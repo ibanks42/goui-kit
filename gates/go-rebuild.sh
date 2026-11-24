@@ -1,9 +1,11 @@
 #!/bin/bash
-# go-rebuild.sh: the Go edit loop. Copies examples/go/counter to scratch, builds it once (the
-# package gk is in GOCACHE after the first build), then changes one line and builds again, three
-# times; prints each time and "GATE go-rebuild ... median". With GK_REBUILD_FLAGS (default
-# empty: plain `go build`) the flags tried. Also a cold build of package gk alone into an empty
-# cache of its own, deleted after, for the first build an app developer waits for.
+# Incremental Go rebuild-latency gate (`gates/go-rebuild.sh`).
+# Gates: edit-compile turnaround for a small Go app importing go/gk.
+# Method: copies examples/go/go.mod and examples/go/counter into a scratch directory, warms the Go
+# build cache once, then times 3 one-line edits to counter/main.go in milliseconds and takes the
+# median. Also measures one cold build with an empty GOCACHE for context.
+# PASS: median incremental rebuild time is 5000 ms or less (`GATE rebuild go PASS`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 . "$repo/go/env.sh"
 lib=${GK_LIB_ROOT:-$repo/lib}/ship
@@ -14,19 +16,20 @@ cp -r "$repo/examples/go/go.mod" "$repo/examples/go/counter" "$scratch/"
 sed -i "s#=> ../../go#=> $repo/go#" "$scratch/go.mod"
 cd "$scratch"
 export CGO_LDFLAGS="-L$lib"
+# Warm up the package build cache before timing one-line edits.
 go build ${GK_REBUILD_FLAGS:-} -o app ./counter || exit 1
 times=()
 for i in 1 2 3; do
-  sed -i "s/fmt.Sprintf(\"count [^\"]*\"/fmt.Sprintf(\"count $i %d\"/" counter/main.go   # a new string each time
+  sed -i "s/fmt.Sprintf(\"count [^\"]*\"/fmt.Sprintf(\"count $i %d\"/" counter/main.go
   grep -q "\"count $i %d\"" counter/main.go || { echo "go-rebuild: the edit did not apply"; exit 1; }
   t0=$(date +%s%N)
   go build ${GK_REBUILD_FLAGS:-} -o app ./counter || exit 1
   t=$(( ($(date +%s%N) - t0) / 1000000 ))
   times+=("$t"); echo "rebuild $i: $t ms"
 done
+# Median of the three sorted timings (line 2).
 med=$(printf '%s\n' "${times[@]}" | sort -n | sed -n 2p)
 echo "binary $(stat -c %s app) bytes"
-# The cold build of package gk (and its cgo step) into a cache of its own, as a first build.
 mkdir -p "$scratch/cold"
 t0=$(date +%s%N)
 GOCACHE=$scratch/cold go build ${GK_REBUILD_FLAGS:-} -o app ./counter || exit 1

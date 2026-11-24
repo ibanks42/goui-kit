@@ -10,12 +10,12 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// AutoScroll is a handle to gpui_kit::base::AutoScroll, a library object (PROTOCOLS.md section 13).
+// AutoScroll is a handle to gpui_kit::base::AutoScroll, a runtime-owned library object.
 type AutoScroll struct{ rt.HCore }
 
 // Returns the current scroll delta.
 //
-// Delta is <gpui_kit::base::AutoScroll>::delta.
+// Delta calls <gpui_kit::base::AutoScroll>::delta.
 func (s AutoScroll) Delta(cx *gk.Cx) gk.Option[float32] {
 	rt.UseBaseAutoScroll()
 	o := rt.NewReq(1456)
@@ -26,7 +26,7 @@ func (s AutoScroll) Delta(cx *gk.Cx) gk.Option[float32] {
 
 // Returns whether automatic scrolling is active.
 //
-// IsActive is <gpui_kit::base::AutoScroll>::is_active.
+// IsActive calls <gpui_kit::base::AutoScroll>::is_active.
 func (s AutoScroll) IsActive(cx *gk.Cx) bool {
 	rt.UseBaseAutoScroll()
 	o := rt.NewReq(1457)
@@ -37,7 +37,7 @@ func (s AutoScroll) IsActive(cx *gk.Cx) bool {
 
 // Stops automatic scrolling and clears the last drag position.
 //
-// Stop is <gpui_kit::base::AutoScroll>::stop.
+// Stop calls <gpui_kit::base::AutoScroll>::stop.
 func (s AutoScroll) Stop(cx *gk.Cx) {
 	rt.UseBaseAutoScroll()
 	o := rt.NewReq(1458)
@@ -45,17 +45,17 @@ func (s AutoScroll) Stop(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// NewAutoScrollDefault is <gpui_kit::base::AutoScroll as Default>::default.
+// NewAutoScrollDefault calls <gpui_kit::base::AutoScroll as Default>::default.
 func NewAutoScrollDefault(cx *gk.Cx) AutoScroll {
 	rt.UseBaseAutoScroll()
 	o := rt.NewReq(1454)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return AutoScroll{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
 // Computes the scroll delta for a pointer Y position within the viewport.
 //
-// AutoScrollComputeDelta is <gpui_kit::base::AutoScroll>::compute_delta.
+// AutoScrollComputeDelta calls <gpui_kit::base::AutoScroll>::compute_delta.
 func AutoScrollComputeDelta(cx *gk.Cx, y float32, bounds gk.Bounds) gk.Option[float32] {
 	rt.UseBaseAutoScroll()
 	o := rt.NewReq(1455)
@@ -65,10 +65,10 @@ func AutoScrollComputeDelta(cx *gk.Cx, y float32, bounds gk.Bounds) gk.Option[fl
 	return rt.RdOpt(r, func(r *rt.Reader) float32 { return r.F32() })
 }
 
-// CalendarState is a handle to gpui_kit::base::CalendarState, kit state that lives in the library.
+// CalendarState is a handle to gpui_kit::base::CalendarState, a runtime-owned kit state entity.
 type CalendarState struct{ rt.HCore }
 
-// CurrentMonth is <gpui_kit::base::CalendarState>::current_month.
+// CurrentMonth calls <gpui_kit::base::CalendarState>::current_month.
 func (s CalendarState) CurrentMonth(cx *gk.Cx) uint8 {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(256)
@@ -77,7 +77,7 @@ func (s CalendarState) CurrentMonth(cx *gk.Cx) uint8 {
 	return uint8(r.U8())
 }
 
-// CurrentYear is <gpui_kit::base::CalendarState>::current_year.
+// CurrentYear calls <gpui_kit::base::CalendarState>::current_year.
 func (s CalendarState) CurrentYear(cx *gk.Cx) int32 {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(257)
@@ -86,7 +86,7 @@ func (s CalendarState) CurrentYear(cx *gk.Cx) int32 {
 	return int32(r.U32())
 }
 
-// Date is <gpui_kit::base::CalendarState>::date.
+// Date calls <gpui_kit::base::CalendarState>::date.
 func (s CalendarState) Date(cx *gk.Cx) Date {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(258)
@@ -95,7 +95,7 @@ func (s CalendarState) Date(cx *gk.Cx) Date {
 	return rdDate(r)
 }
 
-// Days is <gpui_kit::base::CalendarState>::days.
+// Days calls <gpui_kit::base::CalendarState>::days.
 func (s CalendarState) Days(cx *gk.Cx) [][]gk.CivilDate {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1324)
@@ -106,7 +106,7 @@ func (s CalendarState) Days(cx *gk.Cx) [][]gk.CivilDate {
 	})
 }
 
-// DisabledMatcherRef is <gpui_kit::base::CalendarState>::disabled_matcher_ref.
+// DisabledMatcherRef calls <gpui_kit::base::CalendarState>::disabled_matcher_ref.
 func (s CalendarState) DisabledMatcherRef(cx *gk.Cx) gk.Option[Matcher] {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(259)
@@ -115,7 +115,7 @@ func (s CalendarState) DisabledMatcherRef(cx *gk.Cx) gk.Option[Matcher] {
 	return rt.RdOpt(r, func(r *rt.Reader) Matcher { return rdMatcher(r) })
 }
 
-// HasNextYearPage is <gpui_kit::base::CalendarState>::has_next_year_page.
+// HasNextYearPage calls <gpui_kit::base::CalendarState>::has_next_year_page.
 func (s CalendarState) HasNextYearPage(cx *gk.Cx) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(260)
@@ -124,7 +124,7 @@ func (s CalendarState) HasNextYearPage(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// HasPrevYearPage is <gpui_kit::base::CalendarState>::has_prev_year_page.
+// HasPrevYearPage calls <gpui_kit::base::CalendarState>::has_prev_year_page.
 func (s CalendarState) HasPrevYearPage(cx *gk.Cx) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(261)
@@ -136,7 +136,7 @@ func (s CalendarState) HasPrevYearPage(cx *gk.Cx) bool {
 // Calendar weeks grouped by visible month. This preserves six-week months and is the preferred
 // rendering API.
 //
-// MonthDays is <gpui_kit::base::CalendarState>::month_days.
+// MonthDays calls <gpui_kit::base::CalendarState>::month_days.
 func (s CalendarState) MonthDays(cx *gk.Cx) [][][]gk.CivilDate {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1325)
@@ -149,7 +149,7 @@ func (s CalendarState) MonthDays(cx *gk.Cx) [][][]gk.CivilDate {
 	})
 }
 
-// NumberOfMonths is <gpui_kit::base::CalendarState>::number_of_months.
+// NumberOfMonths calls <gpui_kit::base::CalendarState>::number_of_months.
 func (s CalendarState) NumberOfMonths(cx *gk.Cx) int {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(264)
@@ -158,7 +158,7 @@ func (s CalendarState) NumberOfMonths(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// OffsetYearMonth is <gpui_kit::base::CalendarState>::offset_year_month.
+// OffsetYearMonth calls <gpui_kit::base::CalendarState>::offset_year_month.
 func (s CalendarState) OffsetYearMonth(cx *gk.Cx, offset int) gk.TupleInt32Uint32 {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(265)
@@ -168,7 +168,7 @@ func (s CalendarState) OffsetYearMonth(cx *gk.Cx, offset int) gk.TupleInt32Uint3
 	return gk.TupleInt32Uint32{V0: int32(r.U32()), V1: uint32(r.U32())}
 }
 
-// Today is <gpui_kit::base::CalendarState>::today.
+// Today calls <gpui_kit::base::CalendarState>::today.
 func (s CalendarState) Today(cx *gk.Cx) gk.CivilDate {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1328)
@@ -177,7 +177,7 @@ func (s CalendarState) Today(cx *gk.Cx) gk.CivilDate {
 	return rt.RdCivilDate(r)
 }
 
-// View is <gpui_kit::base::CalendarState>::view.
+// View calls <gpui_kit::base::CalendarState>::view.
 func (s CalendarState) View(cx *gk.Cx) CalendarView {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(273)
@@ -186,7 +186,7 @@ func (s CalendarState) View(cx *gk.Cx) CalendarView {
 	return CalendarView(r.U16())
 }
 
-// YearsOnPage is <gpui_kit::base::CalendarState>::years_on_page.
+// YearsOnPage calls <gpui_kit::base::CalendarState>::years_on_page.
 func (s CalendarState) YearsOnPage(cx *gk.Cx) []int32 {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(274)
@@ -198,7 +198,7 @@ func (s CalendarState) YearsOnPage(cx *gk.Cx) []int32 {
 // Activates a day item and emits `Selected` once the controlled value is complete. This is the
 // single pointer/keyboard activation path used by the calendar root.
 //
-// ActivateDate is <gpui_kit::base::CalendarState>::activate_date.
+// ActivateDate calls <gpui_kit::base::CalendarState>::activate_date.
 func (s CalendarState) ActivateDate(cx *gk.Cx, value gk.CivilDate) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1322)
@@ -208,7 +208,7 @@ func (s CalendarState) ActivateDate(cx *gk.Cx, value gk.CivilDate) bool {
 	return r.Bool()
 }
 
-// ApplyDate is <gpui_kit::base::CalendarState>::apply_date.
+// ApplyDate calls <gpui_kit::base::CalendarState>::apply_date.
 func (s CalendarState) ApplyDate(cx *gk.Cx, date Date) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1323)
@@ -218,7 +218,7 @@ func (s CalendarState) ApplyDate(cx *gk.Cx, date Date) bool {
 	return r.Bool()
 }
 
-// NextYearPage is <gpui_kit::base::CalendarState>::next_year_page.
+// NextYearPage calls <gpui_kit::base::CalendarState>::next_year_page.
 func (s CalendarState) NextYearPage(cx *gk.Cx) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(591)
@@ -227,7 +227,7 @@ func (s CalendarState) NextYearPage(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// PrevYearPage is <gpui_kit::base::CalendarState>::prev_year_page.
+// PrevYearPage calls <gpui_kit::base::CalendarState>::prev_year_page.
 func (s CalendarState) PrevYearPage(cx *gk.Cx) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(592)
@@ -236,7 +236,7 @@ func (s CalendarState) PrevYearPage(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// SelectDate is <gpui_kit::base::CalendarState>::select_date.
+// SelectDate calls <gpui_kit::base::CalendarState>::select_date.
 func (s CalendarState) SelectDate(cx *gk.Cx, value gk.CivilDate) bool {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1326)
@@ -246,7 +246,7 @@ func (s CalendarState) SelectDate(cx *gk.Cx, value gk.CivilDate) bool {
 	return r.Bool()
 }
 
-// NextMonth is <gpui_kit::base::CalendarState>::next_month.
+// NextMonth calls <gpui_kit::base::CalendarState>::next_month.
 func (s CalendarState) NextMonth(cx *gk.Cx) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(263)
@@ -254,7 +254,7 @@ func (s CalendarState) NextMonth(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// PrevMonth is <gpui_kit::base::CalendarState>::prev_month.
+// PrevMonth calls <gpui_kit::base::CalendarState>::prev_month.
 func (s CalendarState) PrevMonth(cx *gk.Cx) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(266)
@@ -262,7 +262,7 @@ func (s CalendarState) PrevMonth(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// SelectMonth is <gpui_kit::base::CalendarState>::select_month.
+// SelectMonth calls <gpui_kit::base::CalendarState>::select_month.
 func (s CalendarState) SelectMonth(cx *gk.Cx, month uint8) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(267)
@@ -271,7 +271,7 @@ func (s CalendarState) SelectMonth(cx *gk.Cx, month uint8) {
 	rt.StateSet(cx, o)
 }
 
-// SelectYear is <gpui_kit::base::CalendarState>::select_year.
+// SelectYear calls <gpui_kit::base::CalendarState>::select_year.
 func (s CalendarState) SelectYear(cx *gk.Cx, year int32) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(268)
@@ -280,7 +280,7 @@ func (s CalendarState) SelectYear(cx *gk.Cx, year int32) {
 	rt.StateSet(cx, o)
 }
 
-// SetDate is <gpui_kit::base::CalendarState>::set_date.
+// SetDate calls <gpui_kit::base::CalendarState>::set_date.
 func (s CalendarState) SetDate(cx *gk.Cx, date DateInto) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(1327)
@@ -289,7 +289,7 @@ func (s CalendarState) SetDate(cx *gk.Cx, date DateInto) {
 	rt.StateSet(cx, o)
 }
 
-// SetDisabledMatcher is <gpui_kit::base::CalendarState>::set_disabled_matcher.
+// SetDisabledMatcher calls <gpui_kit::base::CalendarState>::set_disabled_matcher.
 func (s CalendarState) SetDisabledMatcher(cx *gk.Cx, matcher MatcherInto) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(593)
@@ -298,7 +298,7 @@ func (s CalendarState) SetDisabledMatcher(cx *gk.Cx, matcher MatcherInto) {
 	rt.StateSet(cx, o)
 }
 
-// SetNumberOfMonths is <gpui_kit::base::CalendarState>::set_number_of_months.
+// SetNumberOfMonths calls <gpui_kit::base::CalendarState>::set_number_of_months.
 func (s CalendarState) SetNumberOfMonths(cx *gk.Cx, n_ int) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(269)
@@ -307,7 +307,7 @@ func (s CalendarState) SetNumberOfMonths(cx *gk.Cx, n_ int) {
 	rt.StateSet(cx, o)
 }
 
-// SetView is <gpui_kit::base::CalendarState>::set_view.
+// SetView calls <gpui_kit::base::CalendarState>::set_view.
 func (s CalendarState) SetView(cx *gk.Cx, view CalendarView) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(270)
@@ -316,7 +316,7 @@ func (s CalendarState) SetView(cx *gk.Cx, view CalendarView) {
 	rt.StateSet(cx, o)
 }
 
-// SetYearRange is <gpui_kit::base::CalendarState>::set_year_range.
+// SetYearRange calls <gpui_kit::base::CalendarState>::set_year_range.
 func (s CalendarState) SetYearRange(cx *gk.Cx, range_ gk.TupleInt32Int32) {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(271)
@@ -326,7 +326,7 @@ func (s CalendarState) SetYearRange(cx *gk.Cx, range_ gk.TupleInt32Int32) {
 	rt.StateSet(cx, o)
 }
 
-// OnCalendarEvent subscribes a handler to the state's CalendarEvent events; gk.Release ends it.
+// OnCalendarEvent registers a listener for CalendarEvent events on this state; release the returned Subscription to unsubscribe.
 func (s CalendarState) OnCalendarEvent(cx *gk.Cx, h func(cx *gk.Cx, e CalendarEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 110)
 	o := rt.NewReq(272)
@@ -337,15 +337,17 @@ func (s CalendarState) OnCalendarEvent(cx *gk.Cx, h func(cx *gk.Cx, e CalendarEv
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// CalendarStateBuilder is the chain of CalendarState's `self -> Self` methods; Build makes it, in one crossing.
+// CalendarStateBuilder accumulates chained CalendarState builder options before creating the handle in Build.
 type CalendarStateBuilder struct{ sb *rt.StateBuilder }
 
+// DisabledMatcher calls <gpui_kit::base::CalendarState>::disabled_matcher.
 func (b CalendarStateBuilder) DisabledMatcher(matcher MatcherInto) CalendarStateBuilder {
 	o := b.sb.Op(2)
 	putMatcherInto(o, matcher)
 	return b
 }
 
+// YearRange calls <gpui_kit::base::CalendarState>::year_range.
 func (b CalendarStateBuilder) YearRange(range_ gk.TupleInt32Int32) CalendarStateBuilder {
 	o := b.sb.Op(1)
 	o.U32(uint32(range_.V0))
@@ -353,24 +355,24 @@ func (b CalendarStateBuilder) YearRange(range_ gk.TupleInt32Int32) CalendarState
 	return b
 }
 
-// Build makes the CalendarState.
+// Build commits the queued options and returns the new CalendarState handle.
 func (b CalendarStateBuilder) Build() CalendarState {
 	return CalendarState{HCore: rt.MkH(b.sb.Build())}
 }
 
-// NewCalendarState is <gpui_kit::base::CalendarState>::new.
+// NewCalendarState calls <gpui_kit::base::CalendarState>::new.
 func NewCalendarState(cx *gk.Cx) CalendarStateBuilder {
 	rt.UseBaseCalendar()
 	o := rt.NewReq(262)
 	return CalendarStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// ColorPickerState is a handle to gpui_kit::base::ColorPickerState, kit state that lives in the library.
+// ColorPickerState is a handle to gpui_kit::base::ColorPickerState, a runtime-owned kit state entity.
 type ColorPickerState struct{ rt.HCore }
 
 // Returns the selected application-defined picker panel.
 //
-// ActiveTab is <gpui_kit::base::ColorPickerState>::active_tab.
+// ActiveTab calls <gpui_kit::base::ColorPickerState>::active_tab.
 func (s ColorPickerState) ActiveTab(cx *gk.Cx) int {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(275)
@@ -381,7 +383,7 @@ func (s ColorPickerState) ActiveTab(cx *gk.Cx) int {
 
 // Returns the previewed color, falling back to the committed color.
 //
-// DisplayedColor is <gpui_kit::base::ColorPickerState>::displayed_color.
+// DisplayedColor calls <gpui_kit::base::ColorPickerState>::displayed_color.
 func (s ColorPickerState) DisplayedColor(cx *gk.Cx) gk.Option[gk.Hsla] {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(278)
@@ -392,7 +394,7 @@ func (s ColorPickerState) DisplayedColor(cx *gk.Cx) gk.Option[gk.Hsla] {
 
 // The hex text field. Render it with an application-owned input element.
 //
-// HexInput is <gpui_kit::base::ColorPickerState>::hex_input.
+// HexInput calls <gpui_kit::base::ColorPickerState>::hex_input.
 func (s ColorPickerState) HexInput(cx *gk.Cx) editor.InputState {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(1655)
@@ -403,7 +405,7 @@ func (s ColorPickerState) HexInput(cx *gk.Cx) editor.InputState {
 
 // Returns whether the picker popup is open.
 //
-// IsOpen is <gpui_kit::base::ColorPickerState>::is_open.
+// IsOpen calls <gpui_kit::base::ColorPickerState>::is_open.
 func (s ColorPickerState) IsOpen(cx *gk.Cx) bool {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(279)
@@ -414,7 +416,7 @@ func (s ColorPickerState) IsOpen(cx *gk.Cx) bool {
 
 // Returns the color currently being previewed.
 //
-// Preview is <gpui_kit::base::ColorPickerState>::preview.
+// Preview calls <gpui_kit::base::ColorPickerState>::preview.
 func (s ColorPickerState) Preview(cx *gk.Cx) gk.Option[gk.Hsla] {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(281)
@@ -425,7 +427,7 @@ func (s ColorPickerState) Preview(cx *gk.Cx) gk.Option[gk.Hsla] {
 
 // The HSLA component sliders.
 //
-// Sliders is <gpui_kit::base::ColorPickerState>::sliders.
+// Sliders calls <gpui_kit::base::ColorPickerState>::sliders.
 func (s ColorPickerState) Sliders(cx *gk.Cx) HslaSliders {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(773)
@@ -436,7 +438,7 @@ func (s ColorPickerState) Sliders(cx *gk.Cx) HslaSliders {
 
 // Returns the committed color.
 //
-// Value is <gpui_kit::base::ColorPickerState>::value.
+// Value calls <gpui_kit::base::ColorPickerState>::value.
 func (s ColorPickerState) Value(cx *gk.Cx) gk.Option[gk.Hsla] {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(287)
@@ -445,7 +447,7 @@ func (s ColorPickerState) Value(cx *gk.Cx) gk.Option[gk.Hsla] {
 	return rt.RdOpt(r, func(r *rt.Reader) gk.Hsla { return rt.RdHsla(r) })
 }
 
-// TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
+// TryValue is a non-blocking variant of Value that returns ok=false if the state is currently borrowed.
 func (s ColorPickerState) TryValue(cx *gk.Cx) (v gk.Option[gk.Hsla], ok bool) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(287)
@@ -459,7 +461,7 @@ func (s ColorPickerState) TryValue(cx *gk.Cx) (v gk.Option[gk.Hsla], ok bool) {
 
 // Parses and commits a hex color, closing the picker on success.
 //
-// CommitHex is <gpui_kit::base::ColorPickerState>::commit_hex.
+// CommitHex calls <gpui_kit::base::ColorPickerState>::commit_hex.
 func (s ColorPickerState) CommitHex(cx *gk.Cx, value string) gk.Option[gk.Hsla] {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(594)
@@ -474,7 +476,7 @@ func (s ColorPickerState) CommitHex(cx *gk.Cx, value string) gk.Option[gk.Hsla] 
 // Invalid or incomplete input leaves the current preview unchanged. This does not write the hex
 // field, so it is safe to call while typing in it.
 //
-// PreviewHex is <gpui_kit::base::ColorPickerState>::preview_hex.
+// PreviewHex calls <gpui_kit::base::ColorPickerState>::preview_hex.
 func (s ColorPickerState) PreviewHex(cx *gk.Cx, value string) bool {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(596)
@@ -486,7 +488,7 @@ func (s ColorPickerState) PreviewHex(cx *gk.Cx, value string) bool {
 
 // Drops the transient preview, restoring the committed color.
 //
-// ClearPreview is <gpui_kit::base::ColorPickerState>::clear_preview.
+// ClearPreview calls <gpui_kit::base::ColorPickerState>::clear_preview.
 func (s ColorPickerState) ClearPreview(cx *gk.Cx) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(276)
@@ -496,7 +498,7 @@ func (s ColorPickerState) ClearPreview(cx *gk.Cx) {
 
 // Clears the committed color without emitting a change.
 //
-// ClearValue is <gpui_kit::base::ColorPickerState>::clear_value.
+// ClearValue calls <gpui_kit::base::ColorPickerState>::clear_value.
 func (s ColorPickerState) ClearValue(cx *gk.Cx) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(277)
@@ -506,7 +508,7 @@ func (s ColorPickerState) ClearValue(cx *gk.Cx) {
 
 // Updates the transient preview color and the hex field that shows it.
 //
-// PreviewColor is <gpui_kit::base::ColorPickerState>::preview_color.
+// PreviewColor calls <gpui_kit::base::ColorPickerState>::preview_color.
 func (s ColorPickerState) PreviewColor(cx *gk.Cx, value gk.Color) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(595)
@@ -517,7 +519,7 @@ func (s ColorPickerState) PreviewColor(cx *gk.Cx, value gk.Color) {
 
 // Commits a color and closes the picker, as a palette selection does.
 //
-// SelectColor is <gpui_kit::base::ColorPickerState>::select_color.
+// SelectColor calls <gpui_kit::base::ColorPickerState>::select_color.
 func (s ColorPickerState) SelectColor(cx *gk.Cx, value gk.Color) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(597)
@@ -528,7 +530,7 @@ func (s ColorPickerState) SelectColor(cx *gk.Cx, value gk.Color) {
 
 // Selects the application-defined picker panel.
 //
-// SetActiveTab is <gpui_kit::base::ColorPickerState>::set_active_tab.
+// SetActiveTab calls <gpui_kit::base::ColorPickerState>::set_active_tab.
 func (s ColorPickerState) SetActiveTab(cx *gk.Cx, tab int) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(282)
@@ -539,7 +541,7 @@ func (s ColorPickerState) SetActiveTab(cx *gk.Cx, tab int) {
 
 // Sets whether the picker popup is open.
 //
-// SetOpen is <gpui_kit::base::ColorPickerState>::set_open.
+// SetOpen calls <gpui_kit::base::ColorPickerState>::set_open.
 func (s ColorPickerState) SetOpen(cx *gk.Cx, open bool) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(283)
@@ -550,7 +552,7 @@ func (s ColorPickerState) SetOpen(cx *gk.Cx, open bool) {
 
 // Replaces the committed color without emitting a change.
 //
-// SetValue is <gpui_kit::base::ColorPickerState>::set_value.
+// SetValue calls <gpui_kit::base::ColorPickerState>::set_value.
 func (s ColorPickerState) SetValue(cx *gk.Cx, value gk.Color) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(598)
@@ -562,7 +564,7 @@ func (s ColorPickerState) SetValue(cx *gk.Cx, value gk.Color) {
 // Applies a value supplied to `DefaultValue` to the hex field and sliders. Call this from render;
 // it is a no-op once nothing is pending.
 //
-// SyncPendingValue is <gpui_kit::base::ColorPickerState>::sync_pending_value.
+// SyncPendingValue calls <gpui_kit::base::ColorPickerState>::sync_pending_value.
 func (s ColorPickerState) SyncPendingValue(cx *gk.Cx) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(285)
@@ -572,7 +574,7 @@ func (s ColorPickerState) SyncPendingValue(cx *gk.Cx) {
 
 // Toggles the picker popup.
 //
-// ToggleOpen is <gpui_kit::base::ColorPickerState>::toggle_open.
+// ToggleOpen calls <gpui_kit::base::ColorPickerState>::toggle_open.
 func (s ColorPickerState) ToggleOpen(cx *gk.Cx) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(286)
@@ -582,7 +584,7 @@ func (s ColorPickerState) ToggleOpen(cx *gk.Cx) {
 
 // Commits a color without changing the open state, as a slider drag does.
 //
-// UpdateColor is <gpui_kit::base::ColorPickerState>::update_color.
+// UpdateColor calls <gpui_kit::base::ColorPickerState>::update_color.
 func (s ColorPickerState) UpdateColor(cx *gk.Cx, value gk.Color) {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(599)
@@ -591,7 +593,7 @@ func (s ColorPickerState) UpdateColor(cx *gk.Cx, value gk.Color) {
 	rt.StateSet(cx, o)
 }
 
-// OnColorPickerEvent subscribes a handler to the state's ColorPickerEvent events; gk.Release ends it.
+// OnColorPickerEvent registers a listener for ColorPickerEvent events on this state; release the returned Subscription to unsubscribe.
 func (s ColorPickerState) OnColorPickerEvent(cx *gk.Cx, h func(cx *gk.Cx, e ColorPickerEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 84)
 	o := rt.NewReq(284)
@@ -602,35 +604,38 @@ func (s ColorPickerState) OnColorPickerEvent(cx *gk.Cx, h func(cx *gk.Cx, e Colo
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// ColorPickerStateBuilder is the chain of ColorPickerState's `self -> Self` methods; Build makes it, in one crossing.
+// ColorPickerStateBuilder accumulates chained ColorPickerState builder options before creating the handle in Build.
 type ColorPickerStateBuilder struct{ sb *rt.StateBuilder }
 
+// Sets the initial committed and previewed color.
+//
+// DefaultValue calls <gpui_kit::base::ColorPickerState>::default_value.
 func (b ColorPickerStateBuilder) DefaultValue(value gk.Color) ColorPickerStateBuilder {
 	o := b.sb.Op(1)
 	rt.PutColor(o, value)
 	return b
 }
 
-// Build makes the ColorPickerState.
+// Build commits the queued options and returns the new ColorPickerState handle.
 func (b ColorPickerStateBuilder) Build() ColorPickerState {
 	return ColorPickerState{HCore: rt.MkH(b.sb.Build())}
 }
 
 // Creates an empty, closed picker.
 //
-// NewColorPickerState is <gpui_kit::base::ColorPickerState>::new.
+// NewColorPickerState calls <gpui_kit::base::ColorPickerState>::new.
 func NewColorPickerState(cx *gk.Cx) ColorPickerStateBuilder {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(280)
 	return ColorPickerStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// GridLayoutState is a handle to gpui_kit::base::GridLayoutState, kit state that lives in the library.
+// GridLayoutState is a handle to gpui_kit::base::GridLayoutState, a runtime-owned kit state entity.
 type GridLayoutState struct{ rt.HCore }
 
 // The item being dragged or resized, if a gesture is in progress.
 //
-// ActiveItem is <gpui_kit::base::GridLayoutState>::active_item.
+// ActiveItem calls <gpui_kit::base::GridLayoutState>::active_item.
 func (s GridLayoutState) ActiveItem(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(658)
@@ -641,7 +646,7 @@ func (s GridLayoutState) ActiveItem(cx *gk.Cx) gk.Option[string] {
 
 // The area of the item `id`.
 //
-// Area is <gpui_kit::base::GridLayoutState>::area.
+// Area calls <gpui_kit::base::GridLayoutState>::area.
 func (s GridLayoutState) Area(cx *gk.Cx, id string) gk.Option[BaseGridArea] {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(659)
@@ -653,7 +658,7 @@ func (s GridLayoutState) Area(cx *gk.Cx, id string) gk.Option[BaseGridArea] {
 
 // The committed layout, in the order the areas were given.
 //
-// Areas is <gpui_kit::base::GridLayoutState>::areas.
+// Areas calls <gpui_kit::base::GridLayoutState>::areas.
 func (s GridLayoutState) Areas(cx *gk.Cx) []BaseGridArea {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(660)
@@ -662,7 +667,7 @@ func (s GridLayoutState) Areas(cx *gk.Cx) []BaseGridArea {
 	return rt.RdList(r, func(r *rt.Reader) BaseGridArea { return rdBaseGridArea(r) })
 }
 
-// ColumnCount is <gpui_kit::base::GridLayoutState>::column_count.
+// ColumnCount calls <gpui_kit::base::GridLayoutState>::column_count.
 func (s GridLayoutState) ColumnCount(cx *gk.Cx) int {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(661)
@@ -671,7 +676,7 @@ func (s GridLayoutState) ColumnCount(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// CompactionAxis is <gpui_kit::base::GridLayoutState>::compaction_axis.
+// CompactionAxis calls <gpui_kit::base::GridLayoutState>::compaction_axis.
 func (s GridLayoutState) CompactionAxis(cx *gk.Cx) gk.Option[gk.Axis] {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(662)
@@ -680,7 +685,7 @@ func (s GridLayoutState) CompactionAxis(cx *gk.Cx) gk.Option[gk.Axis] {
 	return rt.RdOpt(r, func(r *rt.Reader) gk.Axis { return gk.Axis(r.U16()) })
 }
 
-// IsCollisionPrevented is <gpui_kit::base::GridLayoutState>::is_collision_prevented.
+// IsCollisionPrevented calls <gpui_kit::base::GridLayoutState>::is_collision_prevented.
 func (s GridLayoutState) IsCollisionPrevented(cx *gk.Cx) bool {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(663)
@@ -689,7 +694,7 @@ func (s GridLayoutState) IsCollisionPrevented(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsDraggable is <gpui_kit::base::GridLayoutState>::is_draggable.
+// IsDraggable calls <gpui_kit::base::GridLayoutState>::is_draggable.
 func (s GridLayoutState) IsDraggable(cx *gk.Cx) bool {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(664)
@@ -698,7 +703,7 @@ func (s GridLayoutState) IsDraggable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsResizable is <gpui_kit::base::GridLayoutState>::is_resizable.
+// IsResizable calls <gpui_kit::base::GridLayoutState>::is_resizable.
 func (s GridLayoutState) IsResizable(cx *gk.Cx) bool {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(665)
@@ -709,7 +714,7 @@ func (s GridLayoutState) IsResizable(cx *gk.Cx) bool {
 
 // The item keyboard commands act on.
 //
-// SelectedItem is <gpui_kit::base::GridLayoutState>::selected_item.
+// SelectedItem calls <gpui_kit::base::GridLayoutState>::selected_item.
 func (s GridLayoutState) SelectedItem(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(669)
@@ -722,7 +727,7 @@ func (s GridLayoutState) SelectedItem(cx *gk.Cx) gk.Option[string] {
 // lands on out of the way. Returns whether the layout changed; a refused or no-op move returns
 // `false`.
 //
-// MoveItem is <gpui_kit::base::GridLayoutState>::move_item.
+// MoveItem calls <gpui_kit::base::GridLayoutState>::move_item.
 func (s GridLayoutState) MoveItem(cx *gk.Cx, id string, col int, row int) bool {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(666)
@@ -737,7 +742,7 @@ func (s GridLayoutState) MoveItem(cx *gk.Cx, id string, col int, row int) bool {
 // Resize the item `id` to cover `col_span` columns and `row_span` rows, clamped to its limits.
 // Returns whether the layout changed.
 //
-// ResizeItem is <gpui_kit::base::GridLayoutState>::resize_item.
+// ResizeItem calls <gpui_kit::base::GridLayoutState>::resize_item.
 func (s GridLayoutState) ResizeItem(cx *gk.Cx, id string, colSpan int, rowSpan int) bool {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(668)
@@ -752,7 +757,7 @@ func (s GridLayoutState) ResizeItem(cx *gk.Cx, id string, colSpan int, rowSpan i
 // Replace the layout, settling it under the grid's rules. Cancels any gesture in progress, and
 // does not emit `Change`.
 //
-// SetAreas is <gpui_kit::base::GridLayoutState>::set_areas.
+// SetAreas calls <gpui_kit::base::GridLayoutState>::set_areas.
 func (s GridLayoutState) SetAreas(cx *gk.Cx, areas []GridArea) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(786)
@@ -764,7 +769,7 @@ func (s GridLayoutState) SetAreas(cx *gk.Cx, areas []GridArea) {
 	rt.StateSet(cx, o)
 }
 
-// SetCols is <gpui_kit::base::GridLayoutState>::set_cols.
+// SetCols calls <gpui_kit::base::GridLayoutState>::set_cols.
 func (s GridLayoutState) SetCols(cx *gk.Cx, cols int) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(670)
@@ -773,7 +778,7 @@ func (s GridLayoutState) SetCols(cx *gk.Cx, cols int) {
 	rt.StateSet(cx, o)
 }
 
-// SetCompaction is <gpui_kit::base::GridLayoutState>::set_compaction.
+// SetCompaction calls <gpui_kit::base::GridLayoutState>::set_compaction.
 func (s GridLayoutState) SetCompaction(cx *gk.Cx, compaction gk.Option[gk.Axis]) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(671)
@@ -787,7 +792,7 @@ func (s GridLayoutState) SetCompaction(cx *gk.Cx, compaction gk.Option[gk.Axis])
 	rt.StateSet(cx, o)
 }
 
-// SetDraggable is <gpui_kit::base::GridLayoutState>::set_draggable.
+// SetDraggable calls <gpui_kit::base::GridLayoutState>::set_draggable.
 func (s GridLayoutState) SetDraggable(cx *gk.Cx, draggable bool) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(672)
@@ -796,7 +801,7 @@ func (s GridLayoutState) SetDraggable(cx *gk.Cx, draggable bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetPreventCollision is <gpui_kit::base::GridLayoutState>::set_prevent_collision.
+// SetPreventCollision calls <gpui_kit::base::GridLayoutState>::set_prevent_collision.
 func (s GridLayoutState) SetPreventCollision(cx *gk.Cx, preventCollision bool) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(673)
@@ -805,7 +810,7 @@ func (s GridLayoutState) SetPreventCollision(cx *gk.Cx, preventCollision bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetResizable is <gpui_kit::base::GridLayoutState>::set_resizable.
+// SetResizable calls <gpui_kit::base::GridLayoutState>::set_resizable.
 func (s GridLayoutState) SetResizable(cx *gk.Cx, resizable bool) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(674)
@@ -816,7 +821,7 @@ func (s GridLayoutState) SetResizable(cx *gk.Cx, resizable bool) {
 
 // Select the item keyboard commands act on.
 //
-// SetSelectedItem is <gpui_kit::base::GridLayoutState>::set_selected_item.
+// SetSelectedItem calls <gpui_kit::base::GridLayoutState>::set_selected_item.
 func (s GridLayoutState) SetSelectedItem(cx *gk.Cx, id gk.Option[string]) {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(675)
@@ -830,7 +835,7 @@ func (s GridLayoutState) SetSelectedItem(cx *gk.Cx, id gk.Option[string]) {
 	rt.StateSet(cx, o)
 }
 
-// OnGridLayoutEvent subscribes a handler to the state's GridLayoutEvent events; gk.Release ends it.
+// OnGridLayoutEvent registers a listener for GridLayoutEvent events on this state; release the returned Subscription to unsubscribe.
 func (s GridLayoutState) OnGridLayoutEvent(cx *gk.Cx, h func(cx *gk.Cx, e GridLayoutEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 85)
 	o := rt.NewReq(676)
@@ -841,15 +846,22 @@ func (s GridLayoutState) OnGridLayoutEvent(cx *gk.Cx, h func(cx *gk.Cx, e GridLa
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// GridLayoutStateBuilder is the chain of GridLayoutState's `self -> Self` methods; Build makes it, in one crossing.
+// GridLayoutStateBuilder accumulates chained GridLayoutState builder options before creating the handle in Build.
 type GridLayoutStateBuilder struct{ sb *rt.StateBuilder }
 
+// The number of equal columns the width is divided into. Defaults to 12.
+//
+// Cols calls <gpui_kit::base::GridLayoutState>::cols.
 func (b GridLayoutStateBuilder) Cols(cols int) GridLayoutStateBuilder {
 	o := b.sb.Op(1)
 	rt.PutUsize(o, cols)
 	return b
 }
 
+// The direction items float toward when space opens up, or `None` to leave them wherever they are
+// put. Defaults to `Some(Axis::Vertical)`.
+//
+// Compaction calls <gpui_kit::base::GridLayoutState>::compaction.
 func (b GridLayoutStateBuilder) Compaction(compaction gk.Option[gk.Axis]) GridLayoutStateBuilder {
 	o := b.sb.Op(2)
 	if x0, ok := compaction.Get(); ok {
@@ -861,6 +873,10 @@ func (b GridLayoutStateBuilder) Compaction(compaction gk.Option[gk.Axis]) GridLa
 	return b
 }
 
+// The areas the grid starts with, settled under the rules set so far: overlaps are pushed apart
+// and, with compaction on, gaps close. Set the rules first.
+//
+// DefaultAreas calls <gpui_kit::base::GridLayoutState>::default_areas.
 func (b GridLayoutStateBuilder) DefaultAreas(areas []GridArea) GridLayoutStateBuilder {
 	o := b.sb.Op(6)
 	o.U32(uint32(len(areas)))
@@ -870,44 +886,54 @@ func (b GridLayoutStateBuilder) DefaultAreas(areas []GridArea) GridLayoutStateBu
 	return b
 }
 
+// Whether items can be moved. Defaults to `true`.
+//
+// Draggable calls <gpui_kit::base::GridLayoutState>::draggable.
 func (b GridLayoutStateBuilder) Draggable(draggable bool) GridLayoutStateBuilder {
 	o := b.sb.Op(3)
 	o.Bool(draggable)
 	return b
 }
 
+// Refuse a move or resize that would overlap another item, instead of pushing that item out of the
+// way. Defaults to `false`.
+//
+// PreventCollision calls <gpui_kit::base::GridLayoutState>::prevent_collision.
 func (b GridLayoutStateBuilder) PreventCollision(preventCollision bool) GridLayoutStateBuilder {
 	o := b.sb.Op(4)
 	o.Bool(preventCollision)
 	return b
 }
 
+// Whether items can be resized. Defaults to `true`.
+//
+// Resizable calls <gpui_kit::base::GridLayoutState>::resizable.
 func (b GridLayoutStateBuilder) Resizable(resizable bool) GridLayoutStateBuilder {
 	o := b.sb.Op(5)
 	o.Bool(resizable)
 	return b
 }
 
-// Build makes the GridLayoutState.
+// Build commits the queued options and returns the new GridLayoutState handle.
 func (b GridLayoutStateBuilder) Build() GridLayoutState {
 	return GridLayoutState{HCore: rt.MkH(b.sb.Build())}
 }
 
 // An empty, 12-column grid that compacts vertically.
 //
-// NewGridLayoutState is <gpui_kit::base::GridLayoutState>::new.
+// NewGridLayoutState calls <gpui_kit::base::GridLayoutState>::new.
 func NewGridLayoutState(cx *gk.Cx) GridLayoutStateBuilder {
 	rt.UseBaseGridLayout()
 	o := rt.NewReq(667)
 	return GridLayoutStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// HorizontalScrollClaim is a handle to gpui_kit::base::HorizontalScrollClaim, a library object (PROTOCOLS.md section 13).
+// HorizontalScrollClaim is a handle to gpui_kit::base::HorizontalScrollClaim, a runtime-owned library object.
 type HorizontalScrollClaim struct{ rt.HCore }
 
 // When the step was handled.
 //
-// At is <gpui_kit::base::HorizontalScrollClaim>::at.
+// At calls <gpui_kit::base::HorizontalScrollClaim>::at.
 func (s HorizontalScrollClaim) At(cx *gk.Cx) time.Duration {
 	rt.UseBaseScrollableMask()
 	o := rt.NewReq(1592)
@@ -918,7 +944,7 @@ func (s HorizontalScrollClaim) At(cx *gk.Cx) time.Duration {
 
 // How far the content moved: positive moves it right, negative moves it left.
 //
-// DeltaX is <gpui_kit::base::HorizontalScrollClaim>::delta_x.
+// DeltaX calls <gpui_kit::base::HorizontalScrollClaim>::delta_x.
 func (s HorizontalScrollClaim) DeltaX(cx *gk.Cx) float32 {
 	rt.UseBaseScrollableMask()
 	o := rt.NewReq(787)
@@ -927,12 +953,12 @@ func (s HorizontalScrollClaim) DeltaX(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// HslaSliders is a handle to gpui_kit::base::HslaSliders, a library object (PROTOCOLS.md section 13).
+// HslaSliders is a handle to gpui_kit::base::HslaSliders, a runtime-owned library object.
 type HslaSliders struct{ rt.HCore }
 
 // The alpha slider, in `0..=1`.
 //
-// Alpha is <gpui_kit::base::HslaSliders>::alpha.
+// Alpha calls <gpui_kit::base::HslaSliders>::alpha.
 func (s HslaSliders) Alpha(cx *gk.Cx) SliderState {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(1449)
@@ -943,7 +969,7 @@ func (s HslaSliders) Alpha(cx *gk.Cx) SliderState {
 
 // The hue slider, in `0..=1`.
 //
-// Hue is <gpui_kit::base::HslaSliders>::hue.
+// Hue calls <gpui_kit::base::HslaSliders>::hue.
 func (s HslaSliders) Hue(cx *gk.Cx) SliderState {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(1450)
@@ -954,7 +980,7 @@ func (s HslaSliders) Hue(cx *gk.Cx) SliderState {
 
 // The lightness slider, in `0..=1`.
 //
-// Lightness is <gpui_kit::base::HslaSliders>::lightness.
+// Lightness calls <gpui_kit::base::HslaSliders>::lightness.
 func (s HslaSliders) Lightness(cx *gk.Cx) SliderState {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(1451)
@@ -965,7 +991,7 @@ func (s HslaSliders) Lightness(cx *gk.Cx) SliderState {
 
 // The saturation slider, in `0..=1`.
 //
-// Saturation is <gpui_kit::base::HslaSliders>::saturation.
+// Saturation calls <gpui_kit::base::HslaSliders>::saturation.
 func (s HslaSliders) Saturation(cx *gk.Cx) SliderState {
 	rt.UseBaseColorPicker()
 	o := rt.NewReq(1452)
@@ -974,12 +1000,12 @@ func (s HslaSliders) Saturation(cx *gk.Cx) SliderState {
 	return SliderState{HCore: rt.MkH(r.U64())}
 }
 
-// NavStackState is a handle to gpui_kit::base::NavStackState, kit state that lives in the library.
+// NavStackState is a handle to gpui_kit::base::NavStackState, a runtime-owned kit state entity.
 type NavStackState struct{ rt.HCore }
 
 // The view on top of the stack, which is the one shown once any transition has finished.
 //
-// Current is <gpui_kit::base::NavStackState>::current.
+// Current calls <gpui_kit::base::NavStackState>::current.
 func (s NavStackState) Current(cx *gk.Cx) gk.Option[gk.View] {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1518)
@@ -990,7 +1016,7 @@ func (s NavStackState) Current(cx *gk.Cx) gk.Option[gk.View] {
 
 // The number of views on the stack.
 //
-// Depth is <gpui_kit::base::NavStackState>::depth.
+// Depth calls <gpui_kit::base::NavStackState>::depth.
 func (s NavStackState) Depth(cx *gk.Cx) int {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(289)
@@ -1002,7 +1028,7 @@ func (s NavStackState) Depth(cx *gk.Cx) int {
 // The views popped since the last push, nearest first: the one `forward` would bring back is the
 // first.
 //
-// ForwardViews is <gpui_kit::base::NavStackState>::forward_views.
+// ForwardViews calls <gpui_kit::base::NavStackState>::forward_views.
 func (s NavStackState) ForwardViews(cx *gk.Cx) []gk.View {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1520)
@@ -1011,7 +1037,7 @@ func (s NavStackState) ForwardViews(cx *gk.Cx) []gk.View {
 	return rt.RdList(r, func(r *rt.Reader) gk.View { return gk.View{HCore: rt.MkH(r.U64())} })
 }
 
-// IsEmpty is <gpui_kit::base::NavStackState>::is_empty.
+// IsEmpty calls <gpui_kit::base::NavStackState>::is_empty.
 func (s NavStackState) IsEmpty(cx *gk.Cx) bool {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(290)
@@ -1022,7 +1048,7 @@ func (s NavStackState) IsEmpty(cx *gk.Cx) bool {
 
 // Every view on the stack, root first.
 //
-// Views is <gpui_kit::base::NavStackState>::views.
+// Views calls <gpui_kit::base::NavStackState>::views.
 func (s NavStackState) Views(cx *gk.Cx) []gk.View {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1525)
@@ -1034,7 +1060,7 @@ func (s NavStackState) Views(cx *gk.Cx) []gk.View {
 // Brings back the most recently popped view, starting a `Push` transition over the current top,
 // and returns it. `None` when nothing has been popped since the last push.
 //
-// Forward is <gpui_kit::base::NavStackState>::forward.
+// Forward calls <gpui_kit::base::NavStackState>::forward.
 func (s NavStackState) Forward(cx *gk.Cx, motion NavMotion) gk.Option[gk.View] {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1519)
@@ -1049,7 +1075,7 @@ func (s NavStackState) Forward(cx *gk.Cx, motion NavMotion) gk.Option[gk.View] {
 //
 // The root is never popped: this returns `None` at a depth of one or less.
 //
-// Pop is <gpui_kit::base::NavStackState>::pop.
+// Pop calls <gpui_kit::base::NavStackState>::pop.
 func (s NavStackState) Pop(cx *gk.Cx, motion NavMotion) gk.Option[gk.View] {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1521)
@@ -1062,7 +1088,7 @@ func (s NavStackState) Pop(cx *gk.Cx, motion NavMotion) gk.Option[gk.View] {
 // Pops every view above the root in one `Pop` transition from the previous top, and returns them
 // root-side first.
 //
-// PopToRoot is <gpui_kit::base::NavStackState>::pop_to_root.
+// PopToRoot calls <gpui_kit::base::NavStackState>::pop_to_root.
 func (s NavStackState) PopToRoot(cx *gk.Cx, motion NavMotion) []gk.View {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1522)
@@ -1075,7 +1101,7 @@ func (s NavStackState) PopToRoot(cx *gk.Cx, motion NavMotion) []gk.View {
 // Swaps the top view for `view` and returns the one replaced, starting a `Replace` transition. The
 // forward views are kept. On an empty stack this is a push.
 //
-// Replace is <gpui_kit::base::NavStackState>::replace.
+// Replace calls <gpui_kit::base::NavStackState>::replace.
 func (s NavStackState) Replace(cx *gk.Cx, view gk.View, motion NavMotion) gk.Option[gk.View] {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1524)
@@ -1088,7 +1114,7 @@ func (s NavStackState) Replace(cx *gk.Cx, view gk.View, motion NavMotion) gk.Opt
 
 // Empties the stack and the forward views immediately, abandoning any running transition.
 //
-// Clear is <gpui_kit::base::NavStackState>::clear.
+// Clear calls <gpui_kit::base::NavStackState>::clear.
 func (s NavStackState) Clear(cx *gk.Cx) {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(288)
@@ -1101,7 +1127,7 @@ func (s NavStackState) Clear(cx *gk.Cx) {
 // Into an empty stack this is immediate, like Qt's `initialItem`. Over an existing top it starts a
 // `Push` transition, unless `motion` is `Immediate`.
 //
-// Push is <gpui_kit::base::NavStackState>::push.
+// Push calls <gpui_kit::base::NavStackState>::push.
 func (s NavStackState) Push(cx *gk.Cx, view gk.View, motion NavMotion) {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(1523)
@@ -1111,7 +1137,7 @@ func (s NavStackState) Push(cx *gk.Cx, view gk.View, motion NavMotion) {
 	rt.StateSet(cx, o)
 }
 
-// OnNavStackEvent subscribes a handler to the state's NavStackEvent events; gk.Release ends it.
+// OnNavStackEvent registers a listener for NavStackEvent events on this state; release the returned Subscription to unsubscribe.
 func (s NavStackState) OnNavStackEvent(cx *gk.Cx, h func(cx *gk.Cx, e NavStackEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 94)
 	o := rt.NewReq(292)
@@ -1122,18 +1148,18 @@ func (s NavStackState) OnNavStackEvent(cx *gk.Cx, h func(cx *gk.Cx, e NavStackEv
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// NewNavStackState is <gpui_kit::base::NavStackState>::new.
+// NewNavStackState calls <gpui_kit::base::NavStackState>::new.
 func NewNavStackState(cx *gk.Cx) NavStackState {
 	rt.UseBaseNavStack()
 	o := rt.NewReq(291)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return NavStackState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// QuestionnaireAnswerChange is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswerChange, a library object (PROTOCOLS.md section 13).
+// QuestionnaireAnswerChange is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswerChange, a runtime-owned library object.
 type QuestionnaireAnswerChange struct{ rt.HCore }
 
-// Answer is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::answer.
+// Answer calls <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::answer.
 func (s QuestionnaireAnswerChange) Answer(cx *gk.Cx) QuestionnaireAnswerRead {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1429)
@@ -1142,7 +1168,7 @@ func (s QuestionnaireAnswerChange) Answer(cx *gk.Cx) QuestionnaireAnswerRead {
 	return QuestionnaireAnswerRead{HCore: rt.MkH(r.U64())}
 }
 
-// Item is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::item.
+// Item calls <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::item.
 func (s QuestionnaireAnswerChange) Item(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1430)
@@ -1151,7 +1177,7 @@ func (s QuestionnaireAnswerChange) Item(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// Status is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::status.
+// Status calls <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::status.
 func (s QuestionnaireAnswerChange) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1431)
@@ -1160,10 +1186,10 @@ func (s QuestionnaireAnswerChange) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	return QuestionnaireItemStatus(r.U16())
 }
 
-// QuestionnaireAnswerRead is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswer, a library object (PROTOCOLS.md section 13).
+// QuestionnaireAnswerRead is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswer, a runtime-owned library object.
 type QuestionnaireAnswerRead struct{ rt.HCore }
 
-// Choices is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::choices.
+// Choices calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::choices.
 func (s QuestionnaireAnswerRead) Choices(cx *gk.Cx) []string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1385)
@@ -1172,7 +1198,7 @@ func (s QuestionnaireAnswerRead) Choices(cx *gk.Cx) []string {
 	return rt.RdList(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// Freeform is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::freeform.
+// Freeform calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::freeform.
 func (s QuestionnaireAnswerRead) Freeform(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1386)
@@ -1181,7 +1207,7 @@ func (s QuestionnaireAnswerRead) Freeform(cx *gk.Cx) gk.Option[string] {
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// IsEmpty is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::is_empty.
+// IsEmpty calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::is_empty.
 func (s QuestionnaireAnswerRead) IsEmpty(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1387)
@@ -1190,10 +1216,10 @@ func (s QuestionnaireAnswerRead) IsEmpty(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// QuestionnaireAnswers is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswers, a library object (PROTOCOLS.md section 13).
+// QuestionnaireAnswers is a handle to gpui_kit::base::questionnaire::QuestionnaireAnswers, a runtime-owned library object.
 type QuestionnaireAnswers struct{ rt.HCore }
 
-// Get is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::get.
+// Get calls <gpui_kit::base::questionnaire::QuestionnaireAnswers>::get.
 func (s QuestionnaireAnswers) Get(cx *gk.Cx, name string) gk.Option[QuestionnaireAnswerRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1353)
@@ -1203,7 +1229,7 @@ func (s QuestionnaireAnswers) Get(cx *gk.Cx, name string) gk.Option[Questionnair
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireAnswerRead { return QuestionnaireAnswerRead{HCore: rt.MkH(r.U64())} })
 }
 
-// IsEmpty is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::is_empty.
+// IsEmpty calls <gpui_kit::base::questionnaire::QuestionnaireAnswers>::is_empty.
 func (s QuestionnaireAnswers) IsEmpty(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1041)
@@ -1212,7 +1238,7 @@ func (s QuestionnaireAnswers) IsEmpty(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Iter is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::iter.
+// Iter calls <gpui_kit::base::questionnaire::QuestionnaireAnswers>::iter.
 func (s QuestionnaireAnswers) Iter(cx *gk.Cx) []TupleStringQuestionnaireAnswerRead {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1354)
@@ -1223,7 +1249,7 @@ func (s QuestionnaireAnswers) Iter(cx *gk.Cx) []TupleStringQuestionnaireAnswerRe
 	})
 }
 
-// Len is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::len.
+// Len calls <gpui_kit::base::questionnaire::QuestionnaireAnswers>::len.
 func (s QuestionnaireAnswers) Len(cx *gk.Cx) int {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1042)
@@ -1232,18 +1258,18 @@ func (s QuestionnaireAnswers) Len(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// NewQuestionnaireAnswersDefault is <gpui_kit::base::questionnaire::QuestionnaireAnswers as Default>::default.
+// NewQuestionnaireAnswersDefault calls <gpui_kit::base::questionnaire::QuestionnaireAnswers as Default>::default.
 func NewQuestionnaireAnswersDefault(cx *gk.Cx) QuestionnaireAnswers {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1483)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return QuestionnaireAnswers{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// QuestionnaireChoiceDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition, a library object (PROTOCOLS.md section 13).
+// QuestionnaireChoiceDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition, a runtime-owned library object.
 type QuestionnaireChoiceDefinitionRead struct{ rt.HCore }
 
-// AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::accessibility_label.
 func (s QuestionnaireChoiceDefinitionRead) AccessibilityLabel(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1388)
@@ -1252,7 +1278,7 @@ func (s QuestionnaireChoiceDefinitionRead) AccessibilityLabel(cx *gk.Cx) string 
 	return r.Str()
 }
 
-// Description is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::description.
+// Description calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::description.
 func (s QuestionnaireChoiceDefinitionRead) Description(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1389)
@@ -1261,7 +1287,7 @@ func (s QuestionnaireChoiceDefinitionRead) Description(cx *gk.Cx) gk.Option[stri
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// IsDefaultSelected is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_default_selected.
+// IsDefaultSelected calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_default_selected.
 func (s QuestionnaireChoiceDefinitionRead) IsDefaultSelected(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1390)
@@ -1270,7 +1296,7 @@ func (s QuestionnaireChoiceDefinitionRead) IsDefaultSelected(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_disabled.
+// IsDisabled calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_disabled.
 func (s QuestionnaireChoiceDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1391)
@@ -1279,7 +1305,7 @@ func (s QuestionnaireChoiceDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Value is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::value.
+// Value calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::value.
 func (s QuestionnaireChoiceDefinitionRead) Value(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1392)
@@ -1288,10 +1314,10 @@ func (s QuestionnaireChoiceDefinitionRead) Value(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// QuestionnaireChoiceState is a handle to gpui_kit::base::questionnaire::QuestionnaireChoiceState, a library object (PROTOCOLS.md section 13).
+// QuestionnaireChoiceState is a handle to gpui_kit::base::questionnaire::QuestionnaireChoiceState, a runtime-owned library object.
 type QuestionnaireChoiceState struct{ rt.HCore }
 
-// IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_disabled.
+// IsDisabled calls <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_disabled.
 func (s QuestionnaireChoiceState) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1043)
@@ -1300,7 +1326,7 @@ func (s QuestionnaireChoiceState) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsInvalid is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_invalid.
+// IsInvalid calls <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_invalid.
 func (s QuestionnaireChoiceState) IsInvalid(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1044)
@@ -1309,7 +1335,7 @@ func (s QuestionnaireChoiceState) IsInvalid(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsSelected is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_selected.
+// IsSelected calls <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_selected.
 func (s QuestionnaireChoiceState) IsSelected(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1045)
@@ -1318,7 +1344,7 @@ func (s QuestionnaireChoiceState) IsSelected(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Shortcut is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::shortcut.
+// Shortcut calls <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::shortcut.
 func (s QuestionnaireChoiceState) Shortcut(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1046)
@@ -1327,7 +1353,7 @@ func (s QuestionnaireChoiceState) Shortcut(cx *gk.Cx) gk.Option[string] {
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// Value is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::value.
+// Value calls <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::value.
 func (s QuestionnaireChoiceState) Value(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1047)
@@ -1336,10 +1362,10 @@ func (s QuestionnaireChoiceState) Value(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// QuestionnaireInputDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireInputDefinition, a library object (PROTOCOLS.md section 13).
+// QuestionnaireInputDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireInputDefinition, a runtime-owned library object.
 type QuestionnaireInputDefinitionRead struct{ rt.HCore }
 
-// AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::accessibility_label.
 func (s QuestionnaireInputDefinitionRead) AccessibilityLabel(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1393)
@@ -1348,7 +1374,7 @@ func (s QuestionnaireInputDefinitionRead) AccessibilityLabel(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::is_disabled.
+// IsDisabled calls <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::is_disabled.
 func (s QuestionnaireInputDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1394)
@@ -1357,7 +1383,7 @@ func (s QuestionnaireInputDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// State is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::state.
+// State calls <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::state.
 func (s QuestionnaireInputDefinitionRead) State(cx *gk.Cx) editor.InputState {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1590)
@@ -1366,10 +1392,10 @@ func (s QuestionnaireInputDefinitionRead) State(cx *gk.Cx) editor.InputState {
 	return editor.InputState{HCore: rt.MkH(r.U64())}
 }
 
-// QuestionnaireItemDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireItemDefinition, a library object (PROTOCOLS.md section 13).
+// QuestionnaireItemDefinitionRead is a handle to gpui_kit::base::questionnaire::QuestionnaireItemDefinition, a runtime-owned library object.
 type QuestionnaireItemDefinitionRead struct{ rt.HCore }
 
-// AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::accessibility_label.
 func (s QuestionnaireItemDefinitionRead) AccessibilityLabel(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1395)
@@ -1378,7 +1404,7 @@ func (s QuestionnaireItemDefinitionRead) AccessibilityLabel(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// Choices is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::choices.
+// Choices calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::choices.
 func (s QuestionnaireItemDefinitionRead) Choices(cx *gk.Cx) []QuestionnaireChoiceDefinitionRead {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1396)
@@ -1389,7 +1415,7 @@ func (s QuestionnaireItemDefinitionRead) Choices(cx *gk.Cx) []QuestionnaireChoic
 	})
 }
 
-// Description is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::description.
+// Description calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::description.
 func (s QuestionnaireItemDefinitionRead) Description(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1397)
@@ -1398,7 +1424,7 @@ func (s QuestionnaireItemDefinitionRead) Description(cx *gk.Cx) gk.Option[string
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// Input is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::input.
+// Input calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::input.
 func (s QuestionnaireItemDefinitionRead) Input(cx *gk.Cx) gk.Option[QuestionnaireInputDefinitionRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1398)
@@ -1409,7 +1435,7 @@ func (s QuestionnaireItemDefinitionRead) Input(cx *gk.Cx) gk.Option[Questionnair
 	})
 }
 
-// IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_disabled.
+// IsDisabled calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_disabled.
 func (s QuestionnaireItemDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1399)
@@ -1418,7 +1444,7 @@ func (s QuestionnaireItemDefinitionRead) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsMultiple is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_multiple.
+// IsMultiple calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_multiple.
 func (s QuestionnaireItemDefinitionRead) IsMultiple(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1400)
@@ -1427,7 +1453,7 @@ func (s QuestionnaireItemDefinitionRead) IsMultiple(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsRequired is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_required.
+// IsRequired calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_required.
 func (s QuestionnaireItemDefinitionRead) IsRequired(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1401)
@@ -1436,7 +1462,7 @@ func (s QuestionnaireItemDefinitionRead) IsRequired(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Name is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::name.
+// Name calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::name.
 func (s QuestionnaireItemDefinitionRead) Name(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1402)
@@ -1445,7 +1471,7 @@ func (s QuestionnaireItemDefinitionRead) Name(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// Validator is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::validator.
+// Validator calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::validator.
 func (s QuestionnaireItemDefinitionRead) Validator(cx *gk.Cx) gk.Option[gk.QuestionnaireValidator] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1763)
@@ -1454,10 +1480,10 @@ func (s QuestionnaireItemDefinitionRead) Validator(cx *gk.Cx) gk.Option[gk.Quest
 	return rt.RdOpt(r, func(r *rt.Reader) gk.QuestionnaireValidator { return rt.RdQuestionnaireValidator(r) })
 }
 
-// QuestionnaireItemState is a handle to gpui_kit::base::questionnaire::QuestionnaireItemState, a library object (PROTOCOLS.md section 13).
+// QuestionnaireItemState is a handle to gpui_kit::base::questionnaire::QuestionnaireItemState, a runtime-owned library object.
 type QuestionnaireItemState struct{ rt.HCore }
 
-// HasInput is <gpui_kit::base::questionnaire::QuestionnaireItemState>::has_input.
+// HasInput calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::has_input.
 func (s QuestionnaireItemState) HasInput(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1048)
@@ -1466,7 +1492,7 @@ func (s QuestionnaireItemState) HasInput(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_disabled.
+// IsDisabled calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_disabled.
 func (s QuestionnaireItemState) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1049)
@@ -1475,7 +1501,7 @@ func (s QuestionnaireItemState) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsInvalid is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_invalid.
+// IsInvalid calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_invalid.
 func (s QuestionnaireItemState) IsInvalid(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1050)
@@ -1484,7 +1510,7 @@ func (s QuestionnaireItemState) IsInvalid(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsMultiple is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_multiple.
+// IsMultiple calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_multiple.
 func (s QuestionnaireItemState) IsMultiple(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1051)
@@ -1493,7 +1519,7 @@ func (s QuestionnaireItemState) IsMultiple(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsRequired is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_required.
+// IsRequired calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_required.
 func (s QuestionnaireItemState) IsRequired(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1052)
@@ -1502,7 +1528,7 @@ func (s QuestionnaireItemState) IsRequired(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Name is <gpui_kit::base::questionnaire::QuestionnaireItemState>::name.
+// Name calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::name.
 func (s QuestionnaireItemState) Name(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1053)
@@ -1511,7 +1537,7 @@ func (s QuestionnaireItemState) Name(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// Status is <gpui_kit::base::questionnaire::QuestionnaireItemState>::status.
+// Status calls <gpui_kit::base::questionnaire::QuestionnaireItemState>::status.
 func (s QuestionnaireItemState) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1054)
@@ -1520,10 +1546,10 @@ func (s QuestionnaireItemState) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	return QuestionnaireItemStatus(r.U16())
 }
 
-// QuestionnaireNavigationState is a handle to gpui_kit::base::questionnaire::QuestionnaireNavigationState, a library object (PROTOCOLS.md section 13).
+// QuestionnaireNavigationState is a handle to gpui_kit::base::questionnaire::QuestionnaireNavigationState, a runtime-owned library object.
 type QuestionnaireNavigationState struct{ rt.HCore }
 
-// IsConfirmable is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_confirmable.
+// IsConfirmable calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_confirmable.
 func (s QuestionnaireNavigationState) IsConfirmable(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1055)
@@ -1532,7 +1558,7 @@ func (s QuestionnaireNavigationState) IsConfirmable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsNextVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_next_visible.
+// IsNextVisible calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_next_visible.
 func (s QuestionnaireNavigationState) IsNextVisible(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1056)
@@ -1541,7 +1567,7 @@ func (s QuestionnaireNavigationState) IsNextVisible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsPreviousVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_previous_visible.
+// IsPreviousVisible calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_previous_visible.
 func (s QuestionnaireNavigationState) IsPreviousVisible(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1057)
@@ -1550,7 +1576,7 @@ func (s QuestionnaireNavigationState) IsPreviousVisible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsSkipVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_skip_visible.
+// IsSkipVisible calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_skip_visible.
 func (s QuestionnaireNavigationState) IsSkipVisible(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1058)
@@ -1559,7 +1585,7 @@ func (s QuestionnaireNavigationState) IsSkipVisible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsSubmitVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_submit_visible.
+// IsSubmitVisible calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_submit_visible.
 func (s QuestionnaireNavigationState) IsSubmitVisible(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1059)
@@ -1568,18 +1594,18 @@ func (s QuestionnaireNavigationState) IsSubmitVisible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// NewQuestionnaireNavigationStateDefault is <gpui_kit::base::questionnaire::QuestionnaireNavigationState as Default>::default.
+// NewQuestionnaireNavigationStateDefault calls <gpui_kit::base::questionnaire::QuestionnaireNavigationState as Default>::default.
 func NewQuestionnaireNavigationStateDefault(cx *gk.Cx) QuestionnaireNavigationState {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1484)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return QuestionnaireNavigationState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// QuestionnaireProgressState is a handle to gpui_kit::base::questionnaire::QuestionnaireProgressState, a library object (PROTOCOLS.md section 13).
+// QuestionnaireProgressState is a handle to gpui_kit::base::questionnaire::QuestionnaireProgressState, a runtime-owned library object.
 type QuestionnaireProgressState struct{ rt.HCore }
 
-// Current is <gpui_kit::base::questionnaire::QuestionnaireProgressState>::current.
+// Current calls <gpui_kit::base::questionnaire::QuestionnaireProgressState>::current.
 func (s QuestionnaireProgressState) Current(cx *gk.Cx) int {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1060)
@@ -1588,7 +1614,7 @@ func (s QuestionnaireProgressState) Current(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// Total is <gpui_kit::base::questionnaire::QuestionnaireProgressState>::total.
+// Total calls <gpui_kit::base::questionnaire::QuestionnaireProgressState>::total.
 func (s QuestionnaireProgressState) Total(cx *gk.Cx) int {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1061)
@@ -1597,10 +1623,10 @@ func (s QuestionnaireProgressState) Total(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// QuestionnaireState is a handle to gpui_kit::base::questionnaire::QuestionnaireState, kit state that lives in the library.
+// QuestionnaireState is a handle to gpui_kit::base::questionnaire::QuestionnaireState, a runtime-owned kit state entity.
 type QuestionnaireState struct{ rt.HCore }
 
-// Answer is <gpui_kit::base::questionnaire::QuestionnaireState>::answer.
+// Answer calls <gpui_kit::base::questionnaire::QuestionnaireState>::answer.
 func (s QuestionnaireState) Answer(cx *gk.Cx, name string) gk.Option[QuestionnaireAnswerRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1355)
@@ -1610,7 +1636,7 @@ func (s QuestionnaireState) Answer(cx *gk.Cx, name string) gk.Option[Questionnai
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireAnswerRead { return QuestionnaireAnswerRead{HCore: rt.MkH(r.U64())} })
 }
 
-// Answers is <gpui_kit::base::questionnaire::QuestionnaireState>::answers.
+// Answers calls <gpui_kit::base::questionnaire::QuestionnaireState>::answers.
 func (s QuestionnaireState) Answers(cx *gk.Cx) QuestionnaireAnswers {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1064)
@@ -1619,7 +1645,7 @@ func (s QuestionnaireState) Answers(cx *gk.Cx) QuestionnaireAnswers {
 	return QuestionnaireAnswers{HCore: rt.MkH(r.U64())}
 }
 
-// ChoiceDefinition is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_definition.
+// ChoiceDefinition calls <gpui_kit::base::questionnaire::QuestionnaireState>::choice_definition.
 func (s QuestionnaireState) ChoiceDefinition(cx *gk.Cx, item string, value string) gk.Option[QuestionnaireChoiceDefinitionRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1356)
@@ -1632,7 +1658,7 @@ func (s QuestionnaireState) ChoiceDefinition(cx *gk.Cx, item string, value strin
 	})
 }
 
-// ChoiceFocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_focus_handle.
+// ChoiceFocusHandle calls <gpui_kit::base::questionnaire::QuestionnaireState>::choice_focus_handle.
 func (s QuestionnaireState) ChoiceFocusHandle(cx *gk.Cx, item string, value string) gk.Option[gk.FocusHandle] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1647)
@@ -1643,7 +1669,7 @@ func (s QuestionnaireState) ChoiceFocusHandle(cx *gk.Cx, item string, value stri
 	return rt.RdOpt(r, func(r *rt.Reader) gk.FocusHandle { return gk.FocusHandle{HCore: rt.MkH(r.U64())} })
 }
 
-// ChoiceForShortcut is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_for_shortcut.
+// ChoiceForShortcut calls <gpui_kit::base::questionnaire::QuestionnaireState>::choice_for_shortcut.
 func (s QuestionnaireState) ChoiceForShortcut(cx *gk.Cx, item string, key string) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1065)
@@ -1657,7 +1683,7 @@ func (s QuestionnaireState) ChoiceForShortcut(cx *gk.Cx, item string, key string
 // One-based position of a choice among its item's enabled choices, with the enabled total.
 // Assistive technology announces the pair.
 //
-// ChoicePosition is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_position.
+// ChoicePosition calls <gpui_kit::base::questionnaire::QuestionnaireState>::choice_position.
 func (s QuestionnaireState) ChoicePosition(cx *gk.Cx, item string, value string) gk.Option[gk.TupleIntInt] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1066)
@@ -1668,7 +1694,7 @@ func (s QuestionnaireState) ChoicePosition(cx *gk.Cx, item string, value string)
 	return rt.RdOpt(r, func(r *rt.Reader) gk.TupleIntInt { return gk.TupleIntInt{V0: int(r.U64()), V1: int(r.U64())} })
 }
 
-// ChoiceState is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_state.
+// ChoiceState calls <gpui_kit::base::questionnaire::QuestionnaireState>::choice_state.
 func (s QuestionnaireState) ChoiceState(cx *gk.Cx, item string, value string) gk.Option[QuestionnaireChoiceState] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1067)
@@ -1682,7 +1708,7 @@ func (s QuestionnaireState) ChoiceState(cx *gk.Cx, item string, value string) gk
 // Whether the active item's freeform input currently holds text. The skin needs it to decide
 // whether an arrow key moves focus or edits the draft.
 //
-// CurrentInputHasText is <gpui_kit::base::questionnaire::QuestionnaireState>::current_input_has_text.
+// CurrentInputHasText calls <gpui_kit::base::questionnaire::QuestionnaireState>::current_input_has_text.
 func (s QuestionnaireState) CurrentInputHasText(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1071)
@@ -1691,7 +1717,7 @@ func (s QuestionnaireState) CurrentInputHasText(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// CurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::current_item.
+// CurrentItem calls <gpui_kit::base::questionnaire::QuestionnaireState>::current_item.
 func (s QuestionnaireState) CurrentItem(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1072)
@@ -1700,7 +1726,7 @@ func (s QuestionnaireState) CurrentItem(cx *gk.Cx) gk.Option[string] {
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// CurrentIx is <gpui_kit::base::questionnaire::QuestionnaireState>::current_ix.
+// CurrentIx calls <gpui_kit::base::questionnaire::QuestionnaireState>::current_ix.
 func (s QuestionnaireState) CurrentIx(cx *gk.Cx) gk.Option[int] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1073)
@@ -1712,7 +1738,7 @@ func (s QuestionnaireState) CurrentIx(cx *gk.Cx) gk.Option[int] {
 // The active validation failure for an item, if any. Base reports the reason; the presentation
 // layer turns a built-in reason into text.
 //
-// Error is <gpui_kit::base::questionnaire::QuestionnaireState>::error.
+// Error calls <gpui_kit::base::questionnaire::QuestionnaireState>::error.
 func (s QuestionnaireState) Error(cx *gk.Cx, name string) gk.Option[QuestionnaireValidationError] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1074)
@@ -1722,7 +1748,7 @@ func (s QuestionnaireState) Error(cx *gk.Cx, name string) gk.Option[Questionnair
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireValidationError { return rdQuestionnaireValidationError(r) })
 }
 
-// FocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_handle.
+// FocusHandle calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_handle.
 func (s QuestionnaireState) FocusHandle(cx *gk.Cx) gk.FocusHandle {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1648)
@@ -1731,7 +1757,7 @@ func (s QuestionnaireState) FocusHandle(cx *gk.Cx) gk.FocusHandle {
 	return gk.FocusHandle{HCore: rt.MkH(r.U64())}
 }
 
-// InputState is <gpui_kit::base::questionnaire::QuestionnaireState>::input_state.
+// InputState calls <gpui_kit::base::questionnaire::QuestionnaireState>::input_state.
 func (s QuestionnaireState) InputState(cx *gk.Cx, name string) gk.Option[editor.InputState] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1587)
@@ -1741,7 +1767,7 @@ func (s QuestionnaireState) InputState(cx *gk.Cx, name string) gk.Option[editor.
 	return rt.RdOpt(r, func(r *rt.Reader) editor.InputState { return editor.InputState{HCore: rt.MkH(r.U64())} })
 }
 
-// IsComplete is <gpui_kit::base::questionnaire::QuestionnaireState>::is_complete.
+// IsComplete calls <gpui_kit::base::questionnaire::QuestionnaireState>::is_complete.
 func (s QuestionnaireState) IsComplete(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1084)
@@ -1750,7 +1776,7 @@ func (s QuestionnaireState) IsComplete(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// ItemDefinition is <gpui_kit::base::questionnaire::QuestionnaireState>::item_definition.
+// ItemDefinition calls <gpui_kit::base::questionnaire::QuestionnaireState>::item_definition.
 func (s QuestionnaireState) ItemDefinition(cx *gk.Cx, name string) gk.Option[QuestionnaireItemDefinitionRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1357)
@@ -1762,7 +1788,7 @@ func (s QuestionnaireState) ItemDefinition(cx *gk.Cx, name string) gk.Option[Que
 	})
 }
 
-// ItemFocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::item_focus_handle.
+// ItemFocusHandle calls <gpui_kit::base::questionnaire::QuestionnaireState>::item_focus_handle.
 func (s QuestionnaireState) ItemFocusHandle(cx *gk.Cx, name string) gk.Option[gk.FocusHandle] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1649)
@@ -1772,7 +1798,7 @@ func (s QuestionnaireState) ItemFocusHandle(cx *gk.Cx, name string) gk.Option[gk
 	return rt.RdOpt(r, func(r *rt.Reader) gk.FocusHandle { return gk.FocusHandle{HCore: rt.MkH(r.U64())} })
 }
 
-// ItemState is <gpui_kit::base::questionnaire::QuestionnaireState>::item_state.
+// ItemState calls <gpui_kit::base::questionnaire::QuestionnaireState>::item_state.
 func (s QuestionnaireState) ItemState(cx *gk.Cx, name string) gk.Option[QuestionnaireItemState] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1086)
@@ -1782,7 +1808,7 @@ func (s QuestionnaireState) ItemState(cx *gk.Cx, name string) gk.Option[Question
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireItemState { return QuestionnaireItemState{HCore: rt.MkH(r.U64())} })
 }
 
-// NavigationState is <gpui_kit::base::questionnaire::QuestionnaireState>::navigation_state.
+// NavigationState calls <gpui_kit::base::questionnaire::QuestionnaireState>::navigation_state.
 func (s QuestionnaireState) NavigationState(cx *gk.Cx) QuestionnaireNavigationState {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1088)
@@ -1791,7 +1817,7 @@ func (s QuestionnaireState) NavigationState(cx *gk.Cx) QuestionnaireNavigationSt
 	return QuestionnaireNavigationState{HCore: rt.MkH(r.U64())}
 }
 
-// Progress is <gpui_kit::base::questionnaire::QuestionnaireState>::progress.
+// Progress calls <gpui_kit::base::questionnaire::QuestionnaireState>::progress.
 func (s QuestionnaireState) Progress(cx *gk.Cx) QuestionnaireProgressState {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1090)
@@ -1800,7 +1826,7 @@ func (s QuestionnaireState) Progress(cx *gk.Cx) QuestionnaireProgressState {
 	return QuestionnaireProgressState{HCore: rt.MkH(r.U64())}
 }
 
-// ShortcutForChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_for_choice.
+// ShortcutForChoice calls <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_for_choice.
 func (s QuestionnaireState) ShortcutForChoice(cx *gk.Cx, item string, value string) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1098)
@@ -1811,7 +1837,7 @@ func (s QuestionnaireState) ShortcutForChoice(cx *gk.Cx, item string, value stri
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// ShortcutMode is <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_mode.
+// ShortcutMode calls <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_mode.
 func (s QuestionnaireState) ShortcutMode(cx *gk.Cx) gk.Option[QuestionnaireShortcutMode] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1099)
@@ -1820,7 +1846,7 @@ func (s QuestionnaireState) ShortcutMode(cx *gk.Cx) gk.Option[QuestionnaireShort
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireShortcutMode { return QuestionnaireShortcutMode(r.U16()) })
 }
 
-// Total is <gpui_kit::base::questionnaire::QuestionnaireState>::total.
+// Total calls <gpui_kit::base::questionnaire::QuestionnaireState>::total.
 func (s QuestionnaireState) Total(cx *gk.Cx) int {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1103)
@@ -1833,7 +1859,7 @@ func (s QuestionnaireState) Total(cx *gk.Cx) int {
 // Arrow-key movement inside a radio group uses this; a person's click, Space, Enter or shortcut
 // goes through `Choose`.
 //
-// ActivateChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::activate_choice.
+// ActivateChoice calls <gpui_kit::base::questionnaire::QuestionnaireState>::activate_choice.
 func (s QuestionnaireState) ActivateChoice(cx *gk.Cx, item string, value string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1062)
@@ -1844,7 +1870,7 @@ func (s QuestionnaireState) ActivateChoice(cx *gk.Cx, item string, value string)
 	return rt.RdResult(r)
 }
 
-// ActivateShortcut is <gpui_kit::base::questionnaire::QuestionnaireState>::activate_shortcut.
+// ActivateShortcut calls <gpui_kit::base::questionnaire::QuestionnaireState>::activate_shortcut.
 func (s QuestionnaireState) ActivateShortcut(cx *gk.Cx, key string) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1063)
@@ -1866,7 +1892,7 @@ func (s QuestionnaireState) ActivateShortcut(cx *gk.Cx, key string) bool {
 //
 // Arrow-key movement inside a radio group uses `ActivateChoice` and never confirms.
 //
-// Choose is <gpui_kit::base::questionnaire::QuestionnaireState>::choose.
+// Choose calls <gpui_kit::base::questionnaire::QuestionnaireState>::choose.
 func (s QuestionnaireState) Choose(cx *gk.Cx, item string, value string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1068)
@@ -1877,7 +1903,7 @@ func (s QuestionnaireState) Choose(cx *gk.Cx, item string, value string) error {
 	return rt.RdResult(r)
 }
 
-// ClearExternalError is <gpui_kit::base::questionnaire::QuestionnaireState>::clear_external_error.
+// ClearExternalError calls <gpui_kit::base::questionnaire::QuestionnaireState>::clear_external_error.
 func (s QuestionnaireState) ClearExternalError(cx *gk.Cx, item string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1069)
@@ -1887,7 +1913,7 @@ func (s QuestionnaireState) ClearExternalError(cx *gk.Cx, item string) error {
 	return rt.RdResult(r)
 }
 
-// ConfirmCurrent is <gpui_kit::base::questionnaire::QuestionnaireState>::confirm_current.
+// ConfirmCurrent calls <gpui_kit::base::questionnaire::QuestionnaireState>::confirm_current.
 func (s QuestionnaireState) ConfirmCurrent(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1070)
@@ -1896,7 +1922,7 @@ func (s QuestionnaireState) ConfirmCurrent(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// FocusChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_choice.
+// FocusChoice calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_choice.
 func (s QuestionnaireState) FocusChoice(cx *gk.Cx, item string, value string) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1075)
@@ -1907,7 +1933,7 @@ func (s QuestionnaireState) FocusChoice(cx *gk.Cx, item string, value string) bo
 	return r.Bool()
 }
 
-// FocusCurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_current_item.
+// FocusCurrentItem calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_current_item.
 func (s QuestionnaireState) FocusCurrentItem(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1076)
@@ -1916,7 +1942,7 @@ func (s QuestionnaireState) FocusCurrentItem(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// FocusInput is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_input.
+// FocusInput calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_input.
 func (s QuestionnaireState) FocusInput(cx *gk.Cx, item string) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1077)
@@ -1926,7 +1952,7 @@ func (s QuestionnaireState) FocusInput(cx *gk.Cx, item string) bool {
 	return r.Bool()
 }
 
-// FocusInvalidItem is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_invalid_item.
+// FocusInvalidItem calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_invalid_item.
 func (s QuestionnaireState) FocusInvalidItem(cx *gk.Cx, item string) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1078)
@@ -1936,7 +1962,7 @@ func (s QuestionnaireState) FocusInvalidItem(cx *gk.Cx, item string) bool {
 	return r.Bool()
 }
 
-// FocusNextAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_next_answer.
+// FocusNextAnswer calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_next_answer.
 func (s QuestionnaireState) FocusNextAnswer(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1079)
@@ -1945,7 +1971,7 @@ func (s QuestionnaireState) FocusNextAnswer(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// FocusPreviousAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_previous_answer.
+// FocusPreviousAnswer calls <gpui_kit::base::questionnaire::QuestionnaireState>::focus_previous_answer.
 func (s QuestionnaireState) FocusPreviousAnswer(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1080)
@@ -1954,7 +1980,7 @@ func (s QuestionnaireState) FocusPreviousAnswer(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// FocusedCurrentChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::focused_current_choice.
+// FocusedCurrentChoice calls <gpui_kit::base::questionnaire::QuestionnaireState>::focused_current_choice.
 func (s QuestionnaireState) FocusedCurrentChoice(cx *gk.Cx) gk.Option[string] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1081)
@@ -1963,7 +1989,7 @@ func (s QuestionnaireState) FocusedCurrentChoice(cx *gk.Cx) gk.Option[string] {
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// GoNext is <gpui_kit::base::questionnaire::QuestionnaireState>::go_next.
+// GoNext calls <gpui_kit::base::questionnaire::QuestionnaireState>::go_next.
 func (s QuestionnaireState) GoNext(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1082)
@@ -1972,7 +1998,7 @@ func (s QuestionnaireState) GoNext(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// GoPrevious is <gpui_kit::base::questionnaire::QuestionnaireState>::go_previous.
+// GoPrevious calls <gpui_kit::base::questionnaire::QuestionnaireState>::go_previous.
 func (s QuestionnaireState) GoPrevious(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1083)
@@ -1981,7 +2007,7 @@ func (s QuestionnaireState) GoPrevious(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsCurrentInputFocused is <gpui_kit::base::questionnaire::QuestionnaireState>::is_current_input_focused.
+// IsCurrentInputFocused calls <gpui_kit::base::questionnaire::QuestionnaireState>::is_current_input_focused.
 func (s QuestionnaireState) IsCurrentInputFocused(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1085)
@@ -1990,7 +2016,7 @@ func (s QuestionnaireState) IsCurrentInputFocused(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// MoveCurrentRadio is <gpui_kit::base::questionnaire::QuestionnaireState>::move_current_radio.
+// MoveCurrentRadio calls <gpui_kit::base::questionnaire::QuestionnaireState>::move_current_radio.
 func (s QuestionnaireState) MoveCurrentRadio(cx *gk.Cx, direction int) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1087)
@@ -2000,7 +2026,7 @@ func (s QuestionnaireState) MoveCurrentRadio(cx *gk.Cx, direction int) bool {
 	return r.Bool()
 }
 
-// SetAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::set_answer.
+// SetAnswer calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_answer.
 func (s QuestionnaireState) SetAnswer(cx *gk.Cx, item string, answer QuestionnaireAnswer) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1092)
@@ -2011,7 +2037,7 @@ func (s QuestionnaireState) SetAnswer(cx *gk.Cx, item string, answer Questionnai
 	return rt.RdResult(r)
 }
 
-// SetChoiceDisabled is <gpui_kit::base::questionnaire::QuestionnaireState>::set_choice_disabled.
+// SetChoiceDisabled calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_choice_disabled.
 func (s QuestionnaireState) SetChoiceDisabled(cx *gk.Cx, item string, value string, disabled bool) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1093)
@@ -2023,7 +2049,7 @@ func (s QuestionnaireState) SetChoiceDisabled(cx *gk.Cx, item string, value stri
 	return rt.RdResult(r)
 }
 
-// SetCurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::set_current_item.
+// SetCurrentItem calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_current_item.
 func (s QuestionnaireState) SetCurrentItem(cx *gk.Cx, name string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1094)
@@ -2033,7 +2059,7 @@ func (s QuestionnaireState) SetCurrentItem(cx *gk.Cx, name string) error {
 	return rt.RdResult(r)
 }
 
-// SetExternalError is <gpui_kit::base::questionnaire::QuestionnaireState>::set_external_error.
+// SetExternalError calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_external_error.
 func (s QuestionnaireState) SetExternalError(cx *gk.Cx, item string, error_ string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1095)
@@ -2044,7 +2070,7 @@ func (s QuestionnaireState) SetExternalError(cx *gk.Cx, item string, error_ stri
 	return rt.RdResult(r)
 }
 
-// SetInputValue is <gpui_kit::base::questionnaire::QuestionnaireState>::set_input_value.
+// SetInputValue calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_input_value.
 func (s QuestionnaireState) SetInputValue(cx *gk.Cx, item string, value string) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1096)
@@ -2055,7 +2081,7 @@ func (s QuestionnaireState) SetInputValue(cx *gk.Cx, item string, value string) 
 	return rt.RdResult(r)
 }
 
-// SetItemDisabled is <gpui_kit::base::questionnaire::QuestionnaireState>::set_item_disabled.
+// SetItemDisabled calls <gpui_kit::base::questionnaire::QuestionnaireState>::set_item_disabled.
 func (s QuestionnaireState) SetItemDisabled(cx *gk.Cx, name string, disabled bool) error {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1097)
@@ -2066,7 +2092,7 @@ func (s QuestionnaireState) SetItemDisabled(cx *gk.Cx, name string, disabled boo
 	return rt.RdResult(r)
 }
 
-// SkipCurrent is <gpui_kit::base::questionnaire::QuestionnaireState>::skip_current.
+// SkipCurrent calls <gpui_kit::base::questionnaire::QuestionnaireState>::skip_current.
 func (s QuestionnaireState) SkipCurrent(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1100)
@@ -2075,7 +2101,7 @@ func (s QuestionnaireState) SkipCurrent(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Submit is <gpui_kit::base::questionnaire::QuestionnaireState>::submit.
+// Submit calls <gpui_kit::base::questionnaire::QuestionnaireState>::submit.
 func (s QuestionnaireState) Submit(cx *gk.Cx) bool {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1101)
@@ -2084,7 +2110,7 @@ func (s QuestionnaireState) Submit(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Reset is <gpui_kit::base::questionnaire::QuestionnaireState>::reset.
+// Reset calls <gpui_kit::base::questionnaire::QuestionnaireState>::reset.
 func (s QuestionnaireState) Reset(cx *gk.Cx) {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1091)
@@ -2092,7 +2118,7 @@ func (s QuestionnaireState) Reset(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// OnQuestionnaireEvent subscribes a handler to the state's QuestionnaireEvent events; gk.Release ends it.
+// OnQuestionnaireEvent registers a listener for QuestionnaireEvent events on this state; release the returned Subscription to unsubscribe.
 func (s QuestionnaireState) OnQuestionnaireEvent(cx *gk.Cx, h func(cx *gk.Cx, e QuestionnaireEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 89)
 	o := rt.NewReq(1102)
@@ -2103,27 +2129,29 @@ func (s QuestionnaireState) OnQuestionnaireEvent(cx *gk.Cx, h func(cx *gk.Cx, e 
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// QuestionnaireStateBuilder is the chain of QuestionnaireState's `self -> Self` methods; Build makes it, in one crossing.
+// QuestionnaireStateBuilder accumulates chained QuestionnaireState builder options before creating the handle in Build.
 type QuestionnaireStateBuilder struct{ sb *rt.StateBuilder }
 
+// WithCurrentItem calls crate::overlay::Fallible(<gpui_kit::base::questionnaire::QuestionnaireState>::with_current_item).call2.
 func (b QuestionnaireStateBuilder) WithCurrentItem(name string) QuestionnaireStateBuilder {
 	o := b.sb.Op(1)
 	o.Str(name)
 	return b
 }
 
+// WithShortcuts calls <gpui_kit::base::questionnaire::QuestionnaireState>::with_shortcuts.
 func (b QuestionnaireStateBuilder) WithShortcuts(mode QuestionnaireShortcutMode) QuestionnaireStateBuilder {
 	o := b.sb.Op(2)
 	o.U16(uint16(mode))
 	return b
 }
 
-// Build makes the QuestionnaireState.
+// Build commits the queued options and returns the new QuestionnaireState handle.
 func (b QuestionnaireStateBuilder) Build() QuestionnaireState {
 	return QuestionnaireState{HCore: rt.MkH(b.sb.Build())}
 }
 
-// NewQuestionnaireState is crate::overlay::Fallible(<gpui_kit::base::questionnaire::QuestionnaireState>::new).call2.
+// NewQuestionnaireState calls crate::overlay::Fallible(<gpui_kit::base::questionnaire::QuestionnaireState>::new).call2.
 func NewQuestionnaireState(cx *gk.Cx, items []QuestionnaireItemDefinition) QuestionnaireStateBuilder {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1089)
@@ -2134,10 +2162,10 @@ func NewQuestionnaireState(cx *gk.Cx, items []QuestionnaireItemDefinition) Quest
 	return QuestionnaireStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// QuestionnaireSubmission is a handle to gpui_kit::base::questionnaire::QuestionnaireSubmission, a library object (PROTOCOLS.md section 13).
+// QuestionnaireSubmission is a handle to gpui_kit::base::questionnaire::QuestionnaireSubmission, a runtime-owned library object.
 type QuestionnaireSubmission struct{ rt.HCore }
 
-// Answer is <gpui_kit::base::questionnaire::QuestionnaireSubmission>::answer.
+// Answer calls <gpui_kit::base::questionnaire::QuestionnaireSubmission>::answer.
 func (s QuestionnaireSubmission) Answer(cx *gk.Cx, name string) gk.Option[QuestionnaireAnswerRead] {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1432)
@@ -2147,7 +2175,7 @@ func (s QuestionnaireSubmission) Answer(cx *gk.Cx, name string) gk.Option[Questi
 	return rt.RdOpt(r, func(r *rt.Reader) QuestionnaireAnswerRead { return QuestionnaireAnswerRead{HCore: rt.MkH(r.U64())} })
 }
 
-// Items is <gpui_kit::base::questionnaire::QuestionnaireSubmission>::items.
+// Items calls <gpui_kit::base::questionnaire::QuestionnaireSubmission>::items.
 func (s QuestionnaireSubmission) Items(cx *gk.Cx) []QuestionnaireSubmissionItem {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1433)
@@ -2158,18 +2186,18 @@ func (s QuestionnaireSubmission) Items(cx *gk.Cx) []QuestionnaireSubmissionItem 
 	})
 }
 
-// NewQuestionnaireSubmissionDefault is <gpui_kit::base::questionnaire::QuestionnaireSubmission as Default>::default.
+// NewQuestionnaireSubmissionDefault calls <gpui_kit::base::questionnaire::QuestionnaireSubmission as Default>::default.
 func NewQuestionnaireSubmissionDefault(cx *gk.Cx) QuestionnaireSubmission {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1485)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return QuestionnaireSubmission{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// QuestionnaireSubmissionItem is a handle to gpui_kit::base::questionnaire::QuestionnaireSubmissionItem, a library object (PROTOCOLS.md section 13).
+// QuestionnaireSubmissionItem is a handle to gpui_kit::base::questionnaire::QuestionnaireSubmissionItem, a runtime-owned library object.
 type QuestionnaireSubmissionItem struct{ rt.HCore }
 
-// Answer is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::answer.
+// Answer calls <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::answer.
 func (s QuestionnaireSubmissionItem) Answer(cx *gk.Cx) QuestionnaireAnswerRead {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1434)
@@ -2178,7 +2206,7 @@ func (s QuestionnaireSubmissionItem) Answer(cx *gk.Cx) QuestionnaireAnswerRead {
 	return QuestionnaireAnswerRead{HCore: rt.MkH(r.U64())}
 }
 
-// Name is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::name.
+// Name calls <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::name.
 func (s QuestionnaireSubmissionItem) Name(cx *gk.Cx) string {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1435)
@@ -2187,7 +2215,7 @@ func (s QuestionnaireSubmissionItem) Name(cx *gk.Cx) string {
 	return r.Str()
 }
 
-// Status is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::status.
+// Status calls <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::status.
 func (s QuestionnaireSubmissionItem) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(1436)
@@ -2196,12 +2224,12 @@ func (s QuestionnaireSubmissionItem) Status(cx *gk.Cx) QuestionnaireItemStatus {
 	return QuestionnaireItemStatus(r.U16())
 }
 
-// ResizableState is a handle to gpui_kit::base::ResizableState, kit state that lives in the library.
+// ResizableState is a handle to gpui_kit::base::ResizableState, a runtime-owned kit state entity.
 type ResizableState struct{ rt.HCore }
 
 // Return the measured size of the group along its resize axis.
 //
-// ContainerSize is <gpui_kit::base::ResizableState>::container_size.
+// ContainerSize calls <gpui_kit::base::ResizableState>::container_size.
 func (s ResizableState) ContainerSize(cx *gk.Cx) float32 {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1527)
@@ -2215,7 +2243,7 @@ func (s ResizableState) ContainerSize(cx *gk.Cx) float32 {
 // Starting a drag does not notify, so read this while rendering during the drag rather than
 // relying on a notification when it starts.
 //
-// IsResizing is <gpui_kit::base::ResizableState>::is_resizing.
+// IsResizing calls <gpui_kit::base::ResizableState>::is_resizing.
 func (s ResizableState) IsResizing(cx *gk.Cx) bool {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1779)
@@ -2226,7 +2254,7 @@ func (s ResizableState) IsResizing(cx *gk.Cx) bool {
 
 // Get the size of the panels.
 //
-// Sizes is <gpui_kit::base::ResizableState>::sizes.
+// Sizes calls <gpui_kit::base::ResizableState>::sizes.
 func (s ResizableState) Sizes(cx *gk.Cx) []float32 {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1533)
@@ -2237,7 +2265,7 @@ func (s ResizableState) Sizes(cx *gk.Cx) []float32 {
 
 // Remove all panel state.
 //
-// Clear is <gpui_kit::base::ResizableState>::clear.
+// Clear calls <gpui_kit::base::ResizableState>::clear.
 func (s ResizableState) Clear(cx *gk.Cx) {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1526)
@@ -2250,7 +2278,7 @@ func (s ResizableState) Clear(cx *gk.Cx) {
 // Existing panel sizes are redistributed so their total remains equal to the current container
 // size.
 //
-// InsertPanel is <gpui_kit::base::ResizableState>::insert_panel.
+// InsertPanel calls <gpui_kit::base::ResizableState>::insert_panel.
 func (s ResizableState) InsertPanel(cx *gk.Cx, size gk.Option[float32], ix gk.Option[int]) {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1528)
@@ -2272,7 +2300,7 @@ func (s ResizableState) InsertPanel(cx *gk.Cx, size gk.Option[float32], ix gk.Op
 
 // Remove the panel at `panel_ix` and redistribute the remaining space.
 //
-// RemovePanel is <gpui_kit::base::ResizableState>::remove_panel.
+// RemovePanel calls <gpui_kit::base::ResizableState>::remove_panel.
 func (s ResizableState) RemovePanel(cx *gk.Cx, panelIx int) {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1530)
@@ -2283,7 +2311,7 @@ func (s ResizableState) RemovePanel(cx *gk.Cx, panelIx int) {
 
 // Reset the panel at `panel_ix` while preserving its current size.
 //
-// ResetPanel is <gpui_kit::base::ResizableState>::reset_panel.
+// ResetPanel calls <gpui_kit::base::ResizableState>::reset_panel.
 func (s ResizableState) ResetPanel(cx *gk.Cx, panelIx int) {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1531)
@@ -2302,7 +2330,7 @@ func (s ResizableState) ResetPanel(cx *gk.Cx, panelIx int) {
 // Hidden panels and out-of-range indices are ignored. The last visible panel resizes using the
 // boundary with its previous visible sibling.
 //
-// ResizePanel is <gpui_kit::base::ResizableState>::resize_panel.
+// ResizePanel calls <gpui_kit::base::ResizableState>::resize_panel.
 func (s ResizableState) ResizePanel(cx *gk.Cx, ix int, size float32) {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1532)
@@ -2312,7 +2340,7 @@ func (s ResizableState) ResizePanel(cx *gk.Cx, ix int, size float32) {
 	rt.StateSet(cx, o)
 }
 
-// OnResizablePanelEvent subscribes a handler to the state's ResizablePanelEvent events; gk.Release ends it.
+// OnResizablePanelEvent registers a listener for ResizablePanelEvent events on this state; release the returned Subscription to unsubscribe.
 func (s ResizableState) OnResizablePanelEvent(cx *gk.Cx, h func(cx *gk.Cx, e ResizablePanelEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 96)
 	o := rt.NewReq(1534)
@@ -2323,22 +2351,22 @@ func (s ResizableState) OnResizablePanelEvent(cx *gk.Cx, h func(cx *gk.Cx, e Res
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// NewResizableState is <gpui_kit::base::ResizableState as Default>::default.
+// NewResizableState calls <gpui_kit::base::ResizableState as Default>::default.
 func NewResizableState(cx *gk.Cx) ResizableState {
 	rt.UseBaseResizable()
 	o := rt.NewReq(1529)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ResizableState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// SliderState is a handle to gpui_kit::base::slider::SliderState, kit state that lives in the library.
+// SliderState is a handle to gpui_kit::base::slider::SliderState, a runtime-owned kit state entity.
 type SliderState struct{ rt.HCore }
 
 // The amount an assistive technology's Increment and Decrement move a thumb, and the step reported
 // to it: the step, or a hundredth of the range for a step that is not a positive finite number (a
 // continuous slider).
 //
-// AccessibilityStep is <gpui_kit::base::slider::SliderState>::accessibility_step.
+// AccessibilityStep calls <gpui_kit::base::slider::SliderState>::accessibility_step.
 func (s SliderState) AccessibilityStep(cx *gk.Cx) float32 {
 	rt.UseBaseSlider()
 	o := rt.NewReq(346)
@@ -2349,7 +2377,7 @@ func (s SliderState) AccessibilityStep(cx *gk.Cx) float32 {
 
 // Get the maximum value.
 //
-// MaxValue is <gpui_kit::base::slider::SliderState>::max_value.
+// MaxValue calls <gpui_kit::base::slider::SliderState>::max_value.
 func (s SliderState) MaxValue(cx *gk.Cx) float32 {
 	rt.UseBaseSlider()
 	o := rt.NewReq(347)
@@ -2360,7 +2388,7 @@ func (s SliderState) MaxValue(cx *gk.Cx) float32 {
 
 // Get the minimum value.
 //
-// MinValue is <gpui_kit::base::slider::SliderState>::min_value.
+// MinValue calls <gpui_kit::base::slider::SliderState>::min_value.
 func (s SliderState) MinValue(cx *gk.Cx) float32 {
 	rt.UseBaseSlider()
 	o := rt.NewReq(348)
@@ -2371,7 +2399,7 @@ func (s SliderState) MinValue(cx *gk.Cx) float32 {
 
 // Get the step value.
 //
-// StepValue is <gpui_kit::base::slider::SliderState>::step_value.
+// StepValue calls <gpui_kit::base::slider::SliderState>::step_value.
 func (s SliderState) StepValue(cx *gk.Cx) float32 {
 	rt.UseBaseSlider()
 	o := rt.NewReq(350)
@@ -2382,7 +2410,7 @@ func (s SliderState) StepValue(cx *gk.Cx) float32 {
 
 // Get the value of the slider.
 //
-// Value is <gpui_kit::base::slider::SliderState>::value.
+// Value calls <gpui_kit::base::slider::SliderState>::value.
 func (s SliderState) Value(cx *gk.Cx) SliderValue {
 	rt.UseBaseSlider()
 	o := rt.NewReq(352)
@@ -2391,7 +2419,7 @@ func (s SliderState) Value(cx *gk.Cx) SliderValue {
 	return rdSliderValue(r)
 }
 
-// TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
+// TryValue is a non-blocking variant of Value that returns ok=false if the state is currently borrowed.
 func (s SliderState) TryValue(cx *gk.Cx) (v SliderValue, ok bool) {
 	rt.UseBaseSlider()
 	o := rt.NewReq(352)
@@ -2405,7 +2433,7 @@ func (s SliderState) TryValue(cx *gk.Cx) (v SliderValue, ok bool) {
 
 // Set the value of the slider.
 //
-// SetValue is <gpui_kit::base::slider::SliderState>::set_value.
+// SetValue calls <gpui_kit::base::slider::SliderState>::set_value.
 func (s SliderState) SetValue(cx *gk.Cx, value SliderValueInto) {
 	rt.UseBaseSlider()
 	o := rt.NewReq(646)
@@ -2414,7 +2442,7 @@ func (s SliderState) SetValue(cx *gk.Cx, value SliderValueInto) {
 	rt.StateSet(cx, o)
 }
 
-// OnSliderEvent subscribes a handler to the state's SliderEvent events; gk.Release ends it.
+// OnSliderEvent registers a listener for SliderEvent events on this state; release the returned Subscription to unsubscribe.
 func (s SliderState) OnSliderEvent(cx *gk.Cx, h func(cx *gk.Cx, e SliderEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 90)
 	o := rt.NewReq(351)
@@ -2425,57 +2453,72 @@ func (s SliderState) OnSliderEvent(cx *gk.Cx, h func(cx *gk.Cx, e SliderEvent)) 
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// SliderStateBuilder is the chain of SliderState's `self -> Self` methods; Build makes it, in one crossing.
+// SliderStateBuilder accumulates chained SliderState builder options before creating the handle in Build.
 type SliderStateBuilder struct{ sb *rt.StateBuilder }
 
+// Set the default value of the slider, default: 0.0
+//
+// DefaultValue calls <gpui_kit::base::slider::SliderState>::default_value.
 func (b SliderStateBuilder) DefaultValue(value SliderValueInto) SliderStateBuilder {
 	o := b.sb.Op(5)
 	putSliderValueInto(o, value)
 	return b
 }
 
+// Set the maximum value of the slider, default: 100.0
+//
+// Max calls <gpui_kit::base::slider::SliderState>::max.
 func (b SliderStateBuilder) Max(max_ float32) SliderStateBuilder {
 	o := b.sb.Op(1)
 	o.F32(max_)
 	return b
 }
 
+// Set the minimum value of the slider, default: 0.0
+//
+// Min calls <gpui_kit::base::slider::SliderState>::min.
 func (b SliderStateBuilder) Min(min_ float32) SliderStateBuilder {
 	o := b.sb.Op(2)
 	o.F32(min_)
 	return b
 }
 
+// Set the scale of the slider, default: `Linear`.
+//
+// Scale calls <gpui_kit::base::slider::SliderState>::scale.
 func (b SliderStateBuilder) Scale(scale SliderScale) SliderStateBuilder {
 	o := b.sb.Op(3)
 	o.U16(uint16(scale))
 	return b
 }
 
+// Set the step value of the slider, default: 1.0
+//
+// Step calls <gpui_kit::base::slider::SliderState>::step.
 func (b SliderStateBuilder) Step(step float32) SliderStateBuilder {
 	o := b.sb.Op(4)
 	o.F32(step)
 	return b
 }
 
-// Build makes the SliderState.
+// Build commits the queued options and returns the new SliderState handle.
 func (b SliderStateBuilder) Build() SliderState { return SliderState{HCore: rt.MkH(b.sb.Build())} }
 
 // Create a new `SliderState`.
 //
-// NewSliderState is <gpui_kit::base::slider::SliderState>::new.
+// NewSliderState calls <gpui_kit::base::slider::SliderState>::new.
 func NewSliderState(cx *gk.Cx) SliderStateBuilder {
 	rt.UseBaseSlider()
 	o := rt.NewReq(349)
 	return SliderStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// TimeFieldState is a handle to gpui_kit::base::TimeFieldState, kit state that lives in the library.
+// TimeFieldState is a handle to gpui_kit::base::TimeFieldState, a runtime-owned kit state entity.
 type TimeFieldState struct{ rt.HCore }
 
 // The segment that keyboard editing applies to.
 //
-// SelectedSegment is <gpui_kit::base::TimeFieldState>::selected_segment.
+// SelectedSegment calls <gpui_kit::base::TimeFieldState>::selected_segment.
 func (s TimeFieldState) SelectedSegment(cx *gk.Cx) TimeSegment {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(319)
@@ -2484,7 +2527,7 @@ func (s TimeFieldState) SelectedSegment(cx *gk.Cx) TimeSegment {
 	return TimeSegment(r.U16())
 }
 
-// Time is <gpui_kit::base::TimeFieldState>::time.
+// Time calls <gpui_kit::base::TimeFieldState>::time.
 func (s TimeFieldState) Time(cx *gk.Cx) gk.CivilTime {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(1330)
@@ -2493,7 +2536,7 @@ func (s TimeFieldState) Time(cx *gk.Cx) gk.CivilTime {
 	return rt.RdCivilTime(r)
 }
 
-// Focus is <gpui_kit::base::TimeFieldState>::focus.
+// Focus calls <gpui_kit::base::TimeFieldState>::focus.
 func (s TimeFieldState) Focus(cx *gk.Cx) {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(407)
@@ -2501,7 +2544,7 @@ func (s TimeFieldState) Focus(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// SetHourCycle is <gpui_kit::base::TimeFieldState>::set_hour_cycle.
+// SetHourCycle calls <gpui_kit::base::TimeFieldState>::set_hour_cycle.
 func (s TimeFieldState) SetHourCycle(cx *gk.Cx, hourCycle HourCycle) {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(320)
@@ -2510,7 +2553,7 @@ func (s TimeFieldState) SetHourCycle(cx *gk.Cx, hourCycle HourCycle) {
 	rt.StateSet(cx, o)
 }
 
-// SetPrecision is <gpui_kit::base::TimeFieldState>::set_precision.
+// SetPrecision calls <gpui_kit::base::TimeFieldState>::set_precision.
 func (s TimeFieldState) SetPrecision(cx *gk.Cx, precision TimePrecision) {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(321)
@@ -2521,7 +2564,7 @@ func (s TimeFieldState) SetPrecision(cx *gk.Cx, precision TimePrecision) {
 
 // Replace the time without emitting `Change`.
 //
-// SetTime is <gpui_kit::base::TimeFieldState>::set_time.
+// SetTime calls <gpui_kit::base::TimeFieldState>::set_time.
 func (s TimeFieldState) SetTime(cx *gk.Cx, time gk.CivilTime) {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(1329)
@@ -2530,7 +2573,7 @@ func (s TimeFieldState) SetTime(cx *gk.Cx, time gk.CivilTime) {
 	rt.StateSet(cx, o)
 }
 
-// OnTimeFieldEvent subscribes a handler to the state's TimeFieldEvent events; gk.Release ends it.
+// OnTimeFieldEvent registers a listener for TimeFieldEvent events on this state; release the returned Subscription to unsubscribe.
 func (s TimeFieldState) OnTimeFieldEvent(cx *gk.Cx, h func(cx *gk.Cx, e TimeFieldEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 111)
 	o := rt.NewReq(322)
@@ -2541,27 +2584,33 @@ func (s TimeFieldState) OnTimeFieldEvent(cx *gk.Cx, h func(cx *gk.Cx, e TimeFiel
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// TimeFieldStateBuilder is the chain of TimeFieldState's `self -> Self` methods; Build makes it, in one crossing.
+// TimeFieldStateBuilder accumulates chained TimeFieldState builder options before creating the handle in Build.
 type TimeFieldStateBuilder struct{ sb *rt.StateBuilder }
 
+// Set the hour cycle, default: `H23`.
+//
+// HourCycle calls <gpui_kit::base::TimeFieldState>::hour_cycle.
 func (b TimeFieldStateBuilder) HourCycle(hourCycle HourCycle) TimeFieldStateBuilder {
 	o := b.sb.Op(1)
 	o.U16(uint16(hourCycle))
 	return b
 }
 
+// Set the precision, default: `Minute`.
+//
+// Precision calls <gpui_kit::base::TimeFieldState>::precision.
 func (b TimeFieldStateBuilder) Precision(precision TimePrecision) TimeFieldStateBuilder {
 	o := b.sb.Op(2)
 	o.U16(uint16(precision))
 	return b
 }
 
-// Build makes the TimeFieldState.
+// Build commits the queued options and returns the new TimeFieldState handle.
 func (b TimeFieldStateBuilder) Build() TimeFieldState {
 	return TimeFieldState{HCore: rt.MkH(b.sb.Build())}
 }
 
-// NewTimeFieldState is <gpui_kit::base::TimeFieldState>::new.
+// NewTimeFieldState calls <gpui_kit::base::TimeFieldState>::new.
 func NewTimeFieldState(cx *gk.Cx) TimeFieldStateBuilder {
 	rt.UseBaseTimeField()
 	o := rt.NewReq(318)

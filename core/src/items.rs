@@ -1,24 +1,23 @@
-//! Item procedures (docs/PROTOCOLS.md 9.41): the element closures upstream calls while it draws
-//! a part of a component for one item (a calendar's day, a time field's segment, a tree's entry,
-//! a nav stack's page, a popover's content, a notification's action button), described by an
-//! app function between frames.
+//! Handed-element slot bridge for upstream item-builder closures.
 //!
-//! Each call of such a closure in a frame is a row of a row source (`source::ctx_key`, the
-//! bookkeeping of the element closures over a context of 9.16): the values upstream hands in are
-//! kept for the row's procedure, and a row handed other values is described again before the next
-//! frame. Nothing calls the app while upstream draws.
+//! # Single-Use Handed-Element Protocol
 //!
-//! What 9.16 could not serve, and this module does:
-//! - an element upstream builds and hands in to be decorated (`CalendarItem`, `TimeFieldSegment`,
-//!   `NavPage`, the dialog's close `Button`) or a view it hands in (a tooltip's content): the row's
-//!   procedure gets it as a node of its own tape (the node's constructor `handed`, decoded here by
-//!   taking the value upstream handed for this call), styles it, adds children or places it inside
-//!   other elements. So the row is decoded inside upstream's closure (`source::row_tape`, as a
-//!   delegate shim decodes its rows), not drawn as the row's view;
-//! - a closure that returns one element type (`Fn(..) -> Button`): the row's root, decoded as that
-//!   type.
-//! Before the row has a tape upstream's own value is drawn (the handed element as it came, or the
-//! type's plain value) for one frame.
+//! Several gpui-kit components (such as `Calendar`, `TimeField`, `Popover`, `Combobox`,
+//! `HoverCard`, `Command`, and `NavigationStack`) invoke a builder closure passing both a
+//! read-only context value and one or more move-only upstream elements or `AnyView`s that the
+//! closure must incorporate into its return value. Because host closures run in Go and return a
+//! byte tape rather than owning Rust elements directly:
+//!
+//! 1. [`row`] switches `src` to decoded-row mode (`source::set_decoded`), records the context
+//!    fingerprint/writer via `source::ctx_key`, and looks up the row's cached `Rc<Tape>`.
+//! 2. Before decoding the tape, [`row`] swaps the move-only `handed: Vec<Box<dyn Any>>` into
+//!    thread-local `HANDED` (saving any enclosing `HANDED` frame so nested item closures compose
+//!    without clobbering outer slots).
+//! 3. While decoding, `N_KIT_VIEW` or generated placeholder nodes call [`handed`] to `Option::take`
+//!    slot `i` exactly once and downcast it to `T`. Attempting to place a handed element twice,
+//!    with the wrong type, or outside its row stops the app via `rt::app_stop`.
+//! 4. On return, [`row`] restores the outer `HANDED` frame and passes any unconsumed values to
+//!    `fallback` if the row tape was missing or failed to decode.
 
 use crate::genapi::{self, Dx};
 use crate::source;
@@ -27,13 +26,11 @@ use std::any::Any;
 use std::cell::RefCell;
 
 thread_local! {
-    /// The values handed to the closure whose row is being decoded, by position.
+    /// Stack-scoped slots holding values handed by upstream during the active [`row`] decode.
     static HANDED: RefCell<Vec<Option<Box<dyn Any>>>> = const { RefCell::new(Vec::new()) };
 }
 
-/// The constructor `handed` of a node type: the value upstream handed the item's closure at
-/// position `i`, for the row's tape to decorate. Once per call: a second use (the procedure
-/// placed the same element twice), or a use outside an item procedure's row, stops the program.
+/// Takes the `i`-th handed upstream value of type `T`; stops the app if already consumed or wrong type.
 pub fn handed<T: 'static>(i: u8) -> T {
     let v = HANDED.with(|h| h.borrow_mut().get_mut(i as usize).and_then(Option::take));
     match v.map(|b| b.downcast::<T>()) {
@@ -48,9 +45,10 @@ pub fn handed<T: 'static>(i: u8) -> T {
     }
 }
 
-/// The element of one call of an item closure whose row is decoded here: `handed` are the values
-/// upstream handed (elements and views) by position; `decode` makes the result from the row's
-/// root; `fallback` is what this frame draws while the row has no tape (upstream's own value).
+/// Decodes one row of decoded row source `src` while exposing `handed` values via [`handed`].
+///
+/// Restores any enclosing `HANDED` slots on return so nested item closures compose safely. If the
+/// row tape is not ready yet or `decode` returns `None`, calls `fallback` with any remaining values.
 #[allow(clippy::too_many_arguments)]
 pub fn row<R>(
     src: u64,
@@ -77,12 +75,12 @@ pub fn row<R>(
     }
 }
 
-/// The handed value at position 0 back as `T`, for a fallback.
+/// Extracts and downcasts the first value from a `handed` list (used in fallback closures).
 pub fn first<T: 'static>(handed: Vec<Box<dyn Any>>) -> Option<T> {
     handed.into_iter().next().and_then(|b| b.downcast::<T>().ok()).map(|b| *b)
 }
 
-/// The library's node of this module: `KIT_VIEW` (u8 index), the view handed at that position.
+/// Decodes `N_KIT_VIEW` by taking the indexed `AnyView` from the active `HANDED` slots.
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<gpui_kit::AnyElement> {
     if ty != crate::ops::N_KIT_VIEW {
         return None;
@@ -91,7 +89,5 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<gpui_kit::An
     Some(gpui_kit::IntoElement::into_any_element(handed::<gpui_kit::AnyView>(i)))
 }
 
-/// A value an item procedure is handed, written as the record of its reads (gen/gk_items.py's
-/// records: their `Wire` impls are on this borrow, never on the type, so a library object the app
-/// also holds keeps its own way to travel, as a handle).
+/// Marker wrapper for generated decoders that read an upstream reference into a wire context.
 pub struct Reads<'a, T: ?Sized>(pub &'a T);

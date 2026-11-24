@@ -5,10 +5,11 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// MotionProp is the style property an animation moves: numbers (opacity 0 to 1, positions and
-// sizes in pixels) or colours.
+// Prop identifies a style property animated by Track or Motion.
 type Prop uint8
 
+// Animatable style properties. Bg, TextColor, and BorderColor take gk.Color
+// values; all other properties take numeric float32 values.
 const (
 	Opacity     Prop = 0
 	Top         Prop = 1
@@ -27,8 +28,8 @@ func (p Prop) isColor() bool {
 	return p == Bg || p == TextColor || p == BorderColor
 }
 
-// MotionVal is a property's value: a float32 for a number, a gk.Color for a colour property. A
-// value of another type stops with a message.
+// Val holds either a float32/float64 (for numeric Prop values) or a gk.Color
+// (for Bg, TextColor, and BorderColor).
 type Val any
 
 func putMotionVal(o *rt.Tape, p Prop, v Val) {
@@ -55,10 +56,10 @@ func putMotionVal(o *rt.Tape, p Prop, v Val) {
 	}
 }
 
-// EaseKind is an easing curve: gpui's (linear, quadratic, ease in-out, ease-out quint, bounce,
-// pulsating between) and the kit's base::animation curves (cubic ones, cubic Bezier).
+// EaseKind selects an easing function for Animation.Ease.
 type EaseKind uint8
 
+// Supported easing curve kinds.
 const (
 	EaseLinear           EaseKind = 0
 	EaseQuadratic        EaseKind = 1
@@ -67,16 +68,18 @@ const (
 	EaseOutCubic         EaseKind = 4
 	EaseInCubic          EaseKind = 5
 	EaseInOutCubic       EaseKind = 6
-	EaseCubicBezier      EaseKind = 7 // P = {x1, y1, x2, y2} (base::animation::cubic_bezier)
-	EaseBounce           EaseKind = 8 // there and back with the curve Bounce
-	EasePulsatingBetween EaseKind = 9 // P = {min, max}
+	EaseCubicBezier      EaseKind = 7
+	EaseBounce           EaseKind = 8
+	EasePulsatingBetween EaseKind = 9
 )
 
-// Ease is an easing curve and its parameters.
+// Ease configures an easing curve. P holds control points for EaseCubicBezier
+// or [min, max] bounds for EasePulsatingBetween; Bounce selects the inner curve
+// wrapped by EaseBounce.
 type Ease struct {
 	Kind   EaseKind
 	P      [4]float32
-	Bounce EaseKind // the curve an EaseBounce runs forth and back (not EaseBounce itself)
+	Bounce EaseKind
 }
 
 func putEase(o *rt.Tape, e Ease) {
@@ -100,8 +103,8 @@ func putEase(o *rt.Tape, e Ease) {
 	}
 }
 
-// Animation is gpui's Animation: a duration in milliseconds, once or repeating (Synced: every
-// repeating animation of the app in phase), an easing, and an optional cap on the frame rate.
+// Animation defines timing, looping, synchronization, easing, and FPS cap for
+// one step of WithAnimation or WithAnimations.
 type Animation struct {
 	Ms     int
 	Repeat bool
@@ -110,8 +113,8 @@ type Animation struct {
 	MaxFPS float32
 }
 
-// Track is one property an animation moves from From (delta 0) to To (delta 1). Step: 0 for every
-// animation of the chain, n for the n-th only (from 1; motion.WithAnimations).
+// Track animates one Prop from From to To during either all steps (Step == 0)
+// or a specific 1-based animation step (Step >= 1).
 type Track struct {
 	Prop     Prop
 	From, To Val
@@ -127,14 +130,12 @@ func animatedNode(el gk.Element, kind uint8) (*rt.Node, *rt.Tape) {
 	return n, o
 }
 
-// WithAnimation is gpui's AnimationExt::with_animation: the element, animated by a, its tracks set
-// from the eased delta on every frame while it runs. id: the element id that keeps its clock.
+// WithAnimation wraps el with a single keyed Animation driving tracks.
 func WithAnimation(el gk.AnimatableElement, id string, a Animation, tracks ...Track) gk.Element {
 	return WithAnimations(el, id, []Animation{a}, tracks...)
 }
 
-// WithAnimations is gpui's with_animations: a chain of animations one after the other; a track's
-// Step says which one moves it (0: all).
+// WithAnimations wraps el with a sequence of keyed Animations driving tracks.
 func WithAnimations(el gk.AnimatableElement, id string, anims []Animation, tracks ...Track) gk.Element {
 	if len(anims) == 0 {
 		rt.Stop("motion.WithAnimations: give at least one motion.Animation")
@@ -175,39 +176,40 @@ func WithAnimations(el gk.AnimatableElement, id string, anims []Animation, track
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// MotionSource is where a motion value comes from: gk.ToTransition, gk.ToSpring, gk.AtKeyframes,
-// gk.AtPresence or gk.ToState, each sampled while the element is drawn (with its window's clock).
+// Source is implemented by declarative motion drivers accepted by Value.Src:
+// ToTransition, ToSpring, AtKeyframes, AtPresence, and ToState.
 type Source interface{ isMotionSource() }
 
-// ToTransition is the kit's transition: the value moves to Target under Policy.
+// ToTransition animates a numeric or color Prop toward Target using Policy.
 type ToTransition struct {
 	ID     string
 	Target Val
 	Policy gk.Transition
 }
 
-// ToSpring is the kit's spring: a number moves to Target under Policy.
+// ToSpring drives a numeric Prop toward Target with a spring physics Policy.
 type ToSpring struct {
 	ID     string
 	Target float32
 	Policy gk.Spring
 }
 
-// AtKeyframes is the kit's animate_keyframes: a number along Frames with Timing.
+// AtKeyframes drives a numeric Prop along a Keyframes curve with Timing.
 type AtKeyframes struct {
 	ID     string
 	Frames Keyframes
 	Timing Timing
 }
 
-// AtPresence is the kit's Presence::sample: between From and To with the presence's progress.
+// AtPresence interpolates a numeric or color Prop between From and To based on
+// Presence enter/exit progress.
 type AtPresence struct {
 	Presence Presence
 	From, To Val
 }
 
-// ToState is the kit's TransitionState::sample: a number moves to Target under Policy, its state
-// kept in State.
+// ToState drives a numeric Prop toward Target using an explicit TransitionState
+// handle and Policy.
 type ToState struct {
 	State  TransitionState
 	Target float32
@@ -224,14 +226,13 @@ func (AtPresence) isMotionSource() {}
 
 func (ToState) isMotionSource() {}
 
-// MotionValue is one property and where its value comes from.
+// Value binds one animated Prop to its driving Source in Motion.
 type Value struct {
 	Prop Prop
 	Src  Source
 }
 
-// Motion is the element with properties set from motion values sampled as it is drawn: a value
-// moving towards its target asks for the next frame itself, and only this view is drawn again.
+// Motion wraps el and animates each property listed in values using its Source.
 func Motion(el gk.AnimatableElement, values ...Value) gk.Element {
 	n, o := animatedNode(el, 3)
 	o.U32(uint32(len(values)))
@@ -279,8 +280,7 @@ func Motion(el gk.AnimatableElement, values ...Value) gk.Element {
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// FocusTrap is the kit's FocusTrapElement::focus_trap: tab and shift-tab stay inside the element
-// while focus is in it.
+// FocusTrap wraps el so keyboard Tab focus cycles within el using focus.
 func FocusTrap(el gk.FocusTrapElement, id string, focus gk.FocusHandle) gk.Element {
 	n, o := animatedNode(el, 4)
 	o.Str(id)
@@ -288,12 +288,13 @@ func FocusTrap(el gk.FocusTrapElement, id string, focus gk.FocusHandle) gk.Eleme
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// TextSelectionScope is a scope of text selection (motion.NewTextSelectionScopeID makes one; keep it).
+// TextSelectionScope identifies a shared cross-element text selection region.
 type TextSelectionScope struct{ rt.HCore }
 
 func (s TextSelectionScope) handle() uint64 { return rt.H(s.HCore) }
 
-// NewTextSelectionScopeID makes a text selection scope (TextSelectionScopeId::new). Once, in init.
+// NewTextSelectionScopeID allocates a new TextSelectionScope handle outside a
+// view function.
 func NewTextSelectionScopeID(cx *gk.Cx) TextSelectionScope {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -304,8 +305,7 @@ func NewTextSelectionScopeID(cx *gk.Cx) TextSelectionScope {
 	return TextSelectionScope{HCore: rt.MkH(r.U64())}
 }
 
-// TextSelectionScopeOf is the kit's ElementExt::text_selection_scope (PROTOCOLS.md 13.31): text
-// selected under the element stays in the scope.
+// TextSelectionScopeOf wraps el so selectable text descendants participate in scope.
 func TextSelectionScopeOf(el gk.FocusTrapElement, scope TextSelectionScope) gk.Element {
 	if rt.H(scope.HCore) == 0 {
 		rt.Stop("motion.TextSelectionScopeOf: a scope made by motion.NewTextSelectionScopeID")

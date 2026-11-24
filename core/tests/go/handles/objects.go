@@ -1,5 +1,3 @@
-// The modes that count handles (gk.TestObjCounts) and a table's
-// columns as the kit's Column values (gk.SetTableKitColumns).
 package main
 
 import (
@@ -14,6 +12,7 @@ import (
 )
 
 func init() {
+	// Register owned-object, global-singleton, given-away, and kit-column tests.
 	modes["obj-objects"] = func(a *App, cx *gk.Cx) {
 		if a.clicks == 1 {
 			objects(a, cx)
@@ -31,7 +30,7 @@ func init() {
 	}
 	modes["obj-columns"] = columns
 	views["obj-global"] = func(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
-		// a read of a global in a view function: a read, allowed
+		// Verify global theme handles can be read inside view callbacks without leaking.
 		return body.Child(gk.Text(fmt.Sprintf("dark %v", gk.ThemeGlobal(cx).IsDark(cx))))
 	}
 	views["obj-columns"] = func(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
@@ -42,8 +41,9 @@ func init() {
 	}
 }
 
-// Owned objects: made by a constructor (kept), read at once, written (buffered: the next read
-// sees it), a call that returns a value; released.
+// objects proves permanent HK_OBJ handles (Dock, DiffLinePosition, SearchMatcher)
+// support field getters/setters and increment live object counts from 0 to 3
+// with 0 temporaries before explicit release.
 func objects(a *App, cx *gk.Cx) {
 	counts(cx, "before")
 	d := dock.NewDock(cx, 240)
@@ -63,7 +63,6 @@ func objects(a *App, cx *gk.Cx) {
 	gk.Release(cx, m)
 }
 
-// diffSide prints a DiffSide as the checks expect (the variant's name).
 func diffSide(s editor.DiffSide) string {
 	switch s {
 	case editor.DiffSideModified:
@@ -74,7 +73,9 @@ func diffSide(s editor.DiffSide) string {
 	return fmt.Sprint(int(s))
 }
 
-// The kit's theme global: one handle, reads in place; a read in a view function is allowed.
+// global proves ThemeGlobal and ThemeGlobalMut return the same GPUI Global
+// handle identity (same=true) and that global singletons count as permanent
+// live handles (temps=0, live=2 for Theme + ThemeRegistry).
 func global(a *App, cx *gk.Cx) {
 	th := gk.ThemeGlobal(cx)
 	again := gk.ThemeGlobalMut(cx)
@@ -84,10 +85,12 @@ func global(a *App, cx *gk.Cx) {
 	counts(cx, "globals")
 }
 
-// An object a method takes by value and cannot copy is given away: its handle is released.
+// givenAway proves a clonable HK_OBJ value (TooltipDefaults) can be passed by
+// value twice (Install twice) without consuming or invalidating its handle
+// (temps=0, live=1).
 func givenAway(a *App, cx *gk.Cx) {
 	t := overlay.NewTooltipDefaults(cx).WithShowDelay(250 * time.Millisecond).Build()
-	t.Install(cx) // TooltipDefaults::install(self, cx): copied (it is Clone), the handle stays
+	t.Install(cx)
 	t.Install(cx)
 	counts(cx, "installed twice")
 	gk.Release(cx, t)
@@ -97,7 +100,8 @@ func (a *App) cell(cx *gk.Cx, at table.CellAt) gk.Element {
 	return gk.Text(fmt.Sprintf("%d.%d", at.Row, at.Col))
 }
 
-// A table's columns as the kit's own Column values (gk.NewColumn(..)...) instead of gk.TableColumn.
+// columns proves SetTableKitColumns installs kit-typed Column descriptors
+// (Name width 140, Size width 60) and supports live replacement with 3 columns.
 func columns(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:

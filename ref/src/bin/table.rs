@@ -1,10 +1,8 @@
-//! ref-table: the Rust reference of the `table` scene and the gallery's table pages' twin: the
-//! kit's DataTable over a TableDelegate written in Rust, `rows` rows of `cols` columns, each
-//! cell a Label with "row:col". The frame-cost gate scrolls it before every frame with
-//! GK_SCROLL (gates/fps.sh table); the Go twin is examples/go/table, whose cells are views
-//! over a row source (docs/PROTOCOLS.md section 9.5).
+//! Pure-Rust large virtualized `DataTable` benchmark reference app.
 //!
-//!   ref-table [rows] [cols]      (default 100000 6)
+//! Accepts optional positional CLI arguments `[rows] [cols]` (defaulting to
+//! `100_000` rows by `6` columns) and formats each cell lazily as `row:col`.
+
 use gpui_kit::component::label::Label;
 use gpui_kit::component::table::{Column, DataTable, TableDelegate, TableState};
 use gpui_kit::component::{ActiveTheme, v_flex};
@@ -12,8 +10,7 @@ use gpui_kit::{
     App, AppContext, Context, Entity, IntoElement, ParentElement, Render, Styled, Window,
 };
 
-/// The rows, as an app would keep them: here only their count, the text is made from the
-/// position when a cell is drawn.
+/// Procedural `TableDelegate` synthesizing `row:col` labels on demand.
 struct Cells {
     rows: usize,
     columns: Vec<Column>,

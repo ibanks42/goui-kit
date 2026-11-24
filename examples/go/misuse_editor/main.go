@@ -1,29 +1,6 @@
-// misuse_editor: mistakes against the editor family's protocols (docs/PROTOCOLS.md 9.20 to 9.40)
-// that must stop with a message, never draw wrong content with exit 0. Run
-// offscreen with the diag library by gates/go-misuse.sh, one
-// mode per case:
-//
-//	GK_NEG=ed-ok             a data plugin's rows, a surface and an owned InputBase: correct (exit 0)
-//	GK_NEG=ed-owner          gk.EntityIDOf a handle that is not an input (a History): must stop
-//	GK_NEG=ed-owner-released gk.EntityIDOf an editor released before the view names it: must stop
-//	GK_NEG=ed-plugin-freed   a data plugin whose row source was released, drawing a node: must stop
-//
-// 9.30 to 9.37:
-//
-//	GK_NEG=ed6-ok             an editor host over the app's blocks and parsed ones kept by gk.Retain,
-//	                          its leaves read in the handler, a decorated number input: correct (exit 0)
-//	GK_NEG=ed6-held-stale     a parsed block kept by gk.Retain, released, then placed in a view: must stop
-//	GK_NEG=ed6-leaf-stale     a leaf's geometry kept from its event without gk.Retain, read a frame
-//	                          later: must stop
-//	GK_NEG=ed6-decorate-freed a decorator whose content row source was released: must stop
-//	GK_NEG=ed6-lent-view      an edit of the editor's lent Lsp from a view function: must stop
-//
-// 9.38 to 9.40:
-//
-//	GK_NEG=ed7-ok             a parsed Custom block (the front matter) kept by gk.Retain, placed among
-//	                          the app's blocks with flows from gk.NewFlowPositionAt over that list: correct
-//	GK_NEG=ed7-custom-unretained the same Custom block not kept, placed from the second frame on: must
-//	                          stop (a held value a call hands out lives until the next frame begins)
+// Runtime misuse cases for the editor and Markdown host protocols (GK_NEG):
+// invalid semantic owners, released plugin/decorator row sources, stale held blocks,
+// expired temporary leaf geometry handles, and view-time mutations.
 package main
 
 import (
@@ -40,20 +17,18 @@ import (
 )
 
 type App struct {
-	mode  string
-	root  gk.View
-	rows  gk.RowSource
-	ed    editor.State
-	hist  gk.History
-	drawn int
-	rowed int
-	// 9.30 to 9.37
+	mode   string
+	root   gk.View
+	rows   gk.RowSource
+	ed     editor.State
+	hist   gk.History
+	drawn  int
+	rowed  int
 	held   []editor.BlockNodeHeld
 	leaf   gk.Option[editor.LeafGeometry]
 	leaves int
 	inp    editor.InputState
 	plus   gk.RowSource
-	// 9.38 to 9.40
 	ext    editor.MarkdownExtensionsArc
 	custom gk.Option[editor.BlockNodeHeld]
 }
@@ -104,7 +79,7 @@ func (a *App) init(cx *gk.Cx) {
 func (a *App) view7(cx *gk.Cx) gk.Element {
 	blocks := []editor.BlockNode{editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode("mine")).WithLeafKey(7)}}
 	if c, ok := a.custom.Get(); ok && (a.mode == "ed7-ok" || a.drawn >= 2) {
-		blocks = append(blocks, c) // unretained: swept when the second frame began, so this stops
+		blocks = append(blocks, c)
 	}
 	flows := make([]gk.Option[editor.FlowPosition], len(blocks))
 	for i := range blocks {
@@ -121,16 +96,16 @@ func (a *App) plusRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 
 func (a *App) leavesLaid(cx *gk.Cx, e editor.LeafGeometryEvent) {
 	for _, l := range e.Leaves {
-		a.leaves += l.Geometry.Len(cx) // read in the handler: correct
+		a.leaves += l.Geometry.Len(cx)
 		if a.mode == "ed6-leaf-stale" {
-			a.leaf = gk.Some(l.Geometry) // kept without gk.Retain: temporary, swept when the next frame begins
+			a.leaf = gk.Some(l.Geometry)
 		}
 	}
 }
 
 func (a *App) view6(cx *gk.Cx) gk.Element {
 	if g, ok := a.leaf.Get(); ok {
-		_ = g.Len(cx) // a released temporary: stops here
+		_ = g.Len(cx)
 	}
 	if a.mode == "ed6-lent-view" {
 		a.ed.LspMut(cx, editor.NewLspDefault())

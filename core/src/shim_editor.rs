@@ -1,12 +1,18 @@
-//! The editor family (docs/PROTOCOLS.md sections 9.11 and
-//! 9.12): what the generator's own rules need at run time (a `char` on the wire), the editor's
-//! providers that are not the input family's, and the data closures. Its
-//! numbers: call 176-207, shape 44-51, node 40-47, hkind 12 (shared with shim_select.rs).
+//! Editor support shims, wire codecs, temporary state lending, syntax
+//! highlighting/language providers, and a compact math expression evaluator.
+//!
+//! This module extends `shim_input` and `editor_text` with:
+//! - `Wire`/`Unwire` implementations for `char`, `Font`, `Rope`, slice smart
+//!   pointers, `NonZero*` integers, and placeholder closures.
+//! - Temporary lending (`lend`/`give_back`) of cloned sub-values out of GPUI
+//!   entity state so the host can mutate them via object handles within a turn.
+//! - `Ask`-backed implementations of `InputHighlighter`, `LanguageProvider`,
+//!   and `SyntaxContextProvider`.
+//! - `Expr`, a small recursive-descent parser and stack VM used to evaluate
+//!   host-supplied numeric formulas on the Rust side.
 
 use crate::genapi::{Call, GkResult, Put, R, Unwire, Wire};
 
-/// A `char` travels as its scalar value, a u32 (the generator's `char` rule: a mask's separator,
-/// a mask token). Go: `rune`.
 impl Wire for char {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u32(*self as u32);
@@ -19,19 +25,21 @@ impl Unwire for char {
     }
 }
 
-/// The family's call ops; None: not one of them.
+/// Dispatches editor-helper call opcodes (`C_LEND_TEST`, `C_HIGHLIGHTER_NEW`,
+/// `C_LANGUAGES_NEW`) and falls through to `editor_text::call`.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     use crate::ops::*;
     Some(match op {
         C_LEND_TEST => {
-            // -> u64 objects lent, u64 given back (docs/PROTOCOLS.md 9.17)
+            // Return cumulative (lent, returned) counts for lending tests.
             let (lent, back) = LENT.with(|l| l.get());
             c.out.put_u64(lent);
             c.out.put_u64(back);
             Ok(())
         }
         C_HIGHLIGHTER_NEW => (|| {
-            // u64 styles ask, u64 folds ask (0: none), u32 n, str language each (none: any).
+            // Payload: styles_ask: u64, folds_ask: u64 (0 if none),
+            // language_count: u32, language_names: [str; count].
             let (styles, folds) = (r.u64(), r.u64());
             let n = r.u32() as usize;
             let languages = (0..n.min(4096)).map(|_| r.str().to_string()).collect();
@@ -44,8 +52,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_LANGUAGES_NEW => (|| {
-            // u64 handle (the syntax ask, or a row source of the provider's own), u8 has syntax,
-            // u32 n, (str alias, str canonical name) each.
+            // Payload: src: u64, has_syntax: u8, alias_count: u32,
+            // aliases: [(alias: str, canonical: str); count].
             let (src, has_syntax) = (r.u64(), r.u8() != 0);
             crate::source::count(src, 0)?;
             let n = r.u32() as usize;
@@ -58,24 +66,21 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             LANGUAGES.with(|l| l.borrow_mut().insert(src, Rc::new(GkLanguages { aliases, syntax })));
             Ok(())
         })(),
-        // core/src/editor_text.rs, docs/PROTOCOLS.md 9.20 to 9.26
+
         _ => return crate::editor_text::call(op, r, c),
     })
 }
 
-// --- objects lent by kit state (docs/PROTOCOLS.md 9.17) ---------------------------------------
-
 thread_local! {
-    /// Objects lent, and given back (the tests' LEND_TEST).
+    /// Diagnostic counters tracking `(lent, given_back)` calls to `lend`.
     static LENT: std::cell::Cell<(u64, u64)> = const { std::cell::Cell::new((0, 0)) };
 }
 
-/// What a generated lend returns (`InputBaseState::diagnostics_mut`): `copy`, the object the state
-/// lends, behind a new temporary handle the app reads and writes like any object of its type.
-/// The copy is given back to the state, through `acc` (the same method), when the turn's buffered
-/// writes have landed, and the state redraws; the handle is released then. A turn's writes are
-/// applied when the outermost update has ended (rt::process_reply defers them after the turn), so
-/// the give-back is deferred twice to come after them. None when the state lends nothing.
+/// Lends a cloned sub-object out of entity `state` as a temporary object handle
+/// and schedules writing any host mutations back into `state`.
+///
+/// Two nested `cx.defer` hops ensure the writeback runs after the current turn
+/// and any immediate follow-up calls targeting the temporary handle have finished.
 pub fn lend<S: 'static, T: Clone + 'static>(
     state: u64,
     copy: Option<T>,
@@ -88,8 +93,11 @@ pub fn lend<S: 'static, T: Clone + 'static>(
     Some(h)
 }
 
+/// Copies the mutated temporary object back into the owning entity slot,
+/// releases the temporary handle, and notifies observers.
 fn give_back<S: 'static, T: Clone + 'static>(state: u64, h: u64, acc: fn(&mut S) -> Option<&mut T>, cx: &mut gpui_kit::App) {
-    // Released or given away by the app in the meantime: there is nothing to give back.
+    // Release the temporary handle before dropping the boxed value so no
+    // destructor runs while the session borrow is active.
     let Ok(copy) = crate::genapi::obj_clone::<T>(h) else { return };
     let item = crate::rt::with(|s| s.release(h));
     drop(item);
@@ -103,16 +111,14 @@ fn give_back<S: 'static, T: Clone + 'static>(state: u64, h: u64, acc: fn(&mut S)
     LENT.with(|l| l.set((l.get().0, l.get().1 + 1)));
 }
 
-// --- delegates answered between frames (docs/PROTOCOLS.md 9.18) -------------------------------
-
 use gpui_kit::base::input::{EditorState, FoldRange, HighlightStyleResolver, InputEdit, InputHighlighter};
 use gpui_kit::base::input::{LanguageProvider, SyntaxContext, SyntaxContextProvider};
 use std::cell::RefCell;
 use std::ops::Range;
 use std::rc::Rc;
 
-/// A highlighter the app made (`gk.highlighter`): its styles procedure and its folds procedure as
-/// asks (9.14), and the languages it highlights (none: any).
+/// Configuration registered by `C_HIGHLIGHTER_NEW`, shared across per-language
+/// `GkHighlighter` instances created by `highlighter_factory`.
 struct Highlighter {
     styles: crate::shim_text::Ask,
     folds: Option<crate::shim_text::Ask>,
@@ -120,12 +126,17 @@ struct Highlighter {
 }
 
 thread_local! {
+    /// Highlighters keyed by their `styles` ask handle.
     static HIGHLIGHTERS: RefCell<std::collections::HashMap<u64, Rc<Highlighter>>> = RefCell::new(std::collections::HashMap::new());
+    /// Language providers keyed by their source handle.
     static LANGUAGES: RefCell<std::collections::HashMap<u64, Rc<GkLanguages>>> = RefCell::new(std::collections::HashMap::new());
 }
 
-/// `InputHighlighterFactory` over the highlighter the app made (`[lists] delegates`): a
-/// `GkHighlighter` for each editor whose language the highlighter takes.
+/// Returns a GPUI highlighter factory closure backed by the host-registered
+/// `Highlighter` for `src`.
+///
+/// When `languages` is non-empty, only case-insensitively matching language
+/// names produce a highlighter; an empty list accepts any language.
 pub fn highlighter_factory(src: u64) -> Rc<dyn Fn(&str) -> Option<Box<dyn InputHighlighter>>> {
     let h = HIGHLIGHTERS.with(|m| m.borrow().get(&src).cloned());
     if h.is_none() {
@@ -140,15 +151,15 @@ pub fn highlighter_factory(src: u64) -> Rc<dyn Fn(&str) -> Option<Box<dyn InputH
     })
 }
 
-/// One editor's highlighter: the editor's text as of its last update, and the app's answers for
-/// ranges of that text. A range without an answer yet is drawn unstyled, and the app is asked
-/// between frames (Highlight_Query); every window redraws when the answer is in.
+/// Per-editor `InputHighlighter` instance caching the latest buffer text so
+/// `styles()` and `fold_ranges()` can key asynchronous `Ask` lookups.
 struct GkHighlighter {
     h: Rc<Highlighter>,
     lang: gpui_kit::SharedString,
     text: String,
 }
 
+/// Decodes highlight runs: `count: u32`, then `(start: u64, end: u64, style: str)` per run.
 fn read_runs(r: &mut R, _dx: &mut crate::genapi::Dx) -> Option<Vec<(Range<usize>, String)>> {
     let n = r.u32() as usize;
     let mut v = Vec::with_capacity(n.min(4096));
@@ -159,6 +170,7 @@ fn read_runs(r: &mut R, _dx: &mut crate::genapi::Dx) -> Option<Vec<(Range<usize>
     Some(v)
 }
 
+/// Decodes fold ranges: `count: u32`, then `(start_line: u64, end_line: u64)` per fold.
 fn read_folds(r: &mut R, _dx: &mut crate::genapi::Dx) -> Option<Vec<(usize, usize)>> {
     let n = r.u32() as usize;
     let mut v = Vec::with_capacity(n.min(4096));
@@ -168,8 +180,8 @@ fn read_folds(r: &mut R, _dx: &mut crate::genapi::Dx) -> Option<Vec<(usize, usiz
     Some(v)
 }
 
-/// Ordered runs that cover `range` exactly, as InputHighlighter::styles promises: the app's named
-/// runs clamped to it, through the editor's resolver, the gaps unstyled.
+/// Normalizes host-supplied highlight runs into a contiguous, non-overlapping
+/// partition of `range`, filling gaps with `HighlightStyle::default()`.
 fn cover(
     range: &Range<usize>,
     mut runs: Vec<(Range<usize>, String)>,
@@ -179,6 +191,7 @@ fn cover(
     let mut out = Vec::with_capacity(runs.len() * 2 + 1);
     let mut at = range.start;
     for (r, name) in runs {
+        // Clamp against both the cursor (to drop overlaps) and range.end.
         let (s, e) = (r.start.max(at), r.end.min(range.end));
         if s >= e {
             continue;
@@ -211,7 +224,8 @@ impl InputHighlighter for GkHighlighter {
         let t = text.to_string();
         if t != self.text {
             self.text = t;
-            // Answers about the old text are for a text that is gone.
+            // Invalidate cached replies whenever buffer content changes so
+            // stale runs or folds are not reused.
             self.h.styles.clear();
             if let Some(f) = &self.h.folds {
                 f.clear();
@@ -233,14 +247,14 @@ impl InputHighlighter for GkHighlighter {
     }
 }
 
-/// A language provider the app made (`gk.language_provider`): aliases of language names, and a
-/// syntax procedure answered between frames (SyntaxContext::Code until the answer is in).
+/// Host-configured language alias table and optional syntax-context query hook.
 struct GkLanguages {
     aliases: std::collections::HashMap<String, String>,
     syntax: Option<crate::shim_text::Ask>,
 }
 
-/// `Rc<dyn LanguageProvider>` over the provider the app made (`[lists] delegates`).
+/// Looks up the registered `LanguageProvider` for `src`, falling back to an
+/// empty pass-through provider if `src` was not registered.
 pub fn language_provider(src: u64) -> Rc<dyn LanguageProvider> {
     match LANGUAGES.with(|m| m.borrow().get(&src).cloned()) {
         Some(l) => l,
@@ -263,6 +277,8 @@ impl LanguageProvider for GkLanguages {
     }
 }
 
+/// `Ask`-backed `SyntaxContextProvider` resolving code/string/comment context
+/// at a byte offset.
 struct GkSyntax {
     ask: crate::shim_text::Ask,
     lang: String,
@@ -275,7 +291,7 @@ fn read_syntax(r: &mut R, _dx: &mut crate::genapi::Dx) -> Option<u16> {
 impl SyntaxContextProvider for GkSyntax {
     fn context_at(&self, text: &ropey::Rope, offset: usize) -> SyntaxContext {
         let key = crate::shim_text::key(&(self.lang.as_str(), text.to_string().as_str(), offset));
-        // Syntax_Context's numbers (api/opcodes.lock): Code 0, String 1, Comment 2.
+        // Wire tags: 0 = Code (default), 1 = String, 2 = Comment.
         match self.ask.get(key, read_syntax, |v| v, || 0) {
             1 => SyntaxContext::String,
             2 => SyntaxContext::Comment,
@@ -284,8 +300,8 @@ impl SyntaxContextProvider for GkSyntax {
     }
 }
 
-/// `gk.Font`: str family, f32 weight (0: upstream's normal), u16 style (Font_Style: 0 normal, 1
-/// italic, 2 oblique). Features and fallbacks are `gpui::font`'s.
+/// Decodes a `gpui_kit::Font` from wire format:
+/// `family: str`, `weight: f32` (`<= 0` keeps default), `style: u16` (0 normal, 1 italic, 2 oblique).
 pub fn font(r: &mut R) -> gpui_kit::Font {
     let family = gpui_kit::SharedString::from(r.str().to_owned());
     let weight = r.f32();
@@ -314,8 +330,6 @@ impl Wire for gpui_kit::Font {
     }
 }
 
-/// An editor's text read back (`InputBaseState::text`, `selected_text`, `DisplayMap::text`): the
-/// whole text as a string.
 impl Wire for ropey::Rope {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_str(&self.to_string());
@@ -328,40 +342,42 @@ impl Wire for ropey::RopeSlice<'_> {
     }
 }
 
-/// A handler given to a call op (`InputState::validate`, `set_validator`): the app kept it
-/// (`keep_handler`, as for a subscription) and sends its slot and generation; it is fired as a
-/// kept handler (view 0), with the window when upstream's closure has one.
+/// Decodes a retained `(handler: u32, generation: u32)` pair with `view = 0`
+/// for handlers not scoped to a specific view.
 pub fn kept(r: &mut R) -> crate::genapi::HandlerRef {
     let (handler, generation) = (r.u32(), r.u32());
     crate::genapi::HandlerRef { view: 0, generation, handler }
 }
 
-// --- expression closures (docs/PROTOCOLS.md 9.12) --------------------------------------------
-
-/// A closure that maps numbers to a number (`step_by(Fn(f64, StepAction, &mut App) -> f64)`,
-/// `ease(Fn(f32) -> f32)`, `heading_font_size(Fn(u8, Pixels) -> Pixels)`), given as an
-/// expression the library evaluates: the app's code never runs while upstream calls it (in the
-/// middle of a frame, or inside the kit's own update). The arguments are `x`, `y`, `z` (or `a0` to
-/// `a9`); an enum argument is its variant's number, a bool 0 or 1. Operators `+ - * / % ^`,
-/// comparisons and `&& || !` (0 is false), `c ? a : b`, and `min max abs floor ceil round sqrt
-/// pow sin cos exp ln clamp`. The binding checked the text (`putExpr` in go/gk); a
-/// text that does not parse evaluates to NaN.
+/// Compiled stack-VM representation of a small floating-point math expression.
+///
+/// Expressions support ternary `cond ? a : b`, logical `||`/`&&`/`!`,
+/// comparisons (`<`, `<=`, `>`, `>=`, `==`, `!=`), arithmetic (`+`, `-`, `*`,
+/// `/`, `%`, right-associative `^`), arguments `x`/`y`/`z`/`a0`..`a9`, and
+/// the builtin functions in `FUNCS`.
 pub struct Expr {
     code: Vec<Op>,
 }
 
+/// Stack-machine bytecode instructions emitted by `P` and run by `Expr::eval`.
 #[derive(Clone, Copy, Debug)]
 enum Op {
     Num(f64),
     Arg(usize),
     Neg,
     Not,
+    /// Binary operator identified by an ASCII tag (`+`, `-`, `*`, `/`, `%`,
+    /// `^`, `<`, `>`, `l` for `<=`, `g` for `>=`, `=` for `==`, `n` for `!=`,
+    /// `&` for `&&`, `|` for `||`).
     Bin(u8),
+    /// Builtin call `(FUNCS index, arity)`.
     Call(u8, u8),
-    /// Pops c, b, a: c != 0 ? a : b would need laziness; both sides are pure, so eager is fine.
+    /// Ternary selection: pops `(false_val, true_val, cond)` and pushes
+    /// `if cond != 0.0 { true_val } else { false_val }`.
     Pick,
 }
 
+/// Recursive-descent parser compiling infix expression text to postfix `Op`s.
 struct P<'a> {
     s: &'a [u8],
     i: usize,
@@ -413,6 +429,7 @@ impl P<'_> {
     }
     fn cmp(&mut self) -> Option<()> {
         self.add()?;
+        // Check two-character tokens before single-character prefixes.
         for (t, c) in [("<=", b'l'), (">=", b'g'), ("==", b'='), ("!=", b'n'), ("<", b'<'), (">", b'>')] {
             if self.eat(t) {
                 self.add()?;
@@ -458,6 +475,7 @@ impl P<'_> {
             self.out.push(Op::Neg);
             return Some(());
         }
+        // Avoid consuming `!` when it begins `!=`.
         if self.ws_peek() == Some(b'!') && self.s.get(self.i + 1) != Some(&b'=') {
             self.i += 1;
             self.unary()?;
@@ -535,12 +553,14 @@ impl P<'_> {
     }
 }
 
+/// Builtin `(name, arity)` table indexed by `Op::Call`.
 const FUNCS: [(&str, u8); 13] = [
     ("min", 2), ("max", 2), ("abs", 1), ("floor", 1), ("ceil", 1), ("round", 1), ("sqrt", 1),
     ("pow", 2), ("sin", 1), ("cos", 1), ("exp", 1), ("ln", 1), ("clamp", 3),
 ];
 
 impl Expr {
+    /// Parses `text` into bytecode; invalid syntax compiles to constant `NaN`.
     pub fn new(text: &str) -> Expr {
         let mut p = P { s: text.as_bytes(), i: 0, out: Vec::new() };
         let ok = p.expr().is_some() && {
@@ -550,6 +570,8 @@ impl Expr {
         Expr { code: if ok { p.out } else { vec![Op::Num(f64::NAN)] } }
     }
 
+    /// Evaluates the compiled bytecode with positional `args` (`x` = `args[0]`,
+    /// `y` = `args[1]`, `z` = `args[2]`, `aN` = `args[N]`).
     pub fn eval(&self, args: &[f64]) -> f64 {
         let mut st: Vec<f64> = Vec::with_capacity(8);
         let b = |v: bool| if v { 1. } else { 0. };
@@ -615,8 +637,6 @@ impl Expr {
     }
 }
 
-// Std shapes of options (docs/PROTOCOLS.md 9.12): a list behind a pointer and a non-zero number
-// travelling out (an enum read back whose variant holds one).
 impl<T: Wire> Wire for std::sync::Arc<[T]> {
     fn put(&self, out: &mut Vec<u8>) {
         (**self).put(out);
@@ -641,8 +661,8 @@ impl Wire for std::num::NonZeroUsize {
     }
 }
 
-// An expression closure read back (an `Easing` or a `NumberStep` that holds one): its text is not
-// kept, so it travels out as an empty expression.
+// Host-side formula closures cannot be serialized back into source text;
+// getters write an empty placeholder string to preserve wire layout.
 impl Wire for std::rc::Rc<dyn Fn(f32) -> f32> {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_str("");

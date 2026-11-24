@@ -3,8 +3,9 @@
 #include "textflag.h"
 
 // func Current() uintptr
-// Loads g through the TLS pseudo-register, which the assembler supports for
-// ABI0 functions on every amd64 target (R14 holds g only under ABIInternal).
+// Reads the current goroutine's g pointer directly from Go's TLS slot so the
+// UI-thread check can compare goroutine identity without calling into the
+// runtime or allocating.
 TEXT ·Current(SB), NOSPLIT, $0-8
 	MOVQ (TLS), AX
 	MOVQ AX, ret+0(FP)

@@ -1,11 +1,7 @@
-//! ref-paint: the Rust reference for the `paint` app (examples/go/paint;
-//! gates/pixels.sh paint): gradient backgrounds and a hand-written plot, as a Rust app writes them.
-//! The bindings describe the same: `.bg(linear_gradient(..))` (a Fill, PROTOCOLS.md 11.38) and
-//! `gk.plot(grid, area, lines, quads)` with the binding's own paths and quads (PROTOCOLS.md 12.17),
-//! which draw with the same `PathBuilder`, `paint_path` and `paint_quad` calls as `Paint::paint`.
-//!
-//!   ref-paint                  a real window
-//!   ref-paint --script FILE    offscreen, driven by a gk-meter script (diag build)
+//! Pure-Rust custom painting reference app exercising linear gradients
+//! (sRGB and Oklab), `PathBuilder` filled/stroked paths, `PlotElement`, and
+//! `window.paint_quad` overlays.
+
 use gpui_kit::base::plot::{Grid, Plot, PlotElement};
 use gpui_kit::component::{ActiveTheme, h_flex, v_flex};
 use gpui_kit::{
@@ -22,13 +18,15 @@ fn violet(a: f32) -> Hsla {
     hsla(0.75, 0.6, 0.65, a)
 }
 
-/// The wave the plot draws: integers only, so every language computes the same pixels.
+/// Generates a deterministic 49-point sawtooth waveform across 0..=576 px.
 fn wave() -> Vec<(f32, f32)> {
     (0..=48).map(|i| ((i * 12) as f32, (40 + (i * 37) % 150) as f32)).collect()
 }
 
 struct Root;
 
+/// Custom `Plot` painting a grid, translucent fill area, three-pass glow stroke,
+/// gradient badge quad, and highlight dot.
 struct Paint {
     pts: Vec<(f32, f32)>,
 }
@@ -42,7 +40,8 @@ impl Plot for Paint {
             .stroke(border)
             .paint(&b, window);
         let at = |(x, y): (f32, f32)| point(b.origin.x + px(x), b.origin.y + px(y));
-        // the filled area under the wave, down to the middle line
+
+        // Translucent filled polygon anchored to y = 120.
         let mut area = PathBuilder::fill();
         area.move_to(at((0., 120.)));
         for p in &self.pts {
@@ -53,7 +52,8 @@ impl Plot for Paint {
         if let Ok(path) = area.build() {
             window.paint_path(path, hsla(0.6, 0.8, 0.7, 0.12));
         }
-        // the line in a gradient, with two wider strokes under it as its glow
+
+        // Layered wide-to-narrow gradient strokes simulating a soft glow.
         for (width, alpha) in [(7., 0.12), (3., 0.25), (1.5, 1.)] {
             let mut line = PathBuilder::stroke(px(width));
             line.move_to(at(self.pts[0]));
@@ -64,7 +64,8 @@ impl Plot for Paint {
                 window.paint_path(path, linear_gradient(90., linear_color_stop(cyan(alpha), 0.), linear_color_stop(violet(alpha), 1.)));
             }
         }
-        // a quad in a gradient from a theme colour, mixed in Oklab, with a border; a round dot
+
+        // Rounded Oklab gradient pill and circular white marker dot.
         let bar = linear_gradient(0., linear_color_stop(primary, 0.), linear_color_stop(violet(1.), 1.)).color_space(ColorSpace::Oklab);
         window.paint_quad(quad(Bounds::new(at((480., 10.)), size(px(80.), px(36.))), px(6.), bar, px(2.), hsla(0., 0., 1., 1.), BorderStyle::Solid));
         window.paint_quad(quad(Bounds::new(at((283., 103.)), size(px(10.), px(10.))), px(5.), hsla(0., 0., 1., 1.), px(0.), transparent_black(), BorderStyle::Solid));

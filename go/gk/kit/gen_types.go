@@ -13,6 +13,7 @@ import (
 // AlertVariant is gpui_kit::component::alert::AlertVariant.
 type AlertVariant uint16
 
+// AlertVariant enum values.
 const (
 	AlertVariantDefault AlertVariant = 0
 	AlertVariantInfo    AlertVariant = 1
@@ -24,6 +25,7 @@ const (
 // AttachmentStatus is gpui_kit::component::attachment::AttachmentStatus.
 type AttachmentStatus uint16
 
+// AttachmentStatus enum values.
 const (
 	AttachmentStatusPending    AttachmentStatus = 0
 	AttachmentStatusUploading  AttachmentStatus = 1
@@ -35,6 +37,7 @@ const (
 // BubbleReactionSide is gpui_kit::component::bubble::BubbleReactionSide.
 type BubbleReactionSide uint16
 
+// BubbleReactionSide enum values.
 const (
 	BubbleReactionSideTop    BubbleReactionSide = 0
 	BubbleReactionSideBottom BubbleReactionSide = 1
@@ -43,6 +46,7 @@ const (
 // BubbleVariant is gpui_kit::component::bubble::BubbleVariant.
 type BubbleVariant uint16
 
+// BubbleVariant enum values.
 const (
 	BubbleVariantFilled      BubbleVariant = 0
 	BubbleVariantSecondary   BubbleVariant = 1
@@ -56,6 +60,7 @@ const (
 // EmptyMediaVariant is gpui_kit::component::empty::EmptyMediaVariant.
 type EmptyMediaVariant uint16
 
+// EmptyMediaVariant enum values.
 const (
 	EmptyMediaVariantDefault EmptyMediaVariant = 0
 	EmptyMediaVariantIcon    EmptyMediaVariant = 1
@@ -64,6 +69,7 @@ const (
 // GroupBoxVariant is gpui_kit::component::group_box::GroupBoxVariant.
 type GroupBoxVariant uint16
 
+// GroupBoxVariant enum values.
 const (
 	GroupBoxVariantNormal  GroupBoxVariant = 0
 	GroupBoxVariantFill    GroupBoxVariant = 1
@@ -73,6 +79,7 @@ const (
 // MarkerAlignment is gpui_kit::component::marker::MarkerAlignment.
 type MarkerAlignment uint16
 
+// MarkerAlignment enum values.
 const (
 	MarkerAlignmentStart  MarkerAlignment = 0
 	MarkerAlignmentCenter MarkerAlignment = 1
@@ -82,6 +89,7 @@ const (
 // MarkerLoadingStyle is gpui_kit::component::marker::MarkerLoadingStyle.
 type MarkerLoadingStyle uint16
 
+// MarkerLoadingStyle enum values.
 const (
 	MarkerLoadingStyleSpinner MarkerLoadingStyle = 0
 	MarkerLoadingStyleShimmer MarkerLoadingStyle = 1
@@ -90,6 +98,7 @@ const (
 // MarkerVariant is gpui_kit::component::marker::MarkerVariant.
 type MarkerVariant uint16
 
+// MarkerVariant enum values.
 const (
 	MarkerVariantPlain     MarkerVariant = 0
 	MarkerVariantSeparator MarkerVariant = 1
@@ -99,6 +108,7 @@ const (
 // MessageAlignment is gpui_kit::component::message::MessageAlignment.
 type MessageAlignment uint16
 
+// MessageAlignment enum values.
 const (
 	MessageAlignmentStart MessageAlignment = 0
 	MessageAlignmentEnd   MessageAlignment = 1
@@ -107,6 +117,7 @@ const (
 // SidebarCollapsible is gpui_kit::component::sidebar::SidebarCollapsible.
 type SidebarCollapsible uint16
 
+// SidebarCollapsible enum values.
 const (
 	SidebarCollapsibleIcon      SidebarCollapsible = 0
 	SidebarCollapsibleOffcanvas SidebarCollapsible = 1
@@ -116,6 +127,7 @@ const (
 // SpeechStatus is gpui_kit::component::speech::SpeechStatus.
 type SpeechStatus uint16
 
+// SpeechStatus enum values.
 const (
 	SpeechStatusIdle       SpeechStatus = 0
 	SpeechStatusConnecting SpeechStatus = 1
@@ -126,6 +138,7 @@ const (
 // TabVariant is gpui_kit::component::tab::TabVariant.
 type TabVariant uint16
 
+// TabVariant enum values.
 const (
 	TabVariantTab       TabVariant = 0
 	TabVariantOutline   TabVariant = 1
@@ -138,6 +151,7 @@ const (
 // ToggleVariant is gpui_kit::component::button::ToggleVariant.
 type ToggleVariant uint16
 
+// ToggleVariant enum values.
 const (
 	ToggleVariantGhost   ToggleVariant = 0
 	ToggleVariantOutline ToggleVariant = 1
@@ -151,7 +165,7 @@ func putBoxShadow(o *rt.Tape, v gk.BoxShadow) {
 	o.Bool(v.Inset)
 }
 
-// ComboboxTriggerContext is crate::items::Reads<'_, gpui_kit::component::combobox::ComboboxTriggerContext<'_, crate::shim_select::GkSearchDelegate>>. Only the fields the binding can carry.
+// ComboboxTriggerContext mirrors crate::items::Reads<'_, gpui_kit::component::combobox::ComboboxTriggerContext<'_, crate::shim_select::GkSearchDelegate>>. Includes only wire-supported fields.
 type ComboboxTriggerContext struct {
 	Selection   []table.TupleBaseIndexPathSearchItem
 	Placeholder gk.Option[string]
@@ -159,7 +173,7 @@ type ComboboxTriggerContext struct {
 	IsDisabled  bool
 }
 
-// CommandStateReads is crate::items::Reads<'_, gpui_kit::component::command::CommandState>. Only the fields the binding can carry.
+// CommandStateReads mirrors crate::items::Reads<'_, gpui_kit::component::command::CommandState>. Includes only wire-supported fields.
 type CommandStateReads struct {
 	SelectedIndex gk.Option[table.BaseIndexPath]
 	MatchedCount  int
@@ -221,7 +235,7 @@ func putModifiers(o *rt.Tape, v gk.Modifiers) {
 	o.Bool(v.Function)
 }
 
-// NumberFieldOptions is gpui_kit::component::setting::NumberFieldOptions.
+// NumberFieldOptions mirrors gpui_kit::component::setting::NumberFieldOptions.
 type NumberFieldOptions struct {
 	Min  float64
 	Max  float64
@@ -234,7 +248,7 @@ func putNumberFieldOptions(o *rt.Tape, v NumberFieldOptions) {
 	o.F64(v.Step)
 }
 
-// SelectIndex is gpui_kit::component::setting::SelectIndex.
+// SelectIndex mirrors gpui_kit::component::setting::SelectIndex.
 type SelectIndex struct {
 	PageIx  int
 	GroupIx gk.Option[int]
@@ -250,14 +264,15 @@ func putSelectIndex(o *rt.Tape, v SelectIndex) {
 	}
 }
 
-// ButtonRounded is gpui_kit::component::button::ButtonRounded: a constant of ButtonRoundedKind for each variant without data, a struct type for each other one.
+// ButtonRounded represents gpui_kit::component::button::ButtonRounded: unit variants use ButtonRoundedKind constants and payload variants use distinct struct types.
 type ButtonRounded interface{ isButtonRounded() }
 
-// ButtonRoundedKind is a variant of gpui_kit::component::button::ButtonRounded without data: gk.ButtonRoundedNone.
+// ButtonRoundedKind represents unit variants of gpui_kit::component::button::ButtonRounded (for example ButtonRoundedNone).
 type ButtonRoundedKind uint16
 
 func (ButtonRoundedKind) isButtonRounded() {}
 
+// ButtonRoundedKind unit variant values.
 const (
 	ButtonRoundedNone   ButtonRoundedKind = 0 // gpui_kit::component::button::ButtonRounded::None
 	ButtonRoundedSmall  ButtonRoundedKind = 1 // gpui_kit::component::button::ButtonRounded::Small
@@ -265,7 +280,7 @@ const (
 	ButtonRoundedLarge  ButtonRoundedKind = 3 // gpui_kit::component::button::ButtonRounded::Large
 )
 
-// ButtonRoundedSize is gpui_kit::component::button::ButtonRounded::Size.
+// ButtonRoundedSize represents gpui_kit::component::button::ButtonRounded::Size.
 type ButtonRoundedSize struct {
 	Value float32
 }
@@ -300,10 +315,10 @@ func putButtonVariant(o *rt.Tape, v gk.ButtonVariant) {
 	}
 }
 
-// CarouselEvent is gpui_kit::component::carousel::CarouselEvent: one struct type per variant.
+// CarouselEvent represents gpui_kit::component::carousel::CarouselEvent with one struct type per variant.
 type CarouselEvent interface{ isCarouselEvent() }
 
-// CarouselEventChange is gpui_kit::component::carousel::CarouselEvent::Change.
+// CarouselEventChange represents gpui_kit::component::carousel::CarouselEvent::Change.
 type CarouselEventChange struct {
 	Value int
 }
@@ -341,27 +356,27 @@ func putDate(o *rt.Tape, v base.Date) {
 	}
 }
 
-// DatePickerEvent is gpui_kit::component::date_picker::DatePickerEvent: one struct type per variant.
+// DatePickerEvent represents gpui_kit::component::date_picker::DatePickerEvent with one struct type per variant.
 type DatePickerEvent interface{ isDatePickerEvent() }
 
-// DatePickerEventChange is gpui_kit::component::date_picker::DatePickerEvent::Change.
+// DatePickerEventChange represents gpui_kit::component::date_picker::DatePickerEvent::Change.
 type DatePickerEventChange struct {
 	Value DateTime
 }
 
 func (DatePickerEventChange) isDatePickerEvent() {}
 
-// DateTime is gpui_kit::component::date_picker::DateTime: one struct type per variant.
+// DateTime represents gpui_kit::component::date_picker::DateTime with one struct type per variant.
 type DateTime interface{ isDateTime() }
 
-// DateTimeSingle is gpui_kit::component::date_picker::DateTime::Single.
+// DateTimeSingle represents gpui_kit::component::date_picker::DateTime::Single.
 type DateTimeSingle struct {
 	Value gk.Option[gk.CivilDateTime]
 }
 
 func (DateTimeSingle) isDateTime() {}
 
-// DateTimeRange is gpui_kit::component::date_picker::DateTime::Range.
+// DateTimeRange represents gpui_kit::component::date_picker::DateTime::Range.
 type DateTimeRange struct {
 	V0 gk.Option[gk.CivilDateTime]
 	V1 gk.Option[gk.CivilDateTime]
@@ -400,19 +415,20 @@ func putDateTime(o *rt.Tape, v DateTime) {
 	}
 }
 
-// DescriptionItem is gpui_kit::component::description_list::DescriptionItem: a constant of DescriptionItemKind for each variant without data, a struct type for each other one.
+// DescriptionItem represents gpui_kit::component::description_list::DescriptionItem: unit variants use DescriptionItemKind constants and payload variants use distinct struct types.
 type DescriptionItem interface{ isDescriptionItem() }
 
-// DescriptionItemKind is a variant of gpui_kit::component::description_list::DescriptionItem without data: gk.DescriptionItemSeparator.
+// DescriptionItemKind represents unit variants of gpui_kit::component::description_list::DescriptionItem (for example DescriptionItemSeparator).
 type DescriptionItemKind uint16
 
 func (DescriptionItemKind) isDescriptionItem() {}
 
+// DescriptionItemKind unit variant values.
 const (
 	DescriptionItemSeparator DescriptionItemKind = 1 // gpui_kit::component::description_list::DescriptionItem::Separator
 )
 
-// DescriptionItemItem is gpui_kit::component::description_list::DescriptionItem::Item.
+// DescriptionItemItem represents gpui_kit::component::description_list::DescriptionItem::Item.
 type DescriptionItemItem struct {
 	Label DescriptionText
 	Value DescriptionText
@@ -437,24 +453,24 @@ func putDescriptionItem(o *rt.Tape, v DescriptionItem) {
 	}
 }
 
-// DescriptionText is gpui_kit::component::description_list::DescriptionText: one struct type per variant.
+// DescriptionText represents gpui_kit::component::description_list::DescriptionText with one struct type per variant.
 type DescriptionText interface{ isDescriptionText() }
 
-// DescriptionTextString is gpui_kit::component::description_list::DescriptionText::String.
+// DescriptionTextString represents gpui_kit::component::description_list::DescriptionText::String.
 type DescriptionTextString struct {
 	Value string
 }
 
 func (DescriptionTextString) isDescriptionText() {}
 
-// DescriptionTextText is gpui_kit::component::description_list::DescriptionText::Text.
+// DescriptionTextText represents gpui_kit::component::description_list::DescriptionText::Text.
 type DescriptionTextText struct {
 	Value editor.KitText
 }
 
 func (DescriptionTextText) isDescriptionText() {}
 
-// DescriptionTextAnyElement is gpui_kit::component::description_list::DescriptionText::AnyElement.
+// DescriptionTextAnyElement represents gpui_kit::component::description_list::DescriptionText::AnyElement.
 type DescriptionTextAnyElement struct {
 	Value gk.Element
 }
@@ -480,24 +496,24 @@ func putDescriptionText(o *rt.Tape, v DescriptionText) {
 	}
 }
 
-// FieldBuilder is gpui_kit::component::form::FieldBuilder: one struct type per variant.
+// FieldBuilder represents gpui_kit::component::form::FieldBuilder with one struct type per variant.
 type FieldBuilder interface{ isFieldBuilder() }
 
-// FieldBuilderString is gpui_kit::component::form::FieldBuilder::String.
+// FieldBuilderString represents gpui_kit::component::form::FieldBuilder::String.
 type FieldBuilderString struct {
 	Value string
 }
 
 func (FieldBuilderString) isFieldBuilder() {}
 
-// FieldBuilderElement is gpui_kit::component::form::FieldBuilder::Element.
+// FieldBuilderElement represents gpui_kit::component::form::FieldBuilder::Element.
 type FieldBuilderElement struct {
 	Value gk.Element
 }
 
 func (FieldBuilderElement) isFieldBuilder() {}
 
-// FieldBuilderView is gpui_kit::component::form::FieldBuilder::View.
+// FieldBuilderView represents gpui_kit::component::form::FieldBuilder::View.
 type FieldBuilderView struct {
 	Value gk.View
 }
@@ -523,17 +539,17 @@ func putFieldBuilder(o *rt.Tape, v FieldBuilder) {
 	}
 }
 
-// HighlightsMatch is gpui_kit::component::label::HighlightsMatch: one struct type per variant.
+// HighlightsMatch represents gpui_kit::component::label::HighlightsMatch with one struct type per variant.
 type HighlightsMatch interface{ isHighlightsMatch() }
 
-// HighlightsMatchPrefix is gpui_kit::component::label::HighlightsMatch::Prefix.
+// HighlightsMatchPrefix represents gpui_kit::component::label::HighlightsMatch::Prefix.
 type HighlightsMatchPrefix struct {
 	Value string
 }
 
 func (HighlightsMatchPrefix) isHighlightsMatch() {}
 
-// HighlightsMatchFull is gpui_kit::component::label::HighlightsMatch::Full.
+// HighlightsMatchFull represents gpui_kit::component::label::HighlightsMatch::Full.
 type HighlightsMatchFull struct {
 	Value string
 }
@@ -666,17 +682,17 @@ func putRoleOverride(o *rt.Tape, v gk.RoleOverride) {
 	}
 }
 
-// ShimmerSpread is gpui_kit::component::shimmer::ShimmerSpread: one struct type per variant.
+// ShimmerSpread represents gpui_kit::component::shimmer::ShimmerSpread with one struct type per variant.
 type ShimmerSpread interface{ isShimmerSpread() }
 
-// ShimmerSpreadRelative is gpui_kit::component::shimmer::ShimmerSpread::Relative.
+// ShimmerSpreadRelative represents gpui_kit::component::shimmer::ShimmerSpread::Relative.
 type ShimmerSpreadRelative struct {
 	Value float32
 }
 
 func (ShimmerSpreadRelative) isShimmerSpread() {}
 
-// ShimmerSpreadAbsolute is gpui_kit::component::shimmer::ShimmerSpread::Absolute.
+// ShimmerSpreadAbsolute represents gpui_kit::component::shimmer::ShimmerSpread::Absolute.
 type ShimmerSpreadAbsolute struct {
 	Value float32
 }
@@ -712,64 +728,66 @@ func putSize(o *rt.Tape, v gk.Size) {
 	}
 }
 
-// SpeechError is gpui_kit::component::speech::SpeechError: a constant of SpeechErrorKind for each variant without data, a struct type for each other one.
+// SpeechError represents gpui_kit::component::speech::SpeechError: unit variants use SpeechErrorKind constants and payload variants use distinct struct types.
 type SpeechError interface{ isSpeechError() }
 
-// SpeechErrorKind is a variant of gpui_kit::component::speech::SpeechError without data: gk.SpeechErrorPermissionDenied.
+// SpeechErrorKind represents unit variants of gpui_kit::component::speech::SpeechError (for example SpeechErrorPermissionDenied).
 type SpeechErrorKind uint16
 
 func (SpeechErrorKind) isSpeechError() {}
 
+// SpeechErrorKind unit variant values.
 const (
 	SpeechErrorPermissionDenied SpeechErrorKind = 0 // gpui_kit::component::speech::SpeechError::PermissionDenied
 	SpeechErrorNoInputDevice    SpeechErrorKind = 1 // gpui_kit::component::speech::SpeechError::NoInputDevice
 	SpeechErrorUnsupported      SpeechErrorKind = 2 // gpui_kit::component::speech::SpeechError::Unsupported
 )
 
-// SpeechEvent is gpui_kit::component::speech::SpeechEvent: one struct type per variant.
+// SpeechEvent represents gpui_kit::component::speech::SpeechEvent with one struct type per variant.
 type SpeechEvent interface{ isSpeechEvent() }
 
-// SpeechEventStarted is gpui_kit::component::speech::SpeechEvent::Started.
+// SpeechEventStarted represents gpui_kit::component::speech::SpeechEvent::Started.
 type SpeechEventStarted struct {
 }
 
 func (SpeechEventStarted) isSpeechEvent() {}
 
-// SpeechEventPartial is gpui_kit::component::speech::SpeechEvent::Partial.
+// SpeechEventPartial represents gpui_kit::component::speech::SpeechEvent::Partial.
 type SpeechEventPartial struct {
 	Value string
 }
 
 func (SpeechEventPartial) isSpeechEvent() {}
 
-// SpeechEventFinal is gpui_kit::component::speech::SpeechEvent::Final.
+// SpeechEventFinal represents gpui_kit::component::speech::SpeechEvent::Final.
 type SpeechEventFinal struct {
 	Value string
 }
 
 func (SpeechEventFinal) isSpeechEvent() {}
 
-// SpeechEventCancelled is gpui_kit::component::speech::SpeechEvent::Cancelled.
+// SpeechEventCancelled represents gpui_kit::component::speech::SpeechEvent::Cancelled.
 type SpeechEventCancelled struct {
 }
 
 func (SpeechEventCancelled) isSpeechEvent() {}
 
-// SpeechEventError is gpui_kit::component::speech::SpeechEvent::Error.
+// SpeechEventError represents gpui_kit::component::speech::SpeechEvent::Error.
 type SpeechEventError struct {
 	Value SpeechError
 }
 
 func (SpeechEventError) isSpeechEvent() {}
 
-// TagVariant is gpui_kit::component::tag::TagVariant: a constant of TagVariantKind for each variant without data, a struct type for each other one.
+// TagVariant represents gpui_kit::component::tag::TagVariant: unit variants use TagVariantKind constants and payload variants use distinct struct types.
 type TagVariant interface{ isTagVariant() }
 
-// TagVariantKind is a variant of gpui_kit::component::tag::TagVariant without data: gk.TagVariantPrimary.
+// TagVariantKind represents unit variants of gpui_kit::component::tag::TagVariant (for example TagVariantPrimary).
 type TagVariantKind uint16
 
 func (TagVariantKind) isTagVariant() {}
 
+// TagVariantKind unit variant values.
 const (
 	TagVariantPrimary   TagVariantKind = 0 // gpui_kit::component::tag::TagVariant::Primary
 	TagVariantSecondary TagVariantKind = 1 // gpui_kit::component::tag::TagVariant::Secondary
@@ -779,14 +797,14 @@ const (
 	TagVariantInfo      TagVariantKind = 5 // gpui_kit::component::tag::TagVariant::Info
 )
 
-// TagVariantColor is gpui_kit::component::tag::TagVariant::Color.
+// TagVariantColor represents gpui_kit::component::tag::TagVariant::Color.
 type TagVariantColor struct {
 	Value gk.ColorName
 }
 
 func (TagVariantColor) isTagVariant() {}
 
-// TagVariantCustom is gpui_kit::component::tag::TagVariant::Custom.
+// TagVariantCustom represents gpui_kit::component::tag::TagVariant::Custom.
 type TagVariantCustom struct {
 	Color      gk.Color
 	Foreground gk.Color
@@ -834,7 +852,7 @@ func putTextOverflow(o *rt.Tape, v gk.TextOverflow) {
 	}
 }
 
-// BreadcrumbItemInto is what `impl Into<gpui_kit::component::breadcrumb::BreadcrumbItem>` accepts: one of BreadcrumbItemEl, string.
+// BreadcrumbItemInto accepts any Go type accepted by `impl Into<gpui_kit::component::breadcrumb::BreadcrumbItem>`: BreadcrumbItemEl, string.
 type BreadcrumbItemInto interface{}
 
 func putBreadcrumbItemInto(o *rt.Tape, v BreadcrumbItemInto) {
@@ -852,7 +870,7 @@ func putBreadcrumbItemInto(o *rt.Tape, v BreadcrumbItemInto) {
 	}
 }
 
-// ButtonRoundedInto is what `impl Into<gpui_kit::component::button::ButtonRounded>` accepts: one of ButtonRounded, float32.
+// ButtonRoundedInto accepts any Go type accepted by `impl Into<gpui_kit::component::button::ButtonRounded>`: ButtonRounded, float32.
 type ButtonRoundedInto interface{}
 
 func putButtonRoundedInto(o *rt.Tape, v ButtonRoundedInto) {
@@ -890,7 +908,7 @@ func putDateInto(o *rt.Tape, v base.DateInto) {
 	}
 }
 
-// DescriptionTextInto is what `impl Into<gpui_kit::component::description_list::DescriptionText>` accepts: one of DescriptionText, string, KitText, Element.
+// DescriptionTextInto accepts any Go type accepted by `impl Into<gpui_kit::component::description_list::DescriptionText>`: DescriptionText, string, KitText, Element.
 type DescriptionTextInto interface{}
 
 func putDescriptionTextInto(o *rt.Tape, v DescriptionTextInto) {
@@ -931,7 +949,7 @@ func putEdgesInto(o *rt.Tape, v gk.EdgesInto) {
 	}
 }
 
-// FieldBuilderInto is what `impl Into<gpui_kit::component::form::FieldBuilder>` accepts: one of FieldBuilder, View, string.
+// FieldBuilderInto accepts any Go type accepted by `impl Into<gpui_kit::component::form::FieldBuilder>`: FieldBuilder, View, string.
 type FieldBuilderInto interface{}
 
 func putFieldBuilderInto(o *rt.Tape, v FieldBuilderInto) {
@@ -953,7 +971,7 @@ func putFieldBuilderInto(o *rt.Tape, v FieldBuilderInto) {
 	}
 }
 
-// HighlightsMatchInto is what `impl Into<gpui_kit::component::label::HighlightsMatch>` accepts: one of HighlightsMatch, string.
+// HighlightsMatchInto accepts any Go type accepted by `impl Into<gpui_kit::component::label::HighlightsMatch>`: HighlightsMatch, string.
 type HighlightsMatchInto interface{}
 
 func putHighlightsMatchInto(o *rt.Tape, v HighlightsMatchInto) {
@@ -1013,7 +1031,7 @@ func putMatcherInto(o *rt.Tape, v base.MatcherInto) {
 	}
 }
 
-// RadioInto is what `impl Into<gpui_kit::component::radio::Radio>` accepts: one of RadioEl, string.
+// RadioInto accepts any Go type accepted by `impl Into<gpui_kit::component::radio::Radio>`: RadioEl, string.
 type RadioInto interface{}
 
 func putRadioInto(o *rt.Tape, v RadioInto) {
@@ -1031,7 +1049,7 @@ func putRadioInto(o *rt.Tape, v RadioInto) {
 	}
 }
 
-// ShimmerSpreadInto is what `impl Into<gpui_kit::component::shimmer::ShimmerSpread>` accepts: one of ShimmerSpread, float32.
+// ShimmerSpreadInto accepts any Go type accepted by `impl Into<gpui_kit::component::shimmer::ShimmerSpread>`: ShimmerSpread, float32.
 type ShimmerSpreadInto interface{}
 
 func putShimmerSpreadInto(o *rt.Tape, v ShimmerSpreadInto) {
@@ -1049,7 +1067,7 @@ func putShimmerSpreadInto(o *rt.Tape, v ShimmerSpreadInto) {
 	}
 }
 
-// SidebarCollapsibleInto is what `impl Into<gpui_kit::component::sidebar::SidebarCollapsible>` accepts: one of SidebarCollapsible, bool.
+// SidebarCollapsibleInto accepts any Go type accepted by `impl Into<gpui_kit::component::sidebar::SidebarCollapsible>`: SidebarCollapsible, bool.
 type SidebarCollapsibleInto interface{}
 
 func putSidebarCollapsibleInto(o *rt.Tape, v SidebarCollapsibleInto) {
@@ -1082,7 +1100,7 @@ func putSizeInto(o *rt.Tape, v gk.SizeInto) {
 	}
 }
 
-// TabInto is what `impl Into<gpui_kit::component::tab::Tab>` accepts: one of TabEl, string, IconEl, IconName.
+// TabInto accepts any Go type accepted by `impl Into<gpui_kit::component::tab::Tab>`: TabEl, string, IconEl, IconName.
 type TabInto interface{}
 
 func putTabInto(o *rt.Tape, v TabInto) {

@@ -1,10 +1,6 @@
-// kinds: the protocol tests of the generator's descriptor kinds beyond the core ones
-// (gen/gk_go_kinds.py): calendar values both ways, value cells, results that may fail, item
-// functions, asks, transformations and gpui's element leftovers. gates/go-proto.sh checks the
-// lines.
-//
-//	GK_PROTO=kinds-values | kinds-bad-date | kinds-bad-expr | kinds-items | kinds-label | kinds-tree | kinds-wrong-kind |
-//	         kinds-elements
+// Protocol tests for extended descriptor kinds: jiff civil dates and times, value cells,
+// fallible Result values, expression validation, item procedures, Ask data closures,
+// SVG transforms, image caches, scroll anchors, and synthetic accessibility nodes.
 package main
 
 import (
@@ -39,7 +35,6 @@ type kindsApp struct {
 	frames                 int
 }
 
-// kindsMain runs a mode of this file; false for any other mode.
 func kindsMain(mode string) bool {
 	if !strings.HasPrefix(mode, "kinds-") {
 		return false
@@ -66,9 +61,6 @@ func kindsMain(mode string) bool {
 	return true
 }
 
-// --- values ----------------------------------------------------------------------------------------
-
-// jiff's calendar values both ways (PROTOCOLS.md 13.13; core/tests/values dates).
 func (a *kindsApp) dates(cx *gk.Cx) {
 	cal := base.NewCalendarState(cx).Build()
 	cal.SetDate(cx, base.DateSingle{Value: gk.Some(gk.CivilDate{Year: 2024, Month: 2, Day: 29})})
@@ -101,7 +93,6 @@ func (a *kindsApp) dates(cx *gk.Cx) {
 	gk.Release(cx, tf)
 }
 
-// Value cells (PROTOCOLS.md 13.19): made, read, written between frames, read again.
 func (a *kindsApp) cells(cx *gk.Cx) {
 	b := gk.NewCell(cx, true)
 	str := gk.NewCell(cx, "first")
@@ -116,7 +107,6 @@ func (a *kindsApp) cells(cx *gk.Cx) {
 	gk.Release(cx, f)
 }
 
-// Results that may fail (PROTOCOLS.md 13.9, 11.23, 9.15) and the expression check (9.12).
 func (a *kindsApp) results(cx *gk.Cx) {
 	bg := gk.TryParseBackground(cx, "#808080")
 	v, _ := bg.Value.Get()
@@ -132,8 +122,6 @@ func (a *kindsApp) results(cx *gk.Cx) {
 	fmt.Printf("kinds diff count=%d err=%v\n", n, err)
 	fmt.Printf("kinds expr ok=%q bad=%q args=%q\n", gk.ExprCheck("x < 10 ? 1 : min(x, 2)", 1), gk.ExprCheck("x +", 1), gk.ExprCheck("y", 1))
 }
-
-// --- item functions and asks (PROTOCOLS.md 9.14, 9.41) ---------------------------------------------
 
 func (a *kindsApp) day(cx *gk.Cx, item base.CalendarItemEl, st base.CalendarItemState) gk.Element {
 	a.described++
@@ -179,8 +167,6 @@ func (a *kindsApp) image(cx *gk.Cx, uri string) string {
 	fmt.Printf("kinds ask image uri=%s\n", uri)
 	return "/nonexistent/pic.png"
 }
-
-// --- the view -----------------------------------------------------------------------------------------
 
 func (a *kindsApp) init(cx *gk.Cx) {
 	gk.OnFrame(cx, func(cx *gk.Cx) {

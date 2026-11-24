@@ -1,9 +1,5 @@
-// The charts' gallery pages, the Go twin of
-// ref/src/bin/gallery/chart_pages.rs, chart for chart: the rows are the app's own structs, given
-// as a data table (gk.NewData, a column per exported field), and where the Rust page passes a
-// closure over a row this page names a column ("Month") or a template ("{:.1} visits"):
-// docs/PROTOCOLS.md section 12. The bar chart's tooltip content is a row source over the rows,
-// keyed by the row's index.
+// Chart and plot gallery pages: line, area, bar, candlestick, pie, radar, and Sankey
+// charts, custom tooltips, described plots, gradient fills, and sidebars.
 package main
 
 import (
@@ -84,11 +80,9 @@ var chartFlows = []chartFlow{
 }
 
 type chartPages struct {
-	tips gk.RowSource // the bar chart's tooltip content, one row per month
+	tips gk.RowSource
 }
 
-// The comp6-* pages (comp6-sankey-labels, comp6-bar-gradient,
-// comp6-bar-labels) wait for bindings: chart_pending.go.
 var chartPageTable = []Page{
 	{"chart-line", chartLine},
 	{"chart-line-more", chartLineMore},
@@ -104,8 +98,6 @@ var chartPageTable = []Page{
 	{"chart-tooltip-pie", chartTooltipPie},
 	{"plot-custom", plotCustom},
 	{"generic-sidebar", genericSidebar},
-	// the components family, docs/PROTOCOLS.md 12.16: closures over a row that return a list,
-	// answered from the list the app gives for each row (row i's at index i)
 	{"comp6-sankey-labels", comp6SankeyLabels},
 	{"comp6-bar-gradient", comp6BarGradient},
 	{"comp6-bar-labels", comp6BarLabels},
@@ -238,8 +230,6 @@ func chartTooltipPie(a *App, cx *gk.Cx) gk.Element {
 		TooltipName("Browser").TooltipValue("{} ({1:.1}%)"))
 }
 
-// chartPt is one point of the described plot, in pixels of the plot's bounds: the Rust page
-// computes the same numbers in its closures.
 type chartPt struct {
 	Month         string
 	X, XLeft      float32
@@ -282,8 +272,6 @@ func plotCustom(a *App, cx *gk.Cx) gk.Element {
 	))
 }
 
-// genericSidebar is a generic element over its children's type (Sidebar<E: SidebarItem>),
-// instantiated for SidebarMenu (`[instantiate] types` in api/overrides.toml).
 func genericSidebar(a *App, cx *gk.Cx) gk.Element {
 	more := []kit.SidebarMenu{kit.NewSidebarMenu().Child(kit.NewSidebarMenuItem("Settings"))}
 	return gk.Div().W(gk.Px(240)).H(gk.Px(300)).Child(
@@ -294,7 +282,6 @@ func genericSidebar(a *App, cx *gk.Cx) gk.Element {
 	)
 }
 
-// comp6SankeyLabels: each node's two labels, its name and "<name> flow" smaller and muted.
 func comp6SankeyLabels(a *App, cx *gk.Cx) gk.Element {
 	labels := make([][]gkchart.SankeyLabel, len(chartFlows))
 	for i, f := range chartFlows {
@@ -307,7 +294,6 @@ func comp6SankeyLabels(a *App, cx *gk.Cx) gk.Element {
 		NodeColor("Color").Labels(labels))
 }
 
-// comp6BarGradient: each bar a gradient from its color at the base to a pale blue at the tip.
 func comp6BarGradient(a *App, cx *gk.Cx) gk.Element {
 	stops := make([][2]gk.LinearColorStop, len(chartMonths))
 	for i, m := range chartMonths {
@@ -317,8 +303,6 @@ func comp6BarGradient(a *App, cx *gk.Cx) gk.Element {
 		FillGradient(stops))
 }
 
-// comp6BarLabels: a plot's bars, each with a label above it at the bar's top (the app computes
-// where, as it computes the bars' positions, docs/PROTOCOLS.md 12.6).
 func comp6BarLabels(a *App, cx *gk.Cx) gk.Element {
 	pts := make([]chartPt, len(chartMonths))
 	labels := make([][]gkchart.Text, len(chartMonths))

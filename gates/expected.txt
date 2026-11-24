@@ -1,4 +1,5 @@
-# Gates known to fail today, one per line: "gate subject | why". gates/summary.py shows them
-# as XFAIL and lets the run pass; a listed gate that passes fails the run until its line is
-# deleted, so this list only shrinks. An entry is added only with the reason it fails and who
-# removes it.
+# Known gate failures accepted temporarily by gates/summary.py.
+# Format: <gate> <subject> | <reason>
+# Blank lines and lines starting with # are ignored.
+# A listed gate that fails is reported as XFAIL; if it starts passing, summary.py reports XPASS
+# and exits non-zero so the stale line is removed.

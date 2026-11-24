@@ -1,12 +1,20 @@
 #!/bin/bash
-# pixels.sh [APP [SCRIPT]]: the pixel gate for one app (default counter; also writerule: the
-# write-rule case, whose every image must show a per-frame handler's write in the frame it
-# was made in). Runs the app offscreen (gpui's
-# HeadlessAppContext with the real wgpu renderer; no display, no compositor) as the Rust
-# reference and as the Go app under the same gk-meter script, with the diag library, and
-# compares the PNGs byte for byte. Reference and candidate are always rendered in the same
-# run, on the same machine and driver. Prints one line starting with "GATE pixels".
-#   gates/pixels.sh
+# Offscreen pixel-identity gate for one app (`gates/pixels.sh [app] [script]`).
+#
+# What it gates:
+#   Byte-for-byte PNG equality of every candidate in `GK_PIXEL_CANDS` (default `go`) against the
+#   pure-Rust reference `ref-<app>` (default app: `counter`, default script: `gates/<app>.script`).
+#
+# How it measures and why the comparison is fair:
+#   - Runs `ref-<app>` (`--script`) and each candidate (`GK_SCRIPT`) offscreen against the same
+#     `lib/diag` build with `WAYLAND_DISPLAY` and `DISPLAY` unset (120 s timeout each) so both
+#     render through the exact same headless renderer, fonts, and scripted input sequence.
+#   - Compares every PNG emitted by Rust against each candidate with `cmp -s`, logging byte size
+#     and sha256 prefix for matches or `DIFFERS` on any pixel mismatch.
+#
+# What PASS means (exit 0):
+#   Every run exits 0, Rust produces at least one PNG, and every candidate image is byte-identical.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 app=${1:-counter}
 script=${2:-$here/$app.script}
@@ -17,7 +25,6 @@ ref=${GK_REF:-$lib}/ref-$app
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
 fail=0; same=0; total=0
-# GK_PIXEL_CANDS: the front ends compared with Rust (default go, as gates/go.sh passes).
 cands=${GK_PIXEL_CANDS:-go}
 for b in rust $cands; do
   rm -rf "$out/$b"; mkdir -p "$out/$b"; cd "$out/$b"

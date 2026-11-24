@@ -1,20 +1,5 @@
-// misuse_rows: mistakes against the delegate protocol (row sources, the kit's table) and
-// InputState that must behave correctly or stop with a message, never show wrong content or
-// crash. Run offscreen with the diag library by
-// gates/go-misuse.sh, one mode per case:
-//
-//	GK_NEG=table-freed   the row source a table draws is released while the table is shown:
-//	                     must stop when it is drawn
-//	GK_NEG=row-reenter   a cell function releases its own row source while the library asks it
-//	                     for the cell: must stop, naming the line
-//	GK_NEG=row-handler   a row's click handler drops its own row (gk.SetCount 0) and then reads
-//	                     the text its closure captured: correct (exit 0), the text intact
-//	GK_NEG=huge-count    a table of 3,000,000,000 rows of 2 columns: must stop at
-//	                     gk.NewTableSource rather than show the cells of another row
-//	GK_NEG=input-release a change handler of an input releases that input while the view still
-//	                     shows it: must stop when the view is drawn
-//
-// (The nul and utf8 cases are the nul and utf8 modes of examples/go/misuse.)
+// Runtime misuse cases for row sources, data tables, lists, and InputState (GK_NEG):
+// released sources, re-entrant release during row rendering, oversized counts, and input release.
 package main
 
 import (
@@ -38,7 +23,7 @@ type App struct {
 	list      gktable.ListState
 	name      editor.InputState
 	clicks    int
-	maxRow    int // the highest row a cell function was asked for
+	maxRow    int
 	described int
 	got       string
 }
@@ -55,7 +40,7 @@ func (a *App) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	a.described++
 	a.maxRow = max(a.maxRow, at.Row)
 	if a.mode == "row-reenter" && a.described == 3 {
-		gk.Release(cx, a.src) // re-enters the runtime from a cell function: must stop here
+		gk.Release(cx, a.src)
 		fmt.Println("gk-neg row-reenter went on after releasing its own source")
 	}
 	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
@@ -64,8 +49,8 @@ func (a *App) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	text := fmt.Sprintf("row %d of a list", at.Row)
 	return gktable.ListItem(gk.Key("r", at.Row)).Child(kit.Label(text)).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
-		gk.SetCount(cx, a.src, 0) // drops this row's view while its handler runs
-		a.got = text              // the captured text must still be intact
+		gk.SetCount(cx, a.src, 0)
+		a.got = text
 		fmt.Printf("gk-neg row-handler clicked text=%q\n", a.got)
 	})
 }
@@ -84,7 +69,7 @@ func (a *App) act(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) changed(cx *gk.Cx, e editor.InputEvent) {
 	if _, ok := e.(editor.InputEventChange); ok {
 		v := a.name.Value(cx)
-		gk.Release(cx, a.name) // its own input, which the view still shows
+		gk.Release(cx, a.name)
 		fmt.Printf("gk-neg input-release released in its handler value=%q\n", v)
 	}
 }
@@ -125,7 +110,6 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
-	// The act button at (36, 30); the table, list or input from (16, 56).
 	script := "size 400 300\nframe\nclick 36 30\nframe\nframe\n"
 	switch a.mode {
 	case "row-handler":

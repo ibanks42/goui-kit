@@ -7,12 +7,12 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// PathCache is a handle to gpui_kit::base::plot::PathCache, a library object (PROTOCOLS.md section 13).
+// PathCache is a handle to gpui_kit::base::plot::PathCache, a runtime-owned library object.
 type PathCache struct{ rt.HCore }
 
 // Whether the last `get` reused the path built by an earlier one.
 //
-// IsWarm is <gpui_kit::base::plot::PathCache>::is_warm.
+// IsWarm calls <gpui_kit::base::plot::PathCache>::is_warm.
 func (s PathCache) IsWarm(cx *gk.Cx) bool {
 	rt.UseBasePlot()
 	o := rt.NewReq(1479)
@@ -21,31 +21,31 @@ func (s PathCache) IsWarm(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// NewPathCacheDefault is <gpui_kit::base::plot::PathCache as Default>::default.
+// NewPathCacheDefault calls <gpui_kit::base::plot::PathCache as Default>::default.
 func NewPathCacheDefault(cx *gk.Cx) PathCache {
 	rt.UseBasePlot()
 	o := rt.NewReq(1478)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PathCache{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PathCaches is a handle to gpui_kit::base::plot::PathCaches, a library object (PROTOCOLS.md section 13).
+// PathCaches is a handle to gpui_kit::base::plot::PathCaches, a runtime-owned library object.
 type PathCaches struct{ rt.HCore }
 
-// NewPathCachesDefault is <gpui_kit::base::plot::PathCaches as Default>::default.
+// NewPathCachesDefault calls <gpui_kit::base::plot::PathCaches as Default>::default.
 func NewPathCachesDefault(cx *gk.Cx) PathCaches {
 	rt.UseBasePlot()
 	o := rt.NewReq(1480)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PathCaches{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// Pie is a handle to gpui_kit::base::plot::shape::Pie<crate::data::Datum>, a library object (PROTOCOLS.md section 13).
+// Pie is a handle to gpui_kit::base::plot::shape::Pie<crate::data::Datum>, a runtime-owned library object.
 type Pie struct{ rt.HCore }
 
 // Get the arcs of the Pie.
 //
-// Arcs is <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::arcs.
+// Arcs calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::arcs.
 func (s Pie) Arcs(cx *gk.Cx, data Data) []gk.ArcData {
 	rt.UseBasePlot()
 	o := rt.NewReq(1636)
@@ -55,49 +55,61 @@ func (s Pie) Arcs(cx *gk.Cx, data Data) []gk.ArcData {
 	return rt.RdList(r, func(r *rt.Reader) gk.ArcData { return rt.RdArcData(r) })
 }
 
-// PieBuilder is the chain of Pie's `self -> Self` methods; Build makes it, in one crossing.
+// PieBuilder accumulates chained Pie builder options before creating the handle in Build.
 type PieBuilder struct{ sb *rt.StateBuilder }
 
+// Set the end angle of the Pie.
+//
+// EndAngle calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::end_angle.
 func (b PieBuilder) EndAngle(endAngle float32) PieBuilder {
 	o := b.sb.Op(1)
 	o.F32(endAngle)
 	return b
 }
 
+// Set the pad angle of the Pie.
+//
+// PadAngle calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::pad_angle.
 func (b PieBuilder) PadAngle(padAngle float32) PieBuilder {
 	o := b.sb.Op(2)
 	o.F32(padAngle)
 	return b
 }
 
+// Set the start angle of the Pie.
+//
+// StartAngle calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::start_angle.
 func (b PieBuilder) StartAngle(startAngle float32) PieBuilder {
 	o := b.sb.Op(3)
 	o.F32(startAngle)
 	return b
 }
 
+// Set the value of the Pie.
+//
+// Value calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::value.
 func (b PieBuilder) Value(value string) PieBuilder {
 	o := b.sb.Op(4)
 	putField(o, value, dataOpt)
 	return b
 }
 
-// Build makes the Pie.
+// Build commits the queued options and returns the new Pie handle.
 func (b PieBuilder) Build() Pie { return Pie{HCore: rt.MkH(b.sb.Build())} }
 
-// NewPie is <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::new.
+// NewPie calls <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::new.
 func NewPie(cx *gk.Cx) PieBuilder {
 	rt.UseBasePlot()
 	o := rt.NewReq(1637)
 	return PieBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// PlotAppear is a handle to gpui_kit::base::plot::PlotAppear, a library object (PROTOCOLS.md section 13).
+// PlotAppear is a handle to gpui_kit::base::plot::PlotAppear, a runtime-owned library object.
 type PlotAppear struct{ rt.HCore }
 
 // Whether the appear is still running.
 //
-// IsAppearing is <gpui_kit::base::plot::PlotAppear>::is_appearing.
+// IsAppearing calls <gpui_kit::base::plot::PlotAppear>::is_appearing.
 func (s PlotAppear) IsAppearing(cx *gk.Cx) bool {
 	rt.UseBasePlot()
 	o := rt.NewReq(948)
@@ -108,7 +120,7 @@ func (s PlotAppear) IsAppearing(cx *gk.Cx) bool {
 
 // How far the whole plot has appeared, from `0` to `1`, eased.
 //
-// Progress is <gpui_kit::base::plot::PlotAppear>::progress.
+// Progress calls <gpui_kit::base::plot::PlotAppear>::progress.
 func (s PlotAppear) Progress(cx *gk.Cx) float32 {
 	rt.UseBasePlot()
 	o := rt.NewReq(949)
@@ -123,7 +135,7 @@ func (s PlotAppear) Progress(cx *gk.Cx) float32 {
 // for the rest of it, so the last mark still finishes with the appear however many marks there
 // are. A `spread` of `0` moves every mark together.
 //
-// Staggered is <gpui_kit::base::plot::PlotAppear>::staggered.
+// Staggered calls <gpui_kit::base::plot::PlotAppear>::staggered.
 func (s PlotAppear) Staggered(cx *gk.Cx, index int, count int, spread float32) float32 {
 	rt.UseBasePlot()
 	o := rt.NewReq(950)
@@ -137,20 +149,20 @@ func (s PlotAppear) Staggered(cx *gk.Cx, index int, count int, spread float32) f
 
 // A finished appear: every mark is complete.
 //
-// NewPlotAppearComplete is <gpui_kit::base::plot::PlotAppear>::complete.
+// NewPlotAppearComplete calls <gpui_kit::base::plot::PlotAppear>::complete.
 func NewPlotAppearComplete(cx *gk.Cx) PlotAppear {
 	rt.UseBasePlot()
 	o := rt.NewReq(947)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PlotAppear{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PlotLabel is a handle to gpui_kit::base::plot::PlotLabel, a library object (PROTOCOLS.md section 13).
+// PlotLabel is a handle to gpui_kit::base::plot::PlotLabel, a runtime-owned library object.
 type PlotLabel struct{ rt.HCore }
 
 // Paint the Label.
 //
-// Paint is <gpui_kit::base::plot::PlotLabel>::paint.
+// Paint calls <gpui_kit::base::plot::PlotLabel>::paint.
 func (s PlotLabel) Paint(cx *gk.Cx, bounds gk.Bounds) {
 	rt.UseBasePlot()
 	o := rt.NewReq(1623)
@@ -159,7 +171,7 @@ func (s PlotLabel) Paint(cx *gk.Cx, bounds gk.Bounds) {
 	rt.StateSet(cx, o)
 }
 
-// NewPlotLabel is <gpui_kit::base::plot::PlotLabel>::new.
+// NewPlotLabel calls <gpui_kit::base::plot::PlotLabel>::new.
 func NewPlotLabel(cx *gk.Cx, items []Text) PlotLabel {
 	rt.UseBasePlot()
 	o := rt.NewReq(951)
@@ -167,16 +179,16 @@ func NewPlotLabel(cx *gk.Cx, items []Text) PlotLabel {
 	for _, x0 := range items {
 		rt.PutVtape(o, rt.N(x0.Core))
 	}
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PlotLabel{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// SankeyGraph is a handle to gpui_kit::base::plot::shape::SankeyGraph, a library object (PROTOCOLS.md section 13).
+// SankeyGraph is a handle to gpui_kit::base::plot::shape::SankeyGraph, a runtime-owned library object.
 type SankeyGraph struct{ rt.HCore }
 
 // Number of layers (max layer + 1), 0 for an empty graph.
 //
-// LayerCount is <gpui_kit::base::plot::shape::SankeyGraph>::layer_count.
+// LayerCount calls <gpui_kit::base::plot::shape::SankeyGraph>::layer_count.
 func (s SankeyGraph) LayerCount(cx *gk.Cx) int {
 	rt.UseBasePlot()
 	o := rt.NewReq(1482)
@@ -185,21 +197,21 @@ func (s SankeyGraph) LayerCount(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// NewSankeyGraphDefault is <gpui_kit::base::plot::shape::SankeyGraph as Default>::default.
+// NewSankeyGraphDefault calls <gpui_kit::base::plot::shape::SankeyGraph as Default>::default.
 func NewSankeyGraphDefault(cx *gk.Cx) SankeyGraph {
 	rt.UseBasePlot()
 	o := rt.NewReq(1481)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return SankeyGraph{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ScaleLinear is a handle to gpui_kit::base::plot::scale::ScaleLinear<f64>, a library object (PROTOCOLS.md section 13).
+// ScaleLinear is a handle to gpui_kit::base::plot::scale::ScaleLinear<f64>, a runtime-owned library object.
 type ScaleLinear struct{ rt.HCore }
 
 // The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
 // scale without discrete positions.
 //
-// NearestIndex is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::nearest_index.
+// NearestIndex calls <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::nearest_index.
 func (s ScaleLinear) NearestIndex(cx *gk.Cx, arg0 float32) int {
 	rt.UseBasePlot()
 	o := rt.NewReq(1151)
@@ -211,7 +223,7 @@ func (s ScaleLinear) NearestIndex(cx *gk.Cx, arg0 float32) int {
 
 // Get the tick of the scale.
 //
-// Tick is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::tick.
+// Tick calls <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::tick.
 func (s ScaleLinear) Tick(cx *gk.Cx, value float64) gk.Option[float32] {
 	rt.UseBasePlot()
 	o := rt.NewReq(1153)
@@ -224,7 +236,7 @@ func (s ScaleLinear) Tick(cx *gk.Cx, value float64) gk.Option[float32] {
 // Map the extent of `domain` onto `range`: the smallest domain value to `range`0“ and the largest
 // to `range`1“, so a reversed range such as `height, 0.` puts larger values higher.
 //
-// NewScaleLinear is <gpui_kit::base::plot::scale::ScaleLinear<f64>>::new.
+// NewScaleLinear calls <gpui_kit::base::plot::scale::ScaleLinear<f64>>::new.
 func NewScaleLinear(cx *gk.Cx, domain []float64, range_ [2]float32) ScaleLinear {
 	rt.UseBasePlot()
 	o := rt.NewReq(1152)
@@ -235,14 +247,14 @@ func NewScaleLinear(cx *gk.Cx, domain []float64, range_ [2]float32) ScaleLinear 
 	for _, x0 := range range_ {
 		o.F32(x0)
 	}
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ScaleLinear{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ShapeKey is a handle to gpui_kit::base::plot::ShapeKey, a library object (PROTOCOLS.md section 13).
+// ShapeKey is a handle to gpui_kit::base::plot::ShapeKey, a runtime-owned library object.
 type ShapeKey struct{ rt.HCore }
 
-// Finish is <gpui_kit::base::plot::ShapeKey>::finish.
+// Finish calls <gpui_kit::base::plot::ShapeKey>::finish.
 func (s ShapeKey) Finish(cx *gk.Cx) uint64 {
 	rt.UseBasePlot()
 	o := rt.NewReq(952)
@@ -251,21 +263,21 @@ func (s ShapeKey) Finish(cx *gk.Cx) uint64 {
 	return uint64(r.U64())
 }
 
-// NewShapeKey is <gpui_kit::base::plot::ShapeKey>::new.
+// NewShapeKey calls <gpui_kit::base::plot::ShapeKey>::new.
 func NewShapeKey(cx *gk.Cx, extra string) ShapeKey {
 	rt.UseBasePlot()
 	o := rt.NewReq(953)
 	o.Str(extra)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ShapeKey{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// Stack is a handle to gpui_kit::base::plot::shape::Stack<crate::data::Datum>, a library object (PROTOCOLS.md section 13).
+// Stack is a handle to gpui_kit::base::plot::shape::Stack<crate::data::Datum>, a runtime-owned library object.
 type Stack struct{ rt.HCore }
 
 // Compute the stacked series
 //
-// Series is <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::series.
+// Series calls <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::series.
 func (s Stack) Series(cx *gk.Cx) []gk.StackSeries {
 	rt.UseBasePlot()
 	o := rt.NewReq(1639)
@@ -274,15 +286,21 @@ func (s Stack) Series(cx *gk.Cx) []gk.StackSeries {
 	return rt.RdList(r, func(r *rt.Reader) gk.StackSeries { return rt.RdStackSeries(r) })
 }
 
-// StackBuilder is the chain of Stack's `self -> Self` methods; Build makes it, in one crossing.
+// StackBuilder accumulates chained Stack builder options before creating the handle in Build.
 type StackBuilder struct{ sb *rt.StateBuilder }
 
+// Set the data to be stacked
+//
+// Data calls <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::data.
 func (b StackBuilder) Data(data Data) StackBuilder {
 	o := b.sb.Op(1)
 	putData(o, data)
 	return b
 }
 
+// Set the keys (series) for stacking
+//
+// Keys calls <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::keys.
 func (b StackBuilder) Keys(keys []string) StackBuilder {
 	o := b.sb.Op(2)
 	o.U32(uint32(len(keys)))
@@ -292,16 +310,19 @@ func (b StackBuilder) Keys(keys []string) StackBuilder {
 	return b
 }
 
+// Set the value accessor function
+//
+// Value calls <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::value.
 func (b StackBuilder) Value(value string) StackBuilder {
 	o := b.sb.Op(3)
 	putField(o, value, dataOpt)
 	return b
 }
 
-// Build makes the Stack.
+// Build commits the queued options and returns the new Stack handle.
 func (b StackBuilder) Build() Stack { return Stack{HCore: rt.MkH(b.sb.Build())} }
 
-// NewStack is <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::new.
+// NewStack calls <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::new.
 func NewStack(cx *gk.Cx) StackBuilder {
 	rt.UseBasePlot()
 	o := rt.NewReq(1638)

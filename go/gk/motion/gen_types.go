@@ -10,6 +10,7 @@ import (
 // MotionPhase is gpui_kit::base::MotionPhase.
 type Phase uint16
 
+// MotionPhase enum values.
 const (
 	PhaseBefore Phase = 0
 	PhaseActive Phase = 1
@@ -19,6 +20,7 @@ const (
 // PlaybackDirection is gpui_kit::base::PlaybackDirection.
 type PlaybackDirection uint16
 
+// PlaybackDirection enum values.
 const (
 	PlaybackDirectionNormal           PlaybackDirection = 0
 	PlaybackDirectionReverse          PlaybackDirection = 1
@@ -29,6 +31,7 @@ const (
 // PresencePhase is gpui_kit::base::PresencePhase.
 type PresencePhase uint16
 
+// PresencePhase enum values.
 const (
 	PresencePhaseEntering PresencePhase = 0
 	PresencePhasePresent  PresencePhase = 1
@@ -42,14 +45,14 @@ func putKeyframeF32(o *rt.Tape, v gk.KeyframeF32) {
 	putEasing(o, v.Easing)
 }
 
-// PresenceSample is gpui_kit::base::PresenceSample.
+// PresenceSample mirrors gpui_kit::base::PresenceSample.
 type PresenceSample struct {
 	Phase    PresencePhase
 	Progress float32
 	Status   gk.MotionStatus
 }
 
-// TimingSample is gpui_kit::base::TimingSample.
+// TimingSample mirrors gpui_kit::base::TimingSample.
 type TimingSample struct {
 	Phase            Phase
 	DirectedProgress float32
@@ -92,19 +95,20 @@ func putEasing(o *rt.Tape, v gk.Easing) {
 	}
 }
 
-// IterationCount is gpui_kit::base::IterationCount: a constant of IterationCountKind for each variant without data, a struct type for each other one.
+// IterationCount represents gpui_kit::base::IterationCount: unit variants use IterationCountKind constants and payload variants use distinct struct types.
 type IterationCount interface{ isIterationCount() }
 
-// IterationCountKind is a variant of gpui_kit::base::IterationCount without data: gk.IterationCountInfinite.
+// IterationCountKind represents unit variants of gpui_kit::base::IterationCount (for example IterationCountInfinite).
 type IterationCountKind uint16
 
 func (IterationCountKind) isIterationCount() {}
 
+// IterationCountKind unit variant values.
 const (
 	IterationCountInfinite IterationCountKind = 1 // gpui_kit::base::IterationCount::Infinite
 )
 
-// IterationCountFinite is gpui_kit::base::IterationCount::Finite.
+// IterationCountFinite represents gpui_kit::base::IterationCount::Finite.
 type IterationCountFinite struct {
 	Value uint64
 }
@@ -140,21 +144,22 @@ func putSignedDuration(o *rt.Tape, v gk.SignedDuration) {
 	}
 }
 
-// StaggerOrigin is gpui_kit::base::StaggerOrigin: a constant of StaggerOriginKind for each variant without data, a struct type for each other one.
+// StaggerOrigin represents gpui_kit::base::StaggerOrigin: unit variants use StaggerOriginKind constants and payload variants use distinct struct types.
 type StaggerOrigin interface{ isStaggerOrigin() }
 
-// StaggerOriginKind is a variant of gpui_kit::base::StaggerOrigin without data: gk.StaggerOriginFirst.
+// StaggerOriginKind represents unit variants of gpui_kit::base::StaggerOrigin (for example StaggerOriginFirst).
 type StaggerOriginKind uint16
 
 func (StaggerOriginKind) isStaggerOrigin() {}
 
+// StaggerOriginKind unit variant values.
 const (
 	StaggerOriginFirst  StaggerOriginKind = 0 // gpui_kit::base::StaggerOrigin::First
 	StaggerOriginLast   StaggerOriginKind = 1 // gpui_kit::base::StaggerOrigin::Last
 	StaggerOriginCenter StaggerOriginKind = 2 // gpui_kit::base::StaggerOrigin::Center
 )
 
-// StaggerOriginIndex is gpui_kit::base::StaggerOrigin::Index.
+// StaggerOriginIndex represents gpui_kit::base::StaggerOrigin::Index.
 type StaggerOriginIndex struct {
 	Value int
 }

@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""status.py: writes the gates block of docs/STATUS.md from the last run in gates/out/.
+"""Update the gates status section in docs/STATUS.md from recent gates/all.sh output.
 
-Between the markers <!-- gates:begin --> and <!-- gates:end --> it puts: the summary table
-gates/all.sh printed (gates/out/summary.md), the frame-cost table of every scene measured
-(gates/out/fps/*/rounds.txt, medians over all rounds), and the galleries' page tables
-(gates/out/gallery-go/result.json). Nothing in that block is typed by hand. Run it after
-`make gates`; it refuses a summary older than an hour unless given --any-age.
-Standard library only."""
+Usage:
+  status.py [--any-age]
+
+What it does:
+  Replaces the Markdown block between `<!-- gates:begin -->` and `<!-- gates:end -->` in
+  `docs/STATUS.md` with:
+  1. The verdict summary table from `gates/out/summary.md` (with run timestamp and Go version).
+  2. A full frame-cost table aggregated from `gates/out/fps/*/rounds.txt` and `summary.md`.
+     (The table displays raw medians over all rounds for transparency, while the verdict column
+     comes from `fps-summary.py`'s paired quiet-round comparison.)
+  3. The page-by-page gallery breakdown rendered by `gates/gallery.py report`.
+
+Safety guard:
+  Refuses `gates/out/summary.md` older than 3600 seconds unless `--any-age` is passed, preventing
+  stale test results from being published into docs/STATUS.md by mistake.
+"""
 import datetime
 import glob
 import io
@@ -23,7 +33,6 @@ REPO = os.path.dirname(HERE)
 OUT = os.path.join(HERE, "out")
 DOC = os.path.join(REPO, "docs", "STATUS.md")
 BEGIN, END = "<!-- gates:begin -->", "<!-- gates:end -->"
-
 
 def fps_table():
     rows = []
@@ -56,16 +65,12 @@ def fps_table():
             "|---|---|---|---|---|---|---|---|"]
     return head + rows
 
-
 def main():
     summary = os.path.join(OUT, "summary.md")
     age = time.time() - os.path.getmtime(summary)
     if age > 3600 and "--any-age" not in sys.argv:
         sys.exit(f"gates/status.py: gates/out/summary.md is {age / 60:.0f} minutes old; run make gates first")
     when = datetime.datetime.fromtimestamp(os.path.getmtime(summary)).strftime("%-d %B %Y, %H:%M")
-    # GK_GO_VERSION: the compiler's version when gates/out was copied from another machine.
-    # The block names no machine: the ratios against the Rust reference of the same run are
-    # what carries over.
     gover = os.environ.get("GK_GO_VERSION")
     if not gover:
         try:
@@ -78,7 +83,6 @@ def main():
           "`rust2` is the Rust reference run a second time in each round; the verdict is paired by round "
           "and leaves out rounds another job disturbed, so it can differ from these columns):", ""]
     o += fps_table() + [""]
-    # The gallery (gates/out/gallery-go).
     sys.path.insert(0, HERE)
     import gallery
     for sub, name in (("gallery-go", "Go"),):
@@ -93,7 +97,6 @@ def main():
     a, b = doc.index(BEGIN) + len(BEGIN), doc.index(END)
     open(DOC, "w").write(doc[:a] + "\n" + "\n".join(o) + doc[b:])
     print("gates/status.py: docs/STATUS.md gates block rewritten")
-
 
 if __name__ == "__main__":
     main()

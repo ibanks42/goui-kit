@@ -4,18 +4,19 @@ package rt
 
 import "syscall"
 
+// Windows DLL filename and loader search path variable.
 const (
 	libName       = "gpuikit.dll"
 	loaderPathVar = "PATH"
 )
 
-// libOpen loads gpuikit.dll: by its full path, or by name with Windows' own search (the program's
-// folder, the system folders, then PATH).
+// libOpen loads a DLL via Win32 LoadLibrary.
 func libOpen(path string) (uintptr, error) {
 	h, err := syscall.LoadLibrary(path)
 	return uintptr(h), err
 }
 
+// libSym resolves an exported symbol from a loaded DLL via GetProcAddress.
 func libSym(h uintptr, name string) (uintptr, error) {
 	return syscall.GetProcAddress(syscall.Handle(h), name)
 }

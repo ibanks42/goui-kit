@@ -1,4 +1,4 @@
-// Step 6 of the Go tutorial: a click on a row opens a dialog that edits the item.
+// Step 6 of the Go tutorial: open a modal dialog to edit an existing list item.
 package main
 
 import (
@@ -24,10 +24,10 @@ type Item struct {
 
 type App struct {
 	items      []Item
-	editing    int // the item the dialog edits
+	editing    int
 	editAmount int
 
-	newName, editName editor.InputState // kit state lives in the library; the app keeps handles
+	newName, editName editor.InputState
 	list              table.ListState
 }
 
@@ -49,7 +49,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
@@ -84,12 +84,15 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 	gk.Refresh(cx)
 }
 
+// listEvent opens the edit dialog when the user confirms a row (Enter or double-click).
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
-	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
+	if c, ok := e.(table.ListEventConfirm); ok {
 		a.openEditor(cx, c.Row)
 	}
 }
 
+// editView describes the modal dialog whenever it opens or updates.
+// Passing a.editView directly to overlay.OpenDialog reuses one view automatically.
 func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 	amountBy := func(by int) func(*gk.Cx) {
 		return func(*gk.Cx) { a.editAmount = max(1, a.editAmount+by) }
@@ -108,6 +111,7 @@ func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 		OnOk(a.saveEdit)
 }
 
+// openEditor loads the chosen item into the dialog's working fields and focuses the input.
 func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editing = row
 	a.editAmount = a.items[row].Amount
@@ -116,16 +120,17 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editName.Focus(cx)
 }
 
+// saveEdit validates the edited name; returning false keeps the dialog open.
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	name := strings.TrimSpace(a.editName.Value(cx))
 	if name == "" {
-		return false // keep the dialog open
+		return false
 	}
 	it := &a.items[a.editing]
 	it.Name = name
 	it.Amount = a.editAmount
 	gk.Refresh(cx)
-	return true // close the dialog
+	return true
 }
 
 func main() {

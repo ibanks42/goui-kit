@@ -1,5 +1,3 @@
-// val-motion: the fallible results (Keyframes<f32>::try_new, Discrete<f32>::switch_at) as
-// gk.Fallible[T].
 package main
 
 import (
@@ -11,10 +9,13 @@ import (
 )
 
 func init() {
+	// Register keyframe sampling, discrete interpolation, and sequence builder tests.
 	modes["val-motion"] = &mode{click: once(motion)}
 }
 
-// Motion values over f32: keyframes (a fallible constructor), a discrete switch, a sequence.
+// motion proves KeyframesTryNew interpolates 0..10 linearly to mid=5.0 and
+// rejects empty slices with an error, Discrete snaps from 1 to 2 across its
+// midpoint and validates SwitchAt(0.1), and Sequence preserves From=1 and 1 step.
 func motion(a *App, cx *gk.Cx) {
 	kf := gkmotion.KeyframesTryNew(cx, []gk.KeyframeF32{{Offset: 0, Value: 0, Easing: gk.EasingLinear}, {Offset: 1, Value: 10, Easing: gk.EasingLinear}})
 	k, kok := kf.Value.Get()

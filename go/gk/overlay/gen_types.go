@@ -17,6 +17,7 @@ import (
 // Align is gpui_kit::base::Align.
 type Align uint16
 
+// Align enum values.
 const (
 	AlignStart  Align = 0
 	AlignCenter Align = 1
@@ -26,6 +27,7 @@ const (
 // DialogChangeReason is gpui_kit::base::DialogChangeReason.
 type DialogChangeReason uint16
 
+// DialogChangeReason enum values.
 const (
 	DialogChangeReasonTriggerPress  DialogChangeReason = 0
 	DialogChangeReasonBackdropPress DialogChangeReason = 1
@@ -37,6 +39,7 @@ const (
 // DialogEntrance is gpui_kit::component::dialog::DialogEntrance.
 type DialogEntrance uint16
 
+// DialogEntrance enum values.
 const (
 	DialogEntranceSlideDown DialogEntrance = 0
 	DialogEntranceFade      DialogEntrance = 1
@@ -47,6 +50,7 @@ const (
 // NotificationType is gpui_kit::component::notification::NotificationType.
 type NotificationType uint16
 
+// NotificationType enum values.
 const (
 	NotificationTypeInfo    NotificationType = 0
 	NotificationTypeSuccess NotificationType = 1
@@ -57,6 +61,7 @@ const (
 // ToastTransitionStatus is gpui_kit::base::ToastTransitionStatus.
 type ToastTransitionStatus uint16
 
+// ToastTransitionStatus enum values.
 const (
 	ToastTransitionStatusStarting ToastTransitionStatus = 0
 	ToastTransitionStatusPresent  ToastTransitionStatus = 1
@@ -112,13 +117,13 @@ func putGpuiSize(o *rt.Tape, v gk.GpuiSize) {
 	o.F32(v.Height)
 }
 
-// ResolvedPosition is gpui_kit::base::ResolvedPosition.
+// ResolvedPosition mirrors gpui_kit::base::ResolvedPosition.
 type ResolvedPosition struct {
 	Bounds    gk.Bounds
 	Placement gk.Option[gk.Placement]
 }
 
-// ToastMotion is gpui_kit::base::ToastMotion.
+// ToastMotion mirrors gpui_kit::base::ToastMotion.
 type ToastMotion struct {
 	Duration           time.Duration
 	ExitDuration       time.Duration
@@ -137,7 +142,7 @@ func putToastMotion(o *rt.Tape, v ToastMotion) {
 	rt.PutUsize(o, v.CollapsedVisible)
 }
 
-// ToastOptions is gpui_kit::base::ToastOptions.
+// ToastOptions mirrors gpui_kit::base::ToastOptions.
 type ToastOptions struct {
 	Timeout gk.Option[time.Duration]
 }
@@ -209,17 +214,17 @@ func putTextOverflow(o *rt.Tape, v gk.TextOverflow) {
 	}
 }
 
-// TooltipTransition is gpui_kit::base::TooltipTransition: one struct type per variant.
+// TooltipTransition represents gpui_kit::base::TooltipTransition with one struct type per variant.
 type TooltipTransition interface{ isTooltipTransition() }
 
-// TooltipTransitionEnter is gpui_kit::base::TooltipTransition::Enter.
+// TooltipTransitionEnter represents gpui_kit::base::TooltipTransition::Enter.
 type TooltipTransitionEnter struct {
 	Epoch int
 }
 
 func (TooltipTransitionEnter) isTooltipTransition() {}
 
-// TooltipTransitionSwitch is gpui_kit::base::TooltipTransition::Switch.
+// TooltipTransitionSwitch represents gpui_kit::base::TooltipTransition::Switch.
 type TooltipTransitionSwitch struct {
 	Epoch    int
 	Previous gk.Bounds
@@ -262,13 +267,13 @@ func putTextInto(o *rt.Tape, v editor.TextInto) {
 	}
 }
 
-// Event64 is the payload of handlers of shape 64: (bool, DialogChangeReason).
+// Event64 holds the multi-argument payload for handler shape 64 (bool, DialogChangeReason).
 type Event64 struct {
 	A0 bool
 	A1 DialogChangeReason
 }
 
-// Event117 is the payload of handlers of shape 117: (ResolvedPosition, gpui::Bounds<gpui::Pixels>).
+// Event117 holds the multi-argument payload for handler shape 117 (ResolvedPosition, gpui::Bounds<gpui::Pixels>).
 type Event117 struct {
 	A0 ResolvedPosition
 	A1 gk.Bounds
@@ -307,6 +312,7 @@ func init() {
 	}})
 }
 
+// TupleUint64Uint64ToastTransitionStatus holds a 3-element tuple (uint64, uint64, ToastTransitionStatus).
 type TupleUint64Uint64ToastTransitionStatus struct {
 	V0 uint64
 	V1 uint64

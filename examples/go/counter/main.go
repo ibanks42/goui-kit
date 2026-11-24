@@ -1,10 +1,6 @@
-// counter: a small app in Go, the same app as ref/src/bin/counter.rs:
-// a kit Button, a Label with the count, an Input echoed into a second
-// Label, and a list of 10,000 rows, in three views inside a root view.
-//
-//	counter-go                 a real window
-//	GK_SCRIPT=file counter-go  offscreen under a gk-meter script (the diag library)
-//	GK_POSTS=rate,seconds      post from a goroutine at that rate
+// Counter example: splits the window into independent child views (controls, echo, list)
+// so clicking Add or receiving background gk.Post ticks redraws only the affected subtree.
+// Set GK_POSTS="rate,seconds" to stress-test background posting.
 package main
 
 import (
@@ -27,11 +23,13 @@ const rows = 10_000
 
 type App struct {
 	count, ticks               int
-	name                       editor.InputState // handles to kit state that lives in the library
+	name                       editor.InputState
 	rows                       gk.Rows
 	root, controls, echo, list gk.View
 }
 
+// init runs once when the window mounts the root view, creating window-backed state
+// and preloading 10,000 rows into the library-owned Rows store.
 func (a *App) init(cx *gk.Cx) {
 	a.name = editor.NewInputState(cx).Placeholder("Name").Build()
 	a.rows = gk.NewRows(cx)
@@ -39,9 +37,11 @@ func (a *App) init(cx *gk.Cx) {
 	for i := range all {
 		all[i] = fmt.Sprintf("row %d", i)
 	}
-	a.rows.Push(cx, all...) // one crossing for all rows
+	a.rows.Push(cx, all...)
 }
 
+// rootView mounts three independent child views so updates in controls or echo
+// do not re-describe sibling views (gpui-fast retains unchanged views).
 func (a *App) rootView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
 		Bg(theme.Background).
@@ -58,8 +58,8 @@ func (a *App) controlsView(cx *gk.Cx) gk.Element {
 		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name)))
 }
 
-// echoView reads kit state through its handle: the library observes the input and has this
-// view described again when it changes.
+// echoView reads a.name.Value(cx), recording a state dependency so only echoView
+// redraws when the user types into the input.
 func (a *App) echoView(cx *gk.Cx) gk.Element {
 	return gk.HFlex().Child(kit.Label("hello " + a.name.Value(cx)))
 }
@@ -68,11 +68,14 @@ func (a *App) listView(cx *gk.Cx) gk.Element {
 	return gk.UniformList("rows", a.rows).Style(s.SizeFull)
 }
 
+// add mutates Go state and buffers a row append; controlsView redraws automatically.
 func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) {
 	a.count++
 	a.rows.Push(cx, fmt.Sprintf("added %d", a.count))
-} // the controls view, which registered this handler, is marked dirty on return
+}
 
+// tick runs on the UI thread inside a coalesced WAKE turn from poster() and dirties
+// only a.controls so a.echo and a.list stay untouched.
 func (a *App) tick(cx *gk.Cx) {
 	a.ticks++
 	gk.Notify(cx, a.controls)
@@ -81,7 +84,7 @@ func (a *App) tick(cx *gk.Cx) {
 var sent atomic.Int64
 
 func (a *App) poster(rate, secs int) {
-	time.Sleep(time.Second) // let the window come up
+	time.Sleep(time.Second)
 	end := time.Now().Add(time.Duration(secs) * time.Second)
 	for time.Now().Before(end) {
 		for range rate / 1000 {

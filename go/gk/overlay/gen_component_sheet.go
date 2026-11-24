@@ -12,7 +12,7 @@ type SheetEl struct{ rt.ElAnimatableElement }
 
 // Creates a new Sheet.
 //
-// Sheet is <gpui_kit::component::sheet::Sheet>::new.
+// Sheet calls <gpui_kit::component::sheet::Sheet>::new.
 func Sheet(st ...gk.Style) SheetEl {
 	rt.UseComponentSheet()
 	n := rt.NewNode(834)
@@ -22,7 +22,7 @@ func Sheet(st ...gk.Style) SheetEl {
 
 // Set the footer of the sheet.
 //
-// Footer is <gpui_kit::component::sheet::Sheet>::footer.
+// Footer calls <gpui_kit::component::sheet::Sheet>::footer.
 func (e SheetEl) Footer(footer gk.Element) SheetEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Take(footer))
@@ -31,14 +31,14 @@ func (e SheetEl) Footer(footer gk.Element) SheetEl {
 
 // Listen to the close event of the sheet.
 //
-// OnClose is <gpui_kit::component::sheet::Sheet>::on_close.
+// OnClose calls <gpui_kit::component::sheet::Sheet>::on_close.
 func (e SheetEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) SheetEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(onClose, 1))
 	return e
 }
 
-// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+// OnCloseDo is the event-free convenience variant of OnClose.
 func (e SheetEl) OnCloseDo(onClose func(cx *gk.Cx)) SheetEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(onClose, 1))
@@ -47,7 +47,7 @@ func (e SheetEl) OnCloseDo(onClose func(cx *gk.Cx)) SheetEl {
 
 // Set whether the sheet should have an overlay, default is `true`.
 //
-// Overlay is <gpui_kit::component::sheet::Sheet>::overlay.
+// Overlay calls <gpui_kit::component::sheet::Sheet>::overlay.
 func (e SheetEl) Overlay(overlay bool) SheetEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(overlay)
@@ -56,7 +56,7 @@ func (e SheetEl) Overlay(overlay bool) SheetEl {
 
 // Set whether the sheet should be closable by clicking the overlay, default is `true`.
 //
-// OverlayClosable is <gpui_kit::component::sheet::Sheet>::overlay_closable.
+// OverlayClosable calls <gpui_kit::component::sheet::Sheet>::overlay_closable.
 func (e SheetEl) OverlayClosable(overlayClosable bool) SheetEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(overlayClosable)
@@ -65,7 +65,7 @@ func (e SheetEl) OverlayClosable(overlayClosable bool) SheetEl {
 
 // Sets whether the sheet is resizable, default is `true`.
 //
-// Resizable is <gpui_kit::component::sheet::Sheet>::resizable.
+// Resizable calls <gpui_kit::component::sheet::Sheet>::resizable.
 func (e SheetEl) Resizable(resizable bool) SheetEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(resizable)
@@ -74,7 +74,7 @@ func (e SheetEl) Resizable(resizable bool) SheetEl {
 
 // Sets the size of the sheet, default is 350px.
 //
-// Size is <gpui_kit::component::sheet::Sheet>::size.
+// Size calls <gpui_kit::component::sheet::Sheet>::size.
 func (e SheetEl) Size(size gk.Length) SheetEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutDefiniteLength(o, size)
@@ -83,7 +83,7 @@ func (e SheetEl) Size(size gk.Length) SheetEl {
 
 // Sets the title of the sheet.
 //
-// Title is <gpui_kit::component::sheet::Sheet>::title.
+// Title calls <gpui_kit::component::sheet::Sheet>::title.
 func (e SheetEl) Title(title gk.Element) SheetEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.Take(title))
@@ -92,32 +92,38 @@ func (e SheetEl) Title(title gk.Element) SheetEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SheetEl) PopoverStyle() SheetEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SheetEl) RoundedFullStyle() SheetEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e SheetEl) FocusRingStyle() SheetEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -130,24 +136,32 @@ func (e SheetEl) FocusRingStyle() SheetEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e SheetEl) KeepTextSelection(id gk.ID) SheetEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e SheetEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) SheetEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SheetEl) BorderE(width gk.Length) SheetEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SheetEl) BorderS(width gk.Length) SheetEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -155,106 +169,148 @@ func (e SheetEl) BorderS(width gk.Length) SheetEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SheetEl) FlexRowDir() SheetEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SheetEl) InsetE(length gk.Length) SheetEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SheetEl) InsetS(length gk.Length) SheetEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SheetEl) JustifyFlexEnd() SheetEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SheetEl) JustifyFlexStart() SheetEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SheetEl) Me(length gk.Length) SheetEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SheetEl) Ms(length gk.Length) SheetEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SheetEl) Pe(length gk.Length) SheetEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SheetEl) Ps(length gk.Length) SheetEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SheetEl) RoundedE(radius gk.Length) SheetEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SheetEl) RoundedS(radius gk.Length) SheetEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SheetEl) TextEnd() SheetEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SheetEl) TextStart() SheetEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SheetEl) CornerRadii(radius gk.Corners) SheetEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SheetEl) DebugBlue() SheetEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SheetEl) DebugFocused(focusHandle gk.FocusHandle) SheetEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SheetEl) DebugGreen() SheetEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SheetEl) DebugPink() SheetEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SheetEl) DebugRed() SheetEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SheetEl) DebugYellow() SheetEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SheetEl) FontBlack() SheetEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SheetEl) FontBold() SheetEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SheetEl) FontExtrabold() SheetEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SheetEl) FontExtralight() SheetEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SheetEl) FontLight() SheetEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SheetEl) FontMedium() SheetEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SheetEl) FontNormal() SheetEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SheetEl) FontSemibold() SheetEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SheetEl) FontThin() SheetEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -263,18 +319,23 @@ func (e SheetEl) FontThin() SheetEl { tStyledExtFontThin(rt.N(e.Core)); return e
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SheetEl) HFlex() SheetEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SheetEl) Margins(margins gk.EdgesInto) SheetEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SheetEl) Paddings(paddings gk.EdgesInto) SheetEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SheetEl) RefineStyle(style gk.StyleRefinement) SheetEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -284,42 +345,59 @@ func (e SheetEl) RefineStyle(style gk.StyleRefinement) SheetEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SheetEl) VFlex() SheetEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e SheetEl) Text(s string) SheetEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e SheetEl) ChildView(v gk.View) SheetEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e SheetEl) Child(child gk.Element) SheetEl { tParentElementChild(rt.N(e.Core), child); return e }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e SheetEl) Children(children ...gk.Element) SheetEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SheetEl) Style(st ...gk.Style) SheetEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SheetEl) AspectRatio(ratio float32) SheetEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SheetEl) Bg(fill gk.Fill) SheetEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SheetEl) Border(length gk.Length) SheetEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SheetEl) BorderB(length gk.Length) SheetEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SheetEl) BorderColor(borderColor gk.Color) SheetEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -327,63 +405,95 @@ func (e SheetEl) BorderColor(borderColor gk.Color) SheetEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SheetEl) BorderL(length gk.Length) SheetEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SheetEl) BorderR(length gk.Length) SheetEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SheetEl) BorderT(length gk.Length) SheetEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SheetEl) BorderX(length gk.Length) SheetEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SheetEl) BorderY(length gk.Length) SheetEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SheetEl) Bottom(length gk.Length) SheetEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SheetEl) ColEnd(end int16) SheetEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SheetEl) ColSpan(span uint16) SheetEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SheetEl) ColStart(start int16) SheetEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SheetEl) Cursor(cursor gk.CursorStyle) SheetEl { tStyledCursor(rt.N(e.Core), cursor); return e }
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SheetEl) FlexBasis(basis gk.Length) SheetEl { tStyledFlexBasis(rt.N(e.Core), basis); return e }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SheetEl) FlexGrow(grow float32) SheetEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SheetEl) FlexShrink(shrink float32) SheetEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SheetEl) Font(font gk.Font) SheetEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SheetEl) FontFamily(familyName string) SheetEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SheetEl) FontFeatures(features gk.FontFeatures) SheetEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -392,26 +502,38 @@ func (e SheetEl) FontFeatures(features gk.FontFeatures) SheetEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SheetEl) FontWeight(weight gk.FontWeight) SheetEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SheetEl) Gap(length gk.Length) SheetEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SheetEl) GapX(length gk.Length) SheetEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SheetEl) GapY(length gk.Length) SheetEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SheetEl) GridCols(cols uint16) SheetEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SheetEl) GridColsMaxContent(cols uint16) SheetEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -419,15 +541,21 @@ func (e SheetEl) GridColsMaxContent(cols uint16) SheetEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SheetEl) GridColsMinContent(cols uint16) SheetEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SheetEl) GridRows(rows uint16) SheetEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SheetEl) GridRowsMaxContent(rows uint16) SheetEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -435,120 +563,182 @@ func (e SheetEl) GridRowsMaxContent(rows uint16) SheetEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SheetEl) GridRowsMinContent(rows uint16) SheetEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SheetEl) H(length gk.Length) SheetEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SheetEl) Inset(length gk.Length) SheetEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SheetEl) Left(length gk.Length) SheetEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SheetEl) LineClamp(lines int) SheetEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SheetEl) LineHeight(lineHeight gk.Length) SheetEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SheetEl) M(length gk.Length) SheetEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SheetEl) MaxH(length gk.Length) SheetEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SheetEl) MaxSize(length gk.Length) SheetEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SheetEl) MaxW(length gk.Length) SheetEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SheetEl) Mb(length gk.Length) SheetEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SheetEl) MinH(length gk.Length) SheetEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SheetEl) MinSize(length gk.Length) SheetEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SheetEl) MinW(length gk.Length) SheetEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SheetEl) Ml(length gk.Length) SheetEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SheetEl) Mr(length gk.Length) SheetEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SheetEl) Mt(length gk.Length) SheetEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SheetEl) Mx(length gk.Length) SheetEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SheetEl) My(length gk.Length) SheetEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SheetEl) Opacity(opacity float32) SheetEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SheetEl) P(length gk.Length) SheetEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SheetEl) Pb(length gk.Length) SheetEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SheetEl) Pl(length gk.Length) SheetEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SheetEl) Pr(length gk.Length) SheetEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SheetEl) Pt(length gk.Length) SheetEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SheetEl) Px(length gk.Length) SheetEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SheetEl) Py(length gk.Length) SheetEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SheetEl) Right(length gk.Length) SheetEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SheetEl) Rounded(length gk.Length) SheetEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SheetEl) RoundedB(length gk.Length) SheetEl { tStyledRoundedB(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SheetEl) RoundedBl(length gk.Length) SheetEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -556,6 +746,8 @@ func (e SheetEl) RoundedBl(length gk.Length) SheetEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SheetEl) RoundedBr(length gk.Length) SheetEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -563,18 +755,26 @@ func (e SheetEl) RoundedBr(length gk.Length) SheetEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SheetEl) RoundedL(length gk.Length) SheetEl { tStyledRoundedL(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SheetEl) RoundedR(length gk.Length) SheetEl { tStyledRoundedR(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SheetEl) RoundedT(length gk.Length) SheetEl { tStyledRoundedT(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SheetEl) RoundedTl(length gk.Length) SheetEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -582,36 +782,50 @@ func (e SheetEl) RoundedTl(length gk.Length) SheetEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SheetEl) RoundedTr(length gk.Length) SheetEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SheetEl) RowEnd(end int16) SheetEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SheetEl) RowSpan(span uint16) SheetEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SheetEl) RowStart(start int16) SheetEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SheetEl) ScrollbarWidth(width gk.Length) SheetEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SheetEl) Shadow(shadows []gk.BoxShadow) SheetEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SheetEl) TextAlign(align gk.TextAlign) SheetEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -620,20 +834,28 @@ func (e SheetEl) TextAlign(align gk.TextAlign) SheetEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SheetEl) TextBg(bg gk.Color) SheetEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SheetEl) TextColor(color gk.Color) SheetEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SheetEl) TextDecorationColor(color gk.Color) SheetEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SheetEl) TextOverflow(overflow gk.TextOverflow) SheetEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -642,16 +864,22 @@ func (e SheetEl) TextOverflow(overflow gk.TextOverflow) SheetEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SheetEl) TextSize(size gk.Length) SheetEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SheetEl) Top(length gk.Length) SheetEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SheetEl) W(length gk.Length) SheetEl { tStyledW(rt.N(e.Core), length); return e }
 
-// NewSheetSettingsDefault is <gpui_kit::component::sheet::SheetSettings as Default>::default.
+// NewSheetSettingsDefault calls <gpui_kit::component::sheet::SheetSettings as Default>::default.
 func NewSheetSettingsDefault() gk.SheetSettings {
 	n := rt.NewValue(749)
 	return gk.SheetSettings{Val: rt.MkVal(n)}

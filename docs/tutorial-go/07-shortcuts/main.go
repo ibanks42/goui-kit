@@ -1,4 +1,4 @@
-// Step 7 of the Go tutorial: keyboard shortcuts, and a menu that shows them.
+// Step 7 of the Go tutorial: register keyboard shortcuts and wire them into a dropdown menu.
 package main
 
 import (
@@ -24,13 +24,13 @@ type Item struct {
 
 type App struct {
 	items      []Item
-	editing    int // the item the dialog edits
+	editing    int
 	editAmount int
 
-	newName, editName editor.InputState // kit state lives in the library; the app keeps handles
+	newName, editName editor.InputState
 	list              table.ListState
 
-	newItem, clearBought gk.Action // shortcuts, also shown in the menu
+	newItem, clearBought gk.Action
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -40,6 +40,8 @@ func (a *App) init(cx *gk.Cx) {
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
 
+	// gk.Shortcut creates an action, binds its keystroke, and installs an app-wide listener.
+	// The returned gk.Action lets menus display the shortcut and dispatch the same handler.
 	a.newItem = gk.Shortcut(cx, "ctrl-n", a.focusNewName)
 	a.clearBought = gk.Shortcut(cx, "ctrl-shift-d", a.removeBought)
 	a.items = append(a.items, Item{Name: "Milk", Amount: 2}, Item{Name: "Bread", Amount: 1}, Item{Name: "Apples", Amount: 6})
@@ -54,7 +56,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
@@ -100,7 +102,7 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 }
 
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
-	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
+	if c, ok := e.(table.ListEventConfirm); ok {
 		a.openEditor(cx, c.Row)
 	}
 }
@@ -134,13 +136,13 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	name := strings.TrimSpace(a.editName.Value(cx))
 	if name == "" {
-		return false // keep the dialog open
+		return false
 	}
 	it := &a.items[a.editing]
 	it.Name = name
 	it.Amount = a.editAmount
 	gk.Refresh(cx)
-	return true // close the dialog
+	return true
 }
 
 func (a *App) focusNewName(cx *gk.Cx) { a.newName.Focus(cx) }

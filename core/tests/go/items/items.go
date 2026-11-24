@@ -1,5 +1,3 @@
-// The modes of gk.Items (an item function as the row source a builder takes) and
-// the builders that take it.
 package main
 
 import (
@@ -15,11 +13,13 @@ import (
 )
 
 func init() {
+	// Register view builders for each typed overlay.Items callback context, plus
+	// `items-wrong-kind` which intentionally passes a mismatched item callback.
 	views["items-calendar"] = func(a *App, cx *gk.Cx, root gk.DivEl) gk.Element {
 		return root.Child(base.Calendar("cal", a.cal).Item(overlay.Items(cx, a.day)))
 	}
 	views["items-wrong-kind"] = func(a *App, cx *gk.Cx, root gk.DivEl) gk.Element {
-		return root.Child(base.Calendar("cal", a.cal).Item(overlay.Items(cx, a.segment))) // stops: a time field's function
+		return root.Child(base.Calendar("cal", a.cal).Item(overlay.Items(cx, a.segment)))
 	}
 	views["items-time-field"] = func(a *App, cx *gk.Cx, root gk.DivEl) gk.Element {
 		return root.Child(base.TimeField("tf", a.tf).RenderSegment(overlay.Items(cx, a.segment)))
@@ -50,8 +50,8 @@ func init() {
 	}
 }
 
-// --- the functions ---------------------------------------------------------------------------------
-
+// day proves Calendar item callbacks receive 28..42 Day items, 7 Weekday
+// headers, and stop being called on steady frames (after=0) once cached.
 func (a *App) day(cx *gk.Cx, item base.CalendarItemEl, st base.CalendarItemState) gk.Element {
 	a.described++
 	a.kinds[st.Kind]++
@@ -71,6 +71,8 @@ func (a *App) day(cx *gk.Cx, item base.CalendarItemEl, st base.CalendarItemState
 	return item.Style(s.RoundedFull).Bg(bg)
 }
 
+// segment proves TimeField RenderSegment hands out Hour and Minute segment
+// elements along with their live numeric values and selection flags.
 func (a *App) segment(cx *gk.Cx, seg base.TimeFieldSegmentEl, st base.TimeFieldSegmentState) gk.Element {
 	a.described++
 	a.segments[st.Segment]++
@@ -78,6 +80,8 @@ func (a *App) segment(cx *gk.Cx, seg base.TimeFieldSegmentEl, st base.TimeFieldS
 	return gk.Div(s.Px1).Bg(theme.Muted).Child(seg)
 }
 
+// entry proves BaseTree Item callbacks receive row indices (0, 1) and decoded
+// TreeEntryReads fields (Alpha/Beta, depth 0, folder=false, selected=false).
 func (a *App) entry(cx *gk.Cx, ix int, e base.TreeEntryReads, st base.TreeEntryState) gk.Element {
 	a.described++
 	fmt.Printf("items tree row ix=%d label=%s depth=%d folder=%v selected=%v\n", ix, e.Item.Label, e.Depth, e.IsFolder,
@@ -85,12 +89,15 @@ func (a *App) entry(cx *gk.Cx, ix int, e base.TreeEntryReads, st base.TreeEntryS
 	return gk.Div(s.H6, s.Px2).Child(gk.Text(fmt.Sprintf("%s (%d)", e.Item.Label, ix)))
 }
 
+// popContent proves an open BasePopover passes PopoverStateReads with is_open=true.
 func (a *App) popContent(cx *gk.Cx, st base.PopoverStateReads) gk.Element {
 	a.described++
 	fmt.Printf("items popover content is_open=%v\n", st.IsOpen)
 	return gk.Div(s.P2).Child(gk.Text("inside the popover"))
 }
 
+// cmdHeader proves Command Header/Footer callbacks both fire (described=2) with
+// CommandStateReads (matched=0, loading=false, no selection).
 func (a *App) cmdHeader(cx *gk.Cx, st kit.CommandStateReads) gk.Element {
 	a.described++
 	_, has := st.SelectedIndex.Get()
@@ -98,12 +105,16 @@ func (a *App) cmdHeader(cx *gk.Cx, st kit.CommandStateReads) gk.Element {
 	return gk.Text(fmt.Sprintf("%d matches", st.MatchedCount))
 }
 
+// hoverContent proves moving the pointer onto BaseHoverCard's trigger invokes
+// Content with HoverCardStateReads reporting is_open=true.
 func (a *App) hoverContent(cx *gk.Cx, st base.HoverCardStateReads) gk.StatefulDivEl {
 	a.described++
 	fmt.Printf("items hover content is_open=%v\n", st.IsOpen)
 	return gk.Div(s.P2).ID("card").Child(gk.Text("card"))
 }
 
+// trigger proves Combobox RenderTrigger receives the preselected item ("Pear",
+// selected=1), placeholder ("Fruit"), and open=false.
 func (a *App) trigger(cx *gk.Cx, t kit.ComboboxTriggerContext) gk.Element {
 	a.described++
 	ph, _ := t.Placeholder.Get()
@@ -115,6 +126,8 @@ func (a *App) trigger(cx *gk.Cx, t kit.ComboboxTriggerContext) gk.Element {
 	return gk.Div(s.P1).Child(gk.Text(fmt.Sprintf("%d chosen", len(t.Selection))))
 }
 
+// navPage proves NavStack Item wraps the pushed page view with index=0 and
+// settled progress=1.0 when pushed with NavMotionImmediate.
 func (a *App) navPage(cx *gk.Cx, pg base.NavPageEl, r base.NavPageReads) gk.Element {
 	a.described++
 	fmt.Printf("items nav page index=%d phase=%s progress=%.1f\n", r.Index, name(phaseNames[:], int(r.Phase)), r.Progress)

@@ -13,7 +13,7 @@ type SliderEl struct{ rt.ElAnimatableElement }
 
 // Create a new `SliderEl` element bind to the `SliderState`.
 //
-// Slider is <gpui_kit::component::slider::Slider>::new.
+// Slider calls <gpui_kit::component::slider::Slider>::new.
 func Slider(state base.SliderState, st ...gk.Style) SliderEl {
 	rt.UseComponentSlider()
 	n := rt.NewNode(760)
@@ -25,7 +25,7 @@ func Slider(state base.SliderState, st ...gk.Style) SliderEl {
 
 // Sets the label exposed to accessibility clients.
 //
-// AccessibilityLabel is <gpui_kit::component::slider::Slider>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::slider::Slider>::accessibility_label.
 func (e SliderEl) AccessibilityLabel(label string) SliderEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -34,7 +34,7 @@ func (e SliderEl) AccessibilityLabel(label string) SliderEl {
 
 // Set the disabled state of the slider, default: false
 //
-// Disabled is <gpui_kit::component::slider::Slider>::disabled.
+// Disabled calls <gpui_kit::component::slider::Slider>::disabled.
 func (e SliderEl) Disabled(disabled bool) SliderEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
@@ -43,7 +43,7 @@ func (e SliderEl) Disabled(disabled bool) SliderEl {
 
 // As a horizontal slider.
 //
-// Horizontal is <gpui_kit::component::slider::Slider>::horizontal.
+// Horizontal calls <gpui_kit::component::slider::Slider>::horizontal.
 func (e SliderEl) Horizontal() SliderEl {
 	rt.Op(rt.N(e.Core), 258)
 	return e
@@ -52,13 +52,13 @@ func (e SliderEl) Horizontal() SliderEl {
 // Reverse the filled (highlighted) side of the track, default: false.
 //
 // By default the track is filled from the min end to the thumb. With `reverse`, the fill goes from
-// the thumb to the max end instead — useful when the slider represents a remaining amount (e.g.
+// the thumb to the max end instead - useful when the slider represents a remaining amount (e.g.
 // time left).
 //
 // This only changes the visual fill; values, events and interactions are unaffected. It applies to
 // single-value sliders and is ignored for range sliders.
 //
-// Reverse is <gpui_kit::component::slider::Slider>::reverse.
+// Reverse calls <gpui_kit::component::slider::Slider>::reverse.
 func (e SliderEl) Reverse() SliderEl {
 	rt.Op(rt.N(e.Core), 259)
 	return e
@@ -66,7 +66,7 @@ func (e SliderEl) Reverse() SliderEl {
 
 // Set the tab index for the slider, default is 0.
 //
-// TabIndex is <gpui_kit::component::slider::Slider>::tab_index.
+// TabIndex calls <gpui_kit::component::slider::Slider>::tab_index.
 func (e SliderEl) TabIndex(tabIndex int) SliderEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U64(uint64(tabIndex))
@@ -75,7 +75,7 @@ func (e SliderEl) TabIndex(tabIndex int) SliderEl {
 
 // Set the tab stop for the slider, default is true.
 //
-// TabStop is <gpui_kit::component::slider::Slider>::tab_stop.
+// TabStop calls <gpui_kit::component::slider::Slider>::tab_stop.
 func (e SliderEl) TabStop(tabStop bool) SliderEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(tabStop)
@@ -84,7 +84,7 @@ func (e SliderEl) TabStop(tabStop bool) SliderEl {
 
 // As a vertical slider.
 //
-// Vertical is <gpui_kit::component::slider::Slider>::vertical.
+// Vertical calls <gpui_kit::component::slider::Slider>::vertical.
 func (e SliderEl) Vertical() SliderEl {
 	rt.Op(rt.N(e.Core), 260)
 	return e
@@ -92,26 +92,34 @@ func (e SliderEl) Vertical() SliderEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SliderEl) PopoverStyle() SliderEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SliderEl) RoundedFullStyle() SliderEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SliderEl) BorderE(width gk.Length) SliderEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SliderEl) BorderS(width gk.Length) SliderEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -119,106 +127,148 @@ func (e SliderEl) BorderS(width gk.Length) SliderEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SliderEl) FlexRowDir() SliderEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SliderEl) InsetE(length gk.Length) SliderEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SliderEl) InsetS(length gk.Length) SliderEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SliderEl) JustifyFlexEnd() SliderEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SliderEl) JustifyFlexStart() SliderEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SliderEl) Me(length gk.Length) SliderEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SliderEl) Ms(length gk.Length) SliderEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SliderEl) Pe(length gk.Length) SliderEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SliderEl) Ps(length gk.Length) SliderEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SliderEl) RoundedE(radius gk.Length) SliderEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SliderEl) RoundedS(radius gk.Length) SliderEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SliderEl) TextEnd() SliderEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SliderEl) TextStart() SliderEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SliderEl) CornerRadii(radius gk.Corners) SliderEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SliderEl) DebugBlue() SliderEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SliderEl) DebugFocused(focusHandle gk.FocusHandle) SliderEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SliderEl) DebugGreen() SliderEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SliderEl) DebugPink() SliderEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SliderEl) DebugRed() SliderEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SliderEl) DebugYellow() SliderEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SliderEl) FontBlack() SliderEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SliderEl) FontBold() SliderEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SliderEl) FontExtrabold() SliderEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SliderEl) FontExtralight() SliderEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SliderEl) FontLight() SliderEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SliderEl) FontMedium() SliderEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SliderEl) FontNormal() SliderEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SliderEl) FontSemibold() SliderEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SliderEl) FontThin() SliderEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -227,18 +277,23 @@ func (e SliderEl) FontThin() SliderEl { tStyledExtFontThin(rt.N(e.Core)); return
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SliderEl) HFlex() SliderEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SliderEl) Margins(margins gk.EdgesInto) SliderEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SliderEl) Paddings(paddings gk.EdgesInto) SliderEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SliderEl) RefineStyle(style gk.StyleRefinement) SliderEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -248,28 +303,40 @@ func (e SliderEl) RefineStyle(style gk.StyleRefinement) SliderEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SliderEl) VFlex() SliderEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SliderEl) Style(st ...gk.Style) SliderEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SliderEl) AspectRatio(ratio float32) SliderEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SliderEl) Bg(fill gk.Fill) SliderEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SliderEl) Border(length gk.Length) SliderEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SliderEl) BorderB(length gk.Length) SliderEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SliderEl) BorderColor(borderColor gk.Color) SliderEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -277,38 +344,58 @@ func (e SliderEl) BorderColor(borderColor gk.Color) SliderEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SliderEl) BorderL(length gk.Length) SliderEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SliderEl) BorderR(length gk.Length) SliderEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SliderEl) BorderT(length gk.Length) SliderEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SliderEl) BorderX(length gk.Length) SliderEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SliderEl) BorderY(length gk.Length) SliderEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SliderEl) Bottom(length gk.Length) SliderEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SliderEl) ColEnd(end int16) SliderEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SliderEl) ColSpan(span uint16) SliderEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SliderEl) ColStart(start int16) SliderEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SliderEl) Cursor(cursor gk.CursorStyle) SliderEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -316,30 +403,42 @@ func (e SliderEl) Cursor(cursor gk.CursorStyle) SliderEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SliderEl) FlexBasis(basis gk.Length) SliderEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SliderEl) FlexGrow(grow float32) SliderEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SliderEl) FlexShrink(shrink float32) SliderEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SliderEl) Font(font gk.Font) SliderEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SliderEl) FontFamily(familyName string) SliderEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SliderEl) FontFeatures(features gk.FontFeatures) SliderEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -348,26 +447,38 @@ func (e SliderEl) FontFeatures(features gk.FontFeatures) SliderEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SliderEl) FontWeight(weight gk.FontWeight) SliderEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SliderEl) Gap(length gk.Length) SliderEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SliderEl) GapX(length gk.Length) SliderEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SliderEl) GapY(length gk.Length) SliderEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SliderEl) GridCols(cols uint16) SliderEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SliderEl) GridColsMaxContent(cols uint16) SliderEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -375,15 +486,21 @@ func (e SliderEl) GridColsMaxContent(cols uint16) SliderEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SliderEl) GridColsMinContent(cols uint16) SliderEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SliderEl) GridRows(rows uint16) SliderEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SliderEl) GridRowsMaxContent(rows uint16) SliderEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -391,116 +508,176 @@ func (e SliderEl) GridRowsMaxContent(rows uint16) SliderEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SliderEl) GridRowsMinContent(rows uint16) SliderEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SliderEl) H(length gk.Length) SliderEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SliderEl) Inset(length gk.Length) SliderEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SliderEl) Left(length gk.Length) SliderEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SliderEl) LineClamp(lines int) SliderEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SliderEl) LineHeight(lineHeight gk.Length) SliderEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SliderEl) M(length gk.Length) SliderEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SliderEl) MaxH(length gk.Length) SliderEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SliderEl) MaxSize(length gk.Length) SliderEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SliderEl) MaxW(length gk.Length) SliderEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SliderEl) Mb(length gk.Length) SliderEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SliderEl) MinH(length gk.Length) SliderEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SliderEl) MinSize(length gk.Length) SliderEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SliderEl) MinW(length gk.Length) SliderEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SliderEl) Ml(length gk.Length) SliderEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SliderEl) Mr(length gk.Length) SliderEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SliderEl) Mt(length gk.Length) SliderEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SliderEl) Mx(length gk.Length) SliderEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SliderEl) My(length gk.Length) SliderEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SliderEl) Opacity(opacity float32) SliderEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SliderEl) P(length gk.Length) SliderEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SliderEl) Pb(length gk.Length) SliderEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SliderEl) Pl(length gk.Length) SliderEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SliderEl) Pr(length gk.Length) SliderEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SliderEl) Pt(length gk.Length) SliderEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SliderEl) Px(length gk.Length) SliderEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SliderEl) Py(length gk.Length) SliderEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SliderEl) Right(length gk.Length) SliderEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SliderEl) Rounded(length gk.Length) SliderEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SliderEl) RoundedB(length gk.Length) SliderEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -508,6 +685,8 @@ func (e SliderEl) RoundedB(length gk.Length) SliderEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SliderEl) RoundedBl(length gk.Length) SliderEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -515,6 +694,8 @@ func (e SliderEl) RoundedBl(length gk.Length) SliderEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SliderEl) RoundedBr(length gk.Length) SliderEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -522,6 +703,8 @@ func (e SliderEl) RoundedBr(length gk.Length) SliderEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SliderEl) RoundedL(length gk.Length) SliderEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -529,6 +712,8 @@ func (e SliderEl) RoundedL(length gk.Length) SliderEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SliderEl) RoundedR(length gk.Length) SliderEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -536,6 +721,8 @@ func (e SliderEl) RoundedR(length gk.Length) SliderEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SliderEl) RoundedT(length gk.Length) SliderEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -543,6 +730,8 @@ func (e SliderEl) RoundedT(length gk.Length) SliderEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SliderEl) RoundedTl(length gk.Length) SliderEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -550,39 +739,55 @@ func (e SliderEl) RoundedTl(length gk.Length) SliderEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SliderEl) RoundedTr(length gk.Length) SliderEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SliderEl) RowEnd(end int16) SliderEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SliderEl) RowSpan(span uint16) SliderEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SliderEl) RowStart(start int16) SliderEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SliderEl) ScrollbarWidth(width gk.Length) SliderEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SliderEl) Shadow(shadows []gk.BoxShadow) SliderEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SliderEl) Size(length gk.Length) SliderEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SliderEl) TextAlign(align gk.TextAlign) SliderEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -591,20 +796,28 @@ func (e SliderEl) TextAlign(align gk.TextAlign) SliderEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SliderEl) TextBg(bg gk.Color) SliderEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SliderEl) TextColor(color gk.Color) SliderEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SliderEl) TextDecorationColor(color gk.Color) SliderEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SliderEl) TextOverflow(overflow gk.TextOverflow) SliderEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -613,11 +826,17 @@ func (e SliderEl) TextOverflow(overflow gk.TextOverflow) SliderEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SliderEl) TextSize(size gk.Length) SliderEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SliderEl) Top(length gk.Length) SliderEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SliderEl) W(length gk.Length) SliderEl { tStyledW(rt.N(e.Core), length); return e }

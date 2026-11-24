@@ -1,32 +1,5 @@
-// editor2: the protocol tests of the editor family (docs/PROTOCOLS.md 9.20 to 9.26 here, 9.30 to 9.37
-// in round6.go and 9.38 to 9.40 in round7.go), the port of core/tests/editor2. Offscreen under a
-// gk-meter script (the diag library). Each mode prints lines core/tests/go/run-editor2.sh checks, with
-// the exit code.
-//
-//	GK_PROTO=plugin      Markdown plugins: the kit's frontmatter plugin, a data plugin claiming
-//	                     ```badge code blocks (a block row) and one claiming inline code (an inline
-//	                     row reading the node and the inherited typography); the claimed count
-//	tooltip              a text view's link tooltip: the mouse on the link, the row of its URL
-//	                     described (a view closure over a value, one row per distinct URL)
-//	surface              a block surface: a Div fragment of the app's view around a blockquote
-//	history              History::retain over the entries the app keeps (a predicate as a key set)
-//	conflict             a working file's merge conflict read back (DiffFile::conflicts: the
-//	                     object a read-back value hands out, its seven reads)
-//	annotation           a diff annotation's id read back as text
-//	fold                 an editor's fold placeholder: the row of the folded line, drawn by an
-//	                     element closure upstream calls without a window
-//	owner                an InputBase whose semantic owner is an editor (gk.EntityIDOf)
-//	bad-owner            gk.EntityID of a handle that is not an input: must stop (exit 2)
-//	decorations          an editor's decoration collection: made from decorations with colours (a
-//	                     record with a colour in a call op, decoded in place), appended, cleared
-//	display-map          an editor's display map read through the borrow (reads of the state)
-//	mask-variant         a mask as MaskPattern's Pattern variant (made by its constructor), typed into
-//	route                an action routed to the editor's overlays (an action in a call op): none open
-//	editor-style         an editor's style set by the app: its colours, and its highlight resolver an
-//	                     ask the editor consults for the highlighter's names (a one-method delegate)
-//
-// Some modes are in files of their own (text.go, editor.go, host.go, round6.go, round7.go), which
-// register them from init.
+// Command editor2 runs headless protocol tests for markdown extensions, editor
+// host blocks, decorations, display maps, input edits, LSP overlays, and diagnostics.
 package main
 
 import (
@@ -42,6 +15,7 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
+// App holds shared root view and editor/input handles for the active GK_PROTO mode.
 type App struct {
 	mode string
 	root gk.View
@@ -50,12 +24,9 @@ type App struct {
 	inp  editor.InputState
 	hist gk.History
 	coll editor.TextDecorationCollection
-	r6   Round6 // round6.go (round7's state is in round7.go)
+	r6   Round6
 }
 
-// mode is what a mode adds to the app: its init (in the root view's init), its body (below the step
-// button), what the step button does, and its gk-meter script after "size 480 360\nframe\n" (a final
-// "frame\n" follows). Some modes register from their files' init.
 type mode struct {
 	init   func(a *App, cx *gk.Cx)
 	view   func(a *App, cx *gk.Cx) gk.Element
@@ -70,7 +41,7 @@ const (
 	foldText     = "top {\nhidden\n}\nlast\n"
 )
 
-// The step button at (36, 30); the body from (16, 56).
+// stepScript clicks the top-left "step" button to trigger mode.step.
 const stepScript = "click 36 30\nframe\n"
 
 func init() {
@@ -97,7 +68,6 @@ func init() {
 	}, script: "click 100 72\ntype 123456\nframe\n" + stepScript}
 }
 
-// rangesText prints ranges in the form the checks expect: [Range{lo = 0, hi = 5}, ...].
 func rangesText(rs []gk.Range) string {
 	parts := make([]string, len(rs))
 	for i, r := range rs {
@@ -106,7 +76,6 @@ func rangesText(rs []gk.Range) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// stringsText prints strings in the form the checks expect: ["b", "d"].
 func stringsText(ss []string) string {
 	parts := make([]string, len(ss))
 	for i, x := range ss {
@@ -115,16 +84,22 @@ func stringsText(ss []string) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
+// annotationStep proves NewDiffAnnotationFile preserves the id ("ann-1") and
+// file path ("src/a.rs") through readback getters.
 func annotationStep(a *App, cx *gk.Cx) {
 	an := editor.NewDiffAnnotationFile(cx, "ann-1", "src/a.rs")
 	fmt.Printf("editor2 annotation id=%q path=%q\n", an.ID(cx), an.Path(cx))
 }
 
+// routeStep proves RouteOverlayAction returns false when no editor overlay is
+// active to intercept the action.
 func routeStep(a *App, cx *gk.Cx) {
 	act := gk.NewAction(cx, "editor2.nothing")
 	fmt.Printf("editor2 route handled=%v\n", a.ed.RouteOverlayAction(cx, act))
 }
 
+// displayMapStep proves DisplayMap getters expose exact buffer line count, full
+// buffer text, display row count, and initial unfolded state (folded=false, folds=0).
 func displayMapStep(a *App, cx *gk.Cx) {
 	folds := a.ed.DisplayMapFoldedRanges(cx)
 	fmt.Printf("editor2 display-map lines=%d text=%q rows=%d folded=%v hidden=%v row1=%d folds=%d\n",
@@ -133,12 +108,14 @@ func displayMapStep(a *App, cx *gk.Cx) {
 		a.ed.DisplayMapBufferLineToDisplayRow(cx, 1), len(folds))
 }
 
+// decorationsStep proves a retained TextDecorationCollection holds initial range
+// [0, 5], appends [6, 11] across steps, and empties cleanly on Clear.
 func decorationsStep(a *App, cx *gk.Cx) {
 	switch a.step {
 	case 1:
 		first := []editor.TextDecoration{{Range: gk.Range{Lo: 0, Hi: 5}, Style: gk.HighlightStyle{Color: gk.Some(theme.Danger),
 			FontWeight: gk.Some(gk.FontWeight{V0: 700})}}}
-		// a call's object is temporary (until the next frame): kept across the steps
+
 		a.coll = a.ed.CreateDecorationsCollection(cx, first)
 		gk.Retain(cx, a.coll)
 		fmt.Printf("editor2 decorations made ranges=%s\n", rangesText(a.coll.GetRanges(cx)))

@@ -1,6 +1,5 @@
-// paint: gradient backgrounds and a plot of the binding's own paths and quads (docs/PROTOCOLS.md
-// 11.38, 12.17), the Go twin of ref/src/bin/paint.rs. gates/pixels.sh paint
-// compares the two image by image.
+// Paint example: showcases linear gradients (sRGB and Oklab) on divs and custom
+// described plots with grid lines, filled polygons, stroked polylines, and quads.
 package main
 
 import (
@@ -23,14 +22,17 @@ func glow(a float32) gk.LinearGradient {
 
 func swatch() gk.DivEl { return gk.Div().W(gk.Px(160)).H(gk.Px(48)).Rounded(gk.Px(8)) }
 
+// view builds three gradient/solid swatches and a described chart.Plot.
+// Because plot parts travel on the tape as data (N_PLOT, N_PLOT_PATH, N_PLOT_QUAD),
+// Rust paints the entire scene natively without crossing back into Go during paint.
 func (a *App) view(cx *gk.Cx) gk.Element {
-	// the wave: integers only, so every language computes the same pixels
 	pts := make([][2]float32, 49)
 	for i := range pts {
 		pts[i] = [2]float32{float32(i * 12), float32(40 + (i*37)%150)}
 	}
-	area := append(append([][2]float32{{0, 120}}, pts...), [2]float32{576, 120}) // down to the middle line
+	area := append(append([][2]float32{{0, 120}}, pts...), [2]float32{576, 120})
 	white := gk.HSLA(0, 0, 1, 1)
+	// Linear gradients accept symbolic theme.* stops and optional Oklab interpolation.
 	bar := gk.NewLinearGradient(0, gk.NewLinearColorStop(theme.Primary, 0), gk.NewLinearColorStop(violet(1), 1)).InOklab()
 	plot := chart.Plot(
 		chart.NewGrid().X([]float32{144, 288, 432}).Y([]float32{60, 120, 180}).Stroke(theme.Border),

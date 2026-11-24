@@ -11,19 +11,19 @@ import (
 // QuestionnaireAnswer is gpui_kit::base::questionnaire::QuestionnaireAnswer.
 type QuestionnaireAnswer struct{ rt.Val }
 
-// NewQuestionnaireAnswer is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::new.
+// NewQuestionnaireAnswer calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::new.
 func NewQuestionnaireAnswer() QuestionnaireAnswer {
 	n := rt.NewValue(540)
 	return QuestionnaireAnswer{Val: rt.MkVal(n)}
 }
 
-// NewQuestionnaireAnswerDefault is <gpui_kit::base::questionnaire::QuestionnaireAnswer as Default>::default.
+// NewQuestionnaireAnswerDefault calls <gpui_kit::base::questionnaire::QuestionnaireAnswer as Default>::default.
 func NewQuestionnaireAnswerDefault() QuestionnaireAnswer {
 	n := rt.NewValue(539)
 	return QuestionnaireAnswer{Val: rt.MkVal(n)}
 }
 
-// WithChoices is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::with_choices.
+// WithChoices calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::with_choices.
 func (e QuestionnaireAnswer) WithChoices(choices []string) QuestionnaireAnswer {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(uint32(len(choices)))
@@ -33,7 +33,7 @@ func (e QuestionnaireAnswer) WithChoices(choices []string) QuestionnaireAnswer {
 	return e
 }
 
-// WithFreeform is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::with_freeform.
+// WithFreeform calls <gpui_kit::base::questionnaire::QuestionnaireAnswer>::with_freeform.
 func (e QuestionnaireAnswer) WithFreeform(value string) QuestionnaireAnswer {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(value)
@@ -43,7 +43,7 @@ func (e QuestionnaireAnswer) WithFreeform(value string) QuestionnaireAnswer {
 // QuestionnaireChoiceDefinition is gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition.
 type QuestionnaireChoiceDefinition struct{ rt.Val }
 
-// NewQuestionnaireChoiceDefinition is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::new.
+// NewQuestionnaireChoiceDefinition calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::new.
 func NewQuestionnaireChoiceDefinition(value string, accessibilityLabel string) QuestionnaireChoiceDefinition {
 	n := rt.NewValue(541)
 	o := rt.NodeArgs(n)
@@ -52,21 +52,21 @@ func NewQuestionnaireChoiceDefinition(value string, accessibilityLabel string) Q
 	return QuestionnaireChoiceDefinition{Val: rt.MkVal(n)}
 }
 
-// WithDefaultSelected is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_default_selected.
+// WithDefaultSelected calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_default_selected.
 func (e QuestionnaireChoiceDefinition) WithDefaultSelected(selected bool) QuestionnaireChoiceDefinition {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(selected)
 	return e
 }
 
-// WithDescription is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_description.
+// WithDescription calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_description.
 func (e QuestionnaireChoiceDefinition) WithDescription(description string) QuestionnaireChoiceDefinition {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(description)
 	return e
 }
 
-// WithDisabled is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_disabled.
+// WithDisabled calls <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::with_disabled.
 func (e QuestionnaireChoiceDefinition) WithDisabled(disabled bool) QuestionnaireChoiceDefinition {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(disabled)
@@ -76,7 +76,7 @@ func (e QuestionnaireChoiceDefinition) WithDisabled(disabled bool) Questionnaire
 // QuestionnaireInputDefinition is gpui_kit::base::questionnaire::QuestionnaireInputDefinition.
 type QuestionnaireInputDefinition struct{ rt.Val }
 
-// NewQuestionnaireInputDefinition is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::new.
+// NewQuestionnaireInputDefinition calls <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::new.
 func NewQuestionnaireInputDefinition(state editor.InputState, accessibilityLabel string) QuestionnaireInputDefinition {
 	n := rt.NewValue(542)
 	o := rt.NodeArgs(n)
@@ -85,7 +85,7 @@ func NewQuestionnaireInputDefinition(state editor.InputState, accessibilityLabel
 	return QuestionnaireInputDefinition{Val: rt.MkVal(n)}
 }
 
-// WithDisabled is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::with_disabled.
+// WithDisabled calls <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::with_disabled.
 func (e QuestionnaireInputDefinition) WithDisabled(disabled bool) QuestionnaireInputDefinition {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(disabled)
@@ -95,7 +95,7 @@ func (e QuestionnaireInputDefinition) WithDisabled(disabled bool) QuestionnaireI
 // QuestionnaireItemDefinition is gpui_kit::base::questionnaire::QuestionnaireItemDefinition.
 type QuestionnaireItemDefinition struct{ rt.Val }
 
-// NewQuestionnaireItemDefinition is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::new.
+// NewQuestionnaireItemDefinition calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::new.
 func NewQuestionnaireItemDefinition(name string, accessibilityLabel string) QuestionnaireItemDefinition {
 	n := rt.NewValue(543)
 	o := rt.NodeArgs(n)
@@ -104,14 +104,14 @@ func NewQuestionnaireItemDefinition(name string, accessibilityLabel string) Ques
 	return QuestionnaireItemDefinition{Val: rt.MkVal(n)}
 }
 
-// WithChoice is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_choice.
+// WithChoice calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_choice.
 func (e QuestionnaireItemDefinition) WithChoice(choice QuestionnaireChoiceDefinition) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(choice.Core)))
 	return e
 }
 
-// WithChoices is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_choices.
+// WithChoices calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_choices.
 func (e QuestionnaireItemDefinition) WithChoices(choices []QuestionnaireChoiceDefinition) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(choices)))
@@ -121,42 +121,42 @@ func (e QuestionnaireItemDefinition) WithChoices(choices []QuestionnaireChoiceDe
 	return e
 }
 
-// WithDescription is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_description.
+// WithDescription calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_description.
 func (e QuestionnaireItemDefinition) WithDescription(description string) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(description)
 	return e
 }
 
-// WithDisabled is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_disabled.
+// WithDisabled calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_disabled.
 func (e QuestionnaireItemDefinition) WithDisabled(disabled bool) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(disabled)
 	return e
 }
 
-// WithInput is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_input.
+// WithInput calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_input.
 func (e QuestionnaireItemDefinition) WithInput(input QuestionnaireInputDefinition) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(input.Core)))
 	return e
 }
 
-// WithMultiple is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_multiple.
+// WithMultiple calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_multiple.
 func (e QuestionnaireItemDefinition) WithMultiple(multiple bool) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Bool(multiple)
 	return e
 }
 
-// WithRequired is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_required.
+// WithRequired calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_required.
 func (e QuestionnaireItemDefinition) WithRequired(required bool) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(required)
 	return e
 }
 
-// WithValidator is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_validator.
+// WithValidator calls <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_validator.
 func (e QuestionnaireItemDefinition) WithValidator(validator gk.QuestionnaireRules) QuestionnaireItemDefinition {
 	o := rt.Op(rt.N(e.Core), 263)
 	rt.PutQuestionnaireRules(o, validator)

@@ -7,7 +7,7 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// NewNotificationSettingsDefault is <gpui_kit::component::notification::NotificationSettings as Default>::default.
+// NewNotificationSettingsDefault calls <gpui_kit::component::notification::NotificationSettings as Default>::default.
 func NewNotificationSettingsDefault() gk.NotificationSettings {
 	n := rt.NewValue(710)
 	return gk.NotificationSettings{Val: rt.MkVal(n)}

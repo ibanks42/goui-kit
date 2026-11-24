@@ -1,5 +1,3 @@
-// val-theme: the theme registry, a config applied, the mode changed, and try_parse_color's Result
-// read back as gk.Fallible[gk.Hsla].
 package main
 
 import (
@@ -9,11 +7,13 @@ import (
 )
 
 func init() {
+	// Register theme registry, JSON validation, color parsing, and dark/light toggle tests.
 	modes["val-theme"] = &mode{click: themeClick}
 }
 
-// The theme: the registry's themes (a map, read back sorted), a config applied, the mode changed (a
-// static taking Option<&mut Window>), fields read and written, results read back.
+// themeClick proves ThemeRegistry lists built-in themes and refuses invalid JSON,
+// TryParseColor parses "#ff0000" (L~0.5) and rejects invalid strings, and
+// ThemeChange switches cleanly from light -> dark (with font_size=17) -> light.
 func themeClick(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:

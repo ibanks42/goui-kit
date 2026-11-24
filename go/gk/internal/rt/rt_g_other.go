@@ -2,5 +2,5 @@
 
 package rt
 
-// curG falls back to the OS thread id on architectures without an assembly reader.
+// curG falls back to the OS thread ID on architectures without goid assembly.
 func curG() uintptr { return uintptr(osThread()) }

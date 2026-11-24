@@ -4,24 +4,28 @@ import (
 	"reflect"
 )
 
+// itemsKey identifies a dynamic item-builder closure by the owning view and
+// the function's code pointer so repeated view renders reuse a single
+// underlying RowSource instead of allocating a fresh one every frame.
 type itemsKey struct {
 	view uint64
 	fn   uintptr
 }
 
 type itemsRec struct {
-	f    any // the app's function, the latest given for this key
+	f    any
 	kind int
 }
 
 var (
 	itemsSources = map[itemsKey]RowSource{}
-	itemsOf      = map[uint64]*itemsRec{} // row source handle -> its item function
+	itemsOf      = map[uint64]*itemsRec{}
 )
 
-// itemsSource is the row source of one item function, made on first use (no rows, at most 512
-// row views). The same function given in the same view gives the same source; the function last
-// given is the one called (a closure's captures stay current).
+// ItemsSource returns a cached or newly created RowSource backed by closure f
+// and adapter tramp for item-producing kit closures (such as popup menus or
+// dynamic item lists). If called during a view render, Vb.Active is briefly
+// cleared so NewRowSource can allocate the backing source safely.
 func ItemsSource(cx *Cx, f any, kind int, tramp func(f any, cx *Cx, src RowSource, at RowAt) Element) RowSource {
 	t := CheckCx(cx)
 	if isNilFunc(f) {
@@ -43,7 +47,7 @@ func ItemsSource(cx *Cx, f any, kind int, tramp func(f any, cx *Cx, src RowSourc
 	var src RowSource
 	row := func(cx *Cx, at RowAt) Element { return tramp(rec.f, cx, src, at) }
 	active := Vb.Active
-	Vb.Active = false // an item function's source may be made in a view function
+	Vb.Active = false
 	src = NewRowSource(cx, 0, row, Initial(0), Capacity(512))
 	Vb.Active = active
 	itemsSources[key] = src
@@ -51,8 +55,8 @@ func ItemsSource(cx *Cx, f any, kind int, tramp func(f any, cx *Cx, src RowSourc
 	return src
 }
 
-// itemsCheck is the source a builder of an item closure is given, checked against the kind of
-// function that closure calls. A source gk.NewRowSource made passes.
+// ItemsCheck verifies that src was created for item procedure kind and returns
+// its raw handle for tape encoding.
 func ItemsCheck(src RowSource, kind int) uint64 {
 	if rec := itemsOf[src.h]; rec != nil && rec.kind != kind && sources[src.h] != nil {
 		Stop("overlay.Items was given a function of the kind %s, but this closure calls one of the kind %s",
@@ -61,7 +65,7 @@ func ItemsCheck(src RowSource, kind int) uint64 {
 	return src.h
 }
 
-// rowContext reads what the element closure over a context last handed row at of src (CTX_GET).
+// RowContext fetches the per-row context bytes supplied by Rust for (src, at).
 func RowContext(cx *Cx, src RowSource, at RowAt) *Reader {
 	CheckCx(cx)
 	o := NewReq(CCtxGet)
@@ -71,18 +75,20 @@ func RowContext(cx *Cx, src RowSource, at RowAt) *Reader {
 	return &Reader{B: MustCall(*o)}
 }
 
-// KitView is a view the kit hands an item function (a tooltip's content): place it as a child,
-// once, in the element the function returns.
+// KitView is a placeholder element referencing a kit-supplied child view by
+// slot index inside an item-procedure template.
 type KitView struct{ ElCore }
 
+// XKitView creates a KitView node referencing kit-provided child view index.
 func XKitView(index int) KitView {
 	n := NewNode(NKitView)
 	NodeArgs(n).U8(uint8(index))
 	return KitView{MkElCore(n)}
 }
 
-// Ask is a data closure's function, kept by the library with its cache of answers: K the closure's
-// arguments (one argument, or a Tuple of them), V its result. gk.Release(cx, a.Src) ends it.
+// Ask represents a typed synchronous request/response callback channel backed
+// by a RowSource, used when Rust kit components query Go for computed data
+// (such as highlight runs, code folds, or syntax context).
 type Ask[K, V any] struct {
 	Src RowSource
 }
@@ -100,15 +106,16 @@ type askCodec struct {
 	put func(o *Tape, v any)
 }
 
-// askCodecs: the wire forms of each ask's key and value, by the Ask type (gen_items.go).
 var askCodecs = map[reflect.Type]askCodec{}
 
+// RegAsk registers the wire reader for key type K and writer for value type V
+// so NewAsk[K, V] can decode incoming requests and encode replies.
 func RegAsk[K, V any](rd func(r *Reader) K, put func(o *Tape, v V)) {
 	askCodecs[reflect.TypeFor[Ask[K, V]]()] = askCodec{func(r *Reader) any { return rd(r) }, func(o *Tape, v any) { put(o, v.(V)) }}
 }
 
 func (a *askRec[K, V]) serve(cx *Cx, r *Reader) {
-	Quiet(cx) // no redraw of the view that made it: the library redraws the windows when the answer is in
+	Quiet(cx)
 	id := r.U64()
 	src := RowSource{MkH(r.U64())}
 	c := askCodecs[reflect.TypeFor[Ask[K, V]]()]
@@ -134,10 +141,8 @@ func init() {
 	}})
 }
 
-// NewAsk keeps f as a data closure's function: the library asks it for each key it draws without
-// an answer, between frames, and caches what it returns. Needs a window: call it in init or in a
-// handler, and keep the gk.Ask. The key and value types are the closure's: an ask of other types
-// does not fit the builder, and one of types no closure of the kit has stops here.
+// NewAsk creates a typed Ask[K, V] callback channel backed by a RowSource and
+// registers it with the Rust core. Must be called outside a view function.
 func NewAsk[K, V any](cx *Cx, f func(cx *Cx, key K) V) Ask[K, V] {
 	CheckCx(cx)
 	if Vb.Active {
@@ -159,19 +164,20 @@ func NewAsk[K, V any](cx *Cx, f func(cx *Cx, key K) V) Ask[K, V] {
 	return Ask[K, V]{src}
 }
 
-// TestAsks is the library's counts of data closure answers (gets, keys asked, answers cached).
+// TestAsks returns diagnostic counters for Ask gets, requests sent, and answers received.
 func TestAsks(cx *Cx) (gets, asked, answered int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CAskTest))}
 	return int(r.U64()), int(r.U64()), int(r.U64())
 }
 
-// TestLends is the library's counts of objects lent by kit state and given back (PROTOCOLS.md 9.17).
+// TestLends returns diagnostic counters for lent handles issued and returned.
 func TestLends(cx *Cx) (lent, givenBack int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CLendTest))}
 	return int(r.U64()), int(r.U64())
 }
 
-// ItemsKinds names the kinds of item functions (overlay.Items), for messages: the generated package sets it.
+// ItemsKinds holds the human-readable names of generated item procedure kinds,
+// populated by generated package init code for ItemsCheck error messages.
 var ItemsKinds []string

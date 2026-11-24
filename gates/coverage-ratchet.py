@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""coverage-ratchet.py [--accept]: the half of the coverage gate that refuses a regression.
+"""Enforce non-regression of upstream API coverage against gates/coverage-baseline.json.
 
-Components are matched by upstream path and row name together.
-Compares api/coverage.json (what the generator wrote; the source of the table in
-docs/STATUS.md) with gates/coverage-baseline.json (the last accepted state, committed).
-Fails when, for a component of the baseline, the component is gone, bound + bridged went
-down, verified went down or failed went up, or when a group's bound + bridged total went
-down. More components, more bound and fewer failed always pass. Prints one line
-"GATE coverage ratchet PASS|FAIL ...".
+What it gates:
+  Per-component and per-group upstream coverage recorded in `api/coverage.json`.
 
-    coverage-ratchet.py            check
-    coverage-ratchet.py --accept   record the present state as the baseline (after a check
-                                   of what changed; commit the file with the change that
-                                   explains it, e.g. a component split in two)
-Standard library only."""
+How it measures and why the check is fair:
+  - Tracks each component by `path [name]` with `done = bound + bridged`, `verified`, and `failed`.
+  - Checks both individual components and aggregate group totals so reorganizing or splitting
+    components cannot silently drop bound surface area.
+  - Run with `--accept` after intentional API coverage increases or upstream removals to update
+    `gates/coverage-baseline.json` in place.
+
+What PASS means (exit 0):
+  Every component in `gates/coverage-baseline.json` still exists in `api/coverage.json`, no
+  component or group lost `bound + bridged` count, no component lost `verified` count, and no
+  component increased `failed` count.
+"""
 import json
 import os
 import sys
@@ -22,24 +24,21 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(REPO, "api", "coverage.json")
 BASE = os.path.join(REPO, "gates", "coverage-baseline.json")
 
-
 def state():
     cov = json.load(open(SRC))
     comps = {}
     for r in cov["components"]:
-        key = f"{r.get('path') or '-'} [{r['name']}]"     # two rows can share a path
+        key = f"{r.get('path') or '-'} [{r['name']}]"
         assert key not in comps, f"api/coverage.json has two rows {key}"
         comps[key] = {"group": r.get("group", ""), "done": r["bound"] + r["bridged"],
                             "verified": r["verified"], "failed": r["failed"], "total": r["total"]}
     return comps
-
 
 def groups(comps):
     g = {}
     for c in comps.values():
         g[c["group"]] = g.get(c["group"], 0) + c["done"]
     return g
-
 
 def main():
     if not os.path.exists(SRC):
@@ -81,6 +80,5 @@ def main():
           f"failed {sum(c['failed'] for c in was.values())} -> {sum(c['failed'] for c in now.values())}"
           + (f"; {len(bad)} regression(s): " + "; ".join(bad[:4]) if bad else ""))
     return 1 if bad else 0
-
 
 sys.exit(main())

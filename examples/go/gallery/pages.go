@@ -1,5 +1,5 @@
-// The gallery's pages in Go: the twin of ref/src/bin/gallery/pages.rs,
-// page for page and call for call.
+// Core component gallery pages: labels, styled/hovered divs, buttons, inputs,
+// uniform lists, switches, alerts, avatars, badges, checkboxes, progress, tags, and more.
 package main
 
 import (

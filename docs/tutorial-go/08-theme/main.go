@@ -1,4 +1,4 @@
-// Step 8 of the Go tutorial: a dark theme, switched by a button, a shortcut and the menu.
+// Step 8 of the Go tutorial: switch between light and dark themes at runtime.
 package main
 
 import (
@@ -24,14 +24,14 @@ type Item struct {
 
 type App struct {
 	items      []Item
-	editing    int // the item the dialog edits
+	editing    int
 	editAmount int
 	dark       bool
 
-	newName, editName editor.InputState // kit state lives in the library; the app keeps handles
+	newName, editName editor.InputState
 	list              table.ListState
 
-	newItem, clearBought, toggleTheme gk.Action // shortcuts, also shown in the menu
+	newItem, clearBought, toggleTheme gk.Action
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -56,7 +56,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
@@ -109,7 +109,7 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 }
 
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
-	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
+	if c, ok := e.(table.ListEventConfirm); ok {
 		a.openEditor(cx, c.Row)
 	}
 }
@@ -143,13 +143,13 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	name := strings.TrimSpace(a.editName.Value(cx))
 	if name == "" {
-		return false // keep the dialog open
+		return false
 	}
 	it := &a.items[a.editing]
 	it.Name = name
 	it.Amount = a.editAmount
 	gk.Refresh(cx)
-	return true // close the dialog
+	return true
 }
 
 func (a *App) focusNewName(cx *gk.Cx) { a.newName.Focus(cx) }
@@ -159,6 +159,8 @@ func (a *App) removeBought(cx *gk.Cx) {
 	gk.Refresh(cx)
 }
 
+// switchTheme flips between light and dark mode. Because theme.* tokens resolve
+// when GPUI draws, every semantic color in the window updates immediately.
 func (a *App) switchTheme(cx *gk.Cx) {
 	a.dark = !a.dark
 	mode := gk.ThemeModeLight

@@ -1,17 +1,8 @@
-# The gallery's pages, one line each, in the order the Next button walks them:
-#   id | script steps after the page's first frame, separated by ";" | upstream functions shown
-# A function is written Type.method with the element type it is called on (Button.primary,
-# whichever trait declares it), a free constructor by its name (div, uniform_list), and a
-# style token as style.name.
-# This one file is compiled into the Rust reference (ref/src/bin/gallery) and read by
-# gates/gallery.sh. Every id has a Rust page; the Go twin (examples/go/gallery) answers `--list`
-# with the ids it has, and the gate reports the others as not
-# bound. A step is a gk-meter script line (click X Y | type TEXT); a shot follows each.
-# The third column is what the conformance count credits when the page's pixels match.
-# The image page (round 6's elem-image) is walked first. gpui keeps every image in one texture atlas and
-# an image's edge samples its atlas neighbour, so the page's pixels depend on what earlier pages left
-# there; the two apps draw some pages from different parts (an input, markdown plugin rows as the
-# app's views), which leave different tiles. First, its pixels are Rust's.
+# Visual parity gallery page manifest read by gates/gallery.py and gates/conformance.py.
+# Format: <page-id> | <semicolon-separated headless script steps> | <space-separated API symbols exercised>
+# Blank lines and lines starting with '#' are ignored by the parsers.
+
+# Core primitives and foundational components
 elem-image |  | img Div.image_cache Img.image_cache Avatar.src
 label-basic |  | Label.new style.text_xs Label.text_color Div.child v_flex style.gap_2
 div-style |  | div h_flex Div.child Div.w Div.h Div.bg style.rounded_sm style.p_2 style.p_1 style.gap_1 style.gap_3 style.flex_wrap style.w_full style.text_xs
@@ -23,6 +14,8 @@ input-cleanable | click 60 96; type xyz | Input.cleanable
 list |  | uniform_list style.size_full
 switch-bare |  | Switch.new Switch.checked
 switch-bare-click | click 34 92; click 34 92 | Switch.on_click
+
+# Component catalog: buttons, alerts, indicators, form controls, and display widgets
 button-variants |  | Button.secondary Button.danger Button.warning Button.success Button.info Button.ghost Button.link Button.text
 button-outline |  | Button.outline
 button-sizes |  | Button.xsmall Button.small Button.large
@@ -48,7 +41,8 @@ description-list |  | DescriptionList.new DescriptionList.item DescriptionList.c
 kbd |  | Kbd.new Kbd.outline
 link |  | Link.new Link.href Link.disabled Link.child
 skeleton |  | Skeleton.new Skeleton.secondary
-# The input family (ref/src/bin/gallery/input_pages.rs)
+
+# Text inputs, textarea, code editor, number/OTP inputs, and completions
 input-edit | click 60 96; key ctrl-a; type Ada; key ctrl-a; key ctrl-c; key end; key ctrl-v; key ctrl-z; key ctrl-y; key shift-left | Input.new InputState.new InputState.placeholder
 textarea | click 60 100; type one; key enter; type two; key shift-up | Textarea.new TextareaState.new TextareaState.auto_grow TextareaState.placeholder
 editor | click 300 200; type x; key enter; type y | gpui_kit::base::Editor::new EditorState.new EditorState.language EditorState.default_value EditorState.set_line_number
@@ -57,9 +51,13 @@ otp-input | click 338 96; type 1234 | OtpInput.new OtpState.new
 editor-completion | click 300 200; type a.; key down; key enter | Editor.new EditorState.new EditorState.language
 input-masked | click 236 96 | InputState.masked Input.mask_toggle Input.disabled
 input-writes | click 56 136; click 144 136; click 232 136; click 320 136 | InputState.set_selected_range InputState.replace InputState.insert InputState.set_value InputState.default_value
+
+# Virtualized row components (List, DataTable, Tree)
 rows-list | click 60 94; key down; scroll 200 200 -60000; key up | List.new ListState.new List.scrollbar_visible ListItem.new ListDelegate.items_count ListDelegate.render_item ListDelegate.set_selected_index
 rows-table | click 100 128; key down; key end; click 100 96; key home | DataTable.new TableState.new DataTable.scrollbar_visible Column.new Column.sortable TableDelegate.columns_count TableDelegate.rows_count TableDelegate.column TableDelegate.render_td TableDelegate.perform_sort
 rows-tree | click 60 94; key down; key down | tree TreeState.new TreeState.items TreeItem.new TreeItem.child TreeItem.expanded
+
+# Charts, chart tooltips, and custom Plot primitives
 chart-line |  | LineChart.new LineChart.id LineChart.appear LineChart.x LineChart.y LineChart.stroke LineChart.dot LineChart.name LineChart.tick_margin LineChart.y_axis LineChart.y_tick_count LineChart.y_tick_format LineChart.grid_dashed LineChart.reference_line LineChart.interactive LineChart.linear LineChart.x_axis LineChart.grid LineChart.y_domain LineChart.y_padding LineChart.y_axis_label_placement
 chart-line-more |  | LineChart.appear_key LineChart.step_after LineChart.x_tick_count LineChart.grid_columns LineChart.natural LineChart.point_count
 chart-area |  | AreaChart.new AreaChart.id AreaChart.appear AreaChart.x AreaChart.y AreaChart.stroke AreaChart.fill AreaChart.name AreaChart.y_axis AreaChart.y_tick_count AreaChart.y_tick_format AreaChart.tick_margin AreaChart.interactive AreaChart.step_after AreaChart.linear AreaChart.natural AreaChart.x_axis AreaChart.grid AreaChart.grid_dashed AreaChart.grid_columns AreaChart.x_tick_count AreaChart.y_domain AreaChart.point_count AreaChart.reference_line AreaChart.y_padding AreaChart.y_axis_label_placement AreaChart.appear_key
@@ -73,21 +71,21 @@ chart-tooltip-line | move 196 190 | LineChart.tooltip_title LineChart.tooltip_va
 chart-tooltip-bar | move 166 260 | BarChart.tooltip_content
 chart-tooltip-pie | move 240 170 | PieChart.tooltip_name PieChart.tooltip_value
 plot-custom |  | PlotAxis.new PlotAxis.x PlotAxis.x_label PlotAxis.stroke PlotAxis.paint AxisText.new Grid.new Grid.y Grid.stroke Grid.dash_array Grid.paint Bar.new Bar.data Bar.band_width Bar.cross Bar.base Bar.value Bar.fill Bar.corner_radii Bar.paint Area.new Area.data Area.x Area.y0 Area.y1 Area.fill Area.stroke Area.curve Area.paint Line.new Line.data Line.x Line.y Line.stroke Line.stroke_width Line.curve Line.dot Line.dot_size Line.dot_fill Line.dot_stroke Line.paint RadialLine.new RadialLine.data RadialLine.angle RadialLine.radius RadialLine.closed RadialLine.fill RadialLine.stroke RadialLine.stroke_width RadialLine.dot RadialLine.dot_size RadialLine.dot_fill RadialLine.dot_stroke RadialLine.paint Plot.paint
+
+# Sidebar, modal overlays, menus, themes, scales, and dock panels
 generic-sidebar |  | Sidebar.new Sidebar.side Sidebar.collapsible Sidebar.collapsed Sidebar.header Sidebar.footer Sidebar.child Sidebar.children SidebarMenu.new SidebarMenu.child SidebarMenuItem.new SidebarMenuItem.active gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::new gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::side gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::collapsible gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::collapsed gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::header gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::footer gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::child gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>::children
-# The overlays track (docs/PROTOCOLS.md 11.6): opened by the page's button or a right click.
 overlay-dialog | click 60 96 | WindowExt.open_dialog Dialog.title Dialog.entrance Dialog.child Dialog.footer
 overlay-alert | click 60 96 | WindowExt.open_alert_dialog AlertDialog.title AlertDialog.description AlertDialog.entrance AlertDialog.show_cancel
 overlay-sheet | click 60 96 | WindowExt.open_sheet Sheet.title Sheet.child
 overlay-sheet-left | click 60 96 | WindowExt.open_sheet_at Sheet.resizable
 overlay-dropdown | click 60 96 | DropdownMenu.dropdown_menu PopupMenu.menu PopupMenu.separator PopupMenu.label PopupMenu.menu_with_check PopupMenu.menu_with_disabled
 overlay-context | rclick 100 150 | ContextMenuExt.context_menu PopupMenu.submenu
-# The values track (ref/src/bin/gallery/values_pages.rs):
-# each theme page's button toggles, so the second click puts the theme back.
 values-theme-mode | click 60 96; click 60 96 | Theme.change Theme.is_dark
 values-theme-edit | click 60 96; click 60 96 | Theme.font_size Theme.radius
 values-scales |  | ScaleBand.new ScaleBand.padding_inner ScaleBand.band_width ScaleLinear.new Scale.tick
 dock-panels |  | DockSkin.dock_area DockArea.set_center DockArea.set_dock DockLayout.tabs DockLayout.panel Panel.panel_name Panel.title
-# The lists and editor track (ref/src/bin/gallery/lists2_pages.rs)
+
+# Searchable selects, combobox, styled/static tables, highlighting, diffs, and inline tokens
 lists2-select | click 100 96; advance 500; key down; key enter | Select.new Select.placeholder SelectState.new SearchableListDelegate.items_count SearchableListDelegate.item SearchableListDelegate.position SearchableListDelegate.is_item_enabled SearchableListDelegate.is_item_checked SearchableListItem.title SearchableListItem.display_title SearchableListItem.render SearchableListItem.value SearchableListItem.disabled
 lists2-select-search | click 100 96; advance 500; type an; key escape | SelectState.searchable Select.search_placeholder SearchableListDelegate.perform_search SearchableListDelegate.sections_count SearchableListItem.matches
 lists2-select-rows | click 100 96; advance 500; key escape | SearchableListDelegate.render_item SearchableListDelegate.render_section_header
@@ -96,58 +94,43 @@ lists2-table-look |  | TableDelegate.group_headers TableDelegate.render_group_th
 lists2-table-static |  | Table.new Table.child TableHeader.new TableHeader.child TableBody.new TableBody.children TableRow.new TableRow.child TableHead.new TableCell.new
 text-highlight | advance 300 | TextView.code_block_highlighter TextView.markdown
 diff-view |  | DiffFile.parse DiffState.new Diff.new
-# Round 4 (docs/PROTOCOLS.md 9.16 to 9.18): an element closure over a context (a token's, a diff
-# file's), an object lent by kit state (an editor's diagnostics), a delegate answered between frames
-# (the editor's highlighter).
 text-token | advance 100 | gpui_kit::component::input::Input::token gpui_kit::component::input::InputToken::new gpui_kit::base::input::InlineTokenContext::is_selected gpui_kit::base::input::InlineTokenContext::line_height gpui_kit::base::input::InlineTokenContext::available_width gpui_kit::base::input::InlineTokenContext::is_disabled gpui_kit::base::input::InputState::replace_range_with_token gpui_kit::base::input::InlineToken::new gpui_kit::base::input::InlineToken::with_label
 diff-header | advance 100 | gpui_kit::component::diff::Diff::render_header_suffix read:gpui_kit::component::diff::DiffFile::path
 editor-diagnostics | advance 300 | gpui_kit::base::input::EditorState::diagnostics_mut gpui_kit::base::input::EditorState::set_highlighter_factory gpui_kit::base::input::DiagnosticSet::push gpui_kit::base::input::Diagnostic::new gpui_kit::base::input::InputHighlighter::styles gpui_kit::base::input::InputHighlighter::update gpui_kit::base::input::InputHighlighter::language
-# (end of the lists and editor track's pages)
+
+# Calendar, scrollbars, dock hooks/restore/renderer, popovers, settings, drag-and-drop, and menus
 calendar-date |  | Calendar.new CalendarState.set_date
 values-scroll |  | Div.track_scroll Scrollbar.vertical ScrollbarHandle.set_offset
-# The overlays track, round 3 (docs/PROTOCOLS.md 11.8): node ids read back and split at, a panel's
-# title suffix and toolbar from the app's views, a saved layout loaded through the panel registry.
 dock-split |  | DockArea.layout PaneTree.find_panel_node DockArea.split_at
 dock-hooks | click 597 95 | Panel.title Panel.title_suffix Panel.toolbar_buttons Panel.dropdown_menu PanelHandle.new
 dock-restore |  | DockArea.load register_panel PanelRegistry.build_panel PanelBuilder.build
 menu-kbd |  | Kbd.binding_for_action Kbd.global_binding_for_action
 menu-dropdown-anchor | click 60 96 | DropdownMenu.dropdown_menu_with_anchor
 dock-skin |  | DockSkin.set_panel_style DockSkin.set_close_button_visible
-# The overlays track, round 4 (docs/PROTOCOLS.md 11.9, 11.12): a dock drawn by the app's renderer (its
-# frame, a dock's chrome around the content and the tab bar are app views), a popover held open by the app.
 dock-renderer |  | DockArea.with_renderer DockAreaRenderer.frame DockAreaRenderer.render_dock TabGroupRenderer.render_tab_bar DockAreaRenderer.tab_group_renderer DockContext.placement DockContext.is_open
 overlay-popover-open |  | Popover.trigger Popover.open
-# The values track, round 4 (docs/PROTOCOLS.md 13.19, 13.20; values_pages.rs):
-# a settings page over value cells (its switch and the zoom field's + clicked), drag and drop of the library's drag value, box_shadow read back,
-# the kit's resizable panels, a div with the kit's scrollbar, a toolbar of Sizable children.
 values-settings | click 742 251; click 739 468 | Settings.new Settings.sidebar_size_range Settings.page SettingPage.new SettingPage.group SettingGroup.new SettingGroup.title SettingGroup.item SettingItem.new SettingItem.render gpui_kit::component::setting::SettingField<bool>::switch gpui_kit::component::setting::SettingField<bool>::checkbox gpui_kit::component::setting::SettingField<gpui_kit::SharedString>::input gpui_kit::component::setting::SettingField<gpui_kit::SharedString>::dropdown gpui_kit::component::setting::SettingField<f64>::number_input gpui_kit::component::setting::SettingField<bool>::default_value
 values-drag | drag 76 100 316 140 | InteractiveElement.on_drop InteractiveElement.drag_over StatefulInteractiveElement.on_drag
 values-shadow |  | box_shadow
 values-resizable |  | h_resizable resizable_panel ResizablePanelGroup.child ResizablePanel.size
 values-scrollbar-div |  | ScrollableElement.overflow_y_scrollbar
 values-toolbar |  | Toolbar.new Toolbar.child Toolbar.children
-# The views track, round 5 (views_pages.rs): a sidebar of groups of the kit's menus,
-# one group collapsed (SidebarGroup<SidebarMenu>, Sidebar<SidebarGroup<SidebarMenu>>).
 views-sidebar-groups |  | SidebarGroup.new SidebarGroup.child SidebarGroup.children SidebarGroup.collapsed gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::new gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::side gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::collapsible gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::collapsed gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::header gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::child gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::children
 views-submenu-icon | rclick 100 150 | PopupMenu.submenu_with_icon
 views-menu-items | rclick 100 150 | PopupMenu.item PopupMenuItem.new PopupMenuItem.icon PopupMenuItem.action PopupMenuItem.separator PopupMenuItem.label PopupMenuItem.checked PopupMenuItem.disabled PopupMenuItem.on_click PopupMenuItem.element PopupMenuItem.link
-# The editor track, round 5 (docs/PROTOCOLS.md 9.20 to 9.23; editor_pages.rs): a block
-# surface (a typed fragment), headings styled by level (a table), Markdown plugins drawn by the app's
-# rows (block and inline) beside the kit's frontmatter plugin, a link's tooltip (a row per URL).
+
+# Rich-text plugins, editor_host blocks, scroller, LSP popovers, and diagnostics
 editor5-surface |  | gpui_kit::base::MarkdownExtensions::block_surface
 editor5-heading |  | gpui_kit::base::TextViewStyle::with_heading
 editor5-plugin | advance 100 | gpui_kit::base::MarkdownExtensions::plugin gpui_kit::base::TextView::plugin gpui_kit::component::text::FrontmatterPlugin::new gpui_kit::base::MarkdownPlugin::is_block gpui_kit::base::MarkdownPlugin::name gpui_kit::base::MarkdownPlugin::parse gpui_kit::base::MarkdownPlugin::render gpui_kit::base::MarkdownPlugin::render_inline
 editor5-tooltip | move 28 90; advance 600 | gpui_kit::base::TextView::link_tooltip
 editor6-host |  | gpui_kit::base::text::editor_host::collect_leaf_geometry gpui_kit::base::text::editor_host::parse_markdown gpui_kit::base::text::editor_host::Paragraph::push gpui_kit::base::text::editor_host::Paragraph::with_leaf_key gpui_kit::base::text::editor_host::InlineNode::new gpui_kit::base::text::editor_host::InlineNode::marks gpui_kit::base::text::editor_host::TextMark::bold gpui_kit::base::text::CodeBlock::from_code gpui_kit::base::text::CodeBlock::with_leaf_key
-# The editor track, round 7 (docs/PROTOCOLS.md 9.38 to 9.40): decorators kept for later (a number input's buttons,
-# a message scroller's jump button after a scroll up), the Lsp's completion highlighter (an ask) on a menu the app
-# presents, a diagnostic presented on a click.
 editor7-number |  | gpui_kit::base::NumberInput::new gpui_kit::base::NumberInput::increment_button gpui_kit::base::NumberInput::decrement_button
 editor7-scroller | scroll 150 200 300; advance 300 | gpui_kit::component::message_scroller::MessageScroller::new gpui_kit::component::message_scroller::MessageScrollerState::new gpui_kit::component::message_scroller::MessageScroller::with_jump_button_renderer
 editor7-lsp | click 60 120; advance 100 | gpui_kit::base::input::EditorState::lsp_mut gpui_kit::base::input::Lsp::with_completion_highlighter gpui_kit::base::input::EditorState::present_completion_items
 editor7-diagnostic | click 60 120; advance 100 | gpui_kit::base::input::EditorState::present_diagnostic
-# The platform and motion track, round 5 (motion_pages.rs, docs/PROTOCOLS.md 13.30):
-# animations and motion values at fixed times (the offscreen clock moves only on advance).
+
+# Motion animations, springs, keyframes, presence, focus trap, and low-level element hooks
 motion-animation | advance 100; advance 150; advance 300 | gpui_kit::base::animation::cubic_bezier
 motion-chain | advance 100; advance 150; advance 100; advance 300 |
 motion-effect | advance 100; advance 300 | gpui_kit::base::animation::EffectTransition::apply EffectTransition.new EffectTransition.fade EffectTransition.slide_x EffectTransition.width
@@ -159,7 +142,8 @@ motion-focus-trap |  | gpui_kit::base::FocusTrapElement::focus_trap
 elem-drop | drag 66 110 182 110; drag 66 110 298 110 | InteractiveElement.can_drop InteractiveElement.on_drag_move InteractiveElement.group_drag_over StatefulInteractiveElement.external_drag_payload
 elem-scope |  | gpui_kit::base::ElementExt::text_selection_scope gpui_kit::base::TextSelectionScopeId::new StatefulInteractiveElement.anchor_scroll StatefulInteractiveElement.a11y_synthetic_children Div.with_dynamic_prepaint_order
 elem-vlist |  | gpui_kit::base::v_virtual_list gpui_kit::base::h_virtual_list
-# The components track, round 6 (docs/PROTOCOLS.md 11.17 to 11.24, 12.16).
+
+# Comp6 additions: tooltips, resize handles, calendar matchers, context menus, and chart labels/gradients
 comp6-tooltip | move 96 100; advance 1000 | Tooltip.new Tooltip.key_binding
 comp6-tooltip-element | move 96 100; advance 1000 | Tooltip.element Tooltip.action
 comp6-resize |  | ResizablePanelGroup.with_handle_appearance ResizeHandle.with_appearance resize_handle_appearance ResizeHandleContext.is_active

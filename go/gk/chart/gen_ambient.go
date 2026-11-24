@@ -13,7 +13,7 @@ import (
 // A chart reserves this much of its height for the axis. With the default `TEXT_SIZE` it is 18px;
 // a styled layer drawing larger labels passes its own size so the plot shrinks to fit them.
 //
-// BaseAxisGutter is gpui_kit::base::plot::axis_gutter.
+// BaseAxisGutter calls gpui_kit::base::plot::axis_gutter.
 func BaseAxisGutter(cx *gk.Cx, fontSize float32) float32 {
 	rt.UseBasePlot()
 	o := rt.NewReq(728)
@@ -25,7 +25,7 @@ func BaseAxisGutter(cx *gk.Cx, fontSize float32) float32 {
 // Returns the rendered width of `text` at `font_size` using the window's current text style. Used
 // for layout calculations that need to reserve space for labels before the scale ranges are fixed.
 //
-// BaseMeasureTextWidth is gpui_kit::base::plot::label::measure_text_width.
+// BaseMeasureTextWidth calls gpui_kit::base::plot::label::measure_text_width.
 func BaseMeasureTextWidth(cx *gk.Cx, text string, fontSize float32) float32 {
 	rt.UseBasePlot()
 	o := rt.NewReq(731)
@@ -37,7 +37,7 @@ func BaseMeasureTextWidth(cx *gk.Cx, text string, fontSize float32) float32 {
 
 // Compute the full layout: `Topology` plus the vertical node placement and link breadths.
 //
-// BaseSankeyLayout is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::layout(&value, node_count, links)).
+// BaseSankeyLayout calls (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::layout(&value, node_count, links)).
 func BaseSankeyLayout(cx *gk.Cx, value Sankey, nodeCount int, links []SankeyLink) gk.Fallible[SankeyGraph] {
 	rt.UseBasePlot()
 	o := rt.NewReq(1659)
@@ -57,7 +57,7 @@ func BaseSankeyLayout(cx *gk.Cx, value Sankey, nodeCount int, links []SankeyLink
 // The topological fields are extent-independent; the horizontal and vertical positions are
 // recomputed for this generator's extent.
 //
-// BaseSankeyLayoutFrom is (|value: gpui_kit::base::plot::shape::Sankey, graph| <gpui_kit::base::plot::shape::Sankey>::layout_from(&value, graph)).
+// BaseSankeyLayoutFrom calls (|value: gpui_kit::base::plot::shape::Sankey, graph| <gpui_kit::base::plot::shape::Sankey>::layout_from(&value, graph)).
 func BaseSankeyLayoutFrom(cx *gk.Cx, value Sankey, graph SankeyGraph) SankeyGraph {
 	rt.UseBasePlot()
 	o := rt.NewReq(1660)
@@ -75,7 +75,7 @@ func BaseSankeyLayoutFrom(cx *gk.Cx, value Sankey, graph SankeyGraph) SankeyGrap
 // `nodeId`). Returns an error if a link references a node out of range or the graph contains a
 // cycle.
 //
-// BaseSankeyTopology is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::topology(&value, node_count, links)).
+// BaseSankeyTopology calls (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::topology(&value, node_count, links)).
 func BaseSankeyTopology(cx *gk.Cx, value Sankey, nodeCount int, links []SankeyLink) gk.Fallible[SankeyGraph] {
 	rt.UseBasePlot()
 	o := rt.NewReq(1661)
@@ -94,7 +94,7 @@ func BaseSankeyTopology(cx *gk.Cx, value Sankey, nodeCount int, links []SankeyLi
 // fits. `max_width <= 0` is treated as "no budget" and returns `text` unchanged (the caller has no
 // room to reason about).
 //
-// BaseTruncateTextToWidth is gpui_kit::base::plot::label::truncate_text_to_width.
+// BaseTruncateTextToWidth calls gpui_kit::base::plot::label::truncate_text_to_width.
 func BaseTruncateTextToWidth(cx *gk.Cx, text string, fontSize float32, maxWidth float32) string {
 	rt.UseBasePlot()
 	o := rt.NewReq(732)

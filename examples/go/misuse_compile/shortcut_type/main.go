@@ -1,5 +1,4 @@
-// A shortcut's handler of another shape: gk.Shortcut takes a func(cx) or a click handler, so a
-// func(cx, bool) does not compile.
+// Compile-time misuse case: gk.Shortcut only accepts func(*gk.Cx) or func(*gk.Cx, gk.ClickEvent).
 package main
 
 import (

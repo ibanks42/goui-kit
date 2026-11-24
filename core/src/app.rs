@@ -1,17 +1,25 @@
-//! The app-level protocols (docs/PROTOCOLS.md section 11): actions and key bindings, timers,
-//! windows and the clipboard. Hand-written runtime of the app family; generated code reaches it
-//! only through `genapi` (`action`, `action_listener`, the `Wire` impl of `dyn Action`).
+//! Application-level runtime services: dynamic actions, keybindings, timers, window management,
+//! lifecycle hooks, clipboard access, and reduced-motion settings.
 //!
-//! - **Actions.** An action is a u32 id. `ACTION_NEW` names one: a name GPUI's action registry
-//!   knows (`menu::Confirm`, the kit's input actions) is that built-in action, built with
-//!   `App::build_action` (id with bit 31 set); any other name is an app action, `GkAction { id }`,
-//!   one Rust type for all of them whose `partial_eq` compares ids. Key bindings, menus,
-//!   tooltips and `Kbd` take either kind; listeners on elements filter app actions by id.
-//! - **Timers** are foreground tasks: they fire a kept handler as an EVENT turn between frames,
-//!   never inside a draw. Releasing the handle drops the task, which cancels it.
-//! - **Windows** carry their options; a closed window releases its handle, fires the app's
-//!   listeners and, by default, quits the app when it was the last. The app may be asked before
-//!   the user closes one (`ON_WINDOW_SHOULD_CLOSE`), and told when the app quits (`ON_APP_QUIT`).
+//! # Action Namespace and Dispatch Protocol
+//!
+//! - **Unified action IDs**: `ACTIONS` stores 1-based entries `(name, json_data, Option<Box<dyn Action>>)`.
+//!   Host-defined actions use plain indices (`id & BUILTIN == 0`) and dispatch through the single
+//!   Rust type [`GkAction`]. Upstream built-in actions constructed via `cx.build_action` or
+//!   discovered via [`id_of`] set the [`BUILTIN`] (`0x8000_0000`) flag bit so callers can check
+//!   `IsBuiltin()` and cannot accidentally register app-wide `GkAction` listeners for built-in types.
+//! - **Propagation invariant**: because every custom host action shares the Rust type `GkAction`,
+//!   GPUI invokes every `on_action::<GkAction>` listener on the bubble path. [`action_listener`]
+//!   checks `a.id == id` and calls `cx.propagate()` on mismatch so sibling/ancestor handlers for
+//!   other custom action IDs still run.
+//! - **Subscription cleanup**: app-wide action listeners (`C_ON_ACTION`), window-closed hooks
+//!   (`C_ON_WINDOW_CLOSED`), close-veto hooks (`C_ON_WINDOW_SHOULD_CLOSE`), and quit hooks
+//!   (`C_ON_APP_QUIT`) store RAII drop guards ([`Unlisten`], [`UnlistenAction`]) in `HK_SUB` slots
+//!   so `C_RELEASE` cleanly unregisters them.
+//! - **Window flags (`C_WINDOW_OPEN`)**: `flags` packs 6 bits: bit 0 = not resizable, bit 1 = not
+//!   minimizable, bit 2 = not movable, bit 3 = unfocused, bit 4 = hidden (`show = false`), bit 5 =
+//!   use `gpui_kit::component::TitleBar::window_options()`. `TITLES` caches each window's title
+//!   as a fallback for platforms/headless drivers where `window.window_title()` returns empty.
 
 use crate::genapi::{self, Call, HandlerRef};
 use crate::ops::*;
@@ -26,12 +34,10 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::time::Duration;
 
-/// Bit 31 of an action id: a built-in action (GPUI's or the kit's), not one of the app's.
+/// Bit flag set on action IDs that wrap an upstream built-in GPUI/gpui-kit `Action`.
 pub const BUILTIN: u32 = 0x8000_0000;
 
-// --- actions --------------------------------------------------------------------------------
-
-/// Every action of the app: one type, told apart by id.
+/// Single GPUI `Action` type representing all dynamically registered host actions by `id`.
 #[derive(Clone, PartialEq, Debug)]
 pub struct GkAction {
     pub id: u32,
@@ -58,27 +64,24 @@ impl Action for GkAction {
 struct Entry {
     name: &'static str,
     data: String,
-    /// The built-in action, or None for an app action (a GkAction).
     builtin: Option<Box<dyn Action>>,
 }
 
 thread_local! {
     static ACTIONS: RefCell<Vec<Entry>> = const { RefCell::new(Vec::new()) };
-    /// App-wide listeners by action id: (listener handle, kept handler).
+    /// App-wide `GkAction` listeners keyed by action ID.
     static GLOBAL: RefCell<HashMap<u32, Vec<(u64, HandlerRef)>>> = RefCell::new(HashMap::new());
     static GLOBAL_INSTALLED: Cell<bool> = const { Cell::new(false) };
-    /// Listeners of a window's closing, by window handle.
+    /// Per-window closed listeners keyed by window handle.
     static CLOSED: RefCell<HashMap<u64, Vec<(u64, HandlerRef)>>> = RefCell::new(HashMap::new());
-    /// The app's answers to "may the user close this window?", by window handle (PROTOCOLS.md 11.38).
+    /// Per-window close-veto callbacks keyed by window handle.
     static SHOULD_CLOSE: RefCell<HashMap<u64, Vec<(u64, HandlerRef)>>> = RefCell::new(HashMap::new());
-    /// The app's quit hooks, by listener handle (key 0: one list).
+    /// App-quit hooks (stored under key 0).
     static ON_QUIT: RefCell<HashMap<u64, Vec<(u64, HandlerRef)>>> = RefCell::new(HashMap::new());
-    /// The title each window was given (gk.open_window, gk.set_window_title), for window_info:
-    /// the platform does not give it back on Linux.
+    /// Fallback title cache for platforms or headless windows where `window.window_title()` is empty.
     static TITLES: RefCell<HashMap<gpui_kit::WindowId, String>> = RefCell::new(HashMap::new());
     static QUIT_ON_LAST: Cell<bool> = const { Cell::new(true) };
-    /// The windows whose gpui should-close callback the library installed (one each; it asks the
-    /// app's handlers of SHOULD_CLOSE).
+    /// Tracks which windows already have a GPUI `on_window_should_close` hook installed.
     static INSTALLED_CLOSE: RefCell<std::collections::HashSet<u64>> = RefCell::new(std::collections::HashSet::new());
 }
 
@@ -86,7 +89,7 @@ fn name_of(id: u32) -> &'static str {
     ACTIONS.with(|a| a.borrow().get(((id & !BUILTIN) as usize).wrapping_sub(1)).map(|e| e.name).unwrap_or("gk::Unknown"))
 }
 
-/// The action an id names, as a box GPUI takes.
+/// Resolves an action ID to a boxed GPUI `Action` (either a cloned built-in or a [`GkAction`]).
 pub fn boxed(id: u32) -> GkResult<Box<dyn Action>> {
     ACTIONS.with(|a| {
         let a = a.borrow();
@@ -98,8 +101,7 @@ pub fn boxed(id: u32) -> GkResult<Box<dyn Action>> {
     })
 }
 
-/// The id of an action the library hands to the app (a menu item's, a listener's). A built-in
-/// action the app never named gets an id here, under its own name.
+/// Returns the wire ID for `action`, interning unseen built-in actions in the table.
 pub fn id_of(action: &dyn Action) -> u32 {
     if let Some(a) = action.as_any().downcast_ref::<GkAction>() {
         return a.id;
@@ -114,6 +116,9 @@ pub fn id_of(action: &dyn Action) -> u32 {
     })
 }
 
+/// Registers or deduplicates an action `(name, json_data)`. If GPUI recognizes `name` as a
+/// built-in action, its constructed `Box<dyn Action>` is cached with the [`BUILTIN`] flag bit set;
+/// otherwise a new host `GkAction` ID is allocated.
 fn action_new(name: &str, data: &str, cx: &App) -> GkResult<u32> {
     if name.is_empty() {
         return err(ERR_BAD_OP, "an action needs a name (\"app::Save\")");
@@ -140,6 +145,7 @@ fn action_new(name: &str, data: &str, cx: &App) -> GkResult<u32> {
         Err(_) if data.is_empty() => None,
         Err(e) => return err(ERR_BAD_OP, format!("action {name} with data {data}: {e}")),
     };
+    // GPUI's `Action::name` requires `&'static str`; action names are interned once per unique pair.
     let leaked: &'static str = Box::leak(name.to_string().into_boxed_str());
     Ok(ACTIONS.with(|t| {
         let mut t = t.borrow_mut();
@@ -149,8 +155,8 @@ fn action_new(name: &str, data: &str, cx: &App) -> GkResult<u32> {
     }))
 }
 
-/// The listener a generated `on_action` / `capture_action` hands GPUI: it fires the handler for
-/// its own action and lets every other app action go on to the next listener.
+/// Builds an element-level listener for a single `GkAction` ID, propagating non-matching IDs
+/// because all host actions share the Rust type `GkAction`.
 pub fn action_listener(
     id: u32,
     h: HandlerRef,
@@ -166,7 +172,7 @@ pub fn action_listener(
     }
 }
 
-/// Removes a listener from its table when its handle is released.
+/// RAII drop guard stored under `HK_SUB` that unregisters a window or app-quit listener on `C_RELEASE`.
 struct Unlisten {
     table: &'static std::thread::LocalKey<RefCell<HashMap<u64, Vec<(u64, HandlerRef)>>>>,
     key: u64,
@@ -186,6 +192,7 @@ impl Drop for Unlisten {
     }
 }
 
+/// RAII drop guard stored under `HK_SUB` that removes an app-wide `GkAction` listener on `C_RELEASE`.
 struct UnlistenAction {
     id: u32,
     handle: u64,
@@ -210,7 +217,6 @@ fn kept(r: &mut R) -> HandlerRef {
     HandlerRef { view: 0, generation, handler }
 }
 
-/// Fires a kept handler with `window` in scope when it is free, else with the app alone.
 fn fire_kept<P: genapi::Wire + ?Sized>(h: HandlerRef, shape: u16, payload: &P, window: Option<AnyWindowHandle>, cx: &mut App) {
     let done = match window {
         Some(any) => any
@@ -225,9 +231,7 @@ fn fire_kept<P: genapi::Wire + ?Sized>(h: HandlerRef, shape: u16, payload: &P, w
     }
 }
 
-// --- windows ----------------------------------------------------------------------------------
-
-/// Called once when the app starts: what happens when a window closes, and when the app quits.
+/// Registers GPUI window-closed and app-quit lifecycle observers once at startup.
 pub fn install(cx: &mut App) {
     cx.on_window_closed(|cx, id| {
         rt::guard("closing a window", || window_closed(id, cx));
@@ -240,8 +244,6 @@ pub fn install(cx: &mut App) {
     .detach();
 }
 
-/// The app's quit hooks, each once, with no window (gpui calls them as the app shuts down, and
-/// waits a short time for what they start; a hook's own writes are applied before it returns).
 fn app_quit(cx: &mut App) {
     let hooks = ON_QUIT.with(|t| t.borrow_mut().remove(&0)).unwrap_or_default();
     for (_, h) in hooks {
@@ -249,11 +251,7 @@ fn app_quit(cx: &mut App) {
     }
 }
 
-/// Whether the user may close the window `wh`: every handler the app gave asked in turn, with the
-/// window in scope; the first that returns false keeps it open. A handler that is gone (its
-/// listener released, its view's table replaced) or that returned nothing does not hold the window.
-/// The platform asks through gpui's `on_window_should_close`; the tests ask through
-/// `PLATFORM_TEST` 6, the same function.
+/// Invokes registered close-veto handlers for `wh`; returns `false` if any handler vetoes closing.
 pub fn ask_should_close(wh: u64, window: &mut Window, cx: &mut App) -> bool {
     let list = SHOULD_CLOSE.with(|t| t.borrow().get(&wh).cloned().unwrap_or_default());
     for (_, h) in list {
@@ -265,6 +263,8 @@ pub fn ask_should_close(wh: u64, window: &mut Window, cx: &mut App) -> bool {
     true
 }
 
+/// Fires all `C_ON_WINDOW_CLOSED` listeners for `id`, releases its `HK_WINDOW` handle, and quits
+/// the GPUI app if `QUIT_ON_LAST` is enabled and no windows remain open.
 fn window_closed(id: gpui_kit::WindowId, cx: &mut App) {
     let wh = rt::with(|s| {
         s.windows.iter().copied().find(|w| s.window(*w).ok().is_some_and(|any| any.window_id() == id))
@@ -299,10 +299,8 @@ fn on_window<T>(c: &mut Call, wh: u64, f: impl FnOnce(&mut Window, &mut App) -> 
     rt::with_window(any, window, c.cx, f)
 }
 
-// --- the call ops -------------------------------------------------------------------------------
-
+/// Dispatches app-family wire calls (actions, keybindings, timers, windows, clipboard) and dock calls.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
-    // Dock panels (docs/PROTOCOLS.md 11.7, core/src/dock.rs).
     if let Some(done) = crate::dock::call(op, r, c) {
         return Some(done);
     }
@@ -358,10 +356,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                 c.cx.on_action::<GkAction>(|a, cx| {
                     let list = GLOBAL.with(|t| t.borrow().get(&a.id).cloned().unwrap_or_default());
                     for (_, h) in list {
-                        // Queued, not fired here: GPUI calls an app-wide listener inside the window's
-                        // dispatch, where the window is not available, and the handler wants one (to open
-                        // a dialog, focus an input). Delivered when the dispatch has ended, before the
-                        // next draw, with the window of the view that registered it (PROTOCOLS.md 11.33).
+                        // Queue delivery so listeners run outside GPUI's action-dispatch borrow.
                         genapi::fire_queued(h, SHAPE_ACTION, &a.id, cx);
                     }
                 });
@@ -440,8 +435,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                     }
                 }
                 if !repeat {
-                    // A one-shot timer forgets itself when it has fired (the binding forgets its
-                    // handler then too); dropped outside this task.
+                    // Self-release one-shot timers on a deferred tick after the task finishes.
                     cx.update(|cx| {
                         cx.defer(move |_| {
                             let item = rt::with(|s| s.release(th)).ok();
@@ -464,8 +458,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             let kind = r.u8();
             let has_pos = r.u8() != 0;
             let (x, y) = (r.f32(), r.f32());
-            // PROTOCOLS.md 11.38: the app id the desktop matches the window to its
-            // entry by (Wayland's app_id, X11's WM_CLASS), and the window's icon as a PNG.
+
             let app_id = r.str().to_string();
             let n = r.u32() as usize;
             let icon = if n == 0 {
@@ -483,9 +476,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             if icon.is_some() {
                 o.icon = icon;
             }
+            // Bit 5 selects gpui-kit's custom TitleBar chrome options.
             if flags & 32 != 0 {
-                // the kit's own title bar (TitleBar::window_options, PROTOCOLS.md 13.21): its
-                // titlebar and window decorations over the meter's bounds and display
                 let k = gpui_kit::component::TitleBar::window_options();
                 o.titlebar = k.titlebar;
                 o.window_decorations = k.window_decorations;
@@ -599,8 +591,6 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
         C_WINDOW_INFO => (|| {
             let wh = r.u64();
             let (title, b, active) = on_window(c, wh, |window, _| {
-                // X11 and Wayland give no title back (gpui's window_title is empty there): the
-                // title the app gave when it opened the window or set it last.
                 let mut title = window.window_title();
                 if title.is_empty() {
                     let id = window.window_handle().window_id();
@@ -629,7 +619,6 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         }
         C_STOP_PROPAGATION => {
-            // Inside a mouse or key listener: GPUI calls no listener of an element further out.
             c.cx.stop_propagation();
             Ok(())
         }

@@ -1,7 +1,5 @@
-# The Rust side of the binding: one library with a C interface (core, package gk-capi), the
-# meter that measures frames (core/meter) and the pure Rust reference apps the gates compare
-# against (ref). `make lib` builds them (tools/build-lib.sh). App developers never build this:
-# they get the prebuilt library in a download.
+# Workspace containing the C ABI runtime library, its instrumentation/headless
+# runner crate, and the pure-Rust reference apps used by pixel and behavior gates.
 [workspace]
 resolver = "3"
 members = ["core/meter", "core", "ref"]
@@ -12,12 +10,11 @@ edition = "2024"
 publish = false
 
 [workspace.dependencies]
-# The rendering engine is chosen by each package's `gpui-fast` feature (on by default): with it,
-# gpui-kit runs on gpui-fast; built with --no-default-features it runs on upstream GPUI (gpui-pre).
-# Left out of the library to keep it small: tree-sitter grammars, speech, decimal.
+# Pinned to match the API snapshot and generated opcodes in core/src/gen/.
 gpui-kit = { version = "=0.11.0", features = ["syntect"] }
 gk-meter = { path = "core/meter", default-features = false }
 
 [profile.release]
 strip = "symbols"
+# Keep unwinding enabled so FFI entry points can catch panics across the C ABI boundary.
 panic = "unwind"

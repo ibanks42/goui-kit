@@ -1,36 +1,35 @@
 package rt
 
-// HighlightQuery is what a highlighter is asked: the editor's language, its whole text, and the
-// byte range to style.
+// HighlightQuery holds the language name, full text, and byte range passed to
+// a custom editor syntax highlighter.
 type HighlightQuery struct {
 	Language string
 	Text     string
 	Range    Range
 }
 
-// HighlightRun styles a byte range by a semantic name ("keyword", "string", "comment", ..), which
-// the editor's resolver turns into a style (the kit's editor: the theme's syntax colors). Text no
-// run covers is unstyled.
+// HighlightRun associates a byte range with a highlight capture or style name.
 type HighlightRun struct {
 	Range Range
 	Name  string
 }
 
-// FoldQuery is what a highlighter's folds function is asked: the language and the whole text.
+// FoldQuery holds the language name and text passed to a custom code-folding callback.
 type FoldQuery struct {
 	Language string
 	Text     string
 }
 
-// SyntaxQuery is what a language provider's syntax function is asked: where in the syntax an
-// offset of the text sits (for pairing quotes and brackets, indenting).
+// SyntaxQuery holds the language name, text, and cursor byte offset passed to a
+// syntax-context callback.
 type SyntaxQuery struct {
 	Language string
 	Text     string
 	Offset   int
 }
 
-// LanguageAlias names a language by another name ("rs" for "rust").
+// LanguageAlias maps an alias (such as a file extension or short name) to a
+// canonical language name.
 type LanguageAlias struct{ Alias, Name string }
 
 func init() {
@@ -55,17 +54,16 @@ func init() {
 		func(o *Tape, c SyntaxContext) { o.U16(uint16(c)) })
 }
 
-// Highlighter is a syntax highlighter made of the app's functions. Give Src where upstream takes
-// an InputHighlighterFactory (editor.SetHighlighterFactory(cx, hl.Src)).
+// Highlighter bundles the row-source handle and request channels for a custom
+// editor syntax highlighter and optional folder.
 type Highlighter struct {
 	Src    RowSource
 	Styles Ask[HighlightQuery, []HighlightRun]
 	Folds  Ask[FoldQuery, []FoldRange]
 }
 
-// NewHighlighter makes a highlighter for editors of languages (none: every language) whose runs
-// styles gives, and whose fold ranges folds gives (nil: none). In init or a handler; release it
-// with gk.Release(cx, hl.Src) once no editor uses it.
+// NewHighlighter registers a custom highlighter for the named languages using
+// styles and optional folds callbacks.
 func NewHighlighter(cx *Cx, styles func(cx *Cx, q HighlightQuery) []HighlightRun, folds func(cx *Cx, q FoldQuery) []FoldRange,
 	languages ...string) Highlighter {
 	var h Highlighter
@@ -85,9 +83,8 @@ func NewHighlighter(cx *Cx, styles func(cx *Cx, q HighlightQuery) []HighlightRun
 	return h
 }
 
-// NewLanguageProvider makes the app's language service: aliases of language names, and where in
-// the syntax an offset sits (syntax; nil: always code). Give the result where upstream takes an
-// Rc<dyn LanguageProvider>. In init or a handler.
+// NewLanguageProvider creates a language provider source with the given aliases
+// and optional syntax-context callback.
 func NewLanguageProvider(cx *Cx, aliases []LanguageAlias, syntax func(cx *Cx, q SyntaxQuery) SyntaxContext) RowSource {
 	var src RowSource
 	if syntax != nil {

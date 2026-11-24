@@ -1,30 +1,6 @@
-// misuse: the mistakes the Go API must make impossible or loud (docs/GO.md section 5).
-// Each mode is one mistake; gates/go-misuse.sh holds the
-// expected outcome. Runs offscreen under a script that clicks the first button a few times.
-// The mistakes Go's compiler catches are in examples/go/misuse_compile.
-//
-//	GK_NEG=rune58    a string made during a view is captured by a handler that stores it:
-//	                 must show the right content
-//	GK_NEG=keep      event text stored: correct (Go strings are copies)
-//	GK_NEG=cx        a *gk.Cx stored and used in a later turn: must stop
-//	GK_NEG=element   an element kept across view builds: must stop
-//	GK_NEG=twice     an element given to two parents: must stop
-//	GK_NEG=self      an element made a child of itself: must stop
-//	GK_NEG=view      a view made inside a view function: must stop
-//	GK_NEG=usize     a negative int where the kit takes a count: must stop
-//	GK_NEG=nil       a nil function as a handler: must stop
-//	GK_NEG=zero      a state handle that was never made: must stop, saying so
-//	GK_NEG=built     a state builder chain used after Build: must stop
-//	GK_NEG=utf8      a string that is not UTF-8: must stop
-//	GK_NEG=nul       a string with a NUL inside: correct
-//	GK_NEG=goroutine a UI call from another goroutine: must stop
-//	GK_NEG=release   kit state released while a view still shows it: must stop when drawn
-//	GK_NEG=row-write a row function that writes: must stop
-//	GK_NEG=nil-child a nil element given to Child: must stop
-//	GK_NEG=data-column a chart names a column its rows do not have: must stop, listing them
-//	GK_NEG=panel-name a dock panel without a name: must stop
-//	GK_NEG=app-panic an index out of range in a handler (the app's own bug): must stop, naming the line
-//	GK_NEG=go-panic  a panic in gk.Go's work function, on its goroutine: must stop, naming the gk.Go
+// Core runtime misuse suite driven by gates/go-misuse.sh via GK_NEG.
+// Exercises stale contexts, stale or double-attached elements, writes inside views,
+// off-thread calls, invalid UTF-8, embedded NUL bytes, nil handlers, and app/gk.Go panics.
 package main
 
 import (
@@ -46,7 +22,7 @@ type App struct {
 	mode     string
 	name     editor.InputState
 	zero     editor.InputState
-	selected string // stored by a handler
+	selected string
 	kept     string
 	clicks   int
 	cx       *gk.Cx
@@ -60,12 +36,12 @@ func (a *App) init(cx *gk.Cx) {
 	a.name = b.Build()
 	switch a.mode {
 	case "built":
-		b.Placeholder("again") // the chain was used up by Build
+		b.Placeholder("again")
 	case "panel-name":
-		dock.NewPanel(cx, gk.NewView(nil, a.view), dock.PanelData{Title: "Files"}) // no Name
+		dock.NewPanel(cx, gk.NewView(nil, a.view), dock.PanelData{Title: "Files"})
 	case "row-write":
 		a.src = gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element {
-			a.name.SetValue(cx, "written by a row") // a row function only describes
+			a.name.SetValue(cx, "written by a row")
 			return kit.Label("row")
 		})
 	}
@@ -76,7 +52,7 @@ func (a *App) store(cx *gk.Cx, _ gk.ClickEvent) {
 	text := a.name.Value(cx)
 	switch a.mode {
 	case "keep":
-		a.kept = text // a copy: always safe to keep
+		a.kept = text
 	case "cx":
 		a.cx = cx
 	case "goroutine":
@@ -84,19 +60,19 @@ func (a *App) store(cx *gk.Cx, _ gk.ClickEvent) {
 		go func() { defer close(done); gk.Notify(cx, a.root) }()
 		<-done
 	case "release":
-		gk.Release(cx, a.name) // the view still shows the input
+		gk.Release(cx, a.name)
 	case "zero":
 		fmt.Println(a.zero.Value(cx))
 	case "app-panic":
 		var items []string
-		fmt.Println(items[a.clicks+2]) // out of range
+		fmt.Println(items[a.clicks+2])
 	case "go-panic":
 		gk.Go(cx, func() int {
 			var m map[string]int
-			m["x"] = 1 // a nil map
+			m["x"] = 1
 			return 0
 		}, func(cx *gk.Cx, n int) {})
-		time.Sleep(200 * time.Millisecond) // the goroutine's panic stops the app; gk.Run panics again with it
+		time.Sleep(200 * time.Millisecond)
 	case "utf8":
 		a.name.SetValue(cx, "ab\xff\xfe")
 	case "nul":
@@ -111,7 +87,6 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	switch a.mode {
 	case "rune58":
 		for i := range 3 {
-			// A different string in every build, so a stale one would show.
 			title := fmt.Sprintf("item %d of build after %d clicks", i, a.clicks)
 			row.Child(kit.Button(gk.Key("item", i)).Label("item").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 				a.clicks++
@@ -120,12 +95,12 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		}
 	case "cx":
 		if a.cx != nil {
-			gk.Notify(a.cx, a.root) // a Cx from an earlier turn
+			gk.Notify(a.cx, a.root)
 		}
 		row.Child(kit.Button("b").Label("store").OnClick(a.store))
 	case "element":
 		if a.clicks > 0 {
-			a.old.Text("again") // an element of an earlier build
+			a.old.Text("again")
 		}
 		a.old = gk.Div()
 		row.Child(kit.Button("b").Label("store").OnClick(a.store))
@@ -153,7 +128,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 			Total float64
 		}
 		sales := []sale{{"Jan", 3}, {"Feb", 5}}
-		row.Child(chart.BarChart(chart.NewData(sales)).Band("month").Value("Total")) // the field is Month
+		row.Child(chart.BarChart(chart.NewData(sales)).Band("month").Value("Total"))
 	case "row-write":
 		row.Child(gk.SourceList("rows", a.src, 20).H(gk.Px(60)))
 	default:

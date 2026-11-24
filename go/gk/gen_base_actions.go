@@ -9,7 +9,7 @@ import (
 // Cancel is gpui_kit::base::actions::Cancel.
 type Cancel struct{ rt.Val }
 
-// NewCancelDefault is <gpui_kit::base::actions::Cancel as Default>::default.
+// NewCancelDefault calls <gpui_kit::base::actions::Cancel as Default>::default.
 func NewCancelDefault() Cancel {
 	rt.UseBaseActions()
 	n := rt.NewValue(430)
@@ -19,7 +19,7 @@ func NewCancelDefault() Cancel {
 // SelectDown is gpui_kit::base::actions::SelectDown.
 type SelectDown struct{ rt.Val }
 
-// NewSelectDownDefault is <gpui_kit::base::actions::SelectDown as Default>::default.
+// NewSelectDownDefault calls <gpui_kit::base::actions::SelectDown as Default>::default.
 func NewSelectDownDefault() SelectDown {
 	rt.UseBaseActions()
 	n := rt.NewValue(431)
@@ -29,7 +29,7 @@ func NewSelectDownDefault() SelectDown {
 // SelectFirst is gpui_kit::base::actions::SelectFirst.
 type SelectFirst struct{ rt.Val }
 
-// NewSelectFirstDefault is <gpui_kit::base::actions::SelectFirst as Default>::default.
+// NewSelectFirstDefault calls <gpui_kit::base::actions::SelectFirst as Default>::default.
 func NewSelectFirstDefault() SelectFirst {
 	rt.UseBaseActions()
 	n := rt.NewValue(432)
@@ -39,7 +39,7 @@ func NewSelectFirstDefault() SelectFirst {
 // SelectLast is gpui_kit::base::actions::SelectLast.
 type SelectLast struct{ rt.Val }
 
-// NewSelectLastDefault is <gpui_kit::base::actions::SelectLast as Default>::default.
+// NewSelectLastDefault calls <gpui_kit::base::actions::SelectLast as Default>::default.
 func NewSelectLastDefault() SelectLast {
 	rt.UseBaseActions()
 	n := rt.NewValue(433)
@@ -49,7 +49,7 @@ func NewSelectLastDefault() SelectLast {
 // SelectLeft is gpui_kit::base::actions::SelectLeft.
 type SelectLeft struct{ rt.Val }
 
-// NewSelectLeftDefault is <gpui_kit::base::actions::SelectLeft as Default>::default.
+// NewSelectLeftDefault calls <gpui_kit::base::actions::SelectLeft as Default>::default.
 func NewSelectLeftDefault() SelectLeft {
 	rt.UseBaseActions()
 	n := rt.NewValue(434)
@@ -59,7 +59,7 @@ func NewSelectLeftDefault() SelectLeft {
 // SelectNextColumn is gpui_kit::base::actions::SelectNextColumn.
 type SelectNextColumn struct{ rt.Val }
 
-// NewSelectNextColumnDefault is <gpui_kit::base::actions::SelectNextColumn as Default>::default.
+// NewSelectNextColumnDefault calls <gpui_kit::base::actions::SelectNextColumn as Default>::default.
 func NewSelectNextColumnDefault() SelectNextColumn {
 	rt.UseBaseActions()
 	n := rt.NewValue(435)
@@ -69,7 +69,7 @@ func NewSelectNextColumnDefault() SelectNextColumn {
 // SelectPageDown is gpui_kit::base::actions::SelectPageDown.
 type SelectPageDown struct{ rt.Val }
 
-// NewSelectPageDownDefault is <gpui_kit::base::actions::SelectPageDown as Default>::default.
+// NewSelectPageDownDefault calls <gpui_kit::base::actions::SelectPageDown as Default>::default.
 func NewSelectPageDownDefault() SelectPageDown {
 	rt.UseBaseActions()
 	n := rt.NewValue(436)
@@ -79,7 +79,7 @@ func NewSelectPageDownDefault() SelectPageDown {
 // SelectPageUp is gpui_kit::base::actions::SelectPageUp.
 type SelectPageUp struct{ rt.Val }
 
-// NewSelectPageUpDefault is <gpui_kit::base::actions::SelectPageUp as Default>::default.
+// NewSelectPageUpDefault calls <gpui_kit::base::actions::SelectPageUp as Default>::default.
 func NewSelectPageUpDefault() SelectPageUp {
 	rt.UseBaseActions()
 	n := rt.NewValue(437)
@@ -89,7 +89,7 @@ func NewSelectPageUpDefault() SelectPageUp {
 // SelectPrevColumn is gpui_kit::base::actions::SelectPrevColumn.
 type SelectPrevColumn struct{ rt.Val }
 
-// NewSelectPrevColumnDefault is <gpui_kit::base::actions::SelectPrevColumn as Default>::default.
+// NewSelectPrevColumnDefault calls <gpui_kit::base::actions::SelectPrevColumn as Default>::default.
 func NewSelectPrevColumnDefault() SelectPrevColumn {
 	rt.UseBaseActions()
 	n := rt.NewValue(438)
@@ -99,7 +99,7 @@ func NewSelectPrevColumnDefault() SelectPrevColumn {
 // SelectRight is gpui_kit::base::actions::SelectRight.
 type SelectRight struct{ rt.Val }
 
-// NewSelectRightDefault is <gpui_kit::base::actions::SelectRight as Default>::default.
+// NewSelectRightDefault calls <gpui_kit::base::actions::SelectRight as Default>::default.
 func NewSelectRightDefault() SelectRight {
 	rt.UseBaseActions()
 	n := rt.NewValue(439)
@@ -109,7 +109,7 @@ func NewSelectRightDefault() SelectRight {
 // SelectUp is gpui_kit::base::actions::SelectUp.
 type SelectUp struct{ rt.Val }
 
-// NewSelectUpDefault is <gpui_kit::base::actions::SelectUp as Default>::default.
+// NewSelectUpDefault calls <gpui_kit::base::actions::SelectUp as Default>::default.
 func NewSelectUpDefault() SelectUp {
 	rt.UseBaseActions()
 	n := rt.NewValue(440)

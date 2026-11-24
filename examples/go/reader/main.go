@@ -1,13 +1,5 @@
-// reader: a feed reader. The articles of a feed file (or of a
-// folder of .md files) in a list on the left, the open articles as tabs on the right, each drawn
-// by the kit's Markdown view; a toolbar of icon buttons with tooltips, a settings dialog (font
-// size, theme, order, summaries), a notification when a load finishes, and the article fading in
-// when it is opened.
-//
-//	reader-go                  a real window
-//	READER_FEED=path           a feed file (articles after "+++ title | source | date" lines) or a
-//	                           folder of .md files; default the bundled sample-feed.md
-//	GK_SCRIPT=file reader-go   offscreen under a gk-meter script (gates/reader.sh)
+// Markdown feed reader example: loads an embedded feed, a file, or a folder of .md files
+// (via READER_FEED) off the UI thread, supports search, sorting, tabs, settings, and themes.
 package main
 
 import (
@@ -48,27 +40,23 @@ const (
 )
 
 type App struct {
-	feed     string    // READER_FEED or ""
-	articles []Article // owned by the UI thread
-	shown    []int     // the articles the list shows, in order
-	tabs     []int     // open articles
-	active   int       // the tab shown, -1 none
-	loading  bool
-	opened   int // how many times an article was opened, for the fade-in's key
-	// settings
-	fontSize  float32
-	dark      bool
-	order     Order
-	summaries bool
-	// kit state
+	feed                     string
+	articles                 []Article
+	shown                    []int
+	tabs                     []int
+	active                   int
+	loading                  bool
+	opened                   int
+	fontSize                 float32
+	dark                     bool
+	order                    Order
+	summaries                bool
 	list                     table.ListState
 	search                   editor.InputState
 	font                     base.SliderState
 	themeSelect, orderSelect table.SelectState
 	settings                 gk.Built[overlay.DialogEl]
 }
-
-// --- loading, on a goroutine ------------------------------------------------------------------
 
 type loaded struct {
 	articles []Article
@@ -107,7 +95,6 @@ func loadFeed(path string) loaded {
 	return loaded{out, time.Since(start), nil}
 }
 
-// parseFeed reads "+++ title | source | date" lines, each followed by the article's Markdown.
 func parseFeed(text string) []Article {
 	var out []Article
 	rest := text
@@ -137,6 +124,8 @@ func parseFeed(text string) []Article {
 	return out
 }
 
+// startLoad kicks off feed parsing on a background goroutine with gk.Go so file I/O
+// never stalls the UI thread.
 func (a *App) startLoad(cx *gk.Cx) {
 	if a.loading {
 		return
@@ -146,6 +135,7 @@ func (a *App) startLoad(cx *gk.Cx) {
 	gk.Go(cx, func() loaded { return loadFeed(feed) }, a.loaded)
 }
 
+// loaded runs back on the UI thread with the parsed articles and announces load timing.
 func (a *App) loaded(cx *gk.Cx, m loaded) {
 	a.loading = false
 	if m.err != nil {
@@ -154,11 +144,10 @@ func (a *App) loaded(cx *gk.Cx, m loaded) {
 		return
 	}
 	a.articles, a.tabs, a.active = m.articles, nil, -1
-	a.resort(cx) // and refresh
+	a.resort(cx)
 	overlay.PushNotification(cx, fmt.Sprintf("Loaded %d articles in %.0f ms", len(a.articles), float64(m.took)/float64(time.Millisecond)))
 }
 
-// resort: the list's articles, filtered by the search and in the chosen order; then refresh.
 func (a *App) resort(cx *gk.Cx) {
 	a.shown = a.shown[:0]
 	needle := strings.ToLower(a.search.Value(cx))
@@ -180,7 +169,6 @@ func (a *App) resort(cx *gk.Cx) {
 	a.selectActive(cx)
 }
 
-// selectActive selects the open article's row in the list, if the list shows it.
 func (a *App) selectActive(cx *gk.Cx, opts ...table.SelectOption) {
 	row := -1
 	if a.active >= 0 {
@@ -189,8 +177,6 @@ func (a *App) selectActive(cx *gk.Cx, opts ...table.SelectOption) {
 	table.SelectRow(cx, a.list, row, opts...)
 	gk.Refresh(cx)
 }
-
-// --- init -------------------------------------------------------------------------------------
 
 var (
 	themes = []gk.SearchItem{{Value: "light", Title: "Light"}, {Value: "dark", Title: "Dark"}}
@@ -232,15 +218,13 @@ func (a *App) init(cx *gk.Cx) {
 	a.orderSelect.OnSelectEvent(cx, func(cx *gk.Cx, e table.SelectEvent) {
 		if v, ok := e.(table.SelectEventConfirm).Value.Get(); ok {
 			a.order = map[string]Order{"newest": Newest, "oldest": Oldest, "title": ByTitle}[v]
-			a.resort(cx) // and refresh
+			a.resort(cx)
 		}
 	})
 	a.settings = gk.NewBuilt(cx, a.settingsView)
 
 	a.startLoad(cx)
 }
-
-// --- the views --------------------------------------------------------------------------------
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
@@ -307,7 +291,6 @@ func (a *App) articleRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	return table.ListItem(gk.Key("article", i)).Child(row)
 }
 
-// summary is the first line of the article that is not a heading.
 func summary(body string) string {
 	for line := range strings.Lines(body) {
 		if l := strings.TrimSpace(line); l != "" && !strings.HasPrefix(l, "#") {
@@ -317,6 +300,8 @@ func summary(body string) string {
 	return ""
 }
 
+// readingPane renders open article tabs and the active Markdown body.
+// Changing the Effect key ("open-%d") replays the fade/slide entrance animation per tab switch.
 func (a *App) readingPane() gk.Element {
 	if a.active < 0 {
 		return gk.VFlex(s.SizeFull, s.ItemsCenter, s.JustifyCenter).
@@ -326,7 +311,7 @@ func (a *App) readingPane() gk.Element {
 	for n, t := range a.tabs {
 		bar = bar.Child(kit.Tab().Label(a.articles[t].Title).
 			Suffix(kit.Button(gk.Key("close-tab", n)).Ghost().Xsmall().Icon(gk.IconClose).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
-				gk.StopPropagation(cx) // the tab itself is not clicked
+				gk.StopPropagation(cx)
 				a.closeTab(cx, n)
 			})))
 	}
@@ -337,8 +322,6 @@ func (a *App) readingPane() gk.Element {
 		Child(bar).
 		Child(gk.Div(s.Flex1, s.MinH0, s.P4).Child(kit.Effect(page, fade, fmt.Sprintf("open-%d", a.opened))))
 }
-
-// --- the settings dialog ----------------------------------------------------------------------
 
 func (a *App) settingsView(cx *gk.Cx) overlay.DialogEl {
 	row := func(label string, sel table.SelectState) gk.Element {
@@ -368,8 +351,6 @@ func (a *App) setDark(cx *gk.Cx, dark bool) {
 	a.themeSelect.SetSelectedValue(cx, value)
 	gk.Refresh(cx)
 }
-
-// --- what the app does ------------------------------------------------------------------------
 
 func (a *App) reload(cx *gk.Cx, _ gk.ClickEvent) {
 	a.startLoad(cx)

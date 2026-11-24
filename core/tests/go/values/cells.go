@@ -1,5 +1,3 @@
-// val-cells and val-settings: the value cells (gk.Cell[T], gk.NewCell, gk.CellGet, gk.CellSet) and
-// the settings page's fields that take them.
 package main
 
 import (
@@ -10,7 +8,7 @@ import (
 	"gpuikit.dev/gk/s"
 )
 
-// The cells of val-cells and val-settings.
+// cells holds typed gk.Cell handles exercised by `val-cells` and `val-settings`.
 var cells struct {
 	b           gk.Cell[bool]
 	s           gk.Cell[string]
@@ -24,12 +22,13 @@ func init() {
 		cells.dark = gk.NewCell(cx, false)
 		cells.dirty = gk.NewCell(cx, false)
 	},
-		// the switch of the Dark item, then the app's fragment below it (the kit's layout at 640 x 480)
+
 		script: "size 640 480\nframe\nclick 284 153\nframe\nframe\nclick 300 192\nframe\nframe\nstat\n"}
 }
 
-// Value cells: made, read, written between frames (the write lands with the turn's writes), read again
-// in the next turn, released.
+// cellsClick proves typed ValueCell handles store initial bool/string/float64
+// values (true, "first", 1.5), persist mutations across turns (false, "second",
+// 2.25), and release cleanly.
 func cellsClick(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -64,9 +63,9 @@ func resetDark(cx *gk.Cx) {
 	gk.CellSet(cx, cells.dirty, false)
 }
 
-// A settings page over value cells: the switch's click runs the field's set_value handler with the
-// new value, which writes the cell; the page reads it while it draws; the app's fragment is drawn and
-// its handler runs (and sees the cell written).
+// settingsPage proves kit.Settings binds a boolean switch to cells.dark (flipping
+// false -> true on click) and renders a custom setting fragment that reads the
+// updated cell state (dark=true) on the following click.
 func settingsPage(a *App, cx *gk.Cx) (gk.Element, bool) {
 	sw := kit.NewSettingFieldBoolSwitch(cells.dark, setDark).OnReset(cells.dirty, resetDark)
 	frag := gk.Div().W(gk.Px(200)).H(gk.Px(40)).ID("frag").OnClick(fragClick).Child(gk.Text("fragment"))

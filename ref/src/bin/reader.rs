@@ -1,14 +1,10 @@
-//! ref-reader: the Rust reference for examples/go/reader, written the way
-//! a Rust GPUI-kit app is written, call for call with the Go app: the articles of a feed file (or of
-//! a folder of .md files) in a list on the left (a ListDelegate), the open articles as tabs on the
-//! right, each drawn by the kit's Markdown view; a toolbar of icon buttons with tooltips, a settings
-//! dialog opened with a closure (font size, theme, order, summaries), a notification when a load
-//! finishes (the load runs on a thread), and the article fading in (`EffectTransition`) when it is
-//! opened.
+//! Pure-Rust feed reader reference app exercising background loading,
+//! searchable/sortable lists, resizable split panes, tabbed markdown reading,
+//! settings dialogs, theme switching, and keyboard shortcuts.
 //!
-//!   ref-reader                  a real window
-//!   ref-reader --script FILE    offscreen, driven by a gk-meter script (diag build)
-//!   READER_FEED=path            a feed file or a folder of .md files; default the bundled sample
+//! Loads `READER_FEED` (a directory of `.md` files or a `+++`-delimited feed
+//! file) or falls back to the bundled `sample-feed.md`.
+
 use futures::channel::oneshot;
 use gpui_kit::base::animation::EffectTransition;
 use gpui_kit::base::{h_flex, h_resizable, resizable_panel, v_flex};
@@ -36,10 +32,10 @@ use std::time::{Duration, Instant};
 
 gpui_kit::actions!(reader, [Reload, CloseActive, OpenSettings, NextArticle, PrevArticle]);
 
+/// Embedded default feed used when `READER_FEED` is unset or empty.
 const SAMPLE: &str = include_str!("../../../examples/go/reader/sample-feed.md");
 
-/// An app-wide listener for action A: it runs `f` on the app in its window once the key's dispatch
-/// is over (as the Go app's gk.Shortcut does).
+/// Registers a global action handler that defers updating `ReaderApp` in `wh`.
 fn shortcut<A: Action>(cx: &mut App, app: WeakEntity<ReaderApp>, wh: AnyWindowHandle, f: fn(&mut ReaderApp, &mut Window, &mut Context<ReaderApp>)) {
     cx.on_action(move |_: &A, cx: &mut App| {
         let app = app.clone();
@@ -71,7 +67,7 @@ enum Order {
     ByTitle,
 }
 
-/// A select's item: a value and the title shown (the Go app's gk.SearchItem).
+/// Option item for theme and sort-order select controls.
 #[derive(Clone)]
 struct Item {
     value: SharedString,
@@ -98,14 +94,15 @@ fn items(list: &[(&str, &str)]) -> SearchableVec<Item> {
     SearchableVec::new(list.iter().map(|(v, t)| Item { value: (*v).into(), title: (*t).into() }).collect::<Vec<_>>())
 }
 
-// --- loading, on a thread ---------------------------------------------------------------------------
-
+/// Background feed-loading outcome delivered back to the UI thread.
 struct Loaded {
     articles: Vec<Article>,
     took: Duration,
     err: Option<String>,
 }
 
+/// Loads articles from the embedded sample, a directory of `.md` files, or a
+/// single `+++`-delimited feed file.
 fn load_feed(path: &str) -> Loaded {
     let start = Instant::now();
     let out = if path.is_empty() {
@@ -135,7 +132,7 @@ fn load_feed(path: &str) -> Loaded {
     Loaded { articles: out, took: start.elapsed(), err: None }
 }
 
-/// Reads "+++ title | source | date" lines, each followed by the article's Markdown.
+/// Parses `+++ title | source | date` sections separated by newline-prefixed `+++ `.
 fn parse_feed(text: &str) -> Vec<Article> {
     let mut out = Vec::new();
     let mut rest = text;
@@ -163,7 +160,7 @@ fn parse_feed(text: &str) -> Vec<Article> {
     out
 }
 
-/// The first line of the article that is not a heading.
+/// Returns the first non-empty, non-heading line of an article body as its snippet.
 fn summary(body: &str) -> String {
     for line in body.split_inclusive('\n') {
         let l = line.trim();
@@ -174,10 +171,10 @@ fn summary(body: &str) -> String {
     String::new()
 }
 
-/// What the app and the list's delegate share.
+/// Shared article store and filtered/sorted row indices backing `ArticleRows`.
 struct Model {
     articles: Vec<Article>,
-    shown: Vec<usize>, // the articles the list shows, in order
+    shown: Vec<usize>,
     summaries: bool,
 }
 
@@ -221,15 +218,13 @@ impl ListDelegate for ArticleRows {
     fn set_selected_index(&mut self, _: Option<IndexPath>, _: &mut Window, _: &mut Context<ListState<Self>>) {}
 }
 
-// --- the app ----------------------------------------------------------------------------------------
-
 struct ReaderApp {
     model: Shared,
     feed: String,
-    tabs: Vec<usize>,      // open articles
-    active: Option<usize>, // the tab shown
+    tabs: Vec<usize>,
+    active: Option<usize>,
     loading: bool,
-    opened: usize, // how many times an article was opened, for the fade-in's key
+    opened: usize,
     font_size: f32,
     dark: bool,
     order: Order,
@@ -326,7 +321,6 @@ impl ReaderApp {
         app
     }
 
-    /// Every view and the list drawn again (the Go app's gk.Refresh).
     fn refresh(&mut self, cx: &mut Context<Self>) {
         self.list.update(cx, |_, cx| cx.notify());
         cx.notify();
@@ -364,11 +358,10 @@ impl ReaderApp {
         self.model.borrow_mut().articles = m.articles;
         self.tabs.clear();
         self.active = None;
-        self.resort(window, cx); // and refresh
+        self.resort(window, cx);
         window.push_notification(format!("Loaded {n} articles in {:.0} ms", m.took.as_secs_f64() * 1000.), cx);
     }
 
-    /// The list's articles, filtered by the search and in the chosen order; then refresh.
     fn resort(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let needle = self.search.read(cx).value().to_lowercase();
         {
@@ -384,7 +377,6 @@ impl ReaderApp {
         self.select_active(false, window, cx);
     }
 
-    /// Selects the open article's row in the list, if the list shows it.
     fn select_active(&mut self, scroll: bool, window: &mut Window, cx: &mut Context<Self>) {
         let row = self.active.and_then(|n| {
             let t = self.tabs[n];
@@ -401,8 +393,6 @@ impl ReaderApp {
         });
         self.refresh(cx);
     }
-
-    // --- the views ------------------------------------------------------------------------------------
 
     fn toolbar(&self, cx: &mut Context<Self>) -> impl IntoElement {
         let starred = self.active.is_some_and(|n| self.model.borrow().articles[self.tabs[n]].starred);
@@ -511,7 +501,7 @@ impl ReaderApp {
                 Tab::new().label(m.articles[t].title.clone()).suffix(
                     Button::new(("close-tab", n)).ghost().xsmall().icon(IconName::Close).on_click(cx.listener(
                         move |this, _, window, cx| {
-                            cx.stop_propagation(); // the tab itself is not clicked
+                            cx.stop_propagation();
                             this.close_tab(n, window, cx);
                         },
                     )),
@@ -527,8 +517,6 @@ impl ReaderApp {
             .child(div().flex_1().min_h_0().p_4().child(fade.apply(page, SharedString::from(format!("open-{}", self.opened)))))
             .into_any_element()
     }
-
-    // --- the settings dialog --------------------------------------------------------------------------
 
     fn open_settings(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let this = cx.weak_entity();
@@ -575,8 +563,6 @@ impl ReaderApp {
         self.theme_select.update(cx, |s, cx| s.set_selected_value(&value, window, cx));
         self.refresh(cx);
     }
-
-    // --- what the app does ----------------------------------------------------------------------------
 
     fn reload(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.start_load(window, cx);

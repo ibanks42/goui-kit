@@ -1,21 +1,11 @@
 //go:build !gkstatic
 
-package rt
+// Dynamic-library backend used by default (CGO_ENABLED=0).
+// It opens libgpuikit at runtime via purego (dlopen/dlsym on Unix, LoadLibrary
+// /GetProcAddress on Windows), resolves the C ABI symbols, and registers a Go
+// turn callback without requiring a C compiler at build time.
 
-// The default way to the library: the shared library (libgpuikit.so, libgpuikit.dylib or
-// gpuikit.dll) is loaded when the program starts the app, and its seven functions are called
-// through purego, so the package needs no C compiler, CGO_ENABLED=0 works and GOOS cross-compiles
-// (docs/GO.md section 8). The build tag gkstatic links the static library through cgo instead
-// (rt_lib_static.go).
-//
-// Where the library is looked for, in order (the first file that exists is the one loaded; one
-// that exists but does not load is an error, not a reason to look further):
-//   1. GK_LIB: the library file itself, or the folder that holds it; when it is set nothing else is tried
-//   2. the program's folder, its lib/, and ../lib/ beside it (macOS also ../Frameworks/, for an
-//      app bundle's Contents/MacOS/app)
-//   3. the system loader's own search by name (LD_LIBRARY_PATH and ld.so's paths on Linux,
-//      DYLD_LIBRARY_PATH and DYLD_FALLBACK_LIBRARY_PATH on macOS; Windows: the program's folder,
-//      the system folders and PATH)
+package rt
 
 import (
 	"errors"
@@ -30,20 +20,22 @@ import (
 	"github.com/ebitengine/purego"
 )
 
+// Dynamic-loader constants matching the C ABI header (include/gpuikit.h).
 const (
-	gkMagic  = 0x314b5047 // "GPK1", GK_MAGIC in gpuikit.h
+	gkMagic  = 0x314b5047 // "GPK1" little-endian magic verified in readInfo
 	infoSize = int(unsafe.Sizeof(cInfo{}))
 	libFile  = libName
 	libPoint = "GK_LIB"
 )
 
-// libFind and libFirst say where the library came from and how to choose another one.
+// Human-readable library location hints embedded into startup diagnostics.
 var (
 	libFind  = "the file it loaded"
 	libFirst = "first: GK_LIB=<its lib/ folder> (or the folder itself first in " + loaderPathVar + ")"
 )
 
-// cInfo is gk_info, cApp gk_app (gpuikit.h), as C lays them out on a 64-bit system.
+// cInfo matches the exact C struct layout of gk_info in include/gpuikit.h on
+// 64-bit targets so readInfo can cast the pointer returned by gk_info_get.
 type cInfo struct {
 	size, magic        uint32
 	abiMajor, abiMinor uint16
@@ -53,6 +45,7 @@ type cInfo struct {
 	versionsLen        uintptr
 }
 
+// cApp matches the exact C struct layout of gk_app in include/gpuikit.h.
 type cApp struct {
 	size               uint32
 	abiMajor, abiMinor uint16
@@ -61,7 +54,8 @@ type cApp struct {
 	flags              uint32
 }
 
-// The library's functions, found once by loadLibrary.
+// Resolved symbol addresses and one-time loader state for the shared library.
+// inlineReply is enabled in readInfo when the library advertises FeatInlineReply.
 var (
 	loadOnce                                       sync.Once
 	loadErr                                        error
@@ -71,12 +65,17 @@ var (
 	inlineReply                                    bool
 )
 
-// loadLibrary finds and loads the library, once; every later call returns the first one's answer.
+// loadLibrary opens libgpuikit once per process and caches any load error.
 func loadLibrary() error {
 	loadOnce.Do(func() { loadErr = load() })
 	return loadErr
 }
 
+// load checks 64-bit pointer width, locates and opens the shared library,
+// resolves all required C ABI functions (plus optional gk_headless_run),
+// activates all component families via gk_use_all, creates the purego turn
+// callback trampoline, and installs the fast non-reflecting callback path
+// unless GK_PUREGO_REFLECT is set.
 func load() error {
 	if unsafe.Sizeof(uintptr(0)) != 8 {
 		return errors.New("the shared library needs a 64-bit program")
@@ -96,19 +95,21 @@ func load() error {
 			return fmt.Errorf("%s (%s) is not a library this package can use: it has no %s (%v)", libName, path, f.name, err)
 		}
 	}
-	fnHeadless, _ = libSym(h, "gk_headless_run") // the diagnostic library's; gk_run's message says so otherwise
-	// The shared library holds every component family: register them all (the static build
-	// registers each when the program first uses it, gen_use.go).
+	// gk_headless_run is exported only by the diagnostic (diag) build.
+	fnHeadless, _ = libSym(h, "gk_headless_run")
 	purego.SyscallN(fnUseAll)
-	// One callback for the whole program: purego keeps it for good (it allows about 2000).
 	turnCallback = purego.NewCallback(dynCallback)
-	if os.Getenv("GK_PUREGO_REFLECT") == "" { // GK_PUREGO_REFLECT=1: purego's own path, to compare
+	if os.Getenv("GK_PUREGO_REFLECT") == "" {
 		installFastCallback(turnCallback)
 	}
 	return nil
 }
 
-// findLibrary looks where the comment at the top of this file says and loads the first library found.
+// findLibrary searches for the shared library in priority order:
+//  1. GK_LIB (pointing to either the library file itself or a directory containing it)
+//  2. Directories relative to the resolved executable path: ".", "lib", "../lib",
+//     and "../Frameworks" on macOS app bundles
+//  3. The OS dynamic loader search path (LD_LIBRARY_PATH, DYLD_LIBRARY_PATH, or PATH)
 func findLibrary() (uintptr, string, error) {
 	var looked []string
 	try := func(path string) (uintptr, string, error, bool) {
@@ -155,10 +156,11 @@ func findLibrary() (uintptr, string, error) {
 		libName, strings.Join(looked, "\n    "), loaderPathVar, err, libName)
 }
 
-// lib returns whether the library is loaded (loading it if need be), for the calls that may come
-// before gk.Run (LibraryInfo, gk.Post, LinkAll).
 func lib() bool { return loadLibrary() == nil }
 
+// readInfo calls gk_info_get and copies its version, hash, and feature bits
+// into a Go rawInfo struct. When FeatInlineReply is set, dynCallback writes
+// reply pointers directly into the caller's cb slot instead of calling gk_reply.
 func readInfo() (rawInfo, bool) {
 	if !lib() {
 		return rawInfo{}, false
@@ -177,10 +179,12 @@ func readInfo() (rawInfo, bool) {
 	return ri, true
 }
 
-// lastN is gk_last_error's length out-parameter. The library keeps its message per thread, and
-// the package asks for it only on the UI thread (or before the app runs).
+// Package-level length out-parameter for gk_last_error. Keeping it in a static
+// global avoids passing a Go stack address (which could move on stack growth)
+// across purego.SyscallN.
 var lastN uintptr
 
+// lastError copies the most recent error string stored by the Rust core.
 func lastError() string {
 	if !lib() {
 		return ""
@@ -192,15 +196,18 @@ func lastError() string {
 	return string(unsafe.Slice(*(**byte)(unsafe.Pointer(&r)), int(lastN)))
 }
 
-// callOut holds gk_call's two out-parameters, one pair per nesting depth (a gk_call can run a
-// turn, which makes gk_calls of its own), so a call needs no allocation.
+// Pre-allocated [ptr, len] out-parameter slots indexed by callDepth.
+// Storing them in a package array prevents stack-growth invalidation across
+// purego.SyscallN and keeps nested re-entrant gk_call frames isolated.
 var (
 	callOut   [64][2]uintptr
 	callDepth int
 )
 
-// call makes one gk_call. The request is Go memory lent for the call; the result is the
-// library's and valid until the next gk_call, so it is copied out at once.
+// call invokes gk_call with req and returns a Go copy of the response bytes
+// (because the Rust reply buffer is only valid until the next call on this thread).
+// Calls made while re-describing a view inline during KEvent panic with
+// abortInline so tryDescribe can bail out cleanly.
 func call(req []byte) (int32, []byte) {
 	if Vb.Active {
 		if cur != nil && cur.inInlineEvent {
@@ -224,22 +231,22 @@ func call(req []byte) (int32, []byte) {
 	return 0, append([]byte(nil), unsafe.Slice(*(**byte)(unsafe.Pointer(&res)), n)...)
 }
 
-// dynCallback is the library's callback (gk_callback): every argument is register-sized, as
-// purego's callbacks need on every platform. The reply is handed to gk_reply, which copies it,
-// before the callback returns: the one crossing back out of a turn that has a reply (the static
-// build hands it over in C after the return, capi.c).
+// dynCallback is the Go callback invoked by Rust on every UI turn.
+// During installFastCallback's probe call, user equals cbMarker and dynCallback
+// immediately echoes cbMarker without touching runtime state.
+// For real turns, if FeatInlineReply is supported, cb points to a [ptr, len]
+// struct in the Rust stack frame that receives the reply slice directly,
+// eliminating an extra FFI call into gk_reply.
 func dynCallback(user, cb, kind, req, n uintptr) uintptr {
 	if user == cbMarker {
-		return cbMarker // installFastCallback's probe, when it went through purego's own path
+		return cbMarker
 	}
 	var in []byte
 	if n > 0 {
-		in = unsafe.Slice(*(**byte)(unsafe.Pointer(&req)), int(n)) // the library's, valid during this call
+		in = unsafe.Slice(*(**byte)(unsafe.Pointer(&req)), int(n))
 	}
 	if r := onTurn(uint32(kind), in); len(r) > 0 {
 		if inlineReply {
-			// GkCb begins with (inline_ptr, inline_len); replyMem is rooted and non-moving
-			// until the next turn's reply, and rt::turn reads it immediately on return.
 			slot := *(**[2]uintptr)(unsafe.Pointer(&cb))
 			slot[0] = uintptr(unsafe.Pointer(&r[0]))
 			slot[1] = uintptr(len(r))
@@ -250,14 +257,17 @@ func dynCallback(user, cb, kind, req, n uintptr) uintptr {
 	return 0
 }
 
-// cbMarker is the first argument (user) of installFastCallback's probe: the library's is always 0.
-const cbMarker = 0x676b5f7475726e // "gk_turn"
+// Sentinel value passed in the user argument while installFastCallback probes
+// purego's callback register layout.
+const cbMarker = 0x676b5f7475726e
 
-// replyMem is the Go memory a turn's reply is written into; gk_reply copies it during the
-// callback, and it is reused by the next turn.
+// Reusable Go slice holding the serialized turn reply. Keeping it referenced in
+// a package variable guarantees the backing array remains live until the next
+// turn (well after Rust finishes reading the reply pointer).
 var replyMem []byte
 
-// replyBuf is an empty slice of at least n bytes.
+// replyBuf returns a zero-length Tape backed by replyMem with at least n bytes
+// of capacity.
 func replyBuf(n int) Tape {
 	if n > cap(replyMem) {
 		replyMem = make([]byte, 0, max(n, 2*cap(replyMem), 4096))
@@ -265,18 +275,18 @@ func replyBuf(n int) Tape {
 	return replyMem[:0]
 }
 
-// The gk_app and the script the library reads for the whole run; kept here so they stay alive.
+// Package-level descriptors kept alive in memory for the full duration of
+// gk_run or gk_headless_run.
 var (
 	runApp    cApp
 	runScript []byte
 )
 
-// libRun enters the library (gk_run, or gk_headless_run with a script when headless).
-// sizeDelta and noCallback exist only for the runtime's version test, which shows the library
-// refusing a wrong gk_app.
+// libRun loads the shared library if needed, populates runApp, and enters
+// gk_run or gk_headless_run.
 func libRun(headless bool, script string, major, minor uint16, hash uint64, sizeDelta uint32, noCallback bool) int32 {
 	if err := loadLibrary(); err != nil {
-		libLoadErr = err // gk.Run's error (runFailed); nothing exits the process
+		libLoadErr = err
 		return rcNotLoaded
 	}
 	runApp = cApp{size: uint32(unsafe.Sizeof(cApp{})) - sizeDelta, abiMajor: major, abiMinor: minor, apiHash: hash, callback: turnCallback}
@@ -296,12 +306,14 @@ func libRun(headless bool, script string, major, minor uint16, hash uint64, size
 	return int32(rc)
 }
 
+// postWake wakes the Rust UI event loop from any goroutine so queued Post
+// callbacks and GC handle releases run on a KWake turn.
 func postWake() {
 	if lib() {
 		purego.SyscallN(fnPost, 0)
 	}
 }
 
-// LinkAll loads the library, which holds every component family and registers them all as it
-// loads (the static build's LinkAll links them all into the program: rt_linkall.go).
+// LinkAll loads the shared library eagerly; dynamic builds already expose all
+// component families via gk_use_all during load.
 func LinkAll() { lib() }

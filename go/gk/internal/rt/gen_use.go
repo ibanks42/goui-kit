@@ -140,7 +140,7 @@ import (
 	"unsafe"
 )
 
-// The component families a program has linked in (docs/GO.md section 8).
+// Tracks which component families have already been registered in this process.
 var (
 	useBaseAccordionDone            atomic.Bool
 	useBaseActionsDone              atomic.Bool
@@ -270,7 +270,7 @@ var (
 	useComponentWindowExtDone       atomic.Bool
 )
 
-// UseBaseAccordion links GPUI-kit's base/accordion family into the program and registers it with the library.
+// UseBaseAccordion forces linking and registers the base/accordion component family once.
 func UseBaseAccordion() {
 	if !useBaseAccordionDone.Load() {
 		useBaseAccordionDone.Store(true)
@@ -278,7 +278,7 @@ func UseBaseAccordion() {
 	}
 }
 
-// UseBaseActions links GPUI-kit's base/actions family into the program and registers it with the library.
+// UseBaseActions forces linking and registers the base/actions component family once.
 func UseBaseActions() {
 	if !useBaseActionsDone.Load() {
 		useBaseActionsDone.Store(true)
@@ -286,7 +286,7 @@ func UseBaseActions() {
 	}
 }
 
-// UseBaseAlertDialog links GPUI-kit's base/alert_dialog family into the program and registers it with the library.
+// UseBaseAlertDialog forces linking and registers the base/alert_dialog component family once.
 func UseBaseAlertDialog() {
 	if !useBaseAlertDialogDone.Load() {
 		useBaseAlertDialogDone.Store(true)
@@ -294,7 +294,7 @@ func UseBaseAlertDialog() {
 	}
 }
 
-// UseBaseAnimation links GPUI-kit's base/animation family into the program and registers it with the library.
+// UseBaseAnimation forces linking and registers the base/animation component family once.
 func UseBaseAnimation() {
 	if !useBaseAnimationDone.Load() {
 		useBaseAnimationDone.Store(true)
@@ -302,7 +302,7 @@ func UseBaseAnimation() {
 	}
 }
 
-// UseBaseAutoScroll links GPUI-kit's base/auto_scroll family into the program and registers it with the library.
+// UseBaseAutoScroll forces linking and registers the base/auto_scroll component family once.
 func UseBaseAutoScroll() {
 	if !useBaseAutoScrollDone.Load() {
 		useBaseAutoScrollDone.Store(true)
@@ -310,7 +310,7 @@ func UseBaseAutoScroll() {
 	}
 }
 
-// UseBaseAvatar links GPUI-kit's base/avatar family into the program and registers it with the library.
+// UseBaseAvatar forces linking and registers the base/avatar component family once.
 func UseBaseAvatar() {
 	if !useBaseAvatarDone.Load() {
 		useBaseAvatarDone.Store(true)
@@ -318,7 +318,7 @@ func UseBaseAvatar() {
 	}
 }
 
-// UseBaseButton links GPUI-kit's base/button family into the program and registers it with the library.
+// UseBaseButton forces linking and registers the base/button component family once.
 func UseBaseButton() {
 	if !useBaseButtonDone.Load() {
 		useBaseButtonDone.Store(true)
@@ -326,7 +326,7 @@ func UseBaseButton() {
 	}
 }
 
-// UseBaseCalendar links GPUI-kit's base/calendar family into the program and registers it with the library.
+// UseBaseCalendar forces linking and registers the base/calendar component family once.
 func UseBaseCalendar() {
 	if !useBaseCalendarDone.Load() {
 		useBaseCalendarDone.Store(true)
@@ -334,7 +334,7 @@ func UseBaseCalendar() {
 	}
 }
 
-// UseBaseCheckbox links GPUI-kit's base/checkbox family into the program and registers it with the library.
+// UseBaseCheckbox forces linking and registers the base/checkbox component family once.
 func UseBaseCheckbox() {
 	if !useBaseCheckboxDone.Load() {
 		useBaseCheckboxDone.Store(true)
@@ -342,7 +342,7 @@ func UseBaseCheckbox() {
 	}
 }
 
-// UseBaseCollapsible links GPUI-kit's base/collapsible family into the program and registers it with the library.
+// UseBaseCollapsible forces linking and registers the base/collapsible component family once.
 func UseBaseCollapsible() {
 	if !useBaseCollapsibleDone.Load() {
 		useBaseCollapsibleDone.Store(true)
@@ -350,7 +350,7 @@ func UseBaseCollapsible() {
 	}
 }
 
-// UseBaseColorPicker links GPUI-kit's base/color_picker family into the program and registers it with the library.
+// UseBaseColorPicker forces linking and registers the base/color_picker component family once.
 func UseBaseColorPicker() {
 	if !useBaseColorPickerDone.Load() {
 		useBaseColorPickerDone.Store(true)
@@ -358,7 +358,7 @@ func UseBaseColorPicker() {
 	}
 }
 
-// UseBaseCombobox links GPUI-kit's base/combobox family into the program and registers it with the library.
+// UseBaseCombobox forces linking and registers the base/combobox component family once.
 func UseBaseCombobox() {
 	if !useBaseComboboxDone.Load() {
 		useBaseComboboxDone.Store(true)
@@ -366,7 +366,7 @@ func UseBaseCombobox() {
 	}
 }
 
-// UseBaseDatePicker links GPUI-kit's base/date_picker family into the program and registers it with the library.
+// UseBaseDatePicker forces linking and registers the base/date_picker component family once.
 func UseBaseDatePicker() {
 	if !useBaseDatePickerDone.Load() {
 		useBaseDatePickerDone.Store(true)
@@ -374,7 +374,7 @@ func UseBaseDatePicker() {
 	}
 }
 
-// UseBaseDialog links GPUI-kit's base/dialog family into the program and registers it with the library.
+// UseBaseDialog forces linking and registers the base/dialog component family once.
 func UseBaseDialog() {
 	if !useBaseDialogDone.Load() {
 		useBaseDialogDone.Store(true)
@@ -382,7 +382,7 @@ func UseBaseDialog() {
 	}
 }
 
-// UseBaseDock links GPUI-kit's base/dock family into the program and registers it with the library.
+// UseBaseDock forces linking and registers the base/dock component family once.
 func UseBaseDock() {
 	if !useBaseDockDone.Load() {
 		useBaseDockDone.Store(true)
@@ -390,7 +390,7 @@ func UseBaseDock() {
 	}
 }
 
-// UseBaseGlobalState links GPUI-kit's base/global_state family into the program and registers it with the library.
+// UseBaseGlobalState forces linking and registers the base/global_state component family once.
 func UseBaseGlobalState() {
 	if !useBaseGlobalStateDone.Load() {
 		useBaseGlobalStateDone.Store(true)
@@ -398,7 +398,7 @@ func UseBaseGlobalState() {
 	}
 }
 
-// UseBaseGridLayout links GPUI-kit's base/grid_layout family into the program and registers it with the library.
+// UseBaseGridLayout forces linking and registers the base/grid_layout component family once.
 func UseBaseGridLayout() {
 	if !useBaseGridLayoutDone.Load() {
 		useBaseGridLayoutDone.Store(true)
@@ -406,7 +406,7 @@ func UseBaseGridLayout() {
 	}
 }
 
-// UseBaseHoverCard links GPUI-kit's base/hover_card family into the program and registers it with the library.
+// UseBaseHoverCard forces linking and registers the base/hover_card component family once.
 func UseBaseHoverCard() {
 	if !useBaseHoverCardDone.Load() {
 		useBaseHoverCardDone.Store(true)
@@ -414,7 +414,7 @@ func UseBaseHoverCard() {
 	}
 }
 
-// UseBaseInput links GPUI-kit's base/input family into the program and registers it with the library.
+// UseBaseInput forces linking and registers the base/input component family once.
 func UseBaseInput() {
 	if !useBaseInputDone.Load() {
 		useBaseInputDone.Store(true)
@@ -422,7 +422,7 @@ func UseBaseInput() {
 	}
 }
 
-// UseBaseLink links GPUI-kit's base/link family into the program and registers it with the library.
+// UseBaseLink forces linking and registers the base/link component family once.
 func UseBaseLink() {
 	if !useBaseLinkDone.Load() {
 		useBaseLinkDone.Store(true)
@@ -430,7 +430,7 @@ func UseBaseLink() {
 	}
 }
 
-// UseBaseMotion links GPUI-kit's base/motion family into the program and registers it with the library.
+// UseBaseMotion forces linking and registers the base/motion component family once.
 func UseBaseMotion() {
 	if !useBaseMotionDone.Load() {
 		useBaseMotionDone.Store(true)
@@ -438,7 +438,7 @@ func UseBaseMotion() {
 	}
 }
 
-// UseBaseNavStack links GPUI-kit's base/nav_stack family into the program and registers it with the library.
+// UseBaseNavStack forces linking and registers the base/nav_stack component family once.
 func UseBaseNavStack() {
 	if !useBaseNavStackDone.Load() {
 		useBaseNavStackDone.Store(true)
@@ -446,7 +446,7 @@ func UseBaseNavStack() {
 	}
 }
 
-// UseBaseNumberInput links GPUI-kit's base/number_input family into the program and registers it with the library.
+// UseBaseNumberInput forces linking and registers the base/number_input component family once.
 func UseBaseNumberInput() {
 	if !useBaseNumberInputDone.Load() {
 		useBaseNumberInputDone.Store(true)
@@ -454,7 +454,7 @@ func UseBaseNumberInput() {
 	}
 }
 
-// UseBaseOtpInput links GPUI-kit's base/otp_input family into the program and registers it with the library.
+// UseBaseOtpInput forces linking and registers the base/otp_input component family once.
 func UseBaseOtpInput() {
 	if !useBaseOtpInputDone.Load() {
 		useBaseOtpInputDone.Store(true)
@@ -462,7 +462,7 @@ func UseBaseOtpInput() {
 	}
 }
 
-// UseBasePagination links GPUI-kit's base/pagination family into the program and registers it with the library.
+// UseBasePagination forces linking and registers the base/pagination component family once.
 func UseBasePagination() {
 	if !useBasePaginationDone.Load() {
 		useBasePaginationDone.Store(true)
@@ -470,7 +470,7 @@ func UseBasePagination() {
 	}
 }
 
-// UseBasePlot links GPUI-kit's base/plot family into the program and registers it with the library.
+// UseBasePlot forces linking and registers the base/plot component family once.
 func UseBasePlot() {
 	if !useBasePlotDone.Load() {
 		useBasePlotDone.Store(true)
@@ -478,7 +478,7 @@ func UseBasePlot() {
 	}
 }
 
-// UseBasePopover links GPUI-kit's base/popover family into the program and registers it with the library.
+// UseBasePopover forces linking and registers the base/popover component family once.
 func UseBasePopover() {
 	if !useBasePopoverDone.Load() {
 		useBasePopoverDone.Store(true)
@@ -486,7 +486,7 @@ func UseBasePopover() {
 	}
 }
 
-// UseBasePopup links GPUI-kit's base/popup family into the program and registers it with the library.
+// UseBasePopup forces linking and registers the base/popup component family once.
 func UseBasePopup() {
 	if !useBasePopupDone.Load() {
 		useBasePopupDone.Store(true)
@@ -494,7 +494,7 @@ func UseBasePopup() {
 	}
 }
 
-// UseBasePositioner links GPUI-kit's base/positioner family into the program and registers it with the library.
+// UseBasePositioner forces linking and registers the base/positioner component family once.
 func UseBasePositioner() {
 	if !useBasePositionerDone.Load() {
 		useBasePositionerDone.Store(true)
@@ -502,7 +502,7 @@ func UseBasePositioner() {
 	}
 }
 
-// UseBaseProgress links GPUI-kit's base/progress family into the program and registers it with the library.
+// UseBaseProgress forces linking and registers the base/progress component family once.
 func UseBaseProgress() {
 	if !useBaseProgressDone.Load() {
 		useBaseProgressDone.Store(true)
@@ -510,7 +510,7 @@ func UseBaseProgress() {
 	}
 }
 
-// UseBaseQuestionnaire links GPUI-kit's base/questionnaire family into the program and registers it with the library.
+// UseBaseQuestionnaire forces linking and registers the base/questionnaire component family once.
 func UseBaseQuestionnaire() {
 	if !useBaseQuestionnaireDone.Load() {
 		useBaseQuestionnaireDone.Store(true)
@@ -518,7 +518,7 @@ func UseBaseQuestionnaire() {
 	}
 }
 
-// UseBaseRadio links GPUI-kit's base/radio family into the program and registers it with the library.
+// UseBaseRadio forces linking and registers the base/radio component family once.
 func UseBaseRadio() {
 	if !useBaseRadioDone.Load() {
 		useBaseRadioDone.Store(true)
@@ -526,7 +526,7 @@ func UseBaseRadio() {
 	}
 }
 
-// UseBaseRadioGroup links GPUI-kit's base/radio_group family into the program and registers it with the library.
+// UseBaseRadioGroup forces linking and registers the base/radio_group component family once.
 func UseBaseRadioGroup() {
 	if !useBaseRadioGroupDone.Load() {
 		useBaseRadioGroupDone.Store(true)
@@ -534,7 +534,7 @@ func UseBaseRadioGroup() {
 	}
 }
 
-// UseBaseResizable links GPUI-kit's base/resizable family into the program and registers it with the library.
+// UseBaseResizable forces linking and registers the base/resizable component family once.
 func UseBaseResizable() {
 	if !useBaseResizableDone.Load() {
 		useBaseResizableDone.Store(true)
@@ -542,7 +542,7 @@ func UseBaseResizable() {
 	}
 }
 
-// UseBaseRoot links GPUI-kit's base/root family into the program and registers it with the library.
+// UseBaseRoot forces linking and registers the base/root component family once.
 func UseBaseRoot() {
 	if !useBaseRootDone.Load() {
 		useBaseRootDone.Store(true)
@@ -550,7 +550,7 @@ func UseBaseRoot() {
 	}
 }
 
-// UseBaseScrollBounce links GPUI-kit's base/scroll_bounce family into the program and registers it with the library.
+// UseBaseScrollBounce forces linking and registers the base/scroll_bounce component family once.
 func UseBaseScrollBounce() {
 	if !useBaseScrollBounceDone.Load() {
 		useBaseScrollBounceDone.Store(true)
@@ -558,7 +558,7 @@ func UseBaseScrollBounce() {
 	}
 }
 
-// UseBaseScrollableMask links GPUI-kit's base/scrollable_mask family into the program and registers it with the library.
+// UseBaseScrollableMask forces linking and registers the base/scrollable_mask component family once.
 func UseBaseScrollableMask() {
 	if !useBaseScrollableMaskDone.Load() {
 		useBaseScrollableMaskDone.Store(true)
@@ -566,7 +566,7 @@ func UseBaseScrollableMask() {
 	}
 }
 
-// UseBaseScrollbar links GPUI-kit's base/scrollbar family into the program and registers it with the library.
+// UseBaseScrollbar forces linking and registers the base/scrollbar component family once.
 func UseBaseScrollbar() {
 	if !useBaseScrollbarDone.Load() {
 		useBaseScrollbarDone.Store(true)
@@ -574,7 +574,7 @@ func UseBaseScrollbar() {
 	}
 }
 
-// UseBaseSelect links GPUI-kit's base/select family into the program and registers it with the library.
+// UseBaseSelect forces linking and registers the base/select component family once.
 func UseBaseSelect() {
 	if !useBaseSelectDone.Load() {
 		useBaseSelectDone.Store(true)
@@ -582,7 +582,7 @@ func UseBaseSelect() {
 	}
 }
 
-// UseBaseSelectableText links GPUI-kit's base/selectable_text family into the program and registers it with the library.
+// UseBaseSelectableText forces linking and registers the base/selectable_text component family once.
 func UseBaseSelectableText() {
 	if !useBaseSelectableTextDone.Load() {
 		useBaseSelectableTextDone.Store(true)
@@ -590,7 +590,7 @@ func UseBaseSelectableText() {
 	}
 }
 
-// UseBaseSheet links GPUI-kit's base/sheet family into the program and registers it with the library.
+// UseBaseSheet forces linking and registers the base/sheet component family once.
 func UseBaseSheet() {
 	if !useBaseSheetDone.Load() {
 		useBaseSheetDone.Store(true)
@@ -598,7 +598,7 @@ func UseBaseSheet() {
 	}
 }
 
-// UseBaseSlider links GPUI-kit's base/slider family into the program and registers it with the library.
+// UseBaseSlider forces linking and registers the base/slider component family once.
 func UseBaseSlider() {
 	if !useBaseSliderDone.Load() {
 		useBaseSliderDone.Store(true)
@@ -606,7 +606,7 @@ func UseBaseSlider() {
 	}
 }
 
-// UseBaseSwitch links GPUI-kit's base/switch family into the program and registers it with the library.
+// UseBaseSwitch forces linking and registers the base/switch component family once.
 func UseBaseSwitch() {
 	if !useBaseSwitchDone.Load() {
 		useBaseSwitchDone.Store(true)
@@ -614,7 +614,7 @@ func UseBaseSwitch() {
 	}
 }
 
-// UseBaseTable links GPUI-kit's base/table family into the program and registers it with the library.
+// UseBaseTable forces linking and registers the base/table component family once.
 func UseBaseTable() {
 	if !useBaseTableDone.Load() {
 		useBaseTableDone.Store(true)
@@ -622,7 +622,7 @@ func UseBaseTable() {
 	}
 }
 
-// UseBaseTabs links GPUI-kit's base/tabs family into the program and registers it with the library.
+// UseBaseTabs forces linking and registers the base/tabs component family once.
 func UseBaseTabs() {
 	if !useBaseTabsDone.Load() {
 		useBaseTabsDone.Store(true)
@@ -630,7 +630,7 @@ func UseBaseTabs() {
 	}
 }
 
-// UseBaseText links GPUI-kit's base/text family into the program and registers it with the library.
+// UseBaseText forces linking and registers the base/text component family once.
 func UseBaseText() {
 	if !useBaseTextDone.Load() {
 		useBaseTextDone.Store(true)
@@ -638,7 +638,7 @@ func UseBaseText() {
 	}
 }
 
-// UseBaseTextSelection links GPUI-kit's base/text_selection family into the program and registers it with the library.
+// UseBaseTextSelection forces linking and registers the base/text_selection component family once.
 func UseBaseTextSelection() {
 	if !useBaseTextSelectionDone.Load() {
 		useBaseTextSelectionDone.Store(true)
@@ -646,7 +646,7 @@ func UseBaseTextSelection() {
 	}
 }
 
-// UseBaseTheme links GPUI-kit's base/theme family into the program and registers it with the library.
+// UseBaseTheme forces linking and registers the base/theme component family once.
 func UseBaseTheme() {
 	if !useBaseThemeDone.Load() {
 		useBaseThemeDone.Store(true)
@@ -654,7 +654,7 @@ func UseBaseTheme() {
 	}
 }
 
-// UseBaseTimeField links GPUI-kit's base/time_field family into the program and registers it with the library.
+// UseBaseTimeField forces linking and registers the base/time_field component family once.
 func UseBaseTimeField() {
 	if !useBaseTimeFieldDone.Load() {
 		useBaseTimeFieldDone.Store(true)
@@ -662,7 +662,7 @@ func UseBaseTimeField() {
 	}
 }
 
-// UseBaseToast links GPUI-kit's base/toast family into the program and registers it with the library.
+// UseBaseToast forces linking and registers the base/toast component family once.
 func UseBaseToast() {
 	if !useBaseToastDone.Load() {
 		useBaseToastDone.Store(true)
@@ -670,7 +670,7 @@ func UseBaseToast() {
 	}
 }
 
-// UseBaseToggle links GPUI-kit's base/toggle family into the program and registers it with the library.
+// UseBaseToggle forces linking and registers the base/toggle component family once.
 func UseBaseToggle() {
 	if !useBaseToggleDone.Load() {
 		useBaseToggleDone.Store(true)
@@ -678,7 +678,7 @@ func UseBaseToggle() {
 	}
 }
 
-// UseBaseToggleGroup links GPUI-kit's base/toggle_group family into the program and registers it with the library.
+// UseBaseToggleGroup forces linking and registers the base/toggle_group component family once.
 func UseBaseToggleGroup() {
 	if !useBaseToggleGroupDone.Load() {
 		useBaseToggleGroupDone.Store(true)
@@ -686,7 +686,7 @@ func UseBaseToggleGroup() {
 	}
 }
 
-// UseBaseToolbar links GPUI-kit's base/toolbar family into the program and registers it with the library.
+// UseBaseToolbar forces linking and registers the base/toolbar component family once.
 func UseBaseToolbar() {
 	if !useBaseToolbarDone.Load() {
 		useBaseToolbarDone.Store(true)
@@ -694,7 +694,7 @@ func UseBaseToolbar() {
 	}
 }
 
-// UseBaseTooltip links GPUI-kit's base/tooltip family into the program and registers it with the library.
+// UseBaseTooltip forces linking and registers the base/tooltip component family once.
 func UseBaseTooltip() {
 	if !useBaseTooltipDone.Load() {
 		useBaseTooltipDone.Store(true)
@@ -702,7 +702,7 @@ func UseBaseTooltip() {
 	}
 }
 
-// UseBaseTouchSelection links GPUI-kit's base/touch_selection family into the program and registers it with the library.
+// UseBaseTouchSelection forces linking and registers the base/touch_selection component family once.
 func UseBaseTouchSelection() {
 	if !useBaseTouchSelectionDone.Load() {
 		useBaseTouchSelectionDone.Store(true)
@@ -710,7 +710,7 @@ func UseBaseTouchSelection() {
 	}
 }
 
-// UseBaseTree links GPUI-kit's base/tree family into the program and registers it with the library.
+// UseBaseTree forces linking and registers the base/tree component family once.
 func UseBaseTree() {
 	if !useBaseTreeDone.Load() {
 		useBaseTreeDone.Store(true)
@@ -718,7 +718,7 @@ func UseBaseTree() {
 	}
 }
 
-// UseBaseVirtualList links GPUI-kit's base/virtual_list family into the program and registers it with the library.
+// UseBaseVirtualList forces linking and registers the base/virtual_list component family once.
 func UseBaseVirtualList() {
 	if !useBaseVirtualListDone.Load() {
 		useBaseVirtualListDone.Store(true)
@@ -726,7 +726,7 @@ func UseBaseVirtualList() {
 	}
 }
 
-// UseComponentAccordion links GPUI-kit's component/accordion family into the program and registers it with the library.
+// UseComponentAccordion forces linking and registers the component/accordion component family once.
 func UseComponentAccordion() {
 	if !useComponentAccordionDone.Load() {
 		useComponentAccordionDone.Store(true)
@@ -734,7 +734,7 @@ func UseComponentAccordion() {
 	}
 }
 
-// UseComponentAlert links GPUI-kit's component/alert family into the program and registers it with the library.
+// UseComponentAlert forces linking and registers the component/alert component family once.
 func UseComponentAlert() {
 	if !useComponentAlertDone.Load() {
 		useComponentAlertDone.Store(true)
@@ -742,7 +742,7 @@ func UseComponentAlert() {
 	}
 }
 
-// UseComponentAttachment links GPUI-kit's component/attachment family into the program and registers it with the library.
+// UseComponentAttachment forces linking and registers the component/attachment component family once.
 func UseComponentAttachment() {
 	if !useComponentAttachmentDone.Load() {
 		useComponentAttachmentDone.Store(true)
@@ -750,7 +750,7 @@ func UseComponentAttachment() {
 	}
 }
 
-// UseComponentAvatar links GPUI-kit's component/avatar family into the program and registers it with the library.
+// UseComponentAvatar forces linking and registers the component/avatar component family once.
 func UseComponentAvatar() {
 	if !useComponentAvatarDone.Load() {
 		useComponentAvatarDone.Store(true)
@@ -758,7 +758,7 @@ func UseComponentAvatar() {
 	}
 }
 
-// UseComponentBadge links GPUI-kit's component/badge family into the program and registers it with the library.
+// UseComponentBadge forces linking and registers the component/badge component family once.
 func UseComponentBadge() {
 	if !useComponentBadgeDone.Load() {
 		useComponentBadgeDone.Store(true)
@@ -766,7 +766,7 @@ func UseComponentBadge() {
 	}
 }
 
-// UseComponentBreadcrumb links GPUI-kit's component/breadcrumb family into the program and registers it with the library.
+// UseComponentBreadcrumb forces linking and registers the component/breadcrumb component family once.
 func UseComponentBreadcrumb() {
 	if !useComponentBreadcrumbDone.Load() {
 		useComponentBreadcrumbDone.Store(true)
@@ -774,7 +774,7 @@ func UseComponentBreadcrumb() {
 	}
 }
 
-// UseComponentBubble links GPUI-kit's component/bubble family into the program and registers it with the library.
+// UseComponentBubble forces linking and registers the component/bubble component family once.
 func UseComponentBubble() {
 	if !useComponentBubbleDone.Load() {
 		useComponentBubbleDone.Store(true)
@@ -782,7 +782,7 @@ func UseComponentBubble() {
 	}
 }
 
-// UseComponentButton links GPUI-kit's component/button family into the program and registers it with the library.
+// UseComponentButton forces linking and registers the component/button component family once.
 func UseComponentButton() {
 	if !useComponentButtonDone.Load() {
 		useComponentButtonDone.Store(true)
@@ -790,7 +790,7 @@ func UseComponentButton() {
 	}
 }
 
-// UseComponentCarousel links GPUI-kit's component/carousel family into the program and registers it with the library.
+// UseComponentCarousel forces linking and registers the component/carousel component family once.
 func UseComponentCarousel() {
 	if !useComponentCarouselDone.Load() {
 		useComponentCarouselDone.Store(true)
@@ -798,7 +798,7 @@ func UseComponentCarousel() {
 	}
 }
 
-// UseComponentChart links GPUI-kit's component/chart family into the program and registers it with the library.
+// UseComponentChart forces linking and registers the component/chart component family once.
 func UseComponentChart() {
 	if !useComponentChartDone.Load() {
 		useComponentChartDone.Store(true)
@@ -806,7 +806,7 @@ func UseComponentChart() {
 	}
 }
 
-// UseComponentCheckbox links GPUI-kit's component/checkbox family into the program and registers it with the library.
+// UseComponentCheckbox forces linking and registers the component/checkbox component family once.
 func UseComponentCheckbox() {
 	if !useComponentCheckboxDone.Load() {
 		useComponentCheckboxDone.Store(true)
@@ -814,7 +814,7 @@ func UseComponentCheckbox() {
 	}
 }
 
-// UseComponentClipboard links GPUI-kit's component/clipboard family into the program and registers it with the library.
+// UseComponentClipboard forces linking and registers the component/clipboard component family once.
 func UseComponentClipboard() {
 	if !useComponentClipboardDone.Load() {
 		useComponentClipboardDone.Store(true)
@@ -822,7 +822,7 @@ func UseComponentClipboard() {
 	}
 }
 
-// UseComponentCollapsible links GPUI-kit's component/collapsible family into the program and registers it with the library.
+// UseComponentCollapsible forces linking and registers the component/collapsible component family once.
 func UseComponentCollapsible() {
 	if !useComponentCollapsibleDone.Load() {
 		useComponentCollapsibleDone.Store(true)
@@ -830,7 +830,7 @@ func UseComponentCollapsible() {
 	}
 }
 
-// UseComponentColorPicker links GPUI-kit's component/color_picker family into the program and registers it with the library.
+// UseComponentColorPicker forces linking and registers the component/color_picker component family once.
 func UseComponentColorPicker() {
 	if !useComponentColorPickerDone.Load() {
 		useComponentColorPickerDone.Store(true)
@@ -838,7 +838,7 @@ func UseComponentColorPicker() {
 	}
 }
 
-// UseComponentCombobox links GPUI-kit's component/combobox family into the program and registers it with the library.
+// UseComponentCombobox forces linking and registers the component/combobox component family once.
 func UseComponentCombobox() {
 	if !useComponentComboboxDone.Load() {
 		useComponentComboboxDone.Store(true)
@@ -846,7 +846,7 @@ func UseComponentCombobox() {
 	}
 }
 
-// UseComponentCommand links GPUI-kit's component/command family into the program and registers it with the library.
+// UseComponentCommand forces linking and registers the component/command component family once.
 func UseComponentCommand() {
 	if !useComponentCommandDone.Load() {
 		useComponentCommandDone.Store(true)
@@ -854,7 +854,7 @@ func UseComponentCommand() {
 	}
 }
 
-// UseComponentDescriptionList links GPUI-kit's component/description_list family into the program and registers it with the library.
+// UseComponentDescriptionList forces linking and registers the component/description_list component family once.
 func UseComponentDescriptionList() {
 	if !useComponentDescriptionListDone.Load() {
 		useComponentDescriptionListDone.Store(true)
@@ -862,7 +862,7 @@ func UseComponentDescriptionList() {
 	}
 }
 
-// UseComponentDialog links GPUI-kit's component/dialog family into the program and registers it with the library.
+// UseComponentDialog forces linking and registers the component/dialog component family once.
 func UseComponentDialog() {
 	if !useComponentDialogDone.Load() {
 		useComponentDialogDone.Store(true)
@@ -870,7 +870,7 @@ func UseComponentDialog() {
 	}
 }
 
-// UseComponentDiff links GPUI-kit's component/diff family into the program and registers it with the library.
+// UseComponentDiff forces linking and registers the component/diff component family once.
 func UseComponentDiff() {
 	if !useComponentDiffDone.Load() {
 		useComponentDiffDone.Store(true)
@@ -878,7 +878,7 @@ func UseComponentDiff() {
 	}
 }
 
-// UseComponentDock links GPUI-kit's component/dock family into the program and registers it with the library.
+// UseComponentDock forces linking and registers the component/dock component family once.
 func UseComponentDock() {
 	if !useComponentDockDone.Load() {
 		useComponentDockDone.Store(true)
@@ -886,7 +886,7 @@ func UseComponentDock() {
 	}
 }
 
-// UseComponentEmpty links GPUI-kit's component/empty family into the program and registers it with the library.
+// UseComponentEmpty forces linking and registers the component/empty component family once.
 func UseComponentEmpty() {
 	if !useComponentEmptyDone.Load() {
 		useComponentEmptyDone.Store(true)
@@ -894,7 +894,7 @@ func UseComponentEmpty() {
 	}
 }
 
-// UseComponentForm links GPUI-kit's component/form family into the program and registers it with the library.
+// UseComponentForm forces linking and registers the component/form component family once.
 func UseComponentForm() {
 	if !useComponentFormDone.Load() {
 		useComponentFormDone.Store(true)
@@ -902,7 +902,7 @@ func UseComponentForm() {
 	}
 }
 
-// UseComponentGroupBox links GPUI-kit's component/group_box family into the program and registers it with the library.
+// UseComponentGroupBox forces linking and registers the component/group_box component family once.
 func UseComponentGroupBox() {
 	if !useComponentGroupBoxDone.Load() {
 		useComponentGroupBoxDone.Store(true)
@@ -910,7 +910,7 @@ func UseComponentGroupBox() {
 	}
 }
 
-// UseComponentHighlighter links GPUI-kit's component/highlighter family into the program and registers it with the library.
+// UseComponentHighlighter forces linking and registers the component/highlighter component family once.
 func UseComponentHighlighter() {
 	if !useComponentHighlighterDone.Load() {
 		useComponentHighlighterDone.Store(true)
@@ -918,7 +918,7 @@ func UseComponentHighlighter() {
 	}
 }
 
-// UseComponentHoverCard links GPUI-kit's component/hover_card family into the program and registers it with the library.
+// UseComponentHoverCard forces linking and registers the component/hover_card component family once.
 func UseComponentHoverCard() {
 	if !useComponentHoverCardDone.Load() {
 		useComponentHoverCardDone.Store(true)
@@ -926,7 +926,7 @@ func UseComponentHoverCard() {
 	}
 }
 
-// UseComponentIcon links GPUI-kit's component/icon family into the program and registers it with the library.
+// UseComponentIcon forces linking and registers the component/icon component family once.
 func UseComponentIcon() {
 	if !useComponentIconDone.Load() {
 		useComponentIconDone.Store(true)
@@ -934,7 +934,7 @@ func UseComponentIcon() {
 	}
 }
 
-// UseComponentInput links GPUI-kit's component/input family into the program and registers it with the library.
+// UseComponentInput forces linking and registers the component/input component family once.
 func UseComponentInput() {
 	if !useComponentInputDone.Load() {
 		useComponentInputDone.Store(true)
@@ -942,7 +942,7 @@ func UseComponentInput() {
 	}
 }
 
-// UseComponentKbd links GPUI-kit's component/kbd family into the program and registers it with the library.
+// UseComponentKbd forces linking and registers the component/kbd component family once.
 func UseComponentKbd() {
 	if !useComponentKbdDone.Load() {
 		useComponentKbdDone.Store(true)
@@ -950,7 +950,7 @@ func UseComponentKbd() {
 	}
 }
 
-// UseComponentLabel links GPUI-kit's component/label family into the program and registers it with the library.
+// UseComponentLabel forces linking and registers the component/label component family once.
 func UseComponentLabel() {
 	if !useComponentLabelDone.Load() {
 		useComponentLabelDone.Store(true)
@@ -958,7 +958,7 @@ func UseComponentLabel() {
 	}
 }
 
-// UseComponentLink links GPUI-kit's component/link family into the program and registers it with the library.
+// UseComponentLink forces linking and registers the component/link component family once.
 func UseComponentLink() {
 	if !useComponentLinkDone.Load() {
 		useComponentLinkDone.Store(true)
@@ -966,7 +966,7 @@ func UseComponentLink() {
 	}
 }
 
-// UseComponentList links GPUI-kit's component/list family into the program and registers it with the library.
+// UseComponentList forces linking and registers the component/list component family once.
 func UseComponentList() {
 	if !useComponentListDone.Load() {
 		useComponentListDone.Store(true)
@@ -974,7 +974,7 @@ func UseComponentList() {
 	}
 }
 
-// UseComponentMarker links GPUI-kit's component/marker family into the program and registers it with the library.
+// UseComponentMarker forces linking and registers the component/marker component family once.
 func UseComponentMarker() {
 	if !useComponentMarkerDone.Load() {
 		useComponentMarkerDone.Store(true)
@@ -982,7 +982,7 @@ func UseComponentMarker() {
 	}
 }
 
-// UseComponentMenu links GPUI-kit's component/menu family into the program and registers it with the library.
+// UseComponentMenu forces linking and registers the component/menu component family once.
 func UseComponentMenu() {
 	if !useComponentMenuDone.Load() {
 		useComponentMenuDone.Store(true)
@@ -990,7 +990,7 @@ func UseComponentMenu() {
 	}
 }
 
-// UseComponentMessage links GPUI-kit's component/message family into the program and registers it with the library.
+// UseComponentMessage forces linking and registers the component/message component family once.
 func UseComponentMessage() {
 	if !useComponentMessageDone.Load() {
 		useComponentMessageDone.Store(true)
@@ -998,7 +998,7 @@ func UseComponentMessage() {
 	}
 }
 
-// UseComponentMessageScroller links GPUI-kit's component/message_scroller family into the program and registers it with the library.
+// UseComponentMessageScroller forces linking and registers the component/message_scroller component family once.
 func UseComponentMessageScroller() {
 	if !useComponentMessageScrollerDone.Load() {
 		useComponentMessageScrollerDone.Store(true)
@@ -1006,7 +1006,7 @@ func UseComponentMessageScroller() {
 	}
 }
 
-// UseComponentNotification links GPUI-kit's component/notification family into the program and registers it with the library.
+// UseComponentNotification forces linking and registers the component/notification component family once.
 func UseComponentNotification() {
 	if !useComponentNotificationDone.Load() {
 		useComponentNotificationDone.Store(true)
@@ -1014,7 +1014,7 @@ func UseComponentNotification() {
 	}
 }
 
-// UseComponentPagination links GPUI-kit's component/pagination family into the program and registers it with the library.
+// UseComponentPagination forces linking and registers the component/pagination component family once.
 func UseComponentPagination() {
 	if !useComponentPaginationDone.Load() {
 		useComponentPaginationDone.Store(true)
@@ -1022,7 +1022,7 @@ func UseComponentPagination() {
 	}
 }
 
-// UseComponentPlot links GPUI-kit's component/plot family into the program and registers it with the library.
+// UseComponentPlot forces linking and registers the component/plot component family once.
 func UseComponentPlot() {
 	if !useComponentPlotDone.Load() {
 		useComponentPlotDone.Store(true)
@@ -1030,7 +1030,7 @@ func UseComponentPlot() {
 	}
 }
 
-// UseComponentPopover links GPUI-kit's component/popover family into the program and registers it with the library.
+// UseComponentPopover forces linking and registers the component/popover component family once.
 func UseComponentPopover() {
 	if !useComponentPopoverDone.Load() {
 		useComponentPopoverDone.Store(true)
@@ -1038,7 +1038,7 @@ func UseComponentPopover() {
 	}
 }
 
-// UseComponentProgress links GPUI-kit's component/progress family into the program and registers it with the library.
+// UseComponentProgress forces linking and registers the component/progress component family once.
 func UseComponentProgress() {
 	if !useComponentProgressDone.Load() {
 		useComponentProgressDone.Store(true)
@@ -1046,7 +1046,7 @@ func UseComponentProgress() {
 	}
 }
 
-// UseComponentQuestionnaire links GPUI-kit's component/questionnaire family into the program and registers it with the library.
+// UseComponentQuestionnaire forces linking and registers the component/questionnaire component family once.
 func UseComponentQuestionnaire() {
 	if !useComponentQuestionnaireDone.Load() {
 		useComponentQuestionnaireDone.Store(true)
@@ -1054,7 +1054,7 @@ func UseComponentQuestionnaire() {
 	}
 }
 
-// UseComponentRadio links GPUI-kit's component/radio family into the program and registers it with the library.
+// UseComponentRadio forces linking and registers the component/radio component family once.
 func UseComponentRadio() {
 	if !useComponentRadioDone.Load() {
 		useComponentRadioDone.Store(true)
@@ -1062,7 +1062,7 @@ func UseComponentRadio() {
 	}
 }
 
-// UseComponentRating links GPUI-kit's component/rating family into the program and registers it with the library.
+// UseComponentRating forces linking and registers the component/rating component family once.
 func UseComponentRating() {
 	if !useComponentRatingDone.Load() {
 		useComponentRatingDone.Store(true)
@@ -1070,7 +1070,7 @@ func UseComponentRating() {
 	}
 }
 
-// UseComponentRoot links GPUI-kit's component/root family into the program and registers it with the library.
+// UseComponentRoot forces linking and registers the component/root component family once.
 func UseComponentRoot() {
 	if !useComponentRootDone.Load() {
 		useComponentRootDone.Store(true)
@@ -1078,7 +1078,7 @@ func UseComponentRoot() {
 	}
 }
 
-// UseComponentScroll links GPUI-kit's component/scroll family into the program and registers it with the library.
+// UseComponentScroll forces linking and registers the component/scroll component family once.
 func UseComponentScroll() {
 	if !useComponentScrollDone.Load() {
 		useComponentScrollDone.Store(true)
@@ -1086,7 +1086,7 @@ func UseComponentScroll() {
 	}
 }
 
-// UseComponentSearchableList links GPUI-kit's component/searchable_list family into the program and registers it with the library.
+// UseComponentSearchableList forces linking and registers the component/searchable_list component family once.
 func UseComponentSearchableList() {
 	if !useComponentSearchableListDone.Load() {
 		useComponentSearchableListDone.Store(true)
@@ -1094,7 +1094,7 @@ func UseComponentSearchableList() {
 	}
 }
 
-// UseComponentSelect links GPUI-kit's component/select family into the program and registers it with the library.
+// UseComponentSelect forces linking and registers the component/select component family once.
 func UseComponentSelect() {
 	if !useComponentSelectDone.Load() {
 		useComponentSelectDone.Store(true)
@@ -1102,7 +1102,7 @@ func UseComponentSelect() {
 	}
 }
 
-// UseComponentSeparator links GPUI-kit's component/separator family into the program and registers it with the library.
+// UseComponentSeparator forces linking and registers the component/separator component family once.
 func UseComponentSeparator() {
 	if !useComponentSeparatorDone.Load() {
 		useComponentSeparatorDone.Store(true)
@@ -1110,7 +1110,7 @@ func UseComponentSeparator() {
 	}
 }
 
-// UseComponentSetting links GPUI-kit's component/setting family into the program and registers it with the library.
+// UseComponentSetting forces linking and registers the component/setting component family once.
 func UseComponentSetting() {
 	if !useComponentSettingDone.Load() {
 		useComponentSettingDone.Store(true)
@@ -1118,7 +1118,7 @@ func UseComponentSetting() {
 	}
 }
 
-// UseComponentSheet links GPUI-kit's component/sheet family into the program and registers it with the library.
+// UseComponentSheet forces linking and registers the component/sheet component family once.
 func UseComponentSheet() {
 	if !useComponentSheetDone.Load() {
 		useComponentSheetDone.Store(true)
@@ -1126,7 +1126,7 @@ func UseComponentSheet() {
 	}
 }
 
-// UseComponentShimmer links GPUI-kit's component/shimmer family into the program and registers it with the library.
+// UseComponentShimmer forces linking and registers the component/shimmer component family once.
 func UseComponentShimmer() {
 	if !useComponentShimmerDone.Load() {
 		useComponentShimmerDone.Store(true)
@@ -1134,7 +1134,7 @@ func UseComponentShimmer() {
 	}
 }
 
-// UseComponentSidebar links GPUI-kit's component/sidebar family into the program and registers it with the library.
+// UseComponentSidebar forces linking and registers the component/sidebar component family once.
 func UseComponentSidebar() {
 	if !useComponentSidebarDone.Load() {
 		useComponentSidebarDone.Store(true)
@@ -1142,7 +1142,7 @@ func UseComponentSidebar() {
 	}
 }
 
-// UseComponentSkeleton links GPUI-kit's component/skeleton family into the program and registers it with the library.
+// UseComponentSkeleton forces linking and registers the component/skeleton component family once.
 func UseComponentSkeleton() {
 	if !useComponentSkeletonDone.Load() {
 		useComponentSkeletonDone.Store(true)
@@ -1150,7 +1150,7 @@ func UseComponentSkeleton() {
 	}
 }
 
-// UseComponentSlider links GPUI-kit's component/slider family into the program and registers it with the library.
+// UseComponentSlider forces linking and registers the component/slider component family once.
 func UseComponentSlider() {
 	if !useComponentSliderDone.Load() {
 		useComponentSliderDone.Store(true)
@@ -1158,7 +1158,7 @@ func UseComponentSlider() {
 	}
 }
 
-// UseComponentSpeech links GPUI-kit's component/speech family into the program and registers it with the library.
+// UseComponentSpeech forces linking and registers the component/speech component family once.
 func UseComponentSpeech() {
 	if !useComponentSpeechDone.Load() {
 		useComponentSpeechDone.Store(true)
@@ -1166,7 +1166,7 @@ func UseComponentSpeech() {
 	}
 }
 
-// UseComponentSpinner links GPUI-kit's component/spinner family into the program and registers it with the library.
+// UseComponentSpinner forces linking and registers the component/spinner component family once.
 func UseComponentSpinner() {
 	if !useComponentSpinnerDone.Load() {
 		useComponentSpinnerDone.Store(true)
@@ -1174,7 +1174,7 @@ func UseComponentSpinner() {
 	}
 }
 
-// UseComponentStatusBar links GPUI-kit's component/status_bar family into the program and registers it with the library.
+// UseComponentStatusBar forces linking and registers the component/status_bar component family once.
 func UseComponentStatusBar() {
 	if !useComponentStatusBarDone.Load() {
 		useComponentStatusBarDone.Store(true)
@@ -1182,7 +1182,7 @@ func UseComponentStatusBar() {
 	}
 }
 
-// UseComponentStepper links GPUI-kit's component/stepper family into the program and registers it with the library.
+// UseComponentStepper forces linking and registers the component/stepper component family once.
 func UseComponentStepper() {
 	if !useComponentStepperDone.Load() {
 		useComponentStepperDone.Store(true)
@@ -1190,7 +1190,7 @@ func UseComponentStepper() {
 	}
 }
 
-// UseComponentSwitch links GPUI-kit's component/switch family into the program and registers it with the library.
+// UseComponentSwitch forces linking and registers the component/switch component family once.
 func UseComponentSwitch() {
 	if !useComponentSwitchDone.Load() {
 		useComponentSwitchDone.Store(true)
@@ -1198,7 +1198,7 @@ func UseComponentSwitch() {
 	}
 }
 
-// UseComponentTab links GPUI-kit's component/tab family into the program and registers it with the library.
+// UseComponentTab forces linking and registers the component/tab component family once.
 func UseComponentTab() {
 	if !useComponentTabDone.Load() {
 		useComponentTabDone.Store(true)
@@ -1206,7 +1206,7 @@ func UseComponentTab() {
 	}
 }
 
-// UseComponentTable links GPUI-kit's component/table family into the program and registers it with the library.
+// UseComponentTable forces linking and registers the component/table component family once.
 func UseComponentTable() {
 	if !useComponentTableDone.Load() {
 		useComponentTableDone.Store(true)
@@ -1214,7 +1214,7 @@ func UseComponentTable() {
 	}
 }
 
-// UseComponentTag links GPUI-kit's component/tag family into the program and registers it with the library.
+// UseComponentTag forces linking and registers the component/tag component family once.
 func UseComponentTag() {
 	if !useComponentTagDone.Load() {
 		useComponentTagDone.Store(true)
@@ -1222,7 +1222,7 @@ func UseComponentTag() {
 	}
 }
 
-// UseComponentTheme links GPUI-kit's component/theme family into the program and registers it with the library.
+// UseComponentTheme forces linking and registers the component/theme component family once.
 func UseComponentTheme() {
 	if !useComponentThemeDone.Load() {
 		useComponentThemeDone.Store(true)
@@ -1230,7 +1230,7 @@ func UseComponentTheme() {
 	}
 }
 
-// UseComponentTime links GPUI-kit's component/time family into the program and registers it with the library.
+// UseComponentTime forces linking and registers the component/time component family once.
 func UseComponentTime() {
 	if !useComponentTimeDone.Load() {
 		useComponentTimeDone.Store(true)
@@ -1238,7 +1238,7 @@ func UseComponentTime() {
 	}
 }
 
-// UseComponentTitleBar links GPUI-kit's component/title_bar family into the program and registers it with the library.
+// UseComponentTitleBar forces linking and registers the component/title_bar component family once.
 func UseComponentTitleBar() {
 	if !useComponentTitleBarDone.Load() {
 		useComponentTitleBarDone.Store(true)
@@ -1246,7 +1246,7 @@ func UseComponentTitleBar() {
 	}
 }
 
-// UseComponentToolbar links GPUI-kit's component/toolbar family into the program and registers it with the library.
+// UseComponentToolbar forces linking and registers the component/toolbar component family once.
 func UseComponentToolbar() {
 	if !useComponentToolbarDone.Load() {
 		useComponentToolbarDone.Store(true)
@@ -1254,7 +1254,7 @@ func UseComponentToolbar() {
 	}
 }
 
-// UseComponentTree links GPUI-kit's component/tree family into the program and registers it with the library.
+// UseComponentTree forces linking and registers the component/tree component family once.
 func UseComponentTree() {
 	if !useComponentTreeDone.Load() {
 		useComponentTreeDone.Store(true)
@@ -1262,7 +1262,7 @@ func UseComponentTree() {
 	}
 }
 
-// UseComponentWindowBorder links GPUI-kit's component/window_border family into the program and registers it with the library.
+// UseComponentWindowBorder forces linking and registers the component/window_border component family once.
 func UseComponentWindowBorder() {
 	if !useComponentWindowBorderDone.Load() {
 		useComponentWindowBorderDone.Store(true)
@@ -1270,7 +1270,7 @@ func UseComponentWindowBorder() {
 	}
 }
 
-// UseComponentWindowExt links GPUI-kit's component/window_ext family into the program and registers it with the library.
+// UseComponentWindowExt forces linking and registers the component/window_ext component family once.
 func UseComponentWindowExt() {
 	if !useComponentWindowExtDone.Load() {
 		useComponentWindowExtDone.Store(true)

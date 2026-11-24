@@ -1,16 +1,28 @@
 #!/bin/bash
-# go-misuse.sh: the Go front end's misuse gate. Run-time cases
-# (examples/go/misuse, offscreen with the diag library): each must behave correctly or stop with
-# its message; exit 0 with wrong content fails. Compile-time cases (examples/go/misuse_compile):
-# each must fail to build, with the compiler's message naming the mistake. Prints
-# "GATE misuse go ...". Needs bin/misuse-go, bin/misuse_rows-go, bin/misuse_data-go,
-# bin/misuse_overlay-go, bin/misuse_values-go, bin/misuse_lists-go, bin/misuse_editor-go and
-# bin/misuse_review-go (examples/go/build.sh misuse misuse_rows misuse_data misuse_overlay
-# misuse_values misuse_lists misuse_editor misuse_review).
+# Misuse, safety-contract, and compile-time type-safety gate for Go (`gates/go-misuse.sh`).
 #
-# Each case is a run or compile case, a comment naming the Go case that covers it, a comment
-# saying why Go makes the mistake impossible, or a PENDING line (a Go binding is missing; not
-# counted; listed in gates/go-pending.txt).
+# What it gates:
+#   Verifies that invalid Go usage fails fast with clear, actionable diagnostics instead of
+#   crashing in Rust or silently corrupting state, and that Go's static type system rejects wrong
+#   element, handler, token, fill, color, and action types at compile time.
+#
+# How it measures:
+#   - Runtime cases (`run <case> <want_rc> <regex>`): launches `bin/<NEG_BIN>-go` offscreen on
+#     `lib/diag` (60 s timeout) with `GK_NEG=<case>` across 8 binaries (`misuse`, `misuse_rows`,
+#     `misuse_data`, `misuse_overlay`, `misuse_values`, `misuse_lists`, `misuse_editor`,
+#     `misuse_review`), asserting exact exit status and error message regex.
+#   - Source-location check (`lines`): confirms all 15 app-originated stops in `misuse` cite
+#     `misuse/main.go:<line>` so users see their own call site rather than internal runtime frames.
+#   - Compile-fail cases (`compile <pkg> <regex>`): builds each package under
+#     `examples/go/misuse_compile/` expecting a non-zero exit and the matching Go compiler error.
+#   - Environment/build-mode checks: verifies `hello-go` fails cleanly with exit 1 when no display
+#     is set, `CGO_ENABLED=0` builds via purego, and `CGO_ENABLED=0 -tags=gkstatic` stops first on
+#     the explicit cgo guard symbol.
+#
+# What PASS means (exit 0):
+#   Every single runtime, line-number, compile-fail, and build-mode check passes (`pass == total`),
+#   printing `GATE misuse go PASS <N> of <N> cases`.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 . "$repo/go/env.sh"
 out=$here/out/go/misuse
@@ -18,7 +30,9 @@ rm -rf "$out"; mkdir -p "$out"
 export LD_LIBRARY_PATH=${GK_LIB_ROOT:-$repo/lib}/diag
 unset WAYLAND_DISPLAY DISPLAY
 pass=0; total=0
-run() { # mode expected-exit pattern (the program is $NEG_BIN, default misuse)
+
+# Run one GK_NEG scenario against $NEG_BIN-go (default misuse-go) and verify exit code + regex.
+run() {
   total=$((total + 1))
   bin=${NEG_BIN:-misuse}
   log=$out/$1.log
@@ -31,14 +45,11 @@ run() { # mode expected-exit pattern (the program is $NEG_BIN, default misuse)
     echo "FAIL $1: exit $rc (wanted $2 and /$3/)"; tail -5 "$log"
   fi
 }
-pending() { # case what-is-missing: not run, not counted (gates/go-pending.txt lists it)
+pending() {
   echo "GATE misuse $1 PENDING needs $2"
 }
-# A handler given to two builders, or kept past its turn: impossible in Go, a handler is a closure
-# the collector keeps alive, so it may be given to any number of builders, in any turn; twice is
-# the element form of the mistake. Lent text kept, or a pointer as handler data: impossible in Go,
-# InputState.Value returns a Go string (a copy, kept by the collector) and a closure may capture
-# any pointer.
+
+# Core runtime misuse cases (context/element lifetimes, threads, UTF-8, NUL, panics, and data columns).
 run rune58 0 'done mode=rune58 clicks=3 selected="item 0 of build after 2 clicks"'
 run keep 0 'done mode=keep clicks=3 selected="" kept="typed text"'
 run cx 1 'a \*gk.Cx was used after the function it was given to returned'
@@ -60,7 +71,8 @@ run data-column 1 'a builder names the column "month", which the rows of this da
 run panel-name 1 'a panel needs a name \(PanelData.Name\)'
 run app-panic 2 'gk: panic in app code: runtime error: index out of range'
 run go-panic 2 'gk: panic in the work function of the gk.Go at .*misuse/main.go:[0-9]+: assignment to entry in nil map'
-# Every run-time stop names the app's line.
+
+# Confirm all 15 app-originated stops point directly to the offending line in misuse/main.go.
 total=$((total + 1))
 if grep -lE 'at .*misuse/main.go:[0-9]+' "$out"/{cx,element,twice,self,view,nil,built,utf8,goroutine,row-write,data-column,panel-name,app-panic,go-panic,usize}.log > /dev/null 2>&1 &&
    [ "$(grep -lE 'at .*misuse/main.go:[0-9]+' "$out"/{cx,element,twice,self,view,nil,built,utf8,goroutine,row-write,data-column,panel-name,app-panic,go-panic,usize}.log | wc -l)" = 15 ]; then
@@ -68,16 +80,16 @@ if grep -lE 'at .*misuse/main.go:[0-9]+' "$out"/{cx,element,twice,self,view,nil,
 else
   echo "FAIL lines: a stop does not name main.go:LINE"; grep -L 'misuse/main.go:' "$out"/*.log
 fi
-# The delegate protocol and InputState (examples/go/misuse_rows; its nul and utf8 cases are the
-# nul and utf8 modes above).
+
+# Virtual rows, table row-count overflow, and released row/input handle cases.
 NEG_BIN=misuse_rows
 run table-freed 1 'a view shows a row source through a handle that cannot be used'
 run row-reenter 1 'a view function may not write: it only describes \(gk.Release\)'
 run row-handler 0 'gk-neg row-handler clicked text="row 0 of a list"'
 run huge-count 1 'table.NewSource was given 3000000000 rows of 2 columns; a table holds at most'
 run input-release 1 'a view shows a .*InputBaseState<.*InputMode> through a handle that cannot be used'
-# The data protocol (examples/go/misuse_data). A column
-# is an exported field, named as the field is (Month, Desktop).
+
+# Data-table template validation: unknown columns, wrong kind, bad index, unclosed brace, unsupported field type.
 NEG_BIN=misuse_data
 run data-ok 0 'gk-neg done mode=data-ok drawn=1'
 run data-column 1 'names the column "Dekstop", which the rows of this data \(main.month\) do not have: Month, Desktop'
@@ -86,8 +98,8 @@ run data-number 1 'asks for number 2, and this builder hands it 1'
 run data-brace 1 'has a \{ that is not closed'
 run data-row 1 'names the column "Month", and this builder has no row to read it from'
 run data-field 1 'the field Parts of main.bad is a \[\]int, which a data table cannot carry'
-# View-built closures (examples/go/misuse_overlay). A function returning a node that is not a
-# Dialog does not compile in Go: compile built_root below.
+
+# Built views (Dialog) and dock panel registration/node ID misuse.
 NEG_BIN=misuse_overlay
 run built-ok 0 'gk-neg done mode=built-ok built=[1-9][0-9]* active=true'
 run built-freed 1 'a view shows a Dialog \(the view gk.NewBuilt made\) through a handle that cannot be used'
@@ -95,7 +107,8 @@ run built-view 1 'gk.NewBuilt in a view function'
 run built-none 1 'no view given: make it with gk.NewBuilt'
 run dock-node 1 'node id 424242 was never handed out by the dock'
 run dock-register 1 'dock.RegisterPanel in a view function'
-# The values family (examples/go/misuse_values).
+
+# Value builders, self-reference, actions in views, invalid time, released scroll handles, search rules, tooltips.
 NEG_BIN=misuse_values
 run val-ok 0 'gk-neg done mode=val-ok drawn=[0-9]* clicks=2'
 run val-self 1 'a value was given as an argument to its own builder'
@@ -107,7 +120,8 @@ run val-scroll-freed 1 'a view shows a .*ScrollHandle through a handle that cann
 run c6-rules-source 1 'gk.SearchWillChange was given a row source gk.NewSearchSource did not make'
 run c6-rules-limits 1 'min 3 and max 1 cannot both hold'
 run c6-tooltip-kept 1 'was used after the function that made it returned'
-# The lists family (examples/go/misuse_lists).
+
+# Search/select row sources, expression parser errors, NonZero bounds, and writes during view builds.
 NEG_BIN=misuse_lists
 run sel-ok 0 'gk-neg sel-ok value="b" ok=true'
 run sel-foreign 1 'gk.SetSearchItems was given a row source gk.NewSearchSource did not make'
@@ -117,24 +131,22 @@ run expr-arg 1 'the expression "z \* 2" uses z, but the closure is handed 2 argu
 run expr-func 1 'the expression "clamp\(x, 1\)" calls clamp with 2 argument\(s\); it takes 3'
 run nonzero 1 '0 was given where the kit takes a number that is never 0'
 run kept-view 1 'a view function may not write'
-# The editor family (examples/go/misuse_editor, docs/PROTOCOLS.md 9.20 to 9.40).
+
+# Editor plugins, owner handle validation, temporary leaf lifetimes, and lent view values.
 NEG_BIN=misuse_editor
 run ed-ok 0 'gk-neg done mode=ed-ok drawn=[1-9][0-9]* rows=[1-9]'
 run ed-owner 1 'is not an input, a textarea or an editor'
 run ed-owner-released 1 'a view shows a kit state \(as an entity id\) through a handle that cannot be used'
 run ed-plugin-freed 1 'a view shows a row source through a handle that cannot be used'
-# Round 6 (9.30 to 9.37): the editor host's held values and leaves, decorators, lent edits.
 run ed6-ok 0 'gk-neg done mode=ed6-ok drawn=[1-9][0-9]* rows=[1-9][0-9]* leaves=[1-9][0-9]*'
 run ed6-held-stale 1 'cannot be used'
 run ed6-leaf-stale 1 'is temporary: it lives until the next frame begins'
 run ed6-decorate-freed 1 'a view shows a row source through a handle that cannot be used'
 run ed6-lent-view 1 'a value made in a view function was given to a call'
-# Round 7 (9.38 to 9.40): a parsed Custom block placed with its flow; kept, and not kept.
 run ed7-ok 0 'gk-neg done mode=ed7-ok drawn=[1-9][0-9]* rows=0 leaves=[1-9][0-9]*'
 run ed7-custom-unretained 1 'is temporary|cannot be used'
-# Attacks on later protocols (examples/go/misuse_review). An action id the library never made
-# does not compile in Go: compile action_forged below. A timer whose handler takes another state
-# than the view's: impossible in Go, a handler is a closure and has no state type.
+
+# Timers, window/panel release checks, key-binding writes in view, and temporary handle expiry.
 NEG_BIN=misuse_review
 run rv-ok 0 'gk-neg done mode=rv-ok drawn=[0-9]* clicks=2 fired=1 closed=1 acted=[1-9]'
 run rv-timer-view 1 'a view function may not start timers'
@@ -144,7 +156,9 @@ run rv-keys-view 1 'a view function may not write'
 run rv-temp-later 1 'temporary: it lives until the next frame begins'
 run rv-panel-released 1 'was released'
 NEG_BIN=misuse
-compile() { # case pattern
+
+# Compile-fail checks: each package in examples/go/misuse_compile must fail `go build` with the expected error.
+compile() {
   total=$((total + 1))
   (cd "$repo/examples/go" && go build -o /dev/null "./misuse_compile/$1") > "$out/compile-$1.log" 2>&1
   rc=$?
@@ -162,15 +176,12 @@ compile no_method 'OnClick undefined'
 compile value_child 'cannot use gk.NewStyleRefinementDefault\(\) .* as gk.Element value'
 compile effect_target 'gk.Text\("x"\) .* does not implement (gk|rt).AnimatableElement'
 compile shortcut_type 'does not satisfy gk.ShortcutHandler'
-# The port round (PROTOCOLS.md 11.38): .Bg takes a gk.Fill (a colour or a gradient); a gradient fits
-# nowhere a single colour goes.
 compile fill_token 'cannot use s.Gap2 .* as gk.Fill value.*does not implement (gk|rt).Fill'
 compile gradient_color 'cannot use g .* as gk.Color value'
-# Lent text assigned to a string: impossible in Go, InputState.Value returns a string (a copy),
-# so keeping it is correct (the keep mode above).
 compile built_root 'gk.Built\[kit.LabelEl\] does not satisfy gk.Builder\[overlay.DialogEl\]'
 compile action_forged 'cannot refer to unexported field id in struct literal of type gk.Action'
-# No display and no script: GPUI would wait without a word; gk.Run says so (exit 1).
+
+# Startup and build-mode checks: missing display error, purego no-cgo build, and static-tag cgo guard.
 total=$((total + 1))
 timeout 30 "${GK_BIN:-$repo/bin}/hello-go" > "$out/no-display.log" 2>&1; rc=$?
 if [ $rc = 1 ] && grep -q 'the app has no display to open its window on' "$out/no-display.log"; then
@@ -178,7 +189,6 @@ if [ $rc = 1 ] && grep -q 'the app has no display to open its window on' "$out/n
 else
   echo "FAIL no-display: exit $rc (wanted 1 and the no-display message)"; head -3 "$out/no-display.log"
 fi
-# The default build needs no C compiler: CGO_ENABLED=0 builds, as it does for a GOOS cross-build.
 total=$((total + 1))
 (cd "$repo/examples/go" && CGO_ENABLED=0 go build -tags= -o /dev/null ./hello) > "$out/compile-nocgo.log" 2>&1
 if [ $? -eq 0 ]; then
@@ -186,7 +196,6 @@ if [ $? -eq 0 ]; then
 else
   echo "FAIL compile-nocgo: CGO_ENABLED=0 does not build"; head -5 "$out/compile-nocgo.log"
 fi
-# The static build without cgo (CGO_ENABLED=0, or no C compiler): the first error says what to do.
 total=$((total + 1))
 (cd "$repo/examples/go" && CGO_ENABLED=0 go build -tags=gkstatic -o /dev/null ./hello) > "$out/compile-static-nocgo.log" 2>&1
 if [ $? -ne 0 ] && grep -v '^#' "$out/compile-static-nocgo.log" | head -1 | grep -q 'undefined: gk_static_needs_cgo__install_gcc_or_clang_and_build_with_CGO_ENABLED_1_or_drop_tag_gkstatic'; then

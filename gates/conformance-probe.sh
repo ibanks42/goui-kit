@@ -1,12 +1,15 @@
 #!/bin/bash
-# conformance-probe.sh: find the generated conformance pages whose Rust reference cannot be
-# drawn on its own. Runs ref-gallery once per page of ref/gallery/conf.txt (GALLERY_START=id,
-# two offscreen frames, about 0.15 s each) and prints, for every page that does not exit 0,
-# a line for gates/conformance-skip.txt: "id | panics in the reference: MESSAGE". Such a
-# page shows an element that only works inside a parent or with state the page does not
-# make (a ResizablePanel outside its group); it needs a hand-written page instead.
-#   gates/conformance-probe.sh >> gates/conformance-skip.txt
-# then gates/conformance.py and a rebuild of the reference.
+# Standalone panic probe for generated conformance pages (`gates/conformance-probe.sh`).
+#
+# What it checks (diagnostic helper for maintaining `gates/conformance-skip.txt`):
+#   Some upstream GPUI-kit widgets panic when rendered in isolation without parent state or context.
+#   This helper iterates through every page ID in `ref/gallery/conf.txt` and renders two 800x600
+#   offscreen frames in `ref-gallery` (`GALLERY_START=<id>`, 20 s timeout) on `lib/diag`.
+#
+# Output:
+#   Prints each failing page to stdout in `gates/conformance-skip.txt` format
+#   (`<id> | panics in the reference: <reason>`) and prints a summary count to stderr.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 lib=${GK_LIB_ROOT:-$repo/lib}/diag
 ref=${GK_REF:-$lib}/ref-gallery; [ -x "$ref" ] || ref=$lib/ref-gallery

@@ -12,7 +12,7 @@ type CaretEl struct{ rt.El }
 
 // Create a select caret sized for its trigger.
 //
-// Caret is <gpui_kit::component::combobox::Caret>::new.
+// Caret calls <gpui_kit::component::combobox::Caret>::new.
 func Caret(size gk.Size) CaretEl {
 	rt.UseComponentSelect()
 	n := rt.NewNode(625)
@@ -23,7 +23,7 @@ func Caret(size gk.Size) CaretEl {
 
 // Set the caret color.
 //
-// TextColor is <gpui_kit::component::combobox::Caret>::text_color.
+// TextColor calls <gpui_kit::component::combobox::Caret>::text_color.
 func (e CaretEl) TextColor(color gk.Color) CaretEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -33,7 +33,7 @@ func (e CaretEl) TextColor(color gk.Color) CaretEl {
 // ComboboxEl is gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>.
 type ComboboxEl struct{ rt.ElAnimatableElement }
 
-// Combobox is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::new.
+// Combobox calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::new.
 func Combobox(state ComboboxState, st ...gk.Style) ComboboxEl {
 	rt.UseComponentCombobox()
 	n := rt.NewNode(830)
@@ -45,7 +45,7 @@ func Combobox(state ComboboxState, st ...gk.Style) ComboboxEl {
 
 // Control whether the trigger shows a border and background.
 //
-// Appearance is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::appearance.
+// Appearance calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::appearance.
 func (e ComboboxEl) Appearance(appearance bool) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(appearance)
@@ -54,7 +54,7 @@ func (e ComboboxEl) Appearance(appearance bool) ComboboxEl {
 
 // Override the trailing check icon shown next to selected items.
 //
-// CheckIcon is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::check_icon.
+// CheckIcon calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::check_icon.
 func (e ComboboxEl) CheckIcon(icon gk.IconName) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.U16(uint16(icon))
@@ -63,7 +63,7 @@ func (e ComboboxEl) CheckIcon(icon gk.IconName) ComboboxEl {
 
 // Show a clear button when at least one item is selected.
 //
-// Cleanable is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::cleanable.
+// Cleanable calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::cleanable.
 func (e ComboboxEl) Cleanable(cleanable bool) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(cleanable)
@@ -72,7 +72,7 @@ func (e ComboboxEl) Cleanable(cleanable bool) ComboboxEl {
 
 // Set the disabled state.
 //
-// Disabled is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::disabled.
+// Disabled calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::disabled.
 func (e ComboboxEl) Disabled(disabled bool) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(disabled)
@@ -81,7 +81,7 @@ func (e ComboboxEl) Disabled(disabled bool) ComboboxEl {
 
 // Set a custom closure that renders the empty-state element.
 //
-// Empty is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::empty.
+// Empty calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::empty.
 func (e ComboboxEl) Empty(builder gk.View) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	rt.PutViewArg(o, builder)
@@ -90,7 +90,7 @@ func (e ComboboxEl) Empty(builder gk.View) ComboboxEl {
 
 // Render an element below a separator at the bottom of the dropdown.
 //
-// Footer is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::footer.
+// Footer calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::footer.
 func (e ComboboxEl) Footer(f gk.Element) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Take(f))
@@ -102,7 +102,7 @@ func (e ComboboxEl) Footer(f gk.Element) ComboboxEl {
 // Rows render with `render_highlighted`; the default highlights the matched text of `title()` in
 // the theme's `list_highlight_foreground` color.
 //
-// HighlightMatches is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::highlight_matches.
+// HighlightMatches calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::highlight_matches.
 func (e ComboboxEl) HighlightMatches(highlight bool) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.Bool(highlight)
@@ -111,7 +111,7 @@ func (e ComboboxEl) HighlightMatches(highlight bool) ComboboxEl {
 
 // Override the trigger chevron icon.
 //
-// Icon is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon.
+// Icon calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon.
 func (e ComboboxEl) Icon(icon gk.IconName) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U16(uint16(icon))
@@ -120,7 +120,7 @@ func (e ComboboxEl) Icon(icon gk.IconName) ComboboxEl {
 
 // Set the maximum height of the dropdown menu.
 //
-// MenuMaxH is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_max_h.
+// MenuMaxH calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_max_h.
 func (e ComboboxEl) MenuMaxH(maxH gk.Length) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	rt.PutLength(o, maxH)
@@ -129,7 +129,7 @@ func (e ComboboxEl) MenuMaxH(maxH gk.Length) ComboboxEl {
 
 // Set the width of the dropdown menu.
 //
-// MenuWidth is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_width.
+// MenuWidth calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_width.
 func (e ComboboxEl) MenuWidth(width gk.Length) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutLength(o, width)
@@ -138,7 +138,7 @@ func (e ComboboxEl) MenuWidth(width gk.Length) ComboboxEl {
 
 // Set the placeholder text shown when no items are selected.
 //
-// Placeholder is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::placeholder.
+// Placeholder calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::placeholder.
 func (e ComboboxEl) Placeholder(placeholder string) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Str(placeholder)
@@ -147,7 +147,7 @@ func (e ComboboxEl) Placeholder(placeholder string) ComboboxEl {
 
 // Override the entire trigger element.
 //
-// RenderTrigger is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::render_trigger.
+// RenderTrigger calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::render_trigger.
 func (e ComboboxEl) RenderTrigger(f gk.RowSource) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U64(rt.ItemsCheck(f, 13))
@@ -156,7 +156,7 @@ func (e ComboboxEl) RenderTrigger(f gk.RowSource) ComboboxEl {
 
 // Set the placeholder text for the search input.
 //
-// SearchPlaceholder is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::search_placeholder.
+// SearchPlaceholder calls <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::search_placeholder.
 func (e ComboboxEl) SearchPlaceholder(placeholder string) ComboboxEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Str(placeholder)
@@ -165,29 +165,37 @@ func (e ComboboxEl) SearchPlaceholder(placeholder string) ComboboxEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ComboboxEl) PopoverStyle() ComboboxEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ComboboxEl) RoundedFullStyle() ComboboxEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ComboboxEl) BorderE(width gk.Length) ComboboxEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ComboboxEl) BorderS(width gk.Length) ComboboxEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -195,121 +203,163 @@ func (e ComboboxEl) BorderS(width gk.Length) ComboboxEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ComboboxEl) FlexRowDir() ComboboxEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ComboboxEl) InsetE(length gk.Length) ComboboxEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ComboboxEl) InsetS(length gk.Length) ComboboxEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ComboboxEl) JustifyFlexEnd() ComboboxEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ComboboxEl) JustifyFlexStart() ComboboxEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ComboboxEl) Me(length gk.Length) ComboboxEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ComboboxEl) Ms(length gk.Length) ComboboxEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ComboboxEl) Pe(length gk.Length) ComboboxEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ComboboxEl) Ps(length gk.Length) ComboboxEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ComboboxEl) RoundedE(radius gk.Length) ComboboxEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ComboboxEl) RoundedS(radius gk.Length) ComboboxEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ComboboxEl) TextEnd() ComboboxEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ComboboxEl) TextStart() ComboboxEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ComboboxEl) CornerRadii(radius gk.Corners) ComboboxEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ComboboxEl) DebugBlue() ComboboxEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ComboboxEl) DebugFocused(focusHandle gk.FocusHandle) ComboboxEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ComboboxEl) DebugGreen() ComboboxEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ComboboxEl) DebugPink() ComboboxEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ComboboxEl) DebugRed() ComboboxEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ComboboxEl) DebugYellow() ComboboxEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ComboboxEl) FontBlack() ComboboxEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ComboboxEl) FontBold() ComboboxEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ComboboxEl) FontExtrabold() ComboboxEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ComboboxEl) FontExtralight() ComboboxEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ComboboxEl) FontLight() ComboboxEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ComboboxEl) FontMedium() ComboboxEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ComboboxEl) FontNormal() ComboboxEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ComboboxEl) FontSemibold() ComboboxEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ComboboxEl) FontThin() ComboboxEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -318,18 +368,23 @@ func (e ComboboxEl) FontThin() ComboboxEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ComboboxEl) HFlex() ComboboxEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ComboboxEl) Margins(margins gk.EdgesInto) ComboboxEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ComboboxEl) Paddings(paddings gk.EdgesInto) ComboboxEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ComboboxEl) RefineStyle(style gk.StyleRefinement) ComboboxEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -339,44 +394,61 @@ func (e ComboboxEl) RefineStyle(style gk.StyleRefinement) ComboboxEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ComboboxEl) VFlex() ComboboxEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ComboboxEl) Large() ComboboxEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ComboboxEl) Small() ComboboxEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ComboboxEl) WithSize(size gk.SizeInto) ComboboxEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ComboboxEl) Xsmall() ComboboxEl { tSizableXsmall(rt.N(e.Core)); return e }
 
+// FocusRing calls <E as gpui_kit::base::FocusableExt>::focus_ring.
 func (e ComboboxEl) FocusRing(enabled bool) ComboboxEl {
 	tFocusableExtFocusRing(rt.N(e.Core), enabled)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ComboboxEl) Style(st ...gk.Style) ComboboxEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ComboboxEl) AspectRatio(ratio float32) ComboboxEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ComboboxEl) Bg(fill gk.Fill) ComboboxEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ComboboxEl) Border(length gk.Length) ComboboxEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -384,12 +456,16 @@ func (e ComboboxEl) Border(length gk.Length) ComboboxEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ComboboxEl) BorderB(length gk.Length) ComboboxEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ComboboxEl) BorderColor(borderColor gk.Color) ComboboxEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -397,6 +473,8 @@ func (e ComboboxEl) BorderColor(borderColor gk.Color) ComboboxEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ComboboxEl) BorderL(length gk.Length) ComboboxEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -404,6 +482,8 @@ func (e ComboboxEl) BorderL(length gk.Length) ComboboxEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ComboboxEl) BorderR(length gk.Length) ComboboxEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -411,6 +491,8 @@ func (e ComboboxEl) BorderR(length gk.Length) ComboboxEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ComboboxEl) BorderT(length gk.Length) ComboboxEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -418,6 +500,8 @@ func (e ComboboxEl) BorderT(length gk.Length) ComboboxEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ComboboxEl) BorderX(length gk.Length) ComboboxEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -425,6 +509,8 @@ func (e ComboboxEl) BorderX(length gk.Length) ComboboxEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ComboboxEl) BorderY(length gk.Length) ComboboxEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -432,21 +518,31 @@ func (e ComboboxEl) BorderY(length gk.Length) ComboboxEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ComboboxEl) Bottom(length gk.Length) ComboboxEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ComboboxEl) ColEnd(end int16) ComboboxEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ComboboxEl) ColSpan(span uint16) ComboboxEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ComboboxEl) ColStart(start int16) ComboboxEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ComboboxEl) Cursor(cursor gk.CursorStyle) ComboboxEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -454,30 +550,42 @@ func (e ComboboxEl) Cursor(cursor gk.CursorStyle) ComboboxEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ComboboxEl) FlexBasis(basis gk.Length) ComboboxEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ComboboxEl) FlexGrow(grow float32) ComboboxEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ComboboxEl) FlexShrink(shrink float32) ComboboxEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ComboboxEl) Font(font gk.Font) ComboboxEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ComboboxEl) FontFamily(familyName string) ComboboxEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ComboboxEl) FontFeatures(features gk.FontFeatures) ComboboxEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -486,26 +594,38 @@ func (e ComboboxEl) FontFeatures(features gk.FontFeatures) ComboboxEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ComboboxEl) FontWeight(weight gk.FontWeight) ComboboxEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ComboboxEl) Gap(length gk.Length) ComboboxEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ComboboxEl) GapX(length gk.Length) ComboboxEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ComboboxEl) GapY(length gk.Length) ComboboxEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ComboboxEl) GridCols(cols uint16) ComboboxEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ComboboxEl) GridColsMaxContent(cols uint16) ComboboxEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -513,15 +633,21 @@ func (e ComboboxEl) GridColsMaxContent(cols uint16) ComboboxEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ComboboxEl) GridColsMinContent(cols uint16) ComboboxEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ComboboxEl) GridRows(rows uint16) ComboboxEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ComboboxEl) GridRowsMaxContent(rows uint16) ComboboxEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -529,121 +655,179 @@ func (e ComboboxEl) GridRowsMaxContent(rows uint16) ComboboxEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ComboboxEl) GridRowsMinContent(rows uint16) ComboboxEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ComboboxEl) H(length gk.Length) ComboboxEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ComboboxEl) Inset(length gk.Length) ComboboxEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ComboboxEl) Left(length gk.Length) ComboboxEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ComboboxEl) LineClamp(lines int) ComboboxEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ComboboxEl) LineHeight(lineHeight gk.Length) ComboboxEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ComboboxEl) M(length gk.Length) ComboboxEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ComboboxEl) MaxH(length gk.Length) ComboboxEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ComboboxEl) MaxSize(length gk.Length) ComboboxEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ComboboxEl) MaxW(length gk.Length) ComboboxEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ComboboxEl) Mb(length gk.Length) ComboboxEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ComboboxEl) MinH(length gk.Length) ComboboxEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ComboboxEl) MinSize(length gk.Length) ComboboxEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ComboboxEl) MinW(length gk.Length) ComboboxEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ComboboxEl) Ml(length gk.Length) ComboboxEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ComboboxEl) Mr(length gk.Length) ComboboxEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ComboboxEl) Mt(length gk.Length) ComboboxEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ComboboxEl) Mx(length gk.Length) ComboboxEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ComboboxEl) My(length gk.Length) ComboboxEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ComboboxEl) Opacity(opacity float32) ComboboxEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ComboboxEl) P(length gk.Length) ComboboxEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ComboboxEl) Pb(length gk.Length) ComboboxEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ComboboxEl) Pl(length gk.Length) ComboboxEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ComboboxEl) Pr(length gk.Length) ComboboxEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ComboboxEl) Pt(length gk.Length) ComboboxEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ComboboxEl) Px(length gk.Length) ComboboxEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ComboboxEl) Py(length gk.Length) ComboboxEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ComboboxEl) Right(length gk.Length) ComboboxEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ComboboxEl) Rounded(length gk.Length) ComboboxEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -651,6 +835,8 @@ func (e ComboboxEl) Rounded(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ComboboxEl) RoundedB(length gk.Length) ComboboxEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -658,6 +844,8 @@ func (e ComboboxEl) RoundedB(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ComboboxEl) RoundedBl(length gk.Length) ComboboxEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -665,6 +853,8 @@ func (e ComboboxEl) RoundedBl(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ComboboxEl) RoundedBr(length gk.Length) ComboboxEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -672,6 +862,8 @@ func (e ComboboxEl) RoundedBr(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ComboboxEl) RoundedL(length gk.Length) ComboboxEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -679,6 +871,8 @@ func (e ComboboxEl) RoundedL(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ComboboxEl) RoundedR(length gk.Length) ComboboxEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -686,6 +880,8 @@ func (e ComboboxEl) RoundedR(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ComboboxEl) RoundedT(length gk.Length) ComboboxEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -693,6 +889,8 @@ func (e ComboboxEl) RoundedT(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ComboboxEl) RoundedTl(length gk.Length) ComboboxEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -700,39 +898,55 @@ func (e ComboboxEl) RoundedTl(length gk.Length) ComboboxEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ComboboxEl) RoundedTr(length gk.Length) ComboboxEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ComboboxEl) RowEnd(end int16) ComboboxEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ComboboxEl) RowSpan(span uint16) ComboboxEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ComboboxEl) RowStart(start int16) ComboboxEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ComboboxEl) ScrollbarWidth(width gk.Length) ComboboxEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ComboboxEl) Shadow(shadows []gk.BoxShadow) ComboboxEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ComboboxEl) Size(length gk.Length) ComboboxEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ComboboxEl) TextAlign(align gk.TextAlign) ComboboxEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -741,23 +955,31 @@ func (e ComboboxEl) TextAlign(align gk.TextAlign) ComboboxEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ComboboxEl) TextBg(bg gk.Color) ComboboxEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ComboboxEl) TextColor(color gk.Color) ComboboxEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ComboboxEl) TextDecorationColor(color gk.Color) ComboboxEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ComboboxEl) TextOverflow(overflow gk.TextOverflow) ComboboxEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -766,6 +988,8 @@ func (e ComboboxEl) TextOverflow(overflow gk.TextOverflow) ComboboxEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ComboboxEl) TextSize(size gk.Length) ComboboxEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -773,7 +997,11 @@ func (e ComboboxEl) TextSize(size gk.Length) ComboboxEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ComboboxEl) Top(length gk.Length) ComboboxEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ComboboxEl) W(length gk.Length) ComboboxEl { tStyledW(rt.N(e.Core), length); return e }

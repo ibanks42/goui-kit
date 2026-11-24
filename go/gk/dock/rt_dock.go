@@ -1,3 +1,7 @@
+// Hand-written dock helpers: panel lifecycle and auto-release, recursive
+// PanelState/AreaState serialization, registered panel factories, dock skin
+// queries, and custom dock chrome Renderer hooks.
+
 package dock
 
 import (
@@ -6,41 +10,45 @@ import (
 	"gpuikit.dev/gk/kit"
 )
 
-// PanelData is what the dock reads of a panel. The flags are upstream's defaults when false.
+// PanelData configures a dock panel's persistent identity, title bar, flags,
+// optional suffix/toolbar views, context menu, and serialized metadata string.
 type PanelData struct {
-	Name        string            // panel_name: the name a saved layout restores it by
-	TabName     gk.Option[string] // the tab's label, else the title
+	Name        string
+	TabName     gk.Option[string]
 	Title       string
 	NotClosable bool
 	NotZoomable bool
 	Hidden      bool
-	NoPadding   bool    // inner_padding false
-	NoTitleBar  bool    // title_bar false
-	Suffix      gk.View // drawn at the end of the title bar (Panel::title_suffix)
-	Toolbar     gk.View // a view whose root's gk.Button children are the toolbar (Panel::toolbar_buttons)
+	NoPadding   bool
+	NoTitleBar  bool
+	Suffix      gk.View
+	Toolbar     gk.View
 	Menu        gk.Built[kit.PopupMenu]
-	Info        string // JSON: the panel's own data in a saved layout ("" for none)
+	Info        string
 }
 
-// PanelEventKind is what the dock told a panel.
+// PanelEventKind identifies lifecycle and visibility transitions emitted for a
+// dock panel.
 type PanelEventKind uint8
 
+// Lifecycle event kinds delivered in PanelEvent.Kind.
 const (
-	PanelActive  PanelEventKind = 0 // Flag: made active (true) or not
-	PanelZoomed  PanelEventKind = 1 // Flag: zoomed in (true) or out
-	PanelAdded   PanelEventKind = 2 // added to a tab group
-	PanelRemoved PanelEventKind = 3 // removed from the dock
+	PanelActive  PanelEventKind = 0
+	PanelZoomed  PanelEventKind = 1
+	PanelAdded   PanelEventKind = 2
+	PanelRemoved PanelEventKind = 3
 )
 
-// PanelEvent is the event of a panel's handler.
+// PanelEvent reports a change in a dock panel's active, zoomed, or attached state.
 type PanelEvent struct {
 	Kind PanelEventKind
 	Flag bool
 }
 
-// PanelEmit is what a panel tells the dock (upstream's PanelEvent).
+// PanelEmit identifies a panel-level command sent to the dock area via EmitPanel.
 type PanelEmit uint8
 
+// Commands accepted by EmitPanel.
 const (
 	PanelZoomIn        PanelEmit = 0
 	PanelZoomOut       PanelEmit = 1
@@ -74,7 +82,7 @@ func putPanelData(o *rt.Tape, d PanelData) {
 	o.Str(d.Info)
 }
 
-// PanelOption changes a panel made by NewPanel.
+// PanelOption configures event handling and close retention on NewPanel and PanelFill.
 type PanelOption func(*panelOpts)
 
 type panelOpts struct {
@@ -82,20 +90,21 @@ type panelOpts struct {
 	keep   bool
 }
 
-// PanelEvents gives a panel the handler of what the dock tells it.
+// PanelEvents attaches a lifecycle callback invoked on PanelActive,
+// PanelZoomed, PanelAdded, and PanelRemoved transitions.
 func PanelEvents(f func(cx *gk.Cx, e PanelEvent)) PanelOption {
 	return func(o *panelOpts) { o.events = f }
 }
 
-// KeepWhenClosed keeps a panel the dock removed (the user closed its tab) for the app to add
-// again: without it the panel is released once it is removed and not added back, and with it its
-// view and all the view made (docs/GO.md section 4). gk.Release ends a kept one.
+// KeepWhenClosed keeps a closed panel's handle and view alive after
+// PanelRemoved instead of automatically posting gk.Release on the next wake.
 func KeepWhenClosed() PanelOption {
 	return func(o *panelOpts) { o.keep = true }
 }
 
-// panelLife follows a panel in and out of the dock: removed and not added back before the next
-// WAKE turn, it is closed.
+// panelLife tracks whether a panel has been removed from its dock area so
+// automatic release can be canceled if the panel is re-added before the posted
+// cleanup callback runs (for example, during a tab drag across groups).
 type panelLife struct {
 	h       uint64
 	removed bool
@@ -110,8 +119,6 @@ func (pl *panelLife) event(cx *gk.Cx, e PanelEvent, keep bool) {
 			return
 		}
 		pl.removed = true
-		// Moved to another tab group, the panel is added back by the dock's same update: the
-		// posted check runs after it.
 		gk.Post(func(cx *gk.Cx) {
 			if pl.removed && rt.Tracked(pl.h) {
 				gk.Release(cx, Panel{HCore: rt.MkH(pl.h)})
@@ -120,10 +127,12 @@ func (pl *panelLife) event(cx *gk.Cx, e PanelEvent, keep bool) {
 	}
 }
 
-// handle makes a panel something gk.Release takes.
 func (p Panel) handle() uint64 { return rt.H(p.HCore) }
 
-// NewPanel makes a dock panel that draws v. In a handler or init (it needs the window).
+// NewPanel creates a dock Panel wrapping view v with metadata d.
+// Ownership of v transfers to the panel so closing or releasing the panel also
+// releases v and any handles v owns. Unless KeepWhenClosed is passed, removing
+// the panel from the dock posts an automatic gk.Release.
 func NewPanel(cx *gk.Cx, v gk.View, d PanelData, opts ...PanelOption) Panel {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -140,8 +149,6 @@ func NewPanel(cx *gk.Cx, v gk.View, d PanelData, opts ...PanelOption) Panel {
 		o(&po)
 	}
 	t.Flush()
-	// The panel hears what the dock tells it, for its own lifetime (panelLife) and the app's
-	// handler; with none, the event marks no view.
 	pl := &panelLife{}
 	user, keep := po.events, po.keep
 	slot, gen := rt.KeepHandler(cx, func(cx *gk.Cx, e PanelEvent) {
@@ -159,12 +166,12 @@ func NewPanel(cx *gk.Cx, v gk.View, d PanelData, opts ...PanelOption) Panel {
 	o.U32(gen)
 	r := rt.Reader{B: rt.MustCall(*o)}
 	pl.h = r.U64()
-	rt.Made(pl.h)         // owned by the turn's view, released when unreachable (rt_life.go)
-	rt.AdoptView(pl.h, v) // the panel owns its view: releasing it releases the view
+	rt.Made(pl.h)
+	rt.AdoptView(pl.h, v)
 	return Panel{HCore: rt.MkH(pl.h)}
 }
 
-// SetPanel changes what the dock reads of a panel; the dock draws it again.
+// SetPanel updates the PanelData metadata of an existing dock Panel.
 func SetPanel(cx *gk.Cx, p Panel, d PanelData) {
 	o := rt.NewReq(rt.CPanelSet)
 	o.U64(rt.H(p.HCore))
@@ -172,7 +179,7 @@ func SetPanel(cx *gk.Cx, p Panel, d PanelData) {
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// EmitPanel tells the dock what upstream's panels emit (zoom in, zoom out, layout changed).
+// EmitPanel triggers a dock command (zoom in, zoom out, or layout changed) on p.
 func EmitPanel(cx *gk.Cx, p Panel, e PanelEmit) {
 	o := rt.NewReq(rt.CPanelEmit)
 	o.U64(rt.H(p.HCore))
@@ -180,8 +187,8 @@ func EmitPanel(cx *gk.Cx, p Panel, e PanelEmit) {
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// NewDockAreaSkinned makes the kit's styled dock area (DockSkin::dock_area); gk.NewDockArea is
-// the bare one. In init or a handler.
+// NewAreaSkinned creates a dock Area with customizable skin settings outside a
+// view function.
 func NewAreaSkinned(cx *gk.Cx, id string) Area {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -196,21 +203,21 @@ func NewAreaSkinned(cx *gk.Cx, id string) Area {
 	return Area{HCore: rt.MkH(r.U64())}
 }
 
-// DockView draws a dock area where the view puts it.
+// View renders dock Area d as an element inside a view tree.
 func View(d Area) gk.Element {
 	n := rt.NewNode(rt.NDockView)
 	rt.NodeArgs(n).U64(rt.H(d.HCore))
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// NodeID names a container of a dock's layout (a split or a tab group): only ids the dock handed
-// out (DockArea.ZoomedGroup, PaneTree.NodeIDs, TabGroup.Node, ...) are taken back.
+// NodeID identifies a split or tab-group node inside a dock pane tree.
 type NodeID uint64
 
-// DockPanelID is a panel's PanelId (gk.PanelID): the panel entity's id.
+// DockPanelID uniquely identifies a panel instance inside a dock pane tree.
 type DockPanelID uint64
 
-// PanelGroup is the tab group the dock put panel p in (Panel::on_added_to); false when none.
+// PanelGroup returns the TabGroup currently containing panel p, or false if p
+// is not placed in a tab group.
 func PanelGroup(cx *gk.Cx, p Panel) (TabGroup, bool) {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CPanelGroup)
@@ -220,7 +227,7 @@ func PanelGroup(cx *gk.Cx, p Panel) (TabGroup, bool) {
 	return TabGroup{HCore: rt.MkH(h)}, h != 0
 }
 
-// PanelID is the PanelId of panel p, for the dock's calls that name a panel (DockArea.SelectPanel).
+// PanelID returns the stable DockPanelID assigned to panel p.
 func PanelID(cx *gk.Cx, p Panel) DockPanelID {
 	rt.CheckCx(cx)
 	o := rt.NewReq(rt.CPanelId)
@@ -229,27 +236,28 @@ func PanelID(cx *gk.Cx, p Panel) DockPanelID {
 	return DockPanelID(r.U64())
 }
 
-// PanelState is a node of a saved layout: a split (PanelInfoStack), a tab group (PanelInfoTabs)
-// or a panel (PanelInfoPanel).
+// PanelState is a serializable tree node representing a split stack, tab group,
+// or leaf panel inside a saved dock layout.
 type PanelState struct {
 	PanelName string
 	Children  []PanelState
 	Info      PanelInfo
 }
 
-// PanelInfo is one of PanelInfoStack, PanelInfoTabs, PanelInfoPanel.
+// PanelInfo is the tagged union held by PanelState.Info: PanelInfoStack,
+// PanelInfoTabs, or PanelInfoPanel.
 type PanelInfo interface{ isPanelInfo() }
 
-// PanelInfoStack is a split: its slot sizes and its axis (0 horizontal, 1 vertical).
+// PanelInfoStack describes a split container with child sizes and layout axis.
 type PanelInfoStack struct {
 	Sizes []float32
 	Axis  int
 }
 
-// PanelInfoTabs is a tab group: its active tab.
+// PanelInfoTabs describes a tabbed container with its active tab index.
 type PanelInfoTabs struct{ ActiveIndex int }
 
-// PanelInfoPanel is a panel's own data: JSON text ("" for none). PanelData.Info sets it.
+// PanelInfoPanel holds the JSON payload associated with a leaf panel.
 type PanelInfoPanel struct{ JSON string }
 
 func (PanelInfoStack) isPanelInfo() {}
@@ -258,7 +266,8 @@ func (PanelInfoTabs) isPanelInfo() {}
 
 func (PanelInfoPanel) isPanelInfo() {}
 
-// DockSaved is a saved dock (upstream's DockState as a value).
+// Saved stores the saved layout state, placement edge, pixel size, and open
+// flag for one side dock (left, right, or bottom).
 type Saved struct {
 	Panel     PanelState
 	Placement Placement
@@ -266,7 +275,8 @@ type Saved struct {
 	Open      bool
 }
 
-// DockAreaState is a whole saved dock area (DockArea.Dump, DockArea.Load).
+// AreaState captures the full serializable layout of a dock Area, including
+// its center pane tree and optional left, right, and bottom docks.
 type AreaState struct {
 	Version    gk.Option[int]
 	Center     PanelState
@@ -367,12 +377,13 @@ func rdDockAreaState(r *rt.Reader) AreaState {
 	return s
 }
 
-// PanelBuild asks the app for a panel a load restores: fill Panel with gk.PanelFill.
+// PanelBuild is passed to a RegisterPanel factory when restoring a saved panel.
+// The callback populates b.Panel by calling PanelFill.
 type PanelBuild struct {
 	Panel Panel
 	Name  string
-	State PanelState // its saved state; State.Info is its PanelInfoPanel when it saved one
-	Dock  Area       // the dock area it goes into
+	State PanelState
+	Dock  Area
 }
 
 func init() {
@@ -388,8 +399,8 @@ func init() {
 	}})
 }
 
-// RegisterPanel makes the panel registry build panels named name: each asks f for its view with a
-// PanelBuild (queued: after the load, before the next frame). In init or a handler.
+// RegisterPanel associates a panel type name with factory f so saved layouts
+// can reconstruct panels of that name via BuildPanel or Area.Load.
 func RegisterPanel(cx *gk.Cx, name string, f func(cx *gk.Cx, b PanelBuild)) {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -404,7 +415,8 @@ func RegisterPanel(cx *gk.Cx, name string, f func(cx *gk.Cx, b PanelBuild)) {
 	rt.MustCall(*o)
 }
 
-// PanelFill gives a requested panel its view, data and events handler (buffered).
+// PanelFill binds view v, metadata d, and optional panel options into the
+// placeholder Panel handed to a RegisterPanel callback.
 func PanelFill(cx *gk.Cx, p Panel, v gk.View, d PanelData, opts ...PanelOption) {
 	t := rt.CheckCx(cx)
 	var po panelOpts
@@ -424,8 +436,8 @@ func PanelFill(cx *gk.Cx, p Panel, v gk.View, d PanelData, opts ...PanelOption) 
 	t.DeferOp(*o)
 }
 
-// BuildPanel builds a panel through the registry (PanelRegistry::build_panel); false when no
-// builder answers to state.PanelName.
+// BuildPanel reconstructs a Panel from a saved PanelState using the factory
+// previously registered for state.PanelName.
 func BuildPanel(cx *gk.Cx, dock Area, state PanelState) (Panel, bool) {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -443,7 +455,7 @@ func BuildPanel(cx *gk.Cx, dock Area, state PanelState) (Panel, bool) {
 	return Panel{HCore: rt.MkH(h)}, h != 0
 }
 
-// PaneTreeToState writes a pane tree out (PaneTree::to_state), reading its panels from dock.
+// PaneTreeToState serializes a live PaneTree into a PanelState snapshot.
 func PaneTreeToState(cx *gk.Cx, tree PaneTree, dock Area) PanelState {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CPaneTreeToState)
@@ -453,8 +465,7 @@ func PaneTreeToState(cx *gk.Cx, tree PaneTree, dock Area) PanelState {
 	return rdPanelState(&r)
 }
 
-// PaneTreeFromState reads a pane tree back (PaneTree::from_state), its panels built through the
-// registry. The tree is kept until gk.Release.
+// PaneTreeFromState rebuilds a live PaneTree from a serialized PanelState.
 func PaneTreeFromState(cx *gk.Cx, dock Area, state PanelState, root RootKind) PaneTree {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -469,17 +480,17 @@ func PaneTreeFromState(cx *gk.Cx, dock Area, state PanelState, root RootKind) Pa
 	return PaneTree{HCore: rt.MkH(r.U64())}
 }
 
-// PaneKind is a pane node's shape (PaneNode::kind): a PaneSplit or a PaneTabs.
+// PaneKind is implemented by PaneSplit and PaneTabs returned by PaneNodeKind.
 type PaneKind interface{ isPaneKind() }
 
-// PaneSplit is a split with its children (temporary handles) and slot sizes.
+// PaneSplit describes a split PaneNode dividing space along Axis among Children.
 type PaneSplit struct {
 	Axis     gk.Axis
 	Children []PaneNode
 	Sizes    []gk.Option[float32]
 }
 
-// PaneTabs is a tab group with its panels and active index.
+// PaneTabs describes a leaf tab-group PaneNode holding Panels and an active index.
 type PaneTabs struct {
 	Panels   []DockPanelID
 	ActiveIx int
@@ -489,7 +500,7 @@ func (PaneSplit) isPaneKind() {}
 
 func (PaneTabs) isPaneKind() {}
 
-// PaneNodeKind is the shape of a pane node (PaneNode::kind).
+// PaneNodeKind inspects node and returns either a PaneSplit or PaneTabs value.
 func PaneNodeKind(cx *gk.Cx, node PaneNode) PaneKind {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CPaneNodeKind)
@@ -510,7 +521,7 @@ func PaneNodeKind(cx *gk.Cx, node PaneNode) PaneKind {
 	return t
 }
 
-// PaneNodeWalk is the node and its descendants in pre-order (PaneNode::walk): temporary handles.
+// PaneNodeWalk returns all PaneNodes reachable in a traversal rooted at node.
 func PaneNodeWalk(cx *gk.Cx, node PaneNode) []PaneNode {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CPaneNodeWalk)
@@ -537,72 +548,70 @@ func skinSet(cx *gk.Cx, dock Area, what uint8, visible bool) {
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// DockSkinPanelStyle is the skin's panel style (DockSkin::panel_style).
+// SkinPanelStyle returns the active PanelStyle of a skinned dock Area.
 func SkinPanelStyle(cx *gk.Cx, dock Area) PanelStyle {
 	return PanelStyle(skinRead(cx, dock, 0).U16())
 }
 
-// SetDockSkinPanelStyle sets the skin's panel style (buffered).
+// SetDockSkinPanelStyle updates the PanelStyle of a skinned dock Area.
 func SetDockSkinPanelStyle(cx *gk.Cx, dock Area, style PanelStyle) {
 	o := skinReq(dock, 1)
 	o.U16(uint16(style))
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// DockSkinToggleButtonVisible is whether the docks show their toggle button.
+// SkinToggleButtonVisible reports whether dock toggle buttons are shown.
 func SkinToggleButtonVisible(cx *gk.Cx, dock Area) bool { return skinRead(cx, dock, 2).Bool() }
 
-// SetDockSkinToggleButtonVisible shows or hides the docks' toggle button (buffered).
+// SetDockSkinToggleButtonVisible shows or hides dock toggle buttons.
 func SetDockSkinToggleButtonVisible(cx *gk.Cx, dock Area, visible bool) {
 	skinSet(cx, dock, 3, visible)
 }
 
-// SetDockSkinCloseButtonVisible shows or hides the tabs' close button (buffered).
+// SetDockSkinCloseButtonVisible shows or hides panel close buttons.
 func SetDockSkinCloseButtonVisible(cx *gk.Cx, dock Area, visible bool) {
 	skinSet(cx, dock, 4, visible)
 }
 
-// DockSkinCollapsedTabBarVisible is whether a tab group that has collapsed (its panels hidden)
-// still shows its tab bar.
+// SkinCollapsedTabBarVisible reports whether collapsed dock tab bars are shown.
 func SkinCollapsedTabBarVisible(cx *gk.Cx, dock Area) bool { return skinRead(cx, dock, 5).Bool() }
 
-// SetDockSkinCollapsedTabBarVisible shows or hides a collapsed tab group's tab bar (buffered).
+// SetDockSkinCollapsedTabBarVisible shows or hides collapsed dock tab bars.
 func SetDockSkinCollapsedTabBarVisible(cx *gk.Cx, dock Area, visible bool) {
 	skinSet(cx, dock, 6, visible)
 }
 
-// DockSkinSplitDividerLineVisible is whether the divider between two split slots rests as a
-// one-pixel line (shown by default). Hidden, the indicator still appears on hover and while
-// dragging, and the hit area is unchanged.
+// SkinSplitDividerLineVisible reports whether split divider lines are visible.
 func SkinSplitDividerLineVisible(cx *gk.Cx, dock Area) bool { return skinRead(cx, dock, 7).Bool() }
 
-// SetDockSkinSplitDividerLineVisible shows or hides the resting divider line (buffered).
+// SetDockSkinSplitDividerLineVisible shows or hides split divider lines.
 func SetDockSkinSplitDividerLineVisible(cx *gk.Cx, dock Area, visible bool) {
 	skinSet(cx, dock, 8, visible)
 }
 
-// DockHook is a hook of the dock area's and the tab groups' renderers.
+// Hook identifies one customizable chrome slot in a dock Renderer.
 type Hook uint8
 
+// Render hooks that a dock Renderer can override via Hooks and NewRenderer.
 const (
-	HookFrame            Hook = 0  // the area's outer frame (DockAreaRenderer::frame)
-	HookCenterFrame      Hook = 1  // the column of the center and the bottom dock
-	HookSplitFrame       Hook = 2  // a split's frame; key: its node
-	HookSplitHandle      Hook = 3  // a divider's painted part; key: axis + 2 * dragging
-	HookDock             Hook = 4  // a dock's chrome around its content (the slot); key: placement
-	HookPlaceholder      Hook = 5  // a panel no registered builder makes: fill q.Panel with gk.PanelFill
-	HookTabFrame         Hook = 6  // a tab group's frame; key: its node
-	HookTabContentFrame  Hook = 7  // the frame around the active panel
-	HookTabBar           Hook = 8  // the tab bar
-	HookTabActivePanel   Hook = 9  // around the active panel (the slot)
-	HookTabDropIndicator Hook = 10 // drawn where a dragged panel would land
-	HookTabEmpty         Hook = 11 // a group with no panels
+	HookFrame            Hook = 0
+	HookCenterFrame      Hook = 1
+	HookSplitFrame       Hook = 2
+	HookSplitHandle      Hook = 3
+	HookDock             Hook = 4
+	HookPlaceholder      Hook = 5
+	HookTabFrame         Hook = 6
+	HookTabContentFrame  Hook = 7
+	HookTabBar           Hook = 8
+	HookTabActivePanel   Hook = 9
+	HookTabDropIndicator Hook = 10
+	HookTabEmpty         Hook = 11
 )
 
-// DockHookSet is a set of hooks (gk.DockHooks makes one).
+// HookSet is a bitmask of Hook values enabled on a custom dock Renderer.
 type HookSet uint32
 
-// DockHooks is the set of the hooks given.
+// Hooks combines one or more Hook values into a HookSet bitmask.
 func Hooks(hooks ...Hook) HookSet {
 	var s HookSet
 	for _, h := range hooks {
@@ -611,23 +620,24 @@ func Hooks(hooks ...Hook) HookSet {
 	return s
 }
 
-// DockRenderer is the library's renderer of a dock area and its tab groups (a library object).
+// Renderer is a handle to a custom dock chrome renderer created by NewRenderer.
 type Renderer struct{ rt.HCore }
 
-// DockRender asks the app for its view of one hook and key (queued).
+// Render carries the context for one custom dock chrome hook invocation.
+// The callback supplies a view for (q.Hook, q.Key) by calling RenderAnswer.
 type Render struct {
 	Renderer  Renderer
 	Hook      Hook
 	Key       uint64
-	Node      NodeID          // the split's or the tab group's node
-	Placement Placement       // HookDock
-	Axis      gk.Axis         // HookSplitFrame, HookSplitHandle
-	Flags     uint8           // HookDock: 1 open, 2 collapsible; tab hooks: 1 zoomed, 2 collapsed, 4 closable, 8 locked; HookSplitHandle: 1 dragging
-	Size      float32         // HookDock: its extent along its axis
-	Dock      Context         // HookDock
-	Group     TabGroupContext // tab hooks
-	Panel     Panel           // HookPlaceholder
-	PanelName string          // HookPlaceholder
+	Node      NodeID
+	Placement Placement
+	Axis      gk.Axis
+	Flags     uint8
+	Size      float32
+	Dock      Context
+	Group     TabGroupContext
+	Panel     Panel
+	PanelName string
 }
 
 func init() {
@@ -660,8 +670,8 @@ func init() {
 	}})
 }
 
-// NewDockRenderer makes a renderer answering hooks through f. Give it to DockArea's or
-// TabGroup's WithRenderer. In init or a handler; gk.Release frees it.
+// NewRenderer creates a custom dock chrome Renderer that invokes f for every
+// hook enabled in hooks.
 func NewRenderer(cx *gk.Cx, hooks HookSet, f func(cx *gk.Cx, q Render)) Renderer {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -677,8 +687,7 @@ func NewRenderer(cx *gk.Cx, hooks HookSet, f func(cx *gk.Cx, q Render)) Renderer
 	return Renderer{HCore: rt.MkH(r.U64())}
 }
 
-// DockRenderAnswer gives the view drawn for (hook, key); a zero View gives upstream's default
-// back. Buffered; every window draws again.
+// RenderAnswer supplies view v as the rendered output for (hook, key) on r.
 func RenderAnswer(cx *gk.Cx, r Renderer, hook Hook, key uint64, v gk.View) {
 	o := rt.NewReq(rt.CDockRenderAnswer)
 	o.U64(rt.H(r.HCore))
@@ -688,11 +697,11 @@ func RenderAnswer(cx *gk.Cx, r Renderer, hook Hook, key uint64, v gk.View) {
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// DockSlot is where a renderer's view puts the element the kit handed the hook (a dock's content,
-// the active panel). Nothing in a view drawn by no hook, or by one that hands no element.
+// Slot renders the inner dock content placeholder inside a custom Renderer view.
 func Slot() gk.Element { return rt.ValueEl{ElCore: rt.MkElCore(rt.NewNode(rt.NDockSlot))} }
 
-// TestDockRender: requests sent, answers kept, hooks drawn from an answer (the tests').
+// TestDockRender queries diagnostic counts of render requests, answers, and
+// drawn slots on Renderer r.
 func TestDockRender(cx *gk.Cx, r Renderer) (sent, answers, drawn int) {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CDockRenderTest)
@@ -701,13 +710,13 @@ func TestDockRender(cx *gk.Cx, r Renderer) (sent, answers, drawn int) {
 	return int(rd.U32()), int(rd.U32()), int(rd.U32())
 }
 
-// DockToggle is what the kit reports when the user opens or closes a dock through the skin's toggle.
+// Toggle reports a side dock opening or closing at Placement.
 type Toggle struct {
 	Placement Placement
 	Open      bool
 }
 
-// OnDockToggle subscribes f to the dock area's toggles. In init or a handler.
+// OnDockToggle subscribes to side-dock open/close toggle events on dock.
 func OnDockToggle(cx *gk.Cx, dock Area, f func(cx *gk.Cx, e Toggle)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, f, rt.ShapeDockToggle)
 	o := rt.NewReq(rt.CDockToggleSubscribe)

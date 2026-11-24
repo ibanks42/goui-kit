@@ -1,31 +1,32 @@
 #!/bin/bash
-# go-apps.sh [PHASE...]: the Go apps against Rust where a Rust twin exists, and otherwise against
-# themselves (docs/GO.md section 8). Each runs offscreen (the diag library) under a gk-meter
-# script and every image is compared byte for byte. Phases:
-#   build     go build examples/go/{notes,todo,reader,expenses} and docs/tutorial-go/NN-* (bin/APP-go,
-#             bin/tut-NN-go)
-#   notes     gates/pixels.sh notes: Rust (ref-notes) against Go under gates/notes.script
-#   todo      gates/todo.script then gates/todo-reload.script, each with a fresh state file, by the
-#             Rust twin (ref-todo) and by Go: every image byte-identical; gates/todo-check.py on
-#             what the Go app saved
-#   reader    gates/reader.script over the same generated feed of 3,000 articles: the Rust twin
-#             (ref-reader) twice, then Go (gates/go-apps-cmp.py: Go against Rust, the load toast's
-#             time, the list's scrollbar fade and what differs between the two Rust runs not counted)
-#   expenses  gates/expenses.script by the Rust twin (ref-expenses) and by Go: every image
-#             byte-identical
-#   tutorial  every step a few frames, twice each; the last step's session under
-#             gates/docs-tutorial.script by the Rust twin (ref-tutorial) and by Go
-# notes, todo, reader and expenses have Rust twins (ref/src/bin/notes.rs, todo.rs, reader.rs,
-# expenses.rs), and so has the tutorial's last step (tutorial.rs, its scripted session); the
-# tutorial's other steps are judged by their own runs (a run that is not deterministic fails) and by gates/docs-go.sh. Default: all of them. Prints lines starting with GATE.
-# Images in gates/out/go-apps/.
-# GK_STATIC=1: the Go programs are built the static way (build tag gkstatic, cgo), against the
-# static library (lib/diag's, for the offscreen runs), so each links only the component families
-# it calls into; every scripted session then shows whether one is missing, and the build prints
-# their sizes. Without it they are built the default way, which loads the library at start-up.
+# Go sample apps and tutorial gate (`gates/go-apps.sh [build|notes|todo|reader|expenses|tutorial]...`).
+#
+# What it gates:
+#   Compilation, visual parity against Rust reference twins, state persistence, and self-determinism
+#   for the four full sample applications (`notes`, `todo`, `reader`, `expenses`) and all 9 tutorial
+#   steps (`docs/tutorial-go/01..09`). When `GK_STATIC=1`, builds static binaries linked with
+#   `-Wl,--gc-sections` against `lib/diag` and logs their sizes in MB.
+#
+# How it measures and why the comparison is fair:
+#   - Every app and its Rust twin run offscreen under `lib/diag` (display vars cleared, 120 s
+#     timeout) driven by the exact same `.script` file so layout, input timing, and animation
+#     advances are deterministic.
+#   - `notes`, `todo` (across both initial and reload starts), `expenses`, and `tutorial-session`
+#     (`tut-09-go` vs `ref-tutorial`) require every PNG to be byte-identical (`cmp -s`).
+#   - `todo` also verifies `todo-go.json` with `gates/todo-check.py`.
+#   - `reader` runs a 3000-article synthetic feed (`gates/reader-feed.py`), executes `ref-reader`
+#     twice (`rust`, `rust2`) and `reader-go` once, and uses `gates/go-apps-cmp.py` to mask only
+#     the wall-clock load-time and scrollbar boxes plus pixels where `rust` and `rust2` differ.
+#   - Tutorial steps `01..09` each run twice (`go`, `go2`) to verify deterministic rendering.
+#
+# What PASS means (exit 0):
+#   Every requested phase builds cleanly, exits 0, passes every image/state assertion, and emits
+#   `GATE go-apps <phase> PASS` (or `GATE pixels notes-go PASS` for `notes`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 root=${GK_LIB_ROOT:-$repo/lib}; bin=${GK_BIN:-$repo/bin}; mkdir -p "$bin"
 if [ "${GK_STATIC:-}" = 1 ]; then
+  # Static builds link lib/diag directly so offscreen scripts work, using --gc-sections to drop unused families.
   export GOBUILDFLAGS="-ldflags=-extldflags=-Wl,--gc-sections"
   golib=$root/diag; tag=" (static)"; out=$here/out/go-apps-static
 else
@@ -37,7 +38,7 @@ mkdir -p "$out"
 apps="notes todo reader expenses"
 rc=0
 
-# same DIR A B: compare every image of DIR/A with DIR/B; prints a GATE line named $name.
+# Compare every PNG in $dir/$a byte-for-byte against $dir/$b and verify equal image counts.
 same() {
   local dir=$1 a=$2 b=$3 name=$4 n=0 ok=0 diff=""
   for png in "$dir/$a"/*.png; do
@@ -53,7 +54,7 @@ same() {
   fi
 }
 
-# run DIR LABEL SCRIPT EXE [ENV...]: one offscreen run in DIR/LABEL.
+# Run a Go app offscreen under lib/diag with GK_SCRIPT.
 run() {
   local dir=$1 label=$2 script=$3 exe=$4; shift 4
   rm -rf "${dir:?}/$label"; mkdir -p "$dir/$label"
@@ -63,7 +64,7 @@ run() {
   return $r
 }
 
-# runref DIR LABEL SCRIPT REF [ENV...]: one offscreen run of a Rust twin (lib/diag/ref-NAME) in DIR/LABEL.
+# Run a Rust reference app offscreen under lib/diag with --script.
 runref() {
   local dir=$1 label=$2 script=$3 exe=$root/diag/$4; shift 4
   [ -x "$exe" ] || { echo "go-apps: $exe is missing (make lib builds the Rust twins)"; rc=1; return 1; }
@@ -109,12 +110,9 @@ for phase in "$@"; do
   reader)
     d=$out/reader; mkdir -p "$d"
     python3 "$here/reader-feed.py" "$d/feed.md" 3000
-    # The Rust twin twice, then Go: what differs between the two Rust runs is the session's noise.
-    # Two boxes (image pixels) hold wall-clock time: the load toast says how long the load took
-    # ("in 7 ms"; the box runs on over " ms", which moves when the number's width does: "1" is
-    # narrower than "2"), and the list's scrollbar fades on a real timer (gates/go-apps-cmp.py).
     for l in rust rust2; do runref "$d" "$l" "$here/reader.script" ref-reader READER_FEED="$d/feed.md"; done
     run "$d" go "$here/reader.script" "$bin/reader-go" READER_FEED="$d/feed.md"
+    # Mask the wall-clock load-time box and scrollbar region; also allow pixels where rust and rust2 differ.
     python3 "$here/go-apps-cmp.py" --labels rust,rust2,go "$d" reader "1500,130,1640,175;560,180,580,1320" > "$d/cmp.txt" 2>&1 || rc=1
     grep -v '^GATE' "$d/cmp.txt" | head -20; grep '^GATE' "$d/cmp.txt" ;;
   expenses)

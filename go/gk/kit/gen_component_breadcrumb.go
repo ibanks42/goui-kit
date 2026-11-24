@@ -12,7 +12,7 @@ type BreadcrumbEl struct{ rt.ElAnimatableElement }
 
 // Create a new breadcrumb.
 //
-// Breadcrumb is <gpui_kit::component::breadcrumb::Breadcrumb>::new.
+// Breadcrumb calls <gpui_kit::component::breadcrumb::Breadcrumb>::new.
 func Breadcrumb(st ...gk.Style) BreadcrumbEl {
 	rt.UseComponentBreadcrumb()
 	n := rt.NewNode(595)
@@ -22,7 +22,7 @@ func Breadcrumb(st ...gk.Style) BreadcrumbEl {
 
 // Add an `BreadcrumbItemEl` to the breadcrumb.
 //
-// Child is <gpui_kit::component::breadcrumb::Breadcrumb>::child.
+// Child calls <gpui_kit::component::breadcrumb::Breadcrumb>::child.
 func (e BreadcrumbEl) Child(item BreadcrumbItemInto) BreadcrumbEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	putBreadcrumbItemInto(o, item)
@@ -31,7 +31,7 @@ func (e BreadcrumbEl) Child(item BreadcrumbItemInto) BreadcrumbEl {
 
 // Add multiple `BreadcrumbItemEl` items to the breadcrumb.
 //
-// Children is <gpui_kit::component::breadcrumb::Breadcrumb>::children.
+// Children calls <gpui_kit::component::breadcrumb::Breadcrumb>::children.
 func (e BreadcrumbEl) Children(items []BreadcrumbItemInto) BreadcrumbEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(items)))
@@ -43,29 +43,37 @@ func (e BreadcrumbEl) Children(items []BreadcrumbItemInto) BreadcrumbEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BreadcrumbEl) PopoverStyle() BreadcrumbEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BreadcrumbEl) RoundedFullStyle() BreadcrumbEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BreadcrumbEl) BorderE(width gk.Length) BreadcrumbEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BreadcrumbEl) BorderS(width gk.Length) BreadcrumbEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -73,121 +81,163 @@ func (e BreadcrumbEl) BorderS(width gk.Length) BreadcrumbEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BreadcrumbEl) FlexRowDir() BreadcrumbEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BreadcrumbEl) InsetE(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BreadcrumbEl) InsetS(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BreadcrumbEl) JustifyFlexEnd() BreadcrumbEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BreadcrumbEl) JustifyFlexStart() BreadcrumbEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BreadcrumbEl) Me(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BreadcrumbEl) Ms(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BreadcrumbEl) Pe(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BreadcrumbEl) Ps(length gk.Length) BreadcrumbEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BreadcrumbEl) RoundedE(radius gk.Length) BreadcrumbEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BreadcrumbEl) RoundedS(radius gk.Length) BreadcrumbEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BreadcrumbEl) TextEnd() BreadcrumbEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BreadcrumbEl) TextStart() BreadcrumbEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BreadcrumbEl) CornerRadii(radius gk.Corners) BreadcrumbEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BreadcrumbEl) DebugBlue() BreadcrumbEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BreadcrumbEl) DebugFocused(focusHandle gk.FocusHandle) BreadcrumbEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BreadcrumbEl) DebugGreen() BreadcrumbEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BreadcrumbEl) DebugPink() BreadcrumbEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BreadcrumbEl) DebugRed() BreadcrumbEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BreadcrumbEl) DebugYellow() BreadcrumbEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BreadcrumbEl) FontBlack() BreadcrumbEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BreadcrumbEl) FontBold() BreadcrumbEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BreadcrumbEl) FontExtrabold() BreadcrumbEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BreadcrumbEl) FontExtralight() BreadcrumbEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BreadcrumbEl) FontLight() BreadcrumbEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BreadcrumbEl) FontMedium() BreadcrumbEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BreadcrumbEl) FontNormal() BreadcrumbEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BreadcrumbEl) FontSemibold() BreadcrumbEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BreadcrumbEl) FontThin() BreadcrumbEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -196,18 +246,23 @@ func (e BreadcrumbEl) FontThin() BreadcrumbEl { tStyledExtFontThin(rt.N(e.Core))
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BreadcrumbEl) HFlex() BreadcrumbEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BreadcrumbEl) Margins(margins gk.EdgesInto) BreadcrumbEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BreadcrumbEl) Paddings(paddings gk.EdgesInto) BreadcrumbEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BreadcrumbEl) RefineStyle(style gk.StyleRefinement) BreadcrumbEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -217,21 +272,29 @@ func (e BreadcrumbEl) RefineStyle(style gk.StyleRefinement) BreadcrumbEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BreadcrumbEl) VFlex() BreadcrumbEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BreadcrumbEl) Style(st ...gk.Style) BreadcrumbEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BreadcrumbEl) AspectRatio(ratio float32) BreadcrumbEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BreadcrumbEl) Bg(fill gk.Fill) BreadcrumbEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BreadcrumbEl) Border(length gk.Length) BreadcrumbEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -239,12 +302,16 @@ func (e BreadcrumbEl) Border(length gk.Length) BreadcrumbEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BreadcrumbEl) BorderB(length gk.Length) BreadcrumbEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BreadcrumbEl) BorderColor(borderColor gk.Color) BreadcrumbEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -252,6 +319,8 @@ func (e BreadcrumbEl) BorderColor(borderColor gk.Color) BreadcrumbEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BreadcrumbEl) BorderL(length gk.Length) BreadcrumbEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -259,6 +328,8 @@ func (e BreadcrumbEl) BorderL(length gk.Length) BreadcrumbEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BreadcrumbEl) BorderR(length gk.Length) BreadcrumbEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -266,6 +337,8 @@ func (e BreadcrumbEl) BorderR(length gk.Length) BreadcrumbEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BreadcrumbEl) BorderT(length gk.Length) BreadcrumbEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -273,6 +346,8 @@ func (e BreadcrumbEl) BorderT(length gk.Length) BreadcrumbEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BreadcrumbEl) BorderX(length gk.Length) BreadcrumbEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -280,6 +355,8 @@ func (e BreadcrumbEl) BorderX(length gk.Length) BreadcrumbEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BreadcrumbEl) BorderY(length gk.Length) BreadcrumbEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -287,24 +364,34 @@ func (e BreadcrumbEl) BorderY(length gk.Length) BreadcrumbEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BreadcrumbEl) Bottom(length gk.Length) BreadcrumbEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BreadcrumbEl) ColEnd(end int16) BreadcrumbEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BreadcrumbEl) ColSpan(span uint16) BreadcrumbEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BreadcrumbEl) ColStart(start int16) BreadcrumbEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BreadcrumbEl) Cursor(cursor gk.CursorStyle) BreadcrumbEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -312,33 +399,45 @@ func (e BreadcrumbEl) Cursor(cursor gk.CursorStyle) BreadcrumbEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BreadcrumbEl) FlexBasis(basis gk.Length) BreadcrumbEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BreadcrumbEl) FlexGrow(grow float32) BreadcrumbEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BreadcrumbEl) FlexShrink(shrink float32) BreadcrumbEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BreadcrumbEl) Font(font gk.Font) BreadcrumbEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BreadcrumbEl) FontFamily(familyName string) BreadcrumbEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BreadcrumbEl) FontFeatures(features gk.FontFeatures) BreadcrumbEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -347,16 +446,22 @@ func (e BreadcrumbEl) FontFeatures(features gk.FontFeatures) BreadcrumbEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BreadcrumbEl) FontWeight(weight gk.FontWeight) BreadcrumbEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BreadcrumbEl) Gap(length gk.Length) BreadcrumbEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BreadcrumbEl) GapX(length gk.Length) BreadcrumbEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -364,18 +469,24 @@ func (e BreadcrumbEl) GapX(length gk.Length) BreadcrumbEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BreadcrumbEl) GapY(length gk.Length) BreadcrumbEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BreadcrumbEl) GridCols(cols uint16) BreadcrumbEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BreadcrumbEl) GridColsMaxContent(cols uint16) BreadcrumbEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -383,18 +494,24 @@ func (e BreadcrumbEl) GridColsMaxContent(cols uint16) BreadcrumbEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BreadcrumbEl) GridColsMinContent(cols uint16) BreadcrumbEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BreadcrumbEl) GridRows(rows uint16) BreadcrumbEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BreadcrumbEl) GridRowsMaxContent(rows uint16) BreadcrumbEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -402,16 +519,22 @@ func (e BreadcrumbEl) GridRowsMaxContent(rows uint16) BreadcrumbEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BreadcrumbEl) GridRowsMinContent(rows uint16) BreadcrumbEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BreadcrumbEl) H(length gk.Length) BreadcrumbEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BreadcrumbEl) Inset(length gk.Length) BreadcrumbEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -419,6 +542,8 @@ func (e BreadcrumbEl) Inset(length gk.Length) BreadcrumbEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BreadcrumbEl) Left(length gk.Length) BreadcrumbEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -426,33 +551,45 @@ func (e BreadcrumbEl) Left(length gk.Length) BreadcrumbEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BreadcrumbEl) LineClamp(lines int) BreadcrumbEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BreadcrumbEl) LineHeight(lineHeight gk.Length) BreadcrumbEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BreadcrumbEl) M(length gk.Length) BreadcrumbEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BreadcrumbEl) MaxH(length gk.Length) BreadcrumbEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BreadcrumbEl) MaxSize(length gk.Length) BreadcrumbEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BreadcrumbEl) MaxW(length gk.Length) BreadcrumbEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -460,21 +597,29 @@ func (e BreadcrumbEl) MaxW(length gk.Length) BreadcrumbEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BreadcrumbEl) Mb(length gk.Length) BreadcrumbEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BreadcrumbEl) MinH(length gk.Length) BreadcrumbEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BreadcrumbEl) MinSize(length gk.Length) BreadcrumbEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BreadcrumbEl) MinW(length gk.Length) BreadcrumbEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -482,65 +627,95 @@ func (e BreadcrumbEl) MinW(length gk.Length) BreadcrumbEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BreadcrumbEl) Ml(length gk.Length) BreadcrumbEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BreadcrumbEl) Mr(length gk.Length) BreadcrumbEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BreadcrumbEl) Mt(length gk.Length) BreadcrumbEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BreadcrumbEl) Mx(length gk.Length) BreadcrumbEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BreadcrumbEl) My(length gk.Length) BreadcrumbEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BreadcrumbEl) Opacity(opacity float32) BreadcrumbEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BreadcrumbEl) P(length gk.Length) BreadcrumbEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BreadcrumbEl) Pb(length gk.Length) BreadcrumbEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BreadcrumbEl) Pl(length gk.Length) BreadcrumbEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BreadcrumbEl) Pr(length gk.Length) BreadcrumbEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BreadcrumbEl) Pt(length gk.Length) BreadcrumbEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BreadcrumbEl) Px(length gk.Length) BreadcrumbEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BreadcrumbEl) Py(length gk.Length) BreadcrumbEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BreadcrumbEl) Right(length gk.Length) BreadcrumbEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BreadcrumbEl) Rounded(length gk.Length) BreadcrumbEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -548,6 +723,8 @@ func (e BreadcrumbEl) Rounded(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BreadcrumbEl) RoundedB(length gk.Length) BreadcrumbEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -555,6 +732,8 @@ func (e BreadcrumbEl) RoundedB(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BreadcrumbEl) RoundedBl(length gk.Length) BreadcrumbEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -562,6 +741,8 @@ func (e BreadcrumbEl) RoundedBl(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BreadcrumbEl) RoundedBr(length gk.Length) BreadcrumbEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -569,6 +750,8 @@ func (e BreadcrumbEl) RoundedBr(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BreadcrumbEl) RoundedL(length gk.Length) BreadcrumbEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -576,6 +759,8 @@ func (e BreadcrumbEl) RoundedL(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BreadcrumbEl) RoundedR(length gk.Length) BreadcrumbEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -583,6 +768,8 @@ func (e BreadcrumbEl) RoundedR(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BreadcrumbEl) RoundedT(length gk.Length) BreadcrumbEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -590,6 +777,8 @@ func (e BreadcrumbEl) RoundedT(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BreadcrumbEl) RoundedTl(length gk.Length) BreadcrumbEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -597,18 +786,26 @@ func (e BreadcrumbEl) RoundedTl(length gk.Length) BreadcrumbEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BreadcrumbEl) RoundedTr(length gk.Length) BreadcrumbEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BreadcrumbEl) RowEnd(end int16) BreadcrumbEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BreadcrumbEl) RowSpan(span uint16) BreadcrumbEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BreadcrumbEl) RowStart(start int16) BreadcrumbEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -618,24 +815,32 @@ func (e BreadcrumbEl) RowStart(start int16) BreadcrumbEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BreadcrumbEl) ScrollbarWidth(width gk.Length) BreadcrumbEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BreadcrumbEl) Shadow(shadows []gk.BoxShadow) BreadcrumbEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BreadcrumbEl) Size(length gk.Length) BreadcrumbEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BreadcrumbEl) TextAlign(align gk.TextAlign) BreadcrumbEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -644,23 +849,31 @@ func (e BreadcrumbEl) TextAlign(align gk.TextAlign) BreadcrumbEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BreadcrumbEl) TextBg(bg gk.Color) BreadcrumbEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BreadcrumbEl) TextColor(color gk.Color) BreadcrumbEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BreadcrumbEl) TextDecorationColor(color gk.Color) BreadcrumbEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BreadcrumbEl) TextOverflow(overflow gk.TextOverflow) BreadcrumbEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -669,6 +882,8 @@ func (e BreadcrumbEl) TextOverflow(overflow gk.TextOverflow) BreadcrumbEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BreadcrumbEl) TextSize(size gk.Length) BreadcrumbEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -676,9 +891,13 @@ func (e BreadcrumbEl) TextSize(size gk.Length) BreadcrumbEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BreadcrumbEl) Top(length gk.Length) BreadcrumbEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BreadcrumbEl) W(length gk.Length) BreadcrumbEl { tStyledW(rt.N(e.Core), length); return e }
 
 // BreadcrumbItemEl is gpui_kit::component::breadcrumb::BreadcrumbItem.
@@ -686,7 +905,7 @@ type BreadcrumbItemEl struct{ rt.ElAnimatableElement }
 
 // Create a new BreadcrumbItem with the given id and label.
 //
-// BreadcrumbItem is <gpui_kit::component::breadcrumb::BreadcrumbItem>::new.
+// BreadcrumbItem calls <gpui_kit::component::breadcrumb::BreadcrumbItem>::new.
 func BreadcrumbItem(label string, st ...gk.Style) BreadcrumbItemEl {
 	rt.UseComponentBreadcrumb()
 	n := rt.NewNode(596)
@@ -696,21 +915,21 @@ func BreadcrumbItem(label string, st ...gk.Style) BreadcrumbItemEl {
 	return BreadcrumbItemEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// Disabled is <gpui_kit::component::breadcrumb::BreadcrumbItem>::disabled.
+// Disabled calls <gpui_kit::component::breadcrumb::BreadcrumbItem>::disabled.
 func (e BreadcrumbItemEl) Disabled(disabled bool) BreadcrumbItemEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(disabled)
 	return e
 }
 
-// OnClick is <gpui_kit::component::breadcrumb::BreadcrumbItem>::on_click.
+// OnClick calls <gpui_kit::component::breadcrumb::BreadcrumbItem>::on_click.
 func (e BreadcrumbItemEl) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) BreadcrumbItemEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(onClick, 1))
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BreadcrumbItemEl) OnClickDo(onClick func(cx *gk.Cx)) BreadcrumbItemEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(onClick, 1))
@@ -719,32 +938,40 @@ func (e BreadcrumbItemEl) OnClickDo(onClick func(cx *gk.Cx)) BreadcrumbItemEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BreadcrumbItemEl) PopoverStyle() BreadcrumbItemEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BreadcrumbItemEl) RoundedFullStyle() BreadcrumbItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BreadcrumbItemEl) BorderE(width gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BreadcrumbItemEl) BorderS(width gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -752,142 +979,184 @@ func (e BreadcrumbItemEl) BorderS(width gk.Length) BreadcrumbItemEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BreadcrumbItemEl) FlexRowDir() BreadcrumbItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BreadcrumbItemEl) InsetE(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BreadcrumbItemEl) InsetS(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BreadcrumbItemEl) JustifyFlexEnd() BreadcrumbItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BreadcrumbItemEl) JustifyFlexStart() BreadcrumbItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BreadcrumbItemEl) Me(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BreadcrumbItemEl) Ms(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BreadcrumbItemEl) Pe(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BreadcrumbItemEl) Ps(length gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BreadcrumbItemEl) RoundedE(radius gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BreadcrumbItemEl) RoundedS(radius gk.Length) BreadcrumbItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BreadcrumbItemEl) TextEnd() BreadcrumbItemEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BreadcrumbItemEl) TextStart() BreadcrumbItemEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BreadcrumbItemEl) CornerRadii(radius gk.Corners) BreadcrumbItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BreadcrumbItemEl) DebugBlue() BreadcrumbItemEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BreadcrumbItemEl) DebugFocused(focusHandle gk.FocusHandle) BreadcrumbItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BreadcrumbItemEl) DebugGreen() BreadcrumbItemEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BreadcrumbItemEl) DebugPink() BreadcrumbItemEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BreadcrumbItemEl) DebugRed() BreadcrumbItemEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BreadcrumbItemEl) DebugYellow() BreadcrumbItemEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BreadcrumbItemEl) FontBlack() BreadcrumbItemEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BreadcrumbItemEl) FontBold() BreadcrumbItemEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BreadcrumbItemEl) FontExtrabold() BreadcrumbItemEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BreadcrumbItemEl) FontExtralight() BreadcrumbItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BreadcrumbItemEl) FontLight() BreadcrumbItemEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BreadcrumbItemEl) FontMedium() BreadcrumbItemEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BreadcrumbItemEl) FontNormal() BreadcrumbItemEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BreadcrumbItemEl) FontSemibold() BreadcrumbItemEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BreadcrumbItemEl) FontThin() BreadcrumbItemEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -896,18 +1165,23 @@ func (e BreadcrumbItemEl) FontThin() BreadcrumbItemEl { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BreadcrumbItemEl) HFlex() BreadcrumbItemEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BreadcrumbItemEl) Margins(margins gk.EdgesInto) BreadcrumbItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BreadcrumbItemEl) Paddings(paddings gk.EdgesInto) BreadcrumbItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BreadcrumbItemEl) RefineStyle(style gk.StyleRefinement) BreadcrumbItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -917,24 +1191,32 @@ func (e BreadcrumbItemEl) RefineStyle(style gk.StyleRefinement) BreadcrumbItemEl
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BreadcrumbItemEl) VFlex() BreadcrumbItemEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BreadcrumbItemEl) Style(st ...gk.Style) BreadcrumbItemEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BreadcrumbItemEl) AspectRatio(ratio float32) BreadcrumbItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BreadcrumbItemEl) Bg(fill gk.Fill) BreadcrumbItemEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BreadcrumbItemEl) Border(length gk.Length) BreadcrumbItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -942,12 +1224,16 @@ func (e BreadcrumbItemEl) Border(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BreadcrumbItemEl) BorderB(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BreadcrumbItemEl) BorderColor(borderColor gk.Color) BreadcrumbItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -955,6 +1241,8 @@ func (e BreadcrumbItemEl) BorderColor(borderColor gk.Color) BreadcrumbItemEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BreadcrumbItemEl) BorderL(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -962,6 +1250,8 @@ func (e BreadcrumbItemEl) BorderL(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BreadcrumbItemEl) BorderR(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -969,6 +1259,8 @@ func (e BreadcrumbItemEl) BorderR(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BreadcrumbItemEl) BorderT(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -976,6 +1268,8 @@ func (e BreadcrumbItemEl) BorderT(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BreadcrumbItemEl) BorderX(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -983,6 +1277,8 @@ func (e BreadcrumbItemEl) BorderX(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BreadcrumbItemEl) BorderY(length gk.Length) BreadcrumbItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -990,30 +1286,40 @@ func (e BreadcrumbItemEl) BorderY(length gk.Length) BreadcrumbItemEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BreadcrumbItemEl) Bottom(length gk.Length) BreadcrumbItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BreadcrumbItemEl) ColEnd(end int16) BreadcrumbItemEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BreadcrumbItemEl) ColSpan(span uint16) BreadcrumbItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BreadcrumbItemEl) ColStart(start int16) BreadcrumbItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BreadcrumbItemEl) Cursor(cursor gk.CursorStyle) BreadcrumbItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1021,36 +1327,48 @@ func (e BreadcrumbItemEl) Cursor(cursor gk.CursorStyle) BreadcrumbItemEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BreadcrumbItemEl) FlexBasis(basis gk.Length) BreadcrumbItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BreadcrumbItemEl) FlexGrow(grow float32) BreadcrumbItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BreadcrumbItemEl) FlexShrink(shrink float32) BreadcrumbItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BreadcrumbItemEl) Font(font gk.Font) BreadcrumbItemEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BreadcrumbItemEl) FontFamily(familyName string) BreadcrumbItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BreadcrumbItemEl) FontFeatures(features gk.FontFeatures) BreadcrumbItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1059,12 +1377,16 @@ func (e BreadcrumbItemEl) FontFeatures(features gk.FontFeatures) BreadcrumbItemE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BreadcrumbItemEl) FontWeight(weight gk.FontWeight) BreadcrumbItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BreadcrumbItemEl) Gap(length gk.Length) BreadcrumbItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1072,6 +1394,8 @@ func (e BreadcrumbItemEl) Gap(length gk.Length) BreadcrumbItemEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BreadcrumbItemEl) GapX(length gk.Length) BreadcrumbItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1079,18 +1403,24 @@ func (e BreadcrumbItemEl) GapX(length gk.Length) BreadcrumbItemEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BreadcrumbItemEl) GapY(length gk.Length) BreadcrumbItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BreadcrumbItemEl) GridCols(cols uint16) BreadcrumbItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BreadcrumbItemEl) GridColsMaxContent(cols uint16) BreadcrumbItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1098,18 +1428,24 @@ func (e BreadcrumbItemEl) GridColsMaxContent(cols uint16) BreadcrumbItemEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BreadcrumbItemEl) GridColsMinContent(cols uint16) BreadcrumbItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BreadcrumbItemEl) GridRows(rows uint16) BreadcrumbItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BreadcrumbItemEl) GridRowsMaxContent(rows uint16) BreadcrumbItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1117,12 +1453,16 @@ func (e BreadcrumbItemEl) GridRowsMaxContent(rows uint16) BreadcrumbItemEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BreadcrumbItemEl) GridRowsMinContent(rows uint16) BreadcrumbItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BreadcrumbItemEl) H(length gk.Length) BreadcrumbItemEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1130,6 +1470,8 @@ func (e BreadcrumbItemEl) H(length gk.Length) BreadcrumbItemEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BreadcrumbItemEl) Inset(length gk.Length) BreadcrumbItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1137,6 +1479,8 @@ func (e BreadcrumbItemEl) Inset(length gk.Length) BreadcrumbItemEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BreadcrumbItemEl) Left(length gk.Length) BreadcrumbItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1144,36 +1488,48 @@ func (e BreadcrumbItemEl) Left(length gk.Length) BreadcrumbItemEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BreadcrumbItemEl) LineClamp(lines int) BreadcrumbItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BreadcrumbItemEl) LineHeight(lineHeight gk.Length) BreadcrumbItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BreadcrumbItemEl) M(length gk.Length) BreadcrumbItemEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BreadcrumbItemEl) MaxH(length gk.Length) BreadcrumbItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BreadcrumbItemEl) MaxSize(length gk.Length) BreadcrumbItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BreadcrumbItemEl) MaxW(length gk.Length) BreadcrumbItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1181,24 +1537,32 @@ func (e BreadcrumbItemEl) MaxW(length gk.Length) BreadcrumbItemEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BreadcrumbItemEl) Mb(length gk.Length) BreadcrumbItemEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BreadcrumbItemEl) MinH(length gk.Length) BreadcrumbItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BreadcrumbItemEl) MinSize(length gk.Length) BreadcrumbItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BreadcrumbItemEl) MinW(length gk.Length) BreadcrumbItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1206,6 +1570,8 @@ func (e BreadcrumbItemEl) MinW(length gk.Length) BreadcrumbItemEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BreadcrumbItemEl) Ml(length gk.Length) BreadcrumbItemEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1213,6 +1579,8 @@ func (e BreadcrumbItemEl) Ml(length gk.Length) BreadcrumbItemEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BreadcrumbItemEl) Mr(length gk.Length) BreadcrumbItemEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1220,6 +1588,8 @@ func (e BreadcrumbItemEl) Mr(length gk.Length) BreadcrumbItemEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BreadcrumbItemEl) Mt(length gk.Length) BreadcrumbItemEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1227,6 +1597,8 @@ func (e BreadcrumbItemEl) Mt(length gk.Length) BreadcrumbItemEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BreadcrumbItemEl) Mx(length gk.Length) BreadcrumbItemEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1234,18 +1606,24 @@ func (e BreadcrumbItemEl) Mx(length gk.Length) BreadcrumbItemEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BreadcrumbItemEl) My(length gk.Length) BreadcrumbItemEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BreadcrumbItemEl) Opacity(opacity float32) BreadcrumbItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BreadcrumbItemEl) P(length gk.Length) BreadcrumbItemEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1253,6 +1631,8 @@ func (e BreadcrumbItemEl) P(length gk.Length) BreadcrumbItemEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BreadcrumbItemEl) Pb(length gk.Length) BreadcrumbItemEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1260,6 +1640,8 @@ func (e BreadcrumbItemEl) Pb(length gk.Length) BreadcrumbItemEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BreadcrumbItemEl) Pl(length gk.Length) BreadcrumbItemEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1267,6 +1649,8 @@ func (e BreadcrumbItemEl) Pl(length gk.Length) BreadcrumbItemEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BreadcrumbItemEl) Pr(length gk.Length) BreadcrumbItemEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1274,6 +1658,8 @@ func (e BreadcrumbItemEl) Pr(length gk.Length) BreadcrumbItemEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BreadcrumbItemEl) Pt(length gk.Length) BreadcrumbItemEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1281,6 +1667,8 @@ func (e BreadcrumbItemEl) Pt(length gk.Length) BreadcrumbItemEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BreadcrumbItemEl) Px(length gk.Length) BreadcrumbItemEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1288,6 +1676,8 @@ func (e BreadcrumbItemEl) Px(length gk.Length) BreadcrumbItemEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BreadcrumbItemEl) Py(length gk.Length) BreadcrumbItemEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1295,12 +1685,16 @@ func (e BreadcrumbItemEl) Py(length gk.Length) BreadcrumbItemEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BreadcrumbItemEl) Right(length gk.Length) BreadcrumbItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BreadcrumbItemEl) Rounded(length gk.Length) BreadcrumbItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1308,6 +1702,8 @@ func (e BreadcrumbItemEl) Rounded(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BreadcrumbItemEl) RoundedB(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1315,6 +1711,8 @@ func (e BreadcrumbItemEl) RoundedB(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BreadcrumbItemEl) RoundedBl(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1322,6 +1720,8 @@ func (e BreadcrumbItemEl) RoundedBl(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BreadcrumbItemEl) RoundedBr(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1329,6 +1729,8 @@ func (e BreadcrumbItemEl) RoundedBr(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BreadcrumbItemEl) RoundedL(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1336,6 +1738,8 @@ func (e BreadcrumbItemEl) RoundedL(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BreadcrumbItemEl) RoundedR(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1343,6 +1747,8 @@ func (e BreadcrumbItemEl) RoundedR(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BreadcrumbItemEl) RoundedT(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1350,6 +1756,8 @@ func (e BreadcrumbItemEl) RoundedT(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BreadcrumbItemEl) RoundedTl(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1357,24 +1765,32 @@ func (e BreadcrumbItemEl) RoundedTl(length gk.Length) BreadcrumbItemEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BreadcrumbItemEl) RoundedTr(length gk.Length) BreadcrumbItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BreadcrumbItemEl) RowEnd(end int16) BreadcrumbItemEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BreadcrumbItemEl) RowSpan(span uint16) BreadcrumbItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BreadcrumbItemEl) RowStart(start int16) BreadcrumbItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1384,24 +1800,32 @@ func (e BreadcrumbItemEl) RowStart(start int16) BreadcrumbItemEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BreadcrumbItemEl) ScrollbarWidth(width gk.Length) BreadcrumbItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BreadcrumbItemEl) Shadow(shadows []gk.BoxShadow) BreadcrumbItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BreadcrumbItemEl) Size(length gk.Length) BreadcrumbItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BreadcrumbItemEl) TextAlign(align gk.TextAlign) BreadcrumbItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1410,6 +1834,8 @@ func (e BreadcrumbItemEl) TextAlign(align gk.TextAlign) BreadcrumbItemEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BreadcrumbItemEl) TextBg(bg gk.Color) BreadcrumbItemEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1418,18 +1844,24 @@ func (e BreadcrumbItemEl) TextBg(bg gk.Color) BreadcrumbItemEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BreadcrumbItemEl) TextColor(color gk.Color) BreadcrumbItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BreadcrumbItemEl) TextDecorationColor(color gk.Color) BreadcrumbItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BreadcrumbItemEl) TextOverflow(overflow gk.TextOverflow) BreadcrumbItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1438,6 +1870,8 @@ func (e BreadcrumbItemEl) TextOverflow(overflow gk.TextOverflow) BreadcrumbItemE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BreadcrumbItemEl) TextSize(size gk.Length) BreadcrumbItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1445,12 +1879,16 @@ func (e BreadcrumbItemEl) TextSize(size gk.Length) BreadcrumbItemEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BreadcrumbItemEl) Top(length gk.Length) BreadcrumbItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BreadcrumbItemEl) W(length gk.Length) BreadcrumbItemEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

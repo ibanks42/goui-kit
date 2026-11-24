@@ -1,3 +1,5 @@
-// Package base holds the unstyled primitives of gpui_kit::base that belong to no other area:
-// base.Checkbox, base.Button, ... beside the kit's styled kit.Checkbox, kit.Button.
+// Package base provides low-level layout and headless primitive components
+// from gpui-kit::base, including grid layouts, resize handles, scrollable
+// masks, questionnaire definitions, slider event/value types, and base
+// structural elements shared across higher-level packages.
 package base

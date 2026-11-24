@@ -1,11 +1,6 @@
-//! The platform and motion families' gallery pages, written the way a Rust GPUI-kit app
-//! writes them; the Go twin is examples/go/gallery/motion_pages.go, the pages' lines are in
-//! ref/gallery/pages.txt (docs/PROTOCOLS.md 13.30): gpui's with_animation and a chain of animations
-//! with the kit's easing curves, the kit's EffectTransition, and the kit's motion values
-//! (transition, spring, keyframes, presence, a TransitionState kept with the page's data) sampled in
-//! render. Offscreen the clock moves only on `advance`, so every frame is at a fixed time.
-//!
-//! An animator's arithmetic is the binding's (core/src/motion.rs): from + (to - from) * delta.
+//! Motion, focus-trap, drag-and-drop, image-source, selection-scope, and
+//! variable-height virtual-list gallery pages.
+
 use crate::Gallery;
 use gpui_kit::base::animation::{EffectTransition, Lerp, cubic_bezier, ease_out_cubic};
 use gpui_kit::base::{
@@ -19,7 +14,7 @@ use gpui_kit::{
     Animation, AnimationExt, AnyElement, App, AppContext, Context, Div, FocusHandle, Hsla, InteractiveElement,
     IntoElement, ParentElement, Styled, Window, bounce, div, ease_in_out, hsla, px, quadratic,
 };
-// the elem-* pages
+
 use gpui_kit::base::{ElementExt, TextSelectionScopeId, h_virtual_list, v_virtual_list};
 use gpui_kit::component::avatar::Avatar;
 use gpui_kit::component::{ActiveTheme, h_flex};
@@ -35,20 +30,21 @@ use std::time::Duration;
 
 type Cx<'a> = Context<'a, Gallery>;
 
-/// The pages' own state, made when the gallery starts.
+/// Persistent animation, focus, image-cache, and scroll state shared by the
+/// `motion-*` and `elem-*` gallery pages.
 pub struct MotionPages {
     frames: Keyframes<f32>,
     state: TransitionState<f32>,
     focus: FocusHandle,
-    // the elem-* pages
     cache: Entity<RetainAllImageCache>,
-    pic: Arc<RenderImage>, // made once, as the bindings' gk.render_image (one texture)
+    pic: Arc<RenderImage>,
     scroll: ScrollHandle,
     anchor: ScrollAnchor,
     scope: TextSelectionScopeId,
 }
 
 impl MotionPages {
+    /// Initializes keyframe curves, image fixtures, scroll anchor, and selection scope.
     pub fn new(cx: &mut App) -> Self {
         let frames = Keyframes::try_new([
             Keyframe::new(0., 40.).ease(Easing::Linear),
@@ -56,7 +52,7 @@ impl MotionPages {
             Keyframe::new(1., 100.).ease(Easing::Linear),
         ])
         .expect("keyframes");
-        // ImageSource's Path variant reads this file, written where the gallery runs
+        // Write the embedded 4x4 PNG fixture to disk so `Resource::Path` can load it.
         let _ = std::fs::write(ELEM_PNG_PATH, ELEM_PNG);
         let scroll = ScrollHandle::new();
         Self {
@@ -95,6 +91,7 @@ fn toggle(label: &'static str, cx: &mut Cx) -> Button {
     }))
 }
 
+/// Renders a `motion-*` or `elem-*` gallery page if `id` matches.
 pub fn page(id: &str, g: &Gallery, window: &mut Window, cx: &mut Cx) -> Option<AnyElement> {
     let m = &g.motion;
     Some(match id {
@@ -189,8 +186,7 @@ pub fn page(id: &str, g: &Gallery, window: &mut Window, cx: &mut Cx) -> Option<A
     })
 }
 
-// --- PROTOCOLS.md 13.31: gpui's element leftovers, written as a Rust app writes them.
-
+/// Minimal 4x4 RGBA PNG image fixture shared by `ImageSource::Image` and `Resource::Path`.
 const ELEM_PNG: [u8; 83] = [
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 4, 0, 0, 0, 4, 8, 6, 0, 0, 0, 169, 241, 158,
     126, 0, 0, 0, 26, 73, 68, 65, 84, 120, 218, 99, 248, 127, 130, 225, 63, 67, 195, 255, 255, 48, 154, 1, 153, 3, 166, 9,
@@ -204,7 +200,7 @@ struct Seven {
     id: u64,
 }
 
-/// A 4 x 4 checker of two colours, as gpui keeps pixels (BGRA).
+/// Builds a 4x4 red/blue checkerboard `RenderImage` (GPUI expects BGRA byte order).
 fn checker() -> Arc<RenderImage> {
     let mut px = Vec::with_capacity(64);
     for y in 0..4 {
@@ -262,7 +258,7 @@ fn elem_drop(g: &Gallery, cx: &mut Cx) -> AnyElement {
 }
 
 fn elem_image(m: &MotionPages) -> AnyElement {
-    // one image made once and shown three times, as the bindings' page does (gk.render_image)
+
     let render = m.pic.clone();
     let custom = m.pic.clone();
     h_flex()

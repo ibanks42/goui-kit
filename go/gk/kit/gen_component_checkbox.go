@@ -17,7 +17,7 @@ type CheckboxEl struct {
 
 // Create a new Checkbox with the given id.
 //
-// Checkbox is <gpui_kit::component::checkbox::Checkbox>::new.
+// Checkbox calls <gpui_kit::component::checkbox::Checkbox>::new.
 func Checkbox(id gk.ID, st ...gk.Style) CheckboxEl {
 	rt.UseComponentCheckbox()
 	n := rt.NewNode(620)
@@ -32,7 +32,7 @@ func Checkbox(id gk.ID, st ...gk.Style) CheckboxEl {
 // This does not change the label drawn on screen. A checkbox without a `Label` or text children
 // has no accessible name, so set this whenever the checkbox is drawn without visible text.
 //
-// AccessibilityLabel is <gpui_kit::component::checkbox::Checkbox>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::checkbox::Checkbox>::accessibility_label.
 func (e CheckboxEl) AccessibilityLabel(label string) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -41,7 +41,7 @@ func (e CheckboxEl) AccessibilityLabel(label string) CheckboxEl {
 
 // Set the checked state for the checkbox.
 //
-// Checked is <gpui_kit::component::checkbox::Checkbox>::checked.
+// Checked calls <gpui_kit::component::checkbox::Checkbox>::checked.
 func (e CheckboxEl) Checked(checked bool) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(checked)
@@ -54,7 +54,7 @@ func (e CheckboxEl) Checked(checked bool) CheckboxEl {
 // While set, the checkbox draws a dash instead of the check mark and reports the mixed state to
 // assistive technology, whatever `Checked` says. Activating it requests `true`.
 //
-// Indeterminate is <gpui_kit::component::checkbox::Checkbox>::indeterminate.
+// Indeterminate calls <gpui_kit::component::checkbox::Checkbox>::indeterminate.
 func (e CheckboxEl) Indeterminate(indeterminate bool) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.Bool(indeterminate)
@@ -63,7 +63,7 @@ func (e CheckboxEl) Indeterminate(indeterminate bool) CheckboxEl {
 
 // Set the label for the checkbox.
 //
-// Label is <gpui_kit::component::checkbox::Checkbox>::label.
+// Label calls <gpui_kit::component::checkbox::Checkbox>::label.
 func (e CheckboxEl) Label(label editor.TextInto) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	putTextInto(o, label)
@@ -76,7 +76,7 @@ func (e CheckboxEl) Label(label editor.TextInto) CheckboxEl {
 // controls do not call the handler. This and `OnClick` share one callback; chaining them replaces
 // the previous handler instead of calling both.
 //
-// OnChange is <gpui_kit::component::checkbox::Checkbox>::on_change.
+// OnChange calls <gpui_kit::component::checkbox::Checkbox>::on_change.
 func (e CheckboxEl) OnChange(handler func(cx *gk.Cx, e bool)) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Register(handler, 4))
@@ -85,14 +85,14 @@ func (e CheckboxEl) OnChange(handler func(cx *gk.Cx, e bool)) CheckboxEl {
 
 // Alias for `OnChange`. The last callback registered with either name wins.
 //
-// OnClick is <gpui_kit::component::checkbox::Checkbox>::on_click.
+// OnClick calls <gpui_kit::component::checkbox::Checkbox>::on_click.
 func (e CheckboxEl) OnClick(handler func(cx *gk.Cx, e bool)) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 4))
 	return e
 }
 
-// Role is <gpui_kit::component::checkbox::Checkbox>::role.
+// Role calls <gpui_kit::component::checkbox::Checkbox>::role.
 func (e CheckboxEl) Role(role gk.RoleOverride) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	putRoleOverride(o, role)
@@ -101,7 +101,7 @@ func (e CheckboxEl) Role(role gk.RoleOverride) CheckboxEl {
 
 // Set the tab index for the checkbox, default is 0.
 //
-// TabIndex is <gpui_kit::component::checkbox::Checkbox>::tab_index.
+// TabIndex calls <gpui_kit::component::checkbox::Checkbox>::tab_index.
 func (e CheckboxEl) TabIndex(tabIndex int) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U64(uint64(tabIndex))
@@ -110,7 +110,7 @@ func (e CheckboxEl) TabIndex(tabIndex int) CheckboxEl {
 
 // Set the tab stop for the checkbox, default is true.
 //
-// TabStop is <gpui_kit::component::checkbox::Checkbox>::tab_stop.
+// TabStop calls <gpui_kit::component::checkbox::Checkbox>::tab_stop.
 func (e CheckboxEl) TabStop(tabStop bool) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Bool(tabStop)
@@ -119,7 +119,7 @@ func (e CheckboxEl) TabStop(tabStop bool) CheckboxEl {
 
 // Set tooltip text for the checkbox.
 //
-// Tooltip is <gpui_kit::component::checkbox::Checkbox>::tooltip.
+// Tooltip calls <gpui_kit::component::checkbox::Checkbox>::tooltip.
 func (e CheckboxEl) Tooltip(tooltip string) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Str(tooltip)
@@ -130,7 +130,7 @@ func (e CheckboxEl) Tooltip(tooltip string) CheckboxEl {
 //
 // Defaults to `show_delay`.
 //
-// TooltipShowDelay is <gpui_kit::component::checkbox::Checkbox>::tooltip_show_delay.
+// TooltipShowDelay calls <gpui_kit::component::checkbox::Checkbox>::tooltip_show_delay.
 func (e CheckboxEl) TooltipShowDelay(delay time.Duration) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	rt.PutMs(o, delay)
@@ -139,17 +139,21 @@ func (e CheckboxEl) TooltipShowDelay(delay time.Duration) CheckboxEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CheckboxEl) PopoverStyle() CheckboxEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CheckboxEl) RoundedFullStyle() CheckboxEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -158,16 +162,18 @@ func (e CheckboxEl) RoundedFullStyle() CheckboxEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CheckboxEl) FocusRingStyle() CheckboxEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -180,24 +186,32 @@ func (e CheckboxEl) FocusRingStyle() CheckboxEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CheckboxEl) KeepTextSelection(id gk.ID) CheckboxEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CheckboxEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CheckboxEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CheckboxEl) BorderE(width gk.Length) CheckboxEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CheckboxEl) BorderS(width gk.Length) CheckboxEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -205,121 +219,163 @@ func (e CheckboxEl) BorderS(width gk.Length) CheckboxEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CheckboxEl) FlexRowDir() CheckboxEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CheckboxEl) InsetE(length gk.Length) CheckboxEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CheckboxEl) InsetS(length gk.Length) CheckboxEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CheckboxEl) JustifyFlexEnd() CheckboxEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CheckboxEl) JustifyFlexStart() CheckboxEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CheckboxEl) Me(length gk.Length) CheckboxEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CheckboxEl) Ms(length gk.Length) CheckboxEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CheckboxEl) Pe(length gk.Length) CheckboxEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CheckboxEl) Ps(length gk.Length) CheckboxEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CheckboxEl) RoundedE(radius gk.Length) CheckboxEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CheckboxEl) RoundedS(radius gk.Length) CheckboxEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CheckboxEl) TextEnd() CheckboxEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CheckboxEl) TextStart() CheckboxEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CheckboxEl) CornerRadii(radius gk.Corners) CheckboxEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CheckboxEl) DebugBlue() CheckboxEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CheckboxEl) DebugFocused(focusHandle gk.FocusHandle) CheckboxEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CheckboxEl) DebugGreen() CheckboxEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CheckboxEl) DebugPink() CheckboxEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CheckboxEl) DebugRed() CheckboxEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CheckboxEl) DebugYellow() CheckboxEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CheckboxEl) FontBlack() CheckboxEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CheckboxEl) FontBold() CheckboxEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CheckboxEl) FontExtrabold() CheckboxEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CheckboxEl) FontExtralight() CheckboxEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CheckboxEl) FontLight() CheckboxEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CheckboxEl) FontMedium() CheckboxEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CheckboxEl) FontNormal() CheckboxEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CheckboxEl) FontSemibold() CheckboxEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CheckboxEl) FontThin() CheckboxEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -328,18 +384,23 @@ func (e CheckboxEl) FontThin() CheckboxEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CheckboxEl) HFlex() CheckboxEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CheckboxEl) Margins(margins gk.EdgesInto) CheckboxEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CheckboxEl) Paddings(paddings gk.EdgesInto) CheckboxEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CheckboxEl) RefineStyle(style gk.StyleRefinement) CheckboxEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -349,12 +410,16 @@ func (e CheckboxEl) RefineStyle(style gk.StyleRefinement) CheckboxEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CheckboxEl) VFlex() CheckboxEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e CheckboxEl) BlockMouseExceptScroll() CheckboxEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -362,6 +427,8 @@ func (e CheckboxEl) BlockMouseExceptScroll() CheckboxEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e CheckboxEl) CanDrop(predicate gk.DropAccept) CheckboxEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -371,6 +438,8 @@ func (e CheckboxEl) CanDrop(predicate gk.DropAccept) CheckboxEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e CheckboxEl) CaptureAction(listener gk.ActionHandler) CheckboxEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -380,12 +449,14 @@ func (e CheckboxEl) CaptureAction(listener gk.ActionHandler) CheckboxEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e CheckboxEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e CheckboxEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -395,12 +466,14 @@ func (e CheckboxEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e CheckboxEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e CheckboxEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -410,6 +483,8 @@ func (e CheckboxEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) CheckboxEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e CheckboxEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -419,6 +494,8 @@ func (e CheckboxEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Chec
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e CheckboxEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -428,6 +505,8 @@ func (e CheckboxEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Checkb
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e CheckboxEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) CheckboxEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -437,12 +516,16 @@ func (e CheckboxEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e CheckboxEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) CheckboxEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e CheckboxEl) DragOver(f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -450,6 +533,8 @@ func (e CheckboxEl) DragOver(f gk.StyleRefinement) CheckboxEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e CheckboxEl) Focus(f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -459,30 +544,40 @@ func (e CheckboxEl) Focus(f gk.StyleRefinement) CheckboxEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e CheckboxEl) FocusVisible(f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e CheckboxEl) Group(group string) CheckboxEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e CheckboxEl) GroupDragOver(groupName string, f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e CheckboxEl) GroupHover(groupName string, f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e CheckboxEl) Hover(f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -490,6 +585,8 @@ func (e CheckboxEl) Hover(f gk.StyleRefinement) CheckboxEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e CheckboxEl) InFocus(f gk.StyleRefinement) CheckboxEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -497,6 +594,8 @@ func (e CheckboxEl) InFocus(f gk.StyleRefinement) CheckboxEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e CheckboxEl) KeyContext(keyContext string) CheckboxEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -504,12 +603,16 @@ func (e CheckboxEl) KeyContext(keyContext string) CheckboxEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e CheckboxEl) Occlude() CheckboxEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e CheckboxEl) OnAction(listener gk.ActionHandler) CheckboxEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -519,12 +622,14 @@ func (e CheckboxEl) OnAction(listener gk.ActionHandler) CheckboxEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e CheckboxEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e CheckboxEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -535,6 +640,8 @@ func (e CheckboxEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e CheckboxEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) CheckboxEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -545,6 +652,8 @@ func (e CheckboxEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e CheckboxEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) CheckboxEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -556,6 +665,8 @@ func (e CheckboxEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e g
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e CheckboxEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) CheckboxEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -565,6 +676,8 @@ func (e CheckboxEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) Che
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e CheckboxEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) CheckboxEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -577,6 +690,8 @@ func (e CheckboxEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) CheckboxEl 
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e CheckboxEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) CheckboxEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -586,6 +701,8 @@ func (e CheckboxEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent))
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e CheckboxEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -595,6 +712,8 @@ func (e CheckboxEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxE
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e CheckboxEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -604,6 +723,8 @@ func (e CheckboxEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) CheckboxEl 
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e CheckboxEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) CheckboxEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -613,12 +734,14 @@ func (e CheckboxEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersCh
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e CheckboxEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e CheckboxEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -629,12 +752,14 @@ func (e CheckboxEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e CheckboxEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e CheckboxEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -644,12 +769,14 @@ func (e CheckboxEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) CheckboxEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e CheckboxEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) CheckboxEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e CheckboxEl) OnMouseExitDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -659,12 +786,14 @@ func (e CheckboxEl) OnMouseExitDo(listener func(cx *gk.Cx)) CheckboxEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e CheckboxEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e CheckboxEl) OnMouseMoveDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -674,6 +803,8 @@ func (e CheckboxEl) OnMouseMoveDo(listener func(cx *gk.Cx)) CheckboxEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e CheckboxEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) CheckboxEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -683,12 +814,14 @@ func (e CheckboxEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureE
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e CheckboxEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e CheckboxEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -699,12 +832,14 @@ func (e CheckboxEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx))
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e CheckboxEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e CheckboxEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -714,6 +849,8 @@ func (e CheckboxEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.C
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e CheckboxEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) CheckboxEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -723,6 +860,8 @@ func (e CheckboxEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) CheckboxE
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e CheckboxEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) CheckboxEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -732,10 +871,14 @@ func (e CheckboxEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Checkbo
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e CheckboxEl) TabGroup() CheckboxEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e CheckboxEl) TrackFocus(focusHandle gk.FocusHandle) CheckboxEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -743,12 +886,14 @@ func (e CheckboxEl) TrackFocus(focusHandle gk.FocusHandle) CheckboxEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e CheckboxEl) WindowControlArea(area gk.WindowControlArea) CheckboxEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -756,6 +901,8 @@ func (e CheckboxEl) WindowControlArea(area gk.WindowControlArea) CheckboxEl {
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e CheckboxEl) A11ySyntheticChildren(f []gk.A11yChild) CheckboxEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -767,25 +914,31 @@ func (e CheckboxEl) A11ySyntheticChildren(f []gk.A11yChild) CheckboxEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e CheckboxEl) AccessibilityID(id string) CheckboxEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e CheckboxEl) Active(f gk.StyleRefinement) CheckboxEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e CheckboxEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) CheckboxEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -794,19 +947,25 @@ func (e CheckboxEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) Checkb
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e CheckboxEl) AriaActiveDescendant() CheckboxEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e CheckboxEl) AriaColumnCount(count int) CheckboxEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e CheckboxEl) AriaColumnIndex(index int) CheckboxEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -815,12 +974,16 @@ func (e CheckboxEl) AriaColumnIndex(index int) CheckboxEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e CheckboxEl) AriaDescription(description string) CheckboxEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e CheckboxEl) AriaExpanded(expanded bool) CheckboxEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -831,36 +994,48 @@ func (e CheckboxEl) AriaExpanded(expanded bool) CheckboxEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e CheckboxEl) AriaKeyshortcuts(keyshortcuts string) CheckboxEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e CheckboxEl) AriaLabel(label string) CheckboxEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e CheckboxEl) AriaLevel(level int) CheckboxEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e CheckboxEl) AriaMaxNumericValue(value float64) CheckboxEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e CheckboxEl) AriaMinNumericValue(value float64) CheckboxEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e CheckboxEl) AriaNumericValue(value float64) CheckboxEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -868,6 +1043,8 @@ func (e CheckboxEl) AriaNumericValue(value float64) CheckboxEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e CheckboxEl) AriaNumericValueStep(step float64) CheckboxEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -875,42 +1052,56 @@ func (e CheckboxEl) AriaNumericValueStep(step float64) CheckboxEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e CheckboxEl) AriaPlaceholder(placeholder string) CheckboxEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e CheckboxEl) AriaPositionInSet(position int) CheckboxEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e CheckboxEl) AriaRowCount(count int) CheckboxEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e CheckboxEl) AriaRowIndex(index int) CheckboxEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e CheckboxEl) AriaSelected(selected bool) CheckboxEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e CheckboxEl) AriaSizeOfSet(size int) CheckboxEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e CheckboxEl) AriaValue(value string) CheckboxEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -920,18 +1111,24 @@ func (e CheckboxEl) AriaValue(value string) CheckboxEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e CheckboxEl) ExternalDragPayload(resolver gk.ExternalDragPayload) CheckboxEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e CheckboxEl) Focusable() CheckboxEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e CheckboxEl) GroupActive(groupName string, f gk.StyleRefinement) CheckboxEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -940,6 +1137,8 @@ func (e CheckboxEl) GroupActive(groupName string, f gk.StyleRefinement) Checkbox
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e CheckboxEl) HoverListenerMode(mode gk.HoverListenerMode) CheckboxEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -948,6 +1147,8 @@ func (e CheckboxEl) HoverListenerMode(mode gk.HoverListenerMode) CheckboxEl {
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e CheckboxEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) CheckboxEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -957,12 +1158,14 @@ func (e CheckboxEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) CheckboxEl {
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e CheckboxEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) CheckboxEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e CheckboxEl) OnAuxClickDo(listener func(cx *gk.Cx)) CheckboxEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -974,6 +1177,8 @@ func (e CheckboxEl) OnAuxClickDo(listener func(cx *gk.Cx)) CheckboxEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e CheckboxEl) OnDrag(value gk.DragValue, constructor gk.View) CheckboxEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -988,24 +1193,32 @@ func (e CheckboxEl) OnDrag(value gk.DragValue, constructor gk.View) CheckboxEl {
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e CheckboxEl) OnHover(listener func(cx *gk.Cx, e bool)) CheckboxEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e CheckboxEl) OverflowScroll() CheckboxEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e CheckboxEl) OverflowXScroll() CheckboxEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e CheckboxEl) OverflowYScroll() CheckboxEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -1014,30 +1227,40 @@ func (e CheckboxEl) OverflowYScroll() CheckboxEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e CheckboxEl) RestrictScrollToAxis() CheckboxEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e CheckboxEl) TrackScroll(scrollHandle gk.ScrollHandle) CheckboxEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CheckboxEl) Style(st ...gk.Style) CheckboxEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CheckboxEl) AspectRatio(ratio float32) CheckboxEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CheckboxEl) Bg(fill gk.Fill) CheckboxEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CheckboxEl) Border(length gk.Length) CheckboxEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1045,12 +1268,16 @@ func (e CheckboxEl) Border(length gk.Length) CheckboxEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CheckboxEl) BorderB(length gk.Length) CheckboxEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CheckboxEl) BorderColor(borderColor gk.Color) CheckboxEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1058,6 +1285,8 @@ func (e CheckboxEl) BorderColor(borderColor gk.Color) CheckboxEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CheckboxEl) BorderL(length gk.Length) CheckboxEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1065,6 +1294,8 @@ func (e CheckboxEl) BorderL(length gk.Length) CheckboxEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CheckboxEl) BorderR(length gk.Length) CheckboxEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1072,6 +1303,8 @@ func (e CheckboxEl) BorderR(length gk.Length) CheckboxEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CheckboxEl) BorderT(length gk.Length) CheckboxEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1079,6 +1312,8 @@ func (e CheckboxEl) BorderT(length gk.Length) CheckboxEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CheckboxEl) BorderX(length gk.Length) CheckboxEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1086,6 +1321,8 @@ func (e CheckboxEl) BorderX(length gk.Length) CheckboxEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CheckboxEl) BorderY(length gk.Length) CheckboxEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1093,21 +1330,31 @@ func (e CheckboxEl) BorderY(length gk.Length) CheckboxEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CheckboxEl) Bottom(length gk.Length) CheckboxEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CheckboxEl) ColEnd(end int16) CheckboxEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CheckboxEl) ColSpan(span uint16) CheckboxEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CheckboxEl) ColStart(start int16) CheckboxEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CheckboxEl) Cursor(cursor gk.CursorStyle) CheckboxEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1115,30 +1362,42 @@ func (e CheckboxEl) Cursor(cursor gk.CursorStyle) CheckboxEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CheckboxEl) FlexBasis(basis gk.Length) CheckboxEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CheckboxEl) FlexGrow(grow float32) CheckboxEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CheckboxEl) FlexShrink(shrink float32) CheckboxEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CheckboxEl) Font(font gk.Font) CheckboxEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CheckboxEl) FontFamily(familyName string) CheckboxEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CheckboxEl) FontFeatures(features gk.FontFeatures) CheckboxEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1147,26 +1406,38 @@ func (e CheckboxEl) FontFeatures(features gk.FontFeatures) CheckboxEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CheckboxEl) FontWeight(weight gk.FontWeight) CheckboxEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CheckboxEl) Gap(length gk.Length) CheckboxEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CheckboxEl) GapX(length gk.Length) CheckboxEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CheckboxEl) GapY(length gk.Length) CheckboxEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CheckboxEl) GridCols(cols uint16) CheckboxEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CheckboxEl) GridColsMaxContent(cols uint16) CheckboxEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1174,15 +1445,21 @@ func (e CheckboxEl) GridColsMaxContent(cols uint16) CheckboxEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CheckboxEl) GridColsMinContent(cols uint16) CheckboxEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CheckboxEl) GridRows(rows uint16) CheckboxEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CheckboxEl) GridRowsMaxContent(rows uint16) CheckboxEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1190,121 +1467,179 @@ func (e CheckboxEl) GridRowsMaxContent(rows uint16) CheckboxEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CheckboxEl) GridRowsMinContent(rows uint16) CheckboxEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CheckboxEl) H(length gk.Length) CheckboxEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CheckboxEl) Inset(length gk.Length) CheckboxEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CheckboxEl) Left(length gk.Length) CheckboxEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CheckboxEl) LineClamp(lines int) CheckboxEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CheckboxEl) LineHeight(lineHeight gk.Length) CheckboxEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CheckboxEl) M(length gk.Length) CheckboxEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CheckboxEl) MaxH(length gk.Length) CheckboxEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CheckboxEl) MaxSize(length gk.Length) CheckboxEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CheckboxEl) MaxW(length gk.Length) CheckboxEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CheckboxEl) Mb(length gk.Length) CheckboxEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CheckboxEl) MinH(length gk.Length) CheckboxEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CheckboxEl) MinSize(length gk.Length) CheckboxEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CheckboxEl) MinW(length gk.Length) CheckboxEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CheckboxEl) Ml(length gk.Length) CheckboxEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CheckboxEl) Mr(length gk.Length) CheckboxEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CheckboxEl) Mt(length gk.Length) CheckboxEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CheckboxEl) Mx(length gk.Length) CheckboxEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CheckboxEl) My(length gk.Length) CheckboxEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CheckboxEl) Opacity(opacity float32) CheckboxEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CheckboxEl) P(length gk.Length) CheckboxEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CheckboxEl) Pb(length gk.Length) CheckboxEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CheckboxEl) Pl(length gk.Length) CheckboxEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CheckboxEl) Pr(length gk.Length) CheckboxEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CheckboxEl) Pt(length gk.Length) CheckboxEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CheckboxEl) Px(length gk.Length) CheckboxEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CheckboxEl) Py(length gk.Length) CheckboxEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CheckboxEl) Right(length gk.Length) CheckboxEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CheckboxEl) Rounded(length gk.Length) CheckboxEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1312,6 +1647,8 @@ func (e CheckboxEl) Rounded(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CheckboxEl) RoundedB(length gk.Length) CheckboxEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1319,6 +1656,8 @@ func (e CheckboxEl) RoundedB(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CheckboxEl) RoundedBl(length gk.Length) CheckboxEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1326,6 +1665,8 @@ func (e CheckboxEl) RoundedBl(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CheckboxEl) RoundedBr(length gk.Length) CheckboxEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1333,6 +1674,8 @@ func (e CheckboxEl) RoundedBr(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CheckboxEl) RoundedL(length gk.Length) CheckboxEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1340,6 +1683,8 @@ func (e CheckboxEl) RoundedL(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CheckboxEl) RoundedR(length gk.Length) CheckboxEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1347,6 +1692,8 @@ func (e CheckboxEl) RoundedR(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CheckboxEl) RoundedT(length gk.Length) CheckboxEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1354,6 +1701,8 @@ func (e CheckboxEl) RoundedT(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CheckboxEl) RoundedTl(length gk.Length) CheckboxEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1361,39 +1710,55 @@ func (e CheckboxEl) RoundedTl(length gk.Length) CheckboxEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CheckboxEl) RoundedTr(length gk.Length) CheckboxEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CheckboxEl) RowEnd(end int16) CheckboxEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CheckboxEl) RowSpan(span uint16) CheckboxEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CheckboxEl) RowStart(start int16) CheckboxEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CheckboxEl) ScrollbarWidth(width gk.Length) CheckboxEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CheckboxEl) Shadow(shadows []gk.BoxShadow) CheckboxEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CheckboxEl) Size(length gk.Length) CheckboxEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CheckboxEl) TextAlign(align gk.TextAlign) CheckboxEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1402,23 +1767,31 @@ func (e CheckboxEl) TextAlign(align gk.TextAlign) CheckboxEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CheckboxEl) TextBg(bg gk.Color) CheckboxEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CheckboxEl) TextColor(color gk.Color) CheckboxEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CheckboxEl) TextDecorationColor(color gk.Color) CheckboxEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CheckboxEl) TextOverflow(overflow gk.TextOverflow) CheckboxEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1427,6 +1800,8 @@ func (e CheckboxEl) TextOverflow(overflow gk.TextOverflow) CheckboxEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CheckboxEl) TextSize(size gk.Length) CheckboxEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1434,16 +1809,22 @@ func (e CheckboxEl) TextSize(size gk.Length) CheckboxEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CheckboxEl) Top(length gk.Length) CheckboxEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CheckboxEl) W(length gk.Length) CheckboxEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Disabled calls <E as gpui_kit::base::Disableable>::disabled.
 func (e CheckboxEl) Disabled(disabled bool) CheckboxEl {
 	tDisableableDisabled(rt.N(e.Core), disabled)
 	return e
 }
 
+// FocusRing calls <E as gpui_kit::base::FocusableExt>::focus_ring.
 func (e CheckboxEl) FocusRing(enabled bool) CheckboxEl {
 	tFocusableExtFocusRing(rt.N(e.Core), enabled)
 	return e
@@ -1453,49 +1834,66 @@ func (e CheckboxEl) FocusRing(enabled bool) CheckboxEl {
 //
 // Defaults to `selected`, so a trigger only overrides this when its selected state means something
 // other than "my popup is open".
+//
+// Open calls <E as gpui_kit::base::Selectable>::open.
 func (e CheckboxEl) Open(open bool) CheckboxEl { tSelectableOpen(rt.N(e.Core), open); return e }
 
+// SecondarySelected calls <E as gpui_kit::base::Selectable>::secondary_selected.
 func (e CheckboxEl) SecondarySelected(arg0 bool) CheckboxEl {
 	tSelectableSecondarySelected(rt.N(e.Core), arg0)
 	return e
 }
 
+// Selected calls <E as gpui_kit::base::Selectable>::selected.
 func (e CheckboxEl) Selected(selected bool) CheckboxEl {
 	tSelectableSelected(rt.N(e.Core), selected)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e CheckboxEl) Text(s string) CheckboxEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CheckboxEl) ChildView(v gk.View) CheckboxEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CheckboxEl) Child(child gk.Element) CheckboxEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CheckboxEl) Children(children ...gk.Element) CheckboxEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e CheckboxEl) Large() CheckboxEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e CheckboxEl) Small() CheckboxEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e CheckboxEl) WithSize(size gk.SizeInto) CheckboxEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e CheckboxEl) Xsmall() CheckboxEl { tSizableXsmall(rt.N(e.Core)); return e }

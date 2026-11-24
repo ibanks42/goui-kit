@@ -1,9 +1,9 @@
-//! The charts' gallery pages (docs/PROTOCOLS.md section 12): every chart of the kit over a small
-//! fixed data set, written the way a Rust GPUI-kit app writes them, with its own row types and
-//! closures. The Go twin is examples/go/gallery/chart_pages.go, whose charts take the
-//! app's rows as a data table and name columns and templates where these closures stand; the
-//! pages' lines are in ref/gallery/pages.txt. Every chart draws without its appear motion
-//! (`appear(false)`): the motion runs on a clock, which two runs do not share.
+//! Chart, low-level plot-shape, and generic `Sidebar<SidebarMenu>` gallery pages.
+//!
+//! Covers `LineChart`, `AreaChart`, `BarChart`, `CandlestickChart`, `PieChart`,
+//! `RadarChart`, `SankeyChart`, interactive chart tooltips, custom `Plot`
+//! shapes (`Shapes`, `LabeledBars`), and `generic-sidebar`.
+
 use gpui_kit::base::plot::shape::{
     Area, Bar, BarAlignment, Line, RadialLine, SankeyAlign, SankeyLink, SankeyValueScale,
 };
@@ -20,6 +20,7 @@ use gpui_kit::{
     div, hsla, px,
 };
 
+/// Monthly desktop/mobile traffic sample shared by line, area, and bar pages.
 #[derive(Clone)]
 struct Month {
     month: SharedString,
@@ -28,6 +29,7 @@ struct Month {
     color: Hsla,
 }
 
+/// Daily OHLC price datum for `chart-candlestick`.
 #[derive(Clone)]
 struct Price {
     date: SharedString,
@@ -37,6 +39,7 @@ struct Price {
     close: f64,
 }
 
+/// Browser market-share datum with per-slice inner/outer radii for pie pages.
 #[derive(Clone)]
 struct Share {
     browser: SharedString,
@@ -46,12 +49,14 @@ struct Share {
     outer: f32,
 }
 
+/// Single radar axis datum for `chart-radar`.
 #[derive(Clone)]
 struct Score {
     dimension: SharedString,
     alpha: f64,
 }
 
+/// Sankey node metadata for `chart-sankey` and `comp6-sankey-labels`.
 #[derive(Clone)]
 struct Flow {
     name: SharedString,
@@ -114,7 +119,6 @@ fn flows(cx: &App) -> (Vec<Flow>, Vec<SankeyLink>) {
     (nodes, links)
 }
 
-/// One point of the hand-written plot, in pixels of the plot's bounds.
 #[derive(Clone)]
 struct Pt {
     month: SharedString,
@@ -127,7 +131,8 @@ struct Pt {
     color: Hsla,
 }
 
-/// A plot a Rust app writes by hand: a Plot impl that paints an axis, a grid and four shapes.
+/// Composite low-level `Plot` exercising `PlotAxis`, `Grid`, `Bar`, `Area`,
+/// `Line`, and `RadialLine` shapes on a single canvas.
 struct Shapes {
     pts: Vec<Pt>,
 }
@@ -226,6 +231,7 @@ fn pair(a: AnyElement, b: AnyElement) -> AnyElement {
     div().flex().gap_4().child(a).child(b).into_any_element()
 }
 
+/// Renders a chart, custom plot, or `generic-sidebar` page if `id` belongs here.
 pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
     let t = &cx.theme().colors;
     Some(match id {
@@ -300,7 +306,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                     .name("Visits")
                     .y_axis(true)
                     .y_tick_count(3)
-                    .y_tick_format(|v| format!("{v:.0}")) // "{:,.0}" in Go: no value reaches 1,000
+                    .y_tick_format(|v| format!("{v:.0}"))
                     .tick_margin(2),
             ),
             card(
@@ -522,8 +528,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                 .tooltip_value(|_, v, p| format!("{v} ({p:.1}%)").into()),
         ),
         "plot-custom" => card(Shapes { pts: pts(cx) }),
-        // The components family, docs/PROTOCOLS.md 12.16: closures over a row that return
-        // a list.
+
         "comp6-sankey-labels" => {
             let (nodes, links) = flows(cx);
             let muted = cx.theme().muted_foreground;
@@ -549,8 +554,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                 .fill_gradient(|d, _, _| [linear_color_stop(d.color, 0.), linear_color_stop(hsla(0.6, 0.5, 0.9, 1.), 1.)]),
         ),
         "comp6-bar-labels" => card(LabeledBars { months: months(cx) }),
-        // A generic element over its children's type (Sidebar<E: SidebarItem>), instantiated
-        // for SidebarMenu.
+
         "generic-sidebar" => div()
             .w(px(240.))
             .h(px(300.))
@@ -573,8 +577,6 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
     })
 }
 
-/// comp6-bar-labels: bars, each with its value above it, as a Rust app's Plot writes them; the label
-/// is placed from the row (docs/PROTOCOLS.md 12.16).
 struct LabeledBars {
     months: Vec<Month>,
 }

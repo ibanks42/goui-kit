@@ -7,10 +7,10 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// BaseTreeEntry is a handle to gpui_kit::base::TreeEntry, a library object (PROTOCOLS.md section 13).
+// BaseTreeEntry is a handle to gpui_kit::base::TreeEntry, a runtime-owned library object.
 type BaseTreeEntry struct{ rt.HCore }
 
-// Depth is <gpui_kit::base::TreeEntry>::depth.
+// Depth calls <gpui_kit::base::TreeEntry>::depth.
 func (s BaseTreeEntry) Depth(cx *gk.Cx) int {
 	rt.UseBaseTree()
 	o := rt.NewReq(834)
@@ -19,7 +19,7 @@ func (s BaseTreeEntry) Depth(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// IsDisabled is <gpui_kit::base::TreeEntry>::is_disabled.
+// IsDisabled calls <gpui_kit::base::TreeEntry>::is_disabled.
 func (s BaseTreeEntry) IsDisabled(cx *gk.Cx) bool {
 	rt.UseBaseTree()
 	o := rt.NewReq(835)
@@ -28,7 +28,7 @@ func (s BaseTreeEntry) IsDisabled(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsExpanded is <gpui_kit::base::TreeEntry>::is_expanded.
+// IsExpanded calls <gpui_kit::base::TreeEntry>::is_expanded.
 func (s BaseTreeEntry) IsExpanded(cx *gk.Cx) bool {
 	rt.UseBaseTree()
 	o := rt.NewReq(836)
@@ -37,7 +37,7 @@ func (s BaseTreeEntry) IsExpanded(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsFolder is <gpui_kit::base::TreeEntry>::is_folder.
+// IsFolder calls <gpui_kit::base::TreeEntry>::is_folder.
 func (s BaseTreeEntry) IsFolder(cx *gk.Cx) bool {
 	rt.UseBaseTree()
 	o := rt.NewReq(837)
@@ -46,7 +46,7 @@ func (s BaseTreeEntry) IsFolder(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsRoot is <gpui_kit::base::TreeEntry>::is_root.
+// IsRoot calls <gpui_kit::base::TreeEntry>::is_root.
 func (s BaseTreeEntry) IsRoot(cx *gk.Cx) bool {
 	rt.UseBaseTree()
 	o := rt.NewReq(838)
@@ -55,7 +55,7 @@ func (s BaseTreeEntry) IsRoot(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Item is <gpui_kit::base::TreeEntry>::item.
+// Item calls <gpui_kit::base::TreeEntry>::item.
 func (s BaseTreeEntry) Item(cx *gk.Cx) BaseTreeItem {
 	rt.UseBaseTree()
 	o := rt.NewReq(839)
@@ -64,22 +64,22 @@ func (s BaseTreeEntry) Item(cx *gk.Cx) BaseTreeItem {
 	return rdBaseTreeItem(r)
 }
 
-// NewBaseTreeEntry is <gpui_kit::base::TreeEntry>::new.
+// NewBaseTreeEntry calls <gpui_kit::base::TreeEntry>::new.
 func NewBaseTreeEntry(cx *gk.Cx, item TreeItem, depth int) BaseTreeEntry {
 	rt.UseBaseTree()
 	o := rt.NewReq(840)
 	rt.PutVtape(o, rt.N(item.Core))
 	rt.PutUsize(o, depth)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return BaseTreeEntry{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ComboboxState is a handle to gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>, kit state that lives in the library.
+// ComboboxState is a handle to gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>, a runtime-owned kit state entity.
 type ComboboxState struct{ rt.HCore }
 
 // Returns the search query.
 //
-// Query is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::query.
+// Query calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::query.
 func (s ComboboxState) Query(cx *gk.Cx) string {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1108)
@@ -92,7 +92,7 @@ func (s ComboboxState) Query(cx *gk.Cx) string {
 //
 // Convenience for single-select mode (`.multiple(false)`).
 //
-// SelectedValue is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_value.
+// SelectedValue calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s ComboboxState) SelectedValue(cx *gk.Cx) gk.Option[string] {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1110)
@@ -103,7 +103,7 @@ func (s ComboboxState) SelectedValue(cx *gk.Cx) gk.Option[string] {
 
 // Return the currently selected values.
 //
-// SelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_values.
+// SelectedValues calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_values.
 func (s ComboboxState) SelectedValues(cx *gk.Cx) []string {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1111)
@@ -114,7 +114,7 @@ func (s ComboboxState) SelectedValues(cx *gk.Cx) []string {
 
 // Return the currently selected `(IndexPath, Item)` pairs.
 //
-// Selection is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selection.
+// Selection calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selection.
 func (s ComboboxState) Selection(cx *gk.Cx) []TupleBaseIndexPathSearchItem {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1112)
@@ -127,7 +127,7 @@ func (s ComboboxState) Selection(cx *gk.Cx) []TupleBaseIndexPathSearchItem {
 
 // Add a single index to the selection, if not already present, returning whether it was added.
 //
-// AddSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::add_selected_index.
+// AddSelectedIndex calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::add_selected_index.
 func (s ComboboxState) AddSelectedIndex(cx *gk.Cx, index BaseIndexPath) bool {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1104)
@@ -139,7 +139,7 @@ func (s ComboboxState) AddSelectedIndex(cx *gk.Cx, index BaseIndexPath) bool {
 
 // Remove a single index from the selection, returning whether it was removed.
 //
-// RemoveSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::remove_selected_index.
+// RemoveSelectedIndex calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::remove_selected_index.
 func (s ComboboxState) RemoveSelectedIndex(cx *gk.Cx, index BaseIndexPath) bool {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1109)
@@ -151,7 +151,7 @@ func (s ComboboxState) RemoveSelectedIndex(cx *gk.Cx, index BaseIndexPath) bool 
 
 // Clear all selected values.
 //
-// ClearSelection is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::clear_selection.
+// ClearSelection calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::clear_selection.
 func (s ComboboxState) ClearSelection(cx *gk.Cx) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1105)
@@ -161,7 +161,7 @@ func (s ComboboxState) ClearSelection(cx *gk.Cx) {
 
 // Focus the trigger.
 //
-// Focus is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::focus.
+// Focus calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s ComboboxState) Focus(cx *gk.Cx) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1106)
@@ -171,7 +171,7 @@ func (s ComboboxState) Focus(cx *gk.Cx) {
 
 // Replace the underlying delegate (item data source).
 //
-// SetItems is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_items.
+// SetItems calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s ComboboxState) SetItems(cx *gk.Cx, items gk.RowSource) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1113)
@@ -182,7 +182,7 @@ func (s ComboboxState) SetItems(cx *gk.Cx, items gk.RowSource) {
 
 // Sets the search query and updates the filtered items.
 //
-// SetQuery is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_query.
+// SetQuery calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_query.
 func (s ComboboxState) SetQuery(cx *gk.Cx, query string) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1114)
@@ -193,7 +193,7 @@ func (s ComboboxState) SetQuery(cx *gk.Cx, query string) {
 
 // Replace the entire selection set.
 //
-// SetSelectedIndices is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_indices.
+// SetSelectedIndices calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_indices.
 func (s ComboboxState) SetSelectedIndices(cx *gk.Cx, indices []BaseIndexPath) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1115)
@@ -210,7 +210,7 @@ func (s ComboboxState) SetSelectedIndices(cx *gk.Cx, indices []BaseIndexPath) {
 // Values are resolved through the current delegate. Values that cannot be resolved are ignored.
 // This updates the committed selection and snapshot without emitting a `ComboboxEvent`.
 //
-// SetSelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_values.
+// SetSelectedValues calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_values.
 func (s ComboboxState) SetSelectedValues(cx *gk.Cx, values []string) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1116)
@@ -222,7 +222,7 @@ func (s ComboboxState) SetSelectedValues(cx *gk.Cx, values []string) {
 	rt.StateSet(cx, o)
 }
 
-// OnComboboxEvent subscribes a handler to the state's ComboboxEvent events; gk.Release ends it.
+// OnComboboxEvent registers a listener for ComboboxEvent events on this state; release the returned Subscription to unsubscribe.
 func (s ComboboxState) OnComboboxEvent(cx *gk.Cx, h func(cx *gk.Cx, e ComboboxEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 102)
 	o := rt.NewReq(1117)
@@ -233,29 +233,38 @@ func (s ComboboxState) OnComboboxEvent(cx *gk.Cx, h func(cx *gk.Cx, e ComboboxEv
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// ComboboxStateBuilder is the chain of ComboboxState's `self -> Self` methods; Build makes it, in one crossing.
+// ComboboxStateBuilder accumulates chained ComboboxState builder options before creating the handle in Build.
 type ComboboxStateBuilder struct{ sb *rt.StateBuilder }
 
+// Enable multi-select mode.
+//
+// When `true`, clicking an item toggles it in the selection and the popover stays open. When
+// `false` (default), clicking an item replaces the selection and closes the popover.
+//
+// Multiple calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::multiple.
 func (b ComboboxStateBuilder) Multiple(multiple bool) ComboboxStateBuilder {
 	o := b.sb.Op(1)
 	o.Bool(multiple)
 	return b
 }
 
+// Enable or disable the search input at the top of the dropdown.
+//
+// Searchable calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::searchable.
 func (b ComboboxStateBuilder) Searchable(searchable bool) ComboboxStateBuilder {
 	o := b.sb.Op(2)
 	o.Bool(searchable)
 	return b
 }
 
-// Build makes the ComboboxState.
+// Build commits the queued options and returns the new ComboboxState handle.
 func (b ComboboxStateBuilder) Build() ComboboxState {
 	return ComboboxState{HCore: rt.MkH(b.sb.Build())}
 }
 
 // Create a new `Combobox` state.
 //
-// NewComboboxState is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::new.
+// NewComboboxState calls <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::new.
 func NewComboboxState(cx *gk.Cx, delegate gk.RowSource, selectedIndices []BaseIndexPath) ComboboxStateBuilder {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1107)
@@ -267,12 +276,12 @@ func NewComboboxState(cx *gk.Cx, delegate gk.RowSource, selectedIndices []BaseIn
 	return ComboboxStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// CommandState is a handle to gpui_kit::component::command::CommandState, kit state that lives in the library.
+// CommandState is a handle to gpui_kit::component::command::CommandState, a runtime-owned kit state entity.
 type CommandState struct{ rt.HCore }
 
 // Whether the search field is showing its spinner.
 //
-// IsLoading is <gpui_kit::component::command::CommandState>::is_loading.
+// IsLoading calls <gpui_kit::component::command::CommandState>::is_loading.
 func (s CommandState) IsLoading(cx *gk.Cx) bool {
 	rt.UseComponentCommand()
 	o := rt.NewReq(367)
@@ -283,7 +292,7 @@ func (s CommandState) IsLoading(cx *gk.Cx) bool {
 
 // The number of items matching the current query.
 //
-// MatchedCount is <gpui_kit::component::command::CommandState>::matched_count.
+// MatchedCount calls <gpui_kit::component::command::CommandState>::matched_count.
 func (s CommandState) MatchedCount(cx *gk.Cx) int {
 	rt.UseComponentCommand()
 	o := rt.NewReq(368)
@@ -294,7 +303,7 @@ func (s CommandState) MatchedCount(cx *gk.Cx) int {
 
 // The current search query.
 //
-// Query is <gpui_kit::component::command::CommandState>::query.
+// Query calls <gpui_kit::component::command::CommandState>::query.
 func (s CommandState) Query(cx *gk.Cx) string {
 	rt.UseComponentCommand()
 	o := rt.NewReq(370)
@@ -310,7 +319,7 @@ func (s CommandState) Query(cx *gk.Cx) string {
 // their group and item positions; when a model mixes both forms, the implicit ungrouped section
 // comes first.
 //
-// SelectedIndex is <gpui_kit::component::command::CommandState>::selected_index.
+// SelectedIndex calls <gpui_kit::component::command::CommandState>::selected_index.
 func (s CommandState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 	rt.UseComponentCommand()
 	o := rt.NewReq(371)
@@ -321,7 +330,7 @@ func (s CommandState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 
 // Move focus to the palette's active control.
 //
-// Focus is <gpui_kit::component::command::CommandState>::focus.
+// Focus calls <gpui_kit::component::command::CommandState>::focus.
 func (s CommandState) Focus(cx *gk.Cx) {
 	rt.UseComponentCommand()
 	o := rt.NewReq(590)
@@ -333,7 +342,7 @@ func (s CommandState) Focus(cx *gk.Cx) {
 //
 // Turn it on while an `on_query` callback is being answered.
 //
-// SetLoading is <gpui_kit::component::command::CommandState>::set_loading.
+// SetLoading calls <gpui_kit::component::command::CommandState>::set_loading.
 func (s CommandState) SetLoading(cx *gk.Cx, loading bool) {
 	rt.UseComponentCommand()
 	o := rt.NewReq(372)
@@ -347,7 +356,7 @@ func (s CommandState) SetLoading(cx *gk.Cx, loading bool) {
 // The input suppresses its own change event for a programmatic write, so the re-filter and query
 // callback happen here instead.
 //
-// SetQuery is <gpui_kit::component::command::CommandState>::set_query.
+// SetQuery calls <gpui_kit::component::command::CommandState>::set_query.
 func (s CommandState) SetQuery(cx *gk.Cx, query string) {
 	rt.UseComponentCommand()
 	o := rt.NewReq(373)
@@ -361,7 +370,7 @@ func (s CommandState) SetQuery(cx *gk.Cx, query string) {
 // A path that is currently filtered out or disabled clears the highlight. A visible selection is
 // scrolled into view.
 //
-// SetSelectedIndex is <gpui_kit::component::command::CommandState>::set_selected_index.
+// SetSelectedIndex calls <gpui_kit::component::command::CommandState>::set_selected_index.
 func (s CommandState) SetSelectedIndex(cx *gk.Cx, index gk.Option[BaseIndexPath]) {
 	rt.UseComponentCommand()
 	o := rt.NewReq(980)
@@ -377,18 +386,18 @@ func (s CommandState) SetSelectedIndex(cx *gk.Cx, index gk.Option[BaseIndexPath]
 
 // Create an empty palette.
 //
-// NewCommandState is <gpui_kit::component::command::CommandState>::new.
+// NewCommandState calls <gpui_kit::component::command::CommandState>::new.
 func NewCommandState(cx *gk.Cx) CommandState {
 	rt.UseComponentCommand()
 	o := rt.NewReq(369)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return CommandState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ListState is a handle to gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>, kit state that lives in the library.
+// ListState is a handle to gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>, a runtime-owned kit state entity.
 type ListState struct{ rt.HCore }
 
-// Delegate is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate.
+// Delegate calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate.
 func (s ListState) Delegate(cx *gk.Cx) gk.RowSource {
 	rt.UseComponentList()
 	o := rt.NewReq(1181)
@@ -399,7 +408,7 @@ func (s ListState) Delegate(cx *gk.Cx) gk.RowSource {
 
 // Returns the index of the item that has been right clicked.
 //
-// RightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::right_clicked_index.
+// RightClickedIndex calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::right_clicked_index.
 func (s ListState) RightClickedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 	rt.UseComponentList()
 	o := rt.NewReq(692)
@@ -410,7 +419,7 @@ func (s ListState) RightClickedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 
 // Get scroll handle
 //
-// ScrollHandle is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_handle.
+// ScrollHandle calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_handle.
 func (s ListState) ScrollHandle(cx *gk.Cx) VirtualListScrollHandle {
 	rt.UseComponentList()
 	o := rt.NewReq(1022)
@@ -419,7 +428,7 @@ func (s ListState) ScrollHandle(cx *gk.Cx) VirtualListScrollHandle {
 	return VirtualListScrollHandle{HCore: rt.MkH(r.U64())}
 }
 
-// SelectedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::selected_index.
+// SelectedIndex calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::selected_index.
 func (s ListState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 	rt.UseComponentList()
 	o := rt.NewReq(694)
@@ -428,7 +437,7 @@ func (s ListState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 	return rt.RdOpt(r, func(r *rt.Reader) BaseIndexPath { return rdBaseIndexPath(r) })
 }
 
-// DelegateMut is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate_mut.
+// DelegateMut calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate_mut.
 func (s ListState) DelegateMut(cx *gk.Cx) gk.RowSource {
 	rt.UseComponentList()
 	o := rt.NewReq(1182)
@@ -439,7 +448,7 @@ func (s ListState) DelegateMut(cx *gk.Cx) gk.RowSource {
 
 // Focus the list, if the list is searchable, focus the search input.
 //
-// Focus is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::focus.
+// Focus calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::focus.
 func (s ListState) Focus(cx *gk.Cx) {
 	rt.UseComponentList()
 	o := rt.NewReq(690)
@@ -449,7 +458,7 @@ func (s ListState) Focus(cx *gk.Cx) {
 
 // Scroll to the item at the given index.
 //
-// ScrollToItem is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_item.
+// ScrollToItem calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_item.
 func (s ListState) ScrollToItem(cx *gk.Cx, ix BaseIndexPath, strategy gk.ScrollStrategy) {
 	rt.UseComponentList()
 	o := rt.NewReq(1023)
@@ -459,7 +468,7 @@ func (s ListState) ScrollToItem(cx *gk.Cx, ix BaseIndexPath, strategy gk.ScrollS
 	rt.StateSet(cx, o)
 }
 
-// ScrollToSelectedItem is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_selected_item.
+// ScrollToSelectedItem calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_selected_item.
 func (s ListState) ScrollToSelectedItem(cx *gk.Cx) {
 	rt.UseComponentList()
 	o := rt.NewReq(693)
@@ -471,7 +480,7 @@ func (s ListState) ScrollToSelectedItem(cx *gk.Cx) {
 //
 // If the item is absent, measure the first item in the first non-empty section.
 //
-// SetItemToMeasureIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_item_to_measure_index.
+// SetItemToMeasureIndex calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_item_to_measure_index.
 func (s ListState) SetItemToMeasureIndex(cx *gk.Cx, ix BaseIndexPath) {
 	rt.UseComponentList()
 	o := rt.NewReq(1024)
@@ -482,7 +491,7 @@ func (s ListState) SetItemToMeasureIndex(cx *gk.Cx, ix BaseIndexPath) {
 
 // Set the query text of the search input, this will trigger a search.
 //
-// SetQuery is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_query.
+// SetQuery calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_query.
 func (s ListState) SetQuery(cx *gk.Cx, query string) {
 	rt.UseComponentList()
 	o := rt.NewReq(695)
@@ -493,7 +502,7 @@ func (s ListState) SetQuery(cx *gk.Cx, query string) {
 
 // Set the index of the item that has been right clicked.
 //
-// SetRightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_right_clicked_index.
+// SetRightClickedIndex calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_right_clicked_index.
 func (s ListState) SetRightClickedIndex(cx *gk.Cx, ix gk.Option[BaseIndexPath]) {
 	rt.UseComponentList()
 	o := rt.NewReq(1025)
@@ -507,7 +516,7 @@ func (s ListState) SetRightClickedIndex(cx *gk.Cx, ix gk.Option[BaseIndexPath]) 
 	rt.StateSet(cx, o)
 }
 
-// SetSearchable is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_searchable.
+// SetSearchable calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_searchable.
 func (s ListState) SetSearchable(cx *gk.Cx, searchable bool) {
 	rt.UseComponentList()
 	o := rt.NewReq(696)
@@ -518,7 +527,7 @@ func (s ListState) SetSearchable(cx *gk.Cx, searchable bool) {
 
 // Sets whether the list is selectable, default is true.
 //
-// SetSelectable is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selectable.
+// SetSelectable calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selectable.
 func (s ListState) SetSelectable(cx *gk.Cx, selectable bool) {
 	rt.UseComponentList()
 	o := rt.NewReq(697)
@@ -529,7 +538,7 @@ func (s ListState) SetSelectable(cx *gk.Cx, selectable bool) {
 
 // Set the selected index of the list, this method will not scroll to the selected item.
 //
-// SetSelectedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selected_index.
+// SetSelectedIndex calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selected_index.
 func (s ListState) SetSelectedIndex(cx *gk.Cx, ix gk.Option[BaseIndexPath]) {
 	rt.UseComponentList()
 	o := rt.NewReq(1026)
@@ -543,7 +552,7 @@ func (s ListState) SetSelectedIndex(cx *gk.Cx, ix gk.Option[BaseIndexPath]) {
 	rt.StateSet(cx, o)
 }
 
-// OnListEvent subscribes a handler to the state's ListEvent events; gk.Release ends it.
+// OnListEvent registers a listener for ListEvent events on this state; release the returned Subscription to unsubscribe.
 func (s ListState) OnListEvent(cx *gk.Cx, h func(cx *gk.Cx, e ListEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 99)
 	o := rt.NewReq(698)
@@ -554,25 +563,33 @@ func (s ListState) OnListEvent(cx *gk.Cx, h func(cx *gk.Cx, e ListEvent)) gk.Sub
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// ListStateBuilder is the chain of ListState's `self -> Self` methods; Build makes it, in one crossing.
+// ListStateBuilder accumulates chained ListState builder options before creating the handle in Build.
 type ListStateBuilder struct{ sb *rt.StateBuilder }
 
+// Sets whether the list is searchable, default is `false`.
+//
+// When `true`, there will be a search input at the top of the list.
+//
+// Searchable calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::searchable.
 func (b ListStateBuilder) Searchable(searchable bool) ListStateBuilder {
 	o := b.sb.Op(1)
 	o.Bool(searchable)
 	return b
 }
 
+// Sets whether the list is selectable, default is true.
+//
+// Selectable calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::selectable.
 func (b ListStateBuilder) Selectable(selectable bool) ListStateBuilder {
 	o := b.sb.Op(2)
 	o.Bool(selectable)
 	return b
 }
 
-// Build makes the ListState.
+// Build commits the queued options and returns the new ListState handle.
 func (b ListStateBuilder) Build() ListState { return ListState{HCore: rt.MkH(b.sb.Build())} }
 
-// NewListState is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::new.
+// NewListState calls <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::new.
 func NewListState(cx *gk.Cx, delegate gk.RowSource) ListStateBuilder {
 	rt.UseComponentList()
 	o := rt.NewReq(691)
@@ -580,12 +597,12 @@ func NewListState(cx *gk.Cx, delegate gk.RowSource) ListStateBuilder {
 	return ListStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// SelectState is a handle to gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>, kit state that lives in the library.
+// SelectState is a handle to gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>, a runtime-owned kit state entity.
 type SelectState struct{ rt.HCore }
 
 // Get the current selected index.
 //
-// SelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_index.
+// SelectedIndex calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_index.
 func (s SelectState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1120)
@@ -596,7 +613,7 @@ func (s SelectState) SelectedIndex(cx *gk.Cx) gk.Option[BaseIndexPath] {
 
 // Get the current selected value.
 //
-// SelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_value.
+// SelectedValue calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s SelectState) SelectedValue(cx *gk.Cx) gk.Option[string] {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1171)
@@ -607,7 +624,7 @@ func (s SelectState) SelectedValue(cx *gk.Cx) gk.Option[string] {
 
 // Focus the select trigger input.
 //
-// Focus is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::focus.
+// Focus calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s SelectState) Focus(cx *gk.Cx) {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1118)
@@ -617,7 +634,7 @@ func (s SelectState) Focus(cx *gk.Cx) {
 
 // Replace the delegate (item data) for the select state.
 //
-// SetItems is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_items.
+// SetItems calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s SelectState) SetItems(cx *gk.Cx, items gk.RowSource) {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1121)
@@ -628,7 +645,7 @@ func (s SelectState) SetItems(cx *gk.Cx, items gk.RowSource) {
 
 // Set the selected index for the select.
 //
-// SetSelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_index.
+// SetSelectedIndex calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_index.
 func (s SelectState) SetSelectedIndex(cx *gk.Cx, selectedIndex gk.Option[BaseIndexPath]) {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1122)
@@ -650,7 +667,7 @@ func (s SelectState) SetSelectedIndex(cx *gk.Cx, selectedIndex gk.Option[BaseInd
 // The delegate looks the value up in its matched items, so an active search query is cleared first
 // to get an index into the full item list.
 //
-// SetSelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_value.
+// SetSelectedValue calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_value.
 func (s SelectState) SetSelectedValue(cx *gk.Cx, selectedValue string) {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1172)
@@ -659,7 +676,7 @@ func (s SelectState) SetSelectedValue(cx *gk.Cx, selectedValue string) {
 	rt.StateSet(cx, o)
 }
 
-// OnSelectEvent subscribes a handler to the state's SelectEvent events; gk.Release ends it.
+// OnSelectEvent registers a listener for SelectEvent events on this state; release the returned Subscription to unsubscribe.
 func (s SelectState) OnSelectEvent(cx *gk.Cx, h func(cx *gk.Cx, e SelectEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 103)
 	o := rt.NewReq(1123)
@@ -670,21 +687,26 @@ func (s SelectState) OnSelectEvent(cx *gk.Cx, h func(cx *gk.Cx, e SelectEvent)) 
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// SelectStateBuilder is the chain of SelectState's `self -> Self` methods; Build makes it, in one crossing.
+// SelectStateBuilder accumulates chained SelectState builder options before creating the handle in Build.
 type SelectStateBuilder struct{ sb *rt.StateBuilder }
 
+// Sets whether the dropdown menu is searchable, default is `false`.
+//
+// When `true`, a search input appears at the top of the dropdown menu.
+//
+// Searchable calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::searchable.
 func (b SelectStateBuilder) Searchable(searchable bool) SelectStateBuilder {
 	o := b.sb.Op(1)
 	o.Bool(searchable)
 	return b
 }
 
-// Build makes the SelectState.
+// Build commits the queued options and returns the new SelectState handle.
 func (b SelectStateBuilder) Build() SelectState { return SelectState{HCore: rt.MkH(b.sb.Build())} }
 
 // Create a new Select state.
 //
-// NewSelectState is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::new.
+// NewSelectState calls <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::new.
 func NewSelectState(cx *gk.Cx, delegate gk.RowSource, selectedIndex gk.Option[BaseIndexPath]) SelectStateBuilder {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1119)
@@ -698,7 +720,7 @@ func NewSelectState(cx *gk.Cx, delegate gk.RowSource, selectedIndex gk.Option[Ba
 	return SelectStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// TableState is a handle to gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>, kit state that lives in the library.
+// TableState is a handle to gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>, a runtime-owned kit state entity.
 type State struct{ rt.HCore }
 
 // The width column `col_ix` is drawn at now, or `None` past the last column.
@@ -706,7 +728,7 @@ type State struct{ rt.HCore }
 // This is the table's own width, which follows a drag or a fit as it happens; the delegate's
 // `Width` is read again only on `Refresh`.
 //
-// ColWidth is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_width.
+// ColWidth calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_width.
 func (s State) ColWidth(cx *gk.Cx, colIx int) gk.Option[float32] {
 	rt.UseComponentTable()
 	o := rt.NewReq(701)
@@ -718,7 +740,7 @@ func (s State) ColWidth(cx *gk.Cx, colIx int) gk.Option[float32] {
 
 // Returns a reference to the delegate.
 //
-// Delegate is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate.
+// Delegate calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate.
 func (s State) Delegate(cx *gk.Cx) gk.RowSource {
 	rt.UseComponentTable()
 	o := rt.NewReq(1183)
@@ -734,7 +756,7 @@ func (s State) Delegate(cx *gk.Cx) gk.RowSource {
 // This materializes the complete table in memory. For large tables, prefer `DumpRange` and process
 // rows in batches.
 //
-// Dump is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump.
+// Dump calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump.
 func (s State) Dump(cx *gk.Cx) gk.TupleListStringListListString {
 	rt.UseComponentTable()
 	o := rt.NewReq(702)
@@ -750,7 +772,7 @@ func (s State) Dump(cx *gk.Cx) gk.TupleListStringListListString {
 // The requested range is clamped to the table's current row count. For large tables, callers can
 // invoke this repeatedly with bounded ranges.
 //
-// DumpRange is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump_range.
+// DumpRange calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump_range.
 func (s State) DumpRange(cx *gk.Cx, range_ gk.Range) gk.TupleListStringListListString {
 	rt.UseComponentTable()
 	o := rt.NewReq(703)
@@ -764,7 +786,7 @@ func (s State) DumpRange(cx *gk.Cx, range_ gk.Range) gk.TupleListStringListListS
 //
 // Batched exporters can read the headers once with this, then stream the rows with `DumpRange`.
 //
-// Headers is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::headers.
+// Headers calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::headers.
 func (s State) Headers(cx *gk.Cx) []string {
 	rt.UseComponentTable()
 	o := rt.NewReq(705)
@@ -775,7 +797,7 @@ func (s State) Headers(cx *gk.Cx) []string {
 
 // Returns the cell that has been right clicked, as `(row_ix, col_ix)`.
 //
-// RightClickedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_cell.
+// RightClickedCell calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_cell.
 func (s State) RightClickedCell(cx *gk.Cx) gk.Option[gk.TupleIntInt] {
 	rt.UseComponentTable()
 	o := rt.NewReq(709)
@@ -786,7 +808,7 @@ func (s State) RightClickedCell(cx *gk.Cx) gk.Option[gk.TupleIntInt] {
 
 // Returns the row that has been right clicked.
 //
-// RightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_row.
+// RightClickedRow calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_row.
 func (s State) RightClickedRow(cx *gk.Cx) gk.Option[int] {
 	rt.UseComponentTable()
 	o := rt.NewReq(710)
@@ -799,7 +821,7 @@ func (s State) RightClickedRow(cx *gk.Cx) gk.Option[int] {
 //
 // `Some` only when a cell is selected; see `Selection`.
 //
-// SelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_cell.
+// SelectedCell calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_cell.
 func (s State) SelectedCell(cx *gk.Cx) gk.Option[gk.TupleIntInt] {
 	rt.UseComponentTable()
 	o := rt.NewReq(713)
@@ -812,7 +834,7 @@ func (s State) SelectedCell(cx *gk.Cx) gk.Option[gk.TupleIntInt] {
 //
 // `Some` only when a column itself is selected; a selected cell does not count, see `Selection`.
 //
-// SelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_col.
+// SelectedCol calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_col.
 func (s State) SelectedCol(cx *gk.Cx) gk.Option[int] {
 	rt.UseComponentTable()
 	o := rt.NewReq(714)
@@ -825,7 +847,7 @@ func (s State) SelectedCol(cx *gk.Cx) gk.Option[int] {
 //
 // `Some` only when a row itself is selected; a selected cell does not count, see `Selection`.
 //
-// SelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_row.
+// SelectedRow calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_row.
 func (s State) SelectedRow(cx *gk.Cx) gk.Option[int] {
 	rt.UseComponentTable()
 	o := rt.NewReq(715)
@@ -839,7 +861,7 @@ func (s State) SelectedRow(cx *gk.Cx) gk.Option[int] {
 // A selected cell reports as `Cell` only; use `selected_cell().map(|(row_ix, _)| row_ix)` when the
 // cell's row is wanted.
 //
-// Selection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selection.
+// Selection calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selection.
 func (s State) Selection(cx *gk.Cx) Selection {
 	rt.UseComponentTable()
 	o := rt.NewReq(716)
@@ -848,7 +870,7 @@ func (s State) Selection(cx *gk.Cx) Selection {
 	return rdTableSelection(r)
 }
 
-// VisibleRangeCols is (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::cols(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
+// VisibleRangeCols calls (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::cols(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
 func (s State) VisibleRangeCols(cx *gk.Cx) gk.Range {
 	rt.UseComponentTable()
 	o := rt.NewReq(1740)
@@ -857,7 +879,7 @@ func (s State) VisibleRangeCols(cx *gk.Cx) gk.Range {
 	return rt.RdRange(r)
 }
 
-// VisibleRangeRows is (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::rows(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
+// VisibleRangeRows calls (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::rows(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
 func (s State) VisibleRangeRows(cx *gk.Cx) gk.Range {
 	rt.UseComponentTable()
 	o := rt.NewReq(1741)
@@ -868,7 +890,7 @@ func (s State) VisibleRangeRows(cx *gk.Cx) gk.Range {
 
 // Returns a mutable reference to the delegate.
 //
-// DelegateMut is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate_mut.
+// DelegateMut calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate_mut.
 func (s State) DelegateMut(cx *gk.Cx) gk.RowSource {
 	rt.UseComponentTable()
 	o := rt.NewReq(1184)
@@ -883,7 +905,7 @@ func (s State) DelegateMut(cx *gk.Cx) gk.RowSource {
 // `max_width`, and `ColumnWidthsChanged` is emitted when it changed. Returns whether the delegate
 // gave a width: `false` when the column cannot be resized or the delegate answered `None`.
 //
-// FitCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::fit_col.
+// FitCol calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::fit_col.
 func (s State) FitCol(cx *gk.Cx, colIx int) bool {
 	rt.UseComponentTable()
 	o := rt.NewReq(704)
@@ -895,7 +917,7 @@ func (s State) FitCol(cx *gk.Cx, colIx int) bool {
 
 // Clear the selection of the table.
 //
-// ClearSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::clear_selection.
+// ClearSelection calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::clear_selection.
 func (s State) ClearSelection(cx *gk.Cx) {
 	rt.UseComponentTable()
 	o := rt.NewReq(700)
@@ -905,7 +927,7 @@ func (s State) ClearSelection(cx *gk.Cx) {
 
 // When we update columns or rows, we need to refresh the table.
 //
-// Refresh is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh.
+// Refresh calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh.
 func (s State) Refresh(cx *gk.Cx) {
 	rt.UseComponentTable()
 	o := rt.NewReq(707)
@@ -917,7 +939,7 @@ func (s State) Refresh(cx *gk.Cx) {
 //
 // Call this after changing delegate state that affects `group_headers`.
 //
-// RefreshHeaderLayout is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh_header_layout.
+// RefreshHeaderLayout calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh_header_layout.
 func (s State) RefreshHeaderLayout(cx *gk.Cx) {
 	rt.UseComponentTable()
 	o := rt.NewReq(708)
@@ -925,7 +947,7 @@ func (s State) RefreshHeaderLayout(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// ScrollToCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_col.
+// ScrollToCol calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_col.
 func (s State) ScrollToCol(cx *gk.Cx, colIx int) {
 	rt.UseComponentTable()
 	o := rt.NewReq(711)
@@ -936,7 +958,7 @@ func (s State) ScrollToCol(cx *gk.Cx, colIx int) {
 
 // Scroll to the row at the given index.
 //
-// ScrollToRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_row.
+// ScrollToRow calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_row.
 func (s State) ScrollToRow(cx *gk.Cx, rowIx int) {
 	rt.UseComponentTable()
 	o := rt.NewReq(712)
@@ -947,10 +969,10 @@ func (s State) ScrollToRow(cx *gk.Cx, rowIx int) {
 
 // Set or clear the right-clicked row state.
 //
-// Pass `None` to clear — useful when opening a header context menu to prevent the row context menu
+// Pass `None` to clear - useful when opening a header context menu to prevent the row context menu
 // from appearing simultaneously.
 //
-// SetRightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_right_clicked_row.
+// SetRightClickedRow calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_right_clicked_row.
 func (s State) SetRightClickedRow(cx *gk.Cx, row gk.Option[int]) {
 	rt.UseComponentTable()
 	o := rt.NewReq(717)
@@ -969,7 +991,7 @@ func (s State) SetRightClickedRow(cx *gk.Cx, row gk.Option[int]) {
 // This method: - Switches the table to cell selection mode - Does not scroll; call `ScrollToRow`
 // and `ScrollToCol` to reveal the cell - Emits a `SelectCell` event
 //
-// SetSelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_cell.
+// SetSelectedCell calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_cell.
 func (s State) SetSelectedCell(cx *gk.Cx, rowIx int, colIx int) {
 	rt.UseComponentTable()
 	o := rt.NewReq(718)
@@ -984,7 +1006,7 @@ func (s State) SetSelectedCell(cx *gk.Cx, rowIx int, colIx int) {
 // This does not scroll; call `ScrollToCol` to reveal the column. Clicks and keyboard navigation
 // still scroll the selection into view.
 //
-// SetSelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_col.
+// SetSelectedCol calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_col.
 func (s State) SetSelectedCol(cx *gk.Cx, colIx int) {
 	rt.UseComponentTable()
 	o := rt.NewReq(719)
@@ -998,7 +1020,7 @@ func (s State) SetSelectedCol(cx *gk.Cx, colIx int) {
 // This does not scroll; call `ScrollToRow` to reveal the row. Clicks and keyboard navigation still
 // scroll the selection into view.
 //
-// SetSelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_row.
+// SetSelectedRow calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_row.
 func (s State) SetSelectedRow(cx *gk.Cx, rowIx int) {
 	rt.UseComponentTable()
 	o := rt.NewReq(720)
@@ -1012,7 +1034,7 @@ func (s State) SetSelectedRow(cx *gk.Cx, rowIx int) {
 // Like the matching `set_selected_*` it does not scroll, and emits as the matching
 // `set_selected_*` or `ClearSelection` call would.
 //
-// SetSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selection.
+// SetSelection calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selection.
 func (s State) SetSelection(cx *gk.Cx, selection Selection) {
 	rt.UseComponentTable()
 	o := rt.NewReq(721)
@@ -1021,7 +1043,7 @@ func (s State) SetSelection(cx *gk.Cx, selection Selection) {
 	rt.StateSet(cx, o)
 }
 
-// OnTableEvent subscribes a handler to the state's TableEvent events; gk.Release ends it.
+// OnTableEvent registers a listener for TableEvent events on this state; release the returned Subscription to unsubscribe.
 func (s State) OnTableEvent(cx *gk.Cx, h func(cx *gk.Cx, e Event)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 100)
 	o := rt.NewReq(722)
@@ -1032,69 +1054,109 @@ func (s State) OnTableEvent(cx *gk.Cx, h func(cx *gk.Cx, e Event)) gk.Subscripti
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// TableStateBuilder is the chain of TableState's `self -> Self` methods; Build makes it, in one crossing.
+// TableStateBuilder accumulates chained TableState builder options before creating the handle in Build.
 type StateBuilder struct{ sb *rt.StateBuilder }
 
+// Set to enable/disable cell selection, default is false.
+//
+// When enabled: - Individual cells become selectable by clicking - A row header column appears on
+// the left side (can be hidden via `RowHeader`) - Keyboard navigation operates at the cell level -
+// Cell-specific events (SelectCell, DoubleClickedCell, RightClickedCell) are emitted
+//
+// CellSelectable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::cell_selectable.
 func (b StateBuilder) CellSelectable(cellSelectable bool) StateBuilder {
 	o := b.sb.Op(1)
 	o.Bool(cellSelectable)
 	return b
 }
 
+// Set to enable/disable column movable, default to true.
+//
+// ColMovable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_movable.
 func (b StateBuilder) ColMovable(colMovable bool) StateBuilder {
 	o := b.sb.Op(2)
 	o.Bool(colMovable)
 	return b
 }
 
+// Set to enable/disable column resizable, default to true.
+//
+// ColResizable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_resizable.
 func (b StateBuilder) ColResizable(colResizable bool) StateBuilder {
 	o := b.sb.Op(3)
 	o.Bool(colResizable)
 	return b
 }
 
+// Set to enable/disable column selectable, default true
+//
+// ColSelectable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_selectable.
 func (b StateBuilder) ColSelectable(colSelectable bool) StateBuilder {
 	o := b.sb.Op(4)
 	o.Bool(colSelectable)
 	return b
 }
 
+// Set to loop selection, default to true.
+//
+// LoopSelection calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::loop_selection.
 func (b StateBuilder) LoopSelection(loopSelection bool) StateBuilder {
 	o := b.sb.Op(5)
 	o.Bool(loopSelection)
 	return b
 }
 
+// Set whether the row header column is shown, default is `true`.
+//
+// Only effective when `cell_selectable` is `true` - otherwise the row header column is never
+// rendered. Hide it when you want to use the leftmost column for your own content (e.g. a row
+// index column).
+//
+// When hidden, the first click on a cell selects the cell; clicking the already-selected cell
+// again escalates to selecting the whole row, so users can still pick rows without the dedicated
+// header column. The row escalation requires `row_selectable` to be enabled.
+//
+// RowHeader calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::row_header.
 func (b StateBuilder) RowHeader(rowHeader bool) StateBuilder {
 	o := b.sb.Op(6)
 	o.Bool(rowHeader)
 	return b
 }
 
+// Set to enable/disable row selectable, default true
+//
+// RowSelectable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::row_selectable.
 func (b StateBuilder) RowSelectable(rowSelectable bool) StateBuilder {
 	o := b.sb.Op(7)
 	o.Bool(rowSelectable)
 	return b
 }
 
+// Set whether a row click with the secondary modifier or Shift held selects the row, default is
+// `true`.
+//
+// SelectOnModifierClick calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::select_on_modifier_click.
 func (b StateBuilder) SelectOnModifierClick(selectOnModifierClick bool) StateBuilder {
 	o := b.sb.Op(8)
 	o.Bool(selectOnModifierClick)
 	return b
 }
 
+// Set to enable/disable column sortable, default true
+//
+// Sortable calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::sortable.
 func (b StateBuilder) Sortable(sortable bool) StateBuilder {
 	o := b.sb.Op(9)
 	o.Bool(sortable)
 	return b
 }
 
-// Build makes the TableState.
+// Build commits the queued options and returns the new TableState handle.
 func (b StateBuilder) Build() State { return State{HCore: rt.MkH(b.sb.Build())} }
 
 // Create a new TableState with the given delegate.
 //
-// NewTableState is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::new.
+// NewTableState calls <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::new.
 func NewState(cx *gk.Cx, delegate gk.RowSource) StateBuilder {
 	rt.UseComponentTable()
 	o := rt.NewReq(706)
@@ -1102,12 +1164,12 @@ func NewState(cx *gk.Cx, delegate gk.RowSource) StateBuilder {
 	return StateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// TableVisibleRange is a handle to gpui_kit::component::table::TableVisibleRange, a library object (PROTOCOLS.md section 13).
+// TableVisibleRange is a handle to gpui_kit::component::table::TableVisibleRange, a runtime-owned library object.
 type VisibleRange struct{ rt.HCore }
 
 // Returns the visible range of the columns.
 //
-// Cols is <gpui_kit::component::table::TableVisibleRange>::cols.
+// Cols calls <gpui_kit::component::table::TableVisibleRange>::cols.
 func (s VisibleRange) Cols(cx *gk.Cx) gk.Range {
 	rt.UseComponentTable()
 	o := rt.NewReq(1512)
@@ -1118,7 +1180,7 @@ func (s VisibleRange) Cols(cx *gk.Cx) gk.Range {
 
 // Returns the visible range of the rows.
 //
-// Rows is <gpui_kit::component::table::TableVisibleRange>::rows.
+// Rows calls <gpui_kit::component::table::TableVisibleRange>::rows.
 func (s VisibleRange) Rows(cx *gk.Cx) gk.Range {
 	rt.UseComponentTable()
 	o := rt.NewReq(1513)
@@ -1127,18 +1189,18 @@ func (s VisibleRange) Rows(cx *gk.Cx) gk.Range {
 	return rt.RdRange(r)
 }
 
-// NewTableVisibleRangeDefault is <gpui_kit::component::table::TableVisibleRange as Default>::default.
+// NewTableVisibleRangeDefault calls <gpui_kit::component::table::TableVisibleRange as Default>::default.
 func NewVisibleRangeDefault(cx *gk.Cx) VisibleRange {
 	rt.UseComponentTable()
 	o := rt.NewReq(1511)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return VisibleRange{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// TreeState is a handle to gpui_kit::base::TreeState, kit state that lives in the library.
+// TreeState is a handle to gpui_kit::base::TreeState, a runtime-owned kit state entity.
 type TreeState struct{ rt.HCore }
 
-// Entry is <gpui_kit::base::TreeState>::entry.
+// Entry calls <gpui_kit::base::TreeState>::entry.
 func (s TreeState) Entry(cx *gk.Cx, ix int) gk.Option[BaseTreeEntry] {
 	rt.UseBaseTree()
 	o := rt.NewReq(841)
@@ -1148,7 +1210,7 @@ func (s TreeState) Entry(cx *gk.Cx, ix int) gk.Option[BaseTreeEntry] {
 	return rt.RdOpt(r, func(r *rt.Reader) BaseTreeEntry { return BaseTreeEntry{HCore: rt.MkH(r.U64())} })
 }
 
-// IndexOf is <gpui_kit::base::TreeState>::index_of.
+// IndexOf calls <gpui_kit::base::TreeState>::index_of.
 func (s TreeState) IndexOf(cx *gk.Cx, id string) gk.Option[int] {
 	rt.UseBaseTree()
 	o := rt.NewReq(682)
@@ -1158,7 +1220,7 @@ func (s TreeState) IndexOf(cx *gk.Cx, id string) gk.Option[int] {
 	return rt.RdOpt(r, func(r *rt.Reader) int { return int(r.U64()) })
 }
 
-// ScrollHandle is <gpui_kit::base::TreeState>::scroll_handle.
+// ScrollHandle calls <gpui_kit::base::TreeState>::scroll_handle.
 func (s TreeState) ScrollHandle(cx *gk.Cx) gk.ScrollHandle {
 	rt.UseBaseTree()
 	o := rt.NewReq(1640)
@@ -1167,7 +1229,7 @@ func (s TreeState) ScrollHandle(cx *gk.Cx) gk.ScrollHandle {
 	return gk.ScrollHandle{HCore: rt.MkH(r.U64())}
 }
 
-// SelectedEntry is <gpui_kit::base::TreeState>::selected_entry.
+// SelectedEntry calls <gpui_kit::base::TreeState>::selected_entry.
 func (s TreeState) SelectedEntry(cx *gk.Cx) gk.Option[BaseTreeEntry] {
 	rt.UseBaseTree()
 	o := rt.NewReq(842)
@@ -1176,7 +1238,7 @@ func (s TreeState) SelectedEntry(cx *gk.Cx) gk.Option[BaseTreeEntry] {
 	return rt.RdOpt(r, func(r *rt.Reader) BaseTreeEntry { return BaseTreeEntry{HCore: rt.MkH(r.U64())} })
 }
 
-// SelectedIndex is <gpui_kit::base::TreeState>::selected_index.
+// SelectedIndex calls <gpui_kit::base::TreeState>::selected_index.
 func (s TreeState) SelectedIndex(cx *gk.Cx) gk.Option[int] {
 	rt.UseBaseTree()
 	o := rt.NewReq(686)
@@ -1185,7 +1247,7 @@ func (s TreeState) SelectedIndex(cx *gk.Cx) gk.Option[int] {
 	return rt.RdOpt(r, func(r *rt.Reader) int { return int(r.U64()) })
 }
 
-// SelectedItem is <gpui_kit::base::TreeState>::selected_item.
+// SelectedItem calls <gpui_kit::base::TreeState>::selected_item.
 func (s TreeState) SelectedItem(cx *gk.Cx) gk.Option[BaseTreeItem] {
 	rt.UseBaseTree()
 	o := rt.NewReq(687)
@@ -1194,7 +1256,7 @@ func (s TreeState) SelectedItem(cx *gk.Cx) gk.Option[BaseTreeItem] {
 	return rt.RdOpt(r, func(r *rt.Reader) BaseTreeItem { return rdBaseTreeItem(r) })
 }
 
-// Focus is <gpui_kit::base::TreeState>::focus.
+// Focus calls <gpui_kit::base::TreeState>::focus.
 func (s TreeState) Focus(cx *gk.Cx) {
 	rt.UseBaseTree()
 	o := rt.NewReq(681)
@@ -1202,7 +1264,7 @@ func (s TreeState) Focus(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// RevealItem is <gpui_kit::base::TreeState>::reveal_item.
+// RevealItem calls <gpui_kit::base::TreeState>::reveal_item.
 func (s TreeState) RevealItem(cx *gk.Cx, id string, strategy gk.ScrollStrategy) {
 	rt.UseBaseTree()
 	o := rt.NewReq(684)
@@ -1212,7 +1274,7 @@ func (s TreeState) RevealItem(cx *gk.Cx, id string, strategy gk.ScrollStrategy) 
 	rt.StateSet(cx, o)
 }
 
-// ScrollToItem is <gpui_kit::base::TreeState>::scroll_to_item.
+// ScrollToItem calls <gpui_kit::base::TreeState>::scroll_to_item.
 func (s TreeState) ScrollToItem(cx *gk.Cx, ix int, strategy gk.ScrollStrategy) {
 	rt.UseBaseTree()
 	o := rt.NewReq(685)
@@ -1222,7 +1284,7 @@ func (s TreeState) ScrollToItem(cx *gk.Cx, ix int, strategy gk.ScrollStrategy) {
 	rt.StateSet(cx, o)
 }
 
-// SetItems is <gpui_kit::base::TreeState>::set_items.
+// SetItems calls <gpui_kit::base::TreeState>::set_items.
 func (s TreeState) SetItems(cx *gk.Cx, items []TreeItem) {
 	rt.UseBaseTree()
 	o := rt.NewReq(843)
@@ -1234,7 +1296,7 @@ func (s TreeState) SetItems(cx *gk.Cx, items []TreeItem) {
 	rt.StateSet(cx, o)
 }
 
-// SetSelectedIndex is <gpui_kit::base::TreeState>::set_selected_index.
+// SetSelectedIndex calls <gpui_kit::base::TreeState>::set_selected_index.
 func (s TreeState) SetSelectedIndex(cx *gk.Cx, ix gk.Option[int]) {
 	rt.UseBaseTree()
 	o := rt.NewReq(688)
@@ -1248,7 +1310,7 @@ func (s TreeState) SetSelectedIndex(cx *gk.Cx, ix gk.Option[int]) {
 	rt.StateSet(cx, o)
 }
 
-// SetSelectedItem is <gpui_kit::base::TreeState>::set_selected_item.
+// SetSelectedItem calls <gpui_kit::base::TreeState>::set_selected_item.
 func (s TreeState) SetSelectedItem(cx *gk.Cx, item gk.Option[TreeItem]) {
 	rt.UseBaseTree()
 	o := rt.NewReq(844)
@@ -1262,7 +1324,7 @@ func (s TreeState) SetSelectedItem(cx *gk.Cx, item gk.Option[TreeItem]) {
 	rt.StateSet(cx, o)
 }
 
-// OnTreeEvent subscribes a handler to the state's TreeEvent events; gk.Release ends it.
+// OnTreeEvent registers a listener for TreeEvent events on this state; release the returned Subscription to unsubscribe.
 func (s TreeState) OnTreeEvent(cx *gk.Cx, h func(cx *gk.Cx, e TreeEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 86)
 	o := rt.NewReq(689)
@@ -1273,9 +1335,10 @@ func (s TreeState) OnTreeEvent(cx *gk.Cx, h func(cx *gk.Cx, e TreeEvent)) gk.Sub
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// TreeStateBuilder is the chain of TreeState's `self -> Self` methods; Build makes it, in one crossing.
+// TreeStateBuilder accumulates chained TreeState builder options before creating the handle in Build.
 type TreeStateBuilder struct{ sb *rt.StateBuilder }
 
+// Items calls <gpui_kit::base::TreeState>::items.
 func (b TreeStateBuilder) Items(items []TreeItem) TreeStateBuilder {
 	o := b.sb.Op(1)
 	o.U32(uint32(len(items)))
@@ -1285,22 +1348,22 @@ func (b TreeStateBuilder) Items(items []TreeItem) TreeStateBuilder {
 	return b
 }
 
-// Build makes the TreeState.
+// Build commits the queued options and returns the new TreeState handle.
 func (b TreeStateBuilder) Build() TreeState { return TreeState{HCore: rt.MkH(b.sb.Build())} }
 
-// NewTreeState is <gpui_kit::base::TreeState>::new.
+// NewTreeState calls <gpui_kit::base::TreeState>::new.
 func NewTreeState(cx *gk.Cx) TreeStateBuilder {
 	rt.UseBaseTree()
 	o := rt.NewReq(683)
 	return TreeStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// VirtualListScrollHandle is a handle to gpui_kit::base::VirtualListScrollHandle, a library object (PROTOCOLS.md section 13).
+// VirtualListScrollHandle is a handle to gpui_kit::base::VirtualListScrollHandle, a runtime-owned library object.
 type VirtualListScrollHandle struct{ rt.HCore }
 
 // Get the base scroll handle.
 //
-// BaseHandle is <gpui_kit::base::VirtualListScrollHandle>::base_handle.
+// BaseHandle calls <gpui_kit::base::VirtualListScrollHandle>::base_handle.
 func (s VirtualListScrollHandle) BaseHandle(cx *gk.Cx) gk.ScrollHandle {
 	rt.UseBaseVirtualList()
 	o := rt.NewReq(1340)
@@ -1311,7 +1374,7 @@ func (s VirtualListScrollHandle) BaseHandle(cx *gk.Cx) gk.ScrollHandle {
 
 // Scrolls to the bottom of the list.
 //
-// ScrollToBottom is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_bottom.
+// ScrollToBottom calls <gpui_kit::base::VirtualListScrollHandle>::scroll_to_bottom.
 func (s VirtualListScrollHandle) ScrollToBottom(cx *gk.Cx) {
 	rt.UseBaseVirtualList()
 	o := rt.NewReq(846)
@@ -1321,7 +1384,7 @@ func (s VirtualListScrollHandle) ScrollToBottom(cx *gk.Cx) {
 
 // Scroll to the item at the given index.
 //
-// ScrollToItem is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_item.
+// ScrollToItem calls <gpui_kit::base::VirtualListScrollHandle>::scroll_to_item.
 func (s VirtualListScrollHandle) ScrollToItem(cx *gk.Cx, ix int, strategy gk.ScrollStrategy) {
 	rt.UseBaseVirtualList()
 	o := rt.NewReq(847)
@@ -1333,10 +1396,10 @@ func (s VirtualListScrollHandle) ScrollToItem(cx *gk.Cx, ix int, strategy gk.Scr
 
 // Create a new VirtualListScrollHandle.
 //
-// NewVirtualListScrollHandle is <gpui_kit::base::VirtualListScrollHandle>::new.
+// NewVirtualListScrollHandle calls <gpui_kit::base::VirtualListScrollHandle>::new.
 func NewVirtualListScrollHandle(cx *gk.Cx) VirtualListScrollHandle {
 	rt.UseBaseVirtualList()
 	o := rt.NewReq(845)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return VirtualListScrollHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }

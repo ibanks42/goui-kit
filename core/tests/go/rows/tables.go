@@ -1,4 +1,3 @@
-// The modes of the table's and tree's row sources.
 package main
 
 import (
@@ -10,8 +9,7 @@ import (
 	"gpuikit.dev/gk/table"
 )
 
-// --- tables -----------------------------------------------------------------------------------
-
+// columns defines the 5-column table schema used by the `table` and `table-scroll` modes.
 var columns = []table.TableColumn{
 	{Key: "id", Name: "Id", Width: 80, Sort: gk.Some(table.ColumnSortDefault), Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 400},
 	{Key: "name", Name: "Name", Width: 120, Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 400},
@@ -42,7 +40,6 @@ func (a *App) tableEvent(cx *gk.Cx, e table.DelegateEvent) {
 	}
 }
 
-// The table state's own events (the generated subscription): selection, double clicks, widths.
 func (a *App) tableStateEvent(cx *gk.Cx, e table.Event) {
 	a.events++
 	switch v := e.(type) {
@@ -59,14 +56,16 @@ func (a *App) tableStateEvent(cx *gk.Cx, e table.Event) {
 	}
 }
 
+// tableInit builds a 100,000-row, 5-column DataTable with VisibleEvents enabled
+// so `table` proves keyboard/programmatic jumps (0, 1, 99999, 50000), sort
+// invalidation, double-click, and column drag/resize, while `table-scroll`
+// proves 120 smooth scroll steps bind rows ahead with zero placeholder frames.
 func (a *App) tableInit(cx *gk.Cx) {
 	a.src = table.NewSource(cx, tableCount, columns, a.cell, table.Events(a.tableEvent), gk.Initial(12))
 	a.table = table.NewState(cx, a.src).Build()
 	a.sub = a.table.OnTableEvent(cx, a.tableStateEvent)
 	table.SetDelegateData(cx, a.table, table.DelegateData{Threshold: 20, VisibleEvents: true})
 }
-
-// --- trees ------------------------------------------------------------------------------------
 
 var treeNodes = []table.TreeNode{
 	{ID: "src", Label: "src", Depth: 0, Expanded: true},
@@ -95,6 +94,9 @@ func (a *App) treeEvent(cx *gk.Cx, e table.TreeEvent) {
 	fmt.Printf("rows tree-state %s selected ok=%v ix=%d\n", variant(e), ok, ix)
 }
 
+// treeInit populates a 6-node folder tree where "docs" starts collapsed so
+// clicking row 3 proves folder expansion reveals child "docs/c" at depth 1 and
+// emits TreeEventExpanded with selected index 3.
 func (a *App) treeInit(cx *gk.Cx) {
 	a.tree = table.NewTreeState(cx).Build()
 	table.SetTreeItems(cx, a.tree, treeNodes)

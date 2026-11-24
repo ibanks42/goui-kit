@@ -1,8 +1,5 @@
-// The input family's gallery pages, the Go twin of ref/src/bin/gallery/input_pages.rs,
-// call for call: an input edited by keys, a multi-line
-// textarea, the code editor without grammars, a number input, an OTP input, a masked input and
-// the editor's completion menu filled by the app's provider (gk.EditorProviders). Each page has its own state, made once in init, so a page shows
-// only what its own steps did.
+// Input gallery pages: single-line inputs, auto-growing textareas, base and styled code
+// editors, number and OTP inputs, programmatic selection/edit writes, masking, and completions.
 package main
 
 import (
@@ -21,7 +18,7 @@ type inputPages struct {
 	masked     gkeditor.InputState
 	off        gkeditor.InputState
 	completion gkeditor.State
-	asks       gk.RowSource // the completion editor's questions
+	asks       gk.RowSource
 	writes     gkeditor.InputState
 }
 
@@ -43,8 +40,6 @@ func inputPagesInit(a *App, cx *gk.Cx) {
 		gkeditor.ProvidersOptions{Which: gkeditor.ProvideCompletions, Triggers: gk.Some(".")})
 }
 
-// completions answers the editor-completion page's provider: the two items the Rust page's
-// CompletionProvider returns.
 func (a *App) completions(cx *gk.Cx, e gkeditor.ProviderEvent) {
 	if _, ok := e.Request.(gkeditor.ProviderCompletions); ok {
 		items := []gk.CompletionItem{{Label: "first", Kind: 3, Detail: gk.Some("fn first()")}, {Label: "second", Kind: 6}}
@@ -52,8 +47,6 @@ func (a *App) completions(cx *gk.Cx, e gkeditor.ProviderEvent) {
 	}
 }
 
-// writeButton is one of the input-writes page's buttons: its writes to the state are buffered
-// and applied after the handler, as the Rust page's update closures do them at once.
 func writeButton(id, label string, h func(cx *gk.Cx, e gk.ClickEvent)) kit.ButtonEl {
 	return kit.Button(id).Label(label).W(gk.Px(80)).OnClick(h)
 }

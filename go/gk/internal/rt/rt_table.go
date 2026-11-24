@@ -1,8 +1,10 @@
 package rt
 
-// TableRec is a table's shape, by its row source (package table keeps it; a released source's
-// goes with it, rt_source.go).
+// TableRec stores the row and column dimensions for a RowSource backing a
+// virtualized table, used by gpuikit.dev/gk/table to map row/column indices
+// to flat row-source entries and validate updates.
 type TableRec struct{ Rows, Cols int }
 
-// Tables holds every table's shape by its row source's handle.
+// Tables maps RowSource handles to their TableRec dimensions. Entries are
+// cleaned up automatically in releaseSource when the source is released.
 var Tables = map[uint64]*TableRec{}

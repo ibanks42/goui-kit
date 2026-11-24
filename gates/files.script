@@ -1,32 +1,33 @@
-# The files app's scripted session (examples/go/files against ref/src/bin/files.rs, gates/pixels.sh
-# files): every image must be byte-identical between the two. Offscreen the platform is not asked: the
-# `answer` lines answer the app's file dialogs and its prompt (the library's scripted platform for the
-# Go app, the twin's own queue for Rust). The clock moves only on `advance`, so the status line's
-# entrance animation is shot at fixed times.
+# Offscreen session script for the files pixel gate (gates/pixels.sh files).
+# Drives platform menus, scripted open/save/prompt answers, external URL handling, and picker
+# cancellation across 11 screenshots compared byte-for-byte against ref-files.
 size 720 480
 frame
 advance 300
 frame
 shot 01-start.png
-# the kit's AppMenuBar: the File menu
+
+# Open the File menu and choose Open to trigger a platform file-picker request.
 click 24 18
 frame
 shot 02-file-menu.png
-# its first item, Open…: the file dialog, answered by the script
 click 40 46
 frame
 shot 03-open-asked.png
+
+# Answer the picker with gates/files.sample.txt (four dirs up from gates/out/pixels/files/<cand>/).
 answer paths ../../../../files.sample.txt
-# the answer's DONE turn runs before the frame that follows it (the `answer` line's own frame), so
-# what its handler changed is in that frame, as in Rust (PROTOCOLS.md 11.32)
 shot 04-answered.png
+
+# Capture the content transition mid-animation (+100 ms) and after it settles (+300 ms).
 advance 100
 frame
 shot 05-opened-entering.png
 advance 300
 frame
 shot 06-opened.png
-# File > Save as…: a save dialog, answered with a file in the app's folder (it writes the text there)
+
+# Open File -> Save As and supply a destination filename in the run directory.
 click 17 16
 frame
 click 40 77
@@ -35,7 +36,8 @@ answer new-path saved.txt
 advance 400
 frame
 shot 07-saved.png
-# File > Quit: the window's prompt, answered with its second button (Stay)
+
+# Open File -> Close/Quit prompt and pick button 1 to keep the window open.
 click 17 16
 frame
 click 40 113
@@ -44,7 +46,8 @@ answer prompt 1
 advance 400
 frame
 shot 08-still-here.png
-# Help > Website: open_url (recorded offscreen, not opened)
+
+# Open the Help menu and click the external website link item.
 click 60 16
 frame
 shot 09-help-menu.png
@@ -53,7 +56,8 @@ frame
 advance 400
 frame
 shot 10-website.png
-# ctrl-o: the same action by its key binding; the dialog dismissed
+
+# Trigger Open via Ctrl+O and cancel the platform file picker.
 key ctrl-o
 frame
 answer cancel paths

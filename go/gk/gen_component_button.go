@@ -11,7 +11,7 @@ type ButtonCustomVariant struct{ rt.Val }
 
 // Set active background color, default is transparent.
 //
-// Active is <gpui_kit::component::button::ButtonCustomVariant>::active.
+// Active calls <gpui_kit::component::button::ButtonCustomVariant>::active.
 func (e ButtonCustomVariant) Active(color Color) ButtonCustomVariant {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -24,7 +24,7 @@ func (e ButtonCustomVariant) Active(color Color) ButtonCustomVariant {
 // and info buttons use by default. An outline button also draws its border in it. The `Hover` and
 // `Active` colors are painted as given.
 //
-// Color is <gpui_kit::component::button::ButtonCustomVariant>::color.
+// Color calls <gpui_kit::component::button::ButtonCustomVariant>::color.
 func (e ButtonCustomVariant) Color(color Color) ButtonCustomVariant {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -33,7 +33,7 @@ func (e ButtonCustomVariant) Color(color Color) ButtonCustomVariant {
 
 // Set foreground color, default is theme foreground.
 //
-// Foreground is <gpui_kit::component::button::ButtonCustomVariant>::foreground.
+// Foreground calls <gpui_kit::component::button::ButtonCustomVariant>::foreground.
 func (e ButtonCustomVariant) Foreground(color Color) ButtonCustomVariant {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutColor(o, color)
@@ -42,7 +42,7 @@ func (e ButtonCustomVariant) Foreground(color Color) ButtonCustomVariant {
 
 // Set hover background color, default is transparent.
 //
-// Hover is <gpui_kit::component::button::ButtonCustomVariant>::hover.
+// Hover calls <gpui_kit::component::button::ButtonCustomVariant>::hover.
 func (e ButtonCustomVariant) Hover(color Color) ButtonCustomVariant {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutColor(o, color)
@@ -51,7 +51,7 @@ func (e ButtonCustomVariant) Hover(color Color) ButtonCustomVariant {
 
 // Set shadow, default is false.
 //
-// Shadow is <gpui_kit::component::button::ButtonCustomVariant>::shadow.
+// Shadow calls <gpui_kit::component::button::ButtonCustomVariant>::shadow.
 func (e ButtonCustomVariant) Shadow(shadow bool) ButtonCustomVariant {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(shadow)

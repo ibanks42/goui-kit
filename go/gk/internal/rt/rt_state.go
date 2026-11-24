@@ -1,6 +1,16 @@
+// Kit state calls, window lifecycle, focus handles, and unified handle Release.
+//
+// Reads flush pending deferred writes first so callers observe their own prior
+// mutations in order; reads on kit states also record an entity dependency via
+// dep(h) during view rendering so GPUI re-renders the view when that state
+// changes. Write-only operations queue onto the active turn's deferred buffer
+// (except under GK_DEBUG=1, where DeferOp executes immediately).
+
 package rt
 
-// stateMake runs a constructor call op and returns the new handle.
+// StateMake executes a state-creation request tape, attaches any pending kept
+// handlers to the returned handle, registers GC tracking, and links ownership
+// to the current turn's view. It must be called outside a view function.
 func StateMake(cx *Cx, o *Tape) uint64 {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -17,7 +27,7 @@ func StateMake(cx *Cx, o *Tape) uint64 {
 
 func readResult(rc int32, res []byte) *Reader {
 	if failed.Load() {
-		panic(abortTurn{}) // a turn inside this call stopped the app (rt_fail.go)
+		panic(abortTurn{})
 	}
 	switch rc {
 	case 0:
@@ -29,9 +39,9 @@ func readResult(rc int32, res []byte) *Reader {
 	return nil
 }
 
-// stateTry runs a read call op (a `&self` method). Buffered writes are sent first, so the read
-// sees them. In a view build the state is recorded as a dependency. ok is false when the state
-// is being updated by the component that called the handler.
+// StateTry flushes pending writes, records state handle h as a view dependency
+// if inside a view build, and runs a read request. It returns ok=false when the
+// state is currently borrowed by an active component update (ErrBusy).
 func StateTry(h uint64, cx *Cx, o *Tape) (*Reader, bool) {
 	CheckCx(cx).Flush()
 	dep(h)
@@ -42,7 +52,8 @@ func StateTry(h uint64, cx *Cx, o *Tape) (*Reader, bool) {
 	return readResult(rc, res), true
 }
 
-// stateGet is stateTry for the usual case: a busy state stops with the library's message.
+// StateGet performs a synchronous state read like StateTry, stopping if the
+// state is busy.
 func StateGet(h uint64, cx *Cx, o *Tape) *Reader {
 	r, ok := StateTry(h, cx, o)
 	if !ok {
@@ -51,7 +62,8 @@ func StateGet(h uint64, cx *Cx, o *Tape) *Reader {
 	return r
 }
 
-// stateCall runs an update that returns a value at once. A view function may not call it.
+// StateCall executes a synchronous mutating call that returns a result on a
+// kit state handle outside a view function.
 func StateCall(h uint64, cx *Cx, o *Tape) *Reader {
 	if Vb.Active {
 		Stop("a view function may not change kit state (it only describes): change it in a handler or in init")
@@ -62,24 +74,25 @@ func StateCall(h uint64, cx *Cx, o *Tape) *Reader {
 	return readResult(rc, res)
 }
 
-// stateSet buffers a write call op (a `&mut self` method).
+// StateSet queues a write-only state mutation onto the current turn's deferred
+// op buffer.
 func StateSet(cx *Cx, o *Tape) {
 	t := CheckCx(cx)
 	keptAttachReq(*o)
 	t.DeferOp(*o)
 }
 
-// objGet runs a read of a library object (or a global accessor, h = 0). An object does not
-// notify, so no dependency is recorded.
+// ObjGet performs a synchronous read on an object handle without recording a
+// GPUI entity dependency.
 func ObjGet(h uint64, cx *Cx, o *Tape) *Reader {
 	CheckCx(cx).Flush()
 	rc, res := call(*o)
 	return readResult(rc, res)
 }
 
-// ambientCall runs one generated call of the ambient context at once, with the turn's window
-// and app. One that returns nothing changes the app or a window, so a view function may not
-// make it; one that returns a value may.
+// AmbientCall invokes an app-level or window-level C ABI call. Calls that do
+// not return a value (returns == false) are treated as mutations and rejected
+// inside view functions.
 func AmbientCall(cx *Cx, o *Tape, returns bool) *Reader {
 	t := CheckCx(cx)
 	if !returns && Vb.Active {
@@ -89,19 +102,24 @@ func AmbientCall(cx *Cx, o *Tape, returns bool) *Reader {
 	return &Reader{B: MustCall(*o)}
 }
 
-// stateBuilder is a state constructor's chain of `self -> Self` methods: one crossing in all.
+// StateBuilder accumulates builder options into a state-creation tape before
+// Build submits the request via StateMake.
 type StateBuilder struct {
 	cx      *Cx
 	o       *Tape
 	countAt int
 }
 
+// NewStateBuilder reserves a uint16 option count at the current end of o and
+// returns a single-use StateBuilder.
 func NewStateBuilder(cx *Cx, o *Tape) *StateBuilder {
 	at := len(*o)
-	o.U16(0) // how many builder ops follow
+	o.U16(0)
 	return &StateBuilder{cx, o, at}
 }
 
+// Op increments the builder option count, appends opcode code, and returns the
+// tape for writing option arguments.
 func (b *StateBuilder) Op(code uint16) *Tape {
 	if b.o == nil {
 		Stop("a builder chain was used after Build: start a new one with its constructor")
@@ -112,6 +130,8 @@ func (b *StateBuilder) Op(code uint16) *Tape {
 	return b.o
 }
 
+// Build consumes the builder chain, executes StateMake, and returns the new
+// state handle.
 func (b *StateBuilder) Build() uint64 {
 	if b.o == nil {
 		Stop("Build was called twice on one builder chain: each chain makes one")
@@ -121,48 +141,43 @@ func (b *StateBuilder) Build() uint64 {
 	return StateMake(b.cx, o)
 }
 
-// Window is a handle to a window.
+// Window is a handle to an open GPUI window.
 type Window struct{ HCore }
 
-// WindowStyle is how a window sits among others.
+// WindowStyle selects the native window chrome and floating behavior.
 type WindowStyle uint8
 
+// Window presentation styles for WindowConfig.Style.
 const (
 	WindowNormal   WindowStyle = 0
-	WindowPopup    WindowStyle = 1 // above all other windows
-	WindowFloating WindowStyle = 2 // above its parent window
+	WindowPopup    WindowStyle = 1
+	WindowFloating WindowStyle = 2
 )
 
-// WindowConfig is every option OpenWindowWith takes; zero values are GPUI's defaults.
+// WindowConfig configures size, title, style, position, flags, AppID, and icon
+// when opening a window with OpenWindowWith.
 type WindowConfig struct {
 	Width, Height       float32
 	Title               string
-	MinWidth, MinHeight float32 // 0: no minimum
+	MinWidth, MinHeight float32
 	Style               WindowStyle
-	Position            Option[[2]float32] // none: centred
+	Position            Option[[2]float32]
 	NotResizable        bool
 	NotMinimizable      bool
 	NotMovable          bool
 	NoFocus             bool
 	Hidden              bool
-	KitTitleBar         bool // the kit's title bar options (TitleBar::window_options)
-	// AppID names the app to the desktop, which matches the window to the app's desktop entry and
-	// its icon by it (Wayland's app_id, X11's WM_CLASS): "myapp" for myapp.desktop. "": none.
-	AppID string
-	// Icon is the window's icon as the bytes of a PNG (X11 and Windows show it; Wayland takes the
-	// icon of the desktop entry AppID names). nil: none. One the library cannot read stops.
-	Icon []byte
+	KitTitleBar         bool
+	AppID               string
+	Icon                []byte
 }
 
-// OpenWindow opens a window titled title, width by height logical pixels, whose root (inside
-// the kit's Root) is the view.
-//
-//	gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
+// OpenWindow opens a standard window displaying root with the given title and dimensions.
 func OpenWindow(cx *Cx, title string, width, height float32, root View) Window {
 	return OpenWindowWith(cx, WindowConfig{Width: width, Height: height, Title: title}, root)
 }
 
-// OpenWindowWith opens a window with every option (a minimum size, a position, a style, ...).
+// OpenWindowWith opens a window configured by c displaying root.
 func OpenWindowWith(cx *Cx, c WindowConfig, root View) Window {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -210,33 +225,34 @@ func windowOp(cx *Cx, code uint16, w Window, text string) {
 	CheckCx(cx).DeferOp(*o)
 }
 
-// CloseWindow closes a window (after the handler); a zero Window is the turn's own.
+// CloseWindow closes window w and disables inline re-description for the turn.
 func CloseWindow(cx *Cx, w Window) {
 	CheckCx(cx).skipInline = true
 	windowOp(cx, CWindowClose, w, "")
 }
 
-// SetWindowTitle changes a window's title.
+// SetWindowTitle updates the title of window w.
 func SetWindowTitle(cx *Cx, w Window, title string) { windowOp(cx, CWindowSetTitle, w, title) }
 
-// ActivateWindow brings a window to the front.
+// ActivateWindow raises and focuses window w.
 func ActivateWindow(cx *Cx, w Window) { windowOp(cx, CWindowActivate, w, "") }
 
-// QuitOnLastWindow sets whether closing the last window quits the app (the default).
+// QuitOnLastWindow controls whether the application exits automatically when
+// its last open window closes.
 func QuitOnLastWindow(cx *Cx, yes bool) {
 	o := NewReq(CQuitOnLastWindow)
 	o.Bool(yes)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// WindowInfo is a window's title, bounds and whether it is the active one.
+// WindowInfo describes a window's current title, bounds, and active status.
 type WindowInfo struct {
 	Title               string
 	X, Y, Width, Height float32
 	Active              bool
 }
 
-// GetWindowInfo reads a window's title and bounds; a zero Window is the turn's own.
+// GetWindowInfo queries current geometry and title metadata for window w.
 func GetWindowInfo(cx *Cx, w Window) WindowInfo {
 	CheckCx(cx).Flush()
 	o := NewReq(CWindowInfo)
@@ -245,14 +261,14 @@ func GetWindowInfo(cx *Cx, w Window) WindowInfo {
 	return WindowInfo{r.Str(), r.F32(), r.F32(), r.F32(), r.F32(), r.Bool()}
 }
 
-// Windows lists the open windows, in the order they were opened.
+// Windows returns handles for all currently open application windows.
 func Windows(cx *Cx) []Window {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CWindows))}
 	return RdList(&r, func(r *Reader) Window { return Window{MkH(r.U64())} })
 }
 
-// OnWindowClosed runs f when the window has closed; gk.Release ends it.
+// OnWindowClosed registers f to run after window w closes.
 func OnWindowClosed(cx *Cx, w Window, f func(cx *Cx, w Window)) ActionListener {
 	CheckCx(cx).Flush()
 	slot, gen := KeepHandler(cx, f, ShapeWindow)
@@ -264,17 +280,8 @@ func OnWindowClosed(cx *Cx, w Window, f func(cx *Cx, w Window)) ActionListener {
 	return ActionListener{r.U64(), slot}
 }
 
-// OnWindowShouldClose asks f before the user closes the window (its close button, Alt-F4, the
-// taskbar; Window::on_window_should_close): f returns false to keep it open, say to ask about
-// unsaved edits first, and closes it later with gk.CloseWindow, which does not ask again. Several
-// handlers are asked in the order given; the first false keeps the window. A zero Window is the
-// turn's own. gk.Release ends it. PROTOCOLS.md 11.38.
-//
-//	gk.OnWindowShouldClose(cx, gk.Window{}, func(cx *gk.Cx) bool {
-//		if !a.dirty { return true }
-//		gk.OpenDialog(cx, a.confirmClose) // its OK calls gk.CloseWindow(cx, a.win)
-//		return false
-//	})
+// OnWindowShouldClose registers a veto callback invoked before window w closes;
+// returning false cancels the close.
 func OnWindowShouldClose(cx *Cx, w Window, f func(cx *Cx) bool) ActionListener {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -290,10 +297,7 @@ func OnWindowShouldClose(cx *Cx, w Window, f func(cx *Cx) bool) ActionListener {
 	return ActionListener{r.U64(), slot}
 }
 
-// OnAppQuit runs f once as the app quits (App::on_app_quit), however it quits: gk.Quit, the last
-// window closed, the platform's quit (Cmd-Q on macOS). It runs with no window and must not wait
-// long: gpui gives quit handlers a moment, then exits. Start what must outlive the app (a
-// detached process) from here. gk.Release ends it. PROTOCOLS.md 11.38.
+// OnAppQuit registers f to run when the application is quitting.
 func OnAppQuit(cx *Cx, f func(cx *Cx)) ActionListener {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -308,25 +312,21 @@ func OnAppQuit(cx *Cx, f func(cx *Cx)) ActionListener {
 	return ActionListener{r.U64(), slot}
 }
 
-// ReduceMotion reports whether the app should draw non-essential motion still (gpui's
-// App::reduce_motion: the system's setting once gk.BaseApplySystemReduceMotion follows it, or what
-// gk.SetReduceMotion set). A view function may read it.
+// ReduceMotion reports whether the reduced-motion accessibility flag is active.
 func ReduceMotion(cx *Cx) bool {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CReduceMotion))}
 	return r.Bool()
 }
 
-// SetReduceMotion sets the reduce-motion flag (App::set_reduce_motion); every window redraws. It
-// runs after the handler.
+// SetReduceMotion overrides the reduced-motion accessibility flag.
 func SetReduceMotion(cx *Cx, reduce bool) {
 	o := NewReq(CSetReduceMotion)
 	o.Bool(reduce)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// TestShouldClose asks the window's should-close handlers as the platform does when the user closes
-// it, and reports whether it may close. For tests (offscreen there is no close button to press).
+// TestShouldClose triggers window w's OnWindowShouldClose check in tests.
 func TestShouldClose(cx *Cx, w Window) bool {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -341,9 +341,8 @@ var (
 	frameOwners   = map[uint64]*viewRec{}
 )
 
-// OnFrame asks for a FRAME turn before every frame of the turn's window: the only way app code
-// runs on every frame, and it is opt-in. What f writes is in place before the views are
-// described for that same frame.
+// OnFrame installs or clears (when f is nil) a per-frame callback for the
+// current turn's window.
 func OnFrame(cx *Cx, f func(cx *Cx)) {
 	t := CheckCx(cx)
 	if t.window == 0 {
@@ -357,18 +356,17 @@ func OnFrame(cx *Cx, f func(cx *Cx)) {
 	t.DeferOp(*o)
 }
 
-// Quit ends the app.
+// Quit requests a clean shutdown of the application event loop.
 func Quit(cx *Cx) {
 	t := CheckCx(cx)
 	t.skipInline = true
 	t.DeferOp(*NewReq(CQuit))
 }
 
-// handle makes a focus handle something gk.Release takes.
 func (f FocusHandle) handle() uint64 { return f.h }
 
-// NewFocusHandle makes a GPUI FocusHandle: give it to TrackFocus on an element, and move the
-// keyboard focus there with gk.Focus.
+// NewFocusHandle allocates a GPUI focus handle tracked for GC cleanup and owned
+// by the current view.
 func NewFocusHandle(cx *Cx) FocusHandle {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -382,14 +380,14 @@ func NewFocusHandle(cx *Cx) FocusHandle {
 	return FocusHandle{MkH(h)}
 }
 
-// Focus moves keyboard focus to the element that tracks the handle.
+// Focus moves keyboard focus to f.
 func Focus(cx *Cx, f FocusHandle) {
 	o := NewReq(CFocus)
 	o.U64(f.h)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// Subscription is a handler subscribed to the events of kit state; gk.Release ends it.
+// Subscription is a releasable handle to a kit state event subscription.
 type Subscription struct {
 	h    uint64
 	slot uint32
@@ -401,11 +399,12 @@ func releaseHandle(t *turn, h uint64) {
 	t.DeferOp(*o)
 }
 
+// Handled is implemented by every Go type wrapping an opaque Rust handle.
 type Handled interface{ handle() uint64 }
 
-// Release gives back anything held by handle: kit state, a library object, a subscription, a
-// focus handle, a view, a row source, a timer, a request that waits, a listener. The handle is
-// stale from then on; using it stops with a message, never worse.
+// Release explicitly frees a handle (View, RowSource, Timer, Completion,
+// Subscription, ActionListener, or any kit state handle), cascading to owned
+// children and dropping associated kept handlers.
 func Release(cx *Cx, x any) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -414,7 +413,7 @@ func Release(cx *Cx, x any) {
 	t.skipInline = true
 	if hd, ok := x.(Handled); ok {
 		checkNotGone(hd.handle())
-		disown(hd.handle()) // released here: not again with its owner
+		disown(hd.handle())
 		forget(hd.handle())
 	}
 	switch v := x.(type) {
@@ -433,7 +432,7 @@ func Release(cx *Cx, x any) {
 		dropHandler(v.slot)
 		releaseHandle(t, v.h)
 	case Handled:
-		releaseOwned(t, v.handle()) // a panel's view, and what that view made
+		releaseOwned(t, v.handle())
 		keptRelease(v.handle())
 		releaseHandle(t, v.handle())
 	default:
@@ -441,8 +440,7 @@ func Release(cx *Cx, x any) {
 	}
 }
 
-// Retain keeps a temporary library object (one a read, a call or an event handed out) until
-// gk.Release. Retain(cx, obj) returns nothing: the handle is the same.
+// Retain promotes a frame-temporary handle to a long-lived handle on the Rust side.
 func Retain(cx *Cx, x Handled) {
 	CheckCx(cx).Flush()
 	o := NewReq(CObjRetain)
@@ -459,7 +457,7 @@ func putKept(o *Tape, slot uint32) {
 	o.U32(slot)
 }
 
-// TestFire has the library fire a kept handler synchronously and returns what it received.
+// TestFire invokes kept handler slot from Rust and returns its integer status.
 func TestFire(cx *Cx, slot uint32) int32 {
 	CheckCx(cx).Flush()
 	o := NewReq(CTestFire)
@@ -468,8 +466,7 @@ func TestFire(cx *Cx, slot uint32) int32 {
 	return int32(r.U32())
 }
 
-// TestFireValue fires a handler of the test shape with (text, n) through the library and
-// returns the string that came back.
+// TestFireValue fires a ShapeTest handler round-trip through Rust and returns its string reply.
 func TestFireValue(cx *Cx, h func(cx *Cx, p TestPayload) string, text string, n uint32) string {
 	CheckCx(cx).Flush()
 	slot, _ := KeepHandler(cx, h, ShapeTest)
@@ -482,8 +479,7 @@ func TestFireValue(cx *Cx, h func(cx *Cx, p TestPayload) string, text string, n 
 	return r.Str()
 }
 
-// TestFireNoValue fires a handler that returns nothing where the test shape expects a string:
-// the library gets the default.
+// TestFireNoValue fires a ShapeUnit handler through the value-returning test hook.
 func TestFireNoValue(cx *Cx, h func(cx *Cx), text string, n uint32) string {
 	CheckCx(cx).Flush()
 	slot, _ := KeepHandler(cx, h, ShapeUnit)
@@ -496,7 +492,8 @@ func TestFireNoValue(cx *Cx, h func(cx *Cx), text string, n uint32) string {
 	return r.Str()
 }
 
-// TestFireInUpdate fires a kept handler from inside a state's own update, as a delegate would.
+// TestFireInUpdate invokes slot while state handle s is actively borrowed by Rust
+// to exercise ErrBusy handling.
 func TestFireInUpdate(cx *Cx, s Handled, slot uint32) int32 {
 	CheckCx(cx).Flush()
 	o := NewReq(CTestFireInUpdate)
@@ -506,8 +503,7 @@ func TestFireInUpdate(cx *Cx, s Handled, slot uint32) int32 {
 	return int32(r.U32())
 }
 
-// TestFireQueued raises an event with payload row from inside a state's own update; the handler
-// runs when that update has ended.
+// TestFireQueued schedules a queued ShapeUsize callback on state s in tests.
 func TestFireQueued(cx *Cx, s Handled, h func(cx *Cx, row int), row int) {
 	CheckCx(cx).Flush()
 	slot, _ := KeepHandler(cx, h, ShapeUsize)
@@ -518,8 +514,8 @@ func TestFireQueued(cx *Cx, s Handled, h func(cx *Cx, row int), row int) {
 	MustCall(*o)
 }
 
-// TestPanic makes the library panic: at once, inside the call, or later, when buffered writes
-// are applied outside any call.
+// TestPanic triggers a deliberate Rust panic (either immediately or deferred)
+// to test LibraryError recovery.
 func TestPanic(cx *Cx, later bool) {
 	t := CheckCx(cx)
 	t.skipInline = true
@@ -531,9 +527,8 @@ func TestPanic(cx *Cx, later bool) {
 	}
 }
 
-// TestFireShape fires a handler of shape with a payload already on the wire, through the
-// library, and returns whether the library decoded it into its Rust type and what the handler
-// returned, encoded (the generated shape test).
+// TestFireShape dispatches an arbitrary wire payload for shape through Rust and
+// returns whether the typed handler matched and any reply bytes produced.
 func TestFireShape(cx *Cx, h any, shape uint16, payload []byte) (typed bool, ret []byte) {
 	CheckCx(cx).Flush()
 	slot, _ := KeepHandler(cx, h, shape)
@@ -548,11 +543,8 @@ func TestFireShape(cx *Cx, h any, shape uint16, payload []byte) (typed bool, ret
 	return typed, append([]byte(nil), r.B[r.i:r.i+n]...)
 }
 
-// TestInputState makes an InputState of any handle (tests only: one of another kind shows the
-// library's type check).
-
-// Handle returns the raw handle of x (tests only: a fake of another kind shows the check).
+// Handle extracts the raw 64-bit Rust handle from x.
 func Handle(x Handled) uint64 { return x.handle() }
 
-// MkSubscription is a subscription the library made (generated state events).
+// MkSubscription constructs a Subscription from a Rust handle and kept slot.
 func MkSubscription(h uint64, slot uint32) Subscription { return Subscription{h, slot} }

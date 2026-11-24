@@ -1,6 +1,3 @@
-// The lifetimes of handles (docs/GO.md section 4): what a view makes is released with it, a
-// closed dock panel releases its view and what that made, and a handle the app can no longer
-// reach is released after the collector finds it.
 package main
 
 import (
@@ -14,12 +11,11 @@ import (
 	"gpuikit.dev/gk/s"
 )
 
-// lifeChild is a view that makes kit state, a focus handle, a row source and a view of its own
-// in its first click's handler (a view's turn: its handlers, and init for a window's root): all
-// of it is the view's. It fills its parent, so the script's click reaches it first.
+// lifeChild owns nested state, focus, row-source, and child-view handles so
+// life-view and life-panel can verify cascading release when the owner is freed.
 type lifeChild struct {
 	name  string
-	idle  bool // makes nothing
+	idle  bool
 	input editor.InputState
 	focus gk.FocusHandle
 	src   gk.RowSource
@@ -56,15 +52,17 @@ func liveCounts(cx *gk.Cx, what string) {
 var lifeKid *lifeChild
 var lifeKidView gk.View
 
-// life-view: a view and what it made, released together; life-view-again: then the app releases
-// the view's state itself, which its view released already (stops: was released).
+// lifeView proves releasing lifeKidView cascades release to every state, focus,
+// row-source, and inner view handle created inside it (counts return to
+// states=0 views=1 focus=0). In `life-view-again`, releasing lifeKid.input
+// afterward proves double-release detection names the parent view cascade.
 func lifeView(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
 		liveCounts(cx, "before")
 		lifeKid = &lifeChild{name: "child"}
 		lifeKidView = gk.NewView(nil, lifeKid.view)
-	case 2: // the child's handler ran first and made its state
+	case 2:
 		liveCounts(cx, "made")
 	case 3:
 		gk.Release(cx, lifeKidView)
@@ -73,13 +71,14 @@ func lifeView(a *App, cx *gk.Cx) {
 		liveCounts(cx, "released")
 		if a.mode == "life-view-again" {
 			fmt.Println("handles life releasing the child's state again")
-			gk.Release(cx, lifeKid.input) // stops: released with its view
+			gk.Release(cx, lifeKid.input)
 		}
 	}
 }
 
-// life-gc: kit state and library objects the app drops are released once the collector finds
-// them; one the app keeps, and one handed to the library (a panel given to a dock), stay.
+// lifeGC proves Go GC finalizers reclaim 3 unreachable InputState handles and 3
+// FocusHandle handles (6 total released, focus 3->0, states 4->1) while keeping
+// the live referenced `a.input` intact ("kept").
 func lifeGC(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -93,7 +92,7 @@ func lifeGC(a *App, cx *gk.Cx) {
 	case 2:
 		for range 3 {
 			runtime.GC()
-			time.Sleep(20 * time.Millisecond) // the cleanups run on their own goroutine
+			time.Sleep(20 * time.Millisecond)
 		}
 	case 3:
 		released, _ := gk.TestLife()
@@ -102,11 +101,12 @@ func lifeGC(a *App, cx *gk.Cx) {
 	}
 }
 
-// life-panel: a dock panel the dock removed (as when the user closes its tab) is released with
-// its view and what the view made; the other panel stays.
 var lifePanels [2]dock.Panel
 var lifeDock dock.Area
 
+// lifePanel proves removing panel 0 from a DockArea cascades release to all
+// child states, views, and focus handles created inside that panel while
+// leaving panel 1 docked (empty=false).
 func lifePanel(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -120,7 +120,7 @@ func lifePanel(a *App, cx *gk.Cx) {
 			tabs = tabs.PanelView(lifePanels[i])
 		}
 		lifeDock.SetCenter(cx, tabs)
-	case 2: // the panel shown made its state
+	case 2:
 		liveCounts(cx, "docked")
 		lifeDock.RemovePanel(cx, lifePanels[0])
 	case 3:

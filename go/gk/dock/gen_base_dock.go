@@ -12,7 +12,7 @@ type Layout struct{ rt.Val }
 
 // A split whose children sit side by side.
 //
-// NewDockLayoutHSplit is <gpui_kit::base::dock::DockLayout>::h_split.
+// NewDockLayoutHSplit calls <gpui_kit::base::dock::DockLayout>::h_split.
 func NewLayoutHSplit() Layout {
 	n := rt.NewValue(442)
 	return Layout{Val: rt.MkVal(n)}
@@ -20,7 +20,7 @@ func NewLayoutHSplit() Layout {
 
 // A tab group: panels stacked one at a time, selected from a tab bar.
 //
-// NewDockLayoutTabs is <gpui_kit::base::dock::DockLayout>::tabs.
+// NewDockLayoutTabs calls <gpui_kit::base::dock::DockLayout>::tabs.
 func NewLayoutTabs() Layout {
 	n := rt.NewValue(443)
 	return Layout{Val: rt.MkVal(n)}
@@ -28,7 +28,7 @@ func NewLayoutTabs() Layout {
 
 // A split whose children stack.
 //
-// NewDockLayoutVSplit is <gpui_kit::base::dock::DockLayout>::v_split.
+// NewDockLayoutVSplit calls <gpui_kit::base::dock::DockLayout>::v_split.
 func NewLayoutVSplit() Layout {
 	n := rt.NewValue(444)
 	return Layout{Val: rt.MkVal(n)}
@@ -37,7 +37,7 @@ func NewLayoutVSplit() Layout {
 // Which tab is displayed. Out-of-range values are clamped by `normalize` once the layout is
 // installed.
 //
-// ActiveIndex is <gpui_kit::base::dock::DockLayout>::active_index.
+// ActiveIndex calls <gpui_kit::base::dock::DockLayout>::active_index.
 func (e Layout) ActiveIndex(ix int) Layout {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutUsize(o, ix)
@@ -47,7 +47,7 @@ func (e Layout) ActiveIndex(ix int) Layout {
 // Add a child container to a split. `size` is the child's slot along the split's axis; `None`
 // leaves it unconstrained.
 //
-// Child is <gpui_kit::base::dock::DockLayout>::child.
+// Child calls <gpui_kit::base::dock::DockLayout>::child.
 func (e Layout) Child(child Layout, size gk.Option[float32]) Layout {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
@@ -62,7 +62,7 @@ func (e Layout) Child(child Layout, size gk.Option[float32]) Layout {
 
 // Add a panel to a tab group.
 //
-// Panel is <gpui_kit::base::dock::DockLayout>::panel.
+// Panel calls <gpui_kit::base::dock::DockLayout>::panel.
 func (e Layout) Panel(panel Panel) Layout {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(rt.Held(rt.H(panel.HCore)))
@@ -71,11 +71,11 @@ func (e Layout) Panel(panel Panel) Layout {
 
 // Add an already-wrapped panel handle to a tab group.
 //
-// The companion to `Panel`, for a layer that hands base its own concrete handle — see `AsAny` —
+// The companion to `Panel`, for a layer that hands base its own concrete handle - see `AsAny` -
 // rather than a bare entity. `cx` is here because the id has to come from `PanelID`: unlike
 // `Panel`, there is no entity in hand to take it from.
 //
-// PanelView is <gpui_kit::base::dock::DockLayout>::panel_view.
+// PanelView calls <gpui_kit::base::dock::DockLayout>::panel_view.
 func (e Layout) PanelView(panel Panel) Layout {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U64(rt.Held(rt.H(panel.HCore)))
@@ -85,7 +85,7 @@ func (e Layout) PanelView(panel Panel) Layout {
 // DockSizing is gpui_kit::base::dock::DockSizing.
 type Sizing struct{ rt.Val }
 
-// NewDockSizing is <gpui_kit::base::dock::DockSizing>::new.
+// NewDockSizing calls <gpui_kit::base::dock::DockSizing>::new.
 func NewSizing(placement Placement) Sizing {
 	n := rt.NewValue(445)
 	o := rt.NodeArgs(n)
@@ -96,7 +96,7 @@ func NewSizing(placement Placement) Sizing {
 // Set the full area bounds (origin and size). Needed whenever the dock's placement depends on the
 // area's origin, e.g. a bottom dock measuring from the area's bottom edge.
 //
-// WithAreaBounds is <gpui_kit::base::dock::DockSizing>::with_area_bounds.
+// WithAreaBounds calls <gpui_kit::base::dock::DockSizing>::with_area_bounds.
 func (e Sizing) WithAreaBounds(area gk.Bounds) Sizing {
 	o := rt.Op(rt.N(e.Core), 256)
 	putBounds(o, area)
@@ -106,7 +106,7 @@ func (e Sizing) WithAreaBounds(area gk.Bounds) Sizing {
 // Set only the area's height, leaving its origin and width untouched. Convenient for bottom dock
 // clamping, which only reads `area.size.height`.
 //
-// WithAreaHeight is <gpui_kit::base::dock::DockSizing>::with_area_height.
+// WithAreaHeight calls <gpui_kit::base::dock::DockSizing>::with_area_height.
 func (e Sizing) WithAreaHeight(height float32) Sizing {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.F32(height)
@@ -116,7 +116,7 @@ func (e Sizing) WithAreaHeight(height float32) Sizing {
 // Set only the area's width, leaving its origin and height untouched. Convenient for left/right
 // dock clamping, which only reads `area.size.width`.
 //
-// WithAreaWidth is <gpui_kit::base::dock::DockSizing>::with_area_width.
+// WithAreaWidth calls <gpui_kit::base::dock::DockSizing>::with_area_width.
 func (e Sizing) WithAreaWidth(width float32) Sizing {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(width)
@@ -126,7 +126,7 @@ func (e Sizing) WithAreaWidth(width float32) Sizing {
 // Set the size of the dock on the opposite side (right, for a left dock; left, for a right dock).
 // Bottom docks have no opposite side.
 //
-// WithOppositeDockSize is <gpui_kit::base::dock::DockSizing>::with_opposite_dock_size.
+// WithOppositeDockSize calls <gpui_kit::base::dock::DockSizing>::with_opposite_dock_size.
 func (e Sizing) WithOppositeDockSize(size float32) Sizing {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(size)

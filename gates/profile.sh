@@ -1,21 +1,21 @@
 #!/bin/bash
-# profile.sh [--rounds R] [SCENE ARGS...]: where the main thread's time goes in one scene, the
-# Rust reference against the Go app, on the same library build. Default scene:
-# the counter with a click on every frame (GK_CLICK=40,32,61,1), the one frame-cost scene that
-# sat at its limit.
+# Diagnostic CPU and syscall profiler (`gates/profile.sh [--rounds N] [scene] [args...]`).
 #
-# perf needs kernel.perf_event_paranoid 2 or lower (or root), which many machines lack, so the
-# profiler is tools/profile/sampler.c, loaded with LD_PRELOAD into the measured binary only: a
-# timer on the main thread's own CPU clock samples the interrupted address every 50 us of
-# that thread's CPU time. R rounds (default 6) alternate the two binaries in one private
-# display (gates/display.sh); tools/profile/symbolize.py adds them up per function and per
-# binary, in microseconds a frame. Then one run of each under strace (main thread only) counts
-# its system calls.
+# What it measures (diagnostic tool, not a PASS/FAIL gate):
+#   Compares Rust reference and Go main-thread hot stacks and system calls on the exact same
+#   unstripped `libgpuikit.so` from `GK_SYMBOLS_DIR` (default `dist/symbols`). Defaults to 6
+#   rounds of `counter` with per-frame synthetic clicks (`GK_CLICK=40,32,61,1`).
 #
-# Needs unstripped copies of the ship library and of the reference in $GK_SYMBOLS_DIR (default
-# dist/symbols: tools/build-lib.sh symbols ref-counter) and a C compiler for the sampler
-# ($GK_CC, default cc). Output: $GK_SCRATCH/profile/report.txt.
-#   gates/profile.sh
+# How it keeps the comparison fair:
+#   - Copies the unstripped `libgpuikit.so` and `ref-<scene>` into scratch and builds `<scene>-go`
+#     against that exact same shared library so symbol resolution and optimization flags match.
+#   - Compiles `tools/profile/sampler.c` into `sampler.so` and runs `rust` and `go` interleaved
+#     inside one 60 Hz `display.sh` session (default `GK_FRAMES=60,600`) under `LD_PRELOAD`.
+#   - Runs a separate `strace -c` pass without the sampler preloaded so profiling signals do not
+#     pollute the syscall counts.
+#   - Symbolizes the top 45 frames via `tools/profile/symbolize.py --skip 2.5` (skipping the first
+#     2.5 s of startup/warmup) and writes the full report to `<scratch>/profile/report.txt`.
+
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 rounds=6
@@ -32,6 +32,8 @@ cp "$sym/libgpuikit.so" "$sym/ref-$scene" "$out/lib/ship/"
 "$cc" -shared -fPIC -O2 -o "$out/sampler.so" "$repo/tools/profile/sampler.c"
 GK_LIB=$out/lib/ship OUT=$out/bin "$repo/examples/go/build.sh" "$scene"
 export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship
+
+# Interleaved sampling runs under sampler.so.
 "$here/display.sh" --hz 60 bash -c '
   out=$1; scene=$2; rounds=$3; shift 3
   for r in $(seq "$rounds"); do
@@ -41,14 +43,15 @@ export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship
         "$exe" "$@" | grep "^gk-meter" | sed "s/^/round=$r /" >> "$out/meter.txt"
     done
   done' _ "$out" "$scene" "$rounds" "$@"
-# The main thread's system calls, counted (strace without -f follows the main thread only):
-# one run of each binary.
+
+# Separate single-run syscall summary without the sampler preloaded.
 "$here/display.sh" --hz 60 bash -c '
   out=$1; scene=$2; shift 2
   for b in rust go; do
     exe=$out/lib/ship/ref-$scene; [ $b = go ] && exe=$out/bin/$scene-go
     GK_LABEL=$b GK_STATS=$out/runs/$b-strace.csv strace -c -o "$out/runs/$b-strace.txt" "$exe" "$@" > /dev/null
   done' _ "$out" "$scene" "$@"
+
 pre() { local s=""; for r in $(seq "$rounds"); do s="$s${s:+,}$out/runs/$1-$r"; done; echo "$s"; }
 {
   echo "profile of $scene $* (GK_CLICK=$GK_CLICK), $rounds rounds of $GK_FRAMES frames each, Rust reference and Go on the same library"

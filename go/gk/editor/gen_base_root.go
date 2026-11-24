@@ -12,7 +12,7 @@ import (
 // Decrement is gpui_kit::base::Decrement.
 type Decrement struct{ rt.Val }
 
-// NewDecrementDefault is <gpui_kit::base::Decrement as Default>::default.
+// NewDecrementDefault calls <gpui_kit::base::Decrement as Default>::default.
 func NewDecrementDefault() Decrement {
 	rt.UseBaseNumberInput()
 	n := rt.NewValue(307)
@@ -22,7 +22,7 @@ func NewDecrementDefault() Decrement {
 // BaseEditorEl is gpui_kit::base::Editor<()>.
 type BaseEditorEl struct{ rt.El }
 
-// BaseEditor is <gpui_kit::base::Editor<()>>::new.
+// BaseEditor calls <gpui_kit::base::Editor<()>>::new.
 func BaseEditor(state State) BaseEditorEl {
 	rt.UseBaseInput()
 	n := rt.NewNode(320)
@@ -34,7 +34,7 @@ func BaseEditor(state State) BaseEditorEl {
 // Increment is gpui_kit::base::Increment.
 type Increment struct{ rt.Val }
 
-// NewIncrementDefault is <gpui_kit::base::Increment as Default>::default.
+// NewIncrementDefault calls <gpui_kit::base::Increment as Default>::default.
 func NewIncrementDefault() Increment {
 	rt.UseBaseNumberInput()
 	n := rt.NewValue(326)
@@ -44,7 +44,7 @@ func NewIncrementDefault() Increment {
 // BaseInputEl is gpui_kit::base::Input.
 type BaseInputEl struct{ rt.El }
 
-// BaseInput is <gpui_kit::base::Input>::new.
+// BaseInput calls <gpui_kit::base::Input>::new.
 func BaseInput(state InputState) BaseInputEl {
 	rt.UseBaseInput()
 	n := rt.NewNode(330)
@@ -55,7 +55,7 @@ func BaseInput(state InputState) BaseInputEl {
 
 // Open a reference after a completed, unconsumed token click.
 //
-// OnTokenClick is <gpui_kit::base::Input>::on_token_click.
+// OnTokenClick calls <gpui_kit::base::Input>::on_token_click.
 func (e BaseInputEl) OnTokenClick(listener func(cx *gk.Cx, e InlineTokenClickEvent)) BaseInputEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Register(listener, 106))
@@ -64,7 +64,7 @@ func (e BaseInputEl) OnTokenClick(listener func(cx *gk.Cx, e InlineTokenClickEve
 
 // Report pointer presence over a token; hover never selects or edits.
 //
-// OnTokenHover is <gpui_kit::base::Input>::on_token_hover.
+// OnTokenHover calls <gpui_kit::base::Input>::on_token_hover.
 func (e BaseInputEl) OnTokenHover(listener func(cx *gk.Cx, e InlineTokenHoverEvent)) BaseInputEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(listener, 107))
@@ -73,7 +73,7 @@ func (e BaseInputEl) OnTokenHover(listener func(cx *gk.Cx, e InlineTokenHoverEve
 
 // The element each atomic token renders as; the input keeps editing and history.
 //
-// Token is <gpui_kit::base::Input>::token.
+// Token calls <gpui_kit::base::Input>::token.
 func (e BaseInputEl) Token(render gk.RowSource) BaseInputEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(rt.ItemsCheck(render, 4))
@@ -83,7 +83,7 @@ func (e BaseInputEl) Token(render gk.RowSource) BaseInputEl {
 // InputBaseEl is gpui_kit::base::InputBase.
 type InputBaseEl struct{ rt.ElAnimatableElement }
 
-// InputBase is <gpui_kit::base::InputBase>::new.
+// InputBase calls <gpui_kit::base::InputBase>::new.
 func InputBase(id gk.ID, st ...gk.Style) InputBaseEl {
 	rt.UseBaseInput()
 	n := rt.NewNode(331)
@@ -93,28 +93,28 @@ func InputBase(id gk.ID, st ...gk.Style) InputBaseEl {
 	return InputBaseEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// AccessibilityLabel is <gpui_kit::base::InputBase>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::InputBase>::accessibility_label.
 func (e InputBaseEl) AccessibilityLabel(label string) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
 	return e
 }
 
-// Disabled is <gpui_kit::base::InputBase>::disabled.
+// Disabled calls <gpui_kit::base::InputBase>::disabled.
 func (e InputBaseEl) Disabled(disabled bool) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
 	return e
 }
 
-// Focused is <gpui_kit::base::InputBase>::focused.
+// Focused calls <gpui_kit::base::InputBase>::focused.
 func (e InputBaseEl) Focused(focused bool) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(focused)
 	return e
 }
 
-// Role is <gpui_kit::base::InputBase>::role.
+// Role calls <gpui_kit::base::InputBase>::role.
 func (e InputBaseEl) Role(role gk.RoleOverride) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	putRoleOverride(o, role)
@@ -133,14 +133,14 @@ func (e InputBaseEl) Role(role gk.RoleOverride) InputBaseEl {
 // This only declares an observation relationship with `test-support`; it never adds a native
 // accessibility node or registers a focus handle.
 //
-// SemanticOwner is <gpui_kit::base::InputBase>::semantic_owner.
+// SemanticOwner calls <gpui_kit::base::InputBase>::semantic_owner.
 func (e InputBaseEl) SemanticOwner(editor gk.EntityID) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U64(uint64(editor))
 	return e
 }
 
-// Styles is <gpui_kit::base::InputBase>::styles.
+// Styles calls <gpui_kit::base::InputBase>::styles.
 func (e InputBaseEl) Styles(build InputStyles) InputBaseEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
@@ -154,24 +154,32 @@ func (e InputBaseEl) Styles(build InputStyles) InputBaseEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e InputBaseEl) KeepTextSelection(id gk.ID) InputBaseEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e InputBaseEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) InputBaseEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e InputBaseEl) BorderE(width gk.Length) InputBaseEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e InputBaseEl) BorderS(width gk.Length) InputBaseEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -179,121 +187,163 @@ func (e InputBaseEl) BorderS(width gk.Length) InputBaseEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e InputBaseEl) FlexRowDir() InputBaseEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e InputBaseEl) InsetE(length gk.Length) InputBaseEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e InputBaseEl) InsetS(length gk.Length) InputBaseEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e InputBaseEl) JustifyFlexEnd() InputBaseEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e InputBaseEl) JustifyFlexStart() InputBaseEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e InputBaseEl) Me(length gk.Length) InputBaseEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e InputBaseEl) Ms(length gk.Length) InputBaseEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e InputBaseEl) Pe(length gk.Length) InputBaseEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e InputBaseEl) Ps(length gk.Length) InputBaseEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e InputBaseEl) RoundedE(radius gk.Length) InputBaseEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e InputBaseEl) RoundedS(radius gk.Length) InputBaseEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e InputBaseEl) TextEnd() InputBaseEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e InputBaseEl) TextStart() InputBaseEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e InputBaseEl) CornerRadii(radius gk.Corners) InputBaseEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e InputBaseEl) DebugBlue() InputBaseEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e InputBaseEl) DebugFocused(focusHandle gk.FocusHandle) InputBaseEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e InputBaseEl) DebugGreen() InputBaseEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e InputBaseEl) DebugPink() InputBaseEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e InputBaseEl) DebugRed() InputBaseEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e InputBaseEl) DebugYellow() InputBaseEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e InputBaseEl) FontBlack() InputBaseEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e InputBaseEl) FontBold() InputBaseEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e InputBaseEl) FontExtrabold() InputBaseEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e InputBaseEl) FontExtralight() InputBaseEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e InputBaseEl) FontLight() InputBaseEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e InputBaseEl) FontMedium() InputBaseEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e InputBaseEl) FontNormal() InputBaseEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e InputBaseEl) FontSemibold() InputBaseEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e InputBaseEl) FontThin() InputBaseEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -302,18 +352,23 @@ func (e InputBaseEl) FontThin() InputBaseEl { tStyledExtFontThin(rt.N(e.Core)); 
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e InputBaseEl) HFlex() InputBaseEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e InputBaseEl) Margins(margins gk.EdgesInto) InputBaseEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e InputBaseEl) Paddings(paddings gk.EdgesInto) InputBaseEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e InputBaseEl) RefineStyle(style gk.StyleRefinement) InputBaseEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -323,21 +378,29 @@ func (e InputBaseEl) RefineStyle(style gk.StyleRefinement) InputBaseEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e InputBaseEl) VFlex() InputBaseEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e InputBaseEl) Style(st ...gk.Style) InputBaseEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e InputBaseEl) AspectRatio(ratio float32) InputBaseEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e InputBaseEl) Bg(fill gk.Fill) InputBaseEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e InputBaseEl) Border(length gk.Length) InputBaseEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -345,12 +408,16 @@ func (e InputBaseEl) Border(length gk.Length) InputBaseEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e InputBaseEl) BorderB(length gk.Length) InputBaseEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e InputBaseEl) BorderColor(borderColor gk.Color) InputBaseEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -358,6 +425,8 @@ func (e InputBaseEl) BorderColor(borderColor gk.Color) InputBaseEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e InputBaseEl) BorderL(length gk.Length) InputBaseEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -365,6 +434,8 @@ func (e InputBaseEl) BorderL(length gk.Length) InputBaseEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e InputBaseEl) BorderR(length gk.Length) InputBaseEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -372,6 +443,8 @@ func (e InputBaseEl) BorderR(length gk.Length) InputBaseEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e InputBaseEl) BorderT(length gk.Length) InputBaseEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -379,6 +452,8 @@ func (e InputBaseEl) BorderT(length gk.Length) InputBaseEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e InputBaseEl) BorderX(length gk.Length) InputBaseEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -386,6 +461,8 @@ func (e InputBaseEl) BorderX(length gk.Length) InputBaseEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e InputBaseEl) BorderY(length gk.Length) InputBaseEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -393,24 +470,34 @@ func (e InputBaseEl) BorderY(length gk.Length) InputBaseEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e InputBaseEl) Bottom(length gk.Length) InputBaseEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e InputBaseEl) ColEnd(end int16) InputBaseEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e InputBaseEl) ColSpan(span uint16) InputBaseEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e InputBaseEl) ColStart(start int16) InputBaseEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e InputBaseEl) Cursor(cursor gk.CursorStyle) InputBaseEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -418,33 +505,45 @@ func (e InputBaseEl) Cursor(cursor gk.CursorStyle) InputBaseEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e InputBaseEl) FlexBasis(basis gk.Length) InputBaseEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e InputBaseEl) FlexGrow(grow float32) InputBaseEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e InputBaseEl) FlexShrink(shrink float32) InputBaseEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e InputBaseEl) Font(font gk.Font) InputBaseEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e InputBaseEl) FontFamily(familyName string) InputBaseEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e InputBaseEl) FontFeatures(features gk.FontFeatures) InputBaseEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -453,26 +552,38 @@ func (e InputBaseEl) FontFeatures(features gk.FontFeatures) InputBaseEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e InputBaseEl) FontWeight(weight gk.FontWeight) InputBaseEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e InputBaseEl) Gap(length gk.Length) InputBaseEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e InputBaseEl) GapX(length gk.Length) InputBaseEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e InputBaseEl) GapY(length gk.Length) InputBaseEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e InputBaseEl) GridCols(cols uint16) InputBaseEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e InputBaseEl) GridColsMaxContent(cols uint16) InputBaseEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -480,15 +591,21 @@ func (e InputBaseEl) GridColsMaxContent(cols uint16) InputBaseEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e InputBaseEl) GridColsMinContent(cols uint16) InputBaseEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e InputBaseEl) GridRows(rows uint16) InputBaseEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e InputBaseEl) GridRowsMaxContent(rows uint16) InputBaseEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -496,16 +613,22 @@ func (e InputBaseEl) GridRowsMaxContent(rows uint16) InputBaseEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e InputBaseEl) GridRowsMinContent(rows uint16) InputBaseEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e InputBaseEl) H(length gk.Length) InputBaseEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e InputBaseEl) Inset(length gk.Length) InputBaseEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -513,113 +636,165 @@ func (e InputBaseEl) Inset(length gk.Length) InputBaseEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e InputBaseEl) Left(length gk.Length) InputBaseEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e InputBaseEl) LineClamp(lines int) InputBaseEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e InputBaseEl) LineHeight(lineHeight gk.Length) InputBaseEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e InputBaseEl) M(length gk.Length) InputBaseEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e InputBaseEl) MaxH(length gk.Length) InputBaseEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e InputBaseEl) MaxSize(length gk.Length) InputBaseEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e InputBaseEl) MaxW(length gk.Length) InputBaseEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e InputBaseEl) Mb(length gk.Length) InputBaseEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e InputBaseEl) MinH(length gk.Length) InputBaseEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e InputBaseEl) MinSize(length gk.Length) InputBaseEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e InputBaseEl) MinW(length gk.Length) InputBaseEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e InputBaseEl) Ml(length gk.Length) InputBaseEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e InputBaseEl) Mr(length gk.Length) InputBaseEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e InputBaseEl) Mt(length gk.Length) InputBaseEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e InputBaseEl) Mx(length gk.Length) InputBaseEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e InputBaseEl) My(length gk.Length) InputBaseEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e InputBaseEl) Opacity(opacity float32) InputBaseEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e InputBaseEl) P(length gk.Length) InputBaseEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e InputBaseEl) Pb(length gk.Length) InputBaseEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e InputBaseEl) Pl(length gk.Length) InputBaseEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e InputBaseEl) Pr(length gk.Length) InputBaseEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e InputBaseEl) Pt(length gk.Length) InputBaseEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e InputBaseEl) Px(length gk.Length) InputBaseEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e InputBaseEl) Py(length gk.Length) InputBaseEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e InputBaseEl) Right(length gk.Length) InputBaseEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e InputBaseEl) Rounded(length gk.Length) InputBaseEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -627,6 +802,8 @@ func (e InputBaseEl) Rounded(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e InputBaseEl) RoundedB(length gk.Length) InputBaseEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -634,6 +811,8 @@ func (e InputBaseEl) RoundedB(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e InputBaseEl) RoundedBl(length gk.Length) InputBaseEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -641,6 +820,8 @@ func (e InputBaseEl) RoundedBl(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e InputBaseEl) RoundedBr(length gk.Length) InputBaseEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -648,6 +829,8 @@ func (e InputBaseEl) RoundedBr(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e InputBaseEl) RoundedL(length gk.Length) InputBaseEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -655,6 +838,8 @@ func (e InputBaseEl) RoundedL(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e InputBaseEl) RoundedR(length gk.Length) InputBaseEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -662,6 +847,8 @@ func (e InputBaseEl) RoundedR(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e InputBaseEl) RoundedT(length gk.Length) InputBaseEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -669,6 +856,8 @@ func (e InputBaseEl) RoundedT(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e InputBaseEl) RoundedTl(length gk.Length) InputBaseEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -676,18 +865,26 @@ func (e InputBaseEl) RoundedTl(length gk.Length) InputBaseEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e InputBaseEl) RoundedTr(length gk.Length) InputBaseEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e InputBaseEl) RowEnd(end int16) InputBaseEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e InputBaseEl) RowSpan(span uint16) InputBaseEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e InputBaseEl) RowStart(start int16) InputBaseEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -697,21 +894,29 @@ func (e InputBaseEl) RowStart(start int16) InputBaseEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e InputBaseEl) ScrollbarWidth(width gk.Length) InputBaseEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e InputBaseEl) Shadow(shadows []gk.BoxShadow) InputBaseEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e InputBaseEl) Size(length gk.Length) InputBaseEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e InputBaseEl) TextAlign(align gk.TextAlign) InputBaseEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -720,23 +925,31 @@ func (e InputBaseEl) TextAlign(align gk.TextAlign) InputBaseEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e InputBaseEl) TextBg(bg gk.Color) InputBaseEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e InputBaseEl) TextColor(color gk.Color) InputBaseEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e InputBaseEl) TextDecorationColor(color gk.Color) InputBaseEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e InputBaseEl) TextOverflow(overflow gk.TextOverflow) InputBaseEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -745,6 +958,8 @@ func (e InputBaseEl) TextOverflow(overflow gk.TextOverflow) InputBaseEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e InputBaseEl) TextSize(size gk.Length) InputBaseEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -752,23 +967,32 @@ func (e InputBaseEl) TextSize(size gk.Length) InputBaseEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e InputBaseEl) Top(length gk.Length) InputBaseEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e InputBaseEl) W(length gk.Length) InputBaseEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e InputBaseEl) Text(s string) InputBaseEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e InputBaseEl) ChildView(v gk.View) InputBaseEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e InputBaseEl) Child(child gk.Element) InputBaseEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e InputBaseEl) Children(children ...gk.Element) InputBaseEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -778,6 +1002,8 @@ func (e InputBaseEl) Children(children ...gk.Element) InputBaseEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e InputBaseEl) BlockMouseExceptScroll() InputBaseEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -785,6 +1011,8 @@ func (e InputBaseEl) BlockMouseExceptScroll() InputBaseEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e InputBaseEl) CanDrop(predicate gk.DropAccept) InputBaseEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -794,6 +1022,8 @@ func (e InputBaseEl) CanDrop(predicate gk.DropAccept) InputBaseEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e InputBaseEl) CaptureAction(listener gk.ActionHandler) InputBaseEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -803,12 +1033,14 @@ func (e InputBaseEl) CaptureAction(listener gk.ActionHandler) InputBaseEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e InputBaseEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e InputBaseEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -818,12 +1050,14 @@ func (e InputBaseEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) InputBaseEl
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e InputBaseEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e InputBaseEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -833,6 +1067,8 @@ func (e InputBaseEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) InputBaseEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e InputBaseEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBaseEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -842,6 +1078,8 @@ func (e InputBaseEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Inp
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e InputBaseEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBaseEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -851,6 +1089,8 @@ func (e InputBaseEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Input
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e InputBaseEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) InputBaseEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -860,12 +1100,16 @@ func (e InputBaseEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePre
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e InputBaseEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) InputBaseEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e InputBaseEl) DragOver(f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -873,6 +1117,8 @@ func (e InputBaseEl) DragOver(f gk.StyleRefinement) InputBaseEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e InputBaseEl) Focus(f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -882,30 +1128,40 @@ func (e InputBaseEl) Focus(f gk.StyleRefinement) InputBaseEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e InputBaseEl) FocusVisible(f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e InputBaseEl) Group(group string) InputBaseEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e InputBaseEl) GroupDragOver(groupName string, f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e InputBaseEl) GroupHover(groupName string, f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e InputBaseEl) Hover(f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -913,6 +1169,8 @@ func (e InputBaseEl) Hover(f gk.StyleRefinement) InputBaseEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e InputBaseEl) InFocus(f gk.StyleRefinement) InputBaseEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -920,6 +1178,8 @@ func (e InputBaseEl) InFocus(f gk.StyleRefinement) InputBaseEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e InputBaseEl) KeyContext(keyContext string) InputBaseEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -927,12 +1187,16 @@ func (e InputBaseEl) KeyContext(keyContext string) InputBaseEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e InputBaseEl) Occlude() InputBaseEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e InputBaseEl) OnAction(listener gk.ActionHandler) InputBaseEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -942,12 +1206,14 @@ func (e InputBaseEl) OnAction(listener gk.ActionHandler) InputBaseEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e InputBaseEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e InputBaseEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -958,6 +1224,8 @@ func (e InputBaseEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) InputBaseEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e InputBaseEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) InputBaseEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -968,6 +1236,8 @@ func (e InputBaseEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEven
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e InputBaseEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) InputBaseEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -979,6 +1249,8 @@ func (e InputBaseEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e 
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e InputBaseEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) InputBaseEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -988,6 +1260,8 @@ func (e InputBaseEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) In
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e InputBaseEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) InputBaseEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -1000,6 +1274,8 @@ func (e InputBaseEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) InputBaseE
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e InputBaseEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) InputBaseEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -1009,6 +1285,8 @@ func (e InputBaseEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e InputBaseEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBaseEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1018,6 +1296,8 @@ func (e InputBaseEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBas
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e InputBaseEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBaseEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1027,6 +1307,8 @@ func (e InputBaseEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) InputBaseE
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e InputBaseEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) InputBaseEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -1036,12 +1318,14 @@ func (e InputBaseEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersC
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e InputBaseEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e InputBaseEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -1052,12 +1336,14 @@ func (e InputBaseEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.C
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e InputBaseEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e InputBaseEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -1067,12 +1353,14 @@ func (e InputBaseEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) InputBaseEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e InputBaseEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) InputBaseEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e InputBaseEl) OnMouseExitDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -1082,12 +1370,14 @@ func (e InputBaseEl) OnMouseExitDo(listener func(cx *gk.Cx)) InputBaseEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e InputBaseEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e InputBaseEl) OnMouseMoveDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -1097,6 +1387,8 @@ func (e InputBaseEl) OnMouseMoveDo(listener func(cx *gk.Cx)) InputBaseEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e InputBaseEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) InputBaseEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -1106,12 +1398,14 @@ func (e InputBaseEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressure
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e InputBaseEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e InputBaseEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -1122,12 +1416,14 @@ func (e InputBaseEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e InputBaseEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) InputBaseEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e InputBaseEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputBaseEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -1137,6 +1433,8 @@ func (e InputBaseEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e InputBaseEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) InputBaseEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -1146,6 +1444,8 @@ func (e InputBaseEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) InputBas
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e InputBaseEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) InputBaseEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -1155,11 +1455,15 @@ func (e InputBaseEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) InputB
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e InputBaseEl) TabGroup() InputBaseEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e InputBaseEl) TabIndex(index int) InputBaseEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -1169,6 +1473,8 @@ func (e InputBaseEl) TabIndex(index int) InputBaseEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e InputBaseEl) TabStop(tabStop bool) InputBaseEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -1176,6 +1482,8 @@ func (e InputBaseEl) TabStop(tabStop bool) InputBaseEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e InputBaseEl) TrackFocus(focusHandle gk.FocusHandle) InputBaseEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -1183,12 +1491,14 @@ func (e InputBaseEl) TrackFocus(focusHandle gk.FocusHandle) InputBaseEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e InputBaseEl) WindowControlArea(area gk.WindowControlArea) InputBaseEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -1196,6 +1506,8 @@ func (e InputBaseEl) WindowControlArea(area gk.WindowControlArea) InputBaseEl {
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e InputBaseEl) A11ySyntheticChildren(f []gk.A11yChild) InputBaseEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -1207,25 +1519,31 @@ func (e InputBaseEl) A11ySyntheticChildren(f []gk.A11yChild) InputBaseEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e InputBaseEl) AccessibilityID(id string) InputBaseEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e InputBaseEl) Active(f gk.StyleRefinement) InputBaseEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e InputBaseEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) InputBaseEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -1234,19 +1552,25 @@ func (e InputBaseEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) Input
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e InputBaseEl) AriaActiveDescendant() InputBaseEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e InputBaseEl) AriaColumnCount(count int) InputBaseEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e InputBaseEl) AriaColumnIndex(index int) InputBaseEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -1255,12 +1579,16 @@ func (e InputBaseEl) AriaColumnIndex(index int) InputBaseEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e InputBaseEl) AriaDescription(description string) InputBaseEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e InputBaseEl) AriaExpanded(expanded bool) InputBaseEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -1271,36 +1599,48 @@ func (e InputBaseEl) AriaExpanded(expanded bool) InputBaseEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e InputBaseEl) AriaKeyshortcuts(keyshortcuts string) InputBaseEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e InputBaseEl) AriaLabel(label string) InputBaseEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e InputBaseEl) AriaLevel(level int) InputBaseEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e InputBaseEl) AriaMaxNumericValue(value float64) InputBaseEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e InputBaseEl) AriaMinNumericValue(value float64) InputBaseEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e InputBaseEl) AriaNumericValue(value float64) InputBaseEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -1308,6 +1648,8 @@ func (e InputBaseEl) AriaNumericValue(value float64) InputBaseEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e InputBaseEl) AriaNumericValueStep(step float64) InputBaseEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -1315,42 +1657,56 @@ func (e InputBaseEl) AriaNumericValueStep(step float64) InputBaseEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e InputBaseEl) AriaPlaceholder(placeholder string) InputBaseEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e InputBaseEl) AriaPositionInSet(position int) InputBaseEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e InputBaseEl) AriaRowCount(count int) InputBaseEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e InputBaseEl) AriaRowIndex(index int) InputBaseEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e InputBaseEl) AriaSelected(selected bool) InputBaseEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e InputBaseEl) AriaSizeOfSet(size int) InputBaseEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e InputBaseEl) AriaValue(value string) InputBaseEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -1360,18 +1716,24 @@ func (e InputBaseEl) AriaValue(value string) InputBaseEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e InputBaseEl) ExternalDragPayload(resolver gk.ExternalDragPayload) InputBaseEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e InputBaseEl) Focusable() InputBaseEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e InputBaseEl) GroupActive(groupName string, f gk.StyleRefinement) InputBaseEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -1380,6 +1742,8 @@ func (e InputBaseEl) GroupActive(groupName string, f gk.StyleRefinement) InputBa
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e InputBaseEl) HoverListenerMode(mode gk.HoverListenerMode) InputBaseEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -1388,6 +1752,8 @@ func (e InputBaseEl) HoverListenerMode(mode gk.HoverListenerMode) InputBaseEl {
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e InputBaseEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) InputBaseEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -1397,12 +1763,14 @@ func (e InputBaseEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) InputBaseEl
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e InputBaseEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) InputBaseEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e InputBaseEl) OnAuxClickDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -1412,12 +1780,14 @@ func (e InputBaseEl) OnAuxClickDo(listener func(cx *gk.Cx)) InputBaseEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e InputBaseEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) InputBaseEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e InputBaseEl) OnClickDo(listener func(cx *gk.Cx)) InputBaseEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -1429,6 +1799,8 @@ func (e InputBaseEl) OnClickDo(listener func(cx *gk.Cx)) InputBaseEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e InputBaseEl) OnDrag(value gk.DragValue, constructor gk.View) InputBaseEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -1443,24 +1815,32 @@ func (e InputBaseEl) OnDrag(value gk.DragValue, constructor gk.View) InputBaseEl
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e InputBaseEl) OnHover(listener func(cx *gk.Cx, e bool)) InputBaseEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e InputBaseEl) OverflowScroll() InputBaseEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e InputBaseEl) OverflowXScroll() InputBaseEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e InputBaseEl) OverflowYScroll() InputBaseEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -1469,6 +1849,8 @@ func (e InputBaseEl) OverflowYScroll() InputBaseEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e InputBaseEl) RestrictScrollToAxis() InputBaseEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -1476,6 +1858,8 @@ func (e InputBaseEl) RestrictScrollToAxis() InputBaseEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e InputBaseEl) Tooltip(buildTooltip gk.ViewOrTooltip) InputBaseEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -1485,12 +1869,16 @@ func (e InputBaseEl) Tooltip(buildTooltip gk.ViewOrTooltip) InputBaseEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e InputBaseEl) TooltipShowDelay(delay time.Duration) InputBaseEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e InputBaseEl) TrackScroll(scrollHandle gk.ScrollHandle) InputBaseEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -1499,20 +1887,20 @@ func (e InputBaseEl) TrackScroll(scrollHandle gk.ScrollHandle) InputBaseEl {
 // InputStyles is gpui_kit::base::InputStyles.
 type InputStyles struct{ rt.Val }
 
-// NewInputStylesDefault is <gpui_kit::base::InputStyles as Default>::default.
+// NewInputStylesDefault calls <gpui_kit::base::InputStyles as Default>::default.
 func NewInputStylesDefault() InputStyles {
 	n := rt.NewValue(332)
 	return InputStyles{Val: rt.MkVal(n)}
 }
 
-// Disabled is <gpui_kit::base::InputStyles>::disabled.
+// Disabled calls <gpui_kit::base::InputStyles>::disabled.
 func (e InputStyles) Disabled(build gk.StateStyle) InputStyles {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// Focused is <gpui_kit::base::InputStyles>::focused.
+// Focused calls <gpui_kit::base::InputStyles>::focused.
 func (e InputStyles) Focused(build gk.StateStyle) InputStyles {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
@@ -1522,7 +1910,7 @@ func (e InputStyles) Focused(build gk.StateStyle) InputStyles {
 // MarkdownExtensions is gpui_kit::base::MarkdownExtensions.
 type MarkdownExtensions struct{ rt.Val }
 
-// NewMarkdownExtensionsDefault is <gpui_kit::base::MarkdownExtensions as Default>::default.
+// NewMarkdownExtensionsDefault calls <gpui_kit::base::MarkdownExtensions as Default>::default.
 func NewMarkdownExtensionsDefault() MarkdownExtensions {
 	n := rt.NewValue(336)
 	return MarkdownExtensions{Val: rt.MkVal(n)}
@@ -1530,7 +1918,7 @@ func NewMarkdownExtensionsDefault() MarkdownExtensions {
 
 // Register a renderer for a custom block node name.
 //
-// BlockRenderer is <gpui_kit::base::MarkdownExtensions>::block_renderer.
+// BlockRenderer calls <gpui_kit::base::MarkdownExtensions>::block_renderer.
 func (e MarkdownExtensions) BlockRenderer(name string, renderer gk.RowSource) MarkdownExtensions {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Str(name)
@@ -1566,7 +1954,7 @@ func (e MarkdownExtensions) BlockRenderer(name string, renderer gk.RowSource) Ma
 // streaming one costs time quadratic in its length. Until its marker line is complete, it shows as
 // a blockquote.
 //
-// BlockSurface is <gpui_kit::base::MarkdownExtensions>::block_surface.
+// BlockSurface calls <gpui_kit::base::MarkdownExtensions>::block_surface.
 func (e MarkdownExtensions) BlockSurface(name string, render gk.DivEl) MarkdownExtensions {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Str(name)
@@ -1579,7 +1967,7 @@ func (e MarkdownExtensions) BlockSurface(name string, render gk.DivEl) MarkdownE
 // Frontmatter is disabled by default because it is not part of CommonMark or GFM. Register a block
 // parser or `MarkdownPlugin` to render the resulting `Yaml` node.
 //
-// Frontmatter is <gpui_kit::base::MarkdownExtensions>::frontmatter.
+// Frontmatter calls <gpui_kit::base::MarkdownExtensions>::frontmatter.
 func (e MarkdownExtensions) Frontmatter() MarkdownExtensions {
 	rt.Op(rt.N(e.Core), 256)
 	return e
@@ -1590,7 +1978,7 @@ func (e MarkdownExtensions) Frontmatter() MarkdownExtensions {
 // This disables raw HTML constructs because `markdown-rs` gives HTML priority over MDX when both
 // are enabled.
 //
-// Mdx is <gpui_kit::base::MarkdownExtensions>::mdx.
+// Mdx calls <gpui_kit::base::MarkdownExtensions>::mdx.
 func (e MarkdownExtensions) Mdx() MarkdownExtensions {
 	rt.Op(rt.N(e.Core), 257)
 	return e
@@ -1600,7 +1988,7 @@ func (e MarkdownExtensions) Mdx() MarkdownExtensions {
 // equivalent registrations rebuilt during rendering to retain the parsed document. Renderer-only
 // changes do not need a new value.
 //
-// ParserRevision is <gpui_kit::base::MarkdownExtensions>::parser_revision.
+// ParserRevision calls <gpui_kit::base::MarkdownExtensions>::parser_revision.
 func (e MarkdownExtensions) ParserRevision(revision uint64) MarkdownExtensions {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(uint64(revision))
@@ -1609,7 +1997,7 @@ func (e MarkdownExtensions) ParserRevision(revision uint64) MarkdownExtensions {
 
 // Apply a reusable Markdown plugin.
 //
-// Plugin is <gpui_kit::base::MarkdownExtensions>::plugin.
+// Plugin calls <gpui_kit::base::MarkdownExtensions>::plugin.
 func (e MarkdownExtensions) Plugin(plugin gk.MarkdownPluginAny) MarkdownExtensions {
 	o := rt.Op(rt.N(e.Core), 261)
 	switch x := plugin.(type) {
@@ -1633,7 +2021,7 @@ func (e MarkdownExtensions) Plugin(plugin gk.MarkdownPluginAny) MarkdownExtensio
 // this for Markdown from a source that must not render HTML. Autolinks such as
 // `<https://example.com>` are not HTML and still render as links.
 //
-// RawHTML is <gpui_kit::base::MarkdownExtensions>::raw_html.
+// RawHTML calls <gpui_kit::base::MarkdownExtensions>::raw_html.
 func (e MarkdownExtensions) RawHTML(enabled bool) MarkdownExtensions {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(enabled)
@@ -1643,7 +2031,7 @@ func (e MarkdownExtensions) RawHTML(enabled bool) MarkdownExtensions {
 // BaseNumberInputEl is gpui_kit::base::NumberInput.
 type BaseNumberInputEl struct{ rt.ElAnimatableElement }
 
-// BaseNumberInput is <gpui_kit::base::NumberInput>::new.
+// BaseNumberInput calls <gpui_kit::base::NumberInput>::new.
 func BaseNumberInput(state InputState, st ...gk.Style) BaseNumberInputEl {
 	rt.UseBaseNumberInput()
 	n := rt.NewNode(340)
@@ -1658,7 +2046,7 @@ func BaseNumberInput(state InputState, st ...gk.Style) BaseNumberInputEl {
 // A number input has no visible text of its own to be named by, so set this unless the input is
 // named some other way.
 //
-// AccessibilityLabel is <gpui_kit::base::NumberInput>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::NumberInput>::accessibility_label.
 func (e BaseNumberInputEl) AccessibilityLabel(label string) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -1667,7 +2055,7 @@ func (e BaseNumberInputEl) AccessibilityLabel(label string) BaseNumberInputEl {
 
 // Stack both step buttons on the right side of the text region.
 //
-// ControlsRight is <gpui_kit::base::NumberInput>::controls_right.
+// ControlsRight calls <gpui_kit::base::NumberInput>::controls_right.
 func (e BaseNumberInputEl) ControlsRight() BaseNumberInputEl {
 	rt.Op(rt.N(e.Core), 257)
 	return e
@@ -1675,14 +2063,14 @@ func (e BaseNumberInputEl) ControlsRight() BaseNumberInputEl {
 
 // Decorate the built-in decrement button with application-owned content and styles.
 //
-// DecrementButton is <gpui_kit::base::NumberInput>::decrement_button.
+// DecrementButton calls <gpui_kit::base::NumberInput>::decrement_button.
 func (e BaseNumberInputEl) DecrementButton(decorate gk.Decorate) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutDecorate(o, decorate.Style, decorate.Content)
 	return e
 }
 
-// Disabled is <gpui_kit::base::NumberInput>::disabled.
+// Disabled calls <gpui_kit::base::NumberInput>::disabled.
 func (e BaseNumberInputEl) Disabled(disabled bool) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(disabled)
@@ -1691,7 +2079,7 @@ func (e BaseNumberInputEl) Disabled(disabled bool) BaseNumberInputEl {
 
 // Decorate the built-in increment button with application-owned content and styles.
 //
-// IncrementButton is <gpui_kit::base::NumberInput>::increment_button.
+// IncrementButton calls <gpui_kit::base::NumberInput>::increment_button.
 func (e BaseNumberInputEl) IncrementButton(decorate gk.Decorate) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	rt.PutDecorate(o, decorate.Style, decorate.Content)
@@ -1700,14 +2088,14 @@ func (e BaseNumberInputEl) IncrementButton(decorate gk.Decorate) BaseNumberInput
 
 // Decorate the built-in text region with an editor, adornments, and styles.
 //
-// Input is <gpui_kit::base::NumberInput>::input.
+// Input calls <gpui_kit::base::NumberInput>::input.
 func (e BaseNumberInputEl) Input(input gk.Element) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Take(input))
 	return e
 }
 
-// OnStep is <gpui_kit::base::NumberInput>::on_step.
+// OnStep calls <gpui_kit::base::NumberInput>::on_step.
 func (e BaseNumberInputEl) OnStep(handler func(cx *gk.Cx, e StepAction)) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 68))
@@ -1719,7 +2107,7 @@ func (e BaseNumberInputEl) OnStep(handler func(cx *gk.Cx, e StepAction)) BaseNum
 // The buttons are rendered by default. Up and Down keys continue to step the value when they are
 // omitted.
 //
-// Stepper is <gpui_kit::base::NumberInput>::stepper.
+// Stepper calls <gpui_kit::base::NumberInput>::stepper.
 func (e BaseNumberInputEl) Stepper(stepper bool) BaseNumberInputEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Bool(stepper)
@@ -1733,24 +2121,32 @@ func (e BaseNumberInputEl) Stepper(stepper bool) BaseNumberInputEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseNumberInputEl) KeepTextSelection(id gk.ID) BaseNumberInputEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseNumberInputEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseNumberInputEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseNumberInputEl) BorderE(width gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseNumberInputEl) BorderS(width gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1758,151 +2154,193 @@ func (e BaseNumberInputEl) BorderS(width gk.Length) BaseNumberInputEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseNumberInputEl) FlexRowDir() BaseNumberInputEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseNumberInputEl) InsetE(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseNumberInputEl) InsetS(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseNumberInputEl) JustifyFlexEnd() BaseNumberInputEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseNumberInputEl) JustifyFlexStart() BaseNumberInputEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseNumberInputEl) Me(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseNumberInputEl) Ms(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseNumberInputEl) Pe(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseNumberInputEl) Ps(length gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseNumberInputEl) RoundedE(radius gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseNumberInputEl) RoundedS(radius gk.Length) BaseNumberInputEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseNumberInputEl) TextEnd() BaseNumberInputEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseNumberInputEl) TextStart() BaseNumberInputEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseNumberInputEl) CornerRadii(radius gk.Corners) BaseNumberInputEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseNumberInputEl) DebugBlue() BaseNumberInputEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseNumberInputEl) DebugFocused(focusHandle gk.FocusHandle) BaseNumberInputEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseNumberInputEl) DebugGreen() BaseNumberInputEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseNumberInputEl) DebugPink() BaseNumberInputEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseNumberInputEl) DebugRed() BaseNumberInputEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseNumberInputEl) DebugYellow() BaseNumberInputEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseNumberInputEl) FontBlack() BaseNumberInputEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseNumberInputEl) FontBold() BaseNumberInputEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseNumberInputEl) FontExtrabold() BaseNumberInputEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseNumberInputEl) FontExtralight() BaseNumberInputEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseNumberInputEl) FontLight() BaseNumberInputEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseNumberInputEl) FontMedium() BaseNumberInputEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseNumberInputEl) FontNormal() BaseNumberInputEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseNumberInputEl) FontSemibold() BaseNumberInputEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseNumberInputEl) FontThin() BaseNumberInputEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1911,18 +2349,23 @@ func (e BaseNumberInputEl) FontThin() BaseNumberInputEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseNumberInputEl) HFlex() BaseNumberInputEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseNumberInputEl) Margins(margins gk.EdgesInto) BaseNumberInputEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseNumberInputEl) Paddings(paddings gk.EdgesInto) BaseNumberInputEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseNumberInputEl) RefineStyle(style gk.StyleRefinement) BaseNumberInputEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1932,27 +2375,35 @@ func (e BaseNumberInputEl) RefineStyle(style gk.StyleRefinement) BaseNumberInput
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseNumberInputEl) VFlex() BaseNumberInputEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseNumberInputEl) Style(st ...gk.Style) BaseNumberInputEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseNumberInputEl) AspectRatio(ratio float32) BaseNumberInputEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseNumberInputEl) Bg(fill gk.Fill) BaseNumberInputEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseNumberInputEl) Border(length gk.Length) BaseNumberInputEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1960,12 +2411,16 @@ func (e BaseNumberInputEl) Border(length gk.Length) BaseNumberInputEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseNumberInputEl) BorderB(length gk.Length) BaseNumberInputEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseNumberInputEl) BorderColor(borderColor gk.Color) BaseNumberInputEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1973,6 +2428,8 @@ func (e BaseNumberInputEl) BorderColor(borderColor gk.Color) BaseNumberInputEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseNumberInputEl) BorderL(length gk.Length) BaseNumberInputEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1980,6 +2437,8 @@ func (e BaseNumberInputEl) BorderL(length gk.Length) BaseNumberInputEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseNumberInputEl) BorderR(length gk.Length) BaseNumberInputEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1987,6 +2446,8 @@ func (e BaseNumberInputEl) BorderR(length gk.Length) BaseNumberInputEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseNumberInputEl) BorderT(length gk.Length) BaseNumberInputEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1994,6 +2455,8 @@ func (e BaseNumberInputEl) BorderT(length gk.Length) BaseNumberInputEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseNumberInputEl) BorderX(length gk.Length) BaseNumberInputEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2001,6 +2464,8 @@ func (e BaseNumberInputEl) BorderX(length gk.Length) BaseNumberInputEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseNumberInputEl) BorderY(length gk.Length) BaseNumberInputEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2008,30 +2473,40 @@ func (e BaseNumberInputEl) BorderY(length gk.Length) BaseNumberInputEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseNumberInputEl) Bottom(length gk.Length) BaseNumberInputEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseNumberInputEl) ColEnd(end int16) BaseNumberInputEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseNumberInputEl) ColSpan(span uint16) BaseNumberInputEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseNumberInputEl) ColStart(start int16) BaseNumberInputEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseNumberInputEl) Cursor(cursor gk.CursorStyle) BaseNumberInputEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2039,36 +2514,48 @@ func (e BaseNumberInputEl) Cursor(cursor gk.CursorStyle) BaseNumberInputEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseNumberInputEl) FlexBasis(basis gk.Length) BaseNumberInputEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseNumberInputEl) FlexGrow(grow float32) BaseNumberInputEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseNumberInputEl) FlexShrink(shrink float32) BaseNumberInputEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseNumberInputEl) Font(font gk.Font) BaseNumberInputEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseNumberInputEl) FontFamily(familyName string) BaseNumberInputEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseNumberInputEl) FontFeatures(features gk.FontFeatures) BaseNumberInputEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2077,12 +2564,16 @@ func (e BaseNumberInputEl) FontFeatures(features gk.FontFeatures) BaseNumberInpu
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseNumberInputEl) FontWeight(weight gk.FontWeight) BaseNumberInputEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseNumberInputEl) Gap(length gk.Length) BaseNumberInputEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2090,6 +2581,8 @@ func (e BaseNumberInputEl) Gap(length gk.Length) BaseNumberInputEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseNumberInputEl) GapX(length gk.Length) BaseNumberInputEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2097,18 +2590,24 @@ func (e BaseNumberInputEl) GapX(length gk.Length) BaseNumberInputEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseNumberInputEl) GapY(length gk.Length) BaseNumberInputEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseNumberInputEl) GridCols(cols uint16) BaseNumberInputEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseNumberInputEl) GridColsMaxContent(cols uint16) BaseNumberInputEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2116,18 +2615,24 @@ func (e BaseNumberInputEl) GridColsMaxContent(cols uint16) BaseNumberInputEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseNumberInputEl) GridColsMinContent(cols uint16) BaseNumberInputEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseNumberInputEl) GridRows(rows uint16) BaseNumberInputEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseNumberInputEl) GridRowsMaxContent(rows uint16) BaseNumberInputEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2135,12 +2640,16 @@ func (e BaseNumberInputEl) GridRowsMaxContent(rows uint16) BaseNumberInputEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseNumberInputEl) GridRowsMinContent(rows uint16) BaseNumberInputEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseNumberInputEl) H(length gk.Length) BaseNumberInputEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2148,6 +2657,8 @@ func (e BaseNumberInputEl) H(length gk.Length) BaseNumberInputEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseNumberInputEl) Inset(length gk.Length) BaseNumberInputEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2155,6 +2666,8 @@ func (e BaseNumberInputEl) Inset(length gk.Length) BaseNumberInputEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseNumberInputEl) Left(length gk.Length) BaseNumberInputEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2162,36 +2675,48 @@ func (e BaseNumberInputEl) Left(length gk.Length) BaseNumberInputEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseNumberInputEl) LineClamp(lines int) BaseNumberInputEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseNumberInputEl) LineHeight(lineHeight gk.Length) BaseNumberInputEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseNumberInputEl) M(length gk.Length) BaseNumberInputEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseNumberInputEl) MaxH(length gk.Length) BaseNumberInputEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseNumberInputEl) MaxSize(length gk.Length) BaseNumberInputEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseNumberInputEl) MaxW(length gk.Length) BaseNumberInputEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2199,24 +2724,32 @@ func (e BaseNumberInputEl) MaxW(length gk.Length) BaseNumberInputEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseNumberInputEl) Mb(length gk.Length) BaseNumberInputEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseNumberInputEl) MinH(length gk.Length) BaseNumberInputEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseNumberInputEl) MinSize(length gk.Length) BaseNumberInputEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseNumberInputEl) MinW(length gk.Length) BaseNumberInputEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2224,6 +2757,8 @@ func (e BaseNumberInputEl) MinW(length gk.Length) BaseNumberInputEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseNumberInputEl) Ml(length gk.Length) BaseNumberInputEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2231,6 +2766,8 @@ func (e BaseNumberInputEl) Ml(length gk.Length) BaseNumberInputEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseNumberInputEl) Mr(length gk.Length) BaseNumberInputEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2238,6 +2775,8 @@ func (e BaseNumberInputEl) Mr(length gk.Length) BaseNumberInputEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseNumberInputEl) Mt(length gk.Length) BaseNumberInputEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2245,6 +2784,8 @@ func (e BaseNumberInputEl) Mt(length gk.Length) BaseNumberInputEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseNumberInputEl) Mx(length gk.Length) BaseNumberInputEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2252,18 +2793,24 @@ func (e BaseNumberInputEl) Mx(length gk.Length) BaseNumberInputEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseNumberInputEl) My(length gk.Length) BaseNumberInputEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseNumberInputEl) Opacity(opacity float32) BaseNumberInputEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseNumberInputEl) P(length gk.Length) BaseNumberInputEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2271,6 +2818,8 @@ func (e BaseNumberInputEl) P(length gk.Length) BaseNumberInputEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseNumberInputEl) Pb(length gk.Length) BaseNumberInputEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2278,6 +2827,8 @@ func (e BaseNumberInputEl) Pb(length gk.Length) BaseNumberInputEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseNumberInputEl) Pl(length gk.Length) BaseNumberInputEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2285,6 +2836,8 @@ func (e BaseNumberInputEl) Pl(length gk.Length) BaseNumberInputEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseNumberInputEl) Pr(length gk.Length) BaseNumberInputEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2292,6 +2845,8 @@ func (e BaseNumberInputEl) Pr(length gk.Length) BaseNumberInputEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseNumberInputEl) Pt(length gk.Length) BaseNumberInputEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2299,6 +2854,8 @@ func (e BaseNumberInputEl) Pt(length gk.Length) BaseNumberInputEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseNumberInputEl) Px(length gk.Length) BaseNumberInputEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2306,6 +2863,8 @@ func (e BaseNumberInputEl) Px(length gk.Length) BaseNumberInputEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseNumberInputEl) Py(length gk.Length) BaseNumberInputEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2313,12 +2872,16 @@ func (e BaseNumberInputEl) Py(length gk.Length) BaseNumberInputEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseNumberInputEl) Right(length gk.Length) BaseNumberInputEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseNumberInputEl) Rounded(length gk.Length) BaseNumberInputEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2326,6 +2889,8 @@ func (e BaseNumberInputEl) Rounded(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseNumberInputEl) RoundedB(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2333,6 +2898,8 @@ func (e BaseNumberInputEl) RoundedB(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseNumberInputEl) RoundedBl(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2340,6 +2907,8 @@ func (e BaseNumberInputEl) RoundedBl(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseNumberInputEl) RoundedBr(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2347,6 +2916,8 @@ func (e BaseNumberInputEl) RoundedBr(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseNumberInputEl) RoundedL(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2354,6 +2925,8 @@ func (e BaseNumberInputEl) RoundedL(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseNumberInputEl) RoundedR(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2361,6 +2934,8 @@ func (e BaseNumberInputEl) RoundedR(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseNumberInputEl) RoundedT(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2368,6 +2943,8 @@ func (e BaseNumberInputEl) RoundedT(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseNumberInputEl) RoundedTl(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2375,24 +2952,32 @@ func (e BaseNumberInputEl) RoundedTl(length gk.Length) BaseNumberInputEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseNumberInputEl) RoundedTr(length gk.Length) BaseNumberInputEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseNumberInputEl) RowEnd(end int16) BaseNumberInputEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseNumberInputEl) RowSpan(span uint16) BaseNumberInputEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseNumberInputEl) RowStart(start int16) BaseNumberInputEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2402,24 +2987,32 @@ func (e BaseNumberInputEl) RowStart(start int16) BaseNumberInputEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseNumberInputEl) ScrollbarWidth(width gk.Length) BaseNumberInputEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseNumberInputEl) Shadow(shadows []gk.BoxShadow) BaseNumberInputEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseNumberInputEl) Size(length gk.Length) BaseNumberInputEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseNumberInputEl) TextAlign(align gk.TextAlign) BaseNumberInputEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2428,6 +3021,8 @@ func (e BaseNumberInputEl) TextAlign(align gk.TextAlign) BaseNumberInputEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseNumberInputEl) TextBg(bg gk.Color) BaseNumberInputEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2436,18 +3031,24 @@ func (e BaseNumberInputEl) TextBg(bg gk.Color) BaseNumberInputEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseNumberInputEl) TextColor(color gk.Color) BaseNumberInputEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseNumberInputEl) TextDecorationColor(color gk.Color) BaseNumberInputEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseNumberInputEl) TextOverflow(overflow gk.TextOverflow) BaseNumberInputEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2456,6 +3057,8 @@ func (e BaseNumberInputEl) TextOverflow(overflow gk.TextOverflow) BaseNumberInpu
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseNumberInputEl) TextSize(size gk.Length) BaseNumberInputEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2463,32 +3066,41 @@ func (e BaseNumberInputEl) TextSize(size gk.Length) BaseNumberInputEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseNumberInputEl) Top(length gk.Length) BaseNumberInputEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseNumberInputEl) W(length gk.Length) BaseNumberInputEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseNumberInputEl) Text(s string) BaseNumberInputEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseNumberInputEl) ChildView(v gk.View) BaseNumberInputEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseNumberInputEl) Child(child gk.Element) BaseNumberInputEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseNumberInputEl) Children(children ...gk.Element) BaseNumberInputEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -2497,7 +3109,7 @@ func (e BaseNumberInputEl) Children(children ...gk.Element) BaseNumberInputEl {
 // NumberInputTextEl is gpui_kit::base::NumberInputText.
 type NumberInputTextEl struct{ rt.ElAnimatableElement }
 
-// NumberInputText is <gpui_kit::base::NumberInputText>::new.
+// NumberInputText calls <gpui_kit::base::NumberInputText>::new.
 func NumberInputText(st ...gk.Style) NumberInputTextEl {
 	rt.UseBaseNumberInput()
 	n := rt.NewNode(342)
@@ -2505,7 +3117,7 @@ func NumberInputText(st ...gk.Style) NumberInputTextEl {
 	return NumberInputTextEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// NumberInputTextDefault is <gpui_kit::base::NumberInputText as Default>::default.
+// NumberInputTextDefault calls <gpui_kit::base::NumberInputText as Default>::default.
 func NumberInputTextDefault(st ...gk.Style) NumberInputTextEl {
 	rt.UseBaseNumberInput()
 	n := rt.NewNode(341)
@@ -2520,24 +3132,32 @@ func NumberInputTextDefault(st ...gk.Style) NumberInputTextEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e NumberInputTextEl) KeepTextSelection(id gk.ID) NumberInputTextEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e NumberInputTextEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) NumberInputTextEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e NumberInputTextEl) BorderE(width gk.Length) NumberInputTextEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e NumberInputTextEl) BorderS(width gk.Length) NumberInputTextEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2545,151 +3165,193 @@ func (e NumberInputTextEl) BorderS(width gk.Length) NumberInputTextEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e NumberInputTextEl) FlexRowDir() NumberInputTextEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e NumberInputTextEl) InsetE(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e NumberInputTextEl) InsetS(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e NumberInputTextEl) JustifyFlexEnd() NumberInputTextEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e NumberInputTextEl) JustifyFlexStart() NumberInputTextEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e NumberInputTextEl) Me(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e NumberInputTextEl) Ms(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e NumberInputTextEl) Pe(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e NumberInputTextEl) Ps(length gk.Length) NumberInputTextEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e NumberInputTextEl) RoundedE(radius gk.Length) NumberInputTextEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e NumberInputTextEl) RoundedS(radius gk.Length) NumberInputTextEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e NumberInputTextEl) TextEnd() NumberInputTextEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e NumberInputTextEl) TextStart() NumberInputTextEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e NumberInputTextEl) CornerRadii(radius gk.Corners) NumberInputTextEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e NumberInputTextEl) DebugBlue() NumberInputTextEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e NumberInputTextEl) DebugFocused(focusHandle gk.FocusHandle) NumberInputTextEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e NumberInputTextEl) DebugGreen() NumberInputTextEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e NumberInputTextEl) DebugPink() NumberInputTextEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e NumberInputTextEl) DebugRed() NumberInputTextEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e NumberInputTextEl) DebugYellow() NumberInputTextEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e NumberInputTextEl) FontBlack() NumberInputTextEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e NumberInputTextEl) FontBold() NumberInputTextEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e NumberInputTextEl) FontExtrabold() NumberInputTextEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e NumberInputTextEl) FontExtralight() NumberInputTextEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e NumberInputTextEl) FontLight() NumberInputTextEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e NumberInputTextEl) FontMedium() NumberInputTextEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e NumberInputTextEl) FontNormal() NumberInputTextEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e NumberInputTextEl) FontSemibold() NumberInputTextEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e NumberInputTextEl) FontThin() NumberInputTextEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2698,18 +3360,23 @@ func (e NumberInputTextEl) FontThin() NumberInputTextEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e NumberInputTextEl) HFlex() NumberInputTextEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e NumberInputTextEl) Margins(margins gk.EdgesInto) NumberInputTextEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e NumberInputTextEl) Paddings(paddings gk.EdgesInto) NumberInputTextEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e NumberInputTextEl) RefineStyle(style gk.StyleRefinement) NumberInputTextEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2719,27 +3386,35 @@ func (e NumberInputTextEl) RefineStyle(style gk.StyleRefinement) NumberInputText
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e NumberInputTextEl) VFlex() NumberInputTextEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e NumberInputTextEl) Style(st ...gk.Style) NumberInputTextEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e NumberInputTextEl) AspectRatio(ratio float32) NumberInputTextEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e NumberInputTextEl) Bg(fill gk.Fill) NumberInputTextEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e NumberInputTextEl) Border(length gk.Length) NumberInputTextEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2747,12 +3422,16 @@ func (e NumberInputTextEl) Border(length gk.Length) NumberInputTextEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e NumberInputTextEl) BorderB(length gk.Length) NumberInputTextEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e NumberInputTextEl) BorderColor(borderColor gk.Color) NumberInputTextEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2760,6 +3439,8 @@ func (e NumberInputTextEl) BorderColor(borderColor gk.Color) NumberInputTextEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e NumberInputTextEl) BorderL(length gk.Length) NumberInputTextEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2767,6 +3448,8 @@ func (e NumberInputTextEl) BorderL(length gk.Length) NumberInputTextEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e NumberInputTextEl) BorderR(length gk.Length) NumberInputTextEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2774,6 +3457,8 @@ func (e NumberInputTextEl) BorderR(length gk.Length) NumberInputTextEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e NumberInputTextEl) BorderT(length gk.Length) NumberInputTextEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2781,6 +3466,8 @@ func (e NumberInputTextEl) BorderT(length gk.Length) NumberInputTextEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e NumberInputTextEl) BorderX(length gk.Length) NumberInputTextEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2788,6 +3475,8 @@ func (e NumberInputTextEl) BorderX(length gk.Length) NumberInputTextEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e NumberInputTextEl) BorderY(length gk.Length) NumberInputTextEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2795,30 +3484,40 @@ func (e NumberInputTextEl) BorderY(length gk.Length) NumberInputTextEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e NumberInputTextEl) Bottom(length gk.Length) NumberInputTextEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e NumberInputTextEl) ColEnd(end int16) NumberInputTextEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e NumberInputTextEl) ColSpan(span uint16) NumberInputTextEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e NumberInputTextEl) ColStart(start int16) NumberInputTextEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e NumberInputTextEl) Cursor(cursor gk.CursorStyle) NumberInputTextEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2826,36 +3525,48 @@ func (e NumberInputTextEl) Cursor(cursor gk.CursorStyle) NumberInputTextEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e NumberInputTextEl) FlexBasis(basis gk.Length) NumberInputTextEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e NumberInputTextEl) FlexGrow(grow float32) NumberInputTextEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e NumberInputTextEl) FlexShrink(shrink float32) NumberInputTextEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e NumberInputTextEl) Font(font gk.Font) NumberInputTextEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e NumberInputTextEl) FontFamily(familyName string) NumberInputTextEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e NumberInputTextEl) FontFeatures(features gk.FontFeatures) NumberInputTextEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2864,12 +3575,16 @@ func (e NumberInputTextEl) FontFeatures(features gk.FontFeatures) NumberInputTex
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e NumberInputTextEl) FontWeight(weight gk.FontWeight) NumberInputTextEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e NumberInputTextEl) Gap(length gk.Length) NumberInputTextEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2877,6 +3592,8 @@ func (e NumberInputTextEl) Gap(length gk.Length) NumberInputTextEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e NumberInputTextEl) GapX(length gk.Length) NumberInputTextEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2884,18 +3601,24 @@ func (e NumberInputTextEl) GapX(length gk.Length) NumberInputTextEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e NumberInputTextEl) GapY(length gk.Length) NumberInputTextEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e NumberInputTextEl) GridCols(cols uint16) NumberInputTextEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e NumberInputTextEl) GridColsMaxContent(cols uint16) NumberInputTextEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2903,18 +3626,24 @@ func (e NumberInputTextEl) GridColsMaxContent(cols uint16) NumberInputTextEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e NumberInputTextEl) GridColsMinContent(cols uint16) NumberInputTextEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e NumberInputTextEl) GridRows(rows uint16) NumberInputTextEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e NumberInputTextEl) GridRowsMaxContent(rows uint16) NumberInputTextEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2922,12 +3651,16 @@ func (e NumberInputTextEl) GridRowsMaxContent(rows uint16) NumberInputTextEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e NumberInputTextEl) GridRowsMinContent(rows uint16) NumberInputTextEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e NumberInputTextEl) H(length gk.Length) NumberInputTextEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2935,6 +3668,8 @@ func (e NumberInputTextEl) H(length gk.Length) NumberInputTextEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e NumberInputTextEl) Inset(length gk.Length) NumberInputTextEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2942,6 +3677,8 @@ func (e NumberInputTextEl) Inset(length gk.Length) NumberInputTextEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e NumberInputTextEl) Left(length gk.Length) NumberInputTextEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2949,36 +3686,48 @@ func (e NumberInputTextEl) Left(length gk.Length) NumberInputTextEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e NumberInputTextEl) LineClamp(lines int) NumberInputTextEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e NumberInputTextEl) LineHeight(lineHeight gk.Length) NumberInputTextEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e NumberInputTextEl) M(length gk.Length) NumberInputTextEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e NumberInputTextEl) MaxH(length gk.Length) NumberInputTextEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e NumberInputTextEl) MaxSize(length gk.Length) NumberInputTextEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e NumberInputTextEl) MaxW(length gk.Length) NumberInputTextEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2986,24 +3735,32 @@ func (e NumberInputTextEl) MaxW(length gk.Length) NumberInputTextEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e NumberInputTextEl) Mb(length gk.Length) NumberInputTextEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e NumberInputTextEl) MinH(length gk.Length) NumberInputTextEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e NumberInputTextEl) MinSize(length gk.Length) NumberInputTextEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e NumberInputTextEl) MinW(length gk.Length) NumberInputTextEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3011,6 +3768,8 @@ func (e NumberInputTextEl) MinW(length gk.Length) NumberInputTextEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e NumberInputTextEl) Ml(length gk.Length) NumberInputTextEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3018,6 +3777,8 @@ func (e NumberInputTextEl) Ml(length gk.Length) NumberInputTextEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e NumberInputTextEl) Mr(length gk.Length) NumberInputTextEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3025,6 +3786,8 @@ func (e NumberInputTextEl) Mr(length gk.Length) NumberInputTextEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e NumberInputTextEl) Mt(length gk.Length) NumberInputTextEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3032,6 +3795,8 @@ func (e NumberInputTextEl) Mt(length gk.Length) NumberInputTextEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e NumberInputTextEl) Mx(length gk.Length) NumberInputTextEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3039,18 +3804,24 @@ func (e NumberInputTextEl) Mx(length gk.Length) NumberInputTextEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e NumberInputTextEl) My(length gk.Length) NumberInputTextEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e NumberInputTextEl) Opacity(opacity float32) NumberInputTextEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e NumberInputTextEl) P(length gk.Length) NumberInputTextEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3058,6 +3829,8 @@ func (e NumberInputTextEl) P(length gk.Length) NumberInputTextEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e NumberInputTextEl) Pb(length gk.Length) NumberInputTextEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3065,6 +3838,8 @@ func (e NumberInputTextEl) Pb(length gk.Length) NumberInputTextEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e NumberInputTextEl) Pl(length gk.Length) NumberInputTextEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3072,6 +3847,8 @@ func (e NumberInputTextEl) Pl(length gk.Length) NumberInputTextEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e NumberInputTextEl) Pr(length gk.Length) NumberInputTextEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3079,6 +3856,8 @@ func (e NumberInputTextEl) Pr(length gk.Length) NumberInputTextEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e NumberInputTextEl) Pt(length gk.Length) NumberInputTextEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3086,6 +3865,8 @@ func (e NumberInputTextEl) Pt(length gk.Length) NumberInputTextEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e NumberInputTextEl) Px(length gk.Length) NumberInputTextEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3093,6 +3874,8 @@ func (e NumberInputTextEl) Px(length gk.Length) NumberInputTextEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e NumberInputTextEl) Py(length gk.Length) NumberInputTextEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3100,12 +3883,16 @@ func (e NumberInputTextEl) Py(length gk.Length) NumberInputTextEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e NumberInputTextEl) Right(length gk.Length) NumberInputTextEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e NumberInputTextEl) Rounded(length gk.Length) NumberInputTextEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3113,6 +3900,8 @@ func (e NumberInputTextEl) Rounded(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e NumberInputTextEl) RoundedB(length gk.Length) NumberInputTextEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3120,6 +3909,8 @@ func (e NumberInputTextEl) RoundedB(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e NumberInputTextEl) RoundedBl(length gk.Length) NumberInputTextEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3127,6 +3918,8 @@ func (e NumberInputTextEl) RoundedBl(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e NumberInputTextEl) RoundedBr(length gk.Length) NumberInputTextEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3134,6 +3927,8 @@ func (e NumberInputTextEl) RoundedBr(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e NumberInputTextEl) RoundedL(length gk.Length) NumberInputTextEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3141,6 +3936,8 @@ func (e NumberInputTextEl) RoundedL(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e NumberInputTextEl) RoundedR(length gk.Length) NumberInputTextEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3148,6 +3945,8 @@ func (e NumberInputTextEl) RoundedR(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e NumberInputTextEl) RoundedT(length gk.Length) NumberInputTextEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3155,6 +3954,8 @@ func (e NumberInputTextEl) RoundedT(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e NumberInputTextEl) RoundedTl(length gk.Length) NumberInputTextEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3162,24 +3963,32 @@ func (e NumberInputTextEl) RoundedTl(length gk.Length) NumberInputTextEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e NumberInputTextEl) RoundedTr(length gk.Length) NumberInputTextEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e NumberInputTextEl) RowEnd(end int16) NumberInputTextEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e NumberInputTextEl) RowSpan(span uint16) NumberInputTextEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e NumberInputTextEl) RowStart(start int16) NumberInputTextEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3189,24 +3998,32 @@ func (e NumberInputTextEl) RowStart(start int16) NumberInputTextEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e NumberInputTextEl) ScrollbarWidth(width gk.Length) NumberInputTextEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e NumberInputTextEl) Shadow(shadows []gk.BoxShadow) NumberInputTextEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e NumberInputTextEl) Size(length gk.Length) NumberInputTextEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e NumberInputTextEl) TextAlign(align gk.TextAlign) NumberInputTextEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3215,6 +4032,8 @@ func (e NumberInputTextEl) TextAlign(align gk.TextAlign) NumberInputTextEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e NumberInputTextEl) TextBg(bg gk.Color) NumberInputTextEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3223,18 +4042,24 @@ func (e NumberInputTextEl) TextBg(bg gk.Color) NumberInputTextEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e NumberInputTextEl) TextColor(color gk.Color) NumberInputTextEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e NumberInputTextEl) TextDecorationColor(color gk.Color) NumberInputTextEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e NumberInputTextEl) TextOverflow(overflow gk.TextOverflow) NumberInputTextEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3243,6 +4068,8 @@ func (e NumberInputTextEl) TextOverflow(overflow gk.TextOverflow) NumberInputTex
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e NumberInputTextEl) TextSize(size gk.Length) NumberInputTextEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3250,32 +4077,41 @@ func (e NumberInputTextEl) TextSize(size gk.Length) NumberInputTextEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e NumberInputTextEl) Top(length gk.Length) NumberInputTextEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e NumberInputTextEl) W(length gk.Length) NumberInputTextEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e NumberInputTextEl) Text(s string) NumberInputTextEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e NumberInputTextEl) ChildView(v gk.View) NumberInputTextEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e NumberInputTextEl) Child(child gk.Element) NumberInputTextEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e NumberInputTextEl) Children(children ...gk.Element) NumberInputTextEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -3284,7 +4120,7 @@ func (e NumberInputTextEl) Children(children ...gk.Element) NumberInputTextEl {
 // BaseOtpInputEl is gpui_kit::base::OtpInput.
 type BaseOtpInputEl struct{ rt.ElAnimatableElement }
 
-// BaseOtpInput is <gpui_kit::base::OtpInput>::new.
+// BaseOtpInput calls <gpui_kit::base::OtpInput>::new.
 func BaseOtpInput(state OtpState, st ...gk.Style) BaseOtpInputEl {
 	rt.UseBaseOtpInput()
 	n := rt.NewNode(343)
@@ -3294,7 +4130,7 @@ func BaseOtpInput(state OtpState, st ...gk.Style) BaseOtpInputEl {
 	return BaseOtpInputEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// Disabled is <gpui_kit::base::OtpInput>::disabled.
+// Disabled calls <gpui_kit::base::OtpInput>::disabled.
 func (e BaseOtpInputEl) Disabled(disabled bool) BaseOtpInputEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(disabled)
@@ -3308,24 +4144,32 @@ func (e BaseOtpInputEl) Disabled(disabled bool) BaseOtpInputEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseOtpInputEl) KeepTextSelection(id gk.ID) BaseOtpInputEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseOtpInputEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseOtpInputEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseOtpInputEl) BorderE(width gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseOtpInputEl) BorderS(width gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3333,133 +4177,175 @@ func (e BaseOtpInputEl) BorderS(width gk.Length) BaseOtpInputEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseOtpInputEl) FlexRowDir() BaseOtpInputEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseOtpInputEl) InsetE(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseOtpInputEl) InsetS(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseOtpInputEl) JustifyFlexEnd() BaseOtpInputEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseOtpInputEl) JustifyFlexStart() BaseOtpInputEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseOtpInputEl) Me(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseOtpInputEl) Ms(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseOtpInputEl) Pe(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseOtpInputEl) Ps(length gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseOtpInputEl) RoundedE(radius gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseOtpInputEl) RoundedS(radius gk.Length) BaseOtpInputEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseOtpInputEl) TextEnd() BaseOtpInputEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseOtpInputEl) TextStart() BaseOtpInputEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseOtpInputEl) CornerRadii(radius gk.Corners) BaseOtpInputEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseOtpInputEl) DebugBlue() BaseOtpInputEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseOtpInputEl) DebugFocused(focusHandle gk.FocusHandle) BaseOtpInputEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseOtpInputEl) DebugGreen() BaseOtpInputEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseOtpInputEl) DebugPink() BaseOtpInputEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseOtpInputEl) DebugRed() BaseOtpInputEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseOtpInputEl) DebugYellow() BaseOtpInputEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseOtpInputEl) FontBlack() BaseOtpInputEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseOtpInputEl) FontBold() BaseOtpInputEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseOtpInputEl) FontExtrabold() BaseOtpInputEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseOtpInputEl) FontExtralight() BaseOtpInputEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseOtpInputEl) FontLight() BaseOtpInputEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseOtpInputEl) FontMedium() BaseOtpInputEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseOtpInputEl) FontNormal() BaseOtpInputEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseOtpInputEl) FontSemibold() BaseOtpInputEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseOtpInputEl) FontThin() BaseOtpInputEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3468,18 +4354,23 @@ func (e BaseOtpInputEl) FontThin() BaseOtpInputEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseOtpInputEl) HFlex() BaseOtpInputEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseOtpInputEl) Margins(margins gk.EdgesInto) BaseOtpInputEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseOtpInputEl) Paddings(paddings gk.EdgesInto) BaseOtpInputEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseOtpInputEl) RefineStyle(style gk.StyleRefinement) BaseOtpInputEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3489,21 +4380,29 @@ func (e BaseOtpInputEl) RefineStyle(style gk.StyleRefinement) BaseOtpInputEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseOtpInputEl) VFlex() BaseOtpInputEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseOtpInputEl) Style(st ...gk.Style) BaseOtpInputEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseOtpInputEl) AspectRatio(ratio float32) BaseOtpInputEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseOtpInputEl) Bg(fill gk.Fill) BaseOtpInputEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseOtpInputEl) Border(length gk.Length) BaseOtpInputEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3511,12 +4410,16 @@ func (e BaseOtpInputEl) Border(length gk.Length) BaseOtpInputEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseOtpInputEl) BorderB(length gk.Length) BaseOtpInputEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseOtpInputEl) BorderColor(borderColor gk.Color) BaseOtpInputEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3524,6 +4427,8 @@ func (e BaseOtpInputEl) BorderColor(borderColor gk.Color) BaseOtpInputEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseOtpInputEl) BorderL(length gk.Length) BaseOtpInputEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3531,6 +4436,8 @@ func (e BaseOtpInputEl) BorderL(length gk.Length) BaseOtpInputEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseOtpInputEl) BorderR(length gk.Length) BaseOtpInputEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3538,6 +4445,8 @@ func (e BaseOtpInputEl) BorderR(length gk.Length) BaseOtpInputEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseOtpInputEl) BorderT(length gk.Length) BaseOtpInputEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3545,6 +4454,8 @@ func (e BaseOtpInputEl) BorderT(length gk.Length) BaseOtpInputEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseOtpInputEl) BorderX(length gk.Length) BaseOtpInputEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3552,6 +4463,8 @@ func (e BaseOtpInputEl) BorderX(length gk.Length) BaseOtpInputEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseOtpInputEl) BorderY(length gk.Length) BaseOtpInputEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3559,27 +4472,37 @@ func (e BaseOtpInputEl) BorderY(length gk.Length) BaseOtpInputEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseOtpInputEl) Bottom(length gk.Length) BaseOtpInputEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseOtpInputEl) ColEnd(end int16) BaseOtpInputEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseOtpInputEl) ColSpan(span uint16) BaseOtpInputEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseOtpInputEl) ColStart(start int16) BaseOtpInputEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseOtpInputEl) Cursor(cursor gk.CursorStyle) BaseOtpInputEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3587,33 +4510,45 @@ func (e BaseOtpInputEl) Cursor(cursor gk.CursorStyle) BaseOtpInputEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseOtpInputEl) FlexBasis(basis gk.Length) BaseOtpInputEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseOtpInputEl) FlexGrow(grow float32) BaseOtpInputEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseOtpInputEl) FlexShrink(shrink float32) BaseOtpInputEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseOtpInputEl) Font(font gk.Font) BaseOtpInputEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseOtpInputEl) FontFamily(familyName string) BaseOtpInputEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseOtpInputEl) FontFeatures(features gk.FontFeatures) BaseOtpInputEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3622,12 +4557,16 @@ func (e BaseOtpInputEl) FontFeatures(features gk.FontFeatures) BaseOtpInputEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseOtpInputEl) FontWeight(weight gk.FontWeight) BaseOtpInputEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseOtpInputEl) Gap(length gk.Length) BaseOtpInputEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3635,6 +4574,8 @@ func (e BaseOtpInputEl) Gap(length gk.Length) BaseOtpInputEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseOtpInputEl) GapX(length gk.Length) BaseOtpInputEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3642,18 +4583,24 @@ func (e BaseOtpInputEl) GapX(length gk.Length) BaseOtpInputEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseOtpInputEl) GapY(length gk.Length) BaseOtpInputEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseOtpInputEl) GridCols(cols uint16) BaseOtpInputEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseOtpInputEl) GridColsMaxContent(cols uint16) BaseOtpInputEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3661,18 +4608,24 @@ func (e BaseOtpInputEl) GridColsMaxContent(cols uint16) BaseOtpInputEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseOtpInputEl) GridColsMinContent(cols uint16) BaseOtpInputEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseOtpInputEl) GridRows(rows uint16) BaseOtpInputEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseOtpInputEl) GridRowsMaxContent(rows uint16) BaseOtpInputEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3680,16 +4633,22 @@ func (e BaseOtpInputEl) GridRowsMaxContent(rows uint16) BaseOtpInputEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseOtpInputEl) GridRowsMinContent(rows uint16) BaseOtpInputEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseOtpInputEl) H(length gk.Length) BaseOtpInputEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseOtpInputEl) Inset(length gk.Length) BaseOtpInputEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3697,6 +4656,8 @@ func (e BaseOtpInputEl) Inset(length gk.Length) BaseOtpInputEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseOtpInputEl) Left(length gk.Length) BaseOtpInputEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3704,33 +4665,45 @@ func (e BaseOtpInputEl) Left(length gk.Length) BaseOtpInputEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseOtpInputEl) LineClamp(lines int) BaseOtpInputEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseOtpInputEl) LineHeight(lineHeight gk.Length) BaseOtpInputEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseOtpInputEl) M(length gk.Length) BaseOtpInputEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseOtpInputEl) MaxH(length gk.Length) BaseOtpInputEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseOtpInputEl) MaxSize(length gk.Length) BaseOtpInputEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseOtpInputEl) MaxW(length gk.Length) BaseOtpInputEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3738,24 +4711,32 @@ func (e BaseOtpInputEl) MaxW(length gk.Length) BaseOtpInputEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseOtpInputEl) Mb(length gk.Length) BaseOtpInputEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseOtpInputEl) MinH(length gk.Length) BaseOtpInputEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseOtpInputEl) MinSize(length gk.Length) BaseOtpInputEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseOtpInputEl) MinW(length gk.Length) BaseOtpInputEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3763,6 +4744,8 @@ func (e BaseOtpInputEl) MinW(length gk.Length) BaseOtpInputEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseOtpInputEl) Ml(length gk.Length) BaseOtpInputEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3770,6 +4753,8 @@ func (e BaseOtpInputEl) Ml(length gk.Length) BaseOtpInputEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseOtpInputEl) Mr(length gk.Length) BaseOtpInputEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3777,6 +4762,8 @@ func (e BaseOtpInputEl) Mr(length gk.Length) BaseOtpInputEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseOtpInputEl) Mt(length gk.Length) BaseOtpInputEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3784,6 +4771,8 @@ func (e BaseOtpInputEl) Mt(length gk.Length) BaseOtpInputEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseOtpInputEl) Mx(length gk.Length) BaseOtpInputEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3791,22 +4780,30 @@ func (e BaseOtpInputEl) Mx(length gk.Length) BaseOtpInputEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseOtpInputEl) My(length gk.Length) BaseOtpInputEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseOtpInputEl) Opacity(opacity float32) BaseOtpInputEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseOtpInputEl) P(length gk.Length) BaseOtpInputEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseOtpInputEl) Pb(length gk.Length) BaseOtpInputEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3814,6 +4811,8 @@ func (e BaseOtpInputEl) Pb(length gk.Length) BaseOtpInputEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseOtpInputEl) Pl(length gk.Length) BaseOtpInputEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3821,6 +4820,8 @@ func (e BaseOtpInputEl) Pl(length gk.Length) BaseOtpInputEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseOtpInputEl) Pr(length gk.Length) BaseOtpInputEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3828,6 +4829,8 @@ func (e BaseOtpInputEl) Pr(length gk.Length) BaseOtpInputEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseOtpInputEl) Pt(length gk.Length) BaseOtpInputEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3835,6 +4838,8 @@ func (e BaseOtpInputEl) Pt(length gk.Length) BaseOtpInputEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseOtpInputEl) Px(length gk.Length) BaseOtpInputEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3842,6 +4847,8 @@ func (e BaseOtpInputEl) Px(length gk.Length) BaseOtpInputEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseOtpInputEl) Py(length gk.Length) BaseOtpInputEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3849,12 +4856,16 @@ func (e BaseOtpInputEl) Py(length gk.Length) BaseOtpInputEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseOtpInputEl) Right(length gk.Length) BaseOtpInputEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseOtpInputEl) Rounded(length gk.Length) BaseOtpInputEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3862,6 +4873,8 @@ func (e BaseOtpInputEl) Rounded(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseOtpInputEl) RoundedB(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3869,6 +4882,8 @@ func (e BaseOtpInputEl) RoundedB(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseOtpInputEl) RoundedBl(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3876,6 +4891,8 @@ func (e BaseOtpInputEl) RoundedBl(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseOtpInputEl) RoundedBr(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3883,6 +4900,8 @@ func (e BaseOtpInputEl) RoundedBr(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseOtpInputEl) RoundedL(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3890,6 +4909,8 @@ func (e BaseOtpInputEl) RoundedL(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseOtpInputEl) RoundedR(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3897,6 +4918,8 @@ func (e BaseOtpInputEl) RoundedR(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseOtpInputEl) RoundedT(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3904,6 +4927,8 @@ func (e BaseOtpInputEl) RoundedT(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseOtpInputEl) RoundedTl(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3911,21 +4936,29 @@ func (e BaseOtpInputEl) RoundedTl(length gk.Length) BaseOtpInputEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseOtpInputEl) RoundedTr(length gk.Length) BaseOtpInputEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseOtpInputEl) RowEnd(end int16) BaseOtpInputEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseOtpInputEl) RowSpan(span uint16) BaseOtpInputEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseOtpInputEl) RowStart(start int16) BaseOtpInputEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3935,24 +4968,32 @@ func (e BaseOtpInputEl) RowStart(start int16) BaseOtpInputEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseOtpInputEl) ScrollbarWidth(width gk.Length) BaseOtpInputEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseOtpInputEl) Shadow(shadows []gk.BoxShadow) BaseOtpInputEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseOtpInputEl) Size(length gk.Length) BaseOtpInputEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseOtpInputEl) TextAlign(align gk.TextAlign) BaseOtpInputEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3961,23 +5002,31 @@ func (e BaseOtpInputEl) TextAlign(align gk.TextAlign) BaseOtpInputEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseOtpInputEl) TextBg(bg gk.Color) BaseOtpInputEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseOtpInputEl) TextColor(color gk.Color) BaseOtpInputEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseOtpInputEl) TextDecorationColor(color gk.Color) BaseOtpInputEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseOtpInputEl) TextOverflow(overflow gk.TextOverflow) BaseOtpInputEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3986,6 +5035,8 @@ func (e BaseOtpInputEl) TextOverflow(overflow gk.TextOverflow) BaseOtpInputEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseOtpInputEl) TextSize(size gk.Length) BaseOtpInputEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3993,26 +5044,35 @@ func (e BaseOtpInputEl) TextSize(size gk.Length) BaseOtpInputEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseOtpInputEl) Top(length gk.Length) BaseOtpInputEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseOtpInputEl) W(length gk.Length) BaseOtpInputEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e BaseOtpInputEl) Text(s string) BaseOtpInputEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseOtpInputEl) ChildView(v gk.View) BaseOtpInputEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseOtpInputEl) Child(child gk.Element) BaseOtpInputEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseOtpInputEl) Children(children ...gk.Element) BaseOtpInputEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -4023,7 +5083,7 @@ type SelectableTextEl struct{ rt.El }
 
 // Creates a run that owns its own selection.
 //
-// SelectableText is <gpui_kit::base::SelectableText>::new.
+// SelectableText calls <gpui_kit::base::SelectableText>::new.
 func SelectableText(id gk.ID, text string) SelectableTextEl {
 	rt.UseBaseSelectableText()
 	n := rt.NewNode(372)
@@ -4035,7 +5095,7 @@ func SelectableText(id gk.ID, text string) SelectableTextEl {
 
 // Creates a run that joins the document `handle` belongs to.
 //
-// SelectableTextWithHandle is <gpui_kit::base::SelectableText>::with_handle.
+// SelectableTextWithHandle calls <gpui_kit::base::SelectableText>::with_handle.
 func SelectableTextWithHandle(id gk.ID, handle TextSelectionHandle, text string) SelectableTextEl {
 	rt.UseBaseSelectableText()
 	n := rt.NewNode(823)
@@ -4048,7 +5108,7 @@ func SelectableTextWithHandle(id gk.ID, handle TextSelectionHandle, text string)
 
 // Places this run in reading order among the others sharing its handle.
 //
-// DocumentOrder is <gpui_kit::base::SelectableText>::document_order.
+// DocumentOrder calls <gpui_kit::base::SelectableText>::document_order.
 func (e SelectableTextEl) DocumentOrder(order uint64) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(uint64(order))
@@ -4058,7 +5118,7 @@ func (e SelectableTextEl) DocumentOrder(order uint64) SelectableTextEl {
 // Styles ranges of the text, such as the matches of a search, as `with_highlights` does. The
 // ranges are UTF-8 offsets, in order and without overlap.
 //
-// Highlights is <gpui_kit::base::SelectableText>::highlights.
+// Highlights calls <gpui_kit::base::SelectableText>::highlights.
 func (e SelectableTextEl) Highlights(highlights []gk.TupleRangeHighlightStyle) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(uint32(len(highlights)))
@@ -4073,7 +5133,7 @@ func (e SelectableTextEl) Highlights(highlights []gk.TupleRangeHighlightStyle) S
 // manage scrolling through a custom handle. Without a handler, the element requests GPUI
 // autoscroll.
 //
-// OnReveal is <gpui_kit::base::SelectableText>::on_reveal.
+// OnReveal calls <gpui_kit::base::SelectableText>::on_reveal.
 func (e SelectableTextEl) OnReveal(handler func(cx *gk.Cx, e gk.Bounds)) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 75))
@@ -4085,7 +5145,7 @@ func (e SelectableTextEl) OnReveal(handler func(cx *gk.Cx, e gk.Bounds)) Selecta
 // `TextViewState::reveal_range`, so the user can scroll away afterwards. Invalid ranges are
 // ignored.
 //
-// RevealRange is <gpui_kit::base::SelectableText>::reveal_range.
+// RevealRange calls <gpui_kit::base::SelectableText>::reveal_range.
 func (e SelectableTextEl) RevealRange(range_ gk.Range) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutRange(o, range_)
@@ -4094,7 +5154,7 @@ func (e SelectableTextEl) RevealRange(range_ gk.Range) SelectableTextEl {
 
 // Overrides the selection background, which defaults to the theme's `colors.selection` token.
 //
-// SelectionColor is <gpui_kit::base::SelectableText>::selection_color.
+// SelectionColor calls <gpui_kit::base::SelectableText>::selection_color.
 func (e SelectableTextEl) SelectionColor(color gk.Color) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -4103,7 +5163,7 @@ func (e SelectableTextEl) SelectionColor(color gk.Color) SelectableTextEl {
 
 // Sets the text style the run is laid out and painted with.
 //
-// TextStyle is <gpui_kit::base::SelectableText>::text_style.
+// TextStyle calls <gpui_kit::base::SelectableText>::text_style.
 func (e SelectableTextEl) TextStyle(style gk.TextStyleRefinement) SelectableTextEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	putTextStyleRefinement(o, style)
@@ -4115,7 +5175,7 @@ type BaseTextViewEl struct{ rt.ElAnimatableElement }
 
 // Create a new html text view with code location as id.
 //
-// BaseHTML is gpui_kit::base::html.
+// BaseHTML calls gpui_kit::base::html.
 func BaseHTML(source string, st ...gk.Style) BaseTextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(408)
@@ -4127,7 +5187,7 @@ func BaseHTML(source string, st ...gk.Style) BaseTextViewEl {
 
 // Create a new markdown text view with code location as id.
 //
-// BaseMarkdown is gpui_kit::base::markdown.
+// BaseMarkdown calls gpui_kit::base::markdown.
 func BaseMarkdown(source string, st ...gk.Style) BaseTextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(409)
@@ -4139,7 +5199,7 @@ func BaseMarkdown(source string, st ...gk.Style) BaseTextViewEl {
 
 // Create new TextView with managed state.
 //
-// BaseTextView is <gpui_kit::base::TextView>::new.
+// BaseTextView calls <gpui_kit::base::TextView>::new.
 func BaseTextView(state TextViewState, st ...gk.Style) BaseTextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(407)
@@ -4151,7 +5211,7 @@ func BaseTextView(state TextViewState, st ...gk.Style) BaseTextViewEl {
 
 // Create a new html text view.
 //
-// BaseTextViewHTML is <gpui_kit::base::TextView>::html.
+// BaseTextViewHTML calls <gpui_kit::base::TextView>::html.
 func BaseTextViewHTML(id gk.ID, html string, st ...gk.Style) BaseTextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(405)
@@ -4164,7 +5224,7 @@ func BaseTextViewHTML(id gk.ID, html string, st ...gk.Style) BaseTextViewEl {
 
 // Create a new markdown text view.
 //
-// BaseTextViewMarkdown is <gpui_kit::base::TextView>::markdown.
+// BaseTextViewMarkdown calls <gpui_kit::base::TextView>::markdown.
 func BaseTextViewMarkdown(id gk.ID, markdown string, st ...gk.Style) BaseTextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(406)
@@ -4178,7 +5238,7 @@ func BaseTextViewMarkdown(id gk.ID, markdown string, st ...gk.Style) BaseTextVie
 // Refines blockquotes over the resolved style. See `WithBlockquoteStyle` for where it applies.
 // Unspecified properties are inherited.
 //
-// BlockquoteStyle is <gpui_kit::base::TextView>::blockquote_style.
+// BlockquoteStyle calls <gpui_kit::base::TextView>::blockquote_style.
 func (e BaseTextViewEl) BlockquoteStyle(style gk.StyleRefinement) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -4189,7 +5249,7 @@ func (e BaseTextViewEl) BlockquoteStyle(style gk.StyleRefinement) BaseTextViewEl
 //
 // The closure receives the `BaseCodeBlock`, and returns an element to display.
 //
-// CodeBlockActions is <gpui_kit::base::TextView>::code_block_actions.
+// CodeBlockActions calls <gpui_kit::base::TextView>::code_block_actions.
 func (e BaseTextViewEl) CodeBlockActions(f gk.RowSource) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.U64(rt.ItemsCheck(f, 8))
@@ -4201,7 +5261,7 @@ func (e BaseTextViewEl) CodeBlockActions(f gk.RowSource) BaseTextViewEl {
 // Returned byte ranges are relative to `code`. Invalid ranges are discarded. Without this
 // callback, code is unhighlighted.
 //
-// CodeBlockHighlighter is <gpui_kit::base::TextView>::code_block_highlighter.
+// CodeBlockHighlighter calls <gpui_kit::base::TextView>::code_block_highlighter.
 func (e BaseTextViewEl) CodeBlockHighlighter(highlighter gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.U64(rt.H(highlighter.Src.HCore))
@@ -4214,7 +5274,7 @@ func (e BaseTextViewEl) CodeBlockHighlighter(highlighter gk.Ask[gk.CodeBlock, []
 // pending or failed loads never fall back to the document URL. Without this override, images use
 // Base's default URI and data URL handling.
 //
-// ImageSource is <gpui_kit::base::TextView>::image_source.
+// ImageSource calls <gpui_kit::base::TextView>::image_source.
 func (e BaseTextViewEl) ImageSource(resolver gk.Ask[string, string]) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U64(rt.H(resolver.Src.HCore))
@@ -4224,7 +5284,7 @@ func (e BaseTextViewEl) ImageSource(resolver gk.Ask[string, string]) BaseTextVie
 // Refines inline code typography, background, border, radius, and padding over the resolved style.
 // See `WithInlineCodeStyle` for the supported properties. Unspecified properties are inherited.
 //
-// InlineCodeStyle is <gpui_kit::base::TextView>::inline_code_style.
+// InlineCodeStyle calls <gpui_kit::base::TextView>::inline_code_style.
 func (e BaseTextViewEl) InlineCodeStyle(style gk.StyleRefinement) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -4236,7 +5296,7 @@ func (e BaseTextViewEl) InlineCodeStyle(style gk.StyleRefinement) BaseTextViewEl
 // The builder receives the link's URL. The view caches the tooltip until a different destination
 // is shown.
 //
-// LinkTooltip is <gpui_kit::base::TextView>::link_tooltip.
+// LinkTooltip calls <gpui_kit::base::TextView>::link_tooltip.
 func (e BaseTextViewEl) LinkTooltip(builder gk.RowSource) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 275)
 	o.U64(rt.H(builder.HCore))
@@ -4246,7 +5306,7 @@ func (e BaseTextViewEl) LinkTooltip(builder gk.RowSource) BaseTextViewEl {
 // Refines list markers over the resolved style. See `WithListStyle` for where it applies.
 // Unspecified properties are inherited.
 //
-// ListStyle is <gpui_kit::base::TextView>::list_style.
+// ListStyle calls <gpui_kit::base::TextView>::list_style.
 func (e BaseTextViewEl) ListStyle(style gk.StyleRefinement) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -4255,7 +5315,7 @@ func (e BaseTextViewEl) ListStyle(style gk.StyleRefinement) BaseTextViewEl {
 
 // Register a renderer for a custom block-level Markdown node name.
 //
-// MarkdownBlockRenderer is <gpui_kit::base::TextView>::markdown_block_renderer.
+// MarkdownBlockRenderer calls <gpui_kit::base::TextView>::markdown_block_renderer.
 func (e BaseTextViewEl) MarkdownBlockRenderer(name string, renderer gk.RowSource) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.Str(name)
@@ -4265,7 +5325,7 @@ func (e BaseTextViewEl) MarkdownBlockRenderer(name string, renderer gk.RowSource
 
 // Replace the Markdown extension registry.
 //
-// MarkdownExtensions is <gpui_kit::base::TextView>::markdown_extensions.
+// MarkdownExtensions calls <gpui_kit::base::TextView>::markdown_extensions.
 func (e BaseTextViewEl) MarkdownExtensions(extensions MarkdownExtensions) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(extensions.Core)))
@@ -4277,7 +5337,7 @@ func (e BaseTextViewEl) MarkdownExtensions(extensions MarkdownExtensions) BaseTe
 // This disables raw HTML parsing because `markdown-rs` gives HTML priority over MDX when both are
 // enabled.
 //
-// MarkdownMdx is <gpui_kit::base::TextView>::markdown_mdx.
+// MarkdownMdx calls <gpui_kit::base::TextView>::markdown_mdx.
 func (e BaseTextViewEl) MarkdownMdx() BaseTextViewEl {
 	rt.Op(rt.N(e.Core), 260)
 	return e
@@ -4286,7 +5346,7 @@ func (e BaseTextViewEl) MarkdownMdx() BaseTextViewEl {
 // Set whether raw HTML in Markdown renders as HTML (the default) or shows as the text it is
 // written as. See `RawHTML`.
 //
-// MarkdownRawHTML is <gpui_kit::base::TextView>::markdown_raw_html.
+// MarkdownRawHTML calls <gpui_kit::base::TextView>::markdown_raw_html.
 func (e BaseTextViewEl) MarkdownRawHTML(enabled bool) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 277)
 	o.Bool(enabled)
@@ -4309,7 +5369,7 @@ func (e BaseTextViewEl) MarkdownRawHTML(enabled bool) BaseTextViewEl {
 // inside the capped height. A line taller than the whole budget keeps the part that fits rather
 // than emptying the box. Ignored when `Scrollable` is set.
 //
-// MaxLines is <gpui_kit::base::TextView>::max_lines.
+// MaxLines calls <gpui_kit::base::TextView>::max_lines.
 func (e BaseTextViewEl) MaxLines(maxLines int) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutUsize(o, maxLines)
@@ -4319,7 +5379,7 @@ func (e BaseTextViewEl) MaxLines(maxLines int) BaseTextViewEl {
 // Set the motion policy; see `TextViewMotion`. Without one, the state's own policy applies, which
 // plays no motion by default.
 //
-// Motion is <gpui_kit::base::TextView>::motion.
+// Motion calls <gpui_kit::base::TextView>::motion.
 func (e BaseTextViewEl) Motion(motion TextViewMotion) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.TakeValue(rt.N(motion.Core)))
@@ -4331,7 +5391,7 @@ func (e BaseTextViewEl) Motion(motion TextViewMotion) BaseTextViewEl {
 // The handler receives the resolved URL and the original GPUI click event. Without a handler,
 // links open through App::open_url.
 //
-// OnLinkClick is <gpui_kit::base::TextView>::on_link_click.
+// OnLinkClick calls <gpui_kit::base::TextView>::on_link_click.
 func (e BaseTextViewEl) OnLinkClick(handler func(cx *gk.Cx, e gk.Event83)) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.U32(rt.Register(handler, 83))
@@ -4345,7 +5405,7 @@ func (e BaseTextViewEl) OnLinkClick(handler func(cx *gk.Cx, e gk.Event83)) BaseT
 // bounds in window coordinates, to scroll the container, e.g. through its `ScrollHandle`, until
 // the line is visible.
 //
-// OnReveal is <gpui_kit::base::TextView>::on_reveal.
+// OnReveal calls <gpui_kit::base::TextView>::on_reveal.
 func (e BaseTextViewEl) OnReveal(handler func(cx *gk.Cx, e gk.Bounds)) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(handler, 75))
@@ -4359,7 +5419,7 @@ func (e BaseTextViewEl) OnReveal(handler func(cx *gk.Cx, e gk.Bounds)) BaseTextV
 // text: the caller owns the source, replaces the marker and sets the new text. Without a handler,
 // the checkboxes are not interactive.
 //
-// OnTaskToggle is <gpui_kit::base::TextView>::on_task_toggle.
+// OnTaskToggle calls <gpui_kit::base::TextView>::on_task_toggle.
 func (e BaseTextViewEl) OnTaskToggle(handler func(cx *gk.Cx, e TaskToggleEvent)) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.U32(rt.Register(handler, 105))
@@ -4368,7 +5428,7 @@ func (e BaseTextViewEl) OnTaskToggle(handler func(cx *gk.Cx, e TaskToggleEvent))
 
 // Apply a reusable text view plugin.
 //
-// Plugin is <gpui_kit::base::TextView>::plugin.
+// Plugin calls <gpui_kit::base::TextView>::plugin.
 func (e BaseTextViewEl) Plugin(plugin gk.MarkdownPluginAny) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 276)
 	switch x := plugin.(type) {
@@ -4395,7 +5455,7 @@ func (e BaseTextViewEl) Plugin(plugin gk.MarkdownPluginAny) BaseTextViewEl {
 // The TextView will expand to fit all content, no scrollbar. This mode is suitable for small
 // content, such as a few lines of text, a label, etc.
 //
-// Scrollable is <gpui_kit::base::TextView>::scrollable.
+// Scrollable calls <gpui_kit::base::TextView>::scrollable.
 func (e BaseTextViewEl) Scrollable(scrollable bool) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Bool(scrollable)
@@ -4408,7 +5468,7 @@ func (e BaseTextViewEl) Scrollable(scrollable bool) BaseTextViewEl {
 // `.cursor_default()`, replaces it: use that for text on a surface that opens on click. Links keep
 // the pointing hand, and the I-beam still shows while a drag selection is in progress.
 //
-// Selectable is <gpui_kit::base::TextView>::selectable.
+// Selectable calls <gpui_kit::base::TextView>::selectable.
 func (e BaseTextViewEl) Selectable(selectable bool) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.Bool(selectable)
@@ -4420,7 +5480,7 @@ func (e BaseTextViewEl) Selectable(selectable bool) BaseTextViewEl {
 // With `Source`, selecting inside `**bold**` yields `**bold**` (the Markdown source) rather than
 // `bold`.
 //
-// SelectionFormat is <gpui_kit::base::TextView>::selection_format.
+// SelectionFormat calls <gpui_kit::base::TextView>::selection_format.
 func (e BaseTextViewEl) SelectionFormat(selectionFormat SelectionFormat) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U16(uint16(selectionFormat))
@@ -4429,7 +5489,7 @@ func (e BaseTextViewEl) SelectionFormat(selectionFormat SelectionFormat) BaseTex
 
 // Set `BaseTextViewStyle`.
 //
-// Style is <gpui_kit::base::TextView>::style.
+// Style calls <gpui_kit::base::TextView>::style.
 func (e BaseTextViewEl) Style(style BaseTextViewStyle) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -4440,7 +5500,7 @@ func (e BaseTextViewEl) Style(style BaseTextViewStyle) BaseTextViewEl {
 //
 // The closure receives the `TableData`, and returns an element to display.
 //
-// TableActions is <gpui_kit::base::TextView>::table_actions.
+// TableActions calls <gpui_kit::base::TextView>::table_actions.
 func (e BaseTextViewEl) TableActions(f gk.RowSource) BaseTextViewEl {
 	o := rt.Op(rt.N(e.Core), 274)
 	o.U64(rt.ItemsCheck(f, 10))
@@ -4448,12 +5508,16 @@ func (e BaseTextViewEl) TableActions(f gk.RowSource) BaseTextViewEl {
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTextViewEl) BorderE(width gk.Length) BaseTextViewEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTextViewEl) BorderS(width gk.Length) BaseTextViewEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4461,133 +5525,175 @@ func (e BaseTextViewEl) BorderS(width gk.Length) BaseTextViewEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTextViewEl) FlexRowDir() BaseTextViewEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTextViewEl) InsetE(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTextViewEl) InsetS(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTextViewEl) JustifyFlexEnd() BaseTextViewEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTextViewEl) JustifyFlexStart() BaseTextViewEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTextViewEl) Me(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTextViewEl) Ms(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTextViewEl) Pe(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTextViewEl) Ps(length gk.Length) BaseTextViewEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTextViewEl) RoundedE(radius gk.Length) BaseTextViewEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTextViewEl) RoundedS(radius gk.Length) BaseTextViewEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTextViewEl) TextEnd() BaseTextViewEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTextViewEl) TextStart() BaseTextViewEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTextViewEl) CornerRadii(radius gk.Corners) BaseTextViewEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTextViewEl) DebugBlue() BaseTextViewEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTextViewEl) DebugFocused(focusHandle gk.FocusHandle) BaseTextViewEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTextViewEl) DebugGreen() BaseTextViewEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTextViewEl) DebugPink() BaseTextViewEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTextViewEl) DebugRed() BaseTextViewEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTextViewEl) DebugYellow() BaseTextViewEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTextViewEl) FontBlack() BaseTextViewEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTextViewEl) FontBold() BaseTextViewEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTextViewEl) FontExtrabold() BaseTextViewEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTextViewEl) FontExtralight() BaseTextViewEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTextViewEl) FontLight() BaseTextViewEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTextViewEl) FontMedium() BaseTextViewEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTextViewEl) FontNormal() BaseTextViewEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTextViewEl) FontSemibold() BaseTextViewEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTextViewEl) FontThin() BaseTextViewEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4596,18 +5702,23 @@ func (e BaseTextViewEl) FontThin() BaseTextViewEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTextViewEl) HFlex() BaseTextViewEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTextViewEl) Margins(margins gk.EdgesInto) BaseTextViewEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTextViewEl) Paddings(paddings gk.EdgesInto) BaseTextViewEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTextViewEl) RefineStyle(style gk.StyleRefinement) BaseTextViewEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4617,18 +5728,26 @@ func (e BaseTextViewEl) RefineStyle(style gk.StyleRefinement) BaseTextViewEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTextViewEl) VFlex() BaseTextViewEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTextViewEl) AspectRatio(ratio float32) BaseTextViewEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTextViewEl) Bg(fill gk.Fill) BaseTextViewEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTextViewEl) Border(length gk.Length) BaseTextViewEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4636,12 +5755,16 @@ func (e BaseTextViewEl) Border(length gk.Length) BaseTextViewEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTextViewEl) BorderB(length gk.Length) BaseTextViewEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTextViewEl) BorderColor(borderColor gk.Color) BaseTextViewEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4649,6 +5772,8 @@ func (e BaseTextViewEl) BorderColor(borderColor gk.Color) BaseTextViewEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTextViewEl) BorderL(length gk.Length) BaseTextViewEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4656,6 +5781,8 @@ func (e BaseTextViewEl) BorderL(length gk.Length) BaseTextViewEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTextViewEl) BorderR(length gk.Length) BaseTextViewEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4663,6 +5790,8 @@ func (e BaseTextViewEl) BorderR(length gk.Length) BaseTextViewEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTextViewEl) BorderT(length gk.Length) BaseTextViewEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4670,6 +5799,8 @@ func (e BaseTextViewEl) BorderT(length gk.Length) BaseTextViewEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTextViewEl) BorderX(length gk.Length) BaseTextViewEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4677,6 +5808,8 @@ func (e BaseTextViewEl) BorderX(length gk.Length) BaseTextViewEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTextViewEl) BorderY(length gk.Length) BaseTextViewEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4684,27 +5817,37 @@ func (e BaseTextViewEl) BorderY(length gk.Length) BaseTextViewEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTextViewEl) Bottom(length gk.Length) BaseTextViewEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTextViewEl) ColEnd(end int16) BaseTextViewEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTextViewEl) ColSpan(span uint16) BaseTextViewEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTextViewEl) ColStart(start int16) BaseTextViewEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTextViewEl) Cursor(cursor gk.CursorStyle) BaseTextViewEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4712,33 +5855,45 @@ func (e BaseTextViewEl) Cursor(cursor gk.CursorStyle) BaseTextViewEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTextViewEl) FlexBasis(basis gk.Length) BaseTextViewEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTextViewEl) FlexGrow(grow float32) BaseTextViewEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTextViewEl) FlexShrink(shrink float32) BaseTextViewEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTextViewEl) Font(font gk.Font) BaseTextViewEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTextViewEl) FontFamily(familyName string) BaseTextViewEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTextViewEl) FontFeatures(features gk.FontFeatures) BaseTextViewEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4747,12 +5902,16 @@ func (e BaseTextViewEl) FontFeatures(features gk.FontFeatures) BaseTextViewEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTextViewEl) FontWeight(weight gk.FontWeight) BaseTextViewEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTextViewEl) Gap(length gk.Length) BaseTextViewEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4760,6 +5919,8 @@ func (e BaseTextViewEl) Gap(length gk.Length) BaseTextViewEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTextViewEl) GapX(length gk.Length) BaseTextViewEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4767,18 +5928,24 @@ func (e BaseTextViewEl) GapX(length gk.Length) BaseTextViewEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTextViewEl) GapY(length gk.Length) BaseTextViewEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTextViewEl) GridCols(cols uint16) BaseTextViewEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTextViewEl) GridColsMaxContent(cols uint16) BaseTextViewEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4786,18 +5953,24 @@ func (e BaseTextViewEl) GridColsMaxContent(cols uint16) BaseTextViewEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTextViewEl) GridColsMinContent(cols uint16) BaseTextViewEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTextViewEl) GridRows(rows uint16) BaseTextViewEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTextViewEl) GridRowsMaxContent(rows uint16) BaseTextViewEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4805,16 +5978,22 @@ func (e BaseTextViewEl) GridRowsMaxContent(rows uint16) BaseTextViewEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTextViewEl) GridRowsMinContent(rows uint16) BaseTextViewEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTextViewEl) H(length gk.Length) BaseTextViewEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTextViewEl) Inset(length gk.Length) BaseTextViewEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4822,6 +6001,8 @@ func (e BaseTextViewEl) Inset(length gk.Length) BaseTextViewEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTextViewEl) Left(length gk.Length) BaseTextViewEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4829,33 +6010,45 @@ func (e BaseTextViewEl) Left(length gk.Length) BaseTextViewEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTextViewEl) LineClamp(lines int) BaseTextViewEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTextViewEl) LineHeight(lineHeight gk.Length) BaseTextViewEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTextViewEl) M(length gk.Length) BaseTextViewEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTextViewEl) MaxH(length gk.Length) BaseTextViewEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTextViewEl) MaxSize(length gk.Length) BaseTextViewEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTextViewEl) MaxW(length gk.Length) BaseTextViewEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4863,24 +6056,32 @@ func (e BaseTextViewEl) MaxW(length gk.Length) BaseTextViewEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTextViewEl) Mb(length gk.Length) BaseTextViewEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTextViewEl) MinH(length gk.Length) BaseTextViewEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTextViewEl) MinSize(length gk.Length) BaseTextViewEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTextViewEl) MinW(length gk.Length) BaseTextViewEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4888,6 +6089,8 @@ func (e BaseTextViewEl) MinW(length gk.Length) BaseTextViewEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTextViewEl) Ml(length gk.Length) BaseTextViewEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4895,6 +6098,8 @@ func (e BaseTextViewEl) Ml(length gk.Length) BaseTextViewEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTextViewEl) Mr(length gk.Length) BaseTextViewEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4902,6 +6107,8 @@ func (e BaseTextViewEl) Mr(length gk.Length) BaseTextViewEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTextViewEl) Mt(length gk.Length) BaseTextViewEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4909,6 +6116,8 @@ func (e BaseTextViewEl) Mt(length gk.Length) BaseTextViewEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTextViewEl) Mx(length gk.Length) BaseTextViewEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4916,22 +6125,30 @@ func (e BaseTextViewEl) Mx(length gk.Length) BaseTextViewEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTextViewEl) My(length gk.Length) BaseTextViewEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTextViewEl) Opacity(opacity float32) BaseTextViewEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTextViewEl) P(length gk.Length) BaseTextViewEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTextViewEl) Pb(length gk.Length) BaseTextViewEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4939,6 +6156,8 @@ func (e BaseTextViewEl) Pb(length gk.Length) BaseTextViewEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTextViewEl) Pl(length gk.Length) BaseTextViewEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4946,6 +6165,8 @@ func (e BaseTextViewEl) Pl(length gk.Length) BaseTextViewEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTextViewEl) Pr(length gk.Length) BaseTextViewEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4953,6 +6174,8 @@ func (e BaseTextViewEl) Pr(length gk.Length) BaseTextViewEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTextViewEl) Pt(length gk.Length) BaseTextViewEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4960,6 +6183,8 @@ func (e BaseTextViewEl) Pt(length gk.Length) BaseTextViewEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTextViewEl) Px(length gk.Length) BaseTextViewEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4967,6 +6192,8 @@ func (e BaseTextViewEl) Px(length gk.Length) BaseTextViewEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTextViewEl) Py(length gk.Length) BaseTextViewEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4974,12 +6201,16 @@ func (e BaseTextViewEl) Py(length gk.Length) BaseTextViewEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTextViewEl) Right(length gk.Length) BaseTextViewEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTextViewEl) Rounded(length gk.Length) BaseTextViewEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4987,6 +6218,8 @@ func (e BaseTextViewEl) Rounded(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTextViewEl) RoundedB(length gk.Length) BaseTextViewEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4994,6 +6227,8 @@ func (e BaseTextViewEl) RoundedB(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTextViewEl) RoundedBl(length gk.Length) BaseTextViewEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5001,6 +6236,8 @@ func (e BaseTextViewEl) RoundedBl(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTextViewEl) RoundedBr(length gk.Length) BaseTextViewEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5008,6 +6245,8 @@ func (e BaseTextViewEl) RoundedBr(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTextViewEl) RoundedL(length gk.Length) BaseTextViewEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5015,6 +6254,8 @@ func (e BaseTextViewEl) RoundedL(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTextViewEl) RoundedR(length gk.Length) BaseTextViewEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5022,6 +6263,8 @@ func (e BaseTextViewEl) RoundedR(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTextViewEl) RoundedT(length gk.Length) BaseTextViewEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5029,6 +6272,8 @@ func (e BaseTextViewEl) RoundedT(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTextViewEl) RoundedTl(length gk.Length) BaseTextViewEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5036,21 +6281,29 @@ func (e BaseTextViewEl) RoundedTl(length gk.Length) BaseTextViewEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTextViewEl) RoundedTr(length gk.Length) BaseTextViewEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTextViewEl) RowEnd(end int16) BaseTextViewEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTextViewEl) RowSpan(span uint16) BaseTextViewEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTextViewEl) RowStart(start int16) BaseTextViewEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5060,24 +6313,32 @@ func (e BaseTextViewEl) RowStart(start int16) BaseTextViewEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTextViewEl) ScrollbarWidth(width gk.Length) BaseTextViewEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTextViewEl) Shadow(shadows []gk.BoxShadow) BaseTextViewEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTextViewEl) Size(length gk.Length) BaseTextViewEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTextViewEl) TextAlign(align gk.TextAlign) BaseTextViewEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5086,23 +6347,31 @@ func (e BaseTextViewEl) TextAlign(align gk.TextAlign) BaseTextViewEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTextViewEl) TextBg(bg gk.Color) BaseTextViewEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTextViewEl) TextColor(color gk.Color) BaseTextViewEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTextViewEl) TextDecorationColor(color gk.Color) BaseTextViewEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTextViewEl) TextOverflow(overflow gk.TextOverflow) BaseTextViewEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5111,6 +6380,8 @@ func (e BaseTextViewEl) TextOverflow(overflow gk.TextOverflow) BaseTextViewEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTextViewEl) TextSize(size gk.Length) BaseTextViewEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5118,18 +6389,22 @@ func (e BaseTextViewEl) TextSize(size gk.Length) BaseTextViewEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTextViewEl) Top(length gk.Length) BaseTextViewEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTextViewEl) W(length gk.Length) BaseTextViewEl { tStyledW(rt.N(e.Core), length); return e }
 
 // TextViewMotion is gpui_kit::base::TextViewMotion.
 type TextViewMotion struct{ rt.Val }
 
-// NewTextViewMotionDefault is <gpui_kit::base::TextViewMotion as Default>::default.
+// NewTextViewMotionDefault calls <gpui_kit::base::TextViewMotion as Default>::default.
 func NewTextViewMotionDefault() TextViewMotion {
 	n := rt.NewValue(411)
 	return TextViewMotion{Val: rt.MkVal(n)}
@@ -5137,7 +6412,7 @@ func NewTextViewMotionDefault() TextViewMotion {
 
 // How long the text an update appends takes to reach full color.
 //
-// WithStreamFade is <gpui_kit::base::TextViewMotion>::with_stream_fade.
+// WithStreamFade calls <gpui_kit::base::TextViewMotion>::with_stream_fade.
 func (e TextViewMotion) WithStreamFade(duration time.Duration) TextViewMotion {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutMs(o, duration)
@@ -5146,7 +6421,7 @@ func (e TextViewMotion) WithStreamFade(duration time.Duration) TextViewMotion {
 
 // The curve the appended text fades in along.
 //
-// WithStreamFadeEasing is <gpui_kit::base::TextViewMotion>::with_stream_fade_easing.
+// WithStreamFadeEasing calls <gpui_kit::base::TextViewMotion>::with_stream_fade_easing.
 func (e TextViewMotion) WithStreamFadeEasing(easing gk.Easing) TextViewMotion {
 	o := rt.Op(rt.N(e.Core), 257)
 	putEasing(o, easing)
@@ -5157,7 +6432,7 @@ func (e TextViewMotion) WithStreamFadeEasing(easing gk.Easing) TextViewMotion {
 // the update as one chunk. A long update is compressed so its last word starts within one
 // `stream_fade`.
 //
-// WithStreamFadeStagger is <gpui_kit::base::TextViewMotion>::with_stream_fade_stagger.
+// WithStreamFadeStagger calls <gpui_kit::base::TextViewMotion>::with_stream_fade_stagger.
 func (e TextViewMotion) WithStreamFadeStagger(stagger time.Duration) TextViewMotion {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutMs(o, stagger)
@@ -5167,7 +6442,7 @@ func (e TextViewMotion) WithStreamFadeStagger(stagger time.Duration) TextViewMot
 // BaseTextViewStyle is gpui_kit::base::TextViewStyle.
 type BaseTextViewStyle struct{ rt.Val }
 
-// NewBaseTextViewStyleDefault is <gpui_kit::base::TextViewStyle as Default>::default.
+// NewBaseTextViewStyleDefault calls <gpui_kit::base::TextViewStyle as Default>::default.
 func NewBaseTextViewStyleDefault() BaseTextViewStyle {
 	n := rt.NewValue(412)
 	return BaseTextViewStyle{Val: rt.MkVal(n)}
@@ -5175,7 +6450,7 @@ func NewBaseTextViewStyleDefault() BaseTextViewStyle {
 
 // Derives rich-text colors from Base semantic theme tokens.
 //
-// NewBaseTextViewStyleFromTheme is <gpui_kit::base::TextViewStyle>::from_theme.
+// NewBaseTextViewStyleFromTheme calls <gpui_kit::base::TextViewStyle>::from_theme.
 func NewBaseTextViewStyleFromTheme(theme gk.BaseTheme) BaseTextViewStyle {
 	n := rt.NewValue(824)
 	o := rt.NodeArgs(n)
@@ -5192,7 +6467,7 @@ func NewBaseTextViewStyleFromTheme(theme gk.BaseTheme) BaseTextViewStyle {
 // properties keep the existing defaults, and explicit refinements also take precedence on inverted
 // surfaces.
 //
-// WithBlockquoteStyle is <gpui_kit::base::TextViewStyle>::with_blockquote_style.
+// WithBlockquoteStyle calls <gpui_kit::base::TextViewStyle>::with_blockquote_style.
 func (e BaseTextViewStyle) WithBlockquoteStyle(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5201,7 +6476,7 @@ func (e BaseTextViewStyle) WithBlockquoteStyle(style gk.StyleRefinement) BaseTex
 
 // Sets the color of borders and horizontal rules.
 //
-// WithBorder is <gpui_kit::base::TextViewStyle>::with_border.
+// WithBorder calls <gpui_kit::base::TextViewStyle>::with_border.
 func (e BaseTextViewStyle) WithBorder(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -5210,7 +6485,7 @@ func (e BaseTextViewStyle) WithBorder(color gk.Color) BaseTextViewStyle {
 
 // Sets the background of fenced code blocks and table header rows.
 //
-// WithCodeBackground is <gpui_kit::base::TextViewStyle>::with_code_background.
+// WithCodeBackground calls <gpui_kit::base::TextViewStyle>::with_code_background.
 func (e BaseTextViewStyle) WithCodeBackground(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutColor(o, color)
@@ -5223,7 +6498,7 @@ func (e BaseTextViewStyle) WithCodeBackground(color gk.Color) BaseTextViewStyle 
 // block: it gets its own scrollbar, and wheel input over it no longer scrolls an ancestor list
 // until the code reaches its edge.
 //
-// WithCodeBlock is <gpui_kit::base::TextViewStyle>::with_code_block.
+// WithCodeBlock calls <gpui_kit::base::TextViewStyle>::with_code_block.
 func (e BaseTextViewStyle) WithCodeBlock(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5232,7 +6507,7 @@ func (e BaseTextViewStyle) WithCodeBlock(style gk.StyleRefinement) BaseTextViewS
 
 // Sets whether content-specific assets should use their dark variant.
 //
-// WithDark is <gpui_kit::base::TextViewStyle>::with_dark.
+// WithDark calls <gpui_kit::base::TextViewStyle>::with_dark.
 func (e BaseTextViewStyle) WithDark(isDark bool) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(isDark)
@@ -5241,7 +6516,7 @@ func (e BaseTextViewStyle) WithDark(isDark bool) BaseTextViewStyle {
 
 // Sets the default body-text color.
 //
-// WithForeground is <gpui_kit::base::TextViewStyle>::with_foreground.
+// WithForeground calls <gpui_kit::base::TextViewStyle>::with_foreground.
 func (e BaseTextViewStyle) WithForeground(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutColor(o, color)
@@ -5250,7 +6525,7 @@ func (e BaseTextViewStyle) WithForeground(color gk.Color) BaseTextViewStyle {
 
 // Sets the style refinement for headings, selected by heading level (1-6).
 //
-// WithHeading is <gpui_kit::base::TextViewStyle>::with_heading.
+// WithHeading calls <gpui_kit::base::TextViewStyle>::with_heading.
 func (e BaseTextViewStyle) WithHeading(heading []gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.U32(uint32(len(heading)))
@@ -5265,7 +6540,7 @@ func (e BaseTextViewStyle) WithHeading(heading []gk.StyleRefinement) BaseTextVie
 // When `background_color` is `None`, the neutral code background is used, which keeps `default`
 // usable without a theme.
 //
-// WithInlineCode is <gpui_kit::base::TextViewStyle>::with_inline_code.
+// WithInlineCode calls <gpui_kit::base::TextViewStyle>::with_inline_code.
 func (e BaseTextViewStyle) WithInlineCode(style gk.HighlightStyle) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 262)
 	putHighlightStyle(o, style)
@@ -5281,7 +6556,7 @@ func (e BaseTextViewStyle) WithInlineCode(style gk.HighlightStyle) BaseTextViewS
 // Line height remains owned by the paragraph. Non-finite or non-positive font sizes are ignored.
 // Explicit refinements also take precedence on inverted surfaces.
 //
-// WithInlineCodeStyle is <gpui_kit::base::TextViewStyle>::with_inline_code_style.
+// WithInlineCodeStyle calls <gpui_kit::base::TextViewStyle>::with_inline_code_style.
 func (e BaseTextViewStyle) WithInlineCodeStyle(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5290,7 +6565,7 @@ func (e BaseTextViewStyle) WithInlineCodeStyle(style gk.StyleRefinement) BaseTex
 
 // Sets the link text color.
 //
-// WithLink is <gpui_kit::base::TextViewStyle>::with_link.
+// WithLink calls <gpui_kit::base::TextViewStyle>::with_link.
 func (e BaseTextViewStyle) WithLink(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 264)
 	rt.PutColor(o, color)
@@ -5306,7 +6581,7 @@ func (e BaseTextViewStyle) WithLink(color gk.Color) BaseTextViewStyle {
 // properties keep the existing defaults, and explicit refinements also take precedence on inverted
 // surfaces.
 //
-// WithListStyle is <gpui_kit::base::TextViewStyle>::with_list_style.
+// WithListStyle calls <gpui_kit::base::TextViewStyle>::with_list_style.
 func (e BaseTextViewStyle) WithListStyle(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5315,7 +6590,7 @@ func (e BaseTextViewStyle) WithListStyle(style gk.StyleRefinement) BaseTextViewS
 
 // Sets the secondary text color.
 //
-// WithMutedForeground is <gpui_kit::base::TextViewStyle>::with_muted_foreground.
+// WithMutedForeground calls <gpui_kit::base::TextViewStyle>::with_muted_foreground.
 func (e BaseTextViewStyle) WithMutedForeground(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 266)
 	rt.PutColor(o, color)
@@ -5324,7 +6599,7 @@ func (e BaseTextViewStyle) WithMutedForeground(color gk.Color) BaseTextViewStyle
 
 // Sets the gap between paragraphs. Defaults to 0.75 rem.
 //
-// WithParagraphGap is <gpui_kit::base::TextViewStyle>::with_paragraph_gap.
+// WithParagraphGap calls <gpui_kit::base::TextViewStyle>::with_paragraph_gap.
 func (e BaseTextViewStyle) WithParagraphGap(gap float32) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.F32(gap)
@@ -5336,7 +6611,7 @@ func (e BaseTextViewStyle) WithParagraphGap(gap float32) BaseTextViewStyle {
 // Selection quads are painted under the glyphs, so this is normally a translucent wash rather than
 // a solid fill.
 //
-// WithSelection is <gpui_kit::base::TextViewStyle>::with_selection.
+// WithSelection calls <gpui_kit::base::TextViewStyle>::with_selection.
 func (e BaseTextViewStyle) WithSelection(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 268)
 	rt.PutColor(o, color)
@@ -5350,7 +6625,7 @@ func (e BaseTextViewStyle) WithSelection(color gk.Color) BaseTextViewStyle {
 // when space allows, shrink (wrapping cell text) down to a per-column floor when the frame is
 // narrower, and below that the table scrolls horizontally instead of squeezing further.
 //
-// WithTable is <gpui_kit::base::TextViewStyle>::with_table.
+// WithTable calls <gpui_kit::base::TextViewStyle>::with_table.
 func (e BaseTextViewStyle) WithTable(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5359,10 +6634,10 @@ func (e BaseTextViewStyle) WithTable(style gk.StyleRefinement) BaseTextViewStyle
 
 // Sets the style refinement for each table cell.
 //
-// With the scroll table layout, `white_space: nowrap` here keeps cells on a single line — columns
+// With the scroll table layout, `white_space: nowrap` here keeps cells on a single line - columns
 // then never shrink and the table scrolls as soon as the content is wider than the frame.
 //
-// WithTableCell is <gpui_kit::base::TextViewStyle>::with_table_cell.
+// WithTableCell calls <gpui_kit::base::TextViewStyle>::with_table_cell.
 func (e BaseTextViewStyle) WithTableCell(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5372,7 +6647,7 @@ func (e BaseTextViewStyle) WithTableCell(style gk.StyleRefinement) BaseTextViewS
 // Sets the style refinement for the header row (the first row) of a table, applied on top of the
 // header background and foreground.
 //
-// WithTableHead is <gpui_kit::base::TextViewStyle>::with_table_head.
+// WithTableHead calls <gpui_kit::base::TextViewStyle>::with_table_head.
 func (e BaseTextViewStyle) WithTableHead(style gk.StyleRefinement) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5383,7 +6658,7 @@ func (e BaseTextViewStyle) WithTableHead(style gk.StyleRefinement) BaseTextViewS
 //
 // The header row does not highlight. Without this, table rows have no hover highlight.
 //
-// WithTableRowHover is <gpui_kit::base::TextViewStyle>::with_table_row_hover.
+// WithTableRowHover calls <gpui_kit::base::TextViewStyle>::with_table_row_hover.
 func (e BaseTextViewStyle) WithTableRowHover(color gk.Color) BaseTextViewStyle {
 	o := rt.Op(rt.N(e.Core), 272)
 	rt.PutColor(o, color)
@@ -5393,7 +6668,7 @@ func (e BaseTextViewStyle) WithTableRowHover(color gk.Color) BaseTextViewStyle {
 // BaseTextareaEl is gpui_kit::base::Textarea.
 type BaseTextareaEl struct{ rt.El }
 
-// BaseTextarea is <gpui_kit::base::Textarea>::new.
+// BaseTextarea calls <gpui_kit::base::Textarea>::new.
 func BaseTextarea(state TextareaState) BaseTextareaEl {
 	rt.UseBaseInput()
 	n := rt.NewNode(413)
@@ -5404,7 +6679,7 @@ func BaseTextarea(state TextareaState) BaseTextareaEl {
 
 // Open a reference after a completed, unconsumed token click.
 //
-// OnTokenClick is <gpui_kit::base::Textarea>::on_token_click.
+// OnTokenClick calls <gpui_kit::base::Textarea>::on_token_click.
 func (e BaseTextareaEl) OnTokenClick(listener func(cx *gk.Cx, e InlineTokenClickEvent)) BaseTextareaEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Register(listener, 106))
@@ -5413,7 +6688,7 @@ func (e BaseTextareaEl) OnTokenClick(listener func(cx *gk.Cx, e InlineTokenClick
 
 // Report pointer presence over a token; hover never selects or edits.
 //
-// OnTokenHover is <gpui_kit::base::Textarea>::on_token_hover.
+// OnTokenHover calls <gpui_kit::base::Textarea>::on_token_hover.
 func (e BaseTextareaEl) OnTokenHover(listener func(cx *gk.Cx, e InlineTokenHoverEvent)) BaseTextareaEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Register(listener, 107))
@@ -5422,7 +6697,7 @@ func (e BaseTextareaEl) OnTokenHover(listener func(cx *gk.Cx, e InlineTokenHover
 
 // The element each atomic token renders as; the input keeps editing and history.
 //
-// Token is <gpui_kit::base::Textarea>::token.
+// Token calls <gpui_kit::base::Textarea>::token.
 func (e BaseTextareaEl) Token(render gk.RowSource) BaseTextareaEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(rt.ItemsCheck(render, 4))
@@ -5432,7 +6707,7 @@ func (e BaseTextareaEl) Token(render gk.RowSource) BaseTextareaEl {
 // TouchHandleLayout is gpui_kit::base::TouchHandleLayout.
 type TouchHandleLayout struct{ rt.Val }
 
-// NewTouchHandleLayoutDefault is <gpui_kit::base::TouchHandleLayout as Default>::default.
+// NewTouchHandleLayoutDefault calls <gpui_kit::base::TouchHandleLayout as Default>::default.
 func NewTouchHandleLayoutDefault() TouchHandleLayout {
 	n := rt.NewValue(424)
 	return TouchHandleLayout{Val: rt.MkVal(n)}

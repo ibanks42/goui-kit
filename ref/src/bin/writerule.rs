@@ -1,14 +1,9 @@
-//! ref-writerule: the Rust reference of the write-rule case (DESIGN.md section 7, "When a
-//! write lands"; docs/PROTOCOLS.md section 3). Before every frame the app writes the frame's
-//! number into an input's state; a second view echoes the input's value. In Rust the write is
-//! on screen in the frame it was made in: the input and the echo show the same number in every
-//! image. The Go twin (examples/go/writerule) makes the write from a per-frame handler and
-//! must produce the same images, frame for frame (gates/pixels.sh writerule).
+//! Pure-Rust per-frame state-mutation reference app.
 //!
-//! The echo view is never notified by the app: it is built again only because it read the
-//! state that was written.
-//!
-//!   ref-writerule --script FILE   offscreen, driven by a gk-meter script (diag build)
+//! Updates an `InputState` on every `window.on_next_frame` callback while a
+//! sibling `Echo` view reads that value, verifying that writes made during
+//! frame callbacks propagate cleanly to dependent views without extra latency.
+
 use gpui_kit::component::input::{Input, InputState};
 use gpui_kit::component::label::Label;
 use gpui_kit::component::{ActiveTheme, h_flex, v_flex};
@@ -44,7 +39,7 @@ impl Render for Echo {
     }
 }
 
-/// Before every frame: write the frame's number into the input, and ask again.
+/// Schedules a repeating next-frame callback that writes `"frame N"` into `name`.
 fn arm(name: Entity<InputState>, frame: usize, window: &mut Window) {
     window.on_next_frame(move |window, cx| {
         let text = format!("frame {frame}");

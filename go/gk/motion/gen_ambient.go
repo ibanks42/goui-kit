@@ -9,9 +9,9 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// Cubic ease-in — slow start, fast end. Good for exit animations.
+// Cubic ease-in - slow start, fast end. Good for exit animations.
 //
-// BaseEaseInCubic is gpui_kit::base::animation::ease_in_cubic.
+// BaseEaseInCubic calls gpui_kit::base::animation::ease_in_cubic.
 func BaseEaseInCubic(cx *gk.Cx, t float32) float32 {
 	rt.UseBaseAnimation()
 	o := rt.NewReq(723)
@@ -20,9 +20,9 @@ func BaseEaseInCubic(cx *gk.Cx, t float32) float32 {
 	return r.F32()
 }
 
-// Cubic ease-in-out — slow start and end. Good for position transitions.
+// Cubic ease-in-out - slow start and end. Good for position transitions.
 //
-// BaseEaseInOutCubic is gpui_kit::base::animation::ease_in_out_cubic.
+// BaseEaseInOutCubic calls gpui_kit::base::animation::ease_in_out_cubic.
 func BaseEaseInOutCubic(cx *gk.Cx, t float32) float32 {
 	rt.UseBaseAnimation()
 	o := rt.NewReq(724)
@@ -31,9 +31,9 @@ func BaseEaseInOutCubic(cx *gk.Cx, t float32) float32 {
 	return r.F32()
 }
 
-// Cubic ease-out — fast start, slow end. Good for enter animations.
+// Cubic ease-out - fast start, slow end. Good for enter animations.
 //
-// BaseEaseOutCubic is gpui_kit::base::animation::ease_out_cubic.
+// BaseEaseOutCubic calls gpui_kit::base::animation::ease_out_cubic.
 func BaseEaseOutCubic(cx *gk.Cx, t float32) float32 {
 	rt.UseBaseAnimation()
 	o := rt.NewReq(725)
@@ -45,7 +45,7 @@ func BaseEaseOutCubic(cx *gk.Cx, t float32) float32 {
 // Whether scroll areas bounce on this platform unless told otherwise: on iOS, Android and macOS,
 // whose own scroll views do.
 //
-// BaseEnabledByDefault is gpui_kit::base::ScrollBounce::enabled_by_default.
+// BaseEnabledByDefault calls gpui_kit::base::ScrollBounce::enabled_by_default.
 func BaseEnabledByDefault(cx *gk.Cx) bool {
 	rt.UseBaseScrollBounce()
 	o := rt.NewReq(1175)
@@ -53,7 +53,7 @@ func BaseEnabledByDefault(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// BaseTimingSample is (|value: gpui_kit::base::Timing, elapsed| <gpui_kit::base::Timing>::sample(&value, elapsed)).
+// BaseTimingSample calls (|value: gpui_kit::base::Timing, elapsed| <gpui_kit::base::Timing>::sample(&value, elapsed)).
 func BaseTimingSample(cx *gk.Cx, value Timing, elapsed time.Duration) TimingSample {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1656)

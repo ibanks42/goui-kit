@@ -1,10 +1,6 @@
-// app: the protocol tests of the app family (docs/PROTOCOLS.md section 11), the port of
-// core/tests/app: actions and key bindings dispatched to Go handlers, timers between frames,
-// several windows, the clipboard. Each mode runs offscreen (the diag library) under a gk-meter
-// script and prints lines that core/tests/go/run-app.sh checks, with the exit code.
-//
-//	GK_PROTO=actions | timers | windows | clipboard | ambient | builtin-app-listener | bad-keys |
-//	         builtin-on-action | close-veto | quit-hook | reduce-motion | window-icon | bad-icon
+// Command app exercises app-level gk protocol features selected by GK_PROTO:
+// custom/builtin actions, keybindings, timers, multi-window lifecycle,
+// clipboard, ambient getters, close vetoes, quit hooks, reduce-motion, and icons.
 package main
 
 import (
@@ -23,6 +19,7 @@ import (
 
 const ms = time.Millisecond
 
+// App holds test state shared across all modes of the app protocol binary.
 type App struct {
 	mode    string
 	root    gk.View
@@ -35,18 +32,18 @@ type App struct {
 	saves   int
 	others  int
 	cancels int
-	// timers
+
 	once      int
 	ticks     int
 	never     int
 	ticker    gk.Timer
 	described int
-	// windows
+
 	second  gk.Window
 	secondV gk.View
 	closed  int
 	frame   int
-	// window close, quit, motion, icon and app id (PROTOCOLS.md 11.38)
+
 	allow  bool
 	asked  int
 	veto   gk.ActionListener
@@ -54,40 +51,50 @@ type App struct {
 	motion [3]bool
 }
 
-// A 2 x 2 PNG (red and green), a window's icon.
+// Minimal 2x2 RGBA PNG fixture used by the `window-icon` mode.
 var iconPNG = []byte{137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 2, 0, 0, 0, 2, 8, 6, 0, 0, 0, 114, 182, 13, 36, 0, 0, 0, 16, 73, 68, 65, 84, 120, 156, 99, 248, 207, 192, 240, 31, 10, 33, 20, 0, 69, 204, 7, 249, 102, 203, 255, 57, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130}
 
-// --- actions ------------------------------------------------------------------------------------
-
+// saved verifies the save action identity, bound keystroke lookup, and action
+// availability; on the first save it programmatically dispatches a.other so the
+// app-wide listener proves both keystroke and imperative dispatch work.
 func (a *App) saved(cx *gk.Cx, act gk.Action) {
 	a.saves++
 	keys, has := gk.Keystrokes(cx, a.save, "")
 	fmt.Printf("app saved n=%d action_ok=%v keys=%q has_keys=%v available=%v\n", a.saves, act == a.save, keys, has,
 		gk.ActionAvailable(cx, a.save))
 	if a.saves == 1 {
-		gk.DispatchAction(cx, a.other) // after this handler, as if ctrl-o had been pressed
+		gk.DispatchAction(cx, a.other)
 	}
 }
 
+// otherGlobal handles app-wide a.other dispatches and releases itself on the
+// second delivery so a third dispatch proves released listeners stop firing.
 func (a *App) otherGlobal(cx *gk.Cx, act gk.Action) {
 	a.others++
 	fmt.Printf("app other n=%d action_ok=%v\n", a.others, act == a.other)
 	if a.others == 2 {
-		gk.Release(cx, a.global) // the next ctrl-o reaches nobody
+		gk.Release(cx, a.global)
 		fmt.Println("app other released")
 	}
 }
 
+// cancelled confirms kit-owned built-in actions arrive via OnBoxedAction with
+// IsBuiltin()==true and matching action identity.
 func (a *App) cancelled(cx *gk.Cx, act gk.Action) {
 	a.cancels++
 	fmt.Printf("app cancel n=%d builtin=%v same=%v\n", a.cancels, act.IsBuiltin(), act == a.cancel)
 }
 
+// captured runs during the capture phase before bubble-phase OnAction so logs
+// prove capture fires ahead of saved without blocking propagation.
 func (a *App) captured(cx *gk.Cx, _ gk.Action) {
 	gk.Quiet(cx)
 	fmt.Println("app capture save")
 }
 
+// actionsInit proves NewAction deduplicates identical names, distinguishes
+// custom vs built-in actions, rejects built-in app listeners and malformed key
+// contexts in the misuse modes, and binds ctrl-s/ctrl-o/ctrl-x for `actions`.
 func (a *App) actionsInit(cx *gk.Cx) {
 	a.save = gk.NewAction(cx, "app::Save")
 	a.other = gk.NewAction(cx, "app::Other")
@@ -98,9 +105,9 @@ func (a *App) actionsInit(cx *gk.Cx) {
 		a.save.IsBuiltin(), a.cancel.IsBuiltin(), again == a.save, a.save != a.other)
 	switch a.mode {
 	case "builtin-app-listener":
-		gk.OnAppAction(cx, a.cancel, a.cancelled) // stops: app-wide listeners take app actions
+		gk.OnAppAction(cx, a.cancel, a.cancelled)
 	case "bad-keys":
-		gk.BindKeys(cx, gk.KeyBinding{Keys: "ctrl-b", Action: a.save, When: "Editor &&"}) // a context that does not parse: stops when applied
+		gk.BindKeys(cx, gk.KeyBinding{Keys: "ctrl-b", Action: a.save, When: "Editor &&"})
 	}
 	gk.BindKeys(cx, gk.KeyBinding{Keys: "ctrl-s", Action: a.save, When: "Editor"}, gk.KeyBinding{Keys: "ctrl-o", Action: a.other},
 		gk.KeyBinding{Keys: "ctrl-x", Action: a.cancel})
@@ -117,17 +124,15 @@ func (a *App) actionsView(cx *gk.Cx) gk.Element {
 		OnBoxedAction(a.cancel, a.cancelled).
 		Child(kit.Label(fmt.Sprintf("saves %d others %d cancels %d", a.saves, a.others, a.cancels)))
 	if a.mode == "builtin-on-action" {
-		root = root.OnAction(gk.Act(a.cancel, a.saved)) // stops: OnAction takes app actions
+		root = root.OnAction(gk.Act(a.cancel, a.saved))
 	}
 	return root
 }
 
-// --- timers -------------------------------------------------------------------------------------
-
 func (a *App) onceFired(cx *gk.Cx) {
 	a.once++
 	fmt.Printf("app timer once n=%d\n", a.once)
-	gk.Release(cx, gk.Timer{}) // nothing: a zero timer is no timer
+	gk.Release(cx, gk.Timer{})
 }
 
 func (a *App) tick(cx *gk.Cx) {
@@ -144,11 +149,14 @@ func (a *App) neverFired(cx *gk.Cx) {
 	fmt.Println("app timer never fired (wrong)")
 }
 
+// timersInit proves one-shot timers fire once (30ms), repeating timers tick
+// until released on tick 3 (20ms), and releasing a timer before its deadline
+// cancels it cleanly so neverFired stays at 0.
 func (a *App) timersInit(cx *gk.Cx) {
 	gk.After(cx, 30*ms, a.onceFired)
 	a.ticker = gk.Every(cx, 20*ms, a.tick)
 	t3 := gk.After(cx, 40*ms, a.neverFired)
-	gk.Release(cx, t3) // cancelled before it fires
+	gk.Release(cx, t3)
 }
 
 func (a *App) timersView(cx *gk.Cx) gk.Element {
@@ -156,8 +164,6 @@ func (a *App) timersView(cx *gk.Cx) gk.Element {
 	fmt.Printf("app timers view ticks=%d once=%d\n", a.ticks, a.once)
 	return gk.Div().Child(kit.Label(fmt.Sprintf("ticks %d", a.ticks)))
 }
-
-// --- windows ------------------------------------------------------------------------------------
 
 func (a *App) secondClosed(cx *gk.Cx, w gk.Window) {
 	a.closed++
@@ -191,20 +197,21 @@ func (a *App) secondView(cx *gk.Cx) gk.Element {
 
 func (a *App) openSecond(cx *gk.Cx) {
 	a.secondV = gk.NewView(nil, a.secondView)
-	// the kit's title bar options (TitleBar::window_options, PROTOCOLS.md 13.21) under the title the app gives
+
 	a.second = gk.OpenWindowWith(cx, gk.WindowConfig{Width: 300, Height: 200, Title: "Second", MinWidth: 100, MinHeight: 80, KitTitleBar: true}, a.secondV)
 	gk.OnWindowClosed(cx, a.second, a.secondClosed)
 	fmt.Printf("app windows opened n=%d\n", len(gk.Windows(cx)))
 }
 
+// windowsInit proves multi-window lifecycle ordering: open a second window
+// (count 1->2), read its title/size, close it so OnWindowClosed fires once
+// (count 2->1), rename the surviving window, and verify the updated title.
 func (a *App) windowsInit(cx *gk.Cx) {
 	gk.After(cx, 10*ms, a.openSecond)
 	gk.After(cx, 70*ms, a.closeSecond)
 	gk.After(cx, 160*ms, a.readFirst)
 	gk.After(cx, 260*ms, a.readTitle)
 }
-
-// --- the clipboard ---------------------------------------------------------------------------------
 
 func (a *App) clipWrite(cx *gk.Cx) {
 	gk.ClipboardWrite(cx, "hello gk")
@@ -215,26 +222,25 @@ func (a *App) clipRead(cx *gk.Cx) {
 	fmt.Printf("app clipboard read ok=%v text=%q\n", ok, text)
 }
 
+// clipboardInit proves ClipboardWrite followed by ClipboardRead round-trips the
+// exact string "hello gk" with ok=true.
 func (a *App) clipboardInit(cx *gk.Cx) {
 	gk.After(cx, 10*ms, a.clipWrite)
 	gk.After(cx, 60*ms, a.clipRead)
 }
 
-// --- ambient calls -------------------------------------------------------------------------------
-
+// runAmbient invokes every generated ambient getter and prints called vs want
+// so the runner confirms full coverage with no active dialog.
 func (a *App) runAmbient(cx *gk.Cx) {
-	n := ambientAll(a, cx) // gen_ambient.go: every ambient call once
+	n := ambientAll(a, cx)
 	fmt.Printf("app ambient called=%d want=%d dialog=%v\n", n, ambientCalls, overlay.HasActiveDialog(cx))
 }
 
 func (a *App) ambientView(cx *gk.Cx) gk.Element {
-	c := gk.Blue(cx, 500) // a call that returns a value may run in a view function
+	c := gk.Blue(cx, 500)
 	fmt.Printf("app ambient view blue=%v\n", c)
 	return gk.Div(s.SizeFull).Child(kit.Label("ambient"))
 }
-
-// --- PROTOCOLS.md 11.38: a window's close asked, the app's quit, reduced motion, a
-// window's icon and app id ----------------------------------------------------------------------------
 
 func (a *App) mayClose(cx *gk.Cx) bool {
 	a.asked++
@@ -242,23 +248,25 @@ func (a *App) mayClose(cx *gk.Cx) bool {
 	return a.allow
 }
 
-// saysYes: Go's types leave no handler without an answer; this one answers yes, which lets the
-// window close.
 func (a *App) saysYes(cx *gk.Cx) bool {
 	a.asked++
 	fmt.Printf("app asked by a second handler n=%d\n", a.asked)
 	return true
 }
 
+// vetoCheck proves OnWindowShouldClose blocks closing when returning false,
+// permits closing when returning true, stops firing after Release (so the third
+// check returns true without incrementing asked), and accepts a zero Window handle
+// to bind the active window.
 func (a *App) vetoCheck(cx *gk.Cx) {
 	w := gk.Windows(cx)[0]
 	a.veto = gk.OnWindowShouldClose(cx, w, a.mayClose)
-	first := gk.TestShouldClose(cx, w) // the handler says no
+	first := gk.TestShouldClose(cx, w)
 	a.allow = true
-	second := gk.TestShouldClose(cx, w) // now yes
+	second := gk.TestShouldClose(cx, w)
 	gk.Release(cx, a.veto)
-	third := gk.TestShouldClose(cx, w)                          // no handler: it closes
-	a.veto = gk.OnWindowShouldClose(cx, gk.Window{}, a.saysYes) // the turn's window
+	third := gk.TestShouldClose(cx, w)
+	a.veto = gk.OnWindowShouldClose(cx, gk.Window{}, a.saysYes)
 	fourth := gk.TestShouldClose(cx, w)
 	fmt.Printf("app should close first=%v second=%v third=%v fourth=%v asked=%d windows=%d\n", first, second, third, fourth,
 		a.asked, len(gk.Windows(cx)))
@@ -270,7 +278,7 @@ func (a *App) quitHook(cx *gk.Cx) {
 }
 
 func (a *App) quitReleased(cx *gk.Cx) {
-	a.quits++ // counted, so "quits=1" shows it never ran
+	a.quits++
 	fmt.Println("app quit hook ran after its release (wrong)")
 }
 
@@ -286,22 +294,28 @@ func (a *App) motionReadAgain(cx *gk.Cx) {
 }
 
 func (a *App) motionView(cx *gk.Cx) gk.Element {
-	fmt.Printf("app reduce motion in view=%v\n", gk.ReduceMotion(cx)) // a read a view function may make
+	fmt.Printf("app reduce motion in view=%v\n", gk.ReduceMotion(cx))
 	return gk.Div(s.SizeFull).Child(kit.Label("motion"))
 }
 
+// openIconWindow proves a valid PNG icon attaches cleanly when opening a window.
 func (a *App) openIconWindow(cx *gk.Cx) {
 	a.secondV = gk.NewView(nil, a.secondView)
 	a.second = gk.OpenWindowWith(cx, gk.WindowConfig{Width: 300, Height: 200, Title: "Icon", AppID: "gk-test", Icon: iconPNG}, a.secondV)
 	fmt.Printf("app icon window opened n=%d\n", len(gk.Windows(cx)))
 }
 
+// openBadIcon proves malformed icon bytes fail immediately inside OpenWindowWith
+// before the following log line can execute.
 func (a *App) openBadIcon(cx *gk.Cx) {
 	a.secondV = gk.NewView(nil, a.secondView)
-	gk.OpenWindowWith(cx, gk.WindowConfig{Title: "Bad", Icon: []byte{1, 2, 3, 4}}, a.secondV) // stops: not a PNG
+	gk.OpenWindowWith(cx, gk.WindowConfig{Title: "Bad", Icon: []byte{1, 2, 3, 4}}, a.secondV)
 	fmt.Println("app bad icon accepted (wrong)")
 }
 
+// portInit sets up the close-veto, quit-hook (including a released hook that
+// must stay silent), reduce-motion (false->true->false), window-icon, and
+// bad-icon protocol modes.
 func (a *App) portInit(cx *gk.Cx) {
 	switch a.mode {
 	case "close-veto":
@@ -320,8 +334,6 @@ func (a *App) portInit(cx *gk.Cx) {
 		gk.After(cx, 10*ms, a.openBadIcon)
 	}
 }
-
-// --- the app ------------------------------------------------------------------------------------
 
 func (a *App) plainView(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(kit.Label("app"))
@@ -367,11 +379,10 @@ func main() {
 	script := "size 640 480\nframe\n"
 	switch a.mode {
 	case "actions", "builtin-on-action":
-		// ctrl-s twice (the first dispatches app::Other), ctrl-o twice (the second after the
-		// app-wide listener was released: nobody), ctrl-x the built-in ui::Cancel
+
 		script += "key ctrl-s\nkey ctrl-o\nkey ctrl-s\nkey ctrl-o\nkey ctrl-x\nframe\nstat\n"
 	case "timers", "clipboard", "ambient", "close-veto", "reduce-motion", "window-icon", "bad-icon":
-		// the offscreen clock is simulated: advance moves it on, and due timers fire then
+
 		script += strings.Repeat("advance 25\n", 6) + "frame\nstat\n"
 	case "windows":
 		script += "advance 30\nwindows\nwindow 1\nframe\nwindow 0\nadvance 60\nwindows\nadvance 100\nadvance 120\nframe\nstat\n"
@@ -382,7 +393,7 @@ func main() {
 		log.Fatal(err)
 	}
 	if a.mode == "quit-hook" {
-		fmt.Printf("app after the run quits=%d\n", a.quits) // the hook ran as the offscreen app shut down
+		fmt.Printf("app after the run quits=%d\n", a.quits)
 	}
 	fmt.Printf("app done mode=%s saves=%d others=%d cancels=%d once=%d ticks=%d never=%d closed=%d\n",
 		a.mode, a.saves, a.others, a.cancels, a.once, a.ticks, a.never, a.closed)

@@ -1,21 +1,29 @@
 #!/usr/bin/env python3
-"""gkgen: the generator (docs/DESIGN.md section 13). Python 3 standard library only.
+"""Command-line entry point and top-level orchestrator for the gpui-kit bindings generator.
 
-  gkgen.py strip JSON_DIR        stage 1b: reduce rustdoc's JSON (the output of gen/extract.sh)
-                                 to the committed extract api/rustdoc/*.json.gz
-  gkgen.py gen                   stages 2, 3 and 6 in one command, from the committed extract:
-                                 classify every public function, apply api/quarantine.json, number
-                                 from api/opcodes.lock, write the Rust decoders (core/src/gen, or
-                                 --rust-out), the Go package (go/gk/gen_*.go, or --go-out), the
-                                 generated tests (core/tests/go/gensample, gen, app), the opcode
-                                 tables (core/wire/gen.py), api/gk.api.json.gz, api/coverage.json,
-                                 gen/out/report.md and the coverage block of docs/STATUS.md.
-                                 Exits 1 when a signature meets no rule (gen/out/no-rule.md lists
-                                 them), unless --allow-no-rule.
-  gkgen.py quarantine rust LOG   charge the errors of a `cargo check --message-format short` log to
-                                 items (api/quarantine.json) and run `gen` again; exit 3 if any moved
+Usage:
+    gkgen.py strip SRC_DIR                  pack rustdoc JSON into `api/rustdoc/*.json.gz`
+    gkgen.py gen [--allow-no-rule] [...]    build model and emit Rust, Go, tests, and reports
+    gkgen.py quarantine rust BUILD_LOG      record failing Rust items in `api/quarantine.json`
 
-rustc and the Go compiler are the judges: nothing here decides that an item compiles.
+End-to-end `gen` stage order and inter-stage artifacts:
+1. `gk_model.Model`: loads `api/rustdoc/*.json.gz` (or `$GK_JSON`), `api/overrides.toml`,
+   and `api/clone.json`, classifies every public upstream item, and runs extension passes.
+2. `apply_quarantine`: marks items/types recorded in `api/quarantine.json` as `failed`,
+   prunes dependents, re-runs `m.flow()`, and removes stale quarantine entries.
+3. `gk_rust.Lock` + `gk_rust.number`: assigns append-only wire opcodes in `api/opcodes.lock`.
+4. `gk_rust.Rust.emit`: generates `core/src/gen/*.rs`, splits non-core families via
+   `gk_fam.Families.split()`, and saves line provenance to `gen/out/rust-lines.json`.
+5. `gk_doc.Docs` + `gk_names.Names` + `report()`: builds stem names, writes
+   `api/coverage.json`, `api/gk.api.json.gz`, `gen/out/report.md`, and refreshes
+   `docs/STATUS.md` via `tools/status.py`. Fails unless `--allow-no-rule` if any
+   upstream function hits `status == "norule"` (forcing explicit rule or skip decisions).
+6. `gk_go.Go.emit`: emits flat Go sources in memory plus token packages (`s/`, `palette/`,
+   `theme/`), injects `use<Family>()` hooks via `rs.fam.go_link()`, and runs
+   `gk_split.Split` to produce the layered Go subpackages under `go/gk/`.
+7. `gk_tests_go.emit` + `gosplit migrate` + `gofmt`: regenerates `core/tests/go/{gensample,gen,app}`
+   and rewrites their flat `gk.*` references into split subpackage imports.
+8. `gk_apidoc.main`: updates the component index block in `docs/API-GO.md`.
 """
 import gzip
 import json
@@ -26,45 +34,46 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-import gk_model  # noqa: E402
-import gk_names  # noqa: E402
-import gk_rust  # noqa: E402
-import gk_values  # noqa: E402  (the values family: partly reachable options, action types)
-import rdj  # noqa: E402
+import gk_model
+import gk_names
+import gk_rust
+import gk_values
+import rdj
 
 REPO = os.path.dirname(HERE)
 API = os.path.join(REPO, "api")
 OUT = os.path.join(HERE, "out")
 QPATH = os.path.join(API, "quarantine.json")
+# Non-local std traits whose inherent (non-blanket) impls are kept during strip() so
+# `From` unions and `Default` fallback constructors remain visible in `api/rustdoc/*.json.gz`.
 KEEP_STD = {"From", "Default"}
 OURS = ("gpui", "gpui_base", "gpui_component", "gpui_kit")
 
 
-# Public items rustdoc leaves out because their module is #[doc(hidden)], though a public module
-# re-exports them: (crate, the item's own path, the public module that re-exports it). Taken from
-# the --document-hidden-items pass (gen-json/hidden, gen/extract.sh) with their impls, every id
-# they name mapped to the public pass's by path. gpui-component's styled code editor
-# (`#[doc(hidden)] mod editor; pub use editor::Editor;` in input/mod.rs) is the kit's Editor.
+# Hidden upstream structs (`#[doc(hidden)]`) grafted into the public rustdoc index during `strip()`.
+# Each tuple is `(crate, hidden_struct_path, target_public_module_path)`.
 GRAFTS = [("gpui_component", ["gpui_component", "input", "editor", "Editor"], ["gpui_component", "input"])]
 
 
 def graft(d, h, path, into):
-    """Adds the struct at `path` of the hidden pass `h` to the public pass `d`, in module `into`."""
+    """Copy a hidden struct and its impls from hidden rustdoc JSON `h` into public JSON `d`.
+
+    Re-indexes copied item IDs above `max(d["index"])`, remaps cross-references to
+    matching public items in `d`, registers the struct's path, and appends it to module `into`.
+    """
     hpaths = h["paths"]
     hid = next((k for k, p in hpaths.items() if p["path"] == path and p["kind"] == "struct" and p["crate_id"] == 0), None)
     if hid is None or hid not in h["index"]:
         raise SystemExit(f"strip: graft: {'::'.join(path)} is not in the hidden pass")
     if any(p["path"] == path for p in d["paths"].values()):
-        return  # public now: nothing to graft
+        return
     hnames = {k: v["name"] for k, v in h["external_crates"].items()}
     dnames = {v["name"]: k for k, v in d["external_crates"].items()}
-    # The public pass's ids by (crate name, path, kind).
     def crate_of(p, names):
         return p["path"][0] if p["crate_id"] == 0 else names.get(str(p["crate_id"]))
     pub = {}
     for k, p in d["paths"].items():
         pub[(crate_of(p, {k2: v["name"] for k2, v in d["external_crates"].items()}), tuple(p["path"]), p["kind"])] = k
-    # The grafted items: the struct, its impls and their items.
     item = h["index"][hid]
     take = [hid]
     for i in item["inner"]["struct"]["impls"]:
@@ -85,7 +94,7 @@ def graft(d, h, path, into):
             return new[x]
         p = hpaths.get(x)
         if p is None:
-            return 2**31 - 1  # an item the public pass does not have: unresolved, as a hidden one is
+            return 2**31 - 1
         hit = pub.get((crate_of(p, hnames), tuple(p["path"]), p["kind"]))
         return int(hit) if hit is not None else 2**31 - 1
 
@@ -119,9 +128,11 @@ def graft(d, h, path, into):
 
 
 def strip(src):
-    """rustdoc JSON -> api/rustdoc/NAME.json.gz: docs, spans and links removed, and the impls
-    nothing reads (auto traits, blanket and std-trait impls of third-party traits); the docs and
-    their links -> api/rustdoc/docs.json.gz."""
+    """Shrink raw rustdoc JSON from src into compressed archives under api/rustdoc/.
+
+    Extracts doc comments and intra-doc links into docs.json.gz, drops spans and
+    non-local trait impls (except KEEP_STD), and writes deterministic gzip files.
+    """
     dst = os.path.join(API, "rustdoc")
     os.makedirs(dst, exist_ok=True)
     docs = {}
@@ -133,8 +144,6 @@ def strip(src):
                 graft(d, json.load(open(hidden)), path, into)
         idx, drop = d["index"], set()
         names = {k: v["name"] for k, v in d["external_crates"].items()}
-        # The doc comments go to docs.json.gz (gen/gk_doc.py writes them into the bindings): per
-        # documented item its text and intra-doc links, and the full path of every linked id.
         mine, linked = {}, {}
         for k, it in idx.items():
             if it.get("docs"):
@@ -178,17 +187,19 @@ def strip(src):
         print(f"strip: {n}: {len(b) >> 10} KiB of JSON, {os.path.getsize(os.path.join(dst, n + '.json.gz')) >> 10} KiB packed")
 
 
-# ---------------------------------------------------------------- quarantine
-
-
 def load_q():
+    """Load api/quarantine.json, or return an empty quarantine structure."""
     if os.path.exists(QPATH):
         return json.load(open(QPATH))
     return {"rounds": [], "entries": {}}
 
 
 def apply_quarantine(m, q):
-    """Marks what a compiler refused: the item fails, a refused codec fails its users."""
+    """Mark previously failed items/types from `q` in model `m`, then prune dependents.
+
+    Also deletes stale quarantine entries whose upstream item is no longer bound/bridged
+    so `api/quarantine.json` stays clean as upstream signatures evolve.
+    """
     ent = q["entries"]
     byid = {}
     for it in m.items:
@@ -201,10 +212,10 @@ def apply_quarantine(m, q):
         k = json.loads(key)
         if k[0] == "item" and k[1] in byid:
             if byid[k[1]]["status"] not in ("bound", "bridged"):
-                stale.append(key)  # a rule changed and the item is no longer generated
+                stale.append(key)
                 continue
             byid[k[1]].update(status="failed", reason=e["error"], judge=e["judge"])
-            for it in m.items:  # a type-changing trait method is counted in its trait's row
+            for it in m.items:
                 if k[1].endswith(f"::{it.get('trait') or ''}::{it['name']}") and False:
                     pass
         elif k[0] == "variant":
@@ -247,6 +258,7 @@ def uses(d, dead):
 
 
 def quarantine(judge, log_path):
+    """Parse rustc errors from log_path, map lines via rust-lines.json, and update quarantine."""
     q = load_q()
     log = open(log_path, errors="replace").read()
     moved = 0
@@ -255,7 +267,7 @@ def quarantine(judge, log_path):
     where = json.load(open(os.path.join(OUT, "rust-lines.json")))
     pat = re.compile(r"(?:^|/)gen/(\w+\.rs):(\d+):\d+: error(?:\[(E\d+)\])?: (.*)", re.M)
     hits = [(m.group(1), m.group(2), f"{m.group(3) or ''} {m.group(4)}".strip()) for m in pat.finditer(log)]
-    look = lambda f, line: where.get(f, {}).get(line)  # noqa: E731
+    look = lambda f, line: where.get(f, {}).get(line)
     unmapped = []
     for f, line, msg in hits:
         key = look(f, line)
@@ -274,10 +286,8 @@ def quarantine(judge, log_path):
     return moved, unmapped
 
 
-# ---------------------------------------------------------------- gen
-
-
 def gen(argv):
+    """Run the full generation pipeline: model, Rust, Go, package split, tests, and docs."""
     rust_out = os.path.join(REPO, "core", "src", "gen")
     go_out = os.path.join(REPO, "go", "gk")
     allow = "--allow-no-rule" in argv
@@ -296,7 +306,7 @@ def gen(argv):
     rs = gk_rust.Rust(m, rust_out)
     where = rs.emit()
     json.dump(where, open(os.path.join(OUT, "rust-lines.json"), "w"))
-    import gk_doc  # noqa: PLC0415 (GPUI-kit's doc comments, translated into Go)
+    import gk_doc
     docs, doc_names = gk_doc.Docs(), gk_doc.resolver(m)
     names = gk_names.Names(m)
     if names.collisions:
@@ -318,23 +328,21 @@ def gen(argv):
             sys.exit(1)
     elif os.path.exists(os.path.join(OUT, "no-rule.md")):
         os.remove(os.path.join(OUT, "no-rule.md"))
-    import gk_go  # noqa: PLC0415 (the Go package, docs/GO.md: from the model and the stems gk_names gave it)
+    import gk_go
     go = gk_go.Go(m, go_out)
     go.docs, go.doc_names = docs, doc_names
     go.emit()
     n = docs.report()
     print(f"gen: docs: {len(docs.found):,} of {len(docs.asked):,} upstream items have a doc comment, carried into "
           f"Go; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")
-    # each family linked only when the program calls into it (gen/gk_fam.py), then the flat package
-    # split into its packages (gen/gk_split.py, docs/GO.md section 1)
     flat = {n: t for n, t in go.files.items() if "/" not in n}
     uses = rs.fam.go_link(os.path.join(go_out, "internal", "rt"), flat)
-    import gk_split  # noqa: PLC0415
+    import gk_split
     sp = gk_split.Split(go, rs.fam, flat)
     sp.uses = uses
     sp.run()
     go.split = sp
-    import gk_tests_go  # noqa: PLC0415 (the generated protocol tests in Go: core/tests/go/gensample, gen, app)
+    import gk_tests_go
     gk_tests_go.emit(m, go, REPO)
     tests = [os.path.join(REPO, "core", "tests", "go", f) for f in ("gensample/main.go", "gen/main.go", "app/gen_ambient.go")]
     gk_split.gosplit("migrate", os.path.join(gk_split.OUT, "table.json"), *[t for t in tests if os.path.exists(t)])
@@ -343,12 +351,10 @@ def gen(argv):
     print(f"gen: go: {tot[1]:,} of {tot[0]:,} bound or bridged functions generated into {os.path.relpath(go_out, REPO)} "
           f"({tot[2]:,} not yet: gen/out/go-report.md)")
     if os.path.abspath(go_out) == os.path.join(REPO, "go", "gk"):
-        import gk_apidoc  # noqa: PLC0415 (the component index of docs/API-GO.md, read from the package just written)
+        import gk_apidoc
         gk_apidoc.main([])
 
 
-# What remains, by the family of work that will finish it (docs/STATUS.md). First match wins,
-# on the upstream path of the row in lower case.
 FAMILIES = [
     ("tables and lists with delegates", r"table|::list|searchable_list|virtual|tree|select|combobox|autocomplete"),
     ("dialogs, popovers and overlays", r"dialog|popover|sheet|hover_card|tooltip|notification|toast|drawer|modal|preview_card"),
@@ -362,6 +368,7 @@ FAMILIES = [
 
 
 def family(path):
+    """Assign an upstream Rust path to a reporting family bucket."""
     low = path.lower()
     for name, pat in FAMILIES:
         if re.search(pat, low):
@@ -370,9 +377,7 @@ def family(path):
 
 
 def verified_ids(m):
-    """Functions a byte-identical gallery page shows (gates/verified.json, written by
-    gates/gallery.sh --record): exact ids from the generated one-function pages; the
-    hand-written pages name a function Type.method, a free constructor, or style.name."""
+    """Resolve function identifiers listed in gates/verified.json to model item IDs."""
     path = os.path.join(REPO, "gates", "verified.json")
     if not os.path.exists(path):
         return set()
@@ -392,7 +397,7 @@ def verified_ids(m):
             ty, fn = name.split(".", 1)
             cands = [it for it in by_tail.get(fn, []) if it["id"].endswith(f"::{ty}::{fn}")]
             cands = [it for it in cands if "::component::" in it["id"]] or cands
-            if not cands and ty in nodes:  # a builder trait's method, called on this type
+            if not cands and ty in nodes:
                 tabs = set(nodes[ty]["tables"])
                 cands = [it for t in m.traits.values() if t["key"] in tabs for it in t["ops"]
                          if it["name"] == fn and it["status"] in ("bound", "bridged")]
@@ -404,6 +409,7 @@ def verified_ids(m):
 
 
 def report(m, q, names):
+    """Write api/coverage.json, api/gk.api.json.gz, gen/out/report.md, and refresh status."""
     rows, by_reason = [], {}
     ver = verified_ids(m)
     for r in m.owners:
@@ -435,11 +441,10 @@ def report(m, q, names):
                                 "are made of, and the style table; an inventory of the pinned crates counts 4,350 functions in the kit crates and "
                                 "5,075 in gpui-fast"},
            "components": rows,
-           "partial": gk_values.partials(m)}  # options only partly reachable (tools/status.py)
+           "partial": gk_values.partials(m)}
     json.dump(cov, open(os.path.join(API, "coverage.json"), "w"), indent=1)
-    # the interface description: language-neutral (no emitter's names)
     drop = {"fn", "stem", "fcrate", "members", "short_stem"}
-    clean = lambda d: {k: v for k, v in d.items() if k not in drop}  # noqa: E731
+    clean = lambda d: {k: v for k, v in d.items() if k not in drop}
     desc = {"schema": 1, "pin": cov["pin"],
             "items": [{k: v for k, v in it.items() if k not in ("fn", "stem", "fcrate", "crate", "row", "emitted")}
                       for it in m.all_items()],
@@ -456,7 +461,7 @@ def report(m, q, names):
             "into": {k: {"target": v["target"], "members": v["members"]} for k, v in sorted(m.intos.items())},
             "shapes": {str(v["num"]): {"args": v["args"], "ret": v["ret"], "rust": v["rust"]} for v in m.shapes.values()},
             "theme": m.theme_nums, "palette": {i["id"]: i["op"] for i in m.palette},
-            "values": gk_values.describe(m)}  # the values family: action types (gates/accept.py)
+            "values": gk_values.describe(m)}
     with open(os.path.join(API, "gk.api.json.gz"), "wb") as raw:
         with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
             f.write(json.dumps(desc, separators=(",", ":"), sort_keys=True, default=str).encode())
@@ -467,8 +472,8 @@ def report(m, q, names):
          f"- {len(m.nodes)} node types ({sum(1 for n in m.nodes.values() if n['element'])} elements), "
          f"{sum(1 for t in m.traits.values() if t['ops'])} builder traits, {len(m.enums)} enums, {len(m.denums)} enums with data, "
          f"{len(m.records)} records, {sum(1 for s in m.intos.values() if len(s['members']) > 1)} Into sets, "
-         f"{len(m.shapes)} handler shapes, {len(m.tokens)} style tokens, {len(m.palette)} palette colours, "
-         f"{len(m.theme)} theme colours.",
+         f"{len(m.shapes)} handler shapes, {len(m.tokens)} style tokens, {len(m.palette)} palette colors, "
+         f"{len(m.theme)} theme colors.",
          f"- Names that collided: {len(names.collisions)}.", "",
          "## Compiler rounds", "", "| round | judge | errors | items or types refused | errors outside any item |", "|---|---|---|---|---|"]
     for n, r in enumerate(q["rounds"], 1):
@@ -487,7 +492,6 @@ def report(m, q, names):
     open(os.path.join(OUT, "report.md"), "w").write("\n".join(o) + "\n")
     print(f"gen: {tot['total']} functions: {tot['bound']} bound, {tot['bridged']} bridged, {tot['skipped']} skipped, "
           f"{tot['failed']} failed, {tot['todo']} not yet")
-    # the opcode tables and the interface hash, which covers api/opcodes.lock
     subprocess.run([sys.executable, os.path.join(REPO, "core", "wire", "gen.py")], check=True)
     subprocess.run([sys.executable, os.path.join(REPO, "tools", "status.py")], check=False)
 

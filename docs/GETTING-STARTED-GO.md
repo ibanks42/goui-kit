@@ -1,101 +1,44 @@
-# Getting started with Go
+# Getting Started with GPUI-kit in Go
 
-This guide takes a Go programmer who has never used GPUI from the download to a working desktop
-app. Part 1 installs what you need and runs the example that comes with the download. Part 2 is a
-15-minute tutorial: a shopping list app, built in nine steps, each a complete program you can run.
-After it, [API-GO.md](API-GO.md) explains how to read GPUI-kit's own documentation
-(gpui-kit.com/docs) and know the Go call, and lists every component.
+This guide takes you from an unpacked release archive (or a local checkout of this repository) to a working desktop application in Go. It assumes you know Go and have never used GPUI or GPUI-kit before.
 
-Every snippet in this guide is cut from the tutorial's programs in `docs/tutorial-go/`, and those
-programs are built and run by the project's tests, so the code you read here compiles against the
-package you download.
+---
 
-## Part 1: install and run
+## 1. Requirements
 
-### What you need
+- **Go 1.27 or newer** (`go/go.mod` targets Go 1.27).
+- **No Rust toolchain** is needed if you use a prebuilt download.
+- **No C compiler** is needed for default builds. By default, Go binaries load the prebuilt shared library at startup through `github.com/ebitengine/purego` with `CGO_ENABLED=0`. The first build fetches `purego` (pinned in `go/go.sum`) from your `GOPROXY`; no other third-party Go modules are required.
+- On **Linux**, opening a real window requires an active X11 (`DISPLAY`) or Wayland (`WAYLAND_DISPLAY`) session. On **macOS** (11.0+, universal `arm64`/`x86_64`) and **Windows** (10+, `x86_64` with Direct3D 11), the native window server is always available.
 
-- One of the three systems there is a download for:
-  - **Linux** on x86_64 with glibc 2.28 or newer, and the libraries `libxkbcommon`,
-    `libxkbcommon-x11` and `libxcb` (installed on any desktop Linux);
-  - **macOS** 13 Ventura or newer (Go 1.27, which this package needs, runs on nothing older), on
-    Apple silicon or Intel: the library is universal (arm64 and x86_64, minimum macOS 11.0);
-  - **Windows** 10 or newer on x86_64, with Direct3D 11 (any Windows 10 machine).
-- Go 1.27 or newer ([go.dev/doc/install](https://go.dev/doc/install)); the package was tested with
-  Go 1.27.3. `go version` tells you which one you have.
-- No C compiler: the program loads the prebuilt library when it starts (through
-  [purego](https://github.com/ebitengine/purego), with cgo off). The first build downloads purego,
-  the one Go module the package needs, from Go's module proxy (it is pinned in `go/go.sum`).
-  Only a program that links the library into itself (`-tags gkstatic`, "One file" below) needs a
-  C compiler. `examples/go/build.sh` is an `sh` script: on Windows run it in Git Bash or MSYS2
-  (the `go build` it runs is shown below, for PowerShell or cmd).
-- No Rust. The Rust half (GPUI, GPUI-kit and the binding's runtime) is one prebuilt library in the
-  download. (If you want to build that library yourself, see [CONTRIBUTING.md](CONTRIBUTING.md).)
+---
 
-### Download and unpack
+## 2. Setting Up a Project
 
-The download is one file per system: `gpuikit-0.0.2-linux-x86_64.tar.zst` (about 66 MB),
-`gpuikit-0.0.2-macos-universal.tar.zst` or `gpuikit-0.0.2-windows-x86_64.zip`, from release `v0.0.2`
-of the bindings' GitHub releases
-([github.com/ibanks42/gpui-kit-bindings/releases](https://github.com/ibanks42/gpui-kit-bindings/releases)).
-`SHA256SUMS` beside them checks what you downloaded: `sha256sum -c --ignore-missing SHA256SUMS`
-(on macOS `shasum -a 256 -c --ignore-missing SHA256SUMS`). Unpack it anywhere:
+A prebuilt download unpacks into a folder such as `gpuikit-0.0.2-linux-x86_64/` containing `lib/`, `go/`, `include/`, `examples/go/`, and `docs/`. If you are working directly inside a git checkout, run `make lib` first so `lib/ship/` exists.
+
+### Running the Bundled Examples
+
+From an unpacked release archive:
 
 ```sh
-tar --zstd -xf gpuikit-0.0.2-linux-x86_64.tar.zst      # or: zstd -dc gpuikit-0.0.2-linux-x86_64.tar.zst | tar -x
-cd gpuikit-0.0.2-linux-x86_64
+examples/go/build.sh hello && examples/go/hello.bin
 ```
 
-On macOS the same with `macos-universal` (`zstd` is in Homebrew); on Windows unpack the `.zip` with
-Explorer or `tar -xf gpuikit-0.0.2-windows-x86_64.zip`. The three hold the same files except the
-library's:
-
-| path | what |
-|---|---|
-| `lib/libgpuikit.so` | the library (GPUI-kit 0.11.0 on the gpui-fast engine), which your program loads when it starts; `libgpuikit.dylib` on macOS (one universal file for Apple silicon and Intel), `gpuikit.dll` on Windows |
-| `lib/libgpuikit_static.a` | the same library, static, for a program that links it into itself (`-tags gkstatic`); on Windows in MinGW's format |
-| `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | for the static library: Linux, a small linker script naming the system libraries it needs; Windows, the import library of the Windows API it uses |
-| `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
-| `go/` | the Go module `gpuikit.dev`: the package `gpuikit.dev/gk` your app imports, and `s`, `theme`, `palette` beside it |
-| `README.md` | where to start |
-| `examples/go/` | `hello`, `counter`, `notes`, `todo`, `reader`, `expenses` in Go, and `build.sh`, which builds them |
-| `docs/` | this guide, [API-GO.md](API-GO.md), [GO.md](GO.md), the tutorial's programs in `docs/tutorial-go/` |
-| `VERSIONS` | what the library was built from, and what it needs (glibc, macOS, Windows) |
-| `THIRD_PARTY.md`, `licences/` | the licences of everything inside the library |
-
-### Build and run hello
+On Windows (in Git Bash or MSYS2), the output binary ends in `.exe`. From a git checkout, `examples/go/build.sh hello` writes `bin/hello-go`, which you run with:
 
 ```sh
-examples/go/build.sh hello      # the first build compiles the package, about 15 s; after an edit, half a second
-examples/go/hello.bin           # a window with a button, a label and an input (hello.exe on Windows)
+LD_LIBRARY_PATH=lib/ship bin/hello-go
+# or, identically on every OS:
+GK_LIB=lib/ship bin/hello-go
 ```
 
-`build.sh` is one `go build` command, and builds any app folder too
-(`examples/go/build.sh ../groceries`); the command itself is below. It also puts a link to the
-library beside the program (a copy on Windows), where the program looks for it. If the window
-opens, everything works: Go, the package and the library. The other examples are built the same way
-(`examples/go/build.sh todo`, `reader`, `notes`, `counter`, `expenses`). The first build compiles
-package `gk` (a few megabytes of generated Go) into Go's build cache: about 15 s with an empty
-cache, then about 1.5 s for the next example and half a second for a rebuild after a one-line edit.
+### Creating Your Own Module
 
-If it does not start, the first line it prints starts with `gk:` and says why. The usual ones:
+Create a new directory, initialize a Go module, and point `gpuikit.dev` at the unpacked `go/` directory using a `replace` directive:
 
-- `the library and this package are from different versions`: the app was built against the `go/`
-  folder of one download and the `lib/` of another. Build against the `go/` folder that came with
-  the library.
-- `the library libgpuikit.so was not found`: the program looked beside itself, in its `lib/` and
-  `../lib/` folders and where the system loader looks, and lists those places. Put the library
-  beside the program, or set `GK_LIB` to the download's `lib/` folder.
-- `the app has no display to open its window on` (Linux): neither `DISPLAY` nor `WAYLAND_DISPLAY` is set
-  (an ssh session, a container). Run it in a desktop session, or offscreen (Part 3, "Testing
-  without a display").
-
-### Your own app
-
-An app is a Go module that requires `gpuikit.dev` and points it at the download's `go/` folder.
-Put the app's folder beside the unpacked download, with this `go.mod`:
-
-```
-module groceries
+```go.mod
+module myapp
 
 go 1.27
 
@@ -104,109 +47,75 @@ require gpuikit.dev v0.0.0
 replace gpuikit.dev => ../gpuikit-0.0.2-linux-x86_64/go
 ```
 
-and build it with:
+Then run `go mod tidy` and `go build`.
 
-```sh
-G=$PWD/../gpuikit-0.0.2-linux-x86_64
-go mod tidy                     # once: adds purego, the one module the package needs, to go.mod
-go build -ldflags="-s -w" -o groceries.bin .
-ln -s $G/lib/libgpuikit.so .    # or copy it: the program looks for the library beside itself
-./groceries.bin
-```
+### Finding the Shared Library at Runtime
 
-- `require` and `replace` are the two lines that matter: `gpuikit.dev` is not fetched from the
-  network, the `replace` names a folder (relative to `go.mod`, or absolute), and no `go.sum` entry
-  is needed for it. Only purego is fetched, once; after that `go build` works offline.
-- To keep the package in the app's repository instead (a vendored copy), copy the download's
-  `go/` folder into it, say as `third_party/gpuikit`, and write
-  `replace gpuikit.dev => ./third_party/gpuikit`. Copy the whole folder: package `gk` includes its
-  C header (`gk/include/`), which `go mod vendor` would leave out.
-- The program is small (a few megabytes); the library beside it holds all of GPUI-kit. Ship the
-  two together: the program looks for the library in `GK_LIB` (a folder or the file), beside
-  itself, in its `lib/` or `../lib/` folder, then where the system loader looks
-  ([GO.md](GO.md) section 8). `GOOS=windows go build` or `GOOS=darwin go build` build for the
-  other systems from this one, since no C compiler is involved.
-- The app imports `"gpuikit.dev/gk"` (the app, views, windows, `gk.Div` and the styles), the
-  package of each area it uses (`"gpuikit.dev/gk/kit"` for buttons and labels,
-  `"gpuikit.dev/gk/editor"` for inputs, `"gpuikit.dev/gk/table"` for lists and tables, and
-  `motion`, `chart`, `overlay`, `dock`, `base`; [GO.md](GO.md) section 1 says what is where), and
-  `"gpuikit.dev/gk/s"`, `"gpuikit.dev/gk/theme"` or `"gpuikit.dev/gk/palette"` when it uses style
-  tokens or colors. A program compiles only the packages it imports.
+Default builds (`CGO_ENABLED=0`) search for `libgpuikit.so` (Linux), `libgpuikit.dylib` (macOS), or `gpuikit.dll` (Windows) in this order:
 
-**macOS.** The same, with `libgpuikit.dylib`. In an app bundle the library goes in
-`Contents/Frameworks` (the program looks there). The library is universal: `GOARCH=amd64 go build
--o groceries-x86_64.bin .` builds for Intel on Apple silicon (`GOARCH=arm64` on Intel), and
-`lipo -create -output groceries.bin groceries-arm64.bin groceries-x86_64.bin` makes one program for
-both. `examples/go/build.sh` passes `GOARCH` on. `gk.Run` must be
-called from `main` on every system, and on macOS it may not return when the app quits (GPUI can
-end the process inside it there), so put nothing after it that must run.
+1. **`GK_LIB`**: a direct path to the library file or the directory containing it. If `GK_LIB` is set and the file is missing, startup fails immediately without falling back.
+2. **Next to the executable**: `<exe-dir>`, `<exe-dir>/lib`, `<exe-dir>/../lib`, and on macOS `<exe-dir>/../Frameworks` (for `.app` bundles).
+3. **The system loader path**: `LD_LIBRARY_PATH` on Linux, `DYLD_LIBRARY_PATH` on macOS, or `PATH` on Windows.
 
-**Windows.** The same in PowerShell, with `gpuikit.dll` beside the program:
+To distribute an app built in default mode, place the shared library beside your executable (or in `Contents/Frameworks` inside a macOS `.app` bundle). Because cgo is off, you can cross-compile from any OS (`GOOS=windows go build` or `GOOS=darwin GOARCH=arm64 go build`) and ship the resulting binary alongside that platform's shared library.
 
-```powershell
-$G = "$PWD/../gpuikit-0.0.2-windows-x86_64"
-go build -ldflags="-s -w" -o groceries.exe .
-Copy-Item "$G/lib/gpuikit.dll" .
-.\groceries.exe
-```
+### Optional Single-File Static Builds (`-tags gkstatic`)
 
-- The manifest (in `windows/gpuikit.manifest`, embedded by package `gk`) asks for common controls 6,
-  which the library needs: without it Windows refuses to start the program. It also makes the
-  program per-monitor DPI aware (without it Windows draws the window at 96 dpi and scales it up,
-  blurred). To give the window an icon, compile a `.rc` with only the icon into a `.syso` in your
-  main package (`windres -O coff -i app.rc -o rsrc_windows_amd64.syso`); `go build` links every
-  `.syso` there by itself. `windows/gpuikit.rc` shows the line.
-- `-ldflags "-H windowsgui"` builds a program without a console window.
+If you prefer a single executable with no shared library next to it, build with `-tags gkstatic` and `CGO_ENABLED=1`. Static builds link `libgpuikit_static.a` and register only the component families your Go code actually imports, so the linker drops unused GPUI-kit families from the binary:
 
-**One file with the library inside (`-tags gkstatic`).** A program built with `-tags gkstatic`
-links the static library into itself through cgo, so there is nothing to ship next to it, and only
-the components it calls end up in it: use `kit.Button` and the button code comes along; never
-touch the charts and they stay out. This needs a C compiler for cgo (Linux: gcc, or clang with
-`CC=clang`; macOS: the Xcode command-line tools; Windows: MinGW-w64 gcc and LLVM's linker, lld, on
-`PATH`, such as MSYS2's UCRT64 `mingw-w64-ucrt-x86_64-gcc` and `mingw-w64-ucrt-x86_64-lld`), and
-builds for the system it runs on. `GK_STATIC=1 examples/go/build.sh APP` does it, or:
+- **Linux** (needs `gcc`, or `clang` with `CC=clang`):
+  ```sh
+  CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" \
+    go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp .
+  ```
+- **macOS** (needs Xcode Command Line Tools):
+  ```sh
+  CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" \
+    go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip" -o myapp .
+  ```
+- **Windows** (needs MinGW-w64 `gcc` and `ld.lld` on `PATH` to strip unused components):
+  ```sh
+  CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" \
+    go build -tags gkstatic -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" -o myapp.exe .
+  ```
 
-```sh
-CGO_LDFLAGS="-L$G/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o groceries.bin .
-```
+If you pass `-tags gkstatic` with `CGO_ENABLED=0` (or without a C compiler on `PATH`), compilation stops on a descriptive identifier reminding you to enable cgo or drop `-tags gkstatic`.
 
-The `-ldflags` part is what tells the linker to drop the unused parts (`-Wl,-dead_strip` on macOS;
-on Windows `'-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'`, which lld
-warns about, as expected): without it the app still works but carries every component (about
-100 MB instead of about 50 MB for a small app). Without a C compiler the build stops with
-`undefined: gk_static_needs_cgo__install_gcc_or_clang_and_build_with_CGO_ENABLED_1_or_drop_tag_gkstatic`.
-[GO.md](GO.md) section 8 explains the details.
+---
 
-## Part 2: the tutorial
+## 3. Tutorial: Building a Groceries App
 
-You will build a shopping list: items in a list with checkboxes and delete buttons, an input to add
-items, a dialog to edit one, keyboard shortcuts and a menu, a dark theme, and prices that a
-goroutine looks up. Each step below is a complete program in `docs/tutorial-go/` of the download
-(one module, `gpuikit.dev/tutorial`, whose `go.mod` has the `replace` above). Build and run one
-from the download's folder with
-`examples/go/build.sh docs/tutorial-go/03-list && docs/tutorial-go/03-list.bin`.
+The nine runnable programs in `docs/tutorial-go/` build a complete groceries list app one feature at a time:
 
-Five ideas carry the whole binding, and the steps introduce them one at a time:
+| Step | Directory | Concepts Introduced |
+|---:|---|---|
+| 1 | `01-window` | `gk.Run`, `gk.OpenWindow`, `gk.NewView`, flex layout, style tokens (`s.*`), semantic theme colors (`theme.*`) |
+| 2 | `02-state` | Struct-held Go state, element IDs, `.OnClickDo`, automatic view re-description |
+| 3 | `03-list` | `init` callbacks for window-backed states, virtualized `table.ListState`, `table.NewListSource`, `gk.Key`, `gk.Refresh`, `s.Flex1`/`s.MinH0` |
+| 4 | `04-input` | `editor.InputState`, `.OnInputEvent`, reading/writing input text, `table.SelectRow` + `table.ScrollIntoView` |
+| 5 | `05-rows` | Checkboxes and delete buttons inside list rows, `gk.StopPropagation`, conditional styling |
+| 6 | `06-dialog` | `table.ListEventConfirm`, modal `overlay.OpenDialog`, `.OnOk` validation, programmatic focus |
+| 7 | `07-shortcuts` | `gk.Shortcut`, `kit.NewPopupMenu`, `kit.DropdownMenu`, shared action handlers |
+| 8 | `08-theme` | Live light/dark switching with `gk.ThemeChange`, tooltips, reactive toolbar icons |
+| 9 | `09-background` | Off-thread work with `gk.Go`, `gk.Post`, toast alerts via `overlay.PushNotification` |
 
-1. **Your state is an ordinary Go struct** (`App`). The binding never copies or owns it; its
-   methods are the view and the handlers.
-2. **A view function describes what the window shows** from that state, by calling element
-   constructors such as `kit.Button` and `kit.Label` and chaining builders. It runs again whenever
-   the view needs redrawing, so it only describes: it never changes anything.
-3. **A handler is an ordinary Go function** that changes your state: a method value (`a.addMilk`)
-   or a closure, given to an element's builder (`.OnClick`). After it returns, the view it was
-   given in is redrawn.
-4. **Kit state** (an input's text, a list's selection and scroll position) lives in the library;
-   your struct keeps a handle to it (`editor.InputState`, `table.ListState`), made once, in an `init`
-   function.
-5. **`cx *gk.Cx`** is the context of the call you are in (a view, a handler, `init`). Pass it on,
-   never store it.
+Every Go code block below is excerpted directly from those runnable programs and verified automatically by `gates/docs-go.sh`.
 
-### Step 1: a window
+---
+
+### Step 1: Open a Window
+
+A GPUI-kit app enters the UI loop through `gk.Run`. `gk.Run` locks the calling goroutine to its OS thread (GPUI requires all window and UI operations on one thread) and invokes your start callback once in the `INIT` turn.
+
+Inside the start callback, you create a `gk.View` with `gk.NewView(initFn, viewFn)` and open a window with `gk.OpenWindow`. Whenever GPUI needs the view's UI tree, it calls `view(cx)` and encodes the returned element tree into a compact byte buffer (a tape) that Rust decodes into real GPUI elements.
+
+Notice how styling works:
+
+- Layout containers (`gk.VFlex`, `gk.HFlex`, `gk.Div`) and text controls (`kit.Label`) accept nullary style tokens from `gpuikit.dev/gk/s` (`s.SizeFull`, `s.P4`, `s.Gap3`, `s.TextXl`, `s.FontBold`) as variadic arguments.
+- Semantic colors come from `gpuikit.dev/gk/theme` (`theme.Background`, `theme.Foreground`). They stay symbolic on the tape and resolve against the active theme whenever GPUI draws.
 
 <!-- from: docs/tutorial-go/01-window/main.go -->
 ```go
-// Step 1 of the Go tutorial: a window with a view.
 package main
 
 import (
@@ -218,6 +127,9 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
+// view describes the window's root element tree.
+// Style tokens (package s) are passed variadically to layout containers and labels;
+// semantic colors (package theme) resolve dynamically against the active theme.
 func view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
@@ -225,6 +137,8 @@ func view(cx *gk.Cx) gk.Element {
 }
 
 func main() {
+	// gk.Run locks this goroutine to the UI OS thread and enters GPUI's event loop.
+	// The start callback runs once in the INIT turn to open the initial window.
 	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, view))
 	}); err != nil {
@@ -233,25 +147,20 @@ func main() {
 }
 ```
 
-`gk.Run` starts the app: it calls the function you give it once, which opens a window titled
-"Groceries", 520 by 560 pixels, whose content is a view (`gk.OpenWindowWith` takes the other
-options: a minimum size, a position, ...). `gk.NewView(nil, view)` makes that view from an
-optional `init` function (none yet) and the view function. Call `gk.Run` from `main`: the main
-goroutine becomes the UI thread. It returns when the app quits: `nil`, or the mistake in your code
-that stopped it (a `*gk.Error` naming your file and line), which `log.Fatal` prints. Nothing in
-`gk` exits the process, so your deferred functions run.
+Key rules to keep in mind from day one:
 
-`view` returns one element tree. `gk.VFlex` is a column; the arguments after it are **style
-tokens** from package `s`: `s.SizeFull` (fill the window), `s.P4` (padding), `s.Gap3` (space
-between children). They are GPUI's style methods without arguments, and any constructor takes
-them; so are the kit's own (`s.FontBold`, `s.FontSemibold`, `s.HFlex`), and `.Style(..)` adds more
-to an element later. Methods with arguments stay methods: `.Bg(..)`, `.TextColor(..)`,
-`.W(gk.Px(240))`. `theme.Background` is a colour of the kit's theme, so the view follows light and
-dark themes.
+- **`*gk.Cx` is valid only for the duration of the callback that received it.** Never store `*gk.Cx` in a struct field or use it from another goroutine; the runtime catches both and stops cleanly with `*gk.Error`.
+- **Elements are single-use.** Each element created in `view` belongs to that single build and can be attached to at most one parent.
 
-A chain continued on the next line ends its line with `.`, as Go requires.
+---
 
-### Step 2: state and a handler
+### Step 2: Hold State and Handle Clicks
+
+Application data lives in ordinary Go structs rather than framework-managed containers. Here we store `items []Item` on `*App` and add a primary button wired to `a.addMilk`:
+
+- **Element IDs**: Every interactive element (`kit.Button("add-milk")`) takes a stable `gk.ID` so GPUI can track hover, pressed, and focus states across redraws.
+- **`.OnClickDo` vs. `.OnClick`**: Use `.OnClickDo(func(*gk.Cx))` when you do not need click coordinates or modifier keys, and `.OnClick(func(*gk.Cx, gk.ClickEvent))` when you do (for instance, checking `e.ClickCount == 2`).
+- **Automatic redraws**: Because `a.addMilk` is registered on this view, the runtime automatically marks the view dirty when `a.addMilk` returns and re-runs `a.view` before the next frame.
 
 <!-- from: docs/tutorial-go/02-state/main.go -->
 ```go
@@ -260,11 +169,14 @@ type Item struct {
 	Amount int
 }
 
+// App holds ordinary Go state; GPUI-kit redraws from it whenever the view is marked dirty.
 type App struct {
 	items []Item
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
+	// Interactive elements take an ID ("add-milk") so GPUI tracks hover, active,
+	// and focus state across redraws. OnClickDo omits the ClickEvent argument.
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
 		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
@@ -275,107 +187,95 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	return col
 }
 
+// addMilk mutates Go state. Because OnClickDo runs inside this view's turn,
+// the runtime marks the view dirty automatically when addMilk returns.
 func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{Name: "Milk", Amount: 1})
-	// nothing else: a handler redraws the view it was given in
-}
-
-func main() {
-	a := &App{}
-	if err := gk.Run(func(cx *gk.Cx) {
-		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, a.view))
-	}); err != nil {
-		log.Fatal(err)
-	}
 }
 ```
 
-`kit.Button("add-milk")` takes an id: a name that is unique among its siblings, which GPUI uses to
-keep track of the element between redraws (`gk.Key("item", 3)` makes one from a name and a
-number). `.OnClickDo(a.addMilk)` gives it a handler: a method value, `func(cx *gk.Cx)`. `.OnClick`
-takes the same with the click's details, `func(cx *gk.Cx, e gk.ClickEvent)`; the `Do` form is for
-a handler that does not read them. A handler that does not fit does not compile. `addMilk`
-appends and returns: the view it was given in is then redrawn, so the label shows the new count.
-There is no `notify` to call and no state to copy into the view.
+---
 
-The view function builds a new tree on every call, with a plain `for` loop where the data has a
-variable length. That is cheap: a view whose description did not change is not redrawn.
+### Step 3: Virtualized Lists and `init`
 
-### Step 3: a list with your own rows
+Appending every item directly into a `VFlex` works for ten rows, not for scrollable lists with keyboard navigation, selection, or thousands of entries. Instead, switch to `table.ListState` backed by a row source (`table.NewListSource`).
 
-A `for` loop of labels is fine for a few items. For a list the user scrolls, selects in and that may
-hold thousands of items, use the kit's List, which asks you only for the rows it shows:
+Two new concepts appear in Step 3:
+
+1. **Window-backed kit state and `init`**: Components whose state lives inside GPUI (`table.ListState`, `editor.InputState`, `table.SelectState`, `dock.Area`, and so on) require an open window when they are constructed. Pass `a.init` as the first argument to `gk.NewView(a.init, a.view)`: the runtime calls `a.init` once in the `WINDOW_INIT` turn right after `OpenWindow` creates the window and before the first `a.view` call.
+2. **Row sources and `gk.Refresh(cx)`**: `table.NewListSource` takes a count callback (`func() int`) and a row builder (`a.itemRow`). Only visible rows (plus overscan) are bound and described; each row is cached as its own retained view. Whenever `a.items` changes, call `gk.Refresh(cx)` so the row source re-reads the count function and re-describes visible rows.
 
 <!-- from: docs/tutorial-go/03-list/main.go -->
 ```go
 type App struct {
 	items []Item
-	list  table.ListState // kit state: it lives in the library; the app keeps the handle
+	list  table.ListState
 }
 
+// init runs once when OpenWindow mounts the root view, which is when window-backed
+// GPUI-kit states (such as ListState) can be constructed.
 func (a *App) init(cx *gk.Cx) {
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.items = append(a.items, Item{"Milk", 2}, Item{"Bread", 1}, Item{"Apples", 6})
+	// Refresh notifies the view and re-syncs row source counts after changing a.items.
 	gk.Refresh(cx)
 }
+```
 
+Inside `itemRow`, use `gk.Key("item", at.Row)` to produce a unique `gk.ID` per row without string formatting allocations. In `view`, wrap `table.List(a.list)` in `gk.Div(s.Flex1, s.MinH0)`: `s.Flex1` lets the container take remaining vertical space, and `s.MinH0` overrides flexbox's default `min-height: auto` so the list shrinks to fit the window and scrolls properly.
+
+<!-- from: docs/tutorial-go/03-list/main.go -->
+```go
+// itemRow describes one visible row on demand as its own retained view.
+// gk.Key("item", at.Row) gives each row a stable, unique element ID.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	it := a.items[at.Row]
 	return table.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(gk.Div(s.Flex1).Child(kit.Label(it.Name))).
 		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))))
 }
-```
 
-and in the view, and the handler and `main`:
-
-<!-- from: docs/tutorial-go/03-list/main.go -->
-```go
+func (a *App) view(cx *gk.Cx) gk.Element {
+	// s.Flex1 and s.MinH0 constrain the list's height inside the flex column so it scrolls
+	// instead of expanding off-screen.
+	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
 		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.list))).
-// ...
+		Child(kit.Label(fmt.Sprintf("%d items", len(a.items)), s.TextSm).TextColor(theme.MutedForeground))
+}
+
 func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{"Milk", 1})
-	gk.Refresh(cx) // the rows show data this handler changed: describe them again
-}
-
-func main() {
-	a := &App{}
-	if err := gk.Run(func(cx *gk.Cx) {
-		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	}); err != nil {
-		log.Fatal(err)
-	}
+	// Refresh is required here so the row source re-reads len(a.items).
+	gk.Refresh(cx)
 }
 ```
 
-- `init` runs once, when the window first shows the view (the first argument of `gk.NewView`).
-  Kit state is made there: `table.NewListState(cx, source).Build()` makes the list's state in the
-  library and returns the handle you keep in `App`.
-- `table.NewListSource(cx, count, row)` says where rows come from: a function that counts them and
-  one that draws row `at.Row`. `itemRow` returns a `table.ListItemEl` with whatever you put in it;
-  here a label and a tag.
-- `gk.Refresh(cx)`, at the end of a handler (or of `init`) that changed what rows show, has every
-  view and every visible row described again before the next frame, and the list recounts its rows
-  with the count function. Unchanged rows cost a comparison.
-- `s.MinH0` and `s.Flex1` on the list's parent let the list take the remaining height and scroll
-  inside it, as in CSS flexbox. A list has no height of its own: in a row (`gk.HFlex`, which
-  centres its children vertically) give the list's parent `s.HFull` and the row `s.ItemsStart`, or
-  the list is drawn zero pixels high and shows nothing.
+---
 
-### Step 4: an input
+### Step 4: Text Input and Subscriptions
+
+Instead of a hardcoded "Add milk" button, Step 4 adds an `editor.InputState` text box so the user can type any item and press Enter.
+
+- Create `editor.NewInputState(cx).Placeholder(...).Build()` inside `init` and render it in `view` with `editor.Input(a.newName)`.
+- Subscribe to input events with `a.newName.OnInputEvent(cx, a.newNameEvent)`. Subscriptions are owned by the view whose `init` created them and are cleaned up automatically if the view is released.
+- Type-assert the `editor.InputEvent` interface (`editor.InputEventPressEnter`, `editor.InputEventChange`, `editor.InputEventFocus`, `editor.InputEventBlur`) to filter for Enter.
+- Read the current text with `a.newName.Value(cx)`, clear it with `a.newName.SetValue(cx, "")`, and highlight + scroll to the newly added row with `table.SelectRow(cx, a.list, len(a.items)-1, table.ScrollIntoView)`.
 
 <!-- from: docs/tutorial-go/04-input/main.go -->
 ```go
-type App struct {
-	items   []Item
-	newName editor.InputState
-	list    table.ListState
-}
-
+// init builds both window-backed states and subscribes to input events.
 func (a *App) init(cx *gk.Cx) {
 	a.newName = editor.NewInputState(cx).Placeholder("Add an item and press Enter").Build()
 	a.newName.OnInputEvent(cx, a.newNameEvent)
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
+	a.items = append(a.items, Item{"Milk", 2}, Item{"Bread", 1}, Item{"Apples", 6})
+	gk.Refresh(cx)
+}
 // ...
+// newNameEvent receives every InputEvent (change, enter, focus, blur) and adds
+// a new grocery item when the user presses Enter.
 func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 	if _, enter := e.(editor.InputEventPressEnter); !enter {
 		return
@@ -386,26 +286,28 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 	}
 	a.items = append(a.items, Item{name, 1})
 	a.newName.SetValue(cx, "")
+	// Select the newly appended row and scroll it into view if the list is full.
 	table.SelectRow(cx, a.list, len(a.items)-1, table.ScrollIntoView)
 	gk.Refresh(cx)
 }
 ```
 
-The input's state is kit state like the list's: made in `init`, shown with `editor.Input(a.newName)`
-in the view. `.OnInputEvent(cx, a.newNameEvent)` subscribes to its events; the handler gets a
-`editor.InputEvent`, an interface with one struct per event upstream has (`editor.InputEventChange`,
-`editor.InputEventPressEnter`, …), taken apart with a type assertion or a type switch.
+---
 
-`a.newName.Value(cx)` reads the text: an ordinary Go string, yours to keep. Writes such as
-`SetValue` are applied after the handler returns, in order.
+### Step 5: Interactive Controls Inside Rows
 
-`table.SelectRow(cx, a.list, row, table.ScrollIntoView)` selects a row of the list and scrolls it into
-view.
+List rows are full element trees: you can place checkboxes, tags, icons, and action buttons inside each `table.ListItem`.
 
-### Step 5: handlers in a row
+Two details matter whenever you put interactive controls inside a row:
+
+1. **Unique IDs per row**: Every interactive child needs its own row-scoped ID (`gk.Key("bought", row)`, `gk.Key("delete", row)`). Reusing `"delete"` across rows would cause GPUI to collide hover and click state between rows.
+2. **Stop event bubbling**: Clicking a checkbox or delete button inside a `table.ListItem` would normally bubble up to the row and select or confirm it too. Calling `gk.StopPropagation(cx)` inside the child control's click handler prevents the click from reaching the enclosing row.
 
 <!-- from: docs/tutorial-go/05-rows/main.go -->
 ```go
+// itemRow embeds interactive controls inside each list row.
+// Every control uses gk.Key(..., row) for a unique ID, and calls gk.StopPropagation(cx)
+// so clicking the checkbox or delete button does not also select or confirm the row.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	row, it := at.Row, a.items[at.Row]
 	name := kit.Label(it.Name)
@@ -414,7 +316,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
@@ -428,28 +330,30 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 }
 ```
 
-A handler in a row is a closure that captures what it needs, here the row's number. A checkbox's
-`OnClick` hands the new state (`bought bool`) where a button's hands a `gk.ClickEvent` (which the
-delete button's `OnClickDo` leaves out); the types say which, and the compiler checks them.
+---
 
-A click on the checkbox would also be a click on the row under it; `gk.StopPropagation(cx)` keeps
-it for the checkbox. `.Icon(gk.IconDelete)` is one of the kit's icons (`gk.IconName`).
+### Step 6: Modal Dialogs
 
-### Step 6: a dialog
+To edit an existing item's name and quantity, subscribe to `a.list.OnListEvent(cx, a.listEvent)` and watch for `table.ListEventConfirm` (fired on Enter or double-click).
 
-A click on a row (or Enter on the selected row) is the list's `Confirm` event; it opens a dialog
-that edits the item:
+Open a modal dialog with `overlay.OpenDialog(cx, a.editView)`:
+
+- `a.editView` returns an `overlay.DialogEl` rather than a generic `gk.Element`. Passing the method directly to `overlay.OpenDialog` automatically allocates and reuses one backing overlay view for that call site; clicking the `+`/`-` buttons inside the dialog marks that overlay view dirty and updates the displayed amount live while the dialog stays open.
+- Wrap the Cancel button in `overlay.DialogClose().Trigger(...)` and the primary Save button in `overlay.DialogAction().Child(...)`.
+- `.OnOk(a.saveEdit)` receives the confirmation click and returns a `bool`: return `false` to reject invalid input and keep the dialog open, or `true` to commit and close it.
+- Call `a.editName.Focus(cx)` immediately after `overlay.OpenDialog` so the user can start typing right away.
 
 <!-- from: docs/tutorial-go/06-dialog/main.go -->
 ```go
-	a.list.OnListEvent(cx, a.listEvent)
-// ...
+// listEvent opens the edit dialog when the user confirms a row (Enter or double-click).
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
-	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
+	if c, ok := e.(table.ListEventConfirm); ok {
 		a.openEditor(cx, c.Row)
 	}
 }
 
+// editView describes the modal dialog whenever it opens or updates.
+// Passing a.editView directly to overlay.OpenDialog reuses one view automatically.
 func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 	amountBy := func(by int) func(*gk.Cx) {
 		return func(*gk.Cx) { a.editAmount = max(1, a.editAmount+by) }
@@ -468,6 +372,7 @@ func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 		OnOk(a.saveEdit)
 }
 
+// openEditor loads the chosen item into the dialog's working fields and focuses the input.
 func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editing = row
 	a.editAmount = a.items[row].Amount
@@ -476,37 +381,32 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editName.Focus(cx)
 }
 
+// saveEdit validates the edited name; returning false keeps the dialog open.
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	name := strings.TrimSpace(a.editName.Value(cx))
 	if name == "" {
-		return false // keep the dialog open
+		return false
 	}
 	it := &a.items[a.editing]
 	it.Name = name
 	it.Amount = a.editAmount
 	gk.Refresh(cx)
-	return true // close the dialog
+	return true
 }
 ```
 
-- A dialog is described by a function like a view's, which returns a `overlay.DialogEl`.
-  `overlay.OpenDialog(cx, a.editView)` makes it a small view of its own and shows it. It is redrawn
-  like any view: the `+` and `-` buttons change `a.editAmount` and the dialog shows the new number.
-  (`gk.NewBuilt(cx, a.editView)`, made once in `init` and kept as a `gk.Built[overlay.DialogEl]`, is
-  the same view made ahead; `OpenDialog` takes either.)
-- `.Footer(..)` holds the buttons: `overlay.DialogClose().Trigger(button)` closes the dialog, and the
-  button inside `overlay.DialogAction()` runs `OnOk`. `OnOk`'s handler returns a `bool`: `true` closes
-  the dialog, `false` keeps it open (an empty name here). Escape closes it too.
-- `amountBy` is a function that makes handlers: a closure per step size. The dialog's input is
-  kit state made in `init` like the others (`a.editName`).
+---
 
-### Step 7: shortcuts and a menu
+### Step 7: Keyboard Shortcuts and Menus
+
+`gk.Shortcut` registers an action, binds its keystroke, and installs an app-wide listener in one call (add `gk.WhenIn("Context")` if you want a shortcut restricted to a focused subtree carrying `.KeyContext("Context")`).
+
+Pass the returned `gk.Action` straight into `kit.NewPopupMenu().Menu(...)`: the menu automatically renders the keystroke hint (`Ctrl+N`, `Ctrl+Shift+D`) next to the label and dispatches the same handler when clicked. Attach the menu to any button with `kit.DropdownMenu(triggerButton, menu)`.
 
 <!-- from: docs/tutorial-go/07-shortcuts/main.go -->
 ```go
-	newItem, clearBought gk.Action // shortcuts, also shown in the menu
-}
-// ...
+	// gk.Shortcut creates an action, binds its keystroke, and installs an app-wide listener.
+	// The returned gk.Action lets menus display the shortcut and dispatch the same handler.
 	a.newItem = gk.Shortcut(cx, "ctrl-n", a.focusNewName)
 	a.clearBought = gk.Shortcut(cx, "ctrl-shift-d", a.removeBought)
 // ...
@@ -519,46 +419,18 @@ func (a *App) toolbar() gk.Element {
 		Child(gk.Div(s.Flex1)).
 		Child(kit.DropdownMenu(kit.Button("menu").Ghost().Icon(gk.IconMenu), menu))
 }
-// ...
-func (a *App) focusNewName(cx *gk.Cx) { a.newName.Focus(cx) }
-
-func (a *App) removeBought(cx *gk.Cx) {
-	a.items = slices.DeleteFunc(a.items, func(it Item) bool { return it.Bought })
-	gk.Refresh(cx)
-}
 ```
 
-`gk.Shortcut(cx, "ctrl-n", a.focusNewName)` binds keys to a handler, app-wide: it works wherever
-the focus is. The handler is a `func(cx *gk.Cx)` or a click handler, so one method can serve a
-button and its keys (step 8 does that). It returns a `gk.Action`, which a menu item takes, and the
-menu then shows the keys next to the item. `kit.DropdownMenu(button, menu)` opens the menu under
-the button. To limit a shortcut to a part of the window, add `gk.WhenIn("Items")` and mark that
-part with `.KeyContext("Items")`.
+---
 
-`toolbar` is an ordinary method that returns an element. That is how a view is split into parts:
-call it from the view function; it takes whatever it needs.
+### Step 8: Switching Themes
 
-### Step 8: a dark theme
+Because every `theme.*` color (`theme.Background`, `theme.Foreground`, `theme.MutedForeground`, `theme.Border`) travels as a symbolic token on the tape and is resolved against the active theme at draw time, calling `gk.ThemeChange(cx, mode)` switches the entire window between light and dark themes instantly without manually re-coloring individual elements.
 
 <!-- from: docs/tutorial-go/08-theme/main.go -->
 ```go
-func (a *App) toolbar() gk.Element {
-	themeLabel, icon := "Dark theme", gk.IconMoon
-	if a.dark {
-		themeLabel, icon = "Light theme", gk.IconSun
-	}
-	menu := kit.NewPopupMenu().
-		Menu("New item", a.newItem).
-		Menu("Remove bought items", a.clearBought).
-		Separator().
-		Menu(themeLabel, a.toggleTheme)
-	return gk.HFlex(s.Gap2, s.ItemsCenter).
-		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(gk.Div(s.Flex1)).
-		Child(kit.DropdownMenu(kit.Button("menu").Ghost().Icon(gk.IconMenu), menu)).
-		Child(kit.Button("theme").Ghost().Icon(icon).Tooltip("Toggle the theme").OnClickDo(a.switchTheme))
-}
-// ...
+// switchTheme flips between light and dark mode. Because theme.* tokens resolve
+// when GPUI draws, every semantic color in the window updates immediately.
 func (a *App) switchTheme(cx *gk.Cx) {
 	a.dark = !a.dark
 	mode := gk.ThemeModeLight
@@ -570,21 +442,23 @@ func (a *App) switchTheme(cx *gk.Cx) {
 }
 ```
 
-`gk.ThemeChange(cx, ..)` switches every colour of the kit's theme at once; elements that use
-`theme.` colours (as the view has since step 1) follow. `.Tooltip(..)` shows a tip when the
-pointer rests on the button. `switchTheme` is a click handler, given both to the button and, in
-`init`, to `gk.Shortcut(cx, "ctrl-t", a.switchTheme)`.
+---
 
-`gk.Refresh(cx)` matters here because the theme is shown in two places: the button belongs to the
-view, but `switchTheme` also runs from the shortcut, which is not given in a view.
+### Step 9: Background Work and Notifications
 
-### Step 9: work on a goroutine
+Never perform slow I/O, network requests, or heavy computation directly on the UI thread, and never call any `gk` UI function (or touch `*gk.Cx`) from another goroutine: the runtime detects off-thread UI calls immediately and stops with `*gk.Error`.
 
-Looking up prices is slow, so a goroutine does it, and the result comes back on the UI thread:
+Use one of two primitives depending on the lifetime of your background work:
+
+- **`gk.Go(cx, work, done)`**: For one-shot tasks. Runs `work() T` on a new goroutine and delivers its return value to `done(cx *gk.Cx, v T)` on the UI thread with a fresh `*gk.Cx`. If `work` panics, the panic is caught cleanly and re-panicked from `gk.Run` as `*gk.PanicError`.
+- **`gk.Post(func(cx *gk.Cx) { ... })`**: For long-running background goroutines, tickers, or streams. Safe to call from any goroutine; rapid posts coalesce into a single `WAKE` turn on the UI thread.
+
+Call `overlay.PushNotification(cx, message)` from the UI-thread callback to display a transient toast notification.
 
 <!-- from: docs/tutorial-go/09-background/main.go -->
 ```go
-// lookUpPrice asks a slow price service on a goroutine; the answer comes back on the UI thread.
+// lookUpPrice runs slow work off the UI thread via gk.Go and applies the result back
+// on the UI thread with a fresh *gk.Cx, optionally showing a toast notification.
 func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {
 	gk.Go(cx, func() float64 {
 		time.Sleep(300 * time.Millisecond)
@@ -603,84 +477,24 @@ func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {
 }
 ```
 
-- `gk.Go(cx, work, done)` runs `work` on a new goroutine and then `done` with its result on the UI
-  thread, with a `cx`, before the next frame. The type of the result (`float64` here) is checked
-  by the compiler: `gk.Go` is generic.
-- For a goroutine of your own (a stream, a ticker, a watcher), call `gk.Post(func(cx *gk.Cx) { .. })`
-  from it: the function runs on the UI thread. `gk.Post` is the only call of the package any
-  goroutine may make; anything else from another goroutine stops the app, naming the line.
-- A posted function, or `done`, redraws nothing by itself: `gk.Refresh(cx)` shows the price.
-- `overlay.PushNotification(cx, text)` shows a toast in the corner of the window.
+---
 
-The whole program, `docs/tutorial-go/09-background/main.go`, is 232 lines. That is the tutorial.
+## 4. Forms, Validation, and Data-Driven Charts
 
-## Part 3: what to know next
+Once you are comfortable with lists, inputs, and dialogs, explore [examples/go/expenses/main.go](../examples/go/expenses/main.go) for a compact app combining a multi-column `kit.Form`, a `table.Select` dropdown, inline validation messages via `kit.Field().DescriptionFn(...)`, and a live `chart.BarChart`.
 
-### Who redraws what
-
-| after | redrawn |
-|---|---|
-| a handler given to an element in a view | that view |
-| a handler given in a row | that row |
-| a handler given in a view's `init` (an input's events, a shortcut, a timer) | that view |
-| a posted function, `gk.Go`'s `done`; a timer or shortcut made outside a view's `init` | nothing |
-| `gk.Refresh(cx)` anywhere | every view and every visible row (unchanged ones cost a comparison) |
-| `m.Set(cx, v)` of a `gk.Model[T]` | the views that read `m.Get()` |
-
-When in doubt, end the handler with `gk.Refresh(cx)`. `gk.Quiet(cx)` in a handler keeps its view
-from being redrawn.
-
-### What you may keep
-
-| thing | lives | keep it? |
-|---|---|---|
-| your `App` and everything in it | as long as you keep it | yes |
-| `editor.InputState`, `table.ListState`, `gk.View`, `gk.Action`, `gk.Built[T]` and other handles | until `gk.Release` | yes, in your struct |
-| elements (`kit.Label(..)`, `kit.Button(..)`) | one call of the view function | no: make them on each call |
-| strings from reads and events (`a.newName.Value(cx)`) | always (Go strings are copies) | yes |
-| `*gk.Cx` | the call it was given to | never |
-| what a handler closure captures | as long as the closure | yes: the collector keeps it alive |
-
-### When the app stops with a `gk:` message
-
-A mistake in using the binding stops the app with exit code 2 and one message that says what was
-wrong, what to do, and the line of your code. For example, making kit state in a view function:
-
-```
-gk: a view function may not create kit state (it runs on every redraw): create it once in init or in a handler and keep the handle in your state struct, as in a.search = editor.NewInputState(cx).Build()
-    at /home/me/groceries/main.go:61 (main.(*App).view)
-```
-
-The binding panics with a `*gk.Error`; the boundary between the library and your code recovers it,
-prints it and exits, so nothing unwinds into the library. A panic of your own code (an index out of
-range, a nil map) in a handler, a view, `init` or a posted function is reported the same way, with
-`gk: panic in app code:`, the line it came from and Go's stack. A mistake the compiler can catch
-(a handler of the wrong type, a style token where a colour goes, an element where none fits) does
-not compile at all.
-
-Two kinds of mistake are found later than the line that made them, and the message says so:
-
-- An element used twice, or after its view function returned, is found inside a builder or when
-  the view returns. The message names the view (`while the view function of the gk.NewView made at
-  main.go:158 ran`); run the app with `GK_DEBUG=1` and it names the line that made the element.
-- A change to kit state (`SetValue`, `Focus`) is applied after the handler returns. With
-  `GK_DEBUG=1` every change is applied at once, and the message points at its line.
-
-### Forms, selects and charts
-
-`examples/go/expenses` (200 lines) adds expenses through a form with checked fields, and shows a
-bar chart of the totals per category:
+Charts accept any Go slice of structs wrapped in `chart.NewData(slice)`: exported struct field names (`"Category"`, `"Total"`) become columnar table names referenced by chart builders such as `.Band("Category").Value("Total")`. Naming an unknown field stops with a clear `*gk.Error`.
 
 <!-- from: examples/go/expenses/main.go -->
 ```go
-	items := make([]gk.SearchItem, len(categories))
-	for i, c := range categories {
-		items[i] = gk.SearchItem{Value: c.String()}
-	}
-	a.category = table.NewSelectState(cx, gk.NewSearchSource(cx, items), table.NoRow).Build()
-	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ table.SelectEvent) { a.revalidate(cx) })
-// ...
-// field is a form field with its message under it while it has one.
+func (a *App) form() gk.Element {
+	return kit.Form().Columns(3).
+		Child(field("What", editor.Input(a.what), a.whatErr)).
+		Child(field("Amount", editor.Input(a.amount), a.amountErr)).
+		Child(field("Category", table.Select(a.category).Placeholder("Choose one"), a.categoryErr)).
+		Footer(kit.Button("add").Primary().Label("Add expense").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.add(cx) }))
+}
+
 func field(label string, input gk.Element, message string) kit.FieldEl {
 	f := kit.Field().Label(label).Child(input)
 	if message != "" {
@@ -689,12 +503,13 @@ func field(label string, input gk.Element, message string) kit.FieldEl {
 	return f
 }
 
-// total is one bar of the chart.
 type total struct {
 	Category string
 	Total    float64
 }
 
+// chart aggregates totals per category and feeds the struct slice directly to chart.NewData.
+// Exported struct field names ("Category", "Total") are validated against the chart builders.
 func (a *App) chart() gk.Element {
 	totals := make([]total, len(categories))
 	for i, c := range categories {
@@ -707,44 +522,23 @@ func (a *App) chart() gk.Element {
 		Child(kit.Label("By category", s.FontSemibold)).
 		Child(gk.Div().H(gk.Px(220)).Child(chart.BarChart(chart.NewData(totals)).Band("Category").Value("Total")))
 }
-// ...
-	a.categoryErr = "Choose a category"
-	if at, chosen := a.category.SelectedIndex(cx).Get(); chosen {
-		e.Category, a.categoryErr = Category(at.Row), ""
-	}
 ```
 
-- A select's items are data: `gk.NewSearchSource(cx, items)` over `gk.SearchItem`s (a value and
-  the title shown; an empty title shows the value), and `table.NewSelectState` is made over that
-  source. `.SelectedIndex(cx)` is the chosen row (a `gk.Option`, empty until something is chosen;
-  `.Get()` takes it apart); `.SelectedValue(cx)` is its value as text. The last argument of
-  `table.NewSelectState` preselects a row (`gk.Some(table.Row(0))` for the first), or is `table.NoRow`.
-  Wherever a call takes a row of a list (an "index path"), `table.Row(n)` gives one.
-- A form is fields: `kit.Field().Label(..).Child(any element)`, and `.Description(..)` (text) or
-  `.DescriptionFn(..)` (an element: here a red message) under it. Checking is ordinary code: the
-  handler reads the values, sets a message in your state, and the view shows it.
-- A chart takes your rows as they are: `chart.NewData(rows)` over a slice of any struct, whose
-  exported fields are the columns the builders name (`.Band("Category").Value("Total")`, checked
-  when the view runs; a type with a `String` method, like `Category`, is text). The rows are read
-  when the chart is made. A chart has no size of its own: put it in a sized `gk.Div`.
+---
 
-### Checking that it starts, in CI
+## 5. Where to Go Next
 
-`GK_FRAMES=5,30 ./app.bin` draws 30 frames and exits with status 0, so a CI job can check that the
-program starts and draws. On Linux without a display, run it under a virtual one:
-`xvfb-run -a env GK_FRAMES=5,30 ./app.bin` (packages `xvfb`, and Mesa's Vulkan driver
-`mesa-vulkan-drivers` when the machine has no GPU). macOS and Windows CI machines have a desktop,
-so the program runs there as it is.
-
-### Where next
-
-- [API-GO.md](API-GO.md): how the Go names map from GPUI-kit's Rust documentation, and an index of
-  every component with its constructor and builders.
-- [GO.md](GO.md): how the Go front end works (handlers, `gk.Model[T]`, goroutines, the C interface).
-- The examples in `examples/go/`: `expenses` (a form with checks, a select, a bar chart), `todo`
-  (projects, a task list, filters, search, a JSON file, a goroutine that syncs) and `reader` (3,000
-  articles in a virtual list, tabs of Markdown views, a settings dialog with a slider and selects)
-  are whole apps written this way; `notes` adds the kit's dock with panels.
-- `go doc gpuikit.dev/gk/kit ButtonEl` (from a module that requires the package), or the generated
-  files themselves, `go/gk/<package>/gen_component_*.go`: one per upstream module, each type with its
-  constructor and its methods, whose parameter types say what to pass.
+- Read [docs/GO.md](GO.md) for the full Go front-end reference: package map, `gk.Model[T]` reactivity, handle lifetimes (`Release`, ownership, GC cleanups, `Held`, `dock.KeepWhenClosed`), linking modes, and debugging flags (`GK_DEBUG`, `GK_INFO`).
+- Browse [docs/API-GO.md](API-GO.md) for the rules translating upstream GPUI-kit documentation to Go and the generated index of every component, state, and value type.
+- Run `go doc gpuikit.dev/gk/kit ButtonEl` (or any package or type) inside any module that requires `gpuikit.dev`.
+- Inspect the complete example apps under `examples/go/`:
+  - `hello`: minimal counter and live input echo
+  - `counter`: child-view isolation and background `gk.Post` stress testing
+  - `notes`: skinned `dock.Area` panels with left dock and center editor
+  - `todo`: multi-project task manager with JSON persistence, `base.HResizable`, reusable `gk.Built` dialogs, and background sync loop
+  - `reader`: Markdown feed reader with `editor.TextViewMarkdown`, `kit.TabBar`, `base.SliderState`, `motion.NewEffectTransition`, and `gk.Go` loading
+  - `expenses`: multi-column `kit.Form`, validation, `table.Select`, and `chart.BarChart`
+  - `files`: native app menus (`gk.SetMenus`), `kit.AppMenuBar`, async file open/save dialogs, prompts, and `gk.OpenURL`
+  - `paint`: sRGB/Oklab linear gradients and custom `chart.Plot` geometry
+  - `table`: virtualized 100,000-row by 6-column `table.DataTable`
+  - `panels`: retained-view multi-panel grid driven by `gk.OnFrame`

@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-"""todo-check.py STATE.json: what gates/todo.script and then gates/todo-reload.script must have left
-in the todo example's saved state. Prints what failed; exit 1 if anything did."""
+"""Verify the JSON state file saved by the todo app after todo.script and todo-reload.script.
+
+Usage:
+  todo-check.py <todo.json>
+
+PASS: all 7 assertions on projects, Inbox tasks, Work tasks, sync task, and theme flag succeed.
+"""
 import json
 import sys
 

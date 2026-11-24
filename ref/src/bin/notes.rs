@@ -1,12 +1,7 @@
-//! ref-notes: the Rust reference for examples/go/notes, written the way a Rust GPUI-kit app is
-//! written: the kit's styled dock with two panels (a list of notes over a ListDelegate, an editor
-//! with the kit's Input), a File menu whose items are actions with key bindings, a confirmation
-//! dialog opened with a closure, and the theme switched with `Theme::change`. State is shared by
-//! the app, its panels and the list's delegate through an `Rc<RefCell<..>>`. The actions are heard
-//! app-wide, wherever the focus is (`shortcut`).
-//!
-//!   ref-notes                  a real window
-//!   ref-notes --script FILE    offscreen, driven by a gk-meter script (diag build)
+//! Pure-Rust two-panel notes reference app using `DockArea`, a virtualized
+//! note list, title editing, dropdown menus, alert-dialog deletion, keyboard
+//! shortcuts, and light/dark theme toggling.
+
 use gpui_kit::base::dock::{DockArea, DockLayout, DockPlacement, Panel as BasePanel, PanelEvent, PanelView};
 use gpui_kit::base::{h_flex, v_flex};
 use gpui_kit::component::button::{Button, ButtonVariants};
@@ -27,8 +22,8 @@ use std::sync::Arc;
 
 gpui_kit::actions!(notes, [NewNote, DeleteNote, ToggleTheme]);
 
-/// An app-wide listener for action A: it runs `f` on the app in its window once the key's dispatch
-/// is over (a global listener runs inside the window's dispatch, where the window is taken).
+/// Registers a global action handler that defers updating `NotesApp` inside `wh`
+/// so action dispatch never re-enters an active entity borrow.
 fn shortcut<A: Action>(cx: &mut App, app: WeakEntity<NotesApp>, wh: AnyWindowHandle, f: fn(&mut NotesApp, &mut Window, &mut Context<NotesApp>)) {
     cx.on_action(move |_: &A, cx: &mut App| {
         let app = app.clone();
@@ -43,7 +38,7 @@ struct Note {
     words: usize,
 }
 
-/// What the app, its two panels and the list's delegate share.
+/// Shared notes list and selection index accessed by both panels and `NotesApp`.
 struct Model {
     notes: Vec<Note>,
     selected: Option<usize>,
@@ -51,8 +46,7 @@ struct Model {
 
 type Shared = Rc<RefCell<Model>>;
 
-// --- the list of notes -------------------------------------------------------------------------------
-
+/// `ListDelegate` rendering each note's title and word count in the left dock.
 struct NoteRows {
     model: Shared,
 }
@@ -80,8 +74,6 @@ impl ListDelegate for NoteRows {
 
     fn set_selected_index(&mut self, _: Option<IndexPath>, _: &mut Window, _: &mut Context<ListState<Self>>) {}
 }
-
-// --- the two dock panels ------------------------------------------------------------------------------
 
 struct NotesPanel {
     list: Entity<ListState<NoteRows>>,
@@ -146,8 +138,6 @@ macro_rules! panel {
 panel!(NotesPanel, "notes", "Notes");
 panel!(EditorPanel, "editor", "Editor");
 
-// --- the app ------------------------------------------------------------------------------------------
-
 struct NotesApp {
     model: Shared,
     made: usize,
@@ -194,14 +184,14 @@ impl NotesApp {
         let app = cx.weak_entity();
         let editor = cx.new(|cx| EditorPanel { app, model: model.clone(), title: title.clone(), focus: cx.focus_handle() });
         let (dock, _skin) = DockSkin::dock_area("notes", None, window, cx);
-        // PanelHandle: the kit's skin draws a panel's title only through it
+
         let notes_view: Arc<dyn PanelView> = Arc::new(PanelHandle::new(notes_panel));
         let editor_view: Arc<dyn PanelView> = Arc::new(PanelHandle::new(editor.clone()));
         dock.update(cx, |d, cx| {
             d.set_dock(DockPlacement::Left, DockLayout::tabs().panel_view(notes_view, cx), window, cx);
             d.set_center(DockLayout::tabs().panel_view(editor_view, cx), window, cx);
         });
-        // the first note selected
+
         let first = model.borrow().notes[0].title.clone();
         title.update(cx, |s, cx| s.set_value(first, window, cx));
         list.update(cx, |l, cx| {
@@ -261,7 +251,7 @@ impl NotesApp {
                 .show_cancel(true)
                 .on_ok(move |_, window, cx| {
                     this.update(cx, |this, cx| this.confirm_delete(window, cx)).ok();
-                    true // close the dialog
+                    true
                 })
         });
     }

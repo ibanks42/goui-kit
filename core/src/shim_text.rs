@@ -1,18 +1,13 @@
-//! Data closures answered between frames (docs/PROTOCOLS.md 9.14).
+//! Cached asynchronous host-query bridge (`Ask`), text/URI wire codecs, and
+//! list-constructor indexing helpers.
 //!
-//! Upstream calls closures like `TextView::code_block_highlighter(Fn(&CodeBlock) -> Vec<(Range<usize>,
-//! HighlightStyle)>)` or `image_source(Fn(&SharedUri) -> ImageSource)` while it lays out and draws,
-//! without a window or an app. App code never runs in the middle of a frame (DESIGN.md section 0), so
-//! the closure the library gives upstream answers from a cache held by an *ask*: a row source the
-//! app made with `gk.ask(cx, state, procedure)` (call `ASK_NEW`), used for its request channel only
-//! (section 9.2). A key the cache has not got returns the type's default (one frame or two of
-//! placeholder: unhighlighted code, an empty image) and is sent to a main-thread task, which asks
-//! the app (`ASK_EVENT`, `(u64 id, u64 ask, key bytes)`, a queued event, between frames); the app's
-//! procedure returns the value, the binding answers it (`gk.answer`), and the task decodes it with
-//! the app context (colours are resolved against the theme here), caches it under the key's bytes
-//! and redraws every window (`refresh_windows`: the views' tapes are decoded again, so upstream gets
-//! a new closure and asks again, now answered from the cache). A key is the closure's arguments in
-//! their wire form, so the same code block or the same URI is asked once.
+//! Some gpui-kit traits (such as syntax highlighters, syntax-context providers,
+//! and markdown/text data callbacks) invoke synchronous closures without an
+//! `App` reference or from background threads. `Ask` decouples those calls from
+//! the host round trip: a cache miss immediately returns a fallback value and
+//! enqueues `(src, key)` onto a global unbounded channel drained on the GPUI
+//! foreground executor, which asks the host via `SHAPE_ASK_EVENT`, caches the
+//! decoded reply, and refreshes windows.
 
 use crate::genapi::{Call, Dx, GkResult, Put, R, Wire};
 use crate::tape::Tape;
@@ -29,12 +24,12 @@ use std::sync::{Arc, Mutex};
 type Decoded = Arc<dyn Any + Send + Sync>;
 type Decoder = Arc<dyn Fn(&[u8], &mut App) -> Option<Decoded> + Send + Sync>;
 
-/// A decoding context over no tape, with the app's first window: an answer is a value with no
-/// nodes, read by the generated record decoders (which resolve colours against the theme).
+/// Runs `f` with a `Dx` attached to the first open window and a minimal static
+/// empty tape, allowing `Ask` reply decoders that need `Dx` to decode values
+/// outside of a normal view render pass.
 fn with_dx<T>(cx: &mut App, f: impl FnOnce(&mut Dx) -> T) -> Option<T> {
     thread_local! {
-        // A tape of one empty node: the header (magic, 1 node, root 0, no handlers, deps, slots
-        // or ops) and the node.
+        // Minimal valid GKT1 tape header (34 bytes: magic, version=1, zero counts/offsets).
         static EMPTY: Rc<Tape> = Rc::new({
             let mut b = Vec::with_capacity(34);
             b.put_u32(0x3154_4b47);
@@ -53,6 +48,7 @@ fn with_dx<T>(cx: &mut App, f: impl FnOnce(&mut Dx) -> T) -> Option<T> {
     w.update(cx, |_, window, cx| crate::genapi::with_root(&tape, 0, window, cx, |dx, _, _| f(dx))).ok()
 }
 
+/// Per-`Ask` reply cache and in-flight deduplication state.
 #[derive(Default)]
 struct Cache {
     answers: HashMap<Vec<u8>, Decoded>,
@@ -60,13 +56,14 @@ struct Cache {
     decoders: HashMap<Vec<u8>, Decoder>,
 }
 
+/// Registry of active `Ask` caches keyed by source handle.
 static ASKS: Mutex<Option<HashMap<u64, Arc<Mutex<Cache>>>>> = Mutex::new(None);
+/// Sender feeding cache-miss `(src, key)` requests to the foreground pump task.
 static PUMP: Mutex<Option<UnboundedSender<(u64, Vec<u8>)>>> = Mutex::new(None);
+/// Global diagnostic counters `(gets, misses, decoded_answers)` read by `C_ASK_TEST`.
+static STATS: Mutex<(u64, u64, u64)> = Mutex::new((0, 0, 0));
 
-/// The asks the library made (tests: `ASK_TEST`).
-static STATS: Mutex<(u64, u64, u64)> = Mutex::new((0, 0, 0)); // gets, misses, answers
-
-/// What a data closure holds: the ask's cache.
+/// Thread-safe handle to a host-backed cached query closure.
 #[derive(Clone)]
 pub struct Ask {
     src: u64,
@@ -74,8 +71,7 @@ pub struct Ask {
 }
 
 impl Ask {
-    /// The ask behind a row source handle (a tape's or a call's argument). A handle that names no
-    /// ask answers every key with the default.
+    /// Attaches to the `Ask` cache created for source handle `src` by `C_ASK_NEW`.
     pub fn take(src: u64) -> Ask {
         let cache = ASKS.lock().unwrap().as_ref().and_then(|m| m.get(&src).cloned());
         if cache.is_none() && src != 0 {
@@ -84,8 +80,8 @@ impl Ask {
         Ask { src, cache }
     }
 
-    /// The answer for `key` (the arguments' bytes), converted by `conv`; `fallback` while it has
-    /// not arrived. `dec` reads the app's answer with the app context, in the task that receives it.
+    /// Looks up `key` in the cache, returning `conv(cached)` on hit or
+    /// scheduling a single asynchronous host query and returning `fallback()` on miss.
     pub fn get<S: Clone + Send + Sync + 'static, V>(
         &self,
         key: Vec<u8>,
@@ -119,8 +115,8 @@ impl Ask {
 }
 
 impl Ask {
-    /// Forgets every answer and every key asked (a delegate whose text changed: the old answers
-    /// are for a text that is gone, docs/PROTOCOLS.md 9.18). Answers on their way are dropped.
+    /// Discards all cached answers and in-flight keys so subsequent lookups
+    /// re-query the host.
     pub fn clear(&self) {
         if let Some(cache) = &self.cache {
             let mut c = cache.lock().unwrap();
@@ -130,21 +126,19 @@ impl Ask {
         }
     }
 
-    /// Whether this ask was made by gk.ask (a handle that names none answers nothing).
+    /// Reports whether this handle resolved to a live `C_ASK_NEW` cache.
     pub fn is_live(&self) -> bool {
         self.cache.is_some()
     }
 }
 
-/// The key of a closure's arguments: their wire form.
+/// Serializes `args` into a byte vector suitable as an `Ask::get` cache key.
 pub fn key<P: Wire + ?Sized>(args: &P) -> Vec<u8> {
     let mut out = Vec::with_capacity(32);
     args.put(&mut out);
     out
 }
 
-/// The event payload after the request id: the ask's handle, then the key's bytes as they are
-/// (the app reads them as the closure's argument types).
 struct AskKey<'a> {
     src: u64,
     key: &'a [u8],
@@ -157,11 +151,12 @@ impl Wire for AskKey<'_> {
     }
 }
 
-/// Runs on the main thread, between frames: asks the app for one key.
+/// Issues a `SHAPE_ASK_EVENT` request to the host and spawns a foreground task
+/// to store the decoded reply when it arrives.
 fn ask_app(src: u64, key: Vec<u8>, cx: &mut App) {
     let rx = match source::request(src, SHAPE_ASK_EVENT, &AskKey { src, key: &key }, cx) {
         Ok(rx) => rx,
-        Err(_) => return, // the ask was released: nothing more is asked
+        Err(_) => return,
     };
     cx.spawn(async move |cx| {
         let Ok(bytes) = rx.await else { return };
@@ -172,6 +167,8 @@ fn ask_app(src: u64, key: Vec<u8>, cx: &mut App) {
     .detach();
 }
 
+/// Decodes a reply for `(src, key)`, inserts it into the cache, and triggers a
+/// window refresh so the UI repaints with the real value.
 fn answered(src: u64, key: Vec<u8>, bytes: &[u8], cx: &mut App) {
     let Some(cache) = ASKS.lock().unwrap().as_ref().and_then(|m| m.get(&src).cloned()) else {
         return;
@@ -185,7 +182,8 @@ fn answered(src: u64, key: Vec<u8>, bytes: &[u8], cx: &mut App) {
     }
 }
 
-/// `ImageSource` as the app gives one: a URL (`scheme://...`) or a file path.
+/// Converts a host string into a `gpui_kit::ImageSource`, treating strings
+/// containing `"://"` as URIs and all others as filesystem paths.
 pub fn image_source(s: String) -> gpui_kit::ImageSource {
     if s.contains("://") {
         gpui_kit::ImageSource::from(gpui_kit::SharedUri::from(s))
@@ -200,8 +198,6 @@ impl Wire for gpui_kit::SharedUri {
     }
 }
 
-/// A fenced code block as the app's highlighter gets it (`gk.Code_Block`): its language, its
-/// code and its info string after the language.
 impl Wire for gpui_kit::base::text::CodeBlock {
     fn put(&self, out: &mut Vec<u8>) {
         self.lang().map(|s| s.to_string()).put(out);
@@ -210,11 +206,11 @@ impl Wire for gpui_kit::base::text::CodeBlock {
     }
 }
 
+/// Dispatches `C_ASK_NEW` (cache registration + one-time pump startup) and
+/// `C_ASK_TEST` (stats readback). This is the tail of the call-dispatch chain.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_ASK_NEW => (|| {
-            // u64 source (a row source made for its request channel): its cache, and the task
-            // that asks the app, started once.
             let src = r.u64();
             source::count(src, 0)?;
             ASKS.lock().unwrap().get_or_insert_with(HashMap::new).insert(src, Arc::new(Mutex::new(Cache::default())));
@@ -235,7 +231,6 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_ASK_TEST => {
-            // -> u64 gets, u64 misses (keys asked), u64 answers cached
             let (g, m, a) = *STATS.lock().unwrap();
             c.out.put_u64(g);
             c.out.put_u64(m);
@@ -246,9 +241,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     })
 }
 
-// --- values a static makes several of (docs/PROTOCOLS.md 9.15) --------------------------------
-
-/// What a static that makes several values returns: a list, or a list or an error.
+/// Uniform adapter over `Vec<T>` and `Result<Vec<T>, E>` return types used by
+/// generated indexed static constructors (`nth`).
 pub trait Listed {
     type Item;
     fn listed(self) -> Result<Vec<Self::Item>, String>;
@@ -268,9 +262,8 @@ impl<T, E: std::fmt::Debug> Listed for Result<Vec<T>, E> {
     }
 }
 
-/// The value at `index` of what the static made (`gk.diff_file_parse_at(patch, i)`). An index
-/// past its count, or a static that failed, is a mistake in app code (the app asks
-/// `..._count` first): the program stops with exit 2.
+/// Extracts item `index` from a `Listed` constructor result, stopping the app
+/// with a diagnostic message if the constructor failed or `index` is out of bounds.
 pub fn nth<L: Listed>(made: L, index: usize) -> L::Item {
     match made.listed() {
         Ok(mut v) if index < v.len() => v.swap_remove(index),
@@ -283,9 +276,6 @@ pub fn nth<L: Listed>(made: L, index: usize) -> L::Item {
     }
 }
 
-// --- values read back (docs/PROTOCOLS.md 9.13) ------------------------------------------------
-
-/// An LSP position (`cursor_position`): `gk.Lsp_Position {line, character}`, both ways.
 impl Wire for lsp_types::Position {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u32(self.line);
@@ -300,14 +290,12 @@ impl crate::genapi::Unwire for lsp_types::Position {
     }
 }
 
-/// `Arc<Vec<T>>` (a font's fallbacks and features): the list.
 impl<T: Wire> Wire for std::sync::Arc<Vec<T>> {
     fn put(&self, out: &mut Vec<u8>) {
         self.as_slice().put(out);
     }
 }
 
-/// `Rc<Vec<T>>` read back (`SearchMatcher::matched_ranges`): the list.
 impl<T: Wire> Wire for std::rc::Rc<Vec<T>> {
     fn put(&self, out: &mut Vec<u8>) {
         self.as_slice().put(out);

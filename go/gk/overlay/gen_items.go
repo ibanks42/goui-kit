@@ -10,8 +10,7 @@ import (
 	"gpuikit.dev/gk/kit"
 )
 
-// ItemFunc is a function that describes one item of a component: one of the kinds of function a
-// closure of the kit calls (a builder that takes a gk.RowSource made by gk.Items names its kind).
+// ItemFunc constrains callback signatures accepted by Items for per-item component rendering.
 type ItemFunc interface {
 	func(cx *gk.Cx, v0 base.ResizeHandleContext) gk.Element |
 		func(cx *gk.Cx, v0 base.CalendarItemEl, v1 base.CalendarItemState) gk.Element |
@@ -40,10 +39,9 @@ type ItemFunc interface {
 		func(cx *gk.Cx, v0 gk.MarkdownNodeRead, v1 editor.InlineRenderContext) gk.Element
 }
 
-// Items makes the row source of an item function: a function that describes one item of a component
-// (a calendar's day, a tree's entry, a popover's content, an input's token), called between frames with
-// the values the kit hands that item. The same function given in the same view gives the same source;
-// it may be called in a view function.
+// Items creates or reuses a RowSource backed by callback f, which renders individual
+// component items (such as calendar days, tree rows, or popovers) on demand between frames.
+// Passing the same callback in the same view returns the same source.
 func Items[F ItemFunc](cx *gk.Cx, f F) gk.RowSource {
 	switch x := any(f).(type) {
 	case func(cx *gk.Cx, v0 base.ResizeHandleContext) gk.Element:

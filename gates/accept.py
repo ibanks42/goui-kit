@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
-"""accept.py [--check] [--list]: builder and value types that nothing accepts.
+"""Audit non-element value types in api/gk.api.json.gz that nothing accepts as input.
 
-A *value type* is a node type of the interface description (api/gk.api.json.gz, written by
-`make gen`) that is not an element and has at least one usable (bound or bridged) constructor
-or builder. Its values are made by the app; they are useful only if something takes them. A
-value type is *accepted* when one of these takes it:
+What it gates:
+  Ensures bound or bridged value types (non-element structs/builders) are not orphaned: every
+  such type must either be accepted by some usable API surface or have an explicit explanation
+  in REASONS.
 
-  - an argument of a usable function, at any depth (a list, an option, a reference, a tuple, a
-    build closure's node), or a field of a record, a variant of an enum with data or a member
-    of an Into set that such an argument reaches;
-  - the target of a usable conversion (`converts`) of another node;
-  - a procedure of the runtime that takes the value (RUNTIME below: `gk.table_columns` takes
-    `Column`, `gk.plot` takes every type with a `paint`, `gk.action_of` takes every type that
-    implements Action, listed by the generator in the description's `values.actions`).
+How it measures:
+  1. Seeds the `taken` set with hand-wired runtime types (RUNTIME) and registered action types.
+  2. Walks every argument descriptor of every usable (`bound` or `bridged`) item, every paint
+     op's node, and every usable conversion's return descriptor. Expands nested `rec`, `denum`,
+     and `into` definitions recursively while tracking visited keys to avoid cycles.
+  3. Lists every non-element node with at least one usable constructor or method that never
+     appears in `taken`, matching each against exact keys or `::` module prefixes in REASONS.
+  4. Writes the full table to `gates/out/accept.md` (and prints each item if `--list` is given).
 
-Every value type that is not accepted is counted with its usable functions, and must have a
-stated reason in REASONS (why nothing can take it today, and what would). Run it to see
-the current count.
-
-    accept.py           print the count and write gates/out/accept.md (types, functions, reasons)
-    accept.py --list    also print every type left, with its reason
-    accept.py --check   exit 1 when a type left has no reason
-Run by `make gen` after the generator. Standard library only."""
+What PASS means (`--check`, exit 0):
+  Every unaccepted non-element value type with usable functions has a documented reason in
+  REASONS (zero unexplained orphans). Exits 1 if any lack a reason.
+"""
 import gzip
 import json
 import os
@@ -32,10 +29,9 @@ API = os.path.join(REPO, "api", "gk.api.json.gz")
 OUT = os.path.join(REPO, "gates", "out", "accept.md")
 USABLE = ("bound", "bridged")
 
-# Procedures of the runtime that take a value type (the description cannot see them).
+# Value types accepted by hand-written runtime functions rather than generated descriptors.
 RUNTIME = {
     "gpui_kit::component::table::Column": "table.SetTableKitColumns (rt_table.go, PROTOCOLS.md 13.6)",
-    # animations and motion values (rt_motion.go, PROTOCOLS.md 13.30)
     "gpui_kit::base::Presence": "gk.Motion(el, gk.MotionValue{prop, gk.AtPresence{presence, from, to}}) (rt_motion.go, PROTOCOLS.md 13.30)",
     "gpui_kit::base::animation::EffectTransition": "gk.Effect(el, effect, id): EffectTransition::apply (rt_kit.go, PROTOCOLS.md 13.30)",
     "gpui_kit::base::Timing": "gk.Motion(el, gk.MotionValue{prop, gk.AtKeyframes{id, keyframes, timing}}) (rt_motion.go, PROTOCOLS.md 13.30)",
@@ -43,8 +39,7 @@ RUNTIME = {
     "gpui_kit::base::Spring": "gk.Motion(el, gk.MotionValue{prop, gk.ToSpring{id, target, policy}}) (rt_motion.go, PROTOCOLS.md 13.30)",
 }
 
-# Why a value type left is not accepted, by the upstream path of the type or by a prefix
-# ending in "::" (a module). A type left without one fails --check.
+# Documented reasons for non-element value types that no usable function takes (keys ending in `::` match prefixes).
 TOKENS = ("theme tokens: the parts of the semantic token set (`SemanticThemeTokens`) that upstream builds "
           "from a theme file; no public function takes one, a Rust app reads them from the theme")
 CONFIG = ("theme file: upstream deserializes it from JSON (`ThemeRegistry::load_themes_from_str`, bound) and "
@@ -92,16 +87,14 @@ REASONS = {
     "gpui_kit::component::AnyChildElement": ("the table parts' own type-erased child: upstream keeps it in private fields "
                                              "(`Table::child` wraps its argument itself) and no public function takes one; "
                                              "the binding's `Table_Child` takes every ChildElement directly"),
-    # (PROTOCOLS.md 9.28): what is still taken by nothing, and what would take it.
     "gpui_kit::component::setting::RenderOptions": ("handed by upstream to a settings field's render closure, which "
                                                     "the binding serves with a fragment of the app's view (PROTOCOLS.md "
                                                     "13.19); the app wrote the options it would read, so no function "
                                                     "of the binding takes one"),
 }
 
-
 def walk(d, found, desc):
-    """Node keys a descriptor names, following records, data enums and Into sets."""
+    # Recursively collect every referenced value/node type, following records, data enums, and into conversions once.
     if isinstance(d, dict):
         for v in d.values():
             walk(v, found, desc)
@@ -114,7 +107,6 @@ def walk(d, found, desc):
     elif head == "build" and len(d) > 1 and isinstance(d[1], str):
         found.add(d[1])
     elif head in ("traitval", "oneof", "dragstyle") and len(d) > 2:
-        # one of a kit trait's implementors (PROTOCOLS.md 13.19, 9.12), a drag-over style (13.20)
         found.update(x for x in (d[2] if isinstance(d[2], list) else [d[1]]) if isinstance(x, str))
         if head == "dragstyle":
             found.add(d[1])
@@ -124,31 +116,30 @@ def walk(d, found, desc):
             desc["seen"].add(key)
             table = {"rec": desc["records"], "denum": desc["data_enums"], "into": desc["into"]}[head]
             walk(table.get(d[1], {}), found, desc)
-    # A list whose head is a tag (a string) is a descriptor: its operands follow the tag. Any other
-    # list (a record's or a variant's fields, a data enum's variants, a tuple's members) is plain
-    # data and every element counts, the first included.
     for x in (d[1:] if isinstance(head, str) else d):
         walk(x, found, desc)
 
-
 def count(d):
+    """Collect all accepted value types and return unaccepted non-element nodes with reasons."""
     items = {it["id"]: it for it in d["items"]}
     usable = lambda i: items.get(i, {}).get("status") in USABLE  # noqa: E731
     ctx = {"seen": set(), "records": d["records"], "data_enums": d["data_enums"], "into": d["into"]}
     taken = set(RUNTIME)
-    # The kit's action types: gk.action_of makes an Action of any of them (PROTOCOLS.md 13.11).
     taken |= set(d.get("values", {}).get("actions", []))
+    # Record every type reachable from arguments of usable items and paint ops.
     for it in d["items"]:
         if it.get("status") not in USABLE:
             continue
         for a in it.get("args", []):
             walk(a.get("desc"), taken, ctx)
         if it.get("kind") == "paint" and it.get("node"):
-            taken.add(it["node"])  # gk.plot's parts (PROTOCOLS.md 12.6)
+            taken.add(it["node"])
+    # Also mark targets produced by usable conversion helpers on nodes.
     for n in d["nodes"].values():
         for cv in n.get("converts", []):
             if usable(cv):
                 walk(items[cv].get("ret"), taken, ctx)
+    # Report non-element nodes that expose usable constructors/ops yet never appeared in `taken`.
     left = []
     for key, n in sorted(d["nodes"].items()):
         if n["element"]:
@@ -159,7 +150,6 @@ def count(d):
         reason = REASONS.get(n["path"]) or next((v for k, v in REASONS.items() if k.endswith("::") and n["path"].startswith(k)), "")
         left.append({"type": key, "functions": len(fns), "reason": reason})
     return left
-
 
 def main(argv):
     d = json.load(gzip.open(API))
@@ -180,7 +170,6 @@ def main(argv):
             print(f"  {x['type']} ({x['functions']}): {x['reason'] or '(no reason)'}")
     if "--check" in argv and noreason:
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])

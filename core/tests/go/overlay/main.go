@@ -1,15 +1,6 @@
-// overlay: the protocol tests of the overlays family (docs/PROTOCOLS.md section 11.6), the port of
-// core/tests/overlay: a dialog, an alert and a sheet opened from handlers with view-built functions
-// (gk.NewBuilt), described again while open, closed by the keyboard and by the app, opened again on
-// the same view; a questionnaire (a state whose constructor and updates can fail). Each mode runs
-// offscreen (the diag library) under a gk-meter script and prints lines
-// core/tests/go/run-overlay.sh checks.
-//
-//	GK_PROTO=dialog | alert | sheet | questionnaire | release | wrong-root | questionnaire-dup
-//	(and the further modes below: dock, ..., popover, observe, values, menu-redraw, menu-redraw-b)
-//
-// The modes of the dock's node ids, saved layouts, pane tree and renderer, the nav stack's views,
-// the toast manager's clock and a fallible value call are in docks.go.
+// Command overlay runs protocol tests for dialogs, alert dialogs, sheets,
+// questionnaires, dropdown menu redraw survival, dock areas/renderers/layouts,
+// popovers, position observers, toast managers, and real X11 window titles.
 package main
 
 import (
@@ -29,30 +20,30 @@ import (
 
 const ms = time.Millisecond
 
+// App holds overlay, dock, popover, and position-observer state for the active GK_PROTO mode.
 type App struct {
 	mode string
-	// menu-redraw: the view's redraws while its menu is open, and the clicks that reached item
-	// Alpha's handler and item Bravo's action
+
 	menuTicks    int
 	menuA, menuB int
 	menuAct      gk.Action
 	root         gk.View
-	count        int // shown in the dialog; bumped while it is open
-	described    int // runs of the dialog's function
+	count        int
+	described    int
 	cancels      int
 	oks          int
 	closes       int
 	first        gk.Built[overlay.DialogEl]
 	sheet        gk.Built[overlay.SheetEl]
 	q            base.QuestionnaireState
-	// the dock
+
 	dock   gkdock.Area
 	panels [2]gkdock.Panel
 	bodies [2]*Body
-	// popover
+
 	popoverOpen    bool
 	popoverChanges int
-	// views family: observations
+
 	obsX      float32
 	positions int
 	lastPos   overlay.ResolvedPosition
@@ -61,7 +52,6 @@ type App struct {
 	frames5   int
 }
 
-// Body is a panel's (or a page's) view: its text, and how often it was described.
 type Body struct {
 	text      string
 	described int
@@ -72,50 +62,49 @@ func (b *Body) view(cx *gk.Cx) gk.Element {
 	return kit.Label(b.text)
 }
 
-// step: a function a timer runs at a time after init.
 type step struct {
 	at time.Duration
 	f  func(a *App, cx *gk.Cx)
 }
 
-// steps: what a mode's init starts, by mode; roots: the root view of a mode that draws more than
-// the default. The modes of docks.go register from it.
 var (
 	steps = map[string][]step{}
 	inits = map[string]func(a *App, cx *gk.Cx){}
 	roots = map[string]func(a *App, cx *gk.Cx) gk.Element{}
 )
 
-// --- the dialog --------------------------------------------------------------------------------
-
+// confirmDialog proves view-backed Dialogs re-render when notified (count 0->1),
+// deliver Cancel on Escape with the updated closure state (seen=1, count=1),
+// and allow reopening the same Built view handle before CloseDialog closes it.
 func (a *App) confirmDialog(cx *gk.Cx) overlay.DialogEl {
 	a.described++
 	fmt.Printf("overlay dialog described n=%d count=%d\n", a.described, a.count)
-	seen := a.count // the count of this description: which tape the kit used
+	seen := a.count
 	return overlay.Dialog().
 		Title(kit.Label("Delete?")).
 		Child(kit.Label(fmt.Sprintf("count %d", a.count))).
 		OnCancel(func(cx *gk.Cx, _ gk.ClickEvent) bool {
 			a.cancels++
 			fmt.Printf("overlay dialog cancel n=%d seen=%d count=%d\n", a.cancels, seen, a.count)
-			return true // closes it
+			return true
 		})
 }
 
+// openFirst creates and opens the built confirmation dialog.
 func openFirst(a *App, cx *gk.Cx) {
 	a.first = gk.NewBuilt(cx, a.confirmDialog)
 	overlay.OpenDialog(cx, a.first)
 	fmt.Println("overlay dialog opened")
 }
 
+// bump increments the counter and notifies the open dialog view to verify live updates.
 func bump(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay dialog active=%v\n", overlay.HasActiveDialog(cx))
 	a.count++
-	gk.Notify(cx, a.first.View) // described again while open
+	gk.Notify(cx, a.first.View)
 }
 
-// Go: gk.NewBuilt makes a new view on every call; the app keeps the one it made and opens it again, so "again" is the
-// kept Built, the same view the dialog was first opened on.
+// reopen confirms the dialog closed after cancel and reopens the same Built view handle.
 func reopen(a *App, cx *gk.Cx) {
 	again := a.first
 	fmt.Printf("overlay dialog closed active=%v; again same=%v\n", overlay.HasActiveDialog(cx), again.View == a.first.View)
@@ -131,8 +120,8 @@ func dialogDone(a *App, cx *gk.Cx) {
 		overlay.HasActiveDialog(cx), a.described, a.cancels, a.count)
 }
 
-// --- the alert ---------------------------------------------------------------------------------
-
+// alert proves OpenAlertDialog opens an alert modal, handles Enter via OnOk
+// (oks=1), and clears HasActiveDialog back to false.
 func (a *App) alert(cx *gk.Cx) overlay.AlertDialogEl {
 	return overlay.AlertDialog().Title(kit.Label("Unsaved")).Description(kit.Label("Leave?")).ShowCancel(true).
 		OnOk(func(cx *gk.Cx, _ gk.ClickEvent) bool {
@@ -151,8 +140,8 @@ func alertDone(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=alert active=%v oks=%d\n", overlay.HasActiveDialog(cx), a.oks)
 }
 
-// --- the sheet ---------------------------------------------------------------------------------
-
+// settings proves OpenSheetAt opens a left-edge Sheet (HasActiveSheet=true),
+// describes its content, and clears HasActiveSheet to false after CloseSheet.
 func (a *App) settings(cx *gk.Cx) overlay.SheetEl {
 	fmt.Println("overlay sheet described")
 	return overlay.Sheet().Title(kit.Label("Settings")).Child(kit.Label("body")).OnClose(func(cx *gk.Cx, _ gk.ClickEvent) {
@@ -175,22 +164,18 @@ func sheetDone(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=sheet active=%v\n", overlay.HasActiveSheet(cx))
 }
 
-// --- misuse: a released view, a function that returns another node ----------------------------
-
+// releaseFirst tests the misuse path where an active dialog's view is released while open.
 func releaseFirst(a *App, cx *gk.Cx) {
-	gk.Release(cx, a.first.View) // the dialog is still open: its next build stops
+	gk.Release(cx, a.first.View)
 	fmt.Println("overlay released the open dialog's view")
-	overlay.OpenSheet(cx, gk.NewBuilt(cx, a.settings)) // the window's layers are built again
+	overlay.OpenSheet(cx, gk.NewBuilt(cx, a.settings))
 }
 
-// Go: a view-built function's type is checked by the compiler; a Built made around another view
-// (a plain view whose root is a div) compiles, and the library refuses it.
+// openWrong tests the misuse path where OpenDialog receives a view whose root is a Div.
 func openWrong(a *App, cx *gk.Cx) {
 	wrong := gk.NewView(nil, func(cx *gk.Cx) gk.Element { return gk.Div().Child(kit.Label("not a dialog")) })
 	overlay.OpenDialog(cx, gk.Built[overlay.DialogEl]{View: wrong})
 }
-
-// --- the questionnaire ---------------------------------------------------------------------------
 
 func items(dup bool) []base.QuestionnaireItemDefinition {
 	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").
@@ -206,7 +191,6 @@ func items(dup bool) []base.QuestionnaireItemDefinition {
 	return []base.QuestionnaireItemDefinition{color, size}
 }
 
-// errText is an error's text ("" for none), as the checks expect.
 func errText(err error) string {
 	if err == nil {
 		return ""
@@ -214,6 +198,10 @@ func errText(err error) string {
 	return err.Error()
 }
 
+// questionnaire proves QuestionnaireState enforces item/choice names (returning
+// UnknownChoice for "green" and an error for unknown item "nope"), advances
+// current item from "color" to "size" on GoNext, and in `questionnaire-dup`
+// refuses duplicate item names with DuplicateItem.
 func questionnaire(a *App, cx *gk.Cx) {
 	a.q = base.NewQuestionnaireState(cx, items(a.mode == "questionnaire-dup")).Build()
 	cur, _ := a.q.CurrentItem(cx).Get()
@@ -230,9 +218,6 @@ func questionnaire(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=questionnaire complete=%v\n", a.q.IsComplete(cx))
 }
 
-// --- the dock: two Go views as panels ---------------------------------------------------------
-
-// panelKind prints a PanelEventKind as the checks expect (the variant's name).
 func panelKind(k gkdock.PanelEventKind) string {
 	names := []string{"Active", "Zoomed", "Added", "Removed"}
 	if int(k) < len(names) {
@@ -245,6 +230,7 @@ func (a *App) panelEvent(cx *gk.Cx, e gkdock.PanelEvent, which int) {
 	fmt.Printf("overlay panel %d event %s %v\n", which, panelKind(e.Kind), e.Flag)
 }
 
+// dockMake builds a skinned DockArea with two panels subscribed to PanelEvents.
 func dockMake(a *App, cx *gk.Cx) {
 	a.bodies = [2]*Body{{text: "first"}, {text: "second"}}
 	a.dock = gkdock.NewAreaSkinned(cx, "test")
@@ -284,12 +270,6 @@ func (a *App) dockRoot(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(gkdock.View(a.dock))
 }
 
-// --- a real window on a display (an X server such as Xvfb): title and size ------------------------
-// Offscreen every window has the meter's size and the headless platform keeps no title, so the
-// app tests could only read them; here the X server holds them. GPUI reads a window's title back
-// on macOS only (gpui-fast's get_title is empty elsewhere), so run-overlay.sh asks the X server
-// (xwininfo) while the app runs; the size comes back through gk.GetWindowInfo.
-
 func (a *App) realView(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(kit.Label("a real window"))
 }
@@ -311,18 +291,18 @@ func (a *App) realInit(cx *gk.Cx) {
 	gk.After(cx, 2000*ms, a.realAgain)
 }
 
+// realStart opens a live X11 window (`window-real` mode) that reads and renames its OS title.
 func (a *App) realStart(cx *gk.Cx) {
 	a.root = gk.NewView(a.realInit, a.realView)
 	gk.OpenWindow(cx, "Go on the kit", 420, 300, a.root)
 }
-
-// --- PROTOCOLS.md 11.12: a popover opened and closed from code ----------------------------
 
 func (a *App) popoverChanged(cx *gk.Cx, open bool) {
 	a.popoverChanges++
 	a.popoverOpen = open
 }
 
+// popoverRoot renders a controlled Popover driven by app state (`popover` mode).
 func (a *App) popoverRoot(cx *gk.Cx) gk.Element {
 	p := overlay.Popover("pop").Trigger(kit.Button("trigger").Label("Open")).Open(a.popoverOpen).
 		OnOpenChange(a.popoverChanged).Child(kit.Label("inside the popover"))
@@ -343,11 +323,6 @@ func popoverDone(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=popover open=%v changes=%d\n", a.popoverOpen, a.popoverChanges)
 }
 
-// --- views family, PROTOCOLS.md 11.14: observations --------------------
-
-// A positioner at a corner the app moves, and a popup (always open), each reporting where it was laid
-// out (the popup also its trigger's bounds): the reports come after the frame, once per change, never
-// again for the same values.
 func (a *App) positioned(cx *gk.Cx, p overlay.ResolvedPosition) {
 	a.positions++
 	a.lastPos = p
@@ -358,6 +333,9 @@ func (a *App) popped(cx *gk.Cx, e overlay.Event117) {
 	a.lastPop = e
 }
 
+// observeRoot proves PositionerCorner and Popup OnPosition callbacks fire on
+// initial layout (x=4, y=50, positive popup width) and fire again with x=120
+// once obsX moves across frames.
 func (a *App) observeRoot(cx *gk.Cx) gk.Element {
 	a.frames5++
 	pos := overlay.PositionerCorner(gk.AnchorTopLeft, gk.GpuiPoint{X: a.obsX, Y: 50}).OnPosition(a.positioned).Child(kit.Label("placed"))
@@ -365,7 +343,6 @@ func (a *App) observeRoot(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(pos).Child(gk.Div(s.P4).Child(pop))
 }
 
-// placementName prints an optional Placement as the checks expect (nil, or the name).
 func placementName(p gk.Option[gk.Placement]) string {
 	v, ok := p.Get()
 	if !ok {
@@ -381,7 +358,7 @@ func placementName(p gk.Option[gk.Placement]) string {
 func observeFirst(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay observe first positions=%d x=%.0f y=%.0f placement=%s pops=%d pop_w=%v\n", a.positions,
 		a.lastPos.Bounds.Origin.X, a.lastPos.Bounds.Origin.Y, placementName(a.lastPos.Placement), a.pops, a.lastPop.A1.Size.Width > 0)
-	a.obsX = 120 // the positioner moves: one more report
+	a.obsX = 120
 }
 
 func observeMoved(a *App, cx *gk.Cx) {
@@ -392,10 +369,8 @@ func observeDone(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=observe positions=%d pops=%d frames_seen=%v\n", a.positions, a.pops, a.frames5 >= 3)
 }
 
-// --- menu-redraw: a menu item's handler after its view has been described again many times --------
-
-// A dropdown with an item that has its own click handler (Alpha) and one that runs an action
-// (Bravo), beside a label that changes on every tick, so each redraw is a new description.
+// menuRoot renders a dropdown menu alongside a 10ms counter to verify menu handlers
+// survive frequent parent view redraws (`menu-redraw` and `menu-redraw-b`).
 func (a *App) menuRoot(cx *gk.Cx) gk.Element {
 	menu := kit.NewPopupMenu().Item(kit.NewPopupMenuItem("Alpha").OnClick(a.menuAlpha)).Menu("Bravo", a.menuAct)
 	return gk.HFlex(s.Gap2, s.P2).Child(kit.DropdownMenu(kit.Button("menu").Label("Menu"), menu)).
@@ -411,10 +386,8 @@ func (a *App) menuBravo(cx *gk.Cx, act gk.Action) {
 }
 
 func (a *App) menuTick(cx *gk.Cx) {
-	a.menuTicks++ // the view's own handler: it draws again
+	a.menuTicks++
 }
-
-// --- the app -----------------------------------------------------------------------------------
 
 func (a *App) rootView(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(kit.Label("overlay"))
@@ -462,7 +435,6 @@ func (a *App) start(cx *gk.Cx) {
 	gk.OpenWindow(cx, "overlay", 640, 480, a.root)
 }
 
-// Where menu-redraw clicks: the dropdown's button, and its two items once it is open.
 const (
 	menuButton  = "click 30 22\n"
 	menuAlphaAt = "click 50 60\n"
@@ -481,15 +453,13 @@ func main() {
 	script := "size 640 480\nframe\n"
 	switch a.mode {
 	case "dialog":
-		// open at 10; bumped at 30 while open; escape (on_cancel of the second description); reopened
-		// at 50 on the same view; closed by the app at 70; done at 90
+
 		script += "advance 10\n" + step + "advance 20\n" + step + "key escape\n" + step +
 			"advance 20\n" + step + "advance 20\n" + step + "advance 20\n" + step + "stat\n"
 	case "alert":
 		script += "advance 10\n" + step + "key enter\n" + step + "advance 40\n" + step + "stat\n"
 	case "menu-redraw", "menu-redraw-b":
-		// open the menu, let the view be described again ten times (a tick every 10 ms changes its
-		// label), then click item Alpha (menu-redraw) or Bravo (menu-redraw-b) once
+
 		item := menuAlphaAt
 		if a.mode == "menu-redraw-b" {
 			item = menuBravoAt

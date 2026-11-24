@@ -1,4 +1,4 @@
-// A gradient where only one colour goes (a text colour): only a Fill (.Bg, a plot's paths and quads) takes one.
+// Compile-time misuse case: TextColor expects a single gk.Color, so a LinearGradient is rejected.
 package main
 
 import (

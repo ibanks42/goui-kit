@@ -1,3 +1,4 @@
+# C ABI runtime library (libgpuikit) that decodes tape commands and drives gpui-kit.
 [package]
 name = "gk-capi"
 version.workspace = true
@@ -13,29 +14,24 @@ gpui-kit.workspace = true
 gpui-fps = { version = "=0.11.0", features = ["gpui-fast"], optional = true }
 gk-meter.workspace = true
 futures = "0.3"
-# The input family's provider shims (core/src/shim_input.rs) implement upstream traits whose
-# signatures name these; the versions are the ones gpui-base already links (no new crate).
+
+# Versions pinned to match the exact types re-exported or expected by gpui-kit.
 anyhow = "1"
 lsp-types = "=0.97.0"
 ropey = "=2.0.0-beta.1"
-# The calendar values of the date family (core/src/values.rs, PROTOCOLS.md 13.13): the version
-# gpui-base and gpui-component already link (no new crate).
 jiff = { version = "=1.0.2", default-features = false }
-# A saved dock layout's per-panel data (PanelInfo::Panel, core/src/dock.rs): the version gpui-base links.
 serde_json = "=1.0.154"
-# gpui's element leftovers (core/src/platform.rs, PROTOCOLS.md 13.31): accessibility nodes the app
-# describes (accesskit's Node) and images the app gives as pixels (image's Frame); the versions gpui
-# already links (no new crate). png: a window's icon given as a PNG (core/src/app.rs, PROTOCOLS.md
-# 11.38), the decoder gpui already links for its own images.
 accesskit = { version = "=0.24.1", default-features = false }
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
 
 [features]
 default = ["gpui-fast"]
-# Run GPUI-kit on gpui-fast. Without it (--no-default-features) the library runs on upstream GPUI.
+
+# Enables the gpui-fast backend across gpui-kit and gk-meter.
 gpui-fast = ["gpui-kit/gpui-fast", "gk-meter/gpui-fast"]
-# Diagnostic variant: retention counters, offscreen rendering, scripted input, the profiler.
-# The retention counters exist only in gpui-fast, so this variant needs it.
+
+# Diagnostic build: enables headless scripted execution, screenshot capture, and layout counters.
 diag = ["gpui-fast", "gpui-kit/test-support", "dep:gpui-fps", "gk-meter/diag"]
-# Links every component's render path (src/keep.rs), to measure the size of a full library.
+
+# Reserved feature flag for full-family builds.
 all = []

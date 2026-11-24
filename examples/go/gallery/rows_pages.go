@@ -1,9 +1,5 @@
-// The rows family's gallery pages, the Go twin of ref/src/bin/gallery/rows_pages.rs,
-// call for call: a list of 10,000 rows, a table of
-// 10,000 rows with a sortable column and a tree, over row sources (docs/PROTOCOLS.md section
-// 9.5). Each row or cell is a view described once; the steps of ref/gallery/pages.txt click,
-// press keys and scroll (a far scroll and a jump to the last row draw placeholders for one
-// frame, and the shot follows the next frame).
+// Row-source gallery pages: virtualized 10,000-row List, sortable 10,000-row DataTable,
+// and hierarchical Tree views backed by RowSource.
 package main
 
 import (
@@ -23,10 +19,10 @@ const (
 type rowsPages struct {
 	list     gktable.ListState
 	table    gktable.State
-	cells    gk.RowSource // the table's
+	cells    gk.RowSource
 	tree     gktable.TreeState
 	treeRows gk.RowSource
-	desc     bool // the table's rows in descending order of their id
+	desc     bool
 }
 
 var rowsPageTable = []Page{{"rows-list", rowsList}, {"rows-table", rowsTable}, {"rows-tree", rowsTreePage}}

@@ -1,9 +1,6 @@
-// Package runerr checks gk.Run's contract under go test (docs/GO.md section 5): a mistake in app
-// code ends the app and RunHeadless returns it as a *gk.Error with the app's line, and the
-// caller's deferred functions run; a panic in app code ends the app and RunHeadless panics again
-// with a *gk.PanicError holding the app's value. The app runs in TestMain, on the main goroutine
-// (gk needs the main OS thread); the tests read what it left. GK_PROTO picks the case
-// (core/tests/go/run-runerr.sh).
+// Package runerr verifies how gk.RunHeadless surfaces Go API misuse (`*gk.Error`)
+// and Go runtime panics (`*gk.PanicError`), ensuring deferred functions execute
+// and no further handlers run after the failure.
 package runerr
 
 import (
@@ -22,10 +19,12 @@ var (
 	runErr   error
 	deferred bool
 	panicked any
-	after    int // handler turns that ran after the failure (none may)
+	after    int
 	failedAt bool
 )
 
+// script clicks twice so the tests can confirm the second click never reaches
+// the handler after the first click triggers a misuse error or panic.
 const script = "size 200 100\nframe\nclick 100 50\nframe\nclick 100 50\nframe\nframe\n"
 
 func start(cx *gk.Cx) {
@@ -40,10 +39,10 @@ func start(cx *gk.Cx) {
 			failedAt = true
 			switch mode {
 			case "gotest-misuse":
-				_ = kept.Window() // the cx of start, kept past its call: a *gk.Error
+				_ = kept.Window()
 			case "gotest-panic":
 				var m map[string]int
-				m["x"] = 1 // the app's own bug
+				m["x"] = 1
 			}
 		})
 	})
@@ -59,6 +58,9 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// TestMisuse proves calling a gk API with a stale *gk.Cx (saved from start and
+// reused inside OnClickDo) unwinds RunHeadless into a *gk.Error with a nonzero
+// Go source line, executes deferred cleanup, and suppresses the second click.
 func TestMisuse(t *testing.T) {
 	if mode != "gotest-misuse" {
 		t.Skip("GK_PROTO=gotest-misuse")
@@ -73,6 +75,9 @@ func TestMisuse(t *testing.T) {
 	}
 }
 
+// TestPanic proves a Go runtime panic (writing to a nil map) inside an event
+// handler is captured as a *gk.PanicError wrapping the runtime.Error with stack
+// and location metadata, runs deferred cleanup, and blocks the second click.
 func TestPanic(t *testing.T) {
 	if mode != "gotest-panic" {
 		t.Skip("GK_PROTO=gotest-panic")

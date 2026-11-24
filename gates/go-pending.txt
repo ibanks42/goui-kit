@@ -1,5 +1,6 @@
-# Go gates that cannot run yet because the Go package lacks a binding, one per line:
-# "gate subject | the missing Go binding | who adds it". The gate prints PENDING;
-# gates/summary.py shows it as PENDING and lets the run pass only when it is listed here. A
-# listed gate that runs and passes fails the run until its line is deleted, so this list only
-# shrinks.
+# Gates waiting on Go bindings, read by gates/summary.py.
+# Format: <gate> <subject> | <reason>
+# Optional third column: <gate> <subject> | <reason> | <owner>
+# Blank lines and lines starting with # are ignored.
+# Any PENDING gate not listed here fails the run; any listed gate that passes reports XPASS
+# and fails the run so the entry is removed.

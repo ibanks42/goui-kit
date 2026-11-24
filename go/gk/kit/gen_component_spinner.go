@@ -12,7 +12,7 @@ type SpinnerEl struct{ rt.ElSizableNode }
 
 // Create a new loading spinner.
 //
-// Spinner is <gpui_kit::component::spinner::Spinner>::new.
+// Spinner calls <gpui_kit::component::spinner::Spinner>::new.
 func Spinner() SpinnerEl {
 	rt.UseComponentSpinner()
 	n := rt.NewNode(764)
@@ -21,7 +21,7 @@ func Spinner() SpinnerEl {
 
 // Set the icon color.
 //
-// Color is <gpui_kit::component::spinner::Spinner>::color.
+// Color calls <gpui_kit::component::spinner::Spinner>::color.
 func (e SpinnerEl) Color(color gk.Color) SpinnerEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -30,7 +30,7 @@ func (e SpinnerEl) Color(color gk.Color) SpinnerEl {
 
 // Set the easing function.
 //
-// Ease is <gpui_kit::component::spinner::Spinner>::ease.
+// Ease calls <gpui_kit::component::spinner::Spinner>::ease.
 func (e SpinnerEl) Ease(easing string) SpinnerEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutExpr(o, easing, 1)
@@ -43,7 +43,7 @@ func (e SpinnerEl) Ease(easing string) SpinnerEl {
 //
 // Please ensure the icon used is suitable for a loading spinner.
 //
-// Icon is <gpui_kit::component::spinner::Spinner>::icon.
+// Icon calls <gpui_kit::component::spinner::Spinner>::icon.
 func (e SpinnerEl) Icon(icon gk.IconName) SpinnerEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(icon))
@@ -51,19 +51,27 @@ func (e SpinnerEl) Icon(icon gk.IconName) SpinnerEl {
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e SpinnerEl) Large() SpinnerEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e SpinnerEl) Small() SpinnerEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e SpinnerEl) WithSize(size gk.SizeInto) SpinnerEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e SpinnerEl) Xsmall() SpinnerEl { tSizableXsmall(rt.N(e.Core)); return e }

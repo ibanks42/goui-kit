@@ -1,45 +1,47 @@
-# The reader example's scripted session (gates/reader.sh) over a feed of 3,000 articles; gates/go-apps.sh compares Go with ref-reader;
-# the images are looked at by eye. Window coordinates (the images are twice the size): the toolbar's
-# icon buttons at y 24, reload 24, previous 60, next 96, star 132, close 168, theme 940, settings 976;
-# the search box 150,73; the list's rows (with summaries) y = 157, 225, 293, 361, ...; the first tab
-# 388,65. In the settings dialog: the font slider's thumb 396,147 on a track from x 293 to 707, the
-# theme select 550,191 (its "Dark" 550,263), the order select 550,239, the switch 311,281.
-# The offscreen clock moves only with `advance` (toasts slide in, the article fades in).
+# Offscreen session script for the reader app (gates/reader.sh, gates/go-apps.sh reader).
+# Runs over a 3000-article feed at 1000x660 across 15 screenshots covering load, tooltips,
+# article fade transitions, starring, tabs, keyboard nav, scrolling, search, settings, and reload.
 size 1000 660
 frame
 sleep 300
 frame
 advance 500
 shot 01-loaded.png
-# a tooltip on an icon button
+
+# Move over the toolbar button and advance 1500 ms to trigger its hover tooltip.
 move 24 24
 advance 1500
 shot 02-tooltip.png
-# an article opens in a tab and fades in over 200 ms
+
+# Click an article row and capture both mid-fade (+60 ms) and settled open (+300 ms) states.
 click 150 225
 advance 60
 shot 03-fading.png
 advance 300
 shot 04-open.png
-# a second article, a second tab; star it
+
+# Open a second article and toggle its star button.
 click 150 361
 advance 300
 click 132 24
 advance 300
 shot 05-starred.png
-# back to the first tab; alt-down opens the next article in the list
+
+# Click back to the first open tab, then advance to the next article with Alt+Down.
 click 388 65
 advance 300
 shot 06-first-tab.png
 key alt-down
 advance 300
 shot 07-next.png
-# far down the list
+
+# Scroll far down the 3000-item virtual list.
 scroll 150 600 -60000
 frame
 frame
 shot 08-scrolled.png
-# a search
+
+# Filter the feed by typing "bread" in the search input, then clear the query.
 click 150 73
 type bread
 advance 100
@@ -47,7 +49,8 @@ shot 09-search.png
 key ctrl-a
 key backspace
 advance 100
-# the settings: font size 18, no summaries, the dark theme
+
+# Open the settings modal via Ctrl+, and drag the font-size slider plus toggle a checkbox.
 key ctrl-,
 advance 300
 shot 10-settings.png
@@ -55,6 +58,8 @@ drag 396 147 500 147
 advance 300
 click 311 281
 advance 300
+
+# Open the theme select dropdown, pick Dark, then close settings with Escape.
 click 550 191
 advance 300
 shot 11-theme-select.png
@@ -64,7 +69,8 @@ shot 12-dark.png
 key escape
 advance 300
 shot 13-dark-closed.png
-# ctrl-w closes the tab; ctrl-r loads the feed again on the thread: a second toast
+
+# Close the active tab with Ctrl+W, then reload the feed with Ctrl+R.
 key ctrl-w
 advance 300
 shot 14-tab-closed.png

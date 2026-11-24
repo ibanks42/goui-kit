@@ -1,17 +1,5 @@
-// misuse_values: mistakes against the values family's protocols (docs/PROTOCOLS.md sections
-// 13.8 to 13.12, 11.17 and 11.25) that must stop with a message and the app's line, never decode
-// a value inside itself until the library's stack runs out. Run
-// offscreen with the diag library by gates/go-misuse.sh, one
-// mode per case:
-//
-//	GK_NEG=val-ok           a scale made in a handler and read in the view: correct (exit 0)
-//	GK_NEG=val-self         a value made in a handler given to its own builder: must stop
-//	GK_NEG=val-self-view    the same in a view function: must stop
-//	GK_NEG=val-write-view   a theme field written in a view function: must stop
-//	GK_NEG=val-scroll-freed a released ScrollHandle tracked by a view: must stop
-//	GK_NEG=c6-tooltip-kept  a tooltip value made in a handler and given to a view later: must stop
-//
-// val-action-view, val-bad-time, c6-rules-source and c6-rules-limits are in values13.go.
+// Runtime misuse cases for builder values, global theme writes in views,
+// released scroll handles, and tooltips kept across turns (GK_NEG).
 package main
 
 import (
@@ -33,10 +21,9 @@ type App struct {
 	scroll  gk.ScrollHandle
 	clicks  int
 	drawn   int
-	tip     overlay.KitTooltip // c6-tooltip-kept: made in a handler, kept past its turn
+	tip     overlay.KitTooltip
 }
 
-// The modes of values13.go add their steps here.
 var (
 	pendingClick = map[string]func(a *App, cx *gk.Cx){}
 	pendingView  = map[string]func(a *App, cx *gk.Cx){}

@@ -9,7 +9,7 @@ import (
 // ClosePanel is gpui_kit::component::dock::ClosePanel.
 type ClosePanel struct{ rt.Val }
 
-// NewClosePanelDefault is <gpui_kit::component::dock::ClosePanel as Default>::default.
+// NewClosePanelDefault calls <gpui_kit::component::dock::ClosePanel as Default>::default.
 func NewClosePanelDefault() ClosePanel {
 	rt.UseComponentDock()
 	n := rt.NewValue(650)
@@ -19,7 +19,7 @@ func NewClosePanelDefault() ClosePanel {
 // ToggleZoom is gpui_kit::component::dock::ToggleZoom.
 type ToggleZoom struct{ rt.Val }
 
-// NewToggleZoomDefault is <gpui_kit::component::dock::ToggleZoom as Default>::default.
+// NewToggleZoomDefault calls <gpui_kit::component::dock::ToggleZoom as Default>::default.
 func NewToggleZoomDefault() ToggleZoom {
 	rt.UseComponentDock()
 	n := rt.NewValue(651)

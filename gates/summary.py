@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""summary.py TIER LOG EXPECTED TIMES: the one table gates/all.sh prints.
+"""Compile gates/all.sh logs and timings into a Markdown verdict table and exit status.
 
-Reads every line of LOG that starts with "GATE gate subject PASS|FAIL detail", and
-EXPECTED (gates/expected.txt: "gate subject | why", the gates known to fail today).
-A gate listed there that fails is shown as XFAIL and does not fail the run; one that
-passes is shown as XPASS and does fail it, until its line is removed: the list can only
-shrink. A step that printed no GATE line at all fails the run. Exit 0 = the state is as
-recorded. Standard library only.
+Usage:
+  summary.py <tier> <all.log> <expected.txt> <times.txt>
 
-A Go gate that cannot run yet because the Go package lacks a binding prints PENDING; it is
-shown as PENDING and passes the run only when gates/go-pending.txt (beside EXPECTED, the same
-format) lists it. A listed gate that passes fails the run until its line is removed."""
+Method: scans `== <step>:` headers and `GATE <gate> <subject> <PASS|FAIL|NONE|PENDING> ...` lines.
+Applies gates/expected.txt (turning known FAIL into XFAIL and unexpected PASS into XPASS) and
+gates/go-pending.txt (requiring every PENDING gate to be listed and flagging passing ones as XPASS).
+Any step that prints zero GATE lines is recorded as FAIL.
+PASS: at least one gate ran and zero rows have result FAIL, NONE, or XPASS (exit 0).
+"""
 import os
 import re
 import sys

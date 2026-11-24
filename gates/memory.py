@@ -1,19 +1,29 @@
 #!/usr/bin/env python3
-"""memory.py sample|verdict ...: resident memory over a long run (gates/memory.sh).
+"""Sample process RSS and judge memory growth of a front end against Rust.
 
-    memory.py sample OUT.csv -- CMD ARGS...    run CMD, write its resident set every 20 ms
-    memory.py verdict NAME FRAMES DIR          judge DIR/rust.csv against DIR/go.csv
+Usage:
+  memory.py sample <out.csv> -- <cmd...>   Run <cmd>, poll /proc/<pid>/statm every 20 ms, write CSV.
+  memory.py verdict <name> <frames> <dir>  Compare rust.csv and <GK_FRONT>.csv in <dir>.
 
-sample follows the process it starts (not its children) through /proc/PID/statm and exits
-with CMD's status; the command's output goes to OUT.log.
+What it gates:
+  Long-running resident memory (RSS) stability of Go apps against their Rust reference twins.
 
-verdict compares the resident set at the middle of the run (median of the samples between
-40 % and 50 % of its duration, when every page has been shown many times) with the end
-(median of the last 10 %). A leak of b bytes a frame shows as growth of about half the
-run's frames times b. Pass: the Go app grows no more than the Rust reference plus
-SLACK_KB (default 2048 kB, about 1 % of either process; the spread of this number between
-two equal runs), and both finished. Prints the table rows and one line "GATE memory NAME".
-Standard library only."""
+How it measures and why the comparison is fair:
+  - `sample` reads `/proc/<pid>/statm` field 1 (resident pages * system page size) every 20 ms
+    and stops the process immediately if RSS exceeds `GK_MEM_LIMIT_MB` (default 3072 MB).
+  - `windows` compares median RSS in the middle window [40%, 50%] of elapsed time against the
+    final window [90%, 100%]. Waiting until 40% skips startup, font/glyph cache warm-up, GPU
+    buffer setup, and initial Go GC sizing, so only steady-state drift is measured.
+  - `verdict` subtracts Rust's growth from the front end's growth (`over = growth[front] -
+    growth["rust"]`). Shared growth inside GPUI, graphics drivers, or system libraries cancels
+    out, isolating leaks introduced by the bindings or Go runtime.
+  - Per-frame excess (`bytes a frame`) divides `over` by `frames / 2` because the midpoints of
+    the two windows (45% and 95%) are separated by half of the run.
+
+What PASS means (exit 0):
+  Both `rust` and `GK_FRONT` collect at least 50 samples (~1 s, ensuring crashed runs cannot
+  pass as zero growth), neither hits `GK_MEM_LIMIT_MB`, and `over <= SLACK_KB` (default 2048 kB).
+"""
 import os
 import statistics
 import subprocess
@@ -22,18 +32,16 @@ import time
 
 PAGE_KB = os.sysconf("SC_PAGE_SIZE") // 1024
 
-
 def sample(out, cmd):
     log = open(os.path.splitext(out)[0] + ".log", "w")
     start = time.monotonic()
     p = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT)
     rows = []
-    # A run past GK_MEM_LIMIT_MB (default 3072) is stopped here and fails the gate: on 11 Nov
-    # 2026 a gallery page that doubled an input's text on every visit took the Rust reference
-    # to 6.9 GB, and the scope's OOM killer stopped the whole gate run instead of one verdict.
+    # Hard safety cap so a runaway leak stops before exhausting host RAM.
     limit_kb = int(os.environ.get("GK_MEM_LIMIT_MB", "3072")) * 1024
     while p.poll() is None:
         try:
+            # /proc/<pid>/statm field 1 is resident set size in pages.
             rss = int(open(f"/proc/{p.pid}/statm").read().split()[1]) * PAGE_KB
             rows.append((time.monotonic() - start, rss))
             if rss > limit_kb:
@@ -49,7 +57,6 @@ def sample(out, cmd):
         f.writelines(f"{t:.3f},{r}\n" for t, r in rows)
     return p.returncode
 
-
 def read(path):
     rows = []
     try:
@@ -60,12 +67,12 @@ def read(path):
         pass
     return rows
 
-
 def windows(rows):
+    # Compare median RSS in the middle window [40%, 50%] (past startup/JIT/allocator warmup)
+    # against the final window [90%, 100%] to measure steady-state memory growth.
     end = rows[-1][0]
     pick = lambda a, b: statistics.median([r for t, r in rows if a * end <= t <= b * end] or [rows[-1][1]])
     return pick(0.4, 0.5), pick(0.9, 1.0), end, max(r for _, r in rows)
-
 
 def verdict(name, frames, d):
     slack = int(os.environ.get("SLACK_KB", "2048"))
@@ -74,6 +81,7 @@ def verdict(name, frames, d):
     title = {"go": "Go"}.get(front, front)
     for b in ("rust", front):
         rows = read(f"{d}/{b}.csv")
+        # At 20 ms polling, 50 samples is roughly 1 second; fewer means the run died early.
         if len(rows) < 50:
             why.append(f"{b}: only {len(rows)} samples (the run failed or was too short)")
             continue
@@ -88,6 +96,7 @@ def verdict(name, frames, d):
         print(f"memory {name} {b}: frames={frames} seconds={secs:.1f} samples={len(rows)} "
               f"rss_mid_kb={mid:.0f} rss_end_kb={last:.0f} growth_kb={growth[b]:.0f} rss_peak_kb={peak}")
     if len(growth) == 2:
+        # Divide excess growth by frames/2 because [40%,50%] to [90%,100%] spans half the run.
         over = growth[front] - growth["rust"]
         per_frame = over * 1024 / (frames / 2) if frames else 0
         cells.append(f"{title} over Rust {over:+.0f} kB ({per_frame:+.0f} bytes a frame; limit {slack} kB)")
@@ -96,7 +105,6 @@ def verdict(name, frames, d):
     print(f"GATE memory {name} {'FAIL' if why else 'PASS'} {frames} frames: " + ", ".join(cells)
           + ("; " + "; ".join(why) if why else ""))
     return 1 if why else 0
-
 
 if __name__ == "__main__":
     a = sys.argv[1:]

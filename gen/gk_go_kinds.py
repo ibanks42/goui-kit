@@ -1,32 +1,44 @@
-"""gk_go_kinds: the Go emitter's rules for the generator's descriptor kinds beyond the core ones
-(docs/GO.md; the kinds themselves are gk_values', gk_lists', gk_comp6's, gk_items', gk_editor's
-and gk_app's). gk_go.Go calls the three hooks first (gtype, put, rd: None when the kind is
-not one of these) and emit_files once every item was written, before the types.
+"""Extended Go descriptor codecs and `gen_items.go` emission.
 
-Every writer here writes the bytes the Rust decoder reads (by hand in the runtime:
-go/gk/rt_gen_*.go). What the hooks need from the runtime:
+`gen/gk_go.py` delegates non-core descriptor tags to this module so the base emitter
+stays focused on primitives, structs, enums, nodes, and calls. This module handles:
+- `civil` (`jiff::civil` dates/times), `SIMPLE` input-only wire structs (`xform`,
+  `txform`, `font`, `qrules`, `dragpayload`, `imagecache`, `decorate`), and `LIBVALS`
+  (hand-wired runtime structs with per-type `(go_name, writable, readable)` flags).
+- `fallible` (`Fallible[T]` / Rust `Result<T, E>`), `cell` (`Cell[T]` reactive values),
+  `expr` (parsed expressions with variable count), `imgsrc`, `entityid`, `valset` /
+  `table` / `rowvals` / `keyset`, `prepaintorder`, `a11ychildren`, `imagecacheref`,
+  `scrollanchor`, `lent` / `lentmut` / `tfrag` / `uscroll`.
+- `held` recursive data-enum handles (`denum_held`, tagged with `gk_editor.HELD_TAG`
+  when written back to Rust).
+- `ask` / `askdyn` (`Ask[K, V]` query callbacks whose `(K, V)` wire codecs are
+  registered in `init()` via `regAsk`).
+- `items` / `ctxrows` / `ctxlazy` / `viewrows` (per-item render callbacks aggregated into
+  the `ItemFunc` type constraint and the `Items[F ItemFunc]` switch dispatcher).
+- Marker union interfaces: `MarkdownPluginAny` (`mdplug`), type-erased trait values
+  (`traitval`), and `kitfn` built-in-or-custom renderer unions.
 
-- values: CivilDate/CivilTime/CivilDateTime/Weekday, Transformation, TimedTransformation, Font,
-  Fallible[T], Cell[T], Decorate, MarkdownPlugin(Any), EntityID, QuestionnaireRules,
-  ExternalDragPayload, A11yChild, DragMoveEvent, ImageCache(Provider), ScrollAnchor, and the
-  library values of LIBVALS;
-- closures: item functions (gk.Items over the kinds this module numbers, gen_items.go) and asks
-  (gk.NewAsk, whose key and value codecs gen_items.go registers).
+Per-emitter state (`go.kinds_state`, returned by `_state(go)`) accumulates every
+referenced `items` callback signature, `ask` codec pair, `mdplug` implementor,
+`traitval` implementor, and `kitfn` union during the flat-package pass, and
+`emit_files(go)` flushes them into `gen_items.go` at the end.
 """
 import re
 
 from gk_model import ada
 
-# Library values (`["libval", rust path, stem]`) the Go runtime declares (rt_gen_values.go):
-# stem -> (Go type, has a put function, has a rd function).
+# Maps Rust `libval` stems (from gk_editor/gk_comp6) to `(go_type_name, writable, readable)`.
+# Types with writable=False can only appear in outbound replies or callbacks; trying to
+# encode them in `put()` raises Unsup so callers cannot accidentally construct one.
 LIBVALS = {"Lsp_Position": ("LspPosition", True, True), "Completion_Item": ("CompletionItem", True, True),
            "Code_Block": ("CodeBlock", True, True), "Search_Item": ("SearchItem", True, True),
            "Arc_Data": ("ArcData", False, True), "Stack_Series": ("StackSeries", False, True),
            "Questionnaire_Validator": ("QuestionnaireValidator", False, True),
            "Background_Value": ("BackgroundValue", False, True),
            "Interval_Matcher": ("IntervalMatcher", True, True), "Range_Matcher": ("RangeMatcher", True, True)}
+# `jiff::civil` calendar/time types wired via hand-written `putCivil*` / `rdCivil*` helpers in internal/rt.
 CIVIL = {"Date": "CivilDate", "Time": "CivilTime", "DateTime": "CivilDateTime", "Weekday": "Weekday"}
-# Simple values: kind -> (Go type, put function).
+# Input-only descriptors that map 1-to-1 to a Go struct type and a single tape-writer helper.
 SIMPLE = {"xform": ("Transformation", "putTransformation"), "txform": ("TimedTransformation", "putTimedTransformation"),
           "font": ("Font", "putFont"), "qrules": ("QuestionnaireRules", "putQuestionnaireRules"),
           "dragpayload": ("ExternalDragPayload", "putExternalDragPayload"),
@@ -34,25 +46,37 @@ SIMPLE = {"xform": ("Transformation", "putTransformation"), "txform": ("TimedTra
 
 
 def _unsup():
-    import gk_go  # noqa: PLC0415
+    import gk_go
     return gk_go.Unsup
 
 
 def _camel(name):
-    import gk_go  # noqa: PLC0415
+    import gk_go
     return gk_go.camel(name)
 
 
 def _state(go):
+    """Return the per-`Go` accumulator dict for items, asks, mdplug, traitval, and kitfn declarations.
+
+    Stored directly on the `Go` emitter instance so multiple runs do not share global state:
+    - `items`: `{go_func_sig: (kind_id, decoder_stmts, call_args)}`
+    - `asks`: `{(K_go, V_go): (key_reader_expr, val_put_stmts)}`
+    - `mdplug`, `traitval`, `kitfn`: union name -> implementor node keys or built-in fn names.
+    """
     st = go.__dict__.get("kinds_state")
     if st is None:
         st = go.kinds_state = {"items": {}, "asks": {}, "mdplug": {}, "traitval": {}, "kitfn": {}}
     return st
 
 
-# ---------------------------------------------------------------- types
-
 def gtype(go, d, out=False):
+    """Map extended descriptors (`civil`, `libval`, `cell`, `ask`, `items`, `mdplug`, `traitval`, `kitfn`, `held`, etc.) to Go types.
+
+    Side effect: encountering `mdplug`, `traitval`, `kitfn`, or any row-item descriptor
+    registers its union members / callback signature in `_state(go)` so `emit_files()`
+    knows to emit the corresponding Go interface or `ItemFunc` switch case.
+    Returns `None` for descriptors not owned by this module.
+    """
     m, k = go.m, d[0]
     if k == "civil":
         return CIVIL[d[1]]
@@ -90,16 +114,16 @@ def gtype(go, d, out=False):
         _state(go)["mdplug"][d[1]] = [x[1] for x in d[2:]]
         return "MarkdownPluginAny"
     if k == "traitval":
-        import gk_values  # noqa: PLC0415
+        import gk_values
         name = _camel(gk_values.TRAIT_VALUES[d[1]][1])
         _state(go)["traitval"][name] = d[2]
         return name
     if k == "kitfn":
         name = _camel(ada(d[2]))
         _state(go)["kitfn"][name] = d[3]
-        item_kind(go, d[4])  # its rows: an item function over the closure's values
+        item_kind(go, d[4])
         return name
-    if k in ("ask", "askdyn"):  # askdyn: a one-method trait object served by an ask (PROTOCOLS.md 9.26)
+    if k in ("ask", "askdyn"):
         K, V = go.gtype(d[1], True), go.gtype(d[2])
         return f"Ask[{K}, {V}]"
     if k in ("ctxrows", "items", "ctxlazy", "viewrows"):
@@ -122,13 +146,25 @@ def _node_go(go, key):
     return node["go"]
 
 
-# ---------------------------------------------------------------- writers
-
 def put(go, d, v, depth=0):
+    """Return Go tape-encoding statements for extended descriptors handled by `gk_go_kinds`.
+
+    Key wire-format conventions:
+    - `mdplug`: `u8` tag (0..N-1 for generated node plugins followed by `takeValue(x.n)`;
+      N for hand-written `MarkdownPlugin` struct or nil fallback).
+    - `traitval`: dispatches over implementing value nodes and writes `takeValue(x.n)`
+      (nil interface aborts via `stop(...)`).
+    - `kitfn`: `u8(0) + u64(RowSource.h)` for a custom callback, or `u8(1) + u16(enum)`
+      for a built-in upstream renderer.
+    - `ctxrows` / `items`: validates the callback's kind ID at runtime via `itemsCheck`
+      before writing the `RowSource` handle, catching mismatched callback signatures.
+    - `held`: raw `u64` inside call ops, or `putObj(o, h)` inside view tapes so the
+      frame keeps the handle pinned.
+    """
     m, k = go.m, d[0]
     if k == "civil":
         return [f"put{CIVIL[d[1]]}(o, {v})"]
-    if k == "decorate":  # gk.Decorate is the core package's; its writer, generic, rt's
+    if k == "decorate":
         return [f"rt.PutDecorate(o, {v}.Style, {v}.Content)"]
     if k in SIMPLE:
         return [f"{SIMPLE[k][1]}(o, {v})"]
@@ -196,9 +232,12 @@ def put(go, d, v, depth=0):
     return None
 
 
-# ---------------------------------------------------------------- readers
-
 def rd(go, d, out=True):
+    """Return a Go wire-decoding expression for extended descriptors read back from Rust.
+
+    For `drag_move_event`, ensures `rdBounds` is marked needed in `go.need_readers`
+    because `rdDragMoveEvent` calls it to decode the drag bounds.
+    """
     m, k = go.m, d[0]
     if k == "civil":
         return f"rd{CIVIL[d[1]]}(r)"
@@ -213,7 +252,6 @@ def rd(go, d, out=True):
     if k == "libval" and d[2] in LIBVALS:
         return f"rd{LIBVALS[d[2]][0]}(r)"
     if k == "valset":
-        # a set of values read back as the list it was made of (core/src/values.rs value_set's Wire)
         return go.rd(["list", d[1], "vec"], out)
     if k == "lent":
         if d[3]:
@@ -229,24 +267,25 @@ def rd(go, d, out=True):
 
 
 def denum_held(go, e, puts):
-    """A held value of an enum with data the app gives (`BlockNodeHeld`, PROTOCOLS.md 9.30): a
-    library object's handle, one more variant of the enum's interface."""
-    import gk_editor  # noqa: PLC0415
+    """Emit a handle-backed Held variant type for recursive data enums kept in the runtime.
+
+    Only applies to input-only recursive data enums marked `held=True` by `gk_editor.py`
+    (such as `BlockNode`). Appends a wire serializer case to `puts` that writes
+    `gk_editor.HELD_TAG` followed by `putObj(o, x.h)` so Rust recovers the held object.
+    """
+    import gk_editor
     if not e.get("held") or e["out"]:
         return
     E = e["go"]
     V = E + "Held"
-    go.add(f"// {V} is a {e['name']} the library holds (a function's result, PROTOCOLS.md 9.30): temporary until",
-           "// gk.Retain, as any object a call hands out.", f"type {V} struct{{ h uint64 }}", "",
+    go.add(f"// {V} wraps a runtime-held {e['name']} returned by a call; call Retain to keep it across turns.",
+           f"type {V} struct{{ h uint64 }}", "",
            f"func (v {V}) handle() uint64 {{ return v.h }}", "", f"func ({V}) is{E}() {{}}", "")
     puts.append((V, [f"o.u16({gk_editor.HELD_TAG:#x})", "putObj(o, x.h)"]))
 
 
-# ---------------------------------------------------------------- item functions (9.16, 9.22, 9.41)
-
 def _as_items(d):
-    """An item descriptor of every closure gk.Items serves: items, and the element closures over a
-    context (ctxrows, ctxlazy, viewrows) with their values as `val`s."""
+    """Normalize `ctxrows`/`ctxlazy`/`viewrows` descriptors into the uniform `items` shape."""
     if d[0] == "items":
         return d
     if d[0] in ("ctxrows", "ctxlazy", "viewrows"):
@@ -255,10 +294,12 @@ def _as_items(d):
 
 
 def _inline_plugin_kind(go):
-    """The kind of an inline data plugin's row (PROTOCOLS.md 9.23): the node and the inherited
-    typography, as gk.Items's function
-    func(cx, gk.MarkdownNodeRead, gk.InlineRenderContext) gk.Element. A block plugin's row is the
-    MarkdownNodeRead kind a closure of the kit already calls."""
+    """Ensure the `MarkdownPlugin` inline renderer callback signature is registered in `ItemFunc`.
+
+    Even though `MarkdownPlugin` is a hand-written Go struct rather than a generated
+    `items` builder argument, apps pass an `Items(...)` callback taking
+    `(cx, MarkdownNodeRead, InlineRenderContext)` to it.
+    """
     keys = {}
     for key, st in go.m.states.items():
         if st.get("go") in ("MarkdownNodeRead", "InlineRenderContext"):
@@ -270,8 +311,13 @@ def _inline_plugin_kind(go):
 
 
 def item_kind(go, d):
-    """The number of the kind of item function a closure calls (numbered in order of first use),
-    and its Go function type, its value reads and the handed elements it makes."""
+    """Register an `Items` callback signature and its row-context decoder body, returning its 1-based kind ID.
+
+    Walks the descriptor's payload list in exact Rust parameter order so the generated
+    Go decoder reads wire fields (`val`, `reads`) and claims handed-object slots
+    (`handed`, `view`, indexed by `hi`) in lockstep with `gk_items.rust_dec()`.
+    Deduplicates identical Go callback signatures onto the same kind ID.
+    """
     d = _as_items(d)
     m = go.m
     ps, body, args = [], [], []
@@ -324,14 +370,9 @@ def item_kind(go, d):
     return kinds[ty][0]
 
 
-# ---------------------------------------------------------------- files
-
 def emit_files(go):
-    """gen_items.go: gk.Items over the kinds of item functions, the asks' codecs, and the marker
-    methods of the interfaces this module's kinds name."""
+    """Emit gen_items.go with ItemFunc, Items, ask codecs, and plugin/trait/kitfn union types."""
     st = _state(go)
-    # the asks a record's field takes (InputEditorStyle's HighlightStyles): gen_types.go is written
-    # after this file, so their codecs are registered here
     for rc in go.m.records.values():
         for f in rc["fields"]:
             if rc["in"] and f["desc"][0] in ("ask", "askdyn"):
@@ -340,21 +381,18 @@ def emit_files(go):
                 except _unsup():
                     pass
     if st["mdplug"]:
-        _inline_plugin_kind(go)  # numbered last: the kinds the closures call keep their numbers
-    go.open("gen_items.go", "Item functions (docs/PROTOCOLS.md 9.41): gk.Items, one case per kind of function; "
-            "the asks' codecs (9.14); the kit's values of a few closures.")
+        _inline_plugin_kind(go)
+    go.open("gen_items.go", "Item row-source dispatchers (Items), ask codecs, and generated union markers.")
     kinds = sorted(st["items"].items(), key=lambda kv: kv[1][0])
-    go.add("// ItemFunc is a function that describes one item of a component: one of the kinds of function a",
-           "// closure of the kit calls (a builder that takes a gk.RowSource made by gk.Items names its kind).")
+    go.add("// ItemFunc constrains callback signatures accepted by Items for per-item component rendering.")
     if kinds:
         go.add("type ItemFunc interface {", "\t" + " |\n\t\t".join(ty for ty, _ in kinds), "}", "")
     else:
         go.add("type ItemFunc interface{ func(cx *Cx) Element }", "")
     go.add("func init() { rt.ItemsKinds = []string{\"\", " + ", ".join(f'"{ty}"' for ty, _ in kinds) + "} }", "")
-    go.add("// Items makes the row source of an item function: a function that describes one item of a component",
-           "// (a calendar's day, a tree's entry, a popover's content, an input's token), called between frames with",
-           "// the values the kit hands that item. The same function given in the same view gives the same source;",
-           "// it may be called in a view function.",
+    go.add("// Items creates or reuses a RowSource backed by callback f, which renders individual",
+           "// component items (such as calendar days, tree rows, or popovers) on demand between frames.",
+           "// Passing the same callback in the same view returns the same source.",
            "func Items[F ItemFunc](cx *Cx, f F) RowSource {", "\tswitch x := any(f).(type) {")
     for ty, (n, body, args) in kinds:
         go.add(f"\tcase {ty}:", f"\t\treturn itemsSource(cx, x, {n}, func(f any, cx *Cx, src RowSource, at RowAt) Element {{")
@@ -373,15 +411,16 @@ def emit_files(go):
             go.add(f"func ({_node_go(go, key)}) isMarkdownPluginAny() {{}}")
         go.add("")
     for name, keys in sorted(st["traitval"].items()):
-        go.add(f"// {name} is one of the kit's values of this kind: " + ", ".join(_node_go(go, k) for k in keys) + ".",
+        go.add(f"// {name} marks generated value types accepted for this trait: " + ", ".join(_node_go(go, k) for k in keys) + ".",
                f"type {name} interface{{ is{name}() }}", "")
         for key in keys:
             go.add(f"func ({_node_go(go, key)}) is{name}() {{}}")
         go.add("")
     for name, fns in sorted(st["kitfn"].items()):
-        go.add(f"// {name} is the app's rows (a gk.RowSource, made with gk.Items) or a renderer the kit makes ({name}Kit).",
+        go.add(f"// {name} accepts either a custom RowSource (from Items) or a built-in {name}Kit renderer.",
                f"type {name} interface{{ is{name}() }}", "", f"func (RowSource) is{name}() {{}}", "",
-               f"// {name}Kit is a renderer the kit makes.", f"type {name}Kit uint16", "", f"func ({name}Kit) is{name}() {{}}", "", "const (")
+               f"// {name}Kit selects a built-in upstream renderer for {name}.", f"type {name}Kit uint16", "", f"func ({name}Kit) is{name}() {{}}", "",
+               f"// {name}Kit built-in renderer constants.", "const (")
         for i, fn in enumerate(fns):
             go.add(f"\t{name}Kit{_camel(ada(fn.rsplit('::', 1)[-1]))} {name}Kit = {i} // {fn}")
         go.add(")", "")

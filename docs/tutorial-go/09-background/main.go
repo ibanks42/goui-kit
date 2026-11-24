@@ -1,6 +1,4 @@
-// Step 9 of docs/GETTING-STARTED-GO.md, the whole app: a shopping list with a list of custom rows,
-// an input, an edit dialog, shortcuts and a menu, a light and a dark theme, and prices looked up on
-// a goroutine.
+// Step 9 of the Go tutorial: run background work with gk.Go and surface results via notifications.
 package main
 
 import (
@@ -23,19 +21,19 @@ type Item struct {
 	Name   string
 	Amount int
 	Bought bool
-	Price  float64 // 0 until the price lookup has answered
+	Price  float64
 }
 
 type App struct {
 	items      []Item
-	editing    int // the item the dialog edits
+	editing    int
 	editAmount int
 	dark       bool
 
-	newName, editName editor.InputState // kit state lives in the library; the app keeps handles
+	newName, editName editor.InputState
 	list              table.ListState
 
-	newItem, clearBought, toggleTheme gk.Action // shortcuts, also shown in the menu
+	newItem, clearBought, toggleTheme gk.Action
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -71,7 +69,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
@@ -143,7 +141,7 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 }
 
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
-	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
+	if c, ok := e.(table.ListEventConfirm); ok {
 		a.openEditor(cx, c.Row)
 	}
 }
@@ -177,7 +175,7 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	name := strings.TrimSpace(a.editName.Value(cx))
 	if name == "" {
-		return false // keep the dialog open
+		return false
 	}
 	it := &a.items[a.editing]
 	if name != it.Name {
@@ -186,7 +184,7 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	}
 	it.Amount = a.editAmount
 	gk.Refresh(cx)
-	return true // close the dialog
+	return true
 }
 
 func (a *App) focusNewName(cx *gk.Cx) { a.newName.Focus(cx) }
@@ -206,9 +204,9 @@ func (a *App) switchTheme(cx *gk.Cx) {
 	gk.Refresh(cx)
 }
 
-// --- prices, on a goroutine -------------------------------------------------------------------
 
-// lookUpPrice asks a slow price service on a goroutine; the answer comes back on the UI thread.
+// lookUpPrice runs slow work off the UI thread via gk.Go and applies the result back
+// on the UI thread with a fresh *gk.Cx, optionally showing a toast notification.
 func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {
 	gk.Go(cx, func() float64 {
 		time.Sleep(300 * time.Millisecond)

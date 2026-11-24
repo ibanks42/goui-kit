@@ -1,14 +1,25 @@
 #!/bin/bash
-# docs-go.sh: the Go guides cannot rot. docs/GETTING-STARTED-GO.md, docs/API-GO.md and
-# docs/GO.md show code only as excerpts of programs under docs/ or examples/ (gates/docs-snippets.py checks every block against its program,
-# and every call docs/API-GO.md names in its text against its snippet program); README.md's Go
-# block is gates/readme-go.sh's. This builds every program those guides cut from (every folder of
-# docs/tutorial-go and docs/snippets-go, and the examples they cite) with go build against the
-# package (the default build, which loads the library at start-up), runs each of them offscreen (the diag library) for a few frames with a screenshot,
-# drives the tutorial's last step through gates/docs-tutorial.script, and checks that the
-# component index of docs/API-GO.md is the one the generated package gives (gen/gk_apidoc.py).
-# Images in gates/out/docs-go/. Prints one line "GATE docs guides-go ...".
-#   gates/docs-go.sh
+# Go guides, snippets, API index, and tutorial gate (`gates/docs-go.sh`).
+#
+# What it gates:
+#   Accuracy and runnability of `docs/GETTING-STARTED-GO.md`, `docs/API-GO.md`, and `docs/GO.md`,
+#   every tutorial step in `docs/tutorial-go/*/`, every snippet program in `docs/snippets-go/*/`,
+#   and every external example cited with `<!-- from: PATH -->`.
+#
+# How it measures:
+#   1. Runs `gates/docs-snippets.py` to confirm every fenced `go` block and inline API call span
+#      exists verbatim in its backing Go source file.
+#   2. Runs `gen/gk_apidoc.py` in check mode to ensure the generated component index in `API-GO.md`
+#      matches the current Go packages.
+#   3. Compiles every tutorial, snippet, and cited program and runs each offscreen on `lib/diag`
+#      (60 s timeout) to verify it renders a 520x560 PNG without crashing.
+#   4. Drives the final tutorial step through `gates/docs-tutorial.script` (120 s timeout) and
+#      verifies every scripted `shot` PNG is produced.
+#
+# What PASS means (exit 0):
+#   All snippets match, the API-GO.md index is current, every program compiles and draws an image,
+#   and the final tutorial session saves every expected shot (`GATE docs guides-go PASS`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 out=$here/out/docs-go; rm -rf "$out"; mkdir -p "$out"
 root=${GK_LIB_ROOT:-$repo/lib}; bin=${GK_BIN:-$repo/bin}; mkdir -p "$bin"
@@ -18,8 +29,8 @@ python3 "$here/docs-snippets.py" $guides || fail "a snippet is not in its progra
 python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import gk_apidoc as m
 sys.exit(m.write(m.GO_DOC, m.GO_BEGIN, m.go_render(m.go_read_package()), True))' "$repo/gen" \
   || fail "the component index of docs/API-GO.md is stale (python3 gen/gk_apidoc.py)"
-# Every ```go block of a guide follows a <!-- from: --> line (docs-snippets.py); the programs
-# outside docs/ that one cites (examples/go/expenses).
+
+# Collect external program directories referenced by `<!-- from: PATH -->` outside docs/.
 cited=$(grep -ho '<!-- from: [^ ]* -->' $guides | awk '{print $3}' | grep -v '^docs/' | xargs -r -n1 dirname | sort -u | sed "s|^|$repo/|; s|$|/|")
 . "$repo/go/env.sh"
 progs=()
@@ -33,10 +44,10 @@ for d in "$repo"/docs/tutorial-go/*/ "$repo"/docs/snippets-go/*/ $cited; do
   progs+=("$name")
 done
 echo "docs-go: ${#progs[@]} programs build"
+
+# Render one offscreen frame from every built program to confirm it starts and paints cleanly.
 export LD_LIBRARY_PATH=$root/diag
 unset WAYLAND_DISPLAY DISPLAY
-# Every program runs: a few frames offscreen and an image (the tutorial's steps, the snippet
-# programs, the cited examples alike).
 n=0
 for name in "${progs[@]}"; do
   printf 'size 520 560\nframe\nsleep 500\nframe\nadvance 500\nshot %s.png\n' "$name" > "$out/$name.script"
@@ -45,7 +56,8 @@ for name in "${progs[@]}"; do
   [ -f "$out/$name.png" ] || fail "$name drew no image"
   n=$((n + 1))
 done
-# the tutorial's last step under the scripted session
+
+# Drive the final tutorial step through the full scripted user session.
 want=$(grep -c '^shot ' "$here/docs-tutorial.script")
 last=$(printf '%s\n' "${progs[@]}" | grep '^docs-go-tutorial-go-' | sort | tail -1)
 s=$out/session; mkdir -p "$s"

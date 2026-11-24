@@ -1,8 +1,6 @@
-//! The editor family's gallery pages (docs/PROTOCOLS.md 9.20 to 9.23), the Rust reference of
-//! examples/go/gallery/editor_pages.go, call for call: a block surface, headings styled by level,
-//! Markdown plugins (the kit's frontmatter plugin, a block plugin for ```badge code and an inline one
-//! for inline code, written in Rust here as an app would) and a link's tooltip; the editor host
-//! and the decorated buttons, the Lsp's completion highlighter and a presented diagnostic.
+//! Markdown extensions, custom plugins, `editor_host` block rendering, and
+//! round-7 editor/number-input/message-scroller gallery pages.
+
 use gpui_kit::base::{
     InlineElement, InlineRenderContext, MarkdownExtensions, MarkdownNode, MarkdownParseContext, MarkdownPlugin, TextView,
     TextViewStyle, markdown_ast,
@@ -27,7 +25,7 @@ const HEADING_MD: &str = "# One\n\n## Two\n\n### Three\n\nBody text.\n";
 const PLUGIN_MD: &str = "---\ntitle: Notes\nowner: me\n---\n\n# Plugins\n\n```badge\nready\n```\n\nSome `inline` text.\n";
 const TOOLTIP_MD: &str = "[docs](https://example.com/docs) and more";
 
-/// ```badge code blocks, drawn as their text in brackets.
+/// Block markdown plugin matching fenced `badge` code blocks.
 struct Badge;
 
 impl MarkdownPlugin for Badge {
@@ -53,7 +51,7 @@ impl MarkdownPlugin for Badge {
     }
 }
 
-/// Inline code, drawn as its text in angle brackets with a baseline 12 px from its top.
+/// Inline markdown plugin wrapping inline code spans in angle brackets.
 struct Code;
 
 impl MarkdownPlugin for Code {
@@ -72,7 +70,7 @@ impl MarkdownPlugin for Code {
     }
 }
 
-/// A link's tooltip: "open" and the URL.
+/// Custom link-tooltip view rendered on hover in `editor5-tooltip`.
 struct Tip(SharedString);
 
 impl Render for Tip {
@@ -89,6 +87,7 @@ fn plugin_view() -> AnyElement {
         .into_any_element()
 }
 
+/// Renders `editor5-*`, `editor6-host`, and `editor7-*` gallery pages.
 pub fn page(id: &str, cx: &mut App) -> Option<AnyElement> {
     Some(match id {
         "editor5-surface" => {
@@ -103,8 +102,8 @@ pub fn page(id: &str, cx: &mut App) -> Option<AnyElement> {
                 2 => StyleRefinement::default().text_color(success),
                 _ => StyleRefinement::default(),
             });
-            // The next page's text view drawn here first (its plugin rows are
-            // described the frame after the nodes are parsed).
+            // Keep a zero-height hidden `plugin_view` mounted so plugin caches
+            // and fonts warm up in lockstep with the Go gallery page.
             div()
                 .w(px(360.))
                 .child(TextView::markdown("heading", HEADING_MD).style(style))
@@ -125,8 +124,6 @@ pub fn page(id: &str, cx: &mut App) -> Option<AnyElement> {
     })
 }
 
-// ---------------------------------------------------------------- the editor host (9.30)
-
 const HOST_MD: &str = "## Parsed\n\n- one\n- two\n\n> quoted *text*\n";
 
 fn para(text: &[InlineNode]) -> Paragraph {
@@ -137,8 +134,6 @@ fn para(text: &[InlineNode]) -> Paragraph {
     p
 }
 
-/// The page's blocks, as an editor written outside the kit would hand them over: a heading, a
-/// paragraph of two inline nodes, a list of two items, a code block, then the parsed ones.
 fn host_blocks() -> Vec<BlockNode> {
     let mut v = vec![
         BlockNode::Heading { level: 2, children: para(&[InlineNode::new("Host")]).with_leaf_key(1), span: None },
@@ -173,14 +168,13 @@ fn host_blocks() -> Vec<BlockNode> {
     v
 }
 
-/// What an editor's host element does: the blocks rendered as TextView renders them, their prepaint
-/// inside collect_leaf_geometry with the decorations (the geometry is not used here).
+/// Custom element rendering `editor_host::BlockNode` trees while collecting
+/// leaf geometry and applying range highlight `decorations` during prepaint.
 struct Host {
     blocks: Vec<BlockNode>,
     decorations: HashMap<u64, Vec<(std::ops::Range<usize>, Hsla)>>,
 }
 
-// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
 #[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for Host {
     type Element = Self;
@@ -245,8 +239,6 @@ impl Element for Host {
     }
 }
 
-// ---------------------------------------------------------------- 9.38 to 9.40
-
 use gpui_kit::base::input::{Diagnostic, DiagnosticEntry, DiagnosticSeverity, EditorState, Position};
 use gpui_kit::component::button::Button;
 use gpui_kit::base::input::InputState;
@@ -258,7 +250,8 @@ use std::rc::Rc;
 
 const MESSAGES: usize = 30;
 
-/// The editor7-* pages, one view: its states are made the first time it renders, where the window is.
+/// Lazily initialized stateful view backing `editor7-number`, `editor7-scroller`,
+/// `editor7-lsp`, and `editor7-diagnostic`.
 #[derive(Default)]
 struct Round7 {
     page: &'static str,
@@ -301,7 +294,7 @@ impl Render for Round7 {
             .get_or_insert_with(|| {
                 cx.new(|cx| {
                     let mut s = EditorState::new(window, cx).default_value("fi");
-                    // The second and third character of each label.
+
                     s.lsp_mut().set_completion_highlighter(Rc::new(|_: &str, item: &CompletionItem| {
                         let n = item.label.len();
                         vec![1.min(n)..3.min(n)]

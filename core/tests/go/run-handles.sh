@@ -1,9 +1,9 @@
-# run-handles.sh: the protocol tests (docs/PROTOCOLS.md section 13), sourced by
-# core/tests/go/run.sh, which defines build and run. The app is core/tests/go/handles: library
-# objects that are not entities behind handles of kind OBJ, driven by a gk-meter script offscreen.
+# Handle and lifetime protocol tests: owned objects, temporary handles and
+# next-frame sweeps, globals, transient kit values, view/panel cascades, and GC cleanup.
 build handles-go handles
 
-# Owned objects: made (kept), read, written (buffered; the next read sees it), released.
+# Proves permanent HK_OBJ handles support field reads/writes and are tracked in live counts
+# (0 -> 3) without creating any temporary handles.
 GK_PROTO_BIN=handles-go run obj-objects 0 \
   'handles counts before temps=0 live=0' \
   'handles dock open=true size=240' \
@@ -12,57 +12,60 @@ GK_PROTO_BIN=handles-go run obj-objects 0 \
   'handles matcher len=0 empty=true label=' \
   'handles counts made temps=0 live=3' \
   'handles done mode=obj-objects clicks=4'
-# A read hands out a temporary handle, swept when the next frame begins; gk.Retain keeps one.
+# Proves unretained temporary handles are swept on the next frame (temps 1 -> 0, live 2 -> 1)
+# while a handle promoted with gk.Retain survives and remains readable.
 GK_PROTO_BIN=handles-go run obj-temps 0 \
   'handles temp placeholder="type here" editable=true multi_line=false' \
   'handles counts handed out temps=1 live=2' \
   'handles counts next frame temps=0 live=1' \
   'handles kept placeholder="type here"' \
   'handles done mode=obj-temps clicks=4'
-# Misuse: a temporary handle used after its frame stops with the message and the line (gk.Run returns it: exit 1).
-# Go: the app's line is main.go's (the library's message may name gk.retain or gk.Retain).
+# Proves dereferencing an unretained temporary handle after the next-frame sweep fails cleanly
+# with an explanation of temporary lifetimes and exits 1 at the Go call site.
 GK_PROTO_BIN=handles-go run obj-stale-temp 1 'handles reading the swept temporary' \
   'was released .*temporary: it lives until the next frame begins unless gk.[Rr]etain keeps it' 'at .*handles/main.go:[0-9]+'
-# The kit's theme global: one interned handle for both accessors, reads in place, in a view too.
+
+# Proves GPUI Global singletons (Theme, ThemeRegistry) return the same handle identity across lookups
+# and are tracked as permanent live handles rather than temporaries.
 GK_PROTO_BIN=handles-go run obj-global 0 \
   'handles theme same=true dark=false name="[^"]+" radius_full=[0-9]+' 'handles registry ok=true' \
   'handles counts globals temps=0 live=2' 'handles done mode=obj-global clicks=4'
-# A dialog's handle opened and closed from code.
+# Proves DialogState open/close handle state transitions round-trip false -> true -> false.
 GK_PROTO_BIN=handles-go run obj-dialog 0 'handles dialog open=false' 'handles dialog open=true' \
   'handles dialog closed open=false'
-# A list selected and scrolled from code (an IndexPath as its record; the scroll handle an object).
+# Proves ListState handle selection reads back row 120 and resets cleanly when cleared.
 GK_PROTO_BIN=handles-go run obj-list 0 'handles list selected ok=true row=120' 'handles list cleared selected=false'
-# A method that takes its object by value gets a copy when the type is Clone: the handle stays.
+# Proves passing a clonable owned object twice into builders keeps the handle live (live=1)
+# instead of consuming or duplicating it.
 GK_PROTO_BIN=handles-go run obj-given-away 0 'handles counts installed twice temps=0 live=1' 'handles done mode=obj-given-away clicks=4'
-# Builder values made in a handler (no view) and given to call ops: a tree's items, a grid's
-# areas, each a tape of its own; read back through a read that hands out a library object.
+# Proves transient kit values returned from constructors (tree entries, grid areas) decode
+# correctly within the same turn.
 GK_PROTO_BIN=handles-go run obj-values 0 \
   'handles tree entry 0 id=src depth=0 folder=true' 'handles tree entry 1 id=src/a.rs depth=1 folder=false' \
   'handles tree entries=4' 'handles grid area id=one col=1 row=[0-9]+ col_span=3' 'handles grid area id=two '
-# Misuse: a value kept past the turn that made it stops where it is given (gk.Run returns it: exit 1).
-# Go: the message may say "the function that made it" or "the procedure".
+# Proves reusing a transient kit value after the turn that produced it fails with a clear misuse error and exits 1.
 GK_PROTO_BIN=handles-go run obj-stale-value 1 'handles giving a value of an earlier turn' 'a kit value was used after the (procedure|function) that made it returned'
-# A table's columns given as the kit's own Column values (each a value made outside a view), then
-# replaced on the table state.
+# Proves table column-descriptor lists can be inspected (n=2, Name/Size, width 140) and replaced with 3 columns.
 GK_PROTO_BIN=handles-go run obj-columns 0 'handles columns n=2 first=Name second=Size width0=140' 'handles columns replaced n=3'
-# Lifetimes (docs/GO.md section 4, core/tests/go/handles/life.go). What a view makes in its turns
-# (here its click handler: kit state, a focus handle, a row source and its rows, a view) is
-# released with the view.
+
+# Proves releasing a child view automatically cascades release to its child views, state, and focus handles,
+# restoring counts from states=1/views=6/focus=1 back to states=0/views=1/focus=0.
 GK_PROTO_BIN=handles-go run life-view 0 \
   'handles life before states=0 views=1 focus=0' 'handles life child made its state' \
   'handles life made states=1 views=6 focus=1' 'handles life released states=0 views=1 focus=0' \
   'handles done mode=life-view clicks=4'
-# Misuse: releasing what a view released with itself stops at the app's line (exit 1).
+# Proves explicitly releasing a state that was already cascade-released with its owning view exits 1
+# with a diagnostic naming the view/panel cascade and the Go call site.
 GK_PROTO_BIN=handles-go run life-view-again 1 'handles life releasing the child.s state again' \
   'gk.Release was given a handle that was released already, with the view \(or dock panel\) that made it' \
   'at .*handles/life.go:[0-9]+'
-# A dock panel the dock removed (as when the user closes its tab), and not added back, is released
-# with its view and what the view made; the other panel stays.
+# Proves closing a docked panel cascades release to the panel's owned states, views, and focus handles
+# while leaving the remaining dock panel intact (empty=false).
 GK_PROTO_BIN=handles-go run life-panel 0 \
   'handles life panel 0 made its state' 'handles life docked states=4 views=7 focus=1' \
   'handles life closed states=2 views=2 focus=0' 'handles life dock empty=false' 'handles done mode=life-panel'
-# Kit state and focus handles the app drops are released once the collector finds them (runtime.GC
-# in the handler; the release runs on the UI thread, in a WAKE turn); the one kept is not.
+# Proves Go garbage collection finalizers release unreachable state and focus handles (6 released)
+# while preserving handles still referenced by Go code (kept="kept").
 GK_PROTO_BIN=handles-go run life-gc 0 \
   'handles life made states=4 views=1 focus=3' 'handles life collected states=1 views=1 focus=0' \
   'handles life gc released=6 kept="kept"' 'handles done mode=life-gc clicks=4'

@@ -1,12 +1,36 @@
-"""gk_rust: writes the generated half of the Rust library from the interface description.
+"""Wire opcode allocator and Rust decoder emitter (`core/src/gen/*.rs`).
 
-One decode function pair per node type (build_*: constructor arms, apply_*: one arm per
-builder op), one generic function per builder trait, one function per enum, record and Into
-set, one encoder per event payload, the style token table, the palette and the theme tokens.
-Generated code calls only `crate::genapi` (docs/PROTOCOLS.md).
+This module consumes the classified `Model` produced by `gen/gk_model.py` and runs
+two sequential phases:
 
-Every bound item sits on one line, and `lines.json` maps file and line to the item, so a
-compiler error is charged to exactly one item (gkgen.py quarantine).
+1. **Stable wire numbering (`Lock`, `number`)**:
+   Loads `api/opcodes.lock` (an append-only TSV of `kind`, `scope`, `name`, `number`)
+   and assigns immutable numeric IDs to every generated wire entity:
+   - Trait tables (`trait` -> `t["num"]`, 1..N) and trait builder ops (`trait-op` ->
+     `TRAIT_BASE + (trait_num << 7) + idx`, reserving 128 consecutive opcodes per trait
+     starting at `0x4000` so per-trait dispatch uses a single range match `lo..=lo+127`).
+   - Inherent node ops (`op`, scoped per node, starting at `OP_BASE = 256`, below `TRAIT_BASE`).
+   - Node constructors (`node`, starting at `NODE_BASE = 256`, leaving `1..255` for hand-written nodes).
+   - State/object/ambient call ops (`call`, starting at `CALL_BASE = 256`).
+   - Style tokens (`style`), palette colors (`palette`), theme colors (`theme`),
+     enum variants (`variant`, 0-based per enum), and handler shapes (`shape`, starting at
+     `SHAPE_BASE = 64` so low IDs remain reserved for built-in runtime shapes).
+   Also assigns deterministic internal Rust helper names (`en_*`, `de_*`, `rc_*`,
+   `in_*`, `tr_*`, and unique per-node `fn` stems).
+
+2. **Rust module emission (`Rust.emit`)**:
+   Generates:
+   - `codecs.rs`: `Unwire` and `Wire` impls for unit enums, data enums, records, and `Into` unions.
+   - `style.rs`: `style_tokens`, `palette`, and `theme_color` tables.
+   - `traits.rs`: per-trait builder op dispatchers (`tr_<trait>_<n>`).
+   - `calls.rs`: synchronous/buffered call op dispatchers (`c_<op>` and top-level `call()`).
+   - `n_<crate>_<mod>.rs`: per-module node constructor (`make_*`), value builder (`build_*`),
+     and op-loop (`apply_*`) functions.
+   - `mod.rs`: top-level `node()`, `style_op()`, `paint_part()`, `value_action()`,
+     `traitval_*`, `motion_*`, and module re-exports.
+   Finally hands the in-memory `files` map and line-to-item provenance map `where` to
+   `gk_fam.Families.split()` so non-core families are moved into `f_<fam>.rs` modules
+   for static dead-stripping, then writes `core/src/gen/*.rs` (removing stale files).
 """
 import json
 import os
@@ -15,28 +39,33 @@ import re
 import gk_model
 from gk_model import INT_WIRE, SHORT, last, snake, walk_desc
 import gk_app
-import gk_lists  # the lists and editor families (PROTOCOLS.md sections 9.9 to 9.12)
-import gk_values  # the values family (PROTOCOLS.md sections 13.8 to 13.12)
-import gk_overlay  # the overlays and dock families (PROTOCOLS.md sections 11.6, 11.7)
-import gk_editor  # the editor family, PROTOCOLS.md sections 9.20 to 9.26
-import gk_fam  # component families an app opts into
+import gk_lists
+import gk_values
+import gk_overlay
+import gk_editor
+import gk_fam
 import gk_tests
 
-# Numbers (docs/PROTOCOLS.md section 1): the runtime owns element ops, node types and call ops
-# below 256 and shapes below 64. Its four universal element ops are decoded by generated arms.
+# Reserved low opcodes shared with the hand-written Rust runtime (`core/wire/ops.txt`).
+# - Node builder ops: 1..255 runtime-reserved (`OP_CHILD`, `OP_CHILD_VIEW`, `OP_TEXT`, `OP_STYLE`);
+#   256..0x3FFF inherent node ops (`OP_BASE`); 0x4000..0xFFFF trait ops (`TRAIT_BASE + (trait_num << 7) + idx`).
+# - Node constructor type IDs: 1..255 hand-written nodes; >= 256 (`NODE_BASE`) generated nodes.
+# - Handler shapes: 1..63 built-in runtime shapes; >= 64 (`SHAPE_BASE`) generated shapes.
+# - Call ops: 1..255 hand-written runtime calls; >= 256 (`CALL_BASE`) generated state/object/ambient calls.
 OP_CHILD, OP_CHILD_VIEW, OP_TEXT, OP_STYLE = 1, 2, 3, 4
-OP_BASE = 256            # a type's own ops: 256 .. 0x3fff
-TRAIT_BASE = 0x4000      # trait ops: 0x4000 + (trait number << 7) + index
-NODE_BASE = 256          # node types below this belong to the runtime
+OP_BASE = 256
+TRAIT_BASE = 0x4000
+NODE_BASE = 256
 SHAPE_BASE = 64
 CALL_BASE = 256
-RUNTIME_OPS = {"child": OP_CHILD, "children": OP_CHILD}  # ParentElement methods the runtime's ops already are
+# ParentElement methods intercepted by runtime tape ops instead of allocating trait opcodes.
+RUNTIME_OPS = {"child": OP_CHILD, "children": OP_CHILD}
 
 
 SUPPORT = '''
-// --- support: codecs of gpui's own value types, written once -------------------------------
+// Core GPUI value decoders shared by generated modules.
 
-/// u8 kind (0 pixels, 1 rems, 2 fraction of the parent, 3 auto), f32.
+/// Decode a GPUI Length: u8 kind (0 = px, 1 = rems, 2 = relative fraction, 3 = auto) followed by f32.
 pub fn length(r: &mut R) -> gpui_kit::Length {
     match (r.u8(), r.f32()) {
         (3, _) => gpui_kit::Length::Auto,
@@ -64,7 +93,7 @@ pub fn absolute_length(r: &mut R) -> gpui_kit::AbsoluteLength {
     }
 }
 
-/// u8 kind (0 name, 1 integer, 2 name and integer).
+/// Decode a GPUI ElementId: u8 kind (0 = name, 1 = integer, 2 = name and integer).
 pub fn element_id(r: &mut R) -> gpui_kit::ElementId {
     match r.u8() {
         1 => gpui_kit::ElementId::Integer(r.u64()),
@@ -76,8 +105,7 @@ pub fn element_id(r: &mut R) -> gpui_kit::ElementId {
     }
 }
 
-/// The body of a style closure: the ops of a described style (a StyleRefinement node)
-/// applied onto the style upstream hands in.
+/// Apply all style ops recorded on a StyleRefinement node onto `style`.
 pub fn style_into(dx: &mut Dx, n: u32, style: &mut gpui_kit::StyleRefinement) {
     let mut at = dx.node(n).2;
     while let Some((op, mut r)) = dx.op(&mut at) {
@@ -87,7 +115,7 @@ pub fn style_into(dx: &mut Dx, n: u32, style: &mut gpui_kit::StyleRefinement) {
     }
 }
 
-/// The style a style closure produces: the incoming style refined by the described one.
+/// Merge `patch` onto `style` via `Refineable::refine` and return the updated style.
 pub fn refined(mut style: gpui_kit::StyleRefinement, patch: &gpui_kit::StyleRefinement) -> gpui_kit::StyleRefinement {
     use gpui_kit::Refineable;
     style.refine(patch);
@@ -105,7 +133,7 @@ pub fn bad_node<T>(owner: &str, ty: u16) -> Option<T> {
 
 
 class Lock:
-    """api/opcodes.lock: numbers on the wire, append-only (DESIGN.md 5 and 13)."""
+    """Append-only wire-number table persisted to api/opcodes.lock."""
 
     def __init__(self, path):
         self.path, self.nums, self.next = path, {}, {}
@@ -117,6 +145,7 @@ class Lock:
                     self.next[(kind, scope)] = max(self.next.get((kind, scope), 0), int(n) + 1)
 
     def num(self, kind, scope, name, first=1):
+        """Return the existing wire ID for `(kind, scope, name)` or allocate the next sequential ID."""
         k = (kind, scope, name)
         if k not in self.nums:
             self.nums[k] = self.next.get((kind, scope), first)
@@ -124,6 +153,7 @@ class Lock:
         return self.nums[k]
 
     def save(self):
+        """Persist the sorted append-only lock table to `api/opcodes.lock`."""
         with open(self.path, "w") as f:
             f.write("# opcodes.lock: numbers of generated things on the wire. Written by gen/gkgen.py.\n"
                     "# Append-only: a number is never changed or reused. kind, scope, name, number.\n")
@@ -132,7 +162,12 @@ class Lock:
 
 
 def number(m, lock):
-    """Gives every generated thing its wire number, from the lock."""
+    """Assign stable wire opcodes, variant tags, shape IDs, and Rust helper function names.
+
+    Allocates IDs across traits, node ops, node constructors, state/object/ambient calls,
+    style tokens, palette colors, theme colors, enum variants, and handler shapes, then
+    assigns unique Rust helper identifiers (`en_*`, `de_*`, `rc_*`, `in_*`, `tr_*`, node `fn`).
+    """
     for key in sorted(m.traits, key=lambda k: m.traits[k]["key"] or ""):
         t = m.traits[key]
         if not t["ops"]:
@@ -164,10 +199,7 @@ def number(m, lock):
         for it in sorted(st["builders"], key=lambda i: i["name"]):
             it["op"] = lock.num("state-op", key, it["name"])
         st["fn"] = f"{SHORT[st['crate']]}_{snake(st['name'])}"
-    gk_app.number(m, lock, CALL_BASE)  # the app family's ambient calls (PROTOCOLS.md section 11.5)
-    # The nullary methods of the other style-only traits (the kit's StyledExt) are tokens too
-    # (PROTOCOLS.md 11.36): a second entry beside the method, which keeps its trait op; the
-    # description gives the method its token number as `token`.
+    gk_app.number(m, lock, CALL_BASE)
     names = {i["name"] for i in m.tokens}
     for it, tpath in m.style_ext:
         if it["status"] in ("bound", "bridged") and not any(t.get("method_id") == it["id"] for t in m.tokens):
@@ -213,9 +245,7 @@ def number(m, lock):
 
 
 def overrides_trait(m, node, t):
-    """Whether the node's type overrides a method of the trait table t in its impl of the trait
-    (Icon's `Styled::text_color` keeps the colour in a field of its own): its ops then go to the
-    element itself, not to a wrapper over its style refinement, so the override runs."""
+    """Return True if `node` implements any method of style-only trait `t` explicitly instead of inheriting the blanket impl."""
     names = {i["name"] for i in t["ops"]}
     c = m.api.crates[node["crate"]]
     for im in m.info(node["crate"], node["id"])["impls"]:
@@ -227,19 +257,37 @@ def overrides_trait(m, node, t):
 
 
 class Rust:
+    """Emits all generated Rust decoder modules under `core/src/gen` and tracks line-to-item ownership.
+
+    Key state tracked during emission:
+    - `self.files`: `{filename: source_text}` buffered in memory until `gk_fam.Families.split()`
+      finishes partitioning non-core families.
+    - `self.where`: `{filename: {line_num_str: model_key}}` saved to `gen/out/where.json` so
+      compiler diagnostics can map any generated Rust line back to the upstream item that produced it.
+    - `self.call`: controls how `dec()` and `passed()` handle borrows, fallibility, and handles:
+      - `None`: view-tape decode with `&mut Dx` and `&mut R` (returns `Option<T>`, uses `*_shown` handles).
+      - `"builder"` / `"codec"`: inner decode inside a record/enum `Unwire` or `StateBuilder`
+        (returns `Option<T>`, converts `GkResult` lookups with `.ok()?`).
+      - `"state-*"` / `"obj-*"` / `"ambient"`: call handler returning `GkResult<()>` with `&mut Call`
+        (propagates handle lookup errors directly via `?`, clones `&str` inputs into `String`).
+    - `self.stylefn_owned`: selects whether `stylefn` closures borrow `&mut Dx` inline or
+      pre-build an owned `StyleRefinement` (set automatically in `arm()` when a builder has
+      multiple `Dx`-borrowing arguments or is listed in `[rust].owned_style_closure`).
+    """
+
     def __init__(self, m, outdir):
         self.m, self.out = m, outdir
         self.lines, self.where, self.file = [], {}, None
         self.files = {}
-        self.call = None  # the kind of call op being written; None inside a decoder
-        self.stylefn_owned = True  # a style closure keeps its own StyleRefinement (see dec)
+        self.call = None
+        self.stylefn_owned = True
 
-    # ------------------------------------------------------------ files and line keys
 
     def open(self, name, doc):
+        """Start a new generated Rust module with standard lint allows and `genapi` imports."""
         self.file, self.lines = name, []
         self.where[name] = {}
-        self.add("// Generated by gen/gkgen.py. Do not edit. " + doc)
+        self.add("// Code generated by gen/gkgen.py. DO NOT EDIT. " + doc)
         self.add("#![allow(unused_variables, unused_imports, unused_mut, unreachable_patterns, unused_parens)]")
         self.add("#![allow(clippy::all)]")
         self.add("use crate::genapi::{self, Dx, R};")
@@ -247,31 +295,32 @@ class Rust:
         self.add("")
 
     def add(self, text, key=None):
+        """Append one source line and optionally record its owning model key for `gen/out/where.json`."""
         self.lines.append(text)
         if key is not None:
             self.where[self.file][str(len(self.lines))] = key
 
     def close(self):
+        """Store the completed module source in `self.files`."""
         self.files[self.file] = "\n".join(self.lines) + "\n"
 
-    # ------------------------------------------------------------ decode expressions
 
     def dec(self, d):
-        """The Rust expression that reads a value of this descriptor from `r` (a &mut R)."""
+        """Emit a Rust expression that decodes descriptor `d` from tape reader `r` (and `dx`/`c`)."""
         k = d[0]
-        px = gk_app.rust_dec(self, d)  # the platform family's PROTOCOLS.md 13.31
+        px = gk_app.rust_dec(self, d)
         if px is not None:
             return px
-        ex = gk_editor.rust_dec(self, d)  # the editor family's PROTOCOLS.md 9.20 to 9.24
+        ex = gk_editor.rust_dec(self, d)
         if ex is not None:
             return ex
         lx = gk_lists.rust_dec(self, d)
         if lx is not None:
             return lx
         if k == "dock":
-            return gk_overlay.rust_dock_dec(self, d)  # PROTOCOLS.md 11.8
+            return gk_overlay.rust_dock_dec(self, d)
         if k in gk_values.CALL_SAFE or k in gk_values.DEC_ONLY:
-            return gk_values.rust_dec(self, d)  # PROTOCOLS.md 13.10
+            return gk_values.rust_dec(self, d)
         if k == "bool":
             return "r.u8() != 0"
         if k == "int":
@@ -285,7 +334,7 @@ class Rust:
         if k == "str":
             c = d[1].lstrip("&")
             if self.call and c in ("str", "asref"):
-                return "r.str().to_string()"  # a call op's closure outlives the request
+                return "r.str().to_string()"
             return {"str": "r.str()", "asref": "r.str()", "String": "r.str().to_string()",
                     "SharedString": "gpui_kit::SharedString::new(r.str())",
                     "into": "gpui_kit::SharedString::new(r.str())",
@@ -298,7 +347,6 @@ class Rust:
                  "id": "element_id(r)", "duration": "std::time::Duration::from_millis(r.u32() as u64)",
                  "range": "{ let a = r.u64() as usize; a..(r.u64() as usize) }"}[d[1]]
             if gk_model.is_fill(d):
-                # a colour or a gradient (PROTOCOLS.md 11.38)
                 e = "genapi::background(r, &*c.cx)" if self.call else "genapi::background(r, &*dx.cx)"
             return f"<{d[2]}>::from({e})" if d[2] else e
         if k == "enum":
@@ -306,7 +354,7 @@ class Rust:
         if k in ("denum", "rec", "into"):
             fn = {"denum": self.m.denums, "rec": self.m.records, "into": self.m.intos}[k][d[1]]["fn"]
             if self.call in ("builder", "codec"):
-                return f"{fn}_c(r)?"  # inside an Option: a builder op bails, a codec returns None
+                return f"{fn}_c(r)?"
             if self.call:
                 return f"genapi::decoded({fn}_c(r))?"
             return f"{fn}(r, dx)?"
@@ -320,17 +368,15 @@ class Rust:
         if k == "tuple":
             return "(" + ", ".join(self.dec(x) for x in d[1]) + ("," if len(d[1]) == 1 else "") + ")"
         if k == "ref" and self.call and d[1][0] == "obj" and self.call in ("builder", "codec"):
-            return f"genapi::obj_clone::<{d[1][1]}>(r.u64()).ok()?"  # inside a record or chain: a copy (13.12)
+            return f"genapi::obj_clone::<{d[1][1]}>(r.u64()).ok()?"
         if k == "ref" and self.call and d[1][0] == "obj":
-            return f"genapi::obj_rc::<{d[1][1]}>(r.u64())?"  # borrowed in place, not copied
+            return f"genapi::obj_rc::<{d[1][1]}>(r.u64())?"
         if k == "ref":
             return self.dec(d[1])
         if k == "refmut":
             return f"genapi::obj_rc::<{d[1][1]}>(r.u64())?"
         if k == "obj":
-            # A library object behind a handle (PROTOCOLS.md section 13): a call op copies it, or
-            # takes it when it cannot be copied; a tape names one that must still be there.
-            if self.call in ("builder", "codec"):  # inside a record, a variant or a chain (PROTOCOLS.md 13.12)
+            if self.call in ("builder", "codec"):
                 return f"genapi::obj_clone::<{d[1]}>(r.u64()).ok()?"
             if self.call:
                 return f"genapi::obj_clone::<{d[1]}>(r.u64())?" if d[3] else f"genapi::obj_take::<{d[1]}>(r.u64())?"
@@ -339,32 +385,24 @@ class Rust:
         if k == "child":
             return "dx.child(r.u32())"
         if k == "node" and self.call:
-            # A value made outside a view (PROTOCOLS.md section 13.6): a tape of its own.
             return f"genapi::value_arg(c, r, build_{self.m.nodes[d[1]]['fn']})?"
         if k == "node":
             return f"build_{self.m.nodes[d[1]]['fn']}(dx, r.u32())?"
         if k == "entity":
-            # In a decoder a released handle is a mistake in app code, and the element cannot
-            # be drawn: genapi::shown stops the program with the message (it used to draw
-            # nothing in the element's place, with exit 0). A call op returns the error.
             return f"genapi::state::<{d[1]}>(r.u64())?" if self.call else f"genapi::shown::<{d[1]}>(r.u64())"
         if k == "rows":
-            # A closure a delegate shim serves over the row source the app passes (PROTOCOLS.md 9.5).
             return f"{d[1]}(r.u64())"
         if k == "shim":
-            # The library's delegate made over the row source the app passes (PROTOCOLS.md 9.5).
             return f"{d[1]}::from_source(r.u64())?" if self.call else f"{d[1]}::from_source(r.u64()).ok()?"
         if k == "panelview":
-            return gk_overlay.rust_panel_view(self, d)  # a dock panel (PROTOCOLS.md 11.7)
+            return gk_overlay.rust_panel_view(self, d)
         if k == "handle":
             return "genapi::focus(r.u64())?" if self.call else "genapi::shown_focus(r.u64())"
         if k == "action" and d[1] == "listener":
-            # an action listener (gen/gk_app.py): the action's id, then the handler
             return "{ let a = r.u32(); let h = dx.handler(r); genapi::action_listener(a, h, dx.pin()) }"
         if k == "data":
-            # A data table the app passes (docs/PROTOCOLS.md section 12): its rows.
             if self.call == "builder":
-                return "crate::data::rows_plain(r)"  # a constructor's builder chain (PROTOCOLS.md 12.15)
+                return "crate::data::rows_plain(r)"
             return "crate::data::rows(r, &*c.cx)" if self.call else "crate::data::rows(r, &*dx.cx)"
         if k in ("field", "format"):
             return self.data_closure(d)
@@ -380,7 +418,7 @@ class Rust:
             ps = self.closure_params(d[1], d[3])
             return self.wrap(d[2], "{ let f = dx.frag(r.u32()); move |%s| f.with(window, cx, |dx, n| dx.child(n)) }" % ps)
         if k == "viewbuild":
-            return gk_overlay.rust_dec(self, d)  # a view-built closure (PROTOCOLS.md 11.6)
+            return gk_overlay.rust_dec(self, d)
         if k == "build":
             fn = self.m.nodes[d[1]]["fn"]
             if "window" not in d[2]:
@@ -390,9 +428,6 @@ class Rust:
                              "apply_%s(dx, v, dx.node(n).2)) }" % (ps, fn))
         if k == "stylefn":
             if d[2] == "impl" and not self.stylefn_owned:
-                # The described style applied straight onto the style upstream hands in: no
-                # second StyleRefinement, no refine. The closure borrows the decode context,
-                # which upstream allows where it calls the closure at once (hover, active).
                 return ("{ let n = r.u32(); let dx = &mut *dx; move |mut v: gpui_kit::StyleRefinement| "
                         "{ style_into(dx, n, &mut v); v } }")
             return self.wrap(d[2], "{ let s = build_%s(dx, r.u32())?; move |v: gpui_kit::StyleRefinement| refined(v, &s) }"
@@ -400,8 +435,7 @@ class Rust:
         raise KeyError(k)
 
     def data_closure(self, d):
-        """A closure over a row of a data table and the numbers upstream hands in, answered from
-        the row: a column (`field`) or a template (`format`), named by the string on the wire."""
+        """Emit a Rust closure reading a chart `Field` or `Format` template from `crate::data::Datum`."""
         k, kind, ret, how, ptypes, forms = d
         ps, row, nums = [], None, []
         for n, (t, f) in enumerate(zip(ptypes, forms)):
@@ -418,7 +452,7 @@ class Rust:
                              % (", ".join(ps), ret, body))
         key = next((f"a{n}" for n, (t, f) in enumerate(zip(ptypes, forms)) if f == ["other"] and t == "&str"), None)
         if key and kind in ("num", "opt"):
-            row = f"&{row}.keyed({key})" if not row.startswith("&") else f"&{row[1:]}.keyed({key})"  # 12.15
+            row = f"&{row}.keyed({key})" if not row.startswith("&") else f"&{row[1:]}.keyed({key})"
         body = {"text": f"f.text({row}).into()", "color": f"f.color({row}).into()",
                 "num": f"f.num({row}) as {ret}", "opt": f"f.opt({row}).map(|v| v as {ret})"}[kind]
         rt = f"Option<{ret}>" if kind == "opt" else ret
@@ -427,11 +461,13 @@ class Rust:
 
     @staticmethod
     def wrap(how, closure):
+        """Wrap a Rust closure expression in `Box::new`, `Rc::new`, `Arc::new`, or leave bare (`impl`)."""
         return {"impl": closure, "box": f"Box::new({closure})", "rc": f"std::rc::Rc::new({closure})",
                 "arc": f"std::sync::Arc::new({closure})"}[how]
 
     @staticmethod
     def closure_params(params, types, arg="_"):
+        """Format Rust closure parameter bindings (`window`, `cx`, and `_aN` or custom `arg`)."""
         n, out = 0, []
         for p, t in zip(params, types):
             if p == "arg":
@@ -442,9 +478,7 @@ class Rust:
         return ", ".join(out)
 
     def handler(self, d):
-        """`{ let h = dx.handler(r); let k = dx.pin(); move |payload.., window, cx| { let _ = &k; genapi::fire(h, SHAPE,
-        &payload, window, cx) } }`: the closure holds its tape (`Dx::pin`), so the binding keeps its handler table for as
-        long as upstream keeps the closure (PROTOCOLS.md section 4)."""
+        """Emit a Rust event-callback closure that fires Go handler `h` through `genapi::fire*`."""
         sh = self.m.shapes[d[1]]
         names, refs, n = [], [], 0
         for p, t in zip(d[2], d[4]):
@@ -455,10 +489,10 @@ class Rust:
             else:
                 names.append({"window": "window", "app": "cx", "context": "cx"}.get(p, "_x") + ": " + t)
         payload = "&()" if not refs else refs[0] if len(refs) == 1 else "&(" + ", ".join(refs) + ")"
-        payload = gk_app.rust_payload(d, payload) or payload  # DragMoveEvent<Drag> (PROTOCOLS.md 13.31)
-        ret = {"bool": "bool", "str": "gpui_kit::SharedString"}.get(sh["ret"], "()")  # str: values family (13.12)
+        payload = gk_app.rust_payload(d, payload) or payload
+        ret = {"bool": "bool", "str": "gpui_kit::SharedString"}.get(sh["ret"], "()")
         if gk_overlay.rust_observe(d, sh['num'], payload):
-            call = gk_overlay.rust_observe(d, sh['num'], payload)  # an observation (PROTOCOLS.md 11.14)
+            call = gk_overlay.rust_observe(d, sh['num'], payload)
         elif "context" in d[2]:
             call = f"genapi::fire_queued(h, {sh['num']}, {payload}, cx)"
         elif "window" in d[2]:
@@ -468,9 +502,9 @@ class Rust:
         return self.wrap(d[3], "{ let h = dx.handler(r); let k = dx.pin(); move |%s| { let _ = &k; %s } }" % (", ".join(names), call))
 
     def passed(self, d, var):
-        """How a decoded local is handed to the callee."""
+        """Adapt decoded local variable `var` to the exact reference/slice/context form expected by the callee."""
         if d == ["ctx", "window_opt"]:
-            return "Some(window)" if self.call else "Some(&mut *dx.window)"  # Option<&mut Window> (13.10)
+            return "Some(window)" if self.call else "Some(&mut *dx.window)"
         if d[0] == "ctx" and self.call:
             return "window" if d[1].startswith("window") else "cx"
         if d[0] == "str" and self.call and d[1].lstrip("&") in ("str", "asref"):
@@ -479,9 +513,9 @@ class Rust:
             return {"window": "&mut *dx.window", "app": "&mut *dx.cx", "window_ref": "&*dx.window",
                     "app_ref": "&*dx.cx"}[d[1]]
         if d[0] == "opt" and d[1][0] == "ref" and self.call and d[1][1][0] == "obj":
-            return f"{var}.as_ref().map(|x| x.borrow()).as_deref()"  # Option<&Object>: lent in place (13.12)
+            return f"{var}.as_ref().map(|x| x.borrow()).as_deref()"
         if d[0] == "opt" and d[1][0] == "ref":
-            return f"{var}.as_ref()"  # Option<&T>: decoded as Option<T>, lent
+            return f"{var}.as_ref()"
         if d[0] == "ref" and self.call and d[1][0] == "obj":
             return f"&*{var}.borrow()"
         if d[0] == "refmut":
@@ -489,7 +523,7 @@ class Rust:
         if d[0] == "ref":
             return f"&*{var}" if d[1][0] == "action" else f"&{var}"
         if d[0] == "list" and d[2] == "slice" and d[1][0] == "ref" and d[1][1][0] != "obj":
-            return f"&{var}.iter().collect::<Vec<_>>()[..]"  # &[&T]: decoded as Vec<T>, lent (values family)
+            return f"&{var}.iter().collect::<Vec<_>>()[..]"
         if d[0] == "list" and d[2] == "slice":
             return f"&{var}[..]"
         if d[0] == "data" and d[1] == "slice":
@@ -499,8 +533,13 @@ class Rust:
         return var
 
     def arm(self, it, call, bail):
-        """`{ let a0 = ..; callee(recv, a0, ..) }` for one bound item, on one line."""
-        sp = gk_lists.rust_arm(self, it, call, bail)  # one of a trait's node types (PROTOCOLS.md 9.10)
+        """Emit a match-arm block that decodes `it["args"]`, handles `?` failures via `bail`, and runs `call`.
+
+        When an `impl FnOnce(StyleRefinement) -> StyleRefinement` closure would otherwise
+        conflict with a second `&mut Dx` borrow in the same argument list, falls back to
+        pre-building an owned `StyleRefinement` (`stylefn_owned = True`) before re-decoding.
+        """
+        sp = gk_lists.rust_arm(self, it, call, bail)
         if sp:
             return sp
         def decode():
@@ -515,7 +554,6 @@ class Rust:
         lets, passed = decode()
         borrows = sum(1 for _, e in lets if "let dx = &mut *dx" in e)
         if borrows and (borrows > 1 or len(lets) > 1 and any("dx" in e for _, e in lets if "let dx = &mut *dx" not in e)):
-            # a closure that borrows the decode context cannot sit beside another use of it
             self.stylefn_owned = True
             lets, passed = decode()
         text = call % ", ".join(passed) if "%s" in call else call
@@ -528,9 +566,9 @@ class Rust:
         one = "," if len(lets) == 1 else ""
         return "{ let Some((%s%s)) = (|| Some((%s%s)))() else { %s }; %s }" % (vs, one, es, one, bail, text)
 
-    # ------------------------------------------------------------ files
 
     def emit(self):
+        """Emit all Rust files, run `gk_fam.Families.split()`, and write `core/src/gen/*.rs`."""
         m = self.m
         self.codecs()
         self.style()
@@ -544,15 +582,15 @@ class Rust:
             fname = f"n_{SHORT[node['crate']]}_{re.sub(r'[^a-z0-9]+', '_', node['module'].lower()) or 'root'}"
             groups.setdefault(fname, []).append(node)
         for fname in sorted(groups):
-            self.open(fname + ".rs", "Decoders of the node types of one upstream module.")
+            self.open(fname + ".rs", "Node decoders for a single upstream module.")
             for node in groups[fname]:
                 self.node(node)
             self.close()
-        gk_editor.rust_files(self, groups)  # the editor host's decoders (PROTOCOLS.md 9.30)
+        gk_editor.rust_files(self, groups)
         self.file, self.lines = "mod.rs", []
         self.where["mod.rs"] = {}
-        self.add("// Generated by gen/gkgen.py. Do not edit. The generated half of the library: decoders,")
-        self.add("// codecs, style and colour tables. It calls only crate::genapi (docs/PROTOCOLS.md).")
+        self.add("// Code generated by gen/gkgen.py. DO NOT EDIT.")
+        self.add("// Generated decoders, codecs, style tables, and dispatchers calling only crate::genapi.")
         self.add("#![allow(unused_variables, unused_imports, unused_mut, unreachable_patterns, dead_code, non_snake_case, clippy::all)]")
         self.add("use crate::genapi::{self, Dx, R};")
         self.add("use gpui_kit::IntoElement as _;")
@@ -560,7 +598,7 @@ class Rust:
             self.add(f"mod {f};")
             self.add(f"pub use {f}::*;")
         self.add("")
-        self.add("/// The element a generated node type builds; None when `ty` is not a generated element type.")
+        self.add("/// Decode a generated element node into `AnyElement`; returns None for non-generated type IDs.")
         self.add("pub fn node(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::AnyElement> {")
         self.add("    let el = match ty {")
         for key in sorted(m.nodes):
@@ -574,8 +612,7 @@ class Rust:
         self.add("    Some(el.unwrap_or_else(|| gpui_kit::div().into_any_element()))")
         self.add("}")
         self.add("")
-        self.add("/// The ops every styled type shares (the token list and the traits that only write the style),")
-        self.add("/// for the hand-written decoders of the runtime. False when `op` is none of them.")
+        self.add("/// Apply shared style tokens and style-only trait ops to `style`; returns false if `op` is unknown.")
         self.add("pub fn style_op(style: &mut gpui_kit::StyleRefinement, op: u16, r: &mut R, dx: &mut Dx) -> bool {")
         self.add("    match op {")
         self.add(f"        {OP_STYLE} => style_tokens(style, r),")
@@ -589,12 +626,10 @@ class Rust:
         self.add("    true")
         self.add("}")
         self.add("")
-        # Parts of a described plot (docs/PROTOCOLS.md section 12): every value type with
-        # `paint(&self, &Bounds<Pixels>, &mut Window[, &mut App])`, by its constructors' numbers.
-        self.add("/// A part of a described plot, painted in the plot's bounds when the plot paints.")
+        self.add("/// Draw callback for one value part inside a custom plot.")
         self.add("pub type PaintFn = Box<dyn Fn(&gpui_kit::Bounds<gpui_kit::Pixels>, &mut gpui_kit::Window, &mut gpui_kit::App)>;")
         self.add("")
-        self.add("/// The value node `n` as a part of a plot; None when its type paints nothing (gk.plot checks it).")
+        self.add("/// Decode value node `n` into a `PaintFn` if its type supports painting; otherwise returns None.")
         self.add("pub fn paint_part(dx: &mut Dx, n: u32) -> Option<PaintFn> {")
         self.add("    match dx.node(n).0 {")
         for key in sorted(m.nodes):
@@ -612,13 +647,12 @@ class Rust:
         self.add("    }")
         self.add("}")
         self.add("")
-        for line in gk_values.rust_mod(self, m):  # kit action values (PROTOCOLS.md 13.11)
+        for line in gk_values.rust_mod(self, m):
             self.add(line)
         for line in gk_tests.rust_test_shape(self, m):
             self.add(line)
         self.add(SUPPORT)
         self.close()
-        # One dispatcher function per family, behind a registry the app fills (gen/gk_fam.py).
         self.fam = gk_fam.Families(m, self.call_items)
         self.fam.split(self.files, self.where)
         os.makedirs(self.out, exist_ok=True)
@@ -630,20 +664,17 @@ class Rust:
         return self.where
 
     def cfg(self, item, tags):
-        """`#[cfg(..)]` before what is generated for a type gpui has on some platforms only
-        (rdj.target_cfg: the extract is made on Linux), so the library builds on the others."""
         if item.get("cfg"):
             self.add(f"#[cfg({item['cfg']})]", tags)
 
     @staticmethod
     def arm_cfg(v):
-        """The same for one match arm of a variant on some platforms only; every match the
-        generator writes ends in a `_` arm, which covers it there."""
         return f"#[cfg({v['cfg']})] " if v.get("cfg") else ""
 
     def codecs(self):
+        """Emit codecs.rs with enum/record/Into decoders, Wire encoders, and color token lookup."""
         m = self.m
-        self.open("codecs.rs", "Enums, records, Into sets and event encoders.")
+        self.open("codecs.rs", "Wire decoders and encoders for enums, records, Into sets, and color tokens.")
         for rt in sorted(m.enums):
             e = m.enums[rt]
             vs = [v for v in e["variants"]]
@@ -663,7 +694,6 @@ class Rust:
                          "out.extend_from_slice(&n.to_le_bytes()); } }", ["enum", rt])
         for rt in sorted(m.denums):
             e = m.denums[rt]
-            # `_c`: the decoder of a call op, which has no decode context (gk_model.call_bad).
             for sfx, ps, mode in (("", "r: &mut R, dx: &mut Dx", None), ("_c", "r: &mut R", "codec")):
                 if not e["in"] or (mode and not e.get("callable")):
                     continue
@@ -675,7 +705,7 @@ class Rust:
                     if not v["ok"] or not v.get("in", True):
                         continue
                     self.add(f"        {self.arm_cfg(v)}{v['num']} => {self.variant_new(e, v)},", ["variant", rt, v["name"]])
-                for arm in gk_editor.denum_arms(self, e):  # a value the library holds (PROTOCOLS.md 9.30)
+                for arm in gk_editor.denum_arms(self, e):
                     self.add(arm, ["denum", rt])
                 self.add("        _ => return None,", ["denum", rt])
                 self.add("    })", ["denum", rt])
@@ -688,7 +718,7 @@ class Rust:
                 self.add("        match self {", ["denum", rt])
                 for v in e["variants"]:
                     tag = f"out.extend_from_slice(&{v['num']}u16.to_le_bytes());"
-                    put = lambda x: f" genapi::Wire::put({x}, out);"  # noqa: E731
+                    put = lambda x: f" genapi::Wire::put({x}, out);"
                     ac = self.arm_cfg(v)
                     if v["shape"] == "unit" or not v["ok"]:
                         pat = {"unit": "", "tuple": "(..)", "struct": " { .. }"}[v["shape"]]
@@ -718,8 +748,8 @@ class Rust:
                 self.add(f"pub fn {rc['fn']}{sfx}({ps}) -> Option<{rt}> {{ Some({body}) }}", ["rec", rt])
                 self.call = None
             if rc["out"]:
-                body = " ".join(gk_values.rust_field_put(rc, f) for f in rc["fields"])  # a colour field (13.20)
-                body = gk_editor.reads_put(rc) or body  # an event's reads (PROTOCOLS.md 9.35)
+                body = " ".join(gk_values.rust_field_put(rc, f) for f in rc["fields"])
+                body = gk_editor.reads_put(rc) or body
                 self.add(f"impl genapi::Wire for {rt} {{ fn put(&self, out: &mut Vec<u8>) {{ {body} }} }}", ["rec", rt])
         for rt in sorted(m.intos):
             s = m.intos[rt]
@@ -741,15 +771,15 @@ class Rust:
                 self.add("}", ["into", rt])
                 self.call = None
         self.add("")
-        self.add("// Library objects that are Clone travel out as a copy behind a new temporary handle (PROTOCOLS.md 13).")
+        self.add("// Cloneable library objects serialize by cloning into a fresh temporary handle.")
         for key in sorted(m.objects):
             st = m.objects[key]
             if st.get("reachable") and st["clone"] and st["path"] not in m.records:
                 self.add(f"impl genapi::Wire for {st['path']} {{ fn put(&self, out: &mut Vec<u8>) {{ "
                          f"genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); }} }}", ["state", key])
         self.add("")
-        self.add("/// A colour by number, resolved when the tape is decoded: a field of the kit's theme, or")
-        self.add("/// (bit 15 set) one of the kit's fixed palette colours. genapi::color calls it for kind 1.")
+        self.add("/// Resolve a numeric color token: values below 0x8000 index `ThemeColor`;")
+        self.add("/// values at or above 0x8000 select a fixed palette color.")
         self.add("pub fn color_token(t: &gpui_kit::component::ThemeColor, id: u16) -> Option<gpui_kit::Hsla> {")
         self.add("    if id >= 0x8000 {")
         self.add("        return palette_color(id);")
@@ -774,7 +804,7 @@ class Rust:
         self.close()
 
     def variant_new(self, e, v):
-        vn = gk_editor.variant_new(self, e, v)  # a variant made by a constructor (PROTOCOLS.md 9.29)
+        vn = gk_editor.variant_new(self, e, v)
         if vn:
             return vn
         if v["shape"] == "unit":
@@ -784,11 +814,12 @@ class Rust:
         return f"{e['path']}::{v['name']} {{ " + ", ".join(f"{f['name']}: {self.dec(f['desc'])}" for f in v["fields"]) + " }"
 
     def style(self):
+        """Emit style.rs mapping nullary style token IDs onto StyleRefinement mutations."""
         m = self.m
-        self.open("style.rs", "The style table: every nullary Styled method, applied by one function.")
+        self.open("style.rs", "Nullary style token dispatch table for StyleRefinement.")
         self.add("use gpui_kit::{StyleRefinement, Styled};")
         self.add("")
-        self.add("/// Lets the by-value `Styled` methods write into a borrowed `StyleRefinement`.")
+        self.add("/// Adapter allowing by-value `Styled` methods to mutate a borrowed `StyleRefinement`.")
         self.add("pub struct W<'a>(pub &'a mut StyleRefinement);")
         self.add("impl Styled for W<'_> {")
         self.add("    fn style(&mut self) -> &mut StyleRefinement {")
@@ -832,7 +863,7 @@ class Rust:
         self.add("    true")
         self.add("}")
         self.add("")
-        self.add("/// The style-token op: u16 count, then the tokens.")
+        self.add("/// Decode a style-token list op (u16 count followed by u16 token IDs).")
         self.add("pub fn style_tokens(style: &mut StyleRefinement, r: &mut R) {")
         self.add("    for _ in 0..r.u16() {")
         self.add("        let t = r.u16();")
@@ -844,17 +875,15 @@ class Rust:
         self.close()
 
     def traits(self):
+        """Emit traits.rs with one generic op dispatcher per builder trait."""
         m = self.m
-        self.open("traits.rs", "One generic function per builder trait: the trait's ops for any implementor.")
+        self.open("traits.rs", "Generic builder-trait op dispatchers shared across implementing nodes.")
         for key in sorted(m.traits, key=lambda k: m.traits[k]["fn"]):
             t = m.traits[key]
             ops = [i for i in t["ops"] if i["status"] in ("bound", "bridged") and i.get("op") is not None]
             if not ops:
                 continue
             bound = " + ".join([t["path"]] + t["extra_paths"])
-            # Instantiated per element type and called from that type's one decode loop:
-            # inlined there, the element is built in place instead of being moved in and
-            # out once per op. The style-only traits run on one type (W) for every element.
             if not t["via_style"] and not os.environ.get("GK_NO_INLINE"):
                 self.add("#[inline(always)]")
             hot_styled = {
@@ -897,10 +926,10 @@ class Rust:
         self.close()
 
     def calls(self):
-        """Call ops: kit state behind handles (docs/PROTOCOLS.md section 5)."""
+        """Emit calls.rs with state/object/ambient call handlers and the top-level call() dispatcher."""
         m = self.m
-        ok = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
-        self.open("calls.rs", "Call ops: constructors, reads, writes and subscriptions of kit state types.")
+        ok = lambda i: i["status"] in ("bound", "bridged")
+        self.open("calls.rs", "Call handlers for state entities, library objects, and ambient context calls.")
         self.add("use gpui_kit::AppContext as _;")
         self.add("")
         arms = []
@@ -911,7 +940,7 @@ class Rust:
                 if st.get("reachable"):
                     self.obj_calls(st, arms)
                 continue
-            if not any(ok(i) for i in st["ctors"]) and not st.get("handed"):  # handed: PROTOCOLS.md 11.8
+            if not any(ok(i) for i in st["ctors"]) and not st.get("handed"):
                 continue
             self.add(f"fn sb_{st['fn']}(s: {T}, op: u16, r: &mut R) -> {T} {{", ["state", key])
             self.add("    match op {")
@@ -927,7 +956,7 @@ class Rust:
                 if not ok(it):
                     continue
                 head = f"fn c_{it['op']}(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> {{ "
-                if "shape" in it:  # a subscription
+                if "shape" in it:
                     body = ("let (h, slot, generation) = (r.u64(), r.u32(), r.u32()); "
                             f"let sub = genapi::state_subscribe::<{T}, {it['rust']}>(h, slot, generation, {m.shapes[it['shape']]['num']}, c)?; "
                             "c.out.extend_from_slice(&sub.to_le_bytes());")
@@ -943,7 +972,7 @@ class Rust:
                     body = (f"{lets}{win}let entity = c.cx.new(|{cxn}| {{ let mut s = {it['callee']}({passed}); "
                             f"for _ in 0..r.u16() {{ let op = r.u16(); s = sb_{st['fn']}(s, op, r); }} s }}); "
                             "let h = genapi::state_new(entity, c); c.out.extend_from_slice(&h.to_le_bytes());")
-                    body = gk_editor.chain_body(self, st, body)  # values in the chain, with the call's context (PROTOCOLS.md 9.31)
+                    body = gk_editor.chain_body(self, st, body)
                 elif it["kind"] == "state-call":
                     sep = ", " if passed else ""
                     body = (f"let h = r.u64(); {lets}let bytes = genapi::state_call::<{T}>(h, c, move |s, window, cx| {{ let mut out = Vec::new(); "
@@ -958,11 +987,11 @@ class Rust:
                             f"{it['callee']}(s{sep}{passed}); }})?;")
                 self.add(head + body + " Ok(()) }", ["item", it["id"]])
                 arms.append(it)
-        arms += gk_app.rust_calls(self)  # the app family's ambient calls (PROTOCOLS.md section 11.5)
-        self.call_items = list(arms)  # the call dispatcher's arms, by op (gen/gk_fam.py splits it by family)
+        arms += gk_app.rust_calls(self)
+        self.call_items = list(arms)
         self.call = None
         self.add("")
-        self.add("/// A generated call op; None when `op` is not one.")
+        self.add("/// Dispatch a generated call opcode; returns None if `op` is not generated.")
         self.add("pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {")
         self.add("    Some(match op {")
         for it in sorted(arms, key=lambda i: i["op"]):
@@ -974,29 +1003,28 @@ class Rust:
 
     @staticmethod
     def put_ret(ret, expr):
-        """Writes a call op's result to `out`. A library object by value is moved into a new
-        temporary handle (genapi::Owned); a borrowed one is copied by its Wire impl (codecs.rs)."""
-        er = gk_editor.put_ret(ret, expr)  # an iterator of iterators, collected at each level (PROTOCOLS.md 9.30)
+        """Emit the Rust `Wire::put` statement serializing return expression `expr` for descriptor `ret`."""
+        er = gk_editor.put_ret(ret, expr)
         if er:
             return er
-        li = gk_lists.put_ret(ret, expr)  # an iterator: collected (the lists and editor families)
+        li = gk_lists.put_ret(ret, expr)
         if li:
             return li
-        ov = gk_overlay.rust_dock_put(ret, expr)  # node ids, views, panels, handed-out states (11.8)
+        ov = gk_overlay.rust_dock_put(ret, expr)
         if ov:
             return ov
         if ret[0] == "obj":
             return f"genapi::Wire::put(&genapi::Owned::new({expr}), &mut out)"
         if gk_values.rust_put_ret(ret, expr):
-            return gk_values.rust_put_ret(ret, expr)  # Result<T, E> (PROTOCOLS.md 13.9)
+            return gk_values.rust_put_ret(ret, expr)
         if ret[0] == "result":
-            return gk_overlay.rust_put_ret(expr)  # Result<(), E>: the error's text (PROTOCOLS.md 11.6)
+            return gk_overlay.rust_put_ret(expr)
         return f"genapi::Wire::put(&{expr}, &mut out)"
 
     def obj_calls(self, st, arms):
-        """Call ops of a library object (docs/PROTOCOLS.md section 13)."""
+        """Emit `sb_<fn>` builder loop and `c_<op>` call handlers for a non-Entity library object or Global."""
         m = self.m
-        ok = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        ok = lambda i: i["status"] in ("bound", "bridged")
         T, g = st["path"], "_global" if st["glob"] else ""
         if any(ok(i) for i in st["ctors"]):
             self.add(f"fn sb_{st['fn']}(s: {T}, op: u16, r: &mut R) -> {T} {{", ["state", st["key"]])
@@ -1023,11 +1051,11 @@ class Rust:
                 body = (f"{lets}{pre}let cx = &mut *c.cx; let mut s = {it['callee']}({passed}); "
                         f"for _ in 0..r.u16() {{ let op = r.u16(); s = sb_{st['fn']}(s, op, r); }} "
                         "let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes());")
-                body = gk_editor.chain_body(self, st, body)  # values in the chain, with the call's context (PROTOCOLS.md 9.31)
+                body = gk_editor.chain_body(self, st, body)
             elif k == "obj-global":
                 body = f"let h = genapi::obj_global::<{T}>(); c.out.extend_from_slice(&h.to_le_bytes());"
             elif k == "obj-read":
-                expr = gk_values.field_expr(it) or (it['callee'] + '(s' + sep + passed + ')')  # a public field (13.12)
+                expr = gk_values.field_expr(it) or (it['callee'] + '(s' + sep + passed + ')')
                 body = (f"let h = r.u64(); {lets}let bytes = genapi::obj_read{g}::<{T}, _>(h, c, |s, cx| {{ let mut out = Vec::new(); "
                         f"{self.put_ret(it['ret'], expr)}; out }})?; c.out.extend_from_slice(&bytes);")
             elif k in ("obj-static", "obj-scall"):
@@ -1038,8 +1066,8 @@ class Rust:
                     body = f"{lets}let bytes = genapi::with_window(c, |window, cx| {inner})?; c.out.extend_from_slice(&bytes);"
                 else:
                     body = f"{lets}let bytes = {{ let cx = &mut *c.cx; {inner} }}; c.out.extend_from_slice(&bytes);"
-            else:  # obj-write, obj-call
-                call = gk_values.field_set(it, passed) or f"{it['callee']}(s{sep}{passed})"  # a public field (13.12)
+            else:
+                call = gk_values.field_set(it, passed) or f"{it['callee']}(s{sep}{passed})"
                 inner = (f"{{ let mut out = Vec::new(); {self.put_ret(it['ret'], call)}; out }}" if k == "obj-call"
                          else f"{{ {call}; Vec::new() }}")
                 if it.get("consume"):
@@ -1059,6 +1087,12 @@ class Rust:
         self.call = None
 
     def node(self, node):
+        """Emit `build_<fn>`, `make_<fn>`, and `apply_<fn>` tape decoders for one element or value node.
+
+        `make_<fn>` matches the constructor opcode (`ty`) and decodes its arguments;
+        `apply_<fn>` loops over the op chain starting at `first`, dispatching inherent ops,
+        reserved `ParentElement`/`Styled` opcodes, and 128-wide trait op ranges.
+        """
         m = self.m
         fn, tp = node["fn"], node["path"]
         ctors = sorted([i for i in node["ctors"] if i["status"] in ("bound", "bridged")], key=lambda i: i["op"])

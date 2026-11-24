@@ -1,4 +1,4 @@
-// A style token where a fill (a colour or a gradient) goes.
+// Compile-time misuse case: Bg accepts gk.Fill (a color or gradient), not a style token.
 package main
 
 import (

@@ -1,62 +1,75 @@
-"""The editor family's generator rules, docs/PROTOCOLS.md sections 9.20 to 9.26.
+"""Editor, text-view, Markdown plugin, and `BlockHost` rules for model and Rust emission.
 
-Hooked into gk_model.py, gk_rust.py and gk_go.py at a few points each (search for
-`gk_editor.`); everything else of the editor rules lives here. gk_lists.py (the rest of the lists
-and editor rules) is not edited: these rules come before or after its hooks.
+This module extends `gen/gk_model.py` and `gen/gk_rust.py` with the specialized
+rules required by the text editor, syntax highlighter, Markdown renderer, and
+rich-text block host:
 
-- **Typed fragments** (`tfrag`, 9.20). A closure that gets the window and the app, no values, and
-  returns one element type (`MarkdownExtensions::block_surface(name, Fn(&mut Window, &mut App) ->
-  Div)`): a fragment of the app's view, as any render closure without an item is, whose root is
-  decoded as that type. The app passes an element of the type (`gk.div()->...`).
-- **Predicates as key sets** (`keyset`, 9.21). `FnMut(&T) -> bool` with no window or app over a
-  string or an integer (`History::retain`): the app passes the keys for which it holds.
-- **Tables** (`table`, 9.21). `Fn(u8) -> V` with no window or app (`TextViewStyle::with_heading`, a
-  heading level): the app passes the values by index; an index past the end is V's default.
-- **Element closures over values without a window** (`ctxlazy`, 9.22). As an element closure over
-  a context (9.16) but upstream gives the closure no window and no app (`FoldPlaceholderRenderer =
-  Rc<dyn Fn(usize) -> AnyElement>`): the closure returns a library element that becomes the row
-  when it is laid out, where the window and the app are at hand.
-- **View closures over values** (`viewrows`, 9.22). A closure over values that returns an `AnyView`
-  (`TextView::link_tooltip(Fn(&SharedString, &mut Window, &mut App) -> AnyView)`): the row's view of
-  a row source, one row per distinct value.
-- **Markdown plugins** (`mdplug`, 9.23). `plugin<P: MarkdownPlugin>` and `plugin<P: TextViewPlugin>`
-  take one of the kit's plugins (node types that implement MarkdownPlugin: FrontmatterPlugin) or
-  the library's data plugin (`crate::editor_text::DataPlugin`, Go `gk.MarkdownPlugin`), which
-  claims Markdown nodes by a rule the app gives as data and draws them through a row source.
-- **Small values** (9.24): an `ElementId` read back is its text; a `gpui::EntityId` argument is the
-  entity behind any input, textarea or editor handle (`gk.entity_id(state)`).
-- **Objects a read-back value hands out** (9.25): an object returned by a `&self` read of a value
-  that is read back (`DiffFile::conflicts() -> &[DiffConflict]`) is reachable, so its reads are.
+1. **Editor closure descriptors (`closure`, `alias`, `ask_trait`, `decorate`)**:
+   - `tfrag`: zero-payload `(&mut Window, &mut App) -> ConcreteElement` returning a
+     concrete non-instantiated element node (wrapped in `MainThread` + `bad_fragment`).
+   - `keyset`: `Fn(str|int) -> bool` predicates sent as an allow-list slice on the wire.
+   - `table`: `Fn(u8) -> V` lookup functions sent as an indexed `Vec<V>`.
+   - `ctxlazy`: 1..3-arg element closures with no Window/App, rendered lazily via
+     `crate::editor_text::lazy_row`.
+   - `viewrows`: 1..3-arg `(&..., &mut Window, &mut App) -> AnyView` closures via
+     `crate::editor_text::ctx_view`.
+   - `askdyn`: `Arc`/`Rc`/`Box<dyn Trait>` single-method trait objects in `ASK_TRAITS`
+     (such as `HighlightStyleResolver`), backed by an async `Ask` lookup table.
+   - `decorate`: `FnOnce(El) -> El` on `Styled + ParentElement` nodes lowered to an
+     optional `StyleRefinement` plus child row source.
+2. **Markdown plugins and held recursive enums (`bounded`, `held`, `recursive`, `denum_arms`)**:
+   - `mdplug`: closed union over `PLUGIN_NODES` (enforced against rustdoc so new
+     upstream `MarkdownPlugin` structs cannot be silently missed) plus `DataPlugin`.
+   - `HELD_ENUMS` (`BlockNode`): recursive AST enums cannot be serialized back to Go
+     in full without unbounded nesting, so outbound `BlockNode` values become opaque
+     `held` handles and inbound `BlockNode::Unwire` accepts sentinel tag `HELD_TAG`
+     (`0xFFFE`) to recover a held object handle.
+3. **Call-op overrides and inline color records (`call_bad`, `rust_inline_rec`, `chain_cx`, `chain_body`)**:
+   - Permits `Box<dyn Action>` inside immediate calls and decodes color-bearing records
+     field-by-field inside call handlers (`rust_inline_rec`) because `Hsla` lookup needs
+     `&c.cx` rather than a plain `Unwire` reader.
+   - Upgrades state/object constructor builder loops (`sb_<fn>`) to `sbp_<fn>` returning
+     `GkResult<Box<dyn FnOnce(T) -> T>>` when any builder needs `&mut Call` context,
+     decoding those arguments before entering `cx.new(|cx| ...)`.
+4. **Post-reachability bridges (`before_reach`, `revive`, `project`, `after_values`, `lent_edits`, `flat_records`, `event_reads`, `answer_sets`, `rust_files`)**:
+   - `before_reach()` snapshots object methods/statuses before pruning so `revive()` and
+     `after_values()` can restore objects exposed via readback getters or pointer ctors,
+     as well as direct `Iterator<Item = Iterator<...>>` returns.
+   - `project()` lifts pure `&self` getters from non-`Clone` borrowed sub-objects onto
+     their owning state as `<getter>_<field>` reads.
+   - `lent_edits()` bridges `&mut self -> &mut ValueNode` methods via `LentEdit` op-tape
+     application instead of exposing mutable borrows across FFI.
+   - `flat_records()` flattens single-record `&mut self` state writes into plain scalar
+     call arguments; `event_reads()` synthesizes event payload records from private-field
+     `EventEmitter` types' `&self` getters; `answer_sets()` lowers action-filter closures
+     into precomputed `(Enum, action_name)` pairs; `rust_files()` emits `n_editor_host.rs`
+     for `BlockHost`.
 """
-
 import json
 import re
 
-# The library's plugin enum has one variant per kit node type that implements MarkdownPlugin, then
-# the data plugin (core/src/editor_text.rs `GkPlugin`). A new implementor upstream must be added
-# there and here; generation stops until it is.
+# Concrete kit MarkdownPlugin structs mirrored by `core/src/editor_text.rs GkPlugin` variants.
+# `bounded()` asserts this list matches rustdoc exactly so new upstream plugins trigger a loud error.
 PLUGIN_NODES = ["gpui_kit::component::text::FrontmatterPlugin"]
 PLUGIN_VARIANTS = {"gpui_kit::component::text::FrontmatterPlugin": "Frontmatter"}
 PLUGIN_TRAITS = ("MarkdownPlugin", "TextViewPlugin")
 
 
 def _g():
-    import gk_model  # noqa: PLC0415 (gk_model imports this module)
+    import gk_model
     return gk_model
 
 
-# ---------------------------------------------------------------- closures (9.20 to 9.22)
-
 def _is_element_out(m, ctx, output):
-    import rdj  # noqa: PLC0415
+    """Return True if closure output type `output` is `AnyElement` or `impl IntoElement`."""
+    import rdj
     s = rdj.ty(output)
     return "impl_trait" in output and "IntoElement" in s or s.rsplit("::", 1)[-1] == "AnyElement"
 
 
 def _plain(m, ctx, payload, objects_ok):
-    """The descriptors of a closure's values when every one is a value the app can read (a key's
-    bytes: gk_lists.ASK_KEY) or, when objects_ok, a library object that is Clone; else None."""
-    import gk_lists  # noqa: PLC0415
+    """Validate that closure payload arguments can be serialized out to Go row callbacks."""
+    import gk_lists
     g = _g()
     try:
         descs = [m.desc(ctx, t, out=True) for t in payload]
@@ -74,15 +87,20 @@ def _plain(m, ctx, payload, objects_ok):
 
 
 def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
-    """The editor family's closure descriptors (gk_model.closure_desc's hook, after the expression
-    closures), or None for a closure no rule of this module binds."""
-    import rdj  # noqa: PLC0415
+    """Classify editor-related closures into `tfrag`, `keyset`, `table`, `ctxlazy`, or `viewrows` descriptors.
+
+    - `tfrag`: zero-payload `(&mut Window, &mut App) -> ConcreteElement` returning a typed element fragment.
+    - `keyset`: single-arg string/int predicate `-> bool` sent as an explicit allowed-key list.
+    - `table`: `u8 -> V` lookup closure sent as an indexed `Vec<V>` table.
+    - `ctxlazy`: 1..3-arg element closure without Window/App, rendered lazily via `editor_text::lazy_row`.
+    - `viewrows`: 1..3-arg `(&..., &mut Window, &mut App) -> AnyView` row closure via `editor_text::ctx_view`.
+    """
+    import rdj
     g = _g()
     if output is None or "context" in params:
         return None
     out_s = rdj.ty(output)
     has_cx = "window" in params and "app" in params
-    # 9.20: a typed fragment
     if not payload and has_cx and "resolved_path" in output:
         try:
             d = m.desc(ctx, output)
@@ -90,7 +108,6 @@ def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
             d = None
         if d is not None and d[0] == "node" and m.nodes[d[1]]["element"] and m.nodes[d[1]]["inst"] is None:
             return ["tfrag", d[1], params, wrap, ptypes]
-    # 9.21: a predicate over keys, a table by index
     if params == ["arg"] and len(payload) == 1:
         if out_s == "bool":
             try:
@@ -108,7 +125,6 @@ def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
             if vd is not None and vd[0] in ("node", "str", "int", "f32", "f64", "rec", "enum") and \
                     (vd[0] != "node" or not m.nodes[vd[1]]["element"]):
                 return ["table", vd, wrap, ptypes, m.rtype(ctx, output)]
-    # 9.22: element closures over values without a window; view closures over values
     if payload and len(payload) <= 3 and _is_element_out(m, ctx, output) and "window" not in params \
             and "app" not in params and all(p == "arg" for p in params):
         descs = _plain(m, ctx, payload, objects_ok=True)
@@ -121,11 +137,12 @@ def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
     return None
 
 
-# ---------------------------------------------------------------- generic plugins (9.23)
-
 def bounded(m, ctx, bounds, out):
-    """`P: MarkdownPlugin` and `P: TextViewPlugin` going in: one of the kit's plugins or the
-    library's data plugin (gk_model.bounded's hook). None for other bounds."""
+    """Match `impl MarkdownPlugin` / `impl TextViewPlugin` bounds as the `mdplug` tagged union.
+
+    Verifies that the set of concrete upstream plugin structs matches `PLUGIN_NODES` so
+    new kit plugins cannot be silently omitted from `core/src/editor_text.rs GkPlugin`.
+    """
     if out:
         return None
     g = _g()
@@ -137,60 +154,54 @@ def bounded(m, ctx, bounds, out):
     if keys != sorted(PLUGIN_NODES):
         raise SystemExit(f"gkgen: the kit's MarkdownPlugin node types changed ({keys}); "
                          "add them to core/src/editor_text.rs GkPlugin and gen/gk_editor.py PLUGIN_NODES")
-    return ["mdplug", "crate::editor_text::DataPlugin"] + [["node", k] for k in keys]  # nodes as gates/accept.py walks them
+    return ["mdplug", "crate::editor_text::DataPlugin"] + [["node", k] for k in keys]
 
 
 def handed_out(it):
-    """Library objects an item hands the app besides its result (gk_model.reach_objects' hook): a
-    data plugin's inline rows read the inline render context (9.23)."""
+    """Yield object paths made reachable by `mdplug` (`InlineRenderContext`) or `BlockHost` (`LeafGeometry`)."""
     g = _g()
     for a in it.get("args", []):
         for x in g.walk_desc(a["desc"]):
             if x[0] == "mdplug":
                 yield "gpui_kit::base::InlineRenderContext"
-    yield from handed_out_host(it)  # the editor host's leaves (9.30)
+    yield from handed_out_host(it)
 
-
-# ---------------------------------------------------------------- small values (9.24)
 
 def gpui_value(m, hc, name, args, out):
-    """gpui's ElementId read back (its text) and EntityId going in (an input, textarea or editor
-    handle), gk_model.desc's hook before gpui's leaves; None for other types."""
+    """Classify outbound `gpui::ElementId` (as string) and inbound `gpui::EntityId` (as raw u64 handle)."""
     g = _g()
     if hc not in g.GPUI_HOMES or args:
         return None
     if name == "ElementId" and out:
-        return ["str", "ElementId"]  # Wire in core/src/editor_text.rs: ElementId's text
+        return ["str", "ElementId"]
     if name == "EntityId" and not out:
         return ["entityid"]
     return None
 
 
-# Descriptors of this module a call op can decode (gk_model.call_bad's hook).
+# Editor descriptor tags safe to decode in immediate calls without a view Dx.
 CALL_SAFE = {"keyset", "table", "ctxlazy", "viewrows", "entityid", "askdyn", "held", "lentmut"}
 
 
-# ---------------------------------------------------------------- objects a read-back value hands out (9.25)
-
 def before_reach(m):
-    """Keeps every object's lists and its items' statuses as they are before the reachability
-    pass (gk_model.settle's hook), so `revive` can give back an object found reachable later."""
+    """Snapshot object methods and item statuses before reachability pruning, and mark BlockHost items.
+
+    `revive()` and `after_values()` consult these snapshots later to restore objects and
+    items that become reachable through synthesized `read:*` getters, pointer constructors,
+    or nested-iterator unwrapping.
+    """
     m._editor_kept = {key: {grp: list(st[grp]) for grp in ("builders", "reads", "writes", "calls")}
                       for key, st in m.objects.items()}
     m._editor_status = {id(it): (it["status"], it["reason"], it.get("detail"))
                         for st in m.objects.values()
                         for it in st["builders"] + st["reads"] + st["writes"] + st["calls"] + st["statics"]}
-    host(m)  # the editor host (9.30)
+    host(m)
     m._editor_pre = {id(it): (it["status"], it["reason"], it.get("detail")) for it in m.all_items()}
 
 
 def revive(m):
-    """An object returned by a `&self` read of a value that is read back (`DiffFile::conflicts`
-    -> `&[DiffConflict]`) is reachable: the read-back value's reads are made later (the values
-    family's readback_reads), so the reachability pass found nothing that hands it out. Its lists
-    and statuses are given back before those reads are classified (gk_model.settle's hook, before
-    gk_values.post)."""
-    import rdj  # noqa: PLC0415
+    """Revive pruned library objects that are returned by pure `&self` getters on `read:*` readback objects."""
+    import rdj
     g = _g()
     left_reasons(m)
     kept = getattr(m, "_editor_kept", None)
@@ -218,7 +229,7 @@ def revive(m):
                 ins = sig["inputs"]
                 if not ins or ins[0][0] != "self" or rdj.ty(ins[0][1]) != "&Self" or len(ins) != 1 or not sig.get("output"):
                     continue
-                m._closure += 1  # an object read back by value is a copy behind a handle
+                m._closure += 1
                 try:
                     d = m.desc(m.fn_ctx(ctx, fi["inner"]["function"]), sig["output"], out=True)
                 except g.Unsup:
@@ -241,20 +252,16 @@ def revive(m):
         m.dead_objs.discard(key)
 
 
-# ---------------------------------------------------------------- Rust (gk_rust.Rust.dec's hook)
-
 def rust_dec(rs, d):
+    """Emit Rust decoder expressions for editor descriptors and inline color-bearing records."""
     k = d[0]
     if rs.call == "builder" and (k == "node" or d[:2] == ["leaf", "color"]):
-        # A builder of `chain_cx` (9.31) in the chain decoder without a context: never reached, its
-        # constructors decode their chain with sbp_ (only chain_cx builders get here: call_bad refuses
-        # a value node or a colour in any other chain).
         return "None?"
     if d == ["action", "box"] and rs.call not in (None, "builder", "codec"):
-        return "genapi::action(r)?"  # an action argument of a call op (9.26)
+        return "genapi::action(r)?"
     ir = rust_inline_rec(rs, d)
     if ir is not None:
-        return ir  # a record with a colour, in place in a call op (9.26)
+        return ir
     if k == "askdyn":
         return rust_askdyn(rs, d)
     if k == "tfrag":
@@ -293,14 +300,15 @@ def rust_dec(rs, d):
     if k == "entityid":
         return "crate::editor_text::entity_id(r.u64())"
     if k == "decorate":
-        return rust_decorate(rs, d)  # 9.32
-    if k == "lentmut":  # the value's tape and its ops' decoder, applied in place (9.33)
+        return rust_decorate(rs, d)
+    if k == "lentmut":
         return f"crate::editor_text::LentEdit::read(r, apply_{rs.m.nodes[d[1][1]]['fn']})?"
     return None
 
 
 def _rust_ctx(rs, d, lazy):
-    import gk_lists  # noqa: PLC0415
+    """Emit Rust decoder for `ctxlazy` (`lazy=True`) and `viewrows` (`lazy=False`) closures."""
+    import gk_lists
     _, wrap, ptypes, params, descs = d
     ps, lets, puts, n = [], [], [], 0
     for p, t in zip(params, ptypes):
@@ -340,36 +348,33 @@ def _rust_ctx(rs, d, lazy):
 
 
 def check(m):
-    """The editor family's descriptors as text, for the report (not used by the emitters)."""
+    """Return a deterministic JSON summary of editor `CALL_SAFE` tags."""
     return json.dumps(sorted(CALL_SAFE))
 
 
 def alias(m, ctx, t, out):
-    """A use of a type alias whose type is one of this module's closures (`FoldPlaceholderRenderer
-    = Rc<dyn Fn(usize) -> AnyElement>`), gk_model.desc's hook before the lists family's; None for
-    any other type (the alias stays what it was)."""
+    """Unwrap `Rc`/`Arc`/`Box` around dyn-trait type aliases and detect `ctxlazy`/`viewrows`/`askdyn` aliases."""
     g = _g()
     if out:
         return None
     ad = ask_trait(m, ctx, t, out)
     if ad is not None:
-        return ad  # Arc<dyn Trait> served by an ask (9.26)
+        return ad
     rp = t["resolved_path"]
     pa = g.path_args(rp)
     if rp["path"].rsplit("::", 1)[-1] in ("Rc", "Arc", "Box") and len(pa) == 1 and "resolved_path" in pa[0]:
-        # `Rc<CompletionHighlighter>`, the alias a `dyn Fn(..)`: the closure behind the pointer (9.33)
         try:
             ahc, ahid, ait = m.api.item(ctx.crate, pa[0]["resolved_path"]["id"])
-        except Exception:  # noqa: BLE001
+        except Exception:
             ait = None
         if ait is not None and ahc == ctx.crate and "dyn_trait" in ait.get("inner", {}).get("type_alias", {}).get("type", {}):
-            import copy  # noqa: PLC0415
+            import copy
             t2 = copy.deepcopy(t)
             t2["resolved_path"]["args"]["angle_bracketed"]["args"][0] = {"type": ait["inner"]["type_alias"]["type"]}
             return m.desc(ctx, t2, out)
     try:
         hc, hid, it = m.api.item(ctx.crate, rp["id"])
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
     if it is None or "type_alias" not in it.get("inner", {}):
         return None
@@ -380,14 +385,12 @@ def alias(m, ctx, t, out):
     return d if d[0] in ("ctxlazy", "viewrows", "askdyn") else None
 
 
-# ---------------------------------------------------------------- colours in records of a call op (9.26)
-
-# What a call op can decode in place, field by field, when a record holds a colour (gk_model's own
-# list for call ops, without colours and handles at depth, which this rule allows inside records).
+# Descriptor tags allowed inside inline-decoded color-bearing records passed to immediate calls.
 _INLINE_OK = {"bool", "int", "f32", "f64", "str", "enum", "opt", "list", "ref", "tuple", "rec", "from"}
 
 
 def _has_color(m, d, seen=None):
+    """Return True if descriptor `d` (or any nested record) contains a `["leaf", "color", ...]` field."""
     g = _g()
     seen = set() if seen is None else seen
     for x in g.walk_desc(d):
@@ -401,8 +404,8 @@ def _has_color(m, d, seen=None):
 
 
 def _inline_bad(m, d, seen):
-    """The first part of d a call op cannot decode in place, or None."""
-    import gk_lists  # noqa: PLC0415
+    """Return the first disallowed descriptor tag inside a color-bearing record, or None if inline-safe."""
+    import gk_lists
     g = _g()
     for x in g.walk_desc(d):
         k = x[0]
@@ -429,19 +432,19 @@ def _inline_bad(m, d, seen):
 
 
 def call_bad(m, d, builder):
-    """A call op's argument that holds a record with a colour (`Vec<TextDecoration>`, whose
-    HighlightStyle has colours; `InputEditorStyle`): decoded in place, field by field, with the
-    app context the op has, so its colours resolve against the theme (PROTOCOLS.md 9.26).
-    gk_model.call_bad's hook: (verdict,) when this rule decides, verdict None for decodable or
-    the first part that is not; None when the rule does not apply (no record with a colour)."""
+    """Editor override for `Model.call_bad`: permits boxed `Action` values and inline-decoded color records.
+
+    Returns a 1-tuple `(result,)` to override `Model.call_bad`, or `None` to fall back
+    to the standard check. Records containing `Hsla`/`Color` fields cannot implement
+    `Unwire` directly when mixed with other editor types, so `rust_inline_rec` decodes
+    them field-by-field inside the call handler instead.
+    """
     if builder:
         return None
     if d == ["action", "box"]:
-        return (None,)  # a kit or app action by its id, which a call op reads as a tape does (9.26)
+        return (None,)
     g = _g()
     if not _ACTION_INSIDE[0] and _reaches(m, d, ("action", "box")) and not _reaches(m, d, ("action", "listener")):
-        # An action inside a record or a variant (OwnedMenuItem::Action, read back since 9.37 serves
-        # every type): read by its id in a call op too, as at the top level; the rest as the model judges.
         _ACTION_INSIDE[0] = True
         CALL_SAFE.add("action")
         try:
@@ -458,8 +461,7 @@ _ACTION_INSIDE = [False]
 
 
 def _reaches(m, d, head, seen=None):
-    """True when the descriptor d holds `head` (a descriptor's first two parts), following records,
-    data enums and Into sets by name."""
+    """Return True if descriptor `d` (recursing into `rec`/`denum`/`into`) contains a node with prefix `head`."""
     g = _g()
     seen = set() if seen is None else seen
     for x in g.walk_desc(d):
@@ -479,12 +481,12 @@ def _reaches(m, d, head, seen=None):
 
 
 def rust_inline_rec(rs, d):
-    """The in-place decoder of a record with a colour in a call op (9.26), or None."""
+    """Decode a color-bearing record inline inside a call handler instead of via `genapi::Unwire`."""
     inside = getattr(rs, "_editor_inline", False)
     if d[0] != "rec" or rs.call in (None, "builder", "codec") or not (inside or _has_color(rs.m, d)):
         return None
     r = rs.m.records[d[1]]
-    rs._editor_inline = True  # every record inside is decoded in place too: it may have no codec of its own
+    rs._editor_inline = True
     try:
         if r["tuple"]:
             return "%s(%s)" % (d[1], ", ".join(rs.dec(f["desc"]) for f in r["fields"]))
@@ -493,17 +495,12 @@ def rust_inline_rec(rs, d):
         rs._editor_inline = inside
 
 
-# ---------------------------------------------------------------- one-method data delegates (9.26)
-
-# Traits upstream calls while it draws whose one method maps a plain value to a value, served by an
-# ask (9.14): the library function that makes the trait object from the ask and the answer's decoder.
+# Single-method dyn traits served by async Ask tables via core/src/editor_text.rs helpers.
 ASK_TRAITS = {"HighlightStyleResolver": "crate::editor_text::style_resolver"}
 
 
 def ask_trait(m, ctx, t, out):
-    """`Arc<dyn Trait>` (or `Rc`, `Box`), directly or through a type alias (`SharedHighlightStyleResolver`),
-    for a trait of ASK_TRAITS: `["askdyn", key, result, shim]`; the app passes a gk.Ask of the method's
-    argument and result (gk_model.desc's hook through `alias`). None otherwise."""
+    """Match `Arc`/`Rc`/`Box<dyn Trait>` for traits in `ASK_TRAITS` as an `askdyn` descriptor."""
     g = _g()
     if out or "resolved_path" not in t:
         return None
@@ -540,10 +537,11 @@ def ask_trait(m, ctx, t, out):
 
 
 def rust_askdyn(rs, d):
+    """Emit Rust decoder for an `askdyn` trait object shim."""
     _, key, ret, shim, trait = d
     rt = rs.m._editor_ask_rt[trait]
     was = rs.call
-    rs.call = None  # an answer is decoded as a tape's value is, with a context over no tape
+    rs.call = None
     try:
         dec = rs.dec(ret)
     finally:
@@ -551,16 +549,17 @@ def rust_askdyn(rs, d):
     return (f"{shim}(r.u64(), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<{rt}> {{ let _ = &dx; Some({dec}) }})")
 
 
-# ---------------------------------------------------------------- reads through a borrow (9.27)
-
 def project(m):
-    """A state read `fn x(&self) -> &T` where T is a library object that cannot be copied out of the
-    borrow (`InputState::display_map() -> &DisplayMap`; DisplayMap is not Clone) was refused: nothing
-    can carry it. Its object's reads become reads of the state (`ed->display_map_folded_ranges(cx)`,
-    `display_map_buffer_pos_to_display_pos(cx, pos)`): synthetic state reads that call the object's
-    read on the borrow, in place (gk_model.settle's hook, before the reachability pass). The upstream
-    function counts as bridged by them (PROTOCOLS.md 9.27)."""
-    import re  # noqa: PLC0415
+    """Project pure read methods from non-`Clone` borrowed sub-objects onto their owning state.
+
+    When a state method `fn sub(&self) -> &SubObj` fails with "a result that cannot be copied
+    out of a borrow" (because `SubObj` is not `Clone`), every zero-context read method on
+    `SubObj` is lifted directly onto the owning state as `<sub_name>_<read_name>`, cloning
+    any borrowed `&T`/`Option<&T>` return via `ToOwned::to_owned`. Marks the original getter
+    `kind="projected"` so `gk_go_bridges.covered()` verifies at least one projected read landed
+    in Go.
+    """
+    import re
     why = "protocol: object (a result that cannot be copied out of a borrow)"
     for it in list(m.items):
         if it["status"] != "todo" or it["reason"] != why:
@@ -580,7 +579,7 @@ def project(m):
             call = f"{rd['callee']}(<{st['path']}>::{mt.group(1)}(s){ps})"
             out_s = rd["sig"].split("->", 1)[-1].strip()
             if out_s.startswith("&"):
-                call = f"std::borrow::ToOwned::to_owned({call})"  # a closure cannot return a borrow of its argument
+                call = f"std::borrow::ToOwned::to_owned({call})"
             elif out_s.startswith("Option<&"):
                 call = f"({call}).map(std::borrow::ToOwned::to_owned)"
             new = {"row": None, "owner": it["owner"], "trait": None, "crate": it["crate"], "synthetic": True,
@@ -594,7 +593,6 @@ def project(m):
             made.append(new["name"])
         if made:
             it.update(status="bridged", kind="projected", reason="", detail=f"{len(made)} reads: " + ", ".join(made))
-            # The generic state's row (one summary item per upstream function) follows its instances.
             for r in m.owners:
                 if r["path"] != st.get("generic"):
                     continue
@@ -604,19 +602,11 @@ def project(m):
                         sm.setdefault("also", []).append(it["id"])
 
 
-# ---------------------------------------------------------------- what is left, and why
-
-# The editor family's functions no rule binds yet, with the protocol each waits for (STATUS.md's
-# reasons; PROTOCOLS.md 9.28 says how each would be bound). Matched on the end of the item's id.
 LEFT = {
-    # Every function this table named is now bound (PROTOCOLS.md 9.30 to 9.36); a function of the
-    # family left without a rule gets its reason here.
 }
 
 
 def left_reasons(m):
-    """Gives the editor family's remaining functions the reason of the protocol they wait for
-    (gk_model.settle's hook, through `revive`)."""
     items = list(m.all_items()) + [it for r in m.owners for it in r["items"]]
     for it in items:
         if it.get("status") != "todo":
@@ -627,14 +617,8 @@ def left_reasons(m):
                 break
 
 
-# ---------------------------------------------------------------- variants made by a constructor (9.29)
-
 def variant_ctors(m, f, rt, variants, out):
-    """A variant the binding cannot build field by field (its other fields are of private types:
-    `MaskPattern::Pattern { pattern, tokens: Vec<MaskToken> }`) is made by the enum's constructor
-    whose parameters are named as some of its fields, when `[editor] variants` in overrides.toml
-    names the pair ("MaskPattern::Pattern" = "new"): the variant's fields are the constructor's
-    parameters, and the decoder calls the constructor (gk_model.enum's hook). PROTOCOLS.md 9.29."""
+    """Enable data-enum variants with private fields using `[editor].variants` constructor overrides."""
     if out:
         return
     g = _g()
@@ -666,40 +650,21 @@ def variant_ctors(m, f, rt, variants, out):
 
 
 def check_used(m):
+    """Fail if any `[editor].variants` override entry was not matched during model construction."""
     for key in m.ov.get("editor", {}).get("variants", {}):
         if "editor.variants." + key not in m.ov_used:
             raise SystemExit(f"gkgen: overrides [editor] variants names nothing the generator met: {key}")
 
 
 def variant_new(rs, e, v):
-    """The Rust decoder of a variant made by a constructor (9.29), or None (gk_rust.variant_new's hook)."""
+    """Emit Rust constructor expression for a variant bound through `[editor].variants`."""
     if "via" not in v:
         return None
     lets = " ".join(f"let {f['name']} = {rs.dec(f['desc'])};" for f in v["fields"])
     return "{ %s %s }" % (lets, v["via"])
 
 
-# ---------------------------------------------------------------- the editor host (9.30)
-#
-# gpui_kit::base::text::editor_host is for an editor written outside the kit: it renders a BlockNode
-# tree and, around the blocks' prepaint, collects each keyed text leaf's geometry. The library's
-# element `gk.block_host` (core/src/editor_text.rs BlockHost, node EDITOR_HOST) does both: it
-# renders the app's blocks (BlockNode::render with a FlowPosition and the RenderContext), runs
-# collect_leaf_geometry around their prepaint with the app's decorations, and hands the leaves to the
-# app after the frame (app code never runs mid-frame): an event of `[]gk.Leaf_Entry`, each a key and
-# a gk.Leaf_Geometry (a temporary library object whose 10 reads are the upstream reads). The rules:
-#
-# - **Held values.** A data enum the app builds that a bound function also returns, whose variants
-#   cannot be read back (`parse_markdown -> Result<Vec<BlockNode>, SharedString>`; BlockNode::Custom
-#   holds a parsed MarkdownNode): read back, each value is a library object (`["held", rt]`, Go
-#   `BlockNodeHeld`, a temporary handle; gk.Retain keeps it), and the enum gets one member more,
-#   the held value, so a parsed block goes wherever the app's own blocks go (variant 0xfffe).
-# - **Recursive data enums.** A variant holding a list of its own enum (`Root { children:
-#   Vec<BlockNode> }`, Blockquote, Surface, List, ListItem) is built like any variant: the Go interface's
-#   variant holds a slice of it, the decoder is the enum's own function.
-# - **Iterators of iterators** read back are collected at each level (`Table::rows` ->
-#   `[][]gk.Paragraph_Read`).
-
+# BlockHost module paths and sentinel wire tag (0xFFFE) used to reference held BlockNode handles.
 HOST = "gpui_kit::base::text::editor_host"
 HELD_ENUMS = {HOST + "::BlockNode"}
 HOST_ITEMS = {HOST + "::collect_leaf_geometry"}
@@ -708,8 +673,7 @@ HELD_TAG = 0xFFFE
 
 
 def host_args(m):
-    """The editor host's arguments as descriptors: [(name, desc)] (also the arguments of the bridged
-    collect_leaf_geometry item, so the description shows what the host takes)."""
+    """Return the `(name, desc)` argument list decoded by `n_editor_host.rs` for `BlockHost`."""
     fr = next((i for n in m.nodes.values() for i in n["ops"] if i["id"] == HOST + "::RenderContext::with_foreground_ranges"), None)
     if fr is None or fr["status"] not in ("bound", "bridged"):
         raise SystemExit("gkgen: the editor host needs RenderContext::with_foreground_ranges's ranges")
@@ -722,7 +686,7 @@ def host_args(m):
 
 
 def held(m, rt, out):
-    """A data enum of HELD_ENUMS read back: a value the library holds (gk_model.enum's hook)."""
+    """Mark an outbound recursive enum in `HELD_ENUMS` (e.g. `BlockNode`) to be returned as an owned handle."""
     if not out or rt not in HELD_ENUMS:
         return None
     if rt in m.denums:
@@ -733,16 +697,14 @@ def held(m, rt, out):
 
 
 def recursive(m, rt, out):
-    """A variant of a data enum of HELD_ENUMS that holds a list of the enum itself (gk_model.enum's
-    hook where it refuses a recursive type): the enum by name, decoded by its own function."""
+    """Allow inbound self-referential fields on `HELD_ENUMS` without triggering cycle rejection."""
     if out or rt not in HELD_ENUMS:
         return None
     return ["denum", rt]
 
 
 def host(m):
-    """collect_leaf_geometry is what gk.block_host runs around its blocks' prepaint: bridged by the
-    library's element, and the LeafGeometry objects it hands the app are reachable (`handed_out`)."""
+    """Mark `collect_leaf_geometry` as bridged by `BlockHost` and apply deferred `held` flags."""
     for it in m.all_items():
         if it["id"] in HOST_ITEMS and it["status"] == "todo":
             it.update(status="bridged", kind="host", reason="", host=True,
@@ -755,21 +717,22 @@ def host(m):
 
 
 def after_values(m):
-    """Items the reachability pass refused for an argument of an `Rc<X>`/`Arc<X>` object that the
-    values family makes constructible afterwards (gk_values.pointer_ctors: `Arc<MarkdownExtensions>`
-    from the app's value), and reads of an iterator of iterators, which `put_ret` collects at each
-    level (gk_values.nested_iterators refused them): given back their status (gk_model.settle's
-    hook, after gk_values.post)."""
+    """Run late editor passes: lent edits, flat record writes, event reads, answer sets, and revivals.
+
+    After `gk_values.post()` introduces pointer constructors (`Rc::new`/`Arc::new`) and
+    filters nested iterators, this pass restores state/object methods whose arguments or
+    `Iterator<Item = Iterator<...>>` returns are now supported by editor codecs.
+    """
     g = _g()
     pre = getattr(m, "_editor_pre", {})
-    lent_edits(m)  # 9.33
-    flat_records(m)  # 9.34
-    event_read_statuses(m)  # 9.35
-    answer_sets(m)  # 9.36
+    lent_edits(m)
+    flat_records(m)
+    event_read_statuses(m)
+    answer_sets(m)
     live = {k for k, st in m.objects.items() if st.get("reachable")}
     for k in live:
         if m.objects[k].get("pointer"):
-            m.dead_objs.discard(k)  # made constructible after the reachability pass: a later prune keeps its users
+            m.dead_objs.discard(k)
     for it in m.all_items():
         was = pre.get(id(it))
         if was is None or was[0] not in ("bound", "bridged") or it["status"] != "todo":
@@ -789,10 +752,12 @@ def after_values(m):
 
 
 def lent_edits(m):
-    """`fn x(&mut self) -> &mut V` of kit state, V a value the app builds that has a Default
-    (EditorState::lsp_mut -> &mut Lsp): an edit of the lent value, a state write that takes a value
-    of V and applies its builder ops (not its constructor) to the state's own V in place: `ed->lsp_mut(cx,
-    gk.lsp()->with_completion_highlighter(h))` (PROTOCOLS.md 9.33). Called from after_values."""
+    """Bridge `&mut self -> &mut ValueNode` methods via `LentEdit` op-tape application.
+
+    Instead of handing out a mutable reference across FFI, Go records builder ops on the
+    borrowed node type and submits them in a single `LentEdit` call that runs inside
+    the owning state's `&mut self` borrow.
+    """
     for it in list(m.all_items()) + [i for st in m.states.values() for i in st.get("writes", [])]:
         det = it.get("detail") or ""
         if it["status"] != "todo" or not det.startswith("a borrow: &mut ") or it.get("lentmut"):
@@ -821,13 +786,9 @@ def lent_edits(m):
 
 
 def flat_records(m):
-    """A state call whose argument is a struct with public fields one of which is a value node the app
-    builds (`present_diagnostic(DiagnosticEntry { range, diagnostic: Diagnostic })`), refused as an
-    opaque object (the struct is a record only read back, Diagnostic a record only there): its fields
-    become the call's arguments (`ed->present_diagnostic(cx, range, gk.diagnostic(..))`) and the callee
-    builds the struct (PROTOCOLS.md 9.34). Every family; called from after_values."""
+    """Flatten `&mut self` state writes taking a plain non-str/opt record struct into individual call arguments."""
     g = _g()
-    import rdj  # noqa: PLC0415
+    import rdj
     for st in m.states.values():
         if st.get("obj") or st.get("generic") is None and not st.get("ctors"):
             continue
@@ -876,13 +837,13 @@ def flat_records(m):
 
 
 def handed_out_host(it):
+    """Yield `LeafGeometry` when an item is a `BlockHost` host entry."""
     if it.get("host"):
         yield GEOMETRY
 
 
 def put_ret(ret, expr):
-    """A call op's result holding held values or an iterator of iterators (gk_rust.Rust.put_ret's
-    hook), or None."""
+    """Emit Rust wire serialization for nested iterators (`iter` of `iter`) and `held` enum handles."""
     g = _g()
     if ret[0] == "iter" and ret[1][0] == "iter":
         return f"genapi::Wire::put(&({expr}).map(|i| i.collect::<Vec<_>>()).collect::<Vec<_>>(), &mut out)"
@@ -899,16 +860,14 @@ def put_ret(ret, expr):
 
 
 def denum_arms(rs, e):
-    """The decoder's arm of a held value: a copy of the value behind the handle (a released handle
-    stops, as any object a tape names)."""
+    """Append the `HELD_TAG` (`0xFFFE`) match arm to `Unwire` for held recursive enums (`BlockNode`)."""
     if not e.get("held"):
         return []
     return [f"        {HELD_TAG} => genapi::obj_shown::<{e['rust']}>(r.u64()),"]
 
 
 def rust_files(rs, groups):
-    """n_editor_host.rs: the decoders gk.block_host's node uses (core/src/editor_text.rs), made from
-    the descriptors of the values it takes (`host_args`), so a change upstream is a change here."""
+    """Emit `core/src/gen/n_editor_host.rs` with tape argument decoders for `BlockHost`."""
     m = rs.m
     if not any(i.get("host") for i in m.all_items()):
         return
@@ -917,8 +876,7 @@ def rust_files(rs, groups):
              ("flow", a["flows"][1][1], m.nodes[HOST + "::FlowPosition"]["path"]),
              ("context", a["render_context"][1], m.nodes[HOST + "::RenderContext"]["path"]),
              ("ranges", a["decorations"][1][1][1], "Vec<(std::ops::Range<usize>, gpui_kit::Hsla)>")]
-    rs.open("n_editor_host.rs", "The editor host's decoders (docs/PROTOCOLS.md 9.30): what core/src/editor_text.rs "
-            "BlockHost decodes from its node's arguments.")
+    rs.open("n_editor_host.rs", "Argument decoders for core/src/editor_text.rs BlockHost nodes.")
     was, rs.call = rs.call, None
     for name, d, T in parts:
         rs.add(f"pub fn editor_host_{name}(r: &mut R, dx: &mut Dx) -> Option<{T}> {{ Some({rs.dec(d)}) }}")
@@ -928,10 +886,8 @@ def rust_files(rs, groups):
 
 
 def mutator(m, node, it, fn, ctx, tp):
-    """`fn push(&mut self, x)` returning nothing, on a value the editor host takes, with no `self ->
-    Self` form (Paragraph::push(InlineNode), TextMark::merge): an op applied in place, so the app
-    builds a paragraph of inline nodes (gk_model.classify_method's hook before builder-mutator)."""
-    import rdj  # noqa: PLC0415
+    """Adapt `&mut self -> ()` setters on `editor_host` value nodes into `self -> Self` builder ops."""
+    import rdj
     out = fn["sig"].get("output")
     if node["element"] or not node["path"].startswith(HOST + "::") or (out is not None and rdj.ty(out) != "()"):
         return False
@@ -945,27 +901,24 @@ def mutator(m, node, it, fn, ctx, tp):
     return True
 
 
-# ---------------------------------------------------------------- values in a builder chain of a call op (9.31)
-
 def chain_cx(m, d, kind, it):
-    """A builder of a state's or an object's constructor chain whose argument the chain's decoder
-    (`sb_*`, no context) cannot decode but a call op can (a value node the app builds, a colour):
-    bound, and its constructor decodes the whole chain before it runs, with the call's context
-    (gk_model's state and object builder hooks). True when the rule takes it."""
+    """Allow a state/object constructor builder op to decode arguments that need `genapi::Call` context."""
     if kind not in ("state-builder", "obj-builder") or m.call_bad(d, False) is not None:
         return False
     if d == ["leaf", "color", ""]:
-        # `impl Into<Hsla>` (ColorPickerState::default_value): named, so the chain decoder's
-        # placeholder (`None?`) has a type.
         d[:] = ["from", ["leaf", "color", ""], "gpui_kit::Hsla", "gpui_kit::Hsla"]
     it["chain_cx"] = True
     return True
 
 
 def chain_body(rs, st, body):
-    """A constructor's call op whose chain holds a builder of `chain_cx`: the chain is decoded first
-    into closures (`sbp_*`, with the call's context: a value node is a tape of its own, 13.6), then
-    applied to the new value (gk_rust.Rust.calls' and obj_calls' hook). The body unchanged otherwise."""
+    """Rewrite a state/object constructor builder loop to pass `Call` context when any builder needs it.
+
+    Normal `sb_<fn>` builder loops only receive `&mut R`. When any builder on `st` has
+    `chain_cx=True`, this emits `sbp_<fn>` returning `GkResult<Box<dyn FnOnce(T) -> T>>`
+    so arguments needing `&mut Call` (such as handles or views) are decoded before entering
+    the `cx.new(|cx| ...)` closure.
+    """
     ok = [i for i in st["builders"] if i["status"] in ("bound", "bridged")]
     if not any(i.get("chain_cx") for i in ok):
         return body
@@ -998,30 +951,22 @@ def chain_body(rs, st, body):
 
 
 def _family(path):
-    """The STATUS family of an upstream path (gen/gkgen.py FAMILIES, first match wins)."""
-    import sys  # noqa: PLC0415
+    """Map an upstream item path to its documentation family bucket."""
+    import sys
     main = sys.modules.get("__main__")
     fams = getattr(main, "FAMILIES", None)
     if fams is None:
-        import gkgen  # noqa: PLC0415
+        import gkgen
         fams = gkgen.FAMILIES
     low = path.lower()
     return next((name for name, pat in fams if re.search(pat, low)), "other components and values")
 
 
-# ---------------------------------------------------------------- decorators kept for later (9.32)
-
 STYLE_NODE = "gpui_kit::StyleRefinement"
 
 
 def decorate(m, key, kind, params, wrap, ptypes):
-    """`impl FnOnce(X) -> X + 'static` with no window and app, X an element that is Styled and a
-    ParentElement (NumberInput::increment_button(Button), MessageScroller::with_jump_button_renderer):
-    upstream keeps it and calls it while it renders, where the app cannot run and no decode context
-    is left. The app gives what it would add as data (Go `gk.Decorate`): a style, decoded where
-    the closure is decoded (its colours resolved then), and content, a row of a row source laid out
-    where the window is (as the fold placeholder's, 9.22). gk_model.closure_desc's hook before it
-    refuses a build closure without a window; None when the rule does not apply."""
+    """Match a `FnOnce(El) -> El` decorator closure on a `Styled + ParentElement` element node."""
     nd = m.nodes.get(key)
     if nd is None or not nd["element"] or params != ["arg"] or kind != "FnOnce" or STYLE_NODE not in m.nodes:
         return None
@@ -1032,6 +977,7 @@ def decorate(m, key, kind, params, wrap, ptypes):
 
 
 def rust_decorate(rs, d):
+    """Emit Rust decoder for `decorate`: applies an optional `StyleRefinement` and child row source."""
     _, key, wrap, ptypes = d
     fn = rs.m.nodes[STYLE_NODE]["fn"]
     body = ("{ let s = if r.u8() != 0 { Some(build_%s(dx, r.u32())?) } else { None }; let src = r.u64(); "
@@ -1039,21 +985,20 @@ def rust_decorate(rs, d):
     return rs.wrap(wrap, body)
 
 
-# ---------------------------------------------------------------- event payloads with reads (9.35)
-
 def event_reads(m, st, crate, ctx, tpath, t):
-    """`EventEmitter<E>` of kit state where E has no public field and is no object the binding holds,
-    but has `&self` reads that take nothing (`InputEditsEvent::edits() -> &[(InputEdit, Rope)]`):
-    the payload is a record of the reads' results, copied when the event is raised (`Input_Edits_Event
-    {edits = ..}`); the reads count as bridged by it (gk_model's state rule, where it refused E)."""
+    """Synthesize an event payload record from an `EventEmitter` type's `&self` getter methods.
+
+    Used when an entity emits a private-field event struct that exposes all its data via
+    zero-arg `&self` getters; the generated `Wire` impl calls each getter when the event fires.
+    """
     g = _g()
-    import json as _json  # noqa: PLC0415
-    import rdj  # noqa: PLC0415
+    import json as _json
+    import rdj
     if "resolved_path" not in t or g.path_args(t["resolved_path"]):
         return
     try:
         hc, hid, it = m.api.item(crate, t["resolved_path"]["id"])
-    except Exception:  # noqa: BLE001
+    except Exception:
         return
     if it is None or "struct" not in it.get("inner", {}):
         return
@@ -1104,10 +1049,7 @@ def event_reads(m, st, crate, ctx, tpath, t):
 
 
 def event_read_statuses(m):
-    """The reads of an event payload made of them (9.35) are bridged by it. A payload whose event no
-    state the binding keeps raises (the state was made again or left to a hand-written protocol: the
-    kit's DockArea raises DockToggleEvent, which `gk.OnDockToggle` delivers, rt_dock.go) loses its
-    record and shape, so no type is generated that nothing hands the app."""
+    """Prune unused `event_reads` records/shapes and mark active event getters as `bridged`."""
     kept, owners = set(), set()
     for st, ev, rt, key, owner in getattr(m, "_editor_event_reads", []):
         if m.states.get(st["key"]) is st and any(e is ev for e in st["events"]):
@@ -1125,21 +1067,14 @@ def event_read_statuses(m):
 
 
 def reads_put(rc):
-    """The Wire impl of an event payload made of its reads (gk_rust's record hook), or None."""
+    """Generate `Wire::put` statements for a synthesized `event_reads` record."""
     if not rc.get("reads_of"):
         return None
     return " ".join(f"genapi::Wire::put(&self.{f['name']}(), out);" for f in rc["fields"])
 
 
-# ---------------------------------------------------------------- answers given in advance (9.36)
-
 def answer_sets(m):
-    """`set_x(&mut self, handler: impl Fn(E, Box<dyn Action>, &mut Window, &mut Context<..>) -> bool)`,
-    E an enum the binding reads (EditorState::set_overlay_action_handler(InputOverlayKind, action)):
-    upstream needs the answer at once, while it dispatches a key, so the app gives it in advance: the
-    pairs (E, action name) it takes; the handler answers true for those (upstream then leaves the action
-    to the app's own key bindings and, for Enter and Escape, closes the overlay)
-    (PROTOCOLS.md 9.36)."""
+    """Bridge `Fn(Enum, Box<dyn Action>, &mut Window, &mut Context<Self>) -> bool` predicates as `(Enum, action_name)` lists."""
     g = _g()
     pat = re.compile(r"fn (\w+)\(&mut self, (\w+): impl Fn\((\w+), Box<dyn gpui::Action>, &mut Window, &mut Context<'_, [\w<>]+>\) -> bool \+ 'static\)")
     for st in m.states.values():
@@ -1175,14 +1110,6 @@ def answer_sets(m):
                             sm.setdefault("also", []).append(it["id"])
 
 
-# ---------------------------------------------------------------- actions read back (9.37)
-
 def action_out(m):
-    """`Box<dyn Action>` read back (a context menu's `NativeMenuItem::Action { label, disabled, action }`
-    handed to `on_context_menu`, gpui's `OwnedMenuItem::Action` of the app's menus): the action's id as
-    the app knows actions (`gk.Action`, PROTOCOLS.md 11.1; a kit action gets an id the first time it is
-    seen, `app::id_of`), so the app reads every item of a menu and can compare it with `gk.action(cx,
-    "input::Copy")`. Wire for `Box<dyn Action>` in core/src/editor_text.rs. gk_model.resolved's hook.
-    Every type: a value that holds an action and also goes into the library is decoded in
-    a call op by the action's id (`call_bad`), so reading it back costs no call its argument."""
+    """Signal that outbound `&dyn Action` wire serialization is supported."""
     return True

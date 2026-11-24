@@ -1,4 +1,4 @@
-# Unix line endings for every text file on every OS, overriding core.autocrlf (a Windows runner's
-# default, which would check the shell scripts out with CRLF and bash would stop on them).
-# Binary files are detected and left untouched.
+# Enforce LF line endings on all text files in the repo and working tree.
+# Prevents CRLF diffs in shell scripts, generated Go/Rust sources, and golden text tables
+# when contributors build or inspect files across Linux, macOS, and Windows.
 * text=auto eol=lf

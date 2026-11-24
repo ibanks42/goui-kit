@@ -1,5 +1,3 @@
-// c6-q-rules: a questionnaire item's validator as rules (gk.QuestionnaireRules,
-// QuestionnaireItemDefinition.WithValidator, QuestionnaireItemDefinitionRead.Validator).
 package main
 
 import (
@@ -10,11 +8,13 @@ import (
 )
 
 func init() {
+	// Register declarative QuestionnaireRules validation and validator readback tests.
 	modes["c6-q-rules"] = &mode{click: once(qRules)}
 }
 
-// A questionnaire item's validator as rules: two choices where one is allowed is refused with the
-// app's message, one is valid; the definition's validator read back.
+// qRules proves declarative QuestionnaireRules (MaxChoices=1 with "{item}"
+// template expansion) fails validation on 2 choices with "color: one only",
+// passes on 1 choice ("valid"), and reports validator presence (color=true, plain=false).
 func qRules(a *App, cx *gk.Cx) {
 	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").WithMultiple(true).
 		WithChoice(base.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(base.NewQuestionnaireChoiceDefinition("blue", "Blue")).

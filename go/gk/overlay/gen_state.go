@@ -9,10 +9,10 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// DialogHandle is a handle to gpui_kit::base::DialogHandle, a library object (PROTOCOLS.md section 13).
+// DialogHandle is a handle to gpui_kit::base::DialogHandle, a runtime-owned library object.
 type DialogHandle struct{ rt.HCore }
 
-// IsOpen is <gpui_kit::base::DialogHandle>::is_open.
+// IsOpen calls <gpui_kit::base::DialogHandle>::is_open.
 func (s DialogHandle) IsOpen(cx *gk.Cx) bool {
 	rt.UseBaseDialog()
 	o := rt.NewReq(775)
@@ -21,7 +21,7 @@ func (s DialogHandle) IsOpen(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Close is <gpui_kit::base::DialogHandle>::close.
+// Close calls <gpui_kit::base::DialogHandle>::close.
 func (s DialogHandle) Close(cx *gk.Cx) {
 	rt.UseBaseDialog()
 	o := rt.NewReq(774)
@@ -29,7 +29,7 @@ func (s DialogHandle) Close(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// Open is <gpui_kit::base::DialogHandle>::open.
+// Open calls <gpui_kit::base::DialogHandle>::open.
 func (s DialogHandle) Open(cx *gk.Cx) {
 	rt.UseBaseDialog()
 	o := rt.NewReq(777)
@@ -37,21 +37,21 @@ func (s DialogHandle) Open(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// NewDialogHandle is <gpui_kit::base::DialogHandle>::new.
+// NewDialogHandle calls <gpui_kit::base::DialogHandle>::new.
 func NewDialogHandle(cx *gk.Cx, open bool) DialogHandle {
 	rt.UseBaseDialog()
 	o := rt.NewReq(776)
 	o.Bool(open)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return DialogHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// Notification is a handle to gpui_kit::component::notification::Notification, kit state that lives in the library.
+// Notification is a handle to gpui_kit::component::notification::Notification, a runtime-owned kit state entity.
 type Notification struct{ rt.HCore }
 
 // Dismiss the notification.
 //
-// Dismiss is <gpui_kit::component::notification::Notification>::dismiss.
+// Dismiss calls <gpui_kit::component::notification::Notification>::dismiss.
 func (s Notification) Dismiss(cx *gk.Cx) {
 	rt.UseComponentNotification()
 	o := rt.NewReq(388)
@@ -59,93 +59,159 @@ func (s Notification) Dismiss(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// NotificationBuilder is the chain of Notification's `self -> Self` methods; Build makes it, in one crossing.
+// NotificationBuilder accumulates chained Notification builder options before creating the handle in Build.
 type NotificationBuilder struct{ sb *rt.StateBuilder }
 
+// Set the action button of the notification.
+//
+// When an action is set, the notification will not autohide.
+//
+// Action calls <gpui_kit::component::notification::Notification>::action.
 func (b NotificationBuilder) Action(action gk.RowSource) NotificationBuilder {
 	o := b.sb.Op(14)
 	o.U64(rt.ItemsCheck(action, 22))
 	return b
 }
 
+// Set the auto hide of the notification, default is true.
+//
+// Autohide calls <gpui_kit::component::notification::Notification>::autohide.
 func (b NotificationBuilder) Autohide(autohide bool) NotificationBuilder {
 	o := b.sb.Op(1)
 	o.Bool(autohide)
 	return b
 }
 
+// Set the content of the notification.
+//
+// Content calls <gpui_kit::component::notification::Notification>::content.
 func (b NotificationBuilder) Content(content gk.RowSource) NotificationBuilder {
 	o := b.sb.Op(15)
 	o.U64(rt.ItemsCheck(content, 23))
 	return b
 }
 
+// Set where this notification is delivered, overriding the global `delivery`.
+//
+// System delivery uses the OS notification center: the title and message become the system
+// notification's title and body (a notification with neither is not posted). Pushing again with
+// the same `id` replaces the previous system notification. Clicking the system notification
+// activates the window, closes the in-app toast (if any), and fires `OnClick`; with `System` the
+// toast never exists, so `OnClose` is never called.
+//
+// Platform requirements: on macOS the application must run from a bundled `.app` in a location the
+// system trusts, such as `/Applications` (posts are silently dropped under plain `cargo run`, and
+// the first post triggers the authorization prompt); on Windows the application must call
+// `set_app_identity` early in startup; on Linux a notification daemon must be present and
+// retraction is unsupported (dismissed notifications age out).
+//
+// Delivery calls <gpui_kit::component::notification::Notification>::delivery.
 func (b NotificationBuilder) Delivery(delivery gk.NotificationDelivery) NotificationBuilder {
 	o := b.sb.Op(2)
 	o.U16(uint16(delivery))
 	return b
 }
 
+// Set the icon of the notification.
+//
+// If icon is None, the notification will use the default icon of the type.
+//
+// Icon calls <gpui_kit::component::notification::Notification>::icon.
 func (b NotificationBuilder) Icon(icon gk.IconName) NotificationBuilder {
 	o := b.sb.Op(11)
 	o.U16(uint16(icon))
 	return b
 }
 
+// Deliver this notification as an in-app toast and to the OS notification center.
+//
+// Shorthand for `Delivery` with `InAppAndSystem`; see there for platform requirements.
+//
+// InAppAndSystem calls <gpui_kit::component::notification::Notification>::in_app_and_system.
 func (b NotificationBuilder) InAppAndSystem() NotificationBuilder {
 	b.sb.Op(5)
 	return b
 }
 
+// Set the message of the notification, default is None.
+//
+// Message calls <gpui_kit::component::notification::Notification>::message.
 func (b NotificationBuilder) Message(message string) NotificationBuilder {
 	o := b.sb.Op(6)
 	o.Str(message)
 	return b
 }
 
+// Set the click callback of the notification.
+//
+// OnClick calls <gpui_kit::component::notification::Notification>::on_click.
 func (b NotificationBuilder) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) NotificationBuilder {
 	o := b.sb.Op(12)
 	rt.PutKeptHandler(o, onClick, 1)
 	return b
 }
 
+// Set the close callback of the notification.
+//
+// Triggered when the notification is closed by any means (close button, middle-click, autohide,
+// click handler, or programmatic close).
+//
+// OnClose calls <gpui_kit::component::notification::Notification>::on_close.
 func (b NotificationBuilder) OnClose(onClose func(cx *gk.Cx)) NotificationBuilder {
 	o := b.sb.Op(13)
 	rt.PutKeptHandler(o, onClose, 3)
 	return b
 }
 
+// Set the placement of the notification, overriding the global `placement`.
+//
+// Notifications are stacked separately for each placement.
+//
+// Placement calls <gpui_kit::component::notification::Notification>::placement.
 func (b NotificationBuilder) Placement(placement gk.Anchor) NotificationBuilder {
 	o := b.sb.Op(7)
 	o.U16(uint16(placement))
 	return b
 }
 
+// Deliver this notification only to the OS notification center.
+//
+// Shorthand for `Delivery` with `System`; see there for platform requirements.
+//
+// System calls <gpui_kit::component::notification::Notification>::system.
 func (b NotificationBuilder) System() NotificationBuilder {
 	b.sb.Op(8)
 	return b
 }
 
+// Set the title of the notification, default is None.
+//
+// If title is None, the notification will not have a title.
+//
+// Title calls <gpui_kit::component::notification::Notification>::title.
 func (b NotificationBuilder) Title(title string) NotificationBuilder {
 	o := b.sb.Op(9)
 	o.Str(title)
 	return b
 }
 
+// Set the type of the notification, default is NotificationType::Info.
+//
+// WithType calls <gpui_kit::component::notification::Notification>::with_type.
 func (b NotificationBuilder) WithType(type_ NotificationType) NotificationBuilder {
 	o := b.sb.Op(10)
 	o.U16(uint16(type_))
 	return b
 }
 
-// Build makes the Notification.
+// Build commits the queued options and returns the new Notification handle.
 func (b NotificationBuilder) Build() Notification { return Notification{HCore: rt.MkH(b.sb.Build())} }
 
 // Create a new notification.
 //
 // The default id is a random UUID.
 //
-// NewNotification is <gpui_kit::component::notification::Notification>::new.
+// NewNotification calls <gpui_kit::component::notification::Notification>::new.
 func NewNotification(cx *gk.Cx) NotificationBuilder {
 	rt.UseComponentNotification()
 	o := rt.NewReq(391)
@@ -154,7 +220,7 @@ func NewNotification(cx *gk.Cx) NotificationBuilder {
 
 // Create an error notification with the given message.
 //
-// NewNotificationError is <gpui_kit::component::notification::Notification>::error.
+// NewNotificationError calls <gpui_kit::component::notification::Notification>::error.
 func NewNotificationError(cx *gk.Cx, message string) NotificationBuilder {
 	rt.UseComponentNotification()
 	o := rt.NewReq(389)
@@ -164,7 +230,7 @@ func NewNotificationError(cx *gk.Cx, message string) NotificationBuilder {
 
 // Create an info notification with the given message.
 //
-// NewNotificationInfo is <gpui_kit::component::notification::Notification>::info.
+// NewNotificationInfo calls <gpui_kit::component::notification::Notification>::info.
 func NewNotificationInfo(cx *gk.Cx, message string) NotificationBuilder {
 	rt.UseComponentNotification()
 	o := rt.NewReq(390)
@@ -174,7 +240,7 @@ func NewNotificationInfo(cx *gk.Cx, message string) NotificationBuilder {
 
 // Create a success notification with the given message.
 //
-// NewNotificationSuccess is <gpui_kit::component::notification::Notification>::success.
+// NewNotificationSuccess calls <gpui_kit::component::notification::Notification>::success.
 func NewNotificationSuccess(cx *gk.Cx, message string) NotificationBuilder {
 	rt.UseComponentNotification()
 	o := rt.NewReq(392)
@@ -184,7 +250,7 @@ func NewNotificationSuccess(cx *gk.Cx, message string) NotificationBuilder {
 
 // Create a warning notification with the given message.
 //
-// NewNotificationWarning is <gpui_kit::component::notification::Notification>::warning.
+// NewNotificationWarning calls <gpui_kit::component::notification::Notification>::warning.
 func NewNotificationWarning(cx *gk.Cx, message string) NotificationBuilder {
 	rt.UseComponentNotification()
 	o := rt.NewReq(393)
@@ -192,10 +258,10 @@ func NewNotificationWarning(cx *gk.Cx, message string) NotificationBuilder {
 	return NotificationBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// NotificationList is a handle to gpui_kit::component::notification::NotificationList, kit state that lives in the library.
+// NotificationList is a handle to gpui_kit::component::notification::NotificationList, a runtime-owned kit state entity.
 type NotificationList struct{ rt.HCore }
 
-// Notifications is <gpui_kit::component::notification::NotificationList>::notifications.
+// Notifications calls <gpui_kit::component::notification::NotificationList>::notifications.
 func (s NotificationList) Notifications(cx *gk.Cx) []Notification {
 	rt.UseComponentNotification()
 	o := rt.NewReq(1453)
@@ -204,7 +270,7 @@ func (s NotificationList) Notifications(cx *gk.Cx) []Notification {
 	return rt.RdList(r, func(r *rt.Reader) Notification { return Notification{HCore: rt.MkH(r.U64())} })
 }
 
-// Clear is <gpui_kit::component::notification::NotificationList>::clear.
+// Clear calls <gpui_kit::component::notification::NotificationList>::clear.
 func (s NotificationList) Clear(cx *gk.Cx) {
 	rt.UseComponentNotification()
 	o := rt.NewReq(394)
@@ -212,7 +278,7 @@ func (s NotificationList) Clear(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// Push is <gpui_kit::component::notification::NotificationList>::push.
+// Push calls <gpui_kit::component::notification::NotificationList>::push.
 func (s NotificationList) Push(cx *gk.Cx, notification string) {
 	rt.UseComponentNotification()
 	o := rt.NewReq(657)
@@ -221,18 +287,18 @@ func (s NotificationList) Push(cx *gk.Cx, notification string) {
 	rt.StateSet(cx, o)
 }
 
-// NewNotificationList is <gpui_kit::component::notification::NotificationList>::new.
+// NewNotificationList calls <gpui_kit::component::notification::NotificationList>::new.
 func NewNotificationList(cx *gk.Cx) NotificationList {
 	rt.UseComponentNotification()
 	o := rt.NewReq(395)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return NotificationList{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PopoverState is a handle to gpui_kit::base::PopoverState, kit state that lives in the library.
+// PopoverState is a handle to gpui_kit::base::PopoverState, a runtime-owned kit state entity.
 type PopoverState struct{ rt.HCore }
 
-// IsOpen is <gpui_kit::base::PopoverState>::is_open.
+// IsOpen calls <gpui_kit::base::PopoverState>::is_open.
 func (s PopoverState) IsOpen(cx *gk.Cx) bool {
 	rt.UseBasePopover()
 	o := rt.NewReq(678)
@@ -241,7 +307,7 @@ func (s PopoverState) IsOpen(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Dismiss is <gpui_kit::base::PopoverState>::dismiss.
+// Dismiss calls <gpui_kit::base::PopoverState>::dismiss.
 func (s PopoverState) Dismiss(cx *gk.Cx) {
 	rt.UseBasePopover()
 	o := rt.NewReq(677)
@@ -249,7 +315,7 @@ func (s PopoverState) Dismiss(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// Show is <gpui_kit::base::PopoverState>::show.
+// Show calls <gpui_kit::base::PopoverState>::show.
 func (s PopoverState) Show(cx *gk.Cx) {
 	rt.UseBasePopover()
 	o := rt.NewReq(680)
@@ -257,21 +323,21 @@ func (s PopoverState) Show(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// NewPopoverState is <gpui_kit::base::PopoverState>::new.
+// NewPopoverState calls <gpui_kit::base::PopoverState>::new.
 func NewPopoverState(cx *gk.Cx, defaultOpen bool) PopoverState {
 	rt.UseBasePopover()
 	o := rt.NewReq(679)
 	o.Bool(defaultOpen)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PopoverState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ToastManager is a handle to gpui_kit::base::ToastManager<u64, u64>, a library object (PROTOCOLS.md section 13).
+// ToastManager is a handle to gpui_kit::base::ToastManager<u64, u64>, a runtime-owned library object.
 type ToastManager struct{ rt.HCore }
 
 // Return a mounted toast value by id.
 //
-// Get is <gpui_kit::base::ToastManager<u64, u64>>::get.
+// Get calls <gpui_kit::base::ToastManager<u64, u64>>::get.
 func (s ToastManager) Get(cx *gk.Cx, id uint64) gk.Option[uint64] {
 	rt.UseBaseToast()
 	o := rt.NewReq(1628)
@@ -283,7 +349,7 @@ func (s ToastManager) Get(cx *gk.Cx, id uint64) gk.Option[uint64] {
 
 // Return whether no toast is mounted.
 //
-// IsEmpty is <gpui_kit::base::ToastManager<u64, u64>>::is_empty.
+// IsEmpty calls <gpui_kit::base::ToastManager<u64, u64>>::is_empty.
 func (s ToastManager) IsEmpty(cx *gk.Cx) bool {
 	rt.UseBaseToast()
 	o := rt.NewReq(1629)
@@ -294,7 +360,7 @@ func (s ToastManager) IsEmpty(cx *gk.Cx) bool {
 
 // Iterate over mounted toast ids, values, and phases in display order.
 //
-// Iter is <gpui_kit::base::ToastManager<u64, u64>>::iter.
+// Iter calls <gpui_kit::base::ToastManager<u64, u64>>::iter.
 func (s ToastManager) Iter(cx *gk.Cx) []TupleUint64Uint64ToastTransitionStatus {
 	rt.UseBaseToast()
 	o := rt.NewReq(1630)
@@ -307,7 +373,7 @@ func (s ToastManager) Iter(cx *gk.Cx) []TupleUint64Uint64ToastTransitionStatus {
 
 // Return the number of mounted toasts, including ending toasts.
 //
-// Len is <gpui_kit::base::ToastManager<u64, u64>>::len.
+// Len calls <gpui_kit::base::ToastManager<u64, u64>>::len.
 func (s ToastManager) Len(cx *gk.Cx) int {
 	rt.UseBaseToast()
 	o := rt.NewReq(1631)
@@ -318,7 +384,7 @@ func (s ToastManager) Len(cx *gk.Cx) int {
 
 // Iterate over newest visible active toasts plus ending toasts.
 //
-// Visible is <gpui_kit::base::ToastManager<u64, u64>>::visible.
+// Visible calls <gpui_kit::base::ToastManager<u64, u64>>::visible.
 func (s ToastManager) Visible(cx *gk.Cx, limit int) []TupleUint64Uint64ToastTransitionStatus {
 	rt.UseBaseToast()
 	o := rt.NewReq(1634)
@@ -332,7 +398,7 @@ func (s ToastManager) Visible(cx *gk.Cx, limit int) []TupleUint64Uint64ToastTran
 
 // Advance lifecycle time; active timers pause while `paused` is true.
 //
-// Advance is <gpui_kit::base::ToastManager<u64, u64>>::advance.
+// Advance calls <gpui_kit::base::ToastManager<u64, u64>>::advance.
 func (s ToastManager) Advance(cx *gk.Cx, now time.Duration, paused bool) gk.ToastAdvanceU64U64 {
 	rt.UseBaseToast()
 	o := rt.NewReq(1625)
@@ -345,7 +411,7 @@ func (s ToastManager) Advance(cx *gk.Cx, now time.Duration, paused bool) gk.Toas
 
 // Begin a toast's exit transition, returning whether its state changed.
 //
-// Dismiss is <gpui_kit::base::ToastManager<u64, u64>>::dismiss.
+// Dismiss calls <gpui_kit::base::ToastManager<u64, u64>>::dismiss.
 func (s ToastManager) Dismiss(cx *gk.Cx, id uint64, now time.Duration) bool {
 	rt.UseBaseToast()
 	o := rt.NewReq(1626)
@@ -358,7 +424,7 @@ func (s ToastManager) Dismiss(cx *gk.Cx, id uint64, now time.Duration) bool {
 
 // Begin the exit transition for every active toast.
 //
-// DismissAll is <gpui_kit::base::ToastManager<u64, u64>>::dismiss_all.
+// DismissAll calls <gpui_kit::base::ToastManager<u64, u64>>::dismiss_all.
 func (s ToastManager) DismissAll(cx *gk.Cx, now time.Duration) []uint64 {
 	rt.UseBaseToast()
 	o := rt.NewReq(1627)
@@ -370,7 +436,7 @@ func (s ToastManager) DismissAll(cx *gk.Cx, now time.Duration) []uint64 {
 
 // Add a newest toast, replacing an existing toast with the same id.
 //
-// Push is <gpui_kit::base::ToastManager<u64, u64>>::push.
+// Push calls <gpui_kit::base::ToastManager<u64, u64>>::push.
 func (s ToastManager) Push(cx *gk.Cx, id uint64, value uint64, options ToastOptions, now time.Duration) gk.Option[uint64] {
 	rt.UseBaseToast()
 	o := rt.NewReq(1633)
@@ -385,21 +451,21 @@ func (s ToastManager) Push(cx *gk.Cx, id uint64, value uint64, options ToastOpti
 
 // Create a manager using the supplied motion duration for enter and exit.
 //
-// NewToastManager is <gpui_kit::base::ToastManager<u64, u64>>::new.
+// NewToastManager calls <gpui_kit::base::ToastManager<u64, u64>>::new.
 func NewToastManager(cx *gk.Cx, motion ToastMotion) ToastManager {
 	rt.UseBaseToast()
 	o := rt.NewReq(1632)
 	putToastMotion(o, motion)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ToastManager{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ToastStackState is a handle to gpui_kit::base::ToastStackState, a library object (PROTOCOLS.md section 13).
+// ToastStackState is a handle to gpui_kit::base::ToastStackState, a runtime-owned library object.
 type ToastStackState struct{ rt.HCore }
 
 // Return whether interaction has expanded the stack.
 //
-// IsExpanded is <gpui_kit::base::ToastStackState>::is_expanded.
+// IsExpanded calls <gpui_kit::base::ToastStackState>::is_expanded.
 func (s ToastStackState) IsExpanded(cx *gk.Cx) bool {
 	rt.UseBaseToast()
 	o := rt.NewReq(1461)
@@ -408,20 +474,20 @@ func (s ToastStackState) IsExpanded(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// NewToastStackStateDefault is <gpui_kit::base::ToastStackState as Default>::default.
+// NewToastStackStateDefault calls <gpui_kit::base::ToastStackState as Default>::default.
 func NewToastStackStateDefault(cx *gk.Cx) ToastStackState {
 	rt.UseBaseToast()
 	o := rt.NewReq(1460)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ToastStackState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// TooltipDefaults is a handle to gpui_kit::base::TooltipDefaults, a library object (PROTOCOLS.md section 13).
+// TooltipDefaults is a handle to gpui_kit::base::TooltipDefaults, a runtime-owned library object.
 type TooltipDefaults struct{ rt.HCore }
 
 // How long a tooltip stays after the pointer leaves its trigger.
 //
-// GracePeriod is <gpui_kit::base::TooltipDefaults>::grace_period.
+// GracePeriod calls <gpui_kit::base::TooltipDefaults>::grace_period.
 func (s TooltipDefaults) GracePeriod(cx *gk.Cx) time.Duration {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(1438)
@@ -432,7 +498,7 @@ func (s TooltipDefaults) GracePeriod(cx *gk.Cx) time.Duration {
 
 // How long the pointer must rest on a trigger before its tooltip shows.
 //
-// ShowDelay is <gpui_kit::base::TooltipDefaults>::show_delay.
+// ShowDelay calls <gpui_kit::base::TooltipDefaults>::show_delay.
 func (s TooltipDefaults) ShowDelay(cx *gk.Cx) time.Duration {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(1439)
@@ -443,7 +509,7 @@ func (s TooltipDefaults) ShowDelay(cx *gk.Cx) time.Duration {
 
 // Installs these defaults for the whole application.
 //
-// Install is <gpui_kit::base::TooltipDefaults>::install.
+// Install calls <gpui_kit::base::TooltipDefaults>::install.
 func (s TooltipDefaults) Install(cx *gk.Cx) {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(823)
@@ -451,29 +517,38 @@ func (s TooltipDefaults) Install(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// TooltipDefaultsBuilder is the chain of TooltipDefaults's `self -> Self` methods; Build makes it, in one crossing.
+// TooltipDefaultsBuilder accumulates chained TooltipDefaults builder options before creating the handle in Build.
 type TooltipDefaultsBuilder struct{ sb *rt.StateBuilder }
 
+// Sets how long a tooltip stays after the pointer leaves its trigger.
+//
+// Entering another trigger within this period switches to its tooltip without waiting for the show
+// delay.
+//
+// WithGracePeriod calls <gpui_kit::base::TooltipDefaults>::with_grace_period.
 func (b TooltipDefaultsBuilder) WithGracePeriod(period time.Duration) TooltipDefaultsBuilder {
 	o := b.sb.Op(1)
 	rt.PutMs(o, period)
 	return b
 }
 
+// Sets how long the pointer must rest on a trigger before its tooltip shows.
+//
+// WithShowDelay calls <gpui_kit::base::TooltipDefaults>::with_show_delay.
 func (b TooltipDefaultsBuilder) WithShowDelay(delay time.Duration) TooltipDefaultsBuilder {
 	o := b.sb.Op(2)
 	rt.PutMs(o, delay)
 	return b
 }
 
-// Build makes the TooltipDefaults.
+// Build commits the queued options and returns the new TooltipDefaults handle.
 func (b TooltipDefaultsBuilder) Build() TooltipDefaults {
 	return TooltipDefaults{HCore: rt.MkH(b.sb.Build())}
 }
 
 // Creates the Base defaults: a 500 ms show delay and a 300 ms grace period.
 //
-// NewTooltipDefaults is <gpui_kit::base::TooltipDefaults>::new.
+// NewTooltipDefaults calls <gpui_kit::base::TooltipDefaults>::new.
 func NewTooltipDefaults(cx *gk.Cx) TooltipDefaultsBuilder {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(824)
@@ -482,17 +557,17 @@ func NewTooltipDefaults(cx *gk.Cx) TooltipDefaultsBuilder {
 
 // Returns the installed defaults, or the Base ones when none were.
 //
-// NewTooltipDefaultsGlobal is <gpui_kit::base::TooltipDefaults>::global.
+// NewTooltipDefaultsGlobal calls <gpui_kit::base::TooltipDefaults>::global.
 func NewTooltipDefaultsGlobal(cx *gk.Cx) TooltipDefaultsBuilder {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(822)
 	return TooltipDefaultsBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// TooltipOverlay is a handle to gpui_kit::base::TooltipOverlay, kit state that lives in the library.
+// TooltipOverlay is a handle to gpui_kit::base::TooltipOverlay, a runtime-owned kit state entity.
 type TooltipOverlay struct{ rt.HCore }
 
-// Hide is <gpui_kit::base::TooltipOverlay>::hide.
+// Hide calls <gpui_kit::base::TooltipOverlay>::hide.
 func (s TooltipOverlay) Hide(cx *gk.Cx) {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(323)
@@ -500,7 +575,7 @@ func (s TooltipOverlay) Hide(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// RequestHide is <gpui_kit::base::TooltipOverlay>::request_hide.
+// RequestHide calls <gpui_kit::base::TooltipOverlay>::request_hide.
 func (s TooltipOverlay) RequestHide(cx *gk.Cx) {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(325)
@@ -508,7 +583,7 @@ func (s TooltipOverlay) RequestHide(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// RequestShow is <gpui_kit::base::TooltipOverlay>::request_show.
+// RequestShow calls <gpui_kit::base::TooltipOverlay>::request_show.
 func (s TooltipOverlay) RequestShow(cx *gk.Cx, content TooltipRequest) {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(825)
@@ -517,21 +592,22 @@ func (s TooltipOverlay) RequestShow(cx *gk.Cx, content TooltipRequest) {
 	rt.StateSet(cx, o)
 }
 
-// TooltipOverlayBuilder is the chain of TooltipOverlay's `self -> Self` methods; Build makes it, in one crossing.
+// TooltipOverlayBuilder accumulates chained TooltipOverlay builder options before creating the handle in Build.
 type TooltipOverlayBuilder struct{ sb *rt.StateBuilder }
 
+// RenderWith calls <gpui_kit::base::TooltipOverlay>::render_with.
 func (b TooltipOverlayBuilder) RenderWith(renderer gk.RowSource) TooltipOverlayBuilder {
 	o := b.sb.Op(1)
 	o.U64(rt.ItemsCheck(renderer, 24))
 	return b
 }
 
-// Build makes the TooltipOverlay.
+// Build commits the queued options and returns the new TooltipOverlay handle.
 func (b TooltipOverlayBuilder) Build() TooltipOverlay {
 	return TooltipOverlay{HCore: rt.MkH(b.sb.Build())}
 }
 
-// NewTooltipOverlay is <gpui_kit::base::TooltipOverlay>::new.
+// NewTooltipOverlay calls <gpui_kit::base::TooltipOverlay>::new.
 func NewTooltipOverlay(cx *gk.Cx) TooltipOverlayBuilder {
 	rt.UseBaseTooltip()
 	o := rt.NewReq(324)

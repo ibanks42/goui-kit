@@ -1,13 +1,6 @@
-// handles: the protocol tests of library objects behind handles (docs/PROTOCOLS.md section 13):
-// kit values that are not entities, held by the library and named by a handle of kind OBJ. The
-// port of core/tests/handles. Each mode runs offscreen (the diag library) under a gk-meter script
-// and prints lines that core/tests/go/run-handles.sh checks, with the exit code.
-//
-//	GK_PROTO=obj-objects | obj-temps | obj-stale-temp | obj-global | obj-dialog | obj-list |
-//	         obj-given-away | obj-values | obj-stale-value | obj-columns |
-//	         life-view | life-view-again | life-gc | life-panel
-//
-// The modes that count handles and obj-columns are in objects.go, the lifetimes in life.go.
+// Command handles tests object handle lifetimes: temporary handles swept on the
+// next frame, retained handles, globals, transient kit values, cascading view
+// and dock-panel releases, and Go finalizer/GC cleanup.
 package main
 
 import (
@@ -29,40 +22,40 @@ type App struct {
 	mode   string
 	root   gk.View
 	clicks int
-	// temps
+
 	input editor.InputState
 	temp  editor.InputPresentation
 	kept  editor.InputPresentation
-	// list
+
 	src    gk.RowSource
 	list   gktable.ListState
 	scroll gktable.VirtualListScrollHandle
 	events int
-	// dialog
+
 	dialog overlay.DialogHandle
-	// values
+
 	tree  gktable.TreeState
 	grid  base.GridLayoutState
 	keptV gktable.TreeItem
-	// columns (objects.go)
+
 	tsrc  gk.RowSource
 	table gktable.State
 }
 
-// modes: what a click runs, by mode; some register from objects.go.
 var modes = map[string]func(a *App, cx *gk.Cx){}
 
-// views: what a mode adds to the root view, by mode (objects.go registers obj-columns's table).
 var views = map[string]func(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl{}
 
-// counts prints the temporary handles waiting for the next frame and the live library objects.
+// counts prints current temporary and live object counts from the core runtime.
 func counts(cx *gk.Cx, what string) {
 	temps, live := gk.TestObjCounts(cx)
 	fmt.Printf("handles counts %s temps=%d live=%d\n", what, temps, live)
 }
 
-// A read that hands out an object gives a temporary handle: usable in its turn, swept when
-// the next frame begins; gk.Retain keeps one.
+// temps proves that unretained temporary handles (`a.temp`) are swept on the
+// next frame (temps 1->0, live 2->1) while handles promoted via gk.Retain
+// (`a.kept`) stay readable; in `obj-stale-temp` reading `a.temp` after the
+// sweep proves the core rejects stale temporaries with a lifetime diagnostic.
 func temps(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -79,12 +72,13 @@ func temps(a *App, cx *gk.Cx) {
 		gk.Release(cx, a.kept)
 		if a.mode == "obj-stale-temp" {
 			fmt.Println("handles reading the swept temporary")
-			fmt.Println(a.temp.Placeholder(cx)) // stops: it was temporary
+			fmt.Println(a.temp.Placeholder(cx))
 		}
 	}
 }
 
-// A dialog's handle opens and closes it from code (writes with the window).
+// dialog proves DialogHandle transitions cleanly from closed -> open -> closed
+// across frames and reflects each transition in IsOpen.
 func dialog(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -106,12 +100,13 @@ func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 	a.events++
 }
 
-// A list selected and scrolled from code: an IndexPath travels as its record, and the list's
-// scroll handle is a library object.
+// list proves ListState selection and scrolling read back row 120, that a
+// retained VirtualListScrollHandle survives into a later frame to scroll back
+// to row 3, and that clearing selection reports selected=false.
 func list(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
-		// a row source needs a window: made in a handler
+
 		a.src = gktable.NewListSource(cx, func() int { return rows }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
 		a.list = gktable.NewListState(cx, a.src).Build()
 	case 2:
@@ -130,8 +125,10 @@ func list(a *App, cx *gk.Cx) {
 	}
 }
 
-// Builder values made in a handler, outside any view, given to call ops: each travels as a
-// tape of its own and is decoded by the value's own decoder (a tree's items, a grid's areas).
+// values proves transient TreeItem and GridArea kit values decode faithfully
+// within the turn that builds them (4 flattened tree entries, 2 grid areas),
+// and in `obj-stale-value` proves passing a TreeItem saved from click 1 into
+// click 2 fails cleanly because mini-tape values expire at turn end.
 func values(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
@@ -158,7 +155,7 @@ func values(a *App, cx *gk.Cx) {
 		}
 		if a.mode == "obj-stale-value" {
 			fmt.Println("handles giving a value of an earlier turn")
-			a.tree.SetItems(cx, []gktable.TreeItem{a.keptV}) // stops: a value lives for the turn that made it
+			a.tree.SetItems(cx, []gktable.TreeItem{a.keptV})
 		}
 	}
 }

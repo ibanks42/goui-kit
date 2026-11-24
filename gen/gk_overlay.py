@@ -1,65 +1,60 @@
-"""The overlays and dock families' generator rules (docs/PROTOCOLS.md sections 11.6 and 11.7).
+"""Overlay, menu, dock, panel, and value-read model extensions.
 
-Called from the shared model and emitters at a few hook points, so the rules live here:
+Extends `gen/gk_model.py` and `gen/gk_rust.py` with the rules needed for overlays
+(dialogs, sheets, popovers, tooltips, context/dropdown menus), dock panels and layout
+trees, and plot/value readbacks:
 
-- view-built closures (11.6): a closure `Fn(T, &mut Window, &mut App) -> T + 'static` that a
-  call op hands to upstream, which keeps it and calls it later (`WindowExt::open_dialog`,
-  `open_sheet`): the descriptor `build` of an element op becomes `viewbuild` in a call op
-  (`view_built`, from `Model.call_bad`). The op carries the u64 handle of a view whose root is
-  a node of type T; the library applies that root's ops to the T upstream hands in, each time
-  upstream calls the closure (`crate::overlay::ViewBuild`). Go: `gk.NewBuilt(cx, state, fn)`,
-  a `gk.Built[T]`.
-- build closures with the entity's context (11.6): `Fn(PopupMenu, &mut Window,
-  &mut Context<PopupMenu>) -> PopupMenu` in an element op (dropdown and context menus) is a
-  `build` closure like `Fn(X, &mut Window, &mut App) -> X` (`context_build`, from
-  `Model.closure_desc`); the context derefs to the App the decode needs.
-- described values (11.6): an entity type upstream builds itself and hands to such a closure
-  (`PopupMenu`) is a value node of its own (`[node] types` in api/overrides.toml), whose ops are
-  its `self -> Self` methods. It has no public constructor: `after_classify` gives it one that
-  only the app uses to start the node (the library never builds one alone; not counted).
-  `PopupMenu::submenu` needs the menu's own context; the library's `overlay::submenu` builds the
-  child with `PopupMenu::build` and attaches it with `item(PopupMenuItem::submenu(..))`, which
-  upstream wires to its parent when the menu draws.
-- wrappers a type-changing method returns, for one element type named by its full path
-  (`OVERLAY_INSTANCES`): `ContextMenuExt::context_menu` on Div gives `ContextMenu<Div>` (a
-  blanket trait, entered into Div's tables here).
-- fallible calls (questionnaire): `Result<(), E>` as a result is `opt<str>` on the wire, the
-  error's text or nothing (`result_desc`); a constructor or builder that returns
-  `Result<Self, E>` stops the app with the error's text (`fallible`), which is what a schema
-  the app wrote wrongly deserves; a `&self` method that needs the window is a call op run at
-  once with the turn's window (`read_needs_window`).
-
-Standard library only."""
+1. **Concrete wrapper instantiations and blanket traits (`after_scan`, `after_classify`, `instance_tables`)**:
+   - Instantiates `ContextMenu<Div>` (`ContextMenuDiv`) and attaches `ContextMenuExt`
+     onto `Div` because rustdoc does not expand blanket extension impls onto concrete nodes.
+   - Copies non-`Element` builder traits from the wrapped inner node (`Div`) onto each
+     instantiated wrapper so `ContextMenuDiv` inherits styling/layout builders.
+2. **Described values and `ViewBuild` closures (`described_values`, `view_built`, `rust_dec`)**:
+   - Upstream overlay APIs (`open_sheet`, `context_menu`, `tooltip`, etc.) pass a
+     pre-constructed value (`Sheet`, `PopupMenu`, `ResizablePanelGroup`, `Tooltip`, `Icon`)
+     into a closure `Fn(T, &mut Window, &mut App) -> T`.
+   - Listing those types under `[node].types` in `api/overrides.toml` forces them into
+     `m.nodes` with a synthetic `(described)` constructor so Go records builder ops on a
+     standalone value tape, and `view_built()` upgrades `build` descriptors inside call
+     ops to `viewbuild` (decoded via `crate::overlay::ViewBuild::take` and replayed with
+     `apply_<fn>`).
+3. **Dock and panel protocol (`panel_entity`, `panel_view`, `resolved`, `resolved4`, `rust_dock_*`)**:
+   - Maps `Entity<P: Panel>` to `Entity<crate::dock::GkPanel>`, `Arc<dyn PanelView>` to
+     `panelview`, `NodeId`/`PanelId`/`AnyView`/`DockAreaState`/`PanelState`/`PanelInfo`/
+     `Instant`/`Rc<dyn DockAreaRenderer|TabGroupRenderer>` to `dock` descriptors, and
+     plot readbacks (`ArcData`, `StackSeries`) to `libval` descriptors.
+   - Marks `HANDED` runtime-owned states (`TabGroup`, `AppMenuBar`) and `LIBRARY_HANDOUTS`
+     (`DockContext`, `TabGroupContext`) reachable, and registers `LIBRARY_CALLS` /
+     `LIBRARY_CALLS4` / `LIBRARY_NODES` shims in `core/src/dock.rs` and `core/src/overlay.rs`.
+4. **Fallible builders, observed closures, and skip tables (`result_desc`, `fallible_callee`, `SKIPS5`)**:
+   - Maps outbound `Result<(), E>` to `["result", "unit"]` (`crate::overlay::outcome`),
+     wraps `Result<Self, E>` builders in `crate::overlay::Fallible`, and merges grouped
+     skip explanations (`SKIPS5`) for Rust-only plot paint hooks and dock internals.
+"""
 import json
 import re
 
 import rdj
 
-# Generic wrappers a type-changing method returns, instantiated for one element type given by
-# its public path (the older `[instantiate] types` rule finds an argument by its short name, and
-# there are two `Button`s): (wrapper's public path, argument's public path, name). The kit's
-# `DropdownMenuPopover<Button>` has no public path, so rustc cannot name it: the dropdown button
-# is the library's own node (`gk.dropdown_button`, core/src/overlay.rs).
+# Generic overlay elements instantiated over concrete inner types during after_scan().
 OVERLAY_INSTANCES = [
     ("gpui_kit::component::menu::ContextMenu", "gpui_kit::Div", "ContextMenuDiv"),
 ]
-# Blanket traits whose methods change the type, entered into a node's trait tables because the
-# extract lists a blanket impl only in the crate that declares the trait (trait path, node path).
+# Blanket extension traits attached explicitly onto concrete nodes whose rustdoc does not list them.
 BLANKET_TABLES = [("ContextMenuExt", "gpui_kit::Div")]
-# Functions a node of the library itself binds, where generated code cannot name the type upstream
-# returns: the item, where.
+# Kit methods whose return type is private and replaced by a dedicated runtime node opcode.
 LIBRARY_NODES = {
     "gpui_kit::component::menu::DropdownMenu::dropdown_menu":
         "core/src/overlay.rs, node DROPDOWN_BUTTON (gk.dropdown_menu): the kit's DropdownMenuPopover<Button> has no public path",
 }
-# Methods of a described value that need the value's own entity context, done by the library
-# without it (`crate::overlay::NAME`): the method, the library function.
+# PopupMenu methods requiring a `Context<PopupMenu>` that are bridged through runtime helpers
+# because `PopupMenu` is built as a described value without exposing a `Context<PopupMenu>` to Go.
 CONTEXT_OPS = {("PopupMenu", "submenu"): "crate::overlay::submenu",
-               ("PopupMenu", "submenu_with_icon"): "crate::views_menu::submenu_with_icon"}  # the views family
+               ("PopupMenu", "submenu_with_icon"): "crate::views_menu::submenu_with_icon"}
 
 
 def _find(m, path):
-    """(crate, id) of a type by its public path."""
+    """Locate `(crate, item_id)` for a canonical public type path across all loaded crates."""
     for cr, w in m.api.walks.items():
         for iid in w.types:
             if m.api.pubpath(cr, iid) == path:
@@ -68,8 +63,8 @@ def _find(m, path):
 
 
 def after_scan(m):
-    """Node types these families add once the node types are known (Model.scan_types)."""
-    merge_skips(m)  # SKIPS5 as [skip] keys
+    """Merge module skip rules and instantiate concrete overlay wrapper nodes (`ContextMenu<Div>`)."""
+    merge_skips(m)
     for base_path, arg_path, name in OVERLAY_INSTANCES:
         base, arg = _find(m, base_path), _find(m, arg_path)
         if base is None or arg is None:
@@ -84,12 +79,18 @@ def after_scan(m):
 
 
 def described_values(m):
+    """Return the set of `[node].types` names forced into the node table as described values."""
     return set(m.ov.get("node", {}).get("types", []))
 
 
 def after_classify(m):
-    """Before the model settles: blanket trait tables, the described values' constructors and
-    their context ops (Model.__init__, after classify_crate)."""
+    """Attach blanket traits, panel/dock shims, handed states, and synthetic described-value ctors.
+
+    Described values (`Sheet`, `PopupMenu`, `ResizablePanelGroup`, `Tooltip`, `Icon`) are
+    constructed on the Rust side by upstream closures rather than directly by user code;
+    synthesizing a placeholder `(described)` ctor lets Go build op chains for `ViewBuild`
+    closures that replay ops onto the upstream-supplied value.
+    """
     for tname, npath in BLANKET_TABLES:
         node = m.nodes.get(npath)
         hit = [(cr, tid) for cr, w in m.api.walks.items() for tid, (_, t) in w.traits.items() if t["name"] == tname]
@@ -100,13 +101,12 @@ def after_classify(m):
     instance_tables(m)
     mark_panel_traits(m)
     mark_handed(m)
-    after_classify4(m)  # PROTOCOLS.md 11.9 onward
+    after_classify4(m)
     for it in m.items:
         if it["id"] in LIBRARY_CALLS and it["status"] in ("todo", "norule"):
             it.update(kind="shim", status="bridged", reason="", detail="core/src/dock.rs: " + LIBRARY_CALLS[it["id"]])
+    # Strip methods overridden by hand-written dock calls from auto-generated state/object tables.
     for st in list(m.objects.values()) + list(m.states.values()):
-        # served by the library's own calls: not a method the object or state rule emits (and not
-        # one reach_objects may take back)
         for g in ("builders", "reads", "writes", "calls", "statics", "ctors"):
             if g in st:
                 st[g] = [i for i in st[g] if i["id"] not in LIBRARY_CALLS]
@@ -117,8 +117,6 @@ def after_classify(m):
         if node["name"] not in described_values(m) or node["element"]:
             continue
         if not any(i["status"] in ("bound", "bridged") for i in node["ctors"]):
-            # The app starts the node with it; the library applies the node's ops to the value
-            # upstream hands in and never builds one alone. Not an upstream function: no row.
             node["ctors"].append({"row": None, "owner": node["path"], "name": "new", "trait": None,
                                   "sig": "(described value)", "id": node["path"] + "::(described)", "kind": "ctor",
                                   "status": "bound", "reason": "", "args": [], "crate": node["crate"],
@@ -131,11 +129,7 @@ def after_classify(m):
 
 
 def instance_tables(m):
-    """A wrapper instantiated for one element type (`ContextMenu<Div>`) implements the builder
-    traits of its argument through bounded impls (`impl<E: ParentElement + Styled> Styled for
-    ContextMenu<E>`), which the scan does not match to the instance: it gets the argument's
-    entries of the traits the wrapper implements (the gensample gate failed on a
-    `Context_Menu_Div` with no `style`)."""
+    """Copy non-Element builder traits from the wrapped inner node onto each `OVERLAY_INSTANCES` wrapper."""
     for base_path, arg_path, name in OVERLAY_INSTANCES:
         node = m.nodes.get(f"{base_path}<{arg_path}>")
         arg = m.nodes.get(arg_path)
@@ -149,9 +143,8 @@ def instance_tables(m):
 
 
 def _context_op(m, node, it, callee):
-    """`submenu(self, label, window, cx: &mut Context<Self>, f)` as an op of the described value:
-    the library's function takes `&mut App` where upstream takes the entity's context."""
-    from gk_model import Ctx, Unsup  # noqa: PLC0415 (gk_model imports this module)
+    """Bind a `CONTEXT_OPS` method on a described value by lowering `&mut Context<Self>` to `["ctx", "app"]`."""
+    from gk_model import Ctx, Unsup
     c = m.api.crates[node["crate"]]
     f = next((c.item(i) for im in m.info(node["crate"], node["id"])["impls"] if im.get("trait") is None
               for i in im["items"] if c.item(i) and c.item(i)["name"] == it["name"]), None)
@@ -170,7 +163,7 @@ def _context_op(m, node, it, callee):
             try:
                 args += m.args(fctx, [(pn, pt)])
             except Unsup:
-                one = _single_into(m, s)  # Option<Icon> as the Icon its Into set makes
+                one = _single_into(m, s)
                 if one is None:
                     raise
                 args.append({"name": pn, "desc": one})
@@ -182,8 +175,7 @@ def _context_op(m, node, it, callee):
 
 
 def _single_into(m, s):
-    """`T` or `Option<T>` where T is a kit type the binding makes only through its Into set's one
-    member (`Icon` from an `IconName`): that member's descriptor (PopupMenu::submenu_with_icon)."""
+    """Fallback for single-member `Into<T>` wrapper types (optionally wrapped in `Option<...>`)."""
     mt = re.fullmatch(r"(Option<)?(\w+)(>)?", s)
     if mt is None or (mt.group(1) is None) != (mt.group(3) is None):
         return None
@@ -193,23 +185,24 @@ def _single_into(m, s):
     return ["opt", hit[0]["single"]] if mt.group(1) else hit[0]["single"]
 
 
-# ---------------------------------------------------------------- closures
-
-
 def context_build(params):
-    """A build closure that gets the window and the entity's own context (a menu's)."""
+    """Return True if a builder closure takes `(&mut Window, &mut Context<T>)` instead of `&mut App`."""
     return "window" in params and "context" in params and "app" not in params
 
 
 def view_built(m, x, builder, seen):
-    """A `build` closure at the top of a call op's argument: view-built (PROTOCOLS.md 11.6).
-    The descriptor is changed in place, so the emitters see `viewbuild`. False when it is not."""
+    """Check whether descriptor `x` is call-safe via overlay rules, upgrading `build` to `viewbuild`.
+
+    Inside immediate calls (like `WindowExt::open_sheet`), a `build` closure that takes a
+    window cannot use a render-frame `Dx`; rewriting its tag in place to `viewbuild`
+    routes it through `crate::overlay::ViewBuild::take` instead.
+    """
     if x[0] == "panelview" and not builder:
-        return True  # a dock panel's handle (PROTOCOLS.md 11.7)
+        return True
     if x[0] in ("field", "format", "data"):
-        return True  # rows and closures over a row in a call op (PROTOCOLS.md 12.15)
+        return True
     if call_safe(x):
-        return True  # node ids, views (PROTOCOLS.md 11.8)
+        return True
     if x[0] not in ("build", "viewbuild") or builder or seen:
         return False
     if "window" not in x[2]:
@@ -219,11 +212,12 @@ def view_built(m, x, builder, seen):
 
 
 def ctor_nums(m, node_key):
+    """Return sorted constructor opcodes for `node_key` used by `ViewBuild::take` to validate tape roots."""
     return sorted(i["op"] for i in m.nodes[node_key]["ctors"] if i["status"] in ("bound", "bridged") and "op" in i)
 
 
 def rust_dec(rs, d):
-    """`{ let vb = crate::overlay::ViewBuild::take(r.u64(), c, &[..])?; move |v, window, cx| vb.apply(..) }`"""
+    """Emit Rust decoder for `viewbuild`: takes a tape handle and replays `apply_<fn>` onto upstream `v`."""
     node = rs.m.nodes[d[1]]
     nums = ", ".join(map(str, ctor_nums(rs.m, d[1]))) or "0"
     ps = rs.closure_params(d[2], d[4], "v")
@@ -231,12 +225,9 @@ def rust_dec(rs, d):
                    % (nums, node["name"], ps, node["fn"]))
 
 
-# ---------------------------------------------------------------- fallible calls
-
-
 def result_desc(m, ctx, args, out):
-    """`Result<(), E>` read back from a call: the error's text, or nothing (`opt<str>`)."""
-    from gk_model import Unsup  # noqa: PLC0415
+    """Classify outbound `Result<(), E>` as `["result", "unit"]` (other `Result<T, E>` handled by `gk_values`)."""
+    from gk_model import Unsup
     if not out or len(args) != 2:
         raise Unsup("norule", "std type core::result::Result")
     ok = args[0]
@@ -246,42 +237,40 @@ def result_desc(m, ctx, args, out):
 
 
 def rust_put_ret(expr):
+    """Emit wire serialization for `Result<(), E>` via `crate::overlay::outcome`."""
     return f"genapi::Wire::put(&crate::overlay::outcome({expr}), &mut out)"
 
 
 def fallible_callee(callee, n_args):
-    """A constructor or builder that returns Result<Self, E>: the library stops the app with the
-    error's text (crate::overlay::Fallible)."""
+    """Wrap a builder method returning `Result<Self, E>` so errors are logged and the receiver stays intact."""
     return f"crate::overlay::Fallible({callee}).call{n_args}"
 
 
 def is_result_self(out_s, name):
+    """Return True if return type text `out_s` matches `Result<Self, E>` or `Result<Name, E>`."""
     s = out_s.replace(" ", "")
     return bool(re.fullmatch(rf"Result<(Self|{name}),\w+>", s))
 
 
 def read_needs_window(ins):
-    """A `&self` method that takes the window: a call op run at once with the turn's window."""
+    """Return True if any non-self parameter in `ins` borrows `gpui::Window`."""
     return any(re.match(r"&(mut )?(gpui::)?Window\b", rdj.ty(t)) for _, t in ins[1:])
 
 
 def describe(m):
-    """For the report: what this family's rules bound."""
+    """Serialize overlay instantiation and described-value lists for model inspection."""
     return json.dumps({"instances": [n for _, _, n in OVERLAY_INSTANCES], "described": sorted(described_values(m))})
 
 
-# ---------------------------------------------------------------- dock panels (PROTOCOLS.md 11.7)
-
-# The library's one Panel: an app view behind a state handle (core/src/dock.rs GkPanel).
+# Dock panel shim type and upstream trait prefixes bridged by core/src/dock.rs GkPanel.
 PANEL_RUST = "crate::dock::GkPanel"
-PANEL_NAME = "DockPanel"  # Go: gk.DockPanel
-# Trait methods GkPanel serves (its own impl from the data the app pushed, or upstream's blanket
-# PanelView impl over Entity<GkPanel>): counted bridged.
+PANEL_NAME = "DockPanel"
 PANEL_TRAITS = ("gpui_kit::base::dock::Panel::", "gpui_kit::base::dock::PanelView::",
                 "gpui_kit::component::dock::Panel::", "gpui_kit::component::dock::PanelView::")
 
 
 def _bound_names(bounds):
+    """Extract simple trait names from a list of rustdoc GenericBound dicts."""
     out = []
     for b in bounds or []:
         tb = b.get("trait_bound")
@@ -291,7 +280,7 @@ def _bound_names(bounds):
 
 
 def panel_entity(m, ctx, a):
-    """`Entity<P>` with `P: Panel`: the app's panels are all GkPanel (one closed set)."""
+    """Resolve `Entity<P>` where `P: Panel` to `Entity<crate::dock::GkPanel>`."""
     g = a.get("generic")
     if g and g in ctx.bounds and "Panel" in _bound_names(ctx.bounds[g]):
         return ["entity", PANEL_RUST, PANEL_NAME]
@@ -299,8 +288,7 @@ def panel_entity(m, ctx, a):
 
 
 def panel_view(m, ctx, name, a, out):
-    """`Arc<dyn PanelView>` given to the kit: made from a GkPanel handle. gpui-base and the
-    component layer each have a PanelView; the descriptor names which."""
+    """Match input `Arc<dyn PanelView>` parameters for both `gpui_base` and `gpui_component`."""
     if out or name != "Arc" or "dyn_trait" not in a:
         return None
     trs = a["dyn_trait"]["traits"]
@@ -311,11 +299,13 @@ def panel_view(m, ctx, name, a, out):
 
 
 def rust_panel_view(rs, d):
+    """Emit Rust decoder for `panelview`, choosing checked (`?`) vs tape-shown lookup."""
     f = "kit_panel_view" if d[1] == "kit" else "panel_view"
     return f"crate::dock::{f}(r.u64())?" if rs.call else f"crate::dock::{f}_shown(r.u64())"
 
 
 def mark_panel_traits(m):
+    """Mark all `Panel` and `PanelView` trait methods as bridged via `core/src/dock.rs GkPanel`."""
     for it in m.items:
         if it["id"].startswith(PANEL_TRAITS) and it["status"] in ("todo", "norule"):
             it.update(kind="shim", status="bridged", reason="",
@@ -324,55 +314,43 @@ def mark_panel_traits(m):
                              "Panel_Event handler calls")
 
 
-# ---------------------------------------------------------------- PROTOCOLS.md 11.8
-#
-# Values the dock and the kit hand out and take back, as one descriptor family `["dock", what,
-# ..]` (call-safe, both directions):
-#   node_id   gpui-base's NodeId: a u64 on the wire. NodeId has no public constructor, so the library
-#             keeps every id it handed out (crate::dock::node_id) and refuses one it never did;
-#   panel_id  PanelId: its u64 (PanelId::from_u64 / as_u64);
-#   view      gpui's AnyView (and `impl Into<AnyView>`): an app view's handle, gk.View in Go. Taken
-#             in a call op the view is drawn in the turn's window and marked dirty; read back, a
-#             view of the app is its handle and any other view 0;
-#   panel     Arc<dyn PanelView> read back: the gk.Dock_Panel it was made from (0 for the kit's
-#             own placeholders);
-#   ms        std::time::Duration read back: i64 nanoseconds (Go time.Duration);
-#   entity    Entity<T> read back, T a state type: a state handle, the same handle for the same
-#             entity while it lives (crate::dock::entity_handle).
-
-# Entity states nothing constructs but the library hands out (crate::dock): their methods are the
-# state rule's. TabGroup comes from gk.panel_group (a panel's tab group, told to the panel by the
-# dock), and from reads that return it.
+# Entity state types handed out by the runtime (no public constructor needed) and Default-constructed states.
 HANDED = ("gpui_kit::base::dock::TabGroup", "gpui_kit::component::menu::AppMenuBar")
-# Entity states with no constructor but `impl Default`: `T::default()` is their constructor (not an
-# upstream function of their own: no coverage row).
 DEFAULT_CTORS = ("gpui_kit::base::ResizableState",)
 
 
 def _rp_home(m, ctx, t):
+    """Resolve a rustdoc `resolved_path` type node to `(home_crate, home_id, item)` or `(None, None, None)`."""
     rp = t["resolved_path"]
     try:
         hc, hid, it = m.api.item(ctx.crate, rp["id"])
-    except Exception:  # noqa: BLE001 (an id outside the extract)
+    except Exception:
         return None, None, None
     return hc, hid, it
 
 
 def resolved(m, ctx, t, out):
-    """The descriptor of the dock family for a resolved path, or None (Model.resolved's hook)."""
+    """Classify dock, panel, layout-state, `Instant`, and plot readback types.
+
+    Checks `resolved4()` first for `Instant`, `ArcData`/`StackSeries` plot readbacks, and
+    `Rc<dyn DockAreaRenderer|TabGroupRenderer>`, then maps `gpui_base` layout structs,
+    `NodeId`/`PanelId`, `gpui::AnyView`, outbound `Duration` (encoded as `dock.ms`),
+    outbound `Arc<dyn PanelView>`, and outbound `Entity<State>` handles whose state is
+    constructible or runtime-handed (`HANDED`).
+    """
     rp = t["resolved_path"]
     name = rp["path"].split("::")[-1]
     if name not in ("NodeId", "PanelId", "AnyView", "Duration", "Arc", "Entity", "Rc") and name not in LAYOUT_VALUES \
             and name not in ROUND4_NAMES:
         return None
-    r4 = resolved4(m, ctx, t, out, name)  # renderers, the library clock (PROTOCOLS.md 11.9, 11.10)
+    r4 = resolved4(m, ctx, t, out, name)
     if r4 is not None:
         return r4
     if name == "Rc":
         return None
     hc, hid, it = _rp_home(m, ctx, t)
     if name in LAYOUT_VALUES and hc == "gpui_base":
-        return ["dock", LAYOUT_VALUES[name]]  # a saved layout, a wire tree both ways
+        return ["dock", LAYOUT_VALUES[name]]
     if name in ("NodeId", "PanelId") and hc == "gpui_base":
         return ["dock", "node_id" if name == "NodeId" else "panel_id"]
     if name == "AnyView" and hc == "gpui":
@@ -397,14 +375,10 @@ def resolved(m, ctx, t, out):
     return None
 
 
-# A saved layout (DockArea::dump and load): plain values with hand-written codecs in core/src/dock.rs
-# (PanelState is recursive, PanelInfo holds JSON), Go structs and codecs in go/gk/rt_dock.go.
 LAYOUT_VALUES = {"DockAreaState": "area_state", "PanelState": "panel_state", "PanelInfo": "panel_info"}
 LAYOUT_RUST = {"area_state": "gpui_kit::base::dock::DockAreaState", "panel_state": "gpui_kit::base::dock::PanelState",
                "panel_info": "gpui_kit::base::dock::PanelInfo"}
 
-# Functions the library's own calls serve (core/src/dock.rs; go/gk/rt_dock.go): the registry,
-# the build context and the two persistence traits, implemented once by the library.
 LIBRARY_CALLS = {
     "gpui_kit::base::dock::register_panel": "gk.register_panel (call PANEL_REGISTER): a request to the app per panel",
     "gpui_kit::base::dock::PanelRegistry::build_panel": "gk.build_panel (call PANEL_BUILD_NOW)",
@@ -440,11 +414,12 @@ LIBRARY_CALLS = {
 
 
 def call_safe(x):
+    """Return True if descriptor `x` is a `dock` descriptor legal inside immediate call ops."""
     return x[0] == "dock"
 
 
 def mark_handed(m):
-    """After classification: states the library hands out, and Default constructors."""
+    """Mark `HANDED` state types as runtime-supplied and attach synthetic `Default` ctors to `DEFAULT_CTORS`."""
     for path in HANDED:
         st = m.states.get(path)
         if st is None:
@@ -463,6 +438,7 @@ def mark_handed(m):
 
 
 def rust_dock_dec(rs, d):
+    """Emit Rust decoder expression for a `dock` descriptor (`node_id`, `panel_id`, layout state, `view`, `renderer`, `instant`)."""
     w = d[1]
     inner = rs.call in ("builder", "codec")
     if w == "node_id":
@@ -483,6 +459,7 @@ def rust_dock_dec(rs, d):
 
 
 def _put_one(d, expr):
+    """Emit wire serialization for a single outbound `dock` value (`entity`, `ms`, `instant`, or `Out`)."""
     w = d[1]
     if w in ROUND4_PUT:
         return ROUND4_PUT[w](expr)
@@ -494,7 +471,7 @@ def _put_one(d, expr):
 
 
 def rust_dock_put(ret, expr):
-    """A result that holds a dock descriptor: written through crate::dock's writers."""
+    """Emit wire serialization for direct, optional, list, or borrowed `dock` return descriptors."""
     if not ret:
         return None
     if ret[0] == "dock":
@@ -512,25 +489,13 @@ def rust_dock_put(ret, expr):
     return None
 
 
-# ---------------------------------------------------------------- PROTOCOLS.md 11.9 onward
-#
-# Dock renderers (11.9): `Rc<dyn DockAreaRenderer>` and `Rc<dyn TabGroupRenderer>` given to the kit
-# are one library renderer (crate::dock::GkRenderer, implementing both traits) behind an object
-# handle, `gk.DockRenderer` in Go. Its hooks answer from app views the app gave per (hook, key)
-# between frames, asked by a queued Dock_Render request when a key has no answer for the context it
-# is drawn with; the trait methods count bridged. The contexts the kit hands the hooks
-# (DockContext, TabGroupContext) reach the app inside the request: a library hand-out (below).
-#
-# The library clock (11.10): std::time::Instant both ways is a duration since the library's clock
-# began (crate::overlay::instant), `time.Duration` in Go, `gk.ClockNow(cx)` the clock's reading.
-
+# Additional type names handled in resolved4(): std::time::Instant and plot shape readbacks.
 ROUND4_NAMES = ("Instant", "ArcData", "StackSeries")
 
 RENDERER_TRAITS = ("DockAreaRenderer", "TabGroupRenderer")
 RENDERER_ITEMS = ("gpui_kit::base::dock::DockAreaRenderer::", "gpui_kit::base::dock::TabGroupRenderer::")
 
-# Library objects the library itself hands to the app (inside a request it sends), so they are
-# reachable without an upstream function returning one: the object's public path, where.
+# Library objects handed to Go by core/src/dock.rs render hooks (synthetic handouts keep them reachable).
 LIBRARY_HANDOUTS = {
     "gpui_kit::base::dock::DockContext": "the dock hook's Dock_Render request (crate::dock::GkRenderer::render_dock)",
     "gpui_kit::base::dock::TabGroupContext": "the tab group hooks' Dock_Render request (crate::dock::GkRenderer)",
@@ -538,6 +503,7 @@ LIBRARY_HANDOUTS = {
 
 
 def resolved4(m, ctx, t, out, name):
+    """Classify `Instant`, plot readbacks (`ArcData`, `StackSeries`), and `Rc<dyn DockAreaRenderer|TabGroupRenderer>`."""
     rp = t["resolved_path"]
     if name == "Instant":
         hc, _, _ = _rp_home(m, ctx, t)
@@ -556,8 +522,6 @@ def resolved4(m, ctx, t, out, name):
     return None
 
 
-# Kit values over rows of the app's data read back as library values (Wire in core/src/data.rs,
-# Go structs in go/gk/rt_data.go): a row is its index in the rows the app passed.
 LIBRARY_READS = {
     "ArcData": ("gpui_kit::base::plot::shape::ArcData<'_, crate::data::Datum>", "Arc_Data"),
     "StackSeries": ("gpui_kit::base::plot::shape::StackSeries<crate::data::Datum>", "Stack_Series"),
@@ -578,7 +542,6 @@ ROUND4_DEC = {"renderer": _dec_renderer, "instant": _dec_instant}
 ROUND4_PUT = {"instant": lambda expr: f"crate::overlay::put_instant(&{expr}, &mut out)"}
 
 
-# Functions the library's calls of PROTOCOLS.md 11.9 onward serve: the event's reads are the fields of its payload.
 LIBRARY_CALLS4 = {
     "gpui_kit::component::dock::DockToggleEvent::placement": "gk.on_dock_toggle (call DOCK_TOGGLE_SUBSCRIBE): Dock_Toggle.placement",
     "gpui_kit::component::dock::DockToggleEvent::is_open": "gk.on_dock_toggle (call DOCK_TOGGLE_SUBSCRIBE): Dock_Toggle.open",
@@ -586,6 +549,13 @@ LIBRARY_CALLS4 = {
 
 
 def after_classify4(m):
+    """Bridge dock toggle events and renderer traits, and add synthetic handouts for dock render contexts.
+
+    Synthetic `(library hand-out)` items return `["obj", path, path, True]` for `DockContext`
+    and `TabGroupContext` so `Model.reach_objects()` treats both objects as reachable even
+    though no generated constructor creates them (they are handed out at render time by
+    `core/src/dock.rs GkRenderer`).
+    """
     for it in m.items:
         if it["id"] in LIBRARY_CALLS4:
             it.update(kind="shim", status="bridged", reason="", detail="core/src/dock.rs: " + LIBRARY_CALLS4[it["id"]])
@@ -609,9 +579,7 @@ def after_classify4(m):
 
 
 def named_text(fn, text):
-    """The argument text a generic parameter must appear in to count as named, with the bounds of
-    the parameters named there (`keys<I, S>(keys: I) where I: IntoIterator<Item = S>`: S is named
-    by I's bound), as Model.bindable does for node methods (PROTOCOLS.md 12.1)."""
+    """Append trait bounds referenced by generic names appearing in `text` (two hops for nested bounds)."""
     for _ in range(2):
         for w in fn["generics"].get("where_predicates", []):
             bp = w.get("bound_predicate")
@@ -624,9 +592,7 @@ def named_text(fn, text):
 
 
 def borrows_arg(fn, out_s, ins):
-    """A result whose every lifetime is the method's own and is given to an argument (`arcs<'a>(&self,
-    data: &'a [T]) -> Vec<ArcData<'a, T>>`) borrows from that argument, which lives while the call
-    writes the result out: it can be read back (PROTOCOLS.md 12.15)."""
+    """Return True if every lifetime in return type `out_s` is declared on `fn` and appears in an argument."""
     own = {p["name"] for p in fn["generics"]["params"] if "lifetime" in p["kind"]}
     used = set(re.findall(r"'\w+", out_s))
     if not used or not used <= own:
@@ -635,14 +601,10 @@ def borrows_arg(fn, out_s, ins):
     return all(re.search(rf"{u}\b", args) for u in used)
 
 
-# ---------------------------------------------------------------- the views family
-#
-# PROTOCOLS.md 11.14 to 11.16: functions skipped with a reason of DESIGN.md section 13's fixed
-# list (SKIPS5, merged into `[skip]` so the model's own rule applies them and a key that matches
-# nothing stops generation), observations (closures upstream calls while it lays out, delivered
-# after the frame), value calls (a `&self` method of a value the app builds that takes arguments:
-# a computation, run as an ambient call over the value), and library calls whose items the model
-# re-marked after this module bridged them.
+# Built-in skip explanations merged into [skip] during after_scan().
+# Kept in code rather than api/overrides.toml because they group large families of
+# Rust-only plot paint helpers, dock internals, and render-closure state builders.
+
 
 _PAINT = ("rust-only-extension: a paint-time cache of a plot that paints itself in Rust (Plot::paint with its "
           "window and bounds); the library's plot (core/src/plot.rs GkPlot) paints the parts described with gk.plot")
@@ -688,7 +650,6 @@ SKIPS5 = {
     "gpui_kit::base::plot::TooltipState::new": _NEVER + "taken only by Plot::tooltip of a plot that paints itself in Rust",
     "gpui_kit::base::plot::shape::SankeyNodeLayout::Default::default": _NEVER + "taken only by sankey_link_path (path "
                                                                        "geometry for a Rust Plot::paint)",
-    # dock
     "gpui_kit::component::dock::DockSkin::new": ("rust-only-extension: needs the DockArea's own Context while the area "
                                                  "is constructed; DockSkin::dock_area (gk.dock_area_skinned) makes both"),
     "gpui_kit::base::dock::AnyDrag::new": ("rust-only-extension: Rust's dynamic typing (std::any::Any) of a drag "
@@ -702,12 +663,10 @@ SKIPS5 = {
     "gpui_kit::base::dock::TabGroupConstraints::closable": _NEVER + "the facts the dock pushes into a tab group (TabGroup::set_constraints is pub(crate)); no public function takes or returns one",
     "gpui_kit::base::dock::PanelId::from_u64": ("rust-only-extension: a panel id from a raw number; the binding's panel "
                                                 "ids are the ones the dock hands out (gk.Panel_Id, PROTOCOLS.md 11.8)"),
-    # tables and lists
     "gpui_kit::base::TreeEntryState::Default::default": _RENDER + "the state upstream hands a tree item's render closure; no function takes one",
     "gpui_kit::component::list::ListSeparatorItem::new": _NEVER + "upstream's own list rendering",
     "gpui_kit::component::AnyChildElement::new": _NEVER + "the table parts' own type-erased child, kept in private fields (Table::child wraps its argument itself); gk.Table_Child takes every ChildElement directly",
     "gpui_kit::component::menu::ContextMenuState::Default::default": _NEVER + "upstream's own context-menu element state",
-    # dialogs
     "gpui_kit::component::notification::Notification::id": ("rust-only-extension: keys the notification by a Rust type "
                                                              "(TypeId of T); the binding cannot name an app's Rust type"),
     "gpui_kit::component::notification::Notification::id1": ("rust-only-extension: keys the notification by a Rust type "
@@ -716,7 +675,6 @@ SKIPS5 = {
                                                                    "no kit function takes; for a Rust app's own footer buttons"),
     "gpui_kit::component::dialog::DialogFooterButton::is_cancel": ("rust-only-extension: a trait no kit type implements and "
                                                                    "no kit function takes; for a Rust app's own footer buttons"),
-    # menus
     "gpui_kit::component::menu::PopupMenu::build": ("rust-only-extension: a menu entity built by a Rust closure with "
                                                     "the menu's own Context; the binding describes a menu as the value a "
                                                     "dropdown, context or submenu's closure builds (PROTOCOLS.md 11.6)"),
@@ -725,7 +683,6 @@ SKIPS5 = {
                                                           "PopupMenu::submenu and submenu_with_icon"),
     "gpui_kit::component::menu::ContextMenu::new": ("rust-only-extension: a context menu with no menu (its builder "
                                                     "`menu` is private); ContextMenuExt::context_menu (bound) makes one with it"),
-    # other components
     "gpui_kit::base::AutoScroll::set": ("rust-only-extension: drives a Rust entity T through its own Context on each "
                                         "tick; the kit's text views and lists scroll themselves"),
     "gpui_kit::base::CalendarState::set_disabled_matcher_shared": ("rust-only-extension: one Rc'd matcher shared between "
@@ -749,7 +706,6 @@ for _n in ("new", "section", "row", "column", "Default::default"):
         "value-helper: IndexPath is a plain record (gk.Base_Index_Path) wherever a call takes it (PROTOCOLS.md 13.6); "
         "its builders set the same fields")
 
-# Trait methods the library's own implementations serve, by item id: where (bridged).
 BRIDGED5 = {
     "gpui_kit::component::searchable_list::SearchableListDelegate::on_confirm":
         "core/src/shim_select.rs GkSearchDelegate: upstream's default (nothing); the same final selection reaches the "
@@ -758,7 +714,7 @@ BRIDGED5 = {
 
 
 def merge_skips(m):
-    """SKIPS5 as `[skip]` keys of the model (Model.pre applies them, settle checks each matched)."""
+    """Merge `SKIPS5` into `m.ov["skip"]`, rejecting duplicates also declared in `api/overrides.toml`."""
     sk = m.ov.setdefault("skip", {})
     for k, v in SKIPS5.items():
         if k in sk:
@@ -766,49 +722,39 @@ def merge_skips(m):
         sk[k] = v
 
 
-# ---------------------------------------------------------------- observations (PROTOCOLS.md 11.14)
-
-
 def observed(params, out_s, kind="Fn"):
-    """A closure that gets values and no window, app or context and returns nothing
-    (`Popover::on_position(Fn(ResolvedPosition, Bounds<Pixels>))`): upstream calls it while it lays
-    out, where app code may not run. It is a handler delivered after the frame, only when its
-    values differ from the last ones that handler got (`crate::views_after::observe`)."""
+    """Return True if a void `Fn` closure takes only plain payload args (no window/app/context)."""
     return kind == "Fn" and bool(params) and all(p == "arg" for p in params) and out_s == "()"
 
 
 def rust_observe(d, num, payload):
-    """The body of an observation's closure (gk_rust.Rust.handler's hook)."""
+    """Emit `crate::views_after::observe` for plain-payload void closures that lack a Window/App handle."""
     if not observed(d[2], "()"):
         return None
     return f"crate::views_after::observe(h, {num}, {payload})"
 
 
-# ---------------------------------------------------------------- value calls (PROTOCOLS.md 11.15)
-
-
 def value_read(m, node, it, crate, fn, ctx):
-    """A `&self` method of a value node that takes arguments (`DockSizing::clamp(size)`,
-    `Sankey::layout(node_count, links)`): a computation over a value the app builds with the
-    node's constructor and builders, so an ambient call (PROTOCOLS.md 11.5) that takes the value as
-    a tape of its own (13.6) first. One without arguments reads back what the app wrote and stays a
-    builder-getter. True when bound."""
-    from gk_model import Unsup, snake  # noqa: PLC0415
-    import gk_app  # noqa: PLC0415
+    """Promote a pure `&self` read method on a value node into a standalone ambient call.
+
+    Because value nodes live only briefly while building a tape, their query methods
+    (taking `&self` plus wire-safe args and returning a plain owned value) are exposed as
+    ambient calls taking the described value node as the first argument. On refusal, any
+    speculative `in`/`out` flags set on records/denums during probing are rolled back.
+    """
+    from gk_model import Unsup, snake
+    import gk_app
     ins = fn["sig"]["inputs"]
     out = fn["sig"].get("output")
     if node["element"] or node.get("inst") or node["subst"] or len(ins) < 2 or out is None:
         return False
     out_s = rdj.ty(out)
     if "&" in out_s or "'" in out_s or out_s == "()" or out_s == "Self":
-        return False  # a result borrowing the value, which is gone after the call; a builder
+        return False
     if any(re.match(r"&(mut )?(gpui::)?(Window|App|Context)\b", rdj.ty(t)) for _, t in ins[1:]):
         return False
     if fn["generics"]["params"] and any("type" in p["kind"] for p in fn["generics"]["params"]):
-        return False  # a type parameter (Arc::centroid<T>): no closed set
-    # Describing the arguments and the result marks the records and enums they reach as travelling
-    # in or out (a codec is generated for each); a method this rule then refuses must leave no mark
-    # (a StyleRefinement result marked out generated a Wire impl over fields that have none).
+        return False
     flags = {(k, n): (t.get("in"), t.get("out")) for k, tab in (("rec", m.records), ("denum", m.denums))
              for n, t in tab.items()}
 
@@ -841,17 +787,12 @@ def value_read(m, node, it, crate, fn, ctx):
     return True
 
 
-# ---------------------------------------------------------------- after the rules (Model.settle)
-
-
 def post(m):
-    """Statuses these families decide once every rule has run, before the model prunes (Model.settle)."""
+    """Apply late overlay shim marks (`BRIDGED5`) and clear args/ret on bridged `LIBRARY_CALLS`."""
     for it in m.all_items():
         if it["id"] in BRIDGED5 and it["status"] in ("todo", "norule"):
             it.update(kind="shim", status="bridged", reason="", detail=BRIDGED5[it["id"]], args=[])
             it.pop("ret", None)
         if it["id"] in LIBRARY_CALLS and it["status"] == "bridged":
-            # served by the library's own call: its upstream arguments are not on any wire, so the
-            # pruning (an argument type nothing builds) must not take it back (DockSkin::dock_area)
             it["args"] = []
             it.pop("ret", None)

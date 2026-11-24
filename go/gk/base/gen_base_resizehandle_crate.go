@@ -16,7 +16,7 @@ type ResizeHandleEl struct{ rt.El }
 // `ResizablePanelGroup` owns -- an application's sidebar, say. What the drag resizes is the
 // caller's; see `resize_handle`.
 //
-// KitResizeHandle is gpui_kit::component::resize_handle.
+// KitResizeHandle calls gpui_kit::component::resize_handle.
 func KitResizeHandle(id gk.ID, axis gk.Axis) ResizeHandleEl {
 	rt.UseBaseResizable()
 	n := rt.NewNode(870)
@@ -43,7 +43,7 @@ func KitResizeHandle(id gk.ID, axis gk.Axis) ResizeHandleEl {
 // `group`, hitbox behavior or `on_drag` set through the interactive element traits is replaced
 // when the band is laid out.
 //
-// ResizeHandle is gpui_kit::base::resize_handle.
+// ResizeHandle calls gpui_kit::base::resize_handle.
 func ResizeHandle(id gk.ID, axis gk.Axis) ResizeHandleEl {
 	rt.UseBaseResizable()
 	n := rt.NewNode(869)
@@ -56,7 +56,7 @@ func ResizeHandle(id gk.ID, axis gk.Axis) ResizeHandleEl {
 // Keep the whole handle inside its container, hugging `edge`, instead of straddling the boundary
 // it resizes.
 //
-// Inside is <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::inside.
+// Inside calls <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::inside.
 func (e ResizeHandleEl) Inside(edge HandleEdge) ResizeHandleEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(edge))
@@ -70,7 +70,7 @@ func (e ResizeHandleEl) Inside(edge HandleEdge) ResizeHandleEl {
 // GPUI tells drags apart by the type of their payload, so the drag carries `value` itself, and a
 // caller following it with `on_drag_move` listens for a `T`.
 //
-// OnDrag is <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::on_drag.
+// OnDrag calls <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::on_drag.
 func (e ResizeHandleEl) OnDrag(value gk.DragValue, f gk.View) ResizeHandleEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutDragValue(o, value)
@@ -80,7 +80,7 @@ func (e ResizeHandleEl) OnDrag(value gk.DragValue, f gk.View) ResizeHandleEl {
 
 // Hand the painted part of this handle to `appearance`.
 //
-// WithAppearance is <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::with_appearance.
+// WithAppearance calls <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::with_appearance.
 func (e ResizeHandleEl) WithAppearance(appearance gk.ResizeHandleRenderer) ResizeHandleEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	switch x := appearance.(type) {
@@ -100,6 +100,8 @@ func (e ResizeHandleEl) WithAppearance(appearance gk.ResizeHandleRenderer) Resiz
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e ResizeHandleEl) BlockMouseExceptScroll() ResizeHandleEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -107,6 +109,8 @@ func (e ResizeHandleEl) BlockMouseExceptScroll() ResizeHandleEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e ResizeHandleEl) CanDrop(predicate gk.DropAccept) ResizeHandleEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -116,6 +120,8 @@ func (e ResizeHandleEl) CanDrop(predicate gk.DropAccept) ResizeHandleEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e ResizeHandleEl) CaptureAction(listener gk.ActionHandler) ResizeHandleEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -125,12 +131,14 @@ func (e ResizeHandleEl) CaptureAction(listener gk.ActionHandler) ResizeHandleEl 
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e ResizeHandleEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e ResizeHandleEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -140,12 +148,14 @@ func (e ResizeHandleEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHa
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e ResizeHandleEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e ResizeHandleEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -155,6 +165,8 @@ func (e ResizeHandleEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ResizeHand
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e ResizeHandleEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -164,6 +176,8 @@ func (e ResizeHandleEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) 
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e ResizeHandleEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -173,6 +187,8 @@ func (e ResizeHandleEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Re
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e ResizeHandleEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -182,12 +198,16 @@ func (e ResizeHandleEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mouse
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e ResizeHandleEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) ResizeHandleEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e ResizeHandleEl) DragOver(f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -195,6 +215,8 @@ func (e ResizeHandleEl) DragOver(f gk.StyleRefinement) ResizeHandleEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e ResizeHandleEl) Focus(f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -204,30 +226,40 @@ func (e ResizeHandleEl) Focus(f gk.StyleRefinement) ResizeHandleEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e ResizeHandleEl) FocusVisible(f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e ResizeHandleEl) Group(group string) ResizeHandleEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e ResizeHandleEl) GroupDragOver(groupName string, f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e ResizeHandleEl) GroupHover(groupName string, f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e ResizeHandleEl) Hover(f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -235,6 +267,8 @@ func (e ResizeHandleEl) Hover(f gk.StyleRefinement) ResizeHandleEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e ResizeHandleEl) InFocus(f gk.StyleRefinement) ResizeHandleEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -242,6 +276,8 @@ func (e ResizeHandleEl) InFocus(f gk.StyleRefinement) ResizeHandleEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e ResizeHandleEl) KeyContext(keyContext string) ResizeHandleEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -249,12 +285,16 @@ func (e ResizeHandleEl) KeyContext(keyContext string) ResizeHandleEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e ResizeHandleEl) Occlude() ResizeHandleEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e ResizeHandleEl) OnAction(listener gk.ActionHandler) ResizeHandleEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -264,12 +304,14 @@ func (e ResizeHandleEl) OnAction(listener gk.ActionHandler) ResizeHandleEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e ResizeHandleEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e ResizeHandleEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -280,6 +322,8 @@ func (e ResizeHandleEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHandleE
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e ResizeHandleEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) ResizeHandleEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -290,6 +334,8 @@ func (e ResizeHandleEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureE
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e ResizeHandleEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) ResizeHandleEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -301,6 +347,8 @@ func (e ResizeHandleEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx,
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e ResizeHandleEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) ResizeHandleEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -310,6 +358,8 @@ func (e ResizeHandleEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent))
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e ResizeHandleEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) ResizeHandleEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -322,6 +372,8 @@ func (e ResizeHandleEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) ResizeH
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e ResizeHandleEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) ResizeHandleEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -331,6 +383,8 @@ func (e ResizeHandleEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEve
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e ResizeHandleEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) ResizeHandleEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -340,6 +394,8 @@ func (e ResizeHandleEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Resiz
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e ResizeHandleEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) ResizeHandleEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -349,6 +405,8 @@ func (e ResizeHandleEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) ResizeH
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e ResizeHandleEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) ResizeHandleEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -358,12 +416,14 @@ func (e ResizeHandleEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifie
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e ResizeHandleEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e ResizeHandleEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -374,12 +434,14 @@ func (e ResizeHandleEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *g
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e ResizeHandleEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e ResizeHandleEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -389,12 +451,14 @@ func (e ResizeHandleEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ResizeHandleE
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e ResizeHandleEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e ResizeHandleEl) OnMouseExitDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -404,12 +468,14 @@ func (e ResizeHandleEl) OnMouseExitDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e ResizeHandleEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e ResizeHandleEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -419,6 +485,8 @@ func (e ResizeHandleEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e ResizeHandleEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) ResizeHandleEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -428,12 +496,14 @@ func (e ResizeHandleEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePress
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e ResizeHandleEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e ResizeHandleEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -444,12 +514,14 @@ func (e ResizeHandleEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e ResizeHandleEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e ResizeHandleEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -459,6 +531,8 @@ func (e ResizeHandleEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e ResizeHandleEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) ResizeHandleEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -468,6 +542,8 @@ func (e ResizeHandleEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Resiz
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e ResizeHandleEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) ResizeHandleEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -477,6 +553,8 @@ func (e ResizeHandleEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Res
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e ResizeHandleEl) TabGroup() ResizeHandleEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -485,6 +563,8 @@ func (e ResizeHandleEl) TabGroup() ResizeHandleEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e ResizeHandleEl) TabIndex(index int) ResizeHandleEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -494,6 +574,8 @@ func (e ResizeHandleEl) TabIndex(index int) ResizeHandleEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e ResizeHandleEl) TabStop(tabStop bool) ResizeHandleEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -501,6 +583,8 @@ func (e ResizeHandleEl) TabStop(tabStop bool) ResizeHandleEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e ResizeHandleEl) TrackFocus(focusHandle gk.FocusHandle) ResizeHandleEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -508,12 +592,14 @@ func (e ResizeHandleEl) TrackFocus(focusHandle gk.FocusHandle) ResizeHandleEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e ResizeHandleEl) WindowControlArea(area gk.WindowControlArea) ResizeHandleEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -521,6 +607,8 @@ func (e ResizeHandleEl) WindowControlArea(area gk.WindowControlArea) ResizeHandl
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e ResizeHandleEl) A11ySyntheticChildren(f []gk.A11yChild) ResizeHandleEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -532,25 +620,31 @@ func (e ResizeHandleEl) A11ySyntheticChildren(f []gk.A11yChild) ResizeHandleEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e ResizeHandleEl) AccessibilityID(id string) ResizeHandleEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e ResizeHandleEl) Active(f gk.StyleRefinement) ResizeHandleEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e ResizeHandleEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) ResizeHandleEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -559,19 +653,25 @@ func (e ResizeHandleEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) Re
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e ResizeHandleEl) AriaActiveDescendant() ResizeHandleEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e ResizeHandleEl) AriaColumnCount(count int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e ResizeHandleEl) AriaColumnIndex(index int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -580,12 +680,16 @@ func (e ResizeHandleEl) AriaColumnIndex(index int) ResizeHandleEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e ResizeHandleEl) AriaDescription(description string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e ResizeHandleEl) AriaExpanded(expanded bool) ResizeHandleEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -596,36 +700,48 @@ func (e ResizeHandleEl) AriaExpanded(expanded bool) ResizeHandleEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e ResizeHandleEl) AriaKeyshortcuts(keyshortcuts string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e ResizeHandleEl) AriaLabel(label string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e ResizeHandleEl) AriaLevel(level int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e ResizeHandleEl) AriaMaxNumericValue(value float64) ResizeHandleEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e ResizeHandleEl) AriaMinNumericValue(value float64) ResizeHandleEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e ResizeHandleEl) AriaNumericValue(value float64) ResizeHandleEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -633,6 +749,8 @@ func (e ResizeHandleEl) AriaNumericValue(value float64) ResizeHandleEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e ResizeHandleEl) AriaNumericValueStep(step float64) ResizeHandleEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -640,42 +758,56 @@ func (e ResizeHandleEl) AriaNumericValueStep(step float64) ResizeHandleEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e ResizeHandleEl) AriaPlaceholder(placeholder string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e ResizeHandleEl) AriaPositionInSet(position int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e ResizeHandleEl) AriaRowCount(count int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e ResizeHandleEl) AriaRowIndex(index int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e ResizeHandleEl) AriaSelected(selected bool) ResizeHandleEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e ResizeHandleEl) AriaSizeOfSet(size int) ResizeHandleEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e ResizeHandleEl) AriaValue(value string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -685,18 +817,24 @@ func (e ResizeHandleEl) AriaValue(value string) ResizeHandleEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e ResizeHandleEl) ExternalDragPayload(resolver gk.ExternalDragPayload) ResizeHandleEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e ResizeHandleEl) Focusable() ResizeHandleEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e ResizeHandleEl) GroupActive(groupName string, f gk.StyleRefinement) ResizeHandleEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -705,6 +843,8 @@ func (e ResizeHandleEl) GroupActive(groupName string, f gk.StyleRefinement) Resi
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e ResizeHandleEl) HoverListenerMode(mode gk.HoverListenerMode) ResizeHandleEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -713,6 +853,8 @@ func (e ResizeHandleEl) HoverListenerMode(mode gk.HoverListenerMode) ResizeHandl
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e ResizeHandleEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) ResizeHandleEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -722,12 +864,14 @@ func (e ResizeHandleEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) ResizeHa
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e ResizeHandleEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ResizeHandleEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e ResizeHandleEl) OnAuxClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -737,12 +881,14 @@ func (e ResizeHandleEl) OnAuxClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e ResizeHandleEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ResizeHandleEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e ResizeHandleEl) OnClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -757,24 +903,32 @@ func (e ResizeHandleEl) OnClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e ResizeHandleEl) OnHover(listener func(cx *gk.Cx, e bool)) ResizeHandleEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e ResizeHandleEl) OverflowScroll() ResizeHandleEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e ResizeHandleEl) OverflowXScroll() ResizeHandleEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e ResizeHandleEl) OverflowYScroll() ResizeHandleEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -783,6 +937,8 @@ func (e ResizeHandleEl) OverflowYScroll() ResizeHandleEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e ResizeHandleEl) RestrictScrollToAxis() ResizeHandleEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -791,6 +947,8 @@ func (e ResizeHandleEl) RestrictScrollToAxis() ResizeHandleEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e ResizeHandleEl) Role(role gk.Role) ResizeHandleEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -798,6 +956,8 @@ func (e ResizeHandleEl) Role(role gk.Role) ResizeHandleEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e ResizeHandleEl) Tooltip(buildTooltip gk.ViewOrTooltip) ResizeHandleEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -807,24 +967,30 @@ func (e ResizeHandleEl) Tooltip(buildTooltip gk.ViewOrTooltip) ResizeHandleEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e ResizeHandleEl) TooltipShowDelay(delay time.Duration) ResizeHandleEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e ResizeHandleEl) TrackScroll(scrollHandle gk.ScrollHandle) ResizeHandleEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
 }
 
 // Set the listener for a double click event.
+//
+// OnDoubleClick calls <E as gpui_kit::base::InteractiveElementExt>::on_double_click.
 func (e ResizeHandleEl) OnDoubleClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ResizeHandleEl {
 	tInteractiveElementExtOnDoubleClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnDoubleClickDo is OnDoubleClick with a handler that takes no event (docs/GO.md section 4).
+// OnDoubleClickDo is the event-free convenience variant of OnDoubleClick.
 func (e ResizeHandleEl) OnDoubleClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
 	tInteractiveElementExtOnDoubleClickDo(rt.N(e.Core), listener)
 	return e
@@ -832,6 +998,8 @@ func (e ResizeHandleEl) OnDoubleClickDo(listener func(cx *gk.Cx)) ResizeHandleEl
 
 // Locks scrolling to the gesture's dominant axis, where the platform supports it. See
 // `OngoingScrollExt` for why this is a no-op on wasm32.
+//
+// LockScrollAxis calls <E as gpui_kit::base::InteractiveElementExt>::lock_scroll_axis.
 func (e ResizeHandleEl) LockScrollAxis() ResizeHandleEl {
 	tInteractiveElementExtStatefulInteractiveElementLockScrollAxis(rt.N(e.Core))
 	return e

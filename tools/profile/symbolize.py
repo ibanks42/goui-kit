@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""symbolize.py: what tools/profile/sampler.c recorded, by function, for two or more groups of
-runs (e.g. the Rust reference and the Go app), as main-thread CPU microseconds per frame.
+"""Symbolize and summarize main-thread CPU samples captured by tools/profile/sampler.c.
 
-  symbolize.py [--period-us 50] [--skip 2.0] [--hz 60] [--top 40] NAME=PREFIX[,PREFIX...] ...
+Usage:
+    python3 tools/profile/symbolize.py [--skip S] [--hz HZ] [--top N] GROUP=PREFIX[,PREFIX]...
 
-Each PREFIX is a GK_PROF_OUT of one run (PREFIX.samples, PREFIX.maps). Samples in the first
---skip seconds of a run (start-up and warm-up frames) are left out. A sample stands for the
-main thread's CPU time since the one before (the sampler records that clock); a frame is 1/--hz seconds of wall time (the gates
-pace at 60 Hz). Symbols come from the binaries the maps name (`nm -n -C`), so they must not
-be stripped (gates/profile.sh builds unstripped copies). Standard library only.
+Reads `<prefix>.samples` (packed <QQQ records of ip, monotonic ns, thread CPU ns)
+and `<prefix>.maps` (snapshot of /proc/self/maps), resolves addresses via `nm`
+and `readelf`, and prints CPU microseconds per frame by subsystem, binary, and symbol.
 """
 import bisect
 import collections
@@ -20,13 +18,14 @@ import sys
 
 
 def load_symbols(path, cache={}):
+    """Load sorted demangled text symbol addresses and ELF LOAD segments for binary `path`."""
     if path in cache:
         return cache[path]
     addrs, names = [], []
     segs = []
     try:
         out = subprocess.run(["nm", "-n", "-C", "--defined-only", path], capture_output=True, text=True).stdout
-        if not out.strip():  # a stripped system library: its exported symbols
+        if not out.strip():
             out = subprocess.run(["nm", "-D", "-n", "-C", "--defined-only", path], capture_output=True, text=True).stdout
         for line in out.splitlines():
             p = line.split(" ", 2)
@@ -37,7 +36,7 @@ def load_symbols(path, cache={}):
         for line in ro.splitlines():
             f = line.split()
             if f and f[0] == "LOAD":
-                segs.append((int(f[1], 16), int(f[2], 16), int(f[4], 16)))  # offset, vaddr, filesz
+                segs.append((int(f[1], 16), int(f[2], 16), int(f[4], 16)))
     except OSError:
         pass
     cache[path] = (addrs, names, segs)
@@ -45,6 +44,7 @@ def load_symbols(path, cache={}):
 
 
 def maps_of(prefix):
+    """Parse executable virtual memory mappings from `<prefix>.maps`."""
     out = []
     for line in open(prefix + ".maps"):
         f = line.split()
@@ -57,6 +57,7 @@ def maps_of(prefix):
 
 
 def where(ip, maps):
+    """Resolve an instruction pointer address `ip` to (binary_basename, symbol_name)."""
     i = bisect.bisect_right([m[0] for m in maps], ip) - 1
     if i < 0 or ip >= maps[i][1]:
         return "?", "?"
@@ -75,6 +76,7 @@ def where(ip, maps):
 
 
 def main(argv):
+    """Parse CLI options and sample groups, attribute thread CPU time per frame, and print breakdown tables."""
     opts = {"--period-us": 50.0, "--skip": 2.0, "--hz": 60.0, "--top": 40}
     groups = []
     i = 0
@@ -106,7 +108,7 @@ def main(argv):
                 where_of[sym] = dso
             nframes += max(0.0, last - opts["--skip"]) * opts["--hz"]
         per_sym[name], per_dso[name], frames[name], dso_of[name] = syms, dsos, nframes, where_of
-    us = lambda name, n: n / 1000.0 / frames[name] if frames[name] else 0.0  # noqa: E731  (weights are CPU ns)
+    us = lambda name, n: n / 1000.0 / frames[name] if frames[name] else 0.0
     names = [g[0] for g in groups]
     print(f"main-thread CPU per frame by group (each sample weighted by the thread's CPU time since the one before; first {opts['--skip']:g} s left out, {opts['--hz']:g} frames a second):")
     for nm in names:

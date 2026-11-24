@@ -1,57 +1,97 @@
-//! The tape (DESIGN.md section 6): what a view procedure wrote, kept by the view entity and
-//! decoded into real GPUI-kit elements when GPUI builds that view.
+//! Binary view-tree tape parser, table-cell pre-decoder, and fast-path tree cache.
 //!
-//! Tape bytes, as the binding writes them:
-//!   u32 magic "GKT1", u32 node_count, u32 root, u32 handler_count,
-//!   u16 n_deps, u64 * n      kit state the view procedure read
-//!   u16 n_slots, u64 * n     child views the tape embeds
-//!   u32 ops_len, ops         the op stream; offsets are relative to its start, 0 = none
-//!   nodes: node_count * (u16 type, u32 args, u32 first_op)
-//! An op is u16 opcode, u32 offset of the next op of the same node, arguments.
+//! # Tape Binary Format (`"GKT1"`)
+//!
+//! Each described view returns a self-contained little-endian byte buffer laid out in five
+//! contiguous regions so [`Tape::parse`] can validate every bound up front and decode nodes
+//! with O(1) random access:
+//!
+//! 1. **Fixed header (16 bytes)**: `magic: u32` (`"GKT1"`), `node_count: u32`, `root: u32`
+//!    (root node index in `0..node_count`), and `handlers: u32` (number of event handler slots
+//!    referenced by this tape; nonzero values require a [`GenPin`]).
+//! 2. **State dependencies (`2 + 8 * n_deps` bytes)**: `n_deps: u16` followed by `HK_STATE`
+//!    handles read while describing the view; `rt::accept_one` attaches GPUI observers to each.
+//! 3. **Child view slots (`2 + 8 * n_slots` bytes)**: `n_slots: u16` followed by child `HK_VIEW`
+//!    handles embedded in this view; `rt::accept_one` mounts each into the owning window and
+//!    promotes any pending `unmounted_dirty` entries.
+//! 4. **Ops arena (`4 + ops_len` bytes)**: `ops_len: u32` followed by raw bytes containing both
+//!    node constructor arguments (`args` offsets) and singly linked builder-op lists
+//!    (`[op: u16][next_offset: u32][payload...]`, terminated by `next_offset == 0`). Offset `0`
+//!    is reserved as the null/end sentinel, so every valid op sits at offset `>= 1`.
+//! 5. **Node table (`10 * node_count` bytes)**: packed 10-byte records `(ty: u16, args: u32,
+//!    first_op: u32)` indexed directly by node ID at `nodes_at + n * NODE_SIZE`.
+//!
+//! # Fast-Path Caching and `RELEASE_EPOCH`
+//!
+//! Views with `handlers == 0` whose nodes and style ops all fall within the common subset
+//! (div/h_flex/v_flex, bare `Label`, bare `N_TEXT`, child views, and `N_UNIFORM_LIST`) can be
+//! compiled into a [`FastTree`] after their first frame (`GkView::renders >= 1` confirms the
+//! tape is actually reused across frames rather than immediately replaced). `FastTree` caches
+//! resolved `AnyView` and `Entity<RowStore>` handles alongside pre-decoded `FastStyle` arrays,
+//! while keeping theme colors symbolic so theme switches still take effect on render. Each
+//! `FastTree` stamps the current `rt::release_epoch()`; whenever any handle is released anywhere
+//! in the session, `RELEASE_EPOCH` advances and `GkView::render` drops the cached `FastTree` so
+//! stale cached views or row stores are never rendered.
 
 use crate::ops::*;
 use crate::rt::{GkErr, GkResult};
 use crate::wire::R;
 use gpui_kit::SharedString;
 
+/// Little-endian ASCII `"GKT1"` header magic validating tape framing and format version 1.
 const MAGIC: u32 = 0x3154_4b47;
+/// Size in bytes of one node-table entry: `ty: u16` (2) + `args: u32` (4) + `first_op: u32` (4).
 const NODE_SIZE: usize = 10;
-/// `gpui_kit::component::label::Label::new` in `api/opcodes.lock` (append-only).
+
+/// Generated opcode for `gpui_kit::component::label::Label`, matched directly by both
+/// [`parse_table_cells`] and [`build_fast_node`] to bypass generated builder dispatch.
 const NODE_COMPONENT_LABEL: u16 = 685;
 
-/// One cell of an `N_TABLE_CELLS` tape, pre-parsed once when the row's tape is accepted.
-/// Plain labels and text nodes keep their `SharedString` ready to clone with zero per-frame
-/// allocation or indirect family dispatch; any other cell decodes its node through the full
-/// tape decoder.
+/// Pre-decoded column entry extracted from an `N_TABLE_CELLS` row tape during [`Tape::parse`].
+///
+/// Unstyled `Label` and `N_TEXT` cells are copied into `SharedString` once at parse time so
+/// `GkTableDelegate::render_td` can emit them without opening a [`crate::genapi::Dx`] decoder
+/// on every cell scroll; any cell with style ops or another opcode keeps its node index for
+/// general decoding.
 pub enum TableCell {
     Label(SharedString),
     Text(SharedString),
     Node(u32),
 }
 
+/// Parsed, immutable view tape owning its raw byte buffer and pre-validated section offsets.
 pub struct Tape {
     bytes: Vec<u8>,
+    /// Monotonic host generation counter paired with `view` when retiring old handler tables.
     pub generation: u32,
-    /// The token every holder of this description shares (the tape, and each handler closure made
-    /// from it: `genapi::Dx::pin`); set when the library accepts a view's tape (`rt::accept`),
-    /// none for a tape of no view (a fragment a call op carries) or a tape with zero handlers.
+    /// Shared retirement pin cloned into every GPUI event closure decoded from this tape.
+    /// When `handlers == 0`, no pin is allocated and nothing needs retirement.
     pub pin: Option<std::sync::Arc<GenPin>>,
+    /// Byte offset where the ops arena begins inside `bytes`.
     ops_at: usize,
+    /// Byte length of the ops arena.
     ops_len: usize,
+    /// Byte offset where the fixed-stride node table begins (`ops_at + ops_len`).
     nodes_at: usize,
     node_count: u32,
+    /// Root node index (`0..node_count`).
     pub root: u32,
+    /// Number of host event handlers referenced by this tape; gates both [`GenPin`] allocation
+    /// and [`FastTree`] eligibility.
     pub handlers: u32,
+    /// `HK_STATE` handles whose mutations should mark the owning view dirty.
     pub deps: Vec<u64>,
+    /// Child `HK_VIEW` handles embedded in this tape to be mounted in the parent's window.
     pub slots: Vec<u64>,
+    /// Pre-parsed column entries when `root` is an `N_TABLE_CELLS` table-row container.
     pub table_cells: Option<Box<[TableCell]>>,
 }
 
-/// One view description's handlers, held by everything that may still fire one: the tape (its
-/// view, an element or kept value built from it, such as an open menu) and each handler closure
-/// made from it. When the last holder lets go its handlers can no longer fire, so the binding may
-/// forget their table: `rt::retire` hands (view, generation) to the next VIEWS turn (docs/
-/// PROTOCOLS.md section 4). Shared with an Arc: upstream may ask for a closure that is Send.
+/// Reference-counted retirement token keeping a tape's host handler table alive until both the
+/// [`Tape`] itself and every GPUI event closure (`TapePin`) created from it have been dropped.
+///
+/// Dropping the last `Arc<GenPin>` calls [`crate::rt::retire`], which is safe from any thread and
+/// piggybacks `(view, generation)` onto the next turn so the host frees its handler table.
 pub struct GenPin {
     pub view: u64,
     pub generation: u32,
@@ -64,6 +104,13 @@ impl Drop for GenPin {
 }
 
 impl Tape {
+    /// Validates the tape header, dependency/slot lists, ops arena, and exact node-table length,
+    /// returning `ERR_BAD_TAPE` on any truncation or magic mismatch.
+    ///
+    /// Minimum size is 28 bytes (16-byte header + 2-byte `n_deps` + 2-byte `n_slots` + 4-byte
+    /// `ops_len` + at least one 10-byte node would be 34, with 28 guarding the fixed prefix).
+    /// When the root node is `N_TABLE_CELLS`, immediately runs [`parse_table_cells`] once so
+    /// table cell rendering avoids repeated per-cell tape parsing.
     pub fn parse(bytes: Vec<u8>, generation: u32) -> GkResult<Tape> {
         let bad = |m: &str| GkErr(ERR_BAD_TAPE, m.to_string());
         if bytes.len() < 28 {
@@ -113,18 +160,21 @@ impl Tape {
         Ok(tape)
     }
 
-    /// (type, args offset, first op offset) of a node.
+    /// Returns `(node_type, args_offset, first_op_offset)` for node index `n`.
     pub fn node(&self, n: u32) -> (u16, u32, u32) {
         assert!(n < self.node_count, "gk: tape names node {n} of {}", self.node_count);
         let mut r = R::at(&self.bytes, self.nodes_at + n as usize * NODE_SIZE);
         (r.u16(), r.u32(), r.u32())
     }
 
+    /// Returns the raw ops byte slice shared by all nodes in this tape.
     pub fn ops(&self) -> &[u8] {
         &self.bytes[self.ops_at..self.ops_at + self.ops_len]
     }
 }
 
+/// Bounds-checked UTF-8 string reader (`[len: u32][utf8...]`) used by fast-path pre-decoders
+/// so malformed or non-UTF-8 payloads gracefully fall back instead of panicking inside `R`.
 fn try_read_str(ops: &[u8], at: usize) -> Option<&str> {
     let end = at.checked_add(4)?;
     let n = u32::from_le_bytes(ops.get(at..end)?.try_into().ok()?) as usize;
@@ -132,6 +182,12 @@ fn try_read_str(ops: &[u8], at: usize) -> Option<&str> {
     std::str::from_utf8(bytes).ok()
 }
 
+/// Pre-decodes an `N_TABLE_CELLS` root (`[n_cols: u32][child_node_id: u32*]`) into a boxed slice
+/// of [`TableCell`]s.
+///
+/// Cells with `first_op == 0` (no builder/style ops) whose type is `NODE_COMPONENT_LABEL` or
+/// `N_TEXT` materialize their `SharedString` once; all other cells keep their node index so
+/// `render_td` runs the full decoder on them. Returns `None` if the list is out of bounds.
 fn parse_table_cells(tape: &Tape, root_args: u32) -> Option<Box<[TableCell]>> {
     let ops = tape.ops();
     let at = root_args as usize;
@@ -166,18 +222,33 @@ fn parse_table_cells(tape: &Tape, root_args: u32) -> Option<Box<[TableCell]>> {
     Some(cells.into_boxed_slice())
 }
 
-// --- Lazy fast-path cache for unchanged tapes decoded repeatedly -----------------------------
-
-/// A compact, pre-parsed element tree built lazily on the second render of an unchanged tape
-/// (for views like counter's root, echo, and list that gpui-fast rebuilds on every click while
-/// their tape never changes). Changing tapes never build one. Style ops are stored directly as a
-/// small flat slice instead of cloning `StyleRefinement`; theme colors stay symbolic and resolve
-/// against `cx.theme()` on every render; handles are guarded by `rt::release_epoch()`.
+/// Pre-decoded element tree for handler-free views containing only common divs, text, labels,
+/// child views, and uniform lists.
+///
+/// # Caching and Invalidation Contract
+///
+/// - **Unchanged-tape detection**: `GkView` drops its `FastTree` and resets `renders = 0` every
+///   time `rt::accept_one` installs a new `Rc<Tape>`. Only when GPUI re-renders the exact same
+///   `Tape` on a subsequent frame (`renders >= 1`) does `GkView` call [`FastTree::try_build`],
+///   avoiding compilation overhead on views that change every frame.
+/// - **What is cached**: node hierarchy (`FastNode`), pre-parsed `FastStyle` values (lengths,
+///   HSLA colors, style tokens, and symbolic theme-color IDs), `SharedString` text/labels, and
+///   resolved GPUI `AnyView` / `Entity<RowStore>` handles.
+/// - **`RELEASE_EPOCH` guard**: because `FastNode::ChildView` and `FastNode::UniformList` cache
+///   resolved GPUI entity handles, every `Session::release` increments `RELEASE_EPOCH`. Before
+///   replaying a `FastTree`, `GkView::render` checks `fast.epoch == rt::release_epoch()`; any
+///   mismatch clears the cache so a released handle is caught by the general decoder rather than
+///   silently keeping an old entity alive.
 pub struct FastTree {
+    /// Snapshot of `rt::release_epoch()` taken when this tree was compiled.
     pub epoch: u64,
     root: FastNode,
 }
 
+/// Compact pre-decoded representation of high-frequency `Styled` builder ops.
+///
+/// Theme colors (`ThemeBg`, `ThemeText`, `ThemeBorder`) store their token ID rather than a
+/// resolved `Hsla` so switching light/dark themes updates cached views immediately on next paint.
 #[derive(Clone, Copy)]
 enum FastStyle {
     Token(u16),
@@ -235,15 +306,19 @@ enum FastStyle {
     Opacity(f32),
 }
 
+/// Compiled node variants supported by [`FastTree`].
 enum FastNode {
+    /// `kind`: `0` = `div()`, `1` = `h_flex()`, `2` = `v_flex()`.
     Div {
-        kind: u8, // 0 = div, 1 = h_flex, 2 = v_flex
+        kind: u8,
         styles: Box<[FastStyle]>,
         children: Box<[FastNode]>,
     },
+    /// Cached `AnyView` resolved from `E_CHILD_VIEW` (invalidated via `RELEASE_EPOCH`).
     ChildView(gpui_kit::AnyView),
     Label(SharedString),
     Text(SharedString),
+    /// Cached `RowStore` entity resolved from `N_UNIFORM_LIST` (invalidated via `RELEASE_EPOCH`).
     UniformList {
         id: SharedString,
         store: gpui_kit::Entity<crate::rt::RowStore>,
@@ -252,6 +327,11 @@ enum FastNode {
 }
 
 impl FastTree {
+    /// Attempts to compile `tape` into a [`FastTree`] stamped with `epoch`.
+    ///
+    /// Returns `None` immediately when `tape.handlers != 0` (event closures require a `Dx` and
+    /// `TapePin`) or when any node or op is outside the fast-path subset, letting `GkView::render`
+    /// fall back to `genapi::root` and remember `fast_tried = true`.
     pub fn try_build(tape: &Tape, epoch: u64) -> Option<Self> {
         if tape.handlers != 0 {
             return None;
@@ -260,11 +340,18 @@ impl FastTree {
         Some(FastTree { epoch, root })
     }
 
+    /// Instantiates a fresh GPUI `AnyElement` tree from the cached [`FastNode`]s without
+    /// re-reading tape bytes.
     pub fn render(&self, cx: &mut gpui_kit::App) -> gpui_kit::AnyElement {
         self.root.render(cx)
     }
 }
 
+/// Decodes a subset of high-frequency generated `Styled` opcodes into [`FastStyle`] entries.
+///
+/// The numeric opcode arms (`16897..=16973`) correspond to the generated `Styled` method opcodes
+/// in `core/src/gen/`. Gradients (`COLOR_GRADIENT`) and any unsupported op return `false`,
+/// aborting `FastTree` compilation cleanly for that view.
 fn push_fast_style_op(out: &mut Vec<FastStyle>, op: u16, r: &mut R) -> bool {
     use crate::generated::{absolute_length, definite_length, length};
     use gpui_kit::hsla;
@@ -342,6 +429,8 @@ fn push_fast_style_op(out: &mut Vec<FastStyle>, op: u16, r: &mut R) -> bool {
     }
 }
 
+/// Replays pre-decoded [`FastStyle`] entries onto `style`, resolving symbolic theme tokens
+/// against `cx.theme()` at render time.
 #[inline]
 fn apply_fast_styles(style: &mut gpui_kit::StyleRefinement, styles: &[FastStyle], cx: &gpui_kit::App) {
     use crate::generated::W;
@@ -418,12 +507,15 @@ fn apply_fast_styles(style: &mut gpui_kit::StyleRefinement, styles: &[FastStyle]
     }
 }
 
+/// Recursively compiles node `n` into a [`FastNode`], returning `None` if any descendant,
+/// handle lookup, or op falls outside the fast-path subset.
 fn build_fast_node(tape: &Tape, ops: &[u8], n: u32) -> Option<FastNode> {
     if n >= tape.node_count {
         return None;
     }
     let (ty, args, first) = tape.node(n);
     match ty {
+        // Generated opcodes 256=h_flex, 257=v_flex, 258=div.
         256..=258 => {
             let kind = match ty {
                 256 => 1,

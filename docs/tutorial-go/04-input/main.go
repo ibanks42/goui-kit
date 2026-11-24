@@ -1,4 +1,4 @@
-// Step 4 of the Go tutorial: an input; Enter adds what was typed.
+// Step 4 of the Go tutorial: add a text input and append items on Enter.
 package main
 
 import (
@@ -25,6 +25,7 @@ type App struct {
 	list    table.ListState
 }
 
+// init builds both window-backed states and subscribes to input events.
 func (a *App) init(cx *gk.Cx) {
 	a.newName = editor.NewInputState(cx).Placeholder("Add an item and press Enter").Build()
 	a.newName.OnInputEvent(cx, a.newNameEvent)
@@ -48,6 +49,8 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		Child(kit.Label(fmt.Sprintf("%d items", len(a.items)), s.TextSm).TextColor(theme.MutedForeground))
 }
 
+// newNameEvent receives every InputEvent (change, enter, focus, blur) and adds
+// a new grocery item when the user presses Enter.
 func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 	if _, enter := e.(editor.InputEventPressEnter); !enter {
 		return
@@ -58,6 +61,7 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 	}
 	a.items = append(a.items, Item{name, 1})
 	a.newName.SetValue(cx, "")
+	// Select the newly appended row and scroll it into view if the list is full.
 	table.SelectRow(cx, a.list, len(a.items)-1, table.ScrollIntoView)
 	gk.Refresh(cx)
 }

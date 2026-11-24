@@ -14,7 +14,7 @@ type ProgressEl struct {
 
 // Create a new Progress bar.
 //
-// Progress is <gpui_kit::component::progress::Progress>::new.
+// Progress calls <gpui_kit::component::progress::Progress>::new.
 func Progress(id gk.ID, st ...gk.Style) ProgressEl {
 	rt.UseComponentProgress()
 	n := rt.NewNode(716)
@@ -26,7 +26,7 @@ func Progress(id gk.ID, st ...gk.Style) ProgressEl {
 
 // Set the accessible name exposed by the progress indicator.
 //
-// AccessibilityLabel is <gpui_kit::component::progress::Progress>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::progress::Progress>::accessibility_label.
 func (e ProgressEl) AccessibilityLabel(label string) ProgressEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -35,7 +35,7 @@ func (e ProgressEl) AccessibilityLabel(label string) ProgressEl {
 
 // Set the color of the progress bar.
 //
-// Color is <gpui_kit::component::progress::Progress>::color.
+// Color calls <gpui_kit::component::progress::Progress>::color.
 func (e ProgressEl) Color(color gk.Color) ProgressEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -47,7 +47,7 @@ func (e ProgressEl) Color(color gk.Color) ProgressEl {
 // When `loading` is `true`, the `value` is ignored and an infinite sliding animation is shown
 // instead.
 //
-// Loading is <gpui_kit::component::progress::Progress>::loading.
+// Loading calls <gpui_kit::component::progress::Progress>::loading.
 func (e ProgressEl) Loading(loading bool) ProgressEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(loading)
@@ -58,7 +58,7 @@ func (e ProgressEl) Loading(loading bool) ProgressEl {
 //
 // The value should be between 0.0 and 100.0.
 //
-// Value is <gpui_kit::component::progress::Progress>::value.
+// Value calls <gpui_kit::component::progress::Progress>::value.
 func (e ProgressEl) Value(value float32) ProgressEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(value)
@@ -67,29 +67,37 @@ func (e ProgressEl) Value(value float32) ProgressEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ProgressEl) PopoverStyle() ProgressEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ProgressEl) RoundedFullStyle() ProgressEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ProgressEl) BorderE(width gk.Length) ProgressEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ProgressEl) BorderS(width gk.Length) ProgressEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -97,121 +105,163 @@ func (e ProgressEl) BorderS(width gk.Length) ProgressEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ProgressEl) FlexRowDir() ProgressEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ProgressEl) InsetE(length gk.Length) ProgressEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ProgressEl) InsetS(length gk.Length) ProgressEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ProgressEl) JustifyFlexEnd() ProgressEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ProgressEl) JustifyFlexStart() ProgressEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ProgressEl) Me(length gk.Length) ProgressEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ProgressEl) Ms(length gk.Length) ProgressEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ProgressEl) Pe(length gk.Length) ProgressEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ProgressEl) Ps(length gk.Length) ProgressEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ProgressEl) RoundedE(radius gk.Length) ProgressEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ProgressEl) RoundedS(radius gk.Length) ProgressEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ProgressEl) TextEnd() ProgressEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ProgressEl) TextStart() ProgressEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ProgressEl) CornerRadii(radius gk.Corners) ProgressEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ProgressEl) DebugBlue() ProgressEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ProgressEl) DebugFocused(focusHandle gk.FocusHandle) ProgressEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ProgressEl) DebugGreen() ProgressEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ProgressEl) DebugPink() ProgressEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ProgressEl) DebugRed() ProgressEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ProgressEl) DebugYellow() ProgressEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ProgressEl) FontBlack() ProgressEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ProgressEl) FontBold() ProgressEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ProgressEl) FontExtrabold() ProgressEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ProgressEl) FontExtralight() ProgressEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ProgressEl) FontLight() ProgressEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ProgressEl) FontMedium() ProgressEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ProgressEl) FontNormal() ProgressEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ProgressEl) FontSemibold() ProgressEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ProgressEl) FontThin() ProgressEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -220,18 +270,23 @@ func (e ProgressEl) FontThin() ProgressEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ProgressEl) HFlex() ProgressEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ProgressEl) Margins(margins gk.EdgesInto) ProgressEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ProgressEl) Paddings(paddings gk.EdgesInto) ProgressEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ProgressEl) RefineStyle(style gk.StyleRefinement) ProgressEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -241,21 +296,29 @@ func (e ProgressEl) RefineStyle(style gk.StyleRefinement) ProgressEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ProgressEl) VFlex() ProgressEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ProgressEl) Style(st ...gk.Style) ProgressEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ProgressEl) AspectRatio(ratio float32) ProgressEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ProgressEl) Bg(fill gk.Fill) ProgressEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ProgressEl) Border(length gk.Length) ProgressEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -263,12 +326,16 @@ func (e ProgressEl) Border(length gk.Length) ProgressEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ProgressEl) BorderB(length gk.Length) ProgressEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ProgressEl) BorderColor(borderColor gk.Color) ProgressEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -276,6 +343,8 @@ func (e ProgressEl) BorderColor(borderColor gk.Color) ProgressEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ProgressEl) BorderL(length gk.Length) ProgressEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -283,6 +352,8 @@ func (e ProgressEl) BorderL(length gk.Length) ProgressEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ProgressEl) BorderR(length gk.Length) ProgressEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -290,6 +361,8 @@ func (e ProgressEl) BorderR(length gk.Length) ProgressEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ProgressEl) BorderT(length gk.Length) ProgressEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -297,6 +370,8 @@ func (e ProgressEl) BorderT(length gk.Length) ProgressEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ProgressEl) BorderX(length gk.Length) ProgressEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -304,6 +379,8 @@ func (e ProgressEl) BorderX(length gk.Length) ProgressEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ProgressEl) BorderY(length gk.Length) ProgressEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -311,21 +388,31 @@ func (e ProgressEl) BorderY(length gk.Length) ProgressEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ProgressEl) Bottom(length gk.Length) ProgressEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ProgressEl) ColEnd(end int16) ProgressEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ProgressEl) ColSpan(span uint16) ProgressEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ProgressEl) ColStart(start int16) ProgressEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ProgressEl) Cursor(cursor gk.CursorStyle) ProgressEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -333,30 +420,42 @@ func (e ProgressEl) Cursor(cursor gk.CursorStyle) ProgressEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ProgressEl) FlexBasis(basis gk.Length) ProgressEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ProgressEl) FlexGrow(grow float32) ProgressEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ProgressEl) FlexShrink(shrink float32) ProgressEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ProgressEl) Font(font gk.Font) ProgressEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ProgressEl) FontFamily(familyName string) ProgressEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ProgressEl) FontFeatures(features gk.FontFeatures) ProgressEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -365,26 +464,38 @@ func (e ProgressEl) FontFeatures(features gk.FontFeatures) ProgressEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ProgressEl) FontWeight(weight gk.FontWeight) ProgressEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ProgressEl) Gap(length gk.Length) ProgressEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ProgressEl) GapX(length gk.Length) ProgressEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ProgressEl) GapY(length gk.Length) ProgressEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ProgressEl) GridCols(cols uint16) ProgressEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ProgressEl) GridColsMaxContent(cols uint16) ProgressEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -392,15 +503,21 @@ func (e ProgressEl) GridColsMaxContent(cols uint16) ProgressEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ProgressEl) GridColsMinContent(cols uint16) ProgressEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ProgressEl) GridRows(rows uint16) ProgressEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ProgressEl) GridRowsMaxContent(rows uint16) ProgressEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -408,121 +525,179 @@ func (e ProgressEl) GridRowsMaxContent(rows uint16) ProgressEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ProgressEl) GridRowsMinContent(rows uint16) ProgressEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ProgressEl) H(length gk.Length) ProgressEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ProgressEl) Inset(length gk.Length) ProgressEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ProgressEl) Left(length gk.Length) ProgressEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ProgressEl) LineClamp(lines int) ProgressEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ProgressEl) LineHeight(lineHeight gk.Length) ProgressEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ProgressEl) M(length gk.Length) ProgressEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ProgressEl) MaxH(length gk.Length) ProgressEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ProgressEl) MaxSize(length gk.Length) ProgressEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ProgressEl) MaxW(length gk.Length) ProgressEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ProgressEl) Mb(length gk.Length) ProgressEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ProgressEl) MinH(length gk.Length) ProgressEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ProgressEl) MinSize(length gk.Length) ProgressEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ProgressEl) MinW(length gk.Length) ProgressEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ProgressEl) Ml(length gk.Length) ProgressEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ProgressEl) Mr(length gk.Length) ProgressEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ProgressEl) Mt(length gk.Length) ProgressEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ProgressEl) Mx(length gk.Length) ProgressEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ProgressEl) My(length gk.Length) ProgressEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ProgressEl) Opacity(opacity float32) ProgressEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ProgressEl) P(length gk.Length) ProgressEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ProgressEl) Pb(length gk.Length) ProgressEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ProgressEl) Pl(length gk.Length) ProgressEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ProgressEl) Pr(length gk.Length) ProgressEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ProgressEl) Pt(length gk.Length) ProgressEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ProgressEl) Px(length gk.Length) ProgressEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ProgressEl) Py(length gk.Length) ProgressEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ProgressEl) Right(length gk.Length) ProgressEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ProgressEl) Rounded(length gk.Length) ProgressEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -530,6 +705,8 @@ func (e ProgressEl) Rounded(length gk.Length) ProgressEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ProgressEl) RoundedB(length gk.Length) ProgressEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -537,6 +714,8 @@ func (e ProgressEl) RoundedB(length gk.Length) ProgressEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ProgressEl) RoundedBl(length gk.Length) ProgressEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -544,6 +723,8 @@ func (e ProgressEl) RoundedBl(length gk.Length) ProgressEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ProgressEl) RoundedBr(length gk.Length) ProgressEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -551,6 +732,8 @@ func (e ProgressEl) RoundedBr(length gk.Length) ProgressEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ProgressEl) RoundedL(length gk.Length) ProgressEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -558,6 +741,8 @@ func (e ProgressEl) RoundedL(length gk.Length) ProgressEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ProgressEl) RoundedR(length gk.Length) ProgressEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -565,6 +750,8 @@ func (e ProgressEl) RoundedR(length gk.Length) ProgressEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ProgressEl) RoundedT(length gk.Length) ProgressEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -572,6 +759,8 @@ func (e ProgressEl) RoundedT(length gk.Length) ProgressEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ProgressEl) RoundedTl(length gk.Length) ProgressEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -579,39 +768,55 @@ func (e ProgressEl) RoundedTl(length gk.Length) ProgressEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ProgressEl) RoundedTr(length gk.Length) ProgressEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ProgressEl) RowEnd(end int16) ProgressEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ProgressEl) RowSpan(span uint16) ProgressEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ProgressEl) RowStart(start int16) ProgressEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ProgressEl) ScrollbarWidth(width gk.Length) ProgressEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ProgressEl) Shadow(shadows []gk.BoxShadow) ProgressEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ProgressEl) Size(length gk.Length) ProgressEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ProgressEl) TextAlign(align gk.TextAlign) ProgressEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -620,23 +825,31 @@ func (e ProgressEl) TextAlign(align gk.TextAlign) ProgressEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ProgressEl) TextBg(bg gk.Color) ProgressEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ProgressEl) TextColor(color gk.Color) ProgressEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ProgressEl) TextDecorationColor(color gk.Color) ProgressEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ProgressEl) TextOverflow(overflow gk.TextOverflow) ProgressEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -645,6 +858,8 @@ func (e ProgressEl) TextOverflow(overflow gk.TextOverflow) ProgressEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ProgressEl) TextSize(size gk.Length) ProgressEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -652,27 +867,39 @@ func (e ProgressEl) TextSize(size gk.Length) ProgressEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ProgressEl) Top(length gk.Length) ProgressEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ProgressEl) W(length gk.Length) ProgressEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ProgressEl) Large() ProgressEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ProgressEl) Small() ProgressEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ProgressEl) WithSize(size gk.SizeInto) ProgressEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ProgressEl) Xsmall() ProgressEl { tSizableXsmall(rt.N(e.Core)); return e }
 
 // ProgressCircleEl is gpui_kit::component::progress::ProgressCircle.
@@ -682,7 +909,7 @@ type ProgressCircleEl struct {
 
 // Create a new circular progress indicator.
 //
-// ProgressCircle is <gpui_kit::component::progress::ProgressCircle>::new.
+// ProgressCircle calls <gpui_kit::component::progress::ProgressCircle>::new.
 func ProgressCircle(id gk.ID, st ...gk.Style) ProgressCircleEl {
 	rt.UseComponentProgress()
 	n := rt.NewNode(717)
@@ -694,7 +921,7 @@ func ProgressCircle(id gk.ID, st ...gk.Style) ProgressCircleEl {
 
 // Set the accessible name exposed by the progress indicator.
 //
-// AccessibilityLabel is <gpui_kit::component::progress::ProgressCircle>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::progress::ProgressCircle>::accessibility_label.
 func (e ProgressCircleEl) AccessibilityLabel(label string) ProgressCircleEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -703,7 +930,7 @@ func (e ProgressCircleEl) AccessibilityLabel(label string) ProgressCircleEl {
 
 // Set the color of the progress circle.
 //
-// Color is <gpui_kit::component::progress::ProgressCircle>::color.
+// Color calls <gpui_kit::component::progress::ProgressCircle>::color.
 func (e ProgressCircleEl) Color(color gk.Color) ProgressCircleEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -715,7 +942,7 @@ func (e ProgressCircleEl) Color(color gk.Color) ProgressCircleEl {
 // When `loading` is `true`, the `value` is ignored and an infinite rotating arc animation is shown
 // instead.
 //
-// Loading is <gpui_kit::component::progress::ProgressCircle>::loading.
+// Loading calls <gpui_kit::component::progress::ProgressCircle>::loading.
 func (e ProgressCircleEl) Loading(loading bool) ProgressCircleEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(loading)
@@ -726,7 +953,7 @@ func (e ProgressCircleEl) Loading(loading bool) ProgressCircleEl {
 //
 // The value should be between 0.0 and 100.0.
 //
-// Value is <gpui_kit::component::progress::ProgressCircle>::value.
+// Value calls <gpui_kit::component::progress::ProgressCircle>::value.
 func (e ProgressCircleEl) Value(value float32) ProgressCircleEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(value)
@@ -735,20 +962,24 @@ func (e ProgressCircleEl) Value(value float32) ProgressCircleEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ProgressCircleEl) PopoverStyle() ProgressCircleEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ProgressCircleEl) RoundedFullStyle() ProgressCircleEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -757,16 +988,18 @@ func (e ProgressCircleEl) RoundedFullStyle() ProgressCircleEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e ProgressCircleEl) FocusRingStyle() ProgressCircleEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -779,24 +1012,32 @@ func (e ProgressCircleEl) FocusRingStyle() ProgressCircleEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e ProgressCircleEl) KeepTextSelection(id gk.ID) ProgressCircleEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e ProgressCircleEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) ProgressCircleEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ProgressCircleEl) BorderE(width gk.Length) ProgressCircleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ProgressCircleEl) BorderS(width gk.Length) ProgressCircleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -804,142 +1045,184 @@ func (e ProgressCircleEl) BorderS(width gk.Length) ProgressCircleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ProgressCircleEl) FlexRowDir() ProgressCircleEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ProgressCircleEl) InsetE(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ProgressCircleEl) InsetS(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ProgressCircleEl) JustifyFlexEnd() ProgressCircleEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ProgressCircleEl) JustifyFlexStart() ProgressCircleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ProgressCircleEl) Me(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ProgressCircleEl) Ms(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ProgressCircleEl) Pe(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ProgressCircleEl) Ps(length gk.Length) ProgressCircleEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ProgressCircleEl) RoundedE(radius gk.Length) ProgressCircleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ProgressCircleEl) RoundedS(radius gk.Length) ProgressCircleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ProgressCircleEl) TextEnd() ProgressCircleEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ProgressCircleEl) TextStart() ProgressCircleEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ProgressCircleEl) CornerRadii(radius gk.Corners) ProgressCircleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ProgressCircleEl) DebugBlue() ProgressCircleEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ProgressCircleEl) DebugFocused(focusHandle gk.FocusHandle) ProgressCircleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ProgressCircleEl) DebugGreen() ProgressCircleEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ProgressCircleEl) DebugPink() ProgressCircleEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ProgressCircleEl) DebugRed() ProgressCircleEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ProgressCircleEl) DebugYellow() ProgressCircleEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ProgressCircleEl) FontBlack() ProgressCircleEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ProgressCircleEl) FontBold() ProgressCircleEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ProgressCircleEl) FontExtrabold() ProgressCircleEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ProgressCircleEl) FontExtralight() ProgressCircleEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ProgressCircleEl) FontLight() ProgressCircleEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ProgressCircleEl) FontMedium() ProgressCircleEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ProgressCircleEl) FontNormal() ProgressCircleEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ProgressCircleEl) FontSemibold() ProgressCircleEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ProgressCircleEl) FontThin() ProgressCircleEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -948,18 +1231,23 @@ func (e ProgressCircleEl) FontThin() ProgressCircleEl { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ProgressCircleEl) HFlex() ProgressCircleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ProgressCircleEl) Margins(margins gk.EdgesInto) ProgressCircleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ProgressCircleEl) Paddings(paddings gk.EdgesInto) ProgressCircleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ProgressCircleEl) RefineStyle(style gk.StyleRefinement) ProgressCircleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -969,24 +1257,32 @@ func (e ProgressCircleEl) RefineStyle(style gk.StyleRefinement) ProgressCircleEl
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ProgressCircleEl) VFlex() ProgressCircleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ProgressCircleEl) Style(st ...gk.Style) ProgressCircleEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ProgressCircleEl) AspectRatio(ratio float32) ProgressCircleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ProgressCircleEl) Bg(fill gk.Fill) ProgressCircleEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ProgressCircleEl) Border(length gk.Length) ProgressCircleEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -994,12 +1290,16 @@ func (e ProgressCircleEl) Border(length gk.Length) ProgressCircleEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ProgressCircleEl) BorderB(length gk.Length) ProgressCircleEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ProgressCircleEl) BorderColor(borderColor gk.Color) ProgressCircleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1007,6 +1307,8 @@ func (e ProgressCircleEl) BorderColor(borderColor gk.Color) ProgressCircleEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ProgressCircleEl) BorderL(length gk.Length) ProgressCircleEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1014,6 +1316,8 @@ func (e ProgressCircleEl) BorderL(length gk.Length) ProgressCircleEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ProgressCircleEl) BorderR(length gk.Length) ProgressCircleEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1021,6 +1325,8 @@ func (e ProgressCircleEl) BorderR(length gk.Length) ProgressCircleEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ProgressCircleEl) BorderT(length gk.Length) ProgressCircleEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1028,6 +1334,8 @@ func (e ProgressCircleEl) BorderT(length gk.Length) ProgressCircleEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ProgressCircleEl) BorderX(length gk.Length) ProgressCircleEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1035,6 +1343,8 @@ func (e ProgressCircleEl) BorderX(length gk.Length) ProgressCircleEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ProgressCircleEl) BorderY(length gk.Length) ProgressCircleEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1042,30 +1352,40 @@ func (e ProgressCircleEl) BorderY(length gk.Length) ProgressCircleEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ProgressCircleEl) Bottom(length gk.Length) ProgressCircleEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ProgressCircleEl) ColEnd(end int16) ProgressCircleEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ProgressCircleEl) ColSpan(span uint16) ProgressCircleEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ProgressCircleEl) ColStart(start int16) ProgressCircleEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ProgressCircleEl) Cursor(cursor gk.CursorStyle) ProgressCircleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1073,36 +1393,48 @@ func (e ProgressCircleEl) Cursor(cursor gk.CursorStyle) ProgressCircleEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ProgressCircleEl) FlexBasis(basis gk.Length) ProgressCircleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ProgressCircleEl) FlexGrow(grow float32) ProgressCircleEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ProgressCircleEl) FlexShrink(shrink float32) ProgressCircleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ProgressCircleEl) Font(font gk.Font) ProgressCircleEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ProgressCircleEl) FontFamily(familyName string) ProgressCircleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ProgressCircleEl) FontFeatures(features gk.FontFeatures) ProgressCircleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1111,12 +1443,16 @@ func (e ProgressCircleEl) FontFeatures(features gk.FontFeatures) ProgressCircleE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ProgressCircleEl) FontWeight(weight gk.FontWeight) ProgressCircleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ProgressCircleEl) Gap(length gk.Length) ProgressCircleEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1124,6 +1460,8 @@ func (e ProgressCircleEl) Gap(length gk.Length) ProgressCircleEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ProgressCircleEl) GapX(length gk.Length) ProgressCircleEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1131,18 +1469,24 @@ func (e ProgressCircleEl) GapX(length gk.Length) ProgressCircleEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ProgressCircleEl) GapY(length gk.Length) ProgressCircleEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ProgressCircleEl) GridCols(cols uint16) ProgressCircleEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ProgressCircleEl) GridColsMaxContent(cols uint16) ProgressCircleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1150,18 +1494,24 @@ func (e ProgressCircleEl) GridColsMaxContent(cols uint16) ProgressCircleEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ProgressCircleEl) GridColsMinContent(cols uint16) ProgressCircleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ProgressCircleEl) GridRows(rows uint16) ProgressCircleEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ProgressCircleEl) GridRowsMaxContent(rows uint16) ProgressCircleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1169,12 +1519,16 @@ func (e ProgressCircleEl) GridRowsMaxContent(rows uint16) ProgressCircleEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ProgressCircleEl) GridRowsMinContent(rows uint16) ProgressCircleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ProgressCircleEl) H(length gk.Length) ProgressCircleEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1182,6 +1536,8 @@ func (e ProgressCircleEl) H(length gk.Length) ProgressCircleEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ProgressCircleEl) Inset(length gk.Length) ProgressCircleEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1189,6 +1545,8 @@ func (e ProgressCircleEl) Inset(length gk.Length) ProgressCircleEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ProgressCircleEl) Left(length gk.Length) ProgressCircleEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1196,36 +1554,48 @@ func (e ProgressCircleEl) Left(length gk.Length) ProgressCircleEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ProgressCircleEl) LineClamp(lines int) ProgressCircleEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ProgressCircleEl) LineHeight(lineHeight gk.Length) ProgressCircleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ProgressCircleEl) M(length gk.Length) ProgressCircleEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ProgressCircleEl) MaxH(length gk.Length) ProgressCircleEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ProgressCircleEl) MaxSize(length gk.Length) ProgressCircleEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ProgressCircleEl) MaxW(length gk.Length) ProgressCircleEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1233,24 +1603,32 @@ func (e ProgressCircleEl) MaxW(length gk.Length) ProgressCircleEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ProgressCircleEl) Mb(length gk.Length) ProgressCircleEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ProgressCircleEl) MinH(length gk.Length) ProgressCircleEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ProgressCircleEl) MinSize(length gk.Length) ProgressCircleEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ProgressCircleEl) MinW(length gk.Length) ProgressCircleEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1258,6 +1636,8 @@ func (e ProgressCircleEl) MinW(length gk.Length) ProgressCircleEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ProgressCircleEl) Ml(length gk.Length) ProgressCircleEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1265,6 +1645,8 @@ func (e ProgressCircleEl) Ml(length gk.Length) ProgressCircleEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ProgressCircleEl) Mr(length gk.Length) ProgressCircleEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1272,6 +1654,8 @@ func (e ProgressCircleEl) Mr(length gk.Length) ProgressCircleEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ProgressCircleEl) Mt(length gk.Length) ProgressCircleEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1279,6 +1663,8 @@ func (e ProgressCircleEl) Mt(length gk.Length) ProgressCircleEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ProgressCircleEl) Mx(length gk.Length) ProgressCircleEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1286,18 +1672,24 @@ func (e ProgressCircleEl) Mx(length gk.Length) ProgressCircleEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ProgressCircleEl) My(length gk.Length) ProgressCircleEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ProgressCircleEl) Opacity(opacity float32) ProgressCircleEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ProgressCircleEl) P(length gk.Length) ProgressCircleEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1305,6 +1697,8 @@ func (e ProgressCircleEl) P(length gk.Length) ProgressCircleEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ProgressCircleEl) Pb(length gk.Length) ProgressCircleEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1312,6 +1706,8 @@ func (e ProgressCircleEl) Pb(length gk.Length) ProgressCircleEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ProgressCircleEl) Pl(length gk.Length) ProgressCircleEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1319,6 +1715,8 @@ func (e ProgressCircleEl) Pl(length gk.Length) ProgressCircleEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ProgressCircleEl) Pr(length gk.Length) ProgressCircleEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1326,6 +1724,8 @@ func (e ProgressCircleEl) Pr(length gk.Length) ProgressCircleEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ProgressCircleEl) Pt(length gk.Length) ProgressCircleEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1333,6 +1733,8 @@ func (e ProgressCircleEl) Pt(length gk.Length) ProgressCircleEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ProgressCircleEl) Px(length gk.Length) ProgressCircleEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1340,6 +1742,8 @@ func (e ProgressCircleEl) Px(length gk.Length) ProgressCircleEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ProgressCircleEl) Py(length gk.Length) ProgressCircleEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1347,12 +1751,16 @@ func (e ProgressCircleEl) Py(length gk.Length) ProgressCircleEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ProgressCircleEl) Right(length gk.Length) ProgressCircleEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ProgressCircleEl) Rounded(length gk.Length) ProgressCircleEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1360,6 +1768,8 @@ func (e ProgressCircleEl) Rounded(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ProgressCircleEl) RoundedB(length gk.Length) ProgressCircleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1367,6 +1777,8 @@ func (e ProgressCircleEl) RoundedB(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ProgressCircleEl) RoundedBl(length gk.Length) ProgressCircleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1374,6 +1786,8 @@ func (e ProgressCircleEl) RoundedBl(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ProgressCircleEl) RoundedBr(length gk.Length) ProgressCircleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1381,6 +1795,8 @@ func (e ProgressCircleEl) RoundedBr(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ProgressCircleEl) RoundedL(length gk.Length) ProgressCircleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1388,6 +1804,8 @@ func (e ProgressCircleEl) RoundedL(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ProgressCircleEl) RoundedR(length gk.Length) ProgressCircleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1395,6 +1813,8 @@ func (e ProgressCircleEl) RoundedR(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ProgressCircleEl) RoundedT(length gk.Length) ProgressCircleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1402,6 +1822,8 @@ func (e ProgressCircleEl) RoundedT(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ProgressCircleEl) RoundedTl(length gk.Length) ProgressCircleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1409,24 +1831,32 @@ func (e ProgressCircleEl) RoundedTl(length gk.Length) ProgressCircleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ProgressCircleEl) RoundedTr(length gk.Length) ProgressCircleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ProgressCircleEl) RowEnd(end int16) ProgressCircleEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ProgressCircleEl) RowSpan(span uint16) ProgressCircleEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ProgressCircleEl) RowStart(start int16) ProgressCircleEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1436,24 +1866,32 @@ func (e ProgressCircleEl) RowStart(start int16) ProgressCircleEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ProgressCircleEl) ScrollbarWidth(width gk.Length) ProgressCircleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ProgressCircleEl) Shadow(shadows []gk.BoxShadow) ProgressCircleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ProgressCircleEl) Size(length gk.Length) ProgressCircleEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ProgressCircleEl) TextAlign(align gk.TextAlign) ProgressCircleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1462,6 +1900,8 @@ func (e ProgressCircleEl) TextAlign(align gk.TextAlign) ProgressCircleEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ProgressCircleEl) TextBg(bg gk.Color) ProgressCircleEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1470,18 +1910,24 @@ func (e ProgressCircleEl) TextBg(bg gk.Color) ProgressCircleEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ProgressCircleEl) TextColor(color gk.Color) ProgressCircleEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ProgressCircleEl) TextDecorationColor(color gk.Color) ProgressCircleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ProgressCircleEl) TextOverflow(overflow gk.TextOverflow) ProgressCircleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1490,6 +1936,8 @@ func (e ProgressCircleEl) TextOverflow(overflow gk.TextOverflow) ProgressCircleE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ProgressCircleEl) TextSize(size gk.Length) ProgressCircleEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1497,50 +1945,67 @@ func (e ProgressCircleEl) TextSize(size gk.Length) ProgressCircleEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ProgressCircleEl) Top(length gk.Length) ProgressCircleEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ProgressCircleEl) W(length gk.Length) ProgressCircleEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ProgressCircleEl) Large() ProgressCircleEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ProgressCircleEl) Small() ProgressCircleEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ProgressCircleEl) WithSize(size gk.SizeInto) ProgressCircleEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ProgressCircleEl) Xsmall() ProgressCircleEl { tSizableXsmall(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e ProgressCircleEl) Text(s string) ProgressCircleEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e ProgressCircleEl) ChildView(v gk.View) ProgressCircleEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e ProgressCircleEl) Child(child gk.Element) ProgressCircleEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e ProgressCircleEl) Children(children ...gk.Element) ProgressCircleEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e

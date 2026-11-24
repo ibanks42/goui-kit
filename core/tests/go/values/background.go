@@ -1,4 +1,3 @@
-// c6-background: try_parse_background's Result read back as gk.Fallible[gk.BackgroundValue].
 package main
 
 import (
@@ -8,10 +7,10 @@ import (
 )
 
 func init() {
+	// Register CSS solid-color, linear-gradient, and invalid-background parse tests.
 	modes["c6-background"] = &mode{click: once(background)}
 }
 
-// kindName is the name of a background's kind that the checks print.
 func kindName(k gk.BackgroundKind) string {
 	switch k {
 	case gk.BackgroundKindSolid:
@@ -22,6 +21,9 @@ func kindName(k gk.BackgroundKind) string {
 	return fmt.Sprint(uint16(k))
 }
 
+// background proves TryParseBackground decodes CSS solid colors (#ff0000 ->
+// Solid, L=0.50, A=1.00) and linear gradients (90deg, 0% red -> 100% blue,
+// hue 0.00 -> 0.667) while rejecting invalid strings with ok=false and an error.
 func background(a *App, cx *gk.Cx) {
 	solid := gk.TryParseBackground(cx, "#ff0000")
 	s, sok := solid.Value.Get()

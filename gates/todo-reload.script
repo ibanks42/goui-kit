@@ -1,4 +1,5 @@
-# gates/todo.sh's second run: the app loads what the first run saved, and ctrl-t saves it again.
+# Offscreen session script for the second start of the todo app (gates/todo.sh, gates/go-apps.sh todo).
+# Verifies saved state and dark theme reload, then toggles back to light mode and saves.
 size 900 600
 frame
 frame

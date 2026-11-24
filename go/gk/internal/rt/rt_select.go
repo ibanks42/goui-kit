@@ -1,21 +1,22 @@
 package rt
 
-// SearchItem is one item of a select or combobox (upstream's SearchableListItem as data).
+// SearchItem describes one selectable entry in a search or select list.
 type SearchItem struct {
-	Value    string         // identifies the item: what SelectedValue and the events report
-	Title    string         // shown in the menu and, unless Display is set, in the trigger; "" is Value
-	Display  Option[string] // shown in the trigger instead of the title
-	Keywords string         // searched besides the title
-	Disabled bool           // shown, but cannot be chosen
+	Value    string
+	Title    string
+	Display  Option[string]
+	Keywords string
+	Disabled bool
 }
 
-// SearchGroup is a titled group of items (upstream's SearchableGroup).
+// SearchGroup groups SearchItems under an optional section heading.
 type SearchGroup struct {
 	Title string
 	Items []SearchItem
 }
 
-// SearchRequest is the event of a source made with gk.SearchRequests: the query changed.
+// SearchRequest carries a query string and correlation ID delivered to a
+// SearchRequests callback when the user types in a searchable list or select.
 type SearchRequest struct {
 	ID    uint64
 	Query string
@@ -31,7 +32,8 @@ func init() {
 	}})
 }
 
-// SearchOption changes a source made by NewSearchSource.
+// SearchOption configures optional callbacks on NewSearchSource and
+// NewSearchSourceGroups.
 type SearchOption func(*searchOpts)
 
 type searchOpts struct {
@@ -40,29 +42,29 @@ type searchOpts struct {
 	requests func(cx *Cx, e SearchRequest)
 }
 
-// SearchRow has the kit draw each item's row with row (at: the group and the item's index in it)
-// instead of its title.
+// SearchRow sets a custom row render callback for each item in a search source.
 func SearchRow(row func(cx *Cx, at RowAt) Element) SearchOption {
 	return func(o *searchOpts) { o.row = row }
 }
 
-// SearchHeaders has the row function also describe each group's header row (at.Row is the header's marker, HeaderRow).
+// SearchHeaders enables custom rendering of group header rows via SearchRow.
 func SearchHeaders() SearchOption { return func(o *searchOpts) { o.headers = true } }
 
-// SearchRequests makes searches requests to the app (SearchRequest).
+// SearchRequests installs an asynchronous search handler invoked on query changes.
 func SearchRequests(f func(cx *Cx, e SearchRequest)) SearchOption {
 	return func(o *searchOpts) { o.requests = f }
 }
 
+// searches records the feature-flag bitmask (bit 0: custom row, bit 1: async
+// requests, bit 2: custom headers) for every RowSource created as a search source.
 var searches = map[uint64]uint8{}
 
-// NewSearchSource makes the row source of a select or combobox over a flat list of items. Needs
-// a window: init or a handler.
+// NewSearchSource creates a flat searchable RowSource initialized with items.
 func NewSearchSource(cx *Cx, items []SearchItem, opts ...SearchOption) RowSource {
 	return newSearchSource(cx, []SearchGroup{{Items: items}}, false, opts)
 }
 
-// NewSearchSourceGroups is NewSearchSource over titled groups.
+// NewSearchSourceGroups creates a grouped searchable RowSource initialized with groups.
 func NewSearchSourceGroups(cx *Cx, groups []SearchGroup, opts ...SearchOption) RowSource {
 	return newSearchSource(cx, groups, true, opts)
 }
@@ -107,18 +109,17 @@ func newSearchSource(cx *Cx, groups []SearchGroup, grouped bool, opts []SearchOp
 	return src
 }
 
-// SetSearchItems replaces the items of a select's or combobox's source (a buffered write). A
-// state made over it before shows them after .SetItems(cx, src).
+// SetSearchItems replaces the items of a flat search RowSource.
 func SetSearchItems(cx *Cx, src RowSource, items []SearchItem) {
 	putSearch(cx, src, []SearchGroup{{Items: items}}, false)
 }
 
-// SetSearchGroups is SetSearchItems for titled groups.
+// SetSearchGroups replaces the groups and items of a grouped search RowSource.
 func SetSearchGroups(cx *Cx, src RowSource, groups []SearchGroup) {
 	putSearch(cx, src, groups, true)
 }
 
-// AnswerSearch answers a SearchRequest once the items are set.
+// AnswerSearch marks asynchronous search request id on src as fulfilled.
 func AnswerSearch(cx *Cx, src RowSource, id uint64) {
 	t := CheckCx(cx)
 	var body Tape
@@ -137,7 +138,6 @@ func putSearch(cx *Cx, src RowSource, groups []SearchGroup, grouped bool) {
 		Stop("gk.SetSearchItems was given a row source gk.NewSearchSource did not make")
 	}
 	if flags&1 != 0 {
-		// Rows are keyed by (group, the item's index in it): every group needs its count.
 		for s, g := range groups {
 			SetSectionCount(cx, src, s, len(g.Items))
 		}
@@ -167,19 +167,16 @@ func putSearch(cx *Cx, src RowSource, groups []SearchGroup, grouped bool) {
 	t.DeferOp(*o)
 }
 
-// SearchRules is what a select's or combobox's selection may become, given in advance: upstream
-// asks its delegate (SearchableListDelegate::on_will_change) while the list handles a click, where
-// app code may not run, so the library applies upstream's change and then these rules. Blocked
-// values are never added; Locked values are never taken out once selected; a change that would
-// leave fewer than Min or more than Max values selected (0: no limit) is refused whole.
+// SearchRules constrains selection changes on a search source by minimum count,
+// maximum count, locked values that cannot be removed, and blocked values that
+// cannot be selected.
 type SearchRules struct {
 	Min, Max int
 	Locked   []string
 	Blocked  []string
 }
 
-// SearchWillChange gives a select's or combobox's source its rules (buffered; replaces the
-// source's rules; the zero SearchRules is upstream's default alone).
+// SearchWillChange installs selection validation rules on search source src.
 func SearchWillChange(cx *Cx, src RowSource, rules SearchRules) {
 	t := CheckCx(cx)
 	if _, ok := searches[src.h]; !ok {

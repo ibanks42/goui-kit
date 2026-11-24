@@ -1,4 +1,4 @@
-// A style token where a colour goes.
+// Compile-time misuse case: TextColor expects gk.Color, not a layout style token from package s.
 package main
 
 import (

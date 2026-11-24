@@ -14,7 +14,7 @@ type CursorBlink struct{ rt.Val }
 // Stop blinking, with the caret visible, once `timeout` has passed since the last focus, edit or
 // cursor movement.
 //
-// WithIdleTimeout is <gpui_kit::base::input::CursorBlink>::with_idle_timeout.
+// WithIdleTimeout calls <gpui_kit::base::input::CursorBlink>::with_idle_timeout.
 func (e CursorBlink) WithIdleTimeout(timeout time.Duration) CursorBlink {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutMs(o, timeout)

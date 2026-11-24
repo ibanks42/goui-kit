@@ -1,19 +1,36 @@
-//! Row sources: the shared core of the delegate protocol (docs/PROTOCOLS.md section 9).
+//! Virtualized row-source runtime (`HK_SOURCE`) for lists, tables, trees, and item closures.
 //!
-//! A row source holds the rows of one list, table or tree. Each row is a view of its own (a
-//! `GkView`, described by the app's row procedure for that row and retained like any view).
-//! A shim that implements a kit delegate (ListDelegate, TableDelegate, the tree's render
-//! closure) asks the source for rows while GPUI draws (`row`), and never calls the app: a row
-//! that has no view yet is drawn as a placeholder and recorded as wanted. Before the next
-//! frame the pre-frame hook runs one ROWS turn (`rows_turn`), which binds new row views to
-//! the wanted rows and evicts far ones, and the VIEWS turn right after describes them; the
-//! entities that drew the source (`watch`) are then notified, so that same frame shows them.
-//! A far jump therefore shows placeholders for exactly one frame, and app code never runs in
-//! the middle of a frame.
+//! # Architecture and Row Lifecycle
 //!
-//! What the kit asks synchronously (counts, column definitions) is data the app pushed;
-//! what it reports (selection, confirm, sort) is a queued event (`event`); what it asks
-//! asynchronously (completions, hover) is a request answered later (`request`, `answer`).
+//! A [`Source`] bridges large host datasets (up to [`MAX_ROWS`] rows per section) to GPUI
+//! virtualized components without materializing every row in Rust or Go:
+//!
+//! - **Key packing**: every row is addressed by `key(section, row) = (section << 32) | row`.
+//!   Row indices `0xffff_fffe` ([`HEADER_ROW`]) and `0xffff_ffff` (footer) are reserved sentinels
+//!   that bypass neighbor overscan expansion.
+//! - **Two rendering modes**:
+//!   - *View-backed* (`decoded == false`, used by `N_SOURCE_LIST` and `N_VIRTUAL_LIST`): each
+//!     bound row owns a `GkView` entity looked up via [`row`].
+//!   - *Decoded* (`decoded == true`, used by `ListDelegate`, `TableDelegate`, `TreeState`, and
+//!     `items::row`): bound rows use lightweight `Item::DecodedRow` handles with no GPUI entity;
+//!     [`row_tape`] hands back the cached `Rc<Tape>` directly for inline decoding.
+//! - **Bind-ahead and prefetch throttling**: during layout/render, missing rows are recorded in
+//!   `wanted` (visible misses) while `GkTableDelegate::bind_ahead` calls [`table_bind_ahead`] to
+//!   queue nearby offscreen keys into `ahead`. Before the next frame paints, [`rows_turn`] plans
+//!   binds and evictions for every source in the window and sends one batched `K_ROWS` turn:
+//!   - Visible misses expand with an overscan margin `clamp(8, capacity / 4)` per section.
+//!   - Pure prefetch turns (no visible misses) cap at `PREFETCH_PER_FRAME = 24` rows sorted
+//!     nearest `ahead_anchor`, keeping per-frame Go work smooth while scrolling fast; `pre_frame`
+//!     checks `has_pending_ahead` and schedules another frame until `ahead` drains.
+//!   - When `rows.len() + bind.len() > capacity`, keys farthest from the midpoint of the wanted
+//!     window are evicted, and their view handles are released *after* `K_ROWS` returns so the
+//!     host processes eviction notices before Rust drops the handles.
+//! - **`ROWS_EPOCH` fast skip**: every `rows_turn` and `C_SOURCE_SET_COUNT` bumps `ROWS_EPOCH`,
+//!   allowing table delegates to skip redundant lookahead checks while the row cache is unchanged.
+//! - **Context-parameterized closures (`ctx_row` / `ctx_key` / `C_CTX_GET`)**: upstream closures
+//!   that pass rich per-item context structs store a serialized fingerprint + lazy context writer
+//!   on the source. When a fingerprint changes, the bound row is dirtied immediately; unkeyed
+//!   closures auto-increment `ctx_next` and reset it on `window.on_next_frame` via `ctx_armed`.
 
 use crate::genapi::{self, HandlerRef, Wire};
 use crate::ops::*;
@@ -27,11 +44,12 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::rc::Rc;
 
 thread_local! {
-    /// Bumped whenever any row source binds, evicts or changes row count, so `GkTableDelegate`
-    /// can skip redundant `rt::with` checks while the bound set is unchanged.
+    /// Monotonic epoch bumped whenever row bindings or counts change, letting callers skip
+    /// redundant lookahead checks within the same state.
     static ROWS_EPOCH: Cell<u64> = const { Cell::new(1) };
 }
 
+/// Returns the current row-source mutation epoch.
 #[inline]
 pub fn rows_epoch() -> u64 {
     ROWS_EPOCH.with(|e| e.get())
@@ -41,15 +59,16 @@ fn bump_epoch() {
     ROWS_EPOCH.with(|e| e.set(e.get().wrapping_add(1)));
 }
 
-/// A row's key: `section << 32 | row`. Lists without sections and tables use section 0.
+/// Packs `(section, row)` into a single 64-bit row key (`section << 32 | row`).
 pub fn key(section: u32, row: u32) -> u64 {
     (section as u64) << 32 | row as u64
 }
 
-/// The most rows a section can hold: a row's number is 32 bits, and the two highest are a
-/// section's header and footer. Counts above it are refused (a table's count is its cells).
+/// Maximum number of rows permitted per section (reserves [`HEADER_ROW`] and `u32::MAX`).
 pub const MAX_ROWS: u64 = HEADER_ROW;
 
+/// Rejects section sizes exceeding [`MAX_ROWS`] so `(section, row)` keys never collide with
+/// [`HEADER_ROW`] or footer sentinels.
 fn check_count(n: u64) -> GkResult<usize> {
     if n > MAX_ROWS {
         return err(ERR_BAD_OP, format!("a row source holds at most {MAX_ROWS} rows (a table: rows times columns) in a section; {n} were given"));
@@ -57,54 +76,46 @@ fn check_count(n: u64) -> GkResult<usize> {
     Ok(n as usize)
 }
 
-/// The row number of a section's header row; `HEADER_ROW + 1` is its footer row (the list
-/// delegate's, docs/PROTOCOLS.md section 9.5). Bound when drawn, never as part of a range.
+/// Sentinel row index reserved for section headers (`0xffff_fffe`; footer uses `0xffff_ffff`).
 pub const HEADER_ROW: u64 = 0xffff_fffe;
 
+/// Per-source state stored under `HK_SOURCE`.
 pub struct Source {
-    /// The window the rows are drawn in (a handle of kind WINDOW).
+    /// Owning window handle whose `pre_frame` runs `K_ROWS` for this source.
     pub window: u64,
-    /// Rows per section.
+    /// Row count per section.
     pub counts: Vec<usize>,
-    /// Bound rows: key to `(row view handle, accepted tape)`.
+    /// Live bound rows: `row_key -> (view_handle, cached_tape)`.
     rows: IdMap<(u64, Option<Rc<Tape>>)>,
-    /// Keys asked for while drawing that have no row view yet.
+    /// Row keys requested during layout/render that were missing from `rows`.
     wanted: BTreeSet<u64>,
-    /// Keys a shim asked for before drawing them (`table_bind_ahead`): bound as asked, with no
-    /// overscan of their own (the shim's range already reaches past what it will draw). Pure
-    /// prefetch is spread across frames (`PREFETCH_PER_FRAME`) starting nearest `ahead_anchor`.
+    /// Prefetch row keys queued ahead of the viewport by [`table_bind_ahead`].
     ahead: BTreeSet<u64>,
     ahead_anchor: u64,
-    /// Most row views kept at once; far ones are evicted beyond it.
+    /// Maximum live row views kept in `rows` before distant keys are evicted.
     pub capacity: usize,
-    /// The kept handler that receives this source's events (slot, generation).
+    /// Optional host `(slot, generation)` handler for delegate events and async requests.
     events: Option<(u32, u32)>,
-    /// Entities that drew this source, notified when rows arrive.
+    /// GPUI entity IDs notified whenever this source's rows or counts change.
     watchers: Vec<EntityId>,
-    /// The scroll handle of the core's own list element (hand.rs).
     pub scroll: UniformListScrollHandle,
+    /// Pending async host requests keyed by monotonically increasing request ID.
     pending: HashMap<u64, oneshot::Sender<Vec<u8>>>,
     next_request: u64,
-    /// Receivers the runtime's tests read back (C_TEST_SOURCE_TAKE).
     test_rx: Vec<oneshot::Receiver<Vec<u8>>>,
     miss_frame: u64,
-    /// A row was drawn as a placeholder since the watchers were last notified: they must draw
-    /// again when rows arrive. Rows bound ahead (`want`) were never drawn, and their arrival
-    /// alone redraws nothing.
+    /// Set when any row missed since the last tape acceptance, triggering watcher notification.
     missed: bool,
-    /// A delegate shim decodes this source's rows itself (`row_tape`), never drawing their
-    /// views: the runtime then leaves the rows' entities alone (`rt::accept`).
+    /// When `true`, rows decode directly from `Tape` via `Item::DecodedRow` without a `GkView` entity.
     pub decoded: bool,
-    /// An element closure over a context (docs/PROTOCOLS.md 9.16): what each row was last
-    /// handed (its identity's bytes, and a writer of the values as the row's view reads them),
-    /// the next row of this frame's calls, and whether the reset of that count is armed.
+    /// Context fingerprints and serializers for closure-backed rows (`C_CTX_GET`).
     ctxs: HashMap<u64, (Vec<u8>, std::rc::Rc<dyn Fn(&mut Vec<u8>)>)>,
     ctx_next: u32,
     ctx_armed: bool,
 }
 
 impl Source {
-    /// Every row view this source holds.
+    /// Returns all currently bound row view handles (used to cascade release on `C_RELEASE`).
     pub fn views(&self) -> Vec<u64> {
         self.rows.values().map(|(v, _)| *v).collect()
     }
@@ -123,16 +134,21 @@ impl Source {
         }
     }
 
-    /// Rows to bind and row views to evict for what was wanted since the last ROWS turn: the
-    /// wanted rows of each section and as many again on each side (a viewport of overscan
-    /// each way), the rows asked for ahead (`table_bind_ahead`) spread across frames when no
-    /// placeholders were drawn, and the farthest rows evicted beyond `capacity`.
+    /// Computes `(keys_to_bind, view_handles_to_evict)` for the next `K_ROWS` turn.
+    ///
+    /// - When `wanted` is empty (pure prefetch) and `ahead` has more than `24 + 4` entries, only
+    ///   the 24 keys nearest `ahead_anchor` are pulled this frame so scrolling does not stall on
+    ///   a large prefetch burst; the remaining keys stay in `ahead` for subsequent frames.
+    /// - When `wanted` is non-empty (visible misses), every section's `[lo..=hi]` miss range
+    ///   expands by `over = clamp(miss_count, 8, capacity / 4)` rows so small scrolls immediately
+    ///   hit warm rows.
+    /// - If adding `bind` would exceed `capacity`, cached keys outside `want` are sorted by
+    ///   distance from `want`'s midpoint and the farthest ones are evicted first.
     fn plan(&mut self) -> (Vec<u64>, Vec<u64>) {
         const PREFETCH_PER_FRAME: usize = 24;
         let wanted = std::mem::take(&mut self.wanted);
         self.ahead.retain(|k| !self.rows.contains_key(k));
         let mut want = if wanted.is_empty() && self.ahead.len() > PREFETCH_PER_FRAME + 4 {
-            // Spread pure prefetch across frames so no single frame pays for a whole batch.
             let anchor = self.ahead_anchor;
             let mut near: Vec<(u64, u64)> = self.ahead.iter().map(|&k| (k.abs_diff(anchor), k)).collect();
             near.sort_unstable();
@@ -145,11 +161,11 @@ impl Source {
         } else {
             std::mem::take(&mut self.ahead)
         };
-        let mut by_section: BTreeMap<u64, (u64, u64, u64)> = BTreeMap::new(); // lo, hi, n
+        let mut by_section: BTreeMap<u64, (u64, u64, u64)> = BTreeMap::new();
         for k in &wanted {
             let row = k & 0xffff_ffff;
             if row >= HEADER_ROW {
-                // A section's header or footer row (rows family): bound as asked, never a range.
+                // Header and footer sentinel keys do not expand into neighbor ranges.
                 want.insert(*k);
                 continue;
             }
@@ -171,6 +187,7 @@ impl Source {
         let mut evict = Vec::new();
         let excess = (self.rows.len() + bind.len()).saturating_sub(self.capacity);
         if excess > 0 {
+            // Evict cached rows farthest from the midpoint of the active window first.
             let mid = want.iter().nth(want.len() / 2).copied().unwrap_or(0);
             let mut far: Vec<(u64, u64)> = self
                 .rows
@@ -189,19 +206,14 @@ impl Source {
     }
 }
 
-// --- what a shim calls while GPUI draws ---------------------------------------------------
-
-/// A row as a shim draws it.
+/// Result of looking up a row in a view-backed row source.
 pub enum Row {
-    /// The row's view, described and retained.
     View(AnyView),
-    /// No view yet: draw a placeholder of the row's height. The row is asked for before the
-    /// next frame.
     Missing,
 }
 
-/// The row of `key`. Never calls the app. A source that has been released is a mistake in
-/// app code (a view still shows it) and stops the program, as a released state does.
+/// Fetches the rendered `AnyView` for `(src, key)`, recording a miss and scheduling `pre_frame`
+/// if the row has not been bound or described yet.
 pub fn row(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Row {
     let found = rt::with(|s| -> GkResult<(Option<u64>, u64)> {
         let frame = s.frame_no();
@@ -235,18 +247,17 @@ pub fn row(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Row {
     Row::Missing
 }
 
-/// Rows in `section` (0 for a source without sections).
+/// Returns the current row count of `section` in source `src`.
 pub fn count(src: u64, section: u32) -> GkResult<usize> {
     rt::with(|s| Ok(s.source_mut(src)?.counts.get(section as usize).copied().unwrap_or(0)))
 }
 
-/// The scroll handle of the core's own list element.
+/// Returns a clone of source `src`'s `UniformListScrollHandle`.
 pub fn scroll_handle(src: u64) -> GkResult<UniformListScrollHandle> {
     rt::with(|s| Ok(s.source_mut(src)?.scroll.clone()))
 }
 
-/// Asks for `entity` to be notified when rows of `src` arrive (the entity that draws them: a
-/// ListState, a TableState, a view whose tape holds the list).
+/// Registers GPUI `entity` to be notified whenever source `src` receives updated rows or counts.
 pub fn watch(src: u64, entity: EntityId) {
     rt::with(|s| {
         if let Ok(source) = s.source_mut(src) {
@@ -257,11 +268,12 @@ pub fn watch(src: u64, entity: EntityId) {
     });
 }
 
-/// Whether `src`'s rows were drawn as placeholders since this was last asked (and forgets it).
+/// Clears and returns whether source `src` recorded a render miss since the last tape batch.
 pub(crate) fn take_missed(src: u64) -> bool {
     rt::with(|s| s.source_mut(src).map(|x| std::mem::take(&mut x.missed)).unwrap_or(false))
 }
 
+/// Calls `cx.notify` on every GPUI entity watching any source in `sources`.
 pub(crate) fn notify_watchers(sources: &[u64], cx: &mut App) {
     for src in sources {
         let ids = rt::with(|s| s.source_mut(*src).map(|x| x.watchers.clone()).unwrap_or_default());
@@ -271,12 +283,7 @@ pub(crate) fn notify_watchers(sources: &[u64], cx: &mut App) {
     }
 }
 
-// --- events and requests -----------------------------------------------------------------
-
-/// Delivers an event of the source (a selection, a confirm, a sort) to the handler the app
-/// gave the source, after the kit's update has ended and before the next draw: the `queued`
-/// resolution of DESIGN.md section 12. `shape` is the delegate family's event shape and
-/// `payload` its union (u16 variant, then the variant's fields). No handler: dropped.
+/// Queues a source delegate event to the host handler attached to `src`, if any.
 pub fn event<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App) {
     let Some((slot, generation)) = rt::with(|s| s.source_mut(src).ok().and_then(|x| x.events)) else {
         return;
@@ -289,10 +296,8 @@ pub fn event<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App) 
     genapi::fire_queued(h, shape, payload, cx);
 }
 
-/// Asks the app something it answers later (a provider method that returns a Task): the
-/// event `payload` goes out with a new request id first, `(u64 id, payload..)`, and the
-/// receiver gets the bytes of the app's answer (`gk.answer`). Dropping the receiver cancels
-/// nothing on the app's side; the answer is then dropped.
+/// Sends an asynchronous request to `src`'s event handler and returns a oneshot receiver resolved
+/// by `C_SOURCE_ANSWER`.
 pub fn request<P: Wire + ?Sized>(
     src: u64,
     shape: u16,
@@ -310,11 +315,18 @@ pub fn request<P: Wire + ?Sized>(
     Ok(rx)
 }
 
-// --- the ROWS turn ----------------------------------------------------------------------
-
-/// Runs in the pre-frame hook of window `wh`, after the FRAME turn: binds row views to the
-/// rows drawn as placeholders in the last frame (and their overscan), evicts far rows, and
-/// describes both the new row views and any already-dirty views of `wh` in the same ROWS turn.
+/// Runs one batched `K_ROWS` turn for every source owned by window `wh` with pending binds or evictions.
+///
+/// Request layout:
+/// `[wh: u64][n_plans: u32]([src: u64][n_bind: u32][(key: u64, view: u64)*][n_evict: u32][view: u64*])*[n_dirty: u32][dirty: u64*][n_retired: u32][(view: u64, gen: u32)*]`.
+///
+/// Ordering invariants:
+/// 1. Newly bound row views are allocated and inserted into `Source::rows` before calling `K_ROWS`
+///    so the host receives their view handles and can immediately return their tapes in the reply.
+/// 2. Any already-queued dirty views for `wh` are piggybacked in `pre_dirty` so a single `K_ROWS`
+///    turn replaces a separate `K_VIEWS` round-trip.
+/// 3. Evicted views are released only *after* `rt::turn(K_ROWS)` returns so their handles stay
+///    valid if the host inspects them while processing the eviction list.
 pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
     let plans: Vec<(u64, Vec<u64>, Vec<u64>)> = rt::with(|s| {
         let mut plans = Vec::new();
@@ -373,8 +385,8 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
     gk_meter::bump(|c| c.rows_turns += 1);
 }
 
-/// A new row view for `key` of `src`, drawn in window `wh`. Decoded sources get a lightweight
-/// handle with no GPUI `Entity<GkView>` (their tapes are decoded inline by the delegate shim).
+/// Allocates a row view (either `Item::DecodedRow` or `Item::View`), mounts it into `wh`, and
+/// registers `(src, key)` in `Session::row_owner` and `Source::rows`.
 fn bind_row(src: u64, key: u64, wh: u64, cx: &mut App) -> u64 {
     let decoded = rt::with(|s| s.source_mut(src).map(|x| x.decoded).unwrap_or(false));
     let view = if decoded { rt::new_decoded_row() } else { rt::new_view(cx) };
@@ -388,14 +400,16 @@ fn bind_row(src: u64, key: u64, wh: u64, cx: &mut App) -> u64 {
     view
 }
 
-// --- call ops -----------------------------------------------------------------------------
-
+/// Handles `C_SOURCE_*`, `C_CTX_GET`, and `C_TEST_SOURCE_*` wire calls.
+///
+/// - `C_SOURCE_NEW`: `[count: u64][initial: u32][capacity: u32][has_events: u8][slot: u32, gen: u32]?` -> `[src: u64][n: u32][(key: u64, view: u64)*]`
+/// - `C_SOURCE_SET_COUNT`: `[src: u64][section: u32][count: u64]` (evicts bound rows `>= count`)
+/// - `C_SOURCE_SCROLL_TO`: `[src: u64][row: u64]`
+/// - `C_SOURCE_ANSWER`: `[src: u64][req_id: u64][len: u32][bytes...]`
+/// - `C_CTX_GET`: `[src: u64][section: u32][row: u32]` -> serialized context payload
 pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
     Some(match op {
         C_SOURCE_NEW => (|| {
-            // u64 count, u32 initial, u32 capacity, u8 has events, u32 slot, u32 generation.
-            // Out: u64 source, u32 n, (u64 key, u64 view) for the first rows, already marked
-            // dirty, so the first frame that draws the source is complete.
             let count = check_count(r.u64())?;
             let initial = r.u32() as usize;
             let capacity = (r.u32() as usize).max(16);
@@ -451,8 +465,6 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_SOURCE_SET_COUNT => (|| {
-            // u64 source, u32 section, u64 count. Rows at and past the count are released
-            // here; the binding forgot them when it wrote the op.
             let (src, section, n) = (r.u64(), r.u32() as usize, r.u64());
             let n = check_count(n)?;
             let gone = rt::with(|s| -> GkResult<Vec<u64>> {
@@ -475,7 +487,6 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_SOURCE_SCROLL_TO => (|| {
-            // u64 source, u64 row: the core list's scroll handle.
             let src = r.u64();
             let row = r.u64() as usize;
             scroll_handle(src)?.scroll_to_item(row, ScrollStrategy::Top);
@@ -483,15 +494,13 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_SOURCE_ANSWER => (|| {
-            // u64 source, u64 request id, u32 len, bytes: the app's answer, in the wire type
-            // the request's family fixed.
             let (src, id) = (r.u64(), r.u64());
             let n = r.u32() as usize;
             let bytes = r.bytes(n).to_vec();
             let tx = rt::with(|s| -> GkResult<_> { Ok(s.source_mut(src)?.pending.remove(&id)) })?;
             match tx {
                 Some(tx) => {
-                    let _ = tx.send(bytes); // the asker may have gone: then the answer is dropped
+                    let _ = tx.send(bytes);
                     Ok(())
                 }
                 None => err(ERR_BAD_OP, format!("request {id} of this row source was answered already or never asked")),
@@ -499,8 +508,6 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
         })(),
         C_CTX_GET => ctx_get(r, c),
         C_TEST_SOURCE_REQUEST => (|| {
-            // u64 source, str text: a request with the test shape; its receiver is kept for
-            // C_TEST_SOURCE_TAKE.
             let src = r.u64();
             let text = r.str().to_owned();
             let rx = request(src, SHAPE_SOURCE_TEST, &text, c.cx)?;
@@ -510,7 +517,6 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
             })
         })(),
         C_TEST_SOURCE_TAKE => (|| {
-            // u64 source. Out: u8 1 and the answer as a str, or u8 0 while none has arrived.
             let src = r.u64();
             let got = rt::with(|s| -> GkResult<Option<Vec<u8>>> {
                 let source = s.source_mut(src)?;
@@ -539,16 +545,7 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
     })
 }
 
-// --- element closures over a context (docs/PROTOCOLS.md 9.16) ----------------------
-
-/// What a generated element closure over a context returns: the row view of source `src` for
-/// this call. Each call in a frame is a row, in the order of the calls (the count starts again
-/// at the next frame), or row `by` when the closure's only value is an index. `print` is the
-/// identity of the values the kit handed (their bytes; an object's reads that take nothing):
-/// when a bound row was handed other values its view is described again before the next frame,
-/// and this frame shows the old one. `write` writes the values as `gk.row_context` reads them
-/// (an object as a copy behind a temporary handle). Never calls the app: a row without a view
-/// is drawn as nothing for one frame, as any row.
+/// Renders one context-parameterized row from `src`, storing `(print, write)` for `C_CTX_GET`.
 pub fn ctx_row(
     src: u64,
     by: Option<u64>,
@@ -565,10 +562,8 @@ pub fn ctx_row(
     }
 }
 
-/// The row of `src` this call of an element closure over a context is (`ctx_row`'s bookkeeping,
-/// shared with the item procedures of core/src/items.rs): the drawing view watches the source,
-/// the values are kept for `gk.row_context`, and a bound row handed other values is marked for a
-/// new description before the next frame.
+/// Assigns or looks up a row key for a context-parameterized row, updating its cached context
+/// and marking the row view dirty if `print` changed since the previous frame.
 pub fn ctx_key(
     src: u64,
     by: Option<u64>,
@@ -605,7 +600,7 @@ pub fn ctx_key(
         Err(GkErr(_, msg)) => genapi::released_shown(&msg, "row source"),
     };
     if arm {
-        // The calls of the next frame count from 0 again.
+        // Reset the auto-incrementing row counter once per frame so unkeyed closures stay aligned.
         window.on_next_frame(move |_, _| {
             rt::with(|s| {
                 if let Ok(source) = s.source_mut(src) {
@@ -621,8 +616,6 @@ pub fn ctx_key(
     k
 }
 
-/// C_CTX_GET: u64 source, u32 section, u32 row -> the values the row was last handed (immediate;
-/// allowed in a view procedure: a row's view reads them while it is described).
 fn ctx_get(r: &mut R, c: &mut genapi::Call) -> GkResult<()> {
     let (src, section, row) = (r.u64(), r.u32(), r.u32());
     let write = rt::with(|s| -> GkResult<_> { Ok(s.source_mut(src)?.ctxs.get(&key(section, row)).map(|x| x.1.clone())) })?;
@@ -638,12 +631,13 @@ fn ctx_get(r: &mut R, c: &mut genapi::Call) -> GkResult<()> {
     }
 }
 
-// --- rows a shim will draw soon (added by the rows family, 11 Nov 2026) ---------------------
-
-/// Checks whether the rows two screens ahead and behind `rows` are bound for a table source, and
-/// if either is missing asks for two screens behind and four screens ahead (clamped to a quarter
-/// of capacity) in one session borrow. Returns `Some((epoch, covered_rows))` so the delegate can
-/// skip re-entering the session for every subsequent row inside `covered_rows` in the same epoch.
+/// Schedules lookahead row prefetching ahead of and behind the visible `rows` range of a table,
+/// returning `(rows_epoch, covered_range)` so callers can skip repeat checks while unchanged.
+///
+/// Probes `2 * len` rows ahead and behind (`len = max(rows.len(), 24)`). If both boundary rows
+/// are already bound or queued in `ahead`, returns immediately without touching `ahead`;
+/// otherwise queues missing rows up to `rows.end + 2 * len + batch` (with `batch` capped at
+/// `capacity / 4`) and arms `rt::ensure_hook` so `rows_turn` populates them on the next frame.
 pub fn table_bind_ahead(
     src: u64,
     rows: std::ops::Range<usize>,
@@ -693,11 +687,8 @@ pub fn table_bind_ahead(
     None
 }
 
-/// The tape of row `key` of `src` and its view's handle, for a shim that decodes the row itself
-/// (`genapi::with_tape`) instead of drawing its view. The row's entity is not read: in gpui-fast
-/// an entity read while a view draws makes that view depend on the entity, and a table would
-/// depend on every cell it drew. None when the row has no view or no tape yet: it is then a
-/// placeholder for one frame and wanted, as in `row`. A released source stops the program.
+/// Fetches the cached `(Tape, view_handle)` for a decoded-mode row, recording a miss and
+/// scheduling `pre_frame` if the tape is not present yet.
 pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option<(Rc<Tape>, u64)> {
     let found = rt::with(|s| -> GkResult<(Option<(Rc<Tape>, u64)>, u64)> {
         let frame = s.frame_no();
@@ -732,8 +723,8 @@ pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option
     }
 }
 
-/// Marks `src` as a source whose rows a shim decodes (`Source::decoded`), and converts any
-/// already-bound undescribed row views into lightweight `DecodedRow` handles.
+/// Switches `src` to decoded-row mode (tapes decoded inline without a `GkView` entity per row)
+/// and converts any still-empty bound rows to `Item::DecodedRow`.
 pub fn set_decoded(src: u64) {
     let convert: Vec<u64> = rt::with(|s| {
         let Ok(source) = s.source_mut(src) else { return Vec::new() };
@@ -748,14 +739,7 @@ pub fn set_decoded(src: u64) {
     }
 }
 
-/// gpui-kit's `v_virtual_list` / `h_virtual_list` over a row source (docs/PROTOCOLS.md 13.31): the
-/// rows protocol with a size per row. Upstream calls the list's closure while it lays out, with the
-/// range it shows; the closure hands back each row's view, or a placeholder of the row's size for
-/// a row without one yet (asked for before the next frame, as every row source does), so app code
-/// never runs mid-frame. The list's own view is the view that draws it (upstream's `Entity<V>`).
-/// Args: str id, u64 source, u8 axis (0 vertical: each row's height is used; 1 horizontal: its
-/// width), u32 n, n x (f32 width, f32 height). The sizes beyond the source's count are not drawn,
-/// rows beyond the sizes neither (upstream's count is the number of sizes). Then style ops.
+/// Decodes an `N_VIRTUAL_LIST` node (vertical or horizontal) backed by a row source and per-item sizes.
 pub fn virtual_list(dx: &mut genapi::Dx, args: u32, first: u32) -> gpui_kit::AnyElement {
     use gpui_kit::{IntoElement, ParentElement, Styled};
     let mut a = dx.args(args);
@@ -778,7 +762,7 @@ pub fn virtual_list(dx: &mut genapi::Dx, args: u32, first: u32) -> gpui_kit::Any
         Ok(v) => v,
         Err(GkErr(_, msg)) => genapi::released_shown(&msg, "view"),
     };
-    // The view that draws the list is notified when the rows it drew as placeholders arrive.
+
     watch(src, view.entity_id());
     let sizes = std::rc::Rc::new(sizes);
     let each = sizes.clone();

@@ -1,2 +1,3 @@
+# Pin the Rust toolchain so core/, ref/, and CI build with the same compiler version.
 [toolchain]
 channel = "1.99.1"

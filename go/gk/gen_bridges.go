@@ -2,7 +2,7 @@
 
 package gk
 
-// FocusTrapElement is an element gk.FocusTrap may wrap: a parent, styled, a gpui Element (PROTOCOLS.md 13.30).
+// FocusTrapElement marks styled parent elements that can be wrapped by FocusTrap.
 type FocusTrapElement interface {
 	Element
 	isFocusTrapElement()

@@ -1,9 +1,6 @@
-//! The overlays family's gallery pages (docs/PROTOCOLS.md section 11.6): a dialog, an alert, a
-//! sheet at the right and at the left, a dropdown menu and a context menu with a submenu, each
-//! opened by the page's script (a click on the page's button, or a right click), written the way
-//! a Rust GPUI-kit app writes them, with closures. The Go twin is
-//! examples/go/gallery/overlay_pages.go, whose dialogs are views (gk.NewBuilt) and whose menus
-//! are described values; the pages' lines are in ref/gallery/pages.txt.
+//! Overlay (dialog, alert dialog, sheet, popover, dropdown, context menu),
+//! keybinding-hint (`menu-kbd`), and `DockArea` gallery pages.
+
 use gpui_kit::component::button::Button;
 use gpui_kit::component::dialog::DialogEntrance;
 use gpui_kit::component::label::Label;
@@ -19,6 +16,7 @@ use std::cell::RefCell;
 
 gpui_kit::actions!(gallery_menu, [MenuCopy, MenuPaste, MenuDelete, MenuPinned, MenuZoomIn, MenuZoomOut, MenuKbd]);
 
+/// Populates the shared demo popup menu used across dropdown and context pages.
 fn menu(m: PopupMenu) -> PopupMenu {
     m.menu("Copy", Box::new(MenuCopy))
         .menu("Paste", Box::new(MenuPaste))
@@ -28,6 +26,7 @@ fn menu(m: PopupMenu) -> PopupMenu {
         .menu_with_disabled("Delete", Box::new(MenuDelete), true)
 }
 
+/// Renders an `overlay-*`, `menu-*`, or `dock-*` gallery page if `id` matches.
 pub fn page(id: &str, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
     Some(match id {
         "dock-panels" => div().w(px(600.)).h(px(300.)).child(dock(window, cx)).into_any_element(),
@@ -108,7 +107,6 @@ pub fn page(id: &str, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
     })
 }
 
-/// A dock panel that shows one line of text.
 struct TextPanel {
     name: &'static str,
     title: &'static str,
@@ -146,7 +144,6 @@ thread_local! {
     static DOCK: RefCell<Option<Entity<DockArea>>> = const { RefCell::new(None) };
 }
 
-/// The kit's styled dock with two tabs in the center and one panel in the left dock, made once.
 fn dock(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
     if let Some(d) = DOCK.with(|d| d.borrow().clone()) {
         return d;
@@ -164,8 +161,7 @@ fn dock(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
     area
 }
 
-/// docs/PROTOCOLS.md 11.8: what the pages dock-split, dock-hooks and dock-restore do,
-/// the way a Rust app does it.
+/// Dock split, panel hook, persistence-restore, skin, and keybinding fixtures.
 mod r3 {
     use super::TextPanel;
     use gpui_kit::base::dock::{
@@ -218,7 +214,6 @@ mod r3 {
         })
     }
 
-    /// A panel with a title suffix and toolbar buttons.
     struct Hooked {
         focus: FocusHandle,
     }
@@ -276,7 +271,6 @@ mod r3 {
         static BOUND: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     }
 
-    /// ctrl-s for MenuKbd, bound at start (only the page menu-kbd names it).
     pub fn bind_once(cx: &mut App) {
         if !BOUND.with(|b| b.replace(true)) {
             cx.bind_keys([gpui_kit::KeyBinding::new("ctrl-s", super::MenuKbd, None)]);
@@ -318,8 +312,7 @@ mod r3 {
     }
 }
 
-/// docs/PROTOCOLS.md 11.9: a dock drawn by a renderer of the app's own, the way a Rust app
-/// writes one: a padded frame, each dock's chrome a title over its content, the tab bar a label.
+/// Custom `DockAreaRenderer` and `TabGroupRenderer` fixture for `dock-renderer`.
 mod r4 {
     use super::TextPanel;
     use gpui_kit::base::dock::{

@@ -1,22 +1,24 @@
-# The expenses example's scripted session (examples/go/expenses against its Rust twin ref-expenses,
-# gates/go-apps.sh expenses): every image must be byte-identical between the two. Window
-# coordinates (the images are twice the size): What 146,92, Amount 430,92, the Category select
-# 714,92, Add expense 791,134 (lower once the fields show messages), the rows' delete buttons x 526.
+# Offscreen session script for the expenses app (gates/go-apps.sh expenses).
+# Compares expenses-go against ref-expenses across 11 shots covering validation errors,
+# numeric parsing, select dropdowns, button and Enter submission, and row deletion.
 size 860 560
 frame
 frame
 advance 1000
 shot 01-start.png
-# Add with every field empty: three messages
+
+# Click Add with empty inputs to verify required-field validation errors.
 click 791 134
 advance 300
 shot 02-errors.png
-# typing in What clears its message
+
+# Fill the description field with "Coffee".
 click 146 92
 type Coffee
 advance 300
 shot 03-what-typed.png
-# an amount that is not a number
+
+# Type non-numeric text ("abc") to show amount validation error, then replace with "3.20".
 click 430 92
 type abc
 advance 300
@@ -25,18 +27,21 @@ key ctrl-a
 type 3.20
 advance 300
 shot 05-amount-ok.png
+
+# Open the category select menu and pick an entry.
 click 714 92
 advance 300
 shot 06-select-open.png
-# the select's menu: Transport (626,164)
 click 626 164
 advance 300
 shot 07-category.png
-# Add: the fields clear, the list gets a row, the chart grows, a toast says so
+
+# Submit the valid expense via the Add button.
 click 791 134
 advance 500
 shot 08-added.png
-# Enter in a field adds too: an amount of 0 is refused, then 9.90 goes in
+
+# Verify a zero amount is rejected on Enter, then replace with "9.90" and submit via Enter.
 click 146 92
 type Lunch
 click 430 92
@@ -49,7 +54,8 @@ type 9.90
 key enter
 advance 500
 shot 10-added-by-enter.png
-# the first row's delete button
+
+# Click delete on a saved expense row.
 click 526 183
 advance 300
 shot 11-deleted.png

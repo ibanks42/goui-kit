@@ -7,18 +7,22 @@ import (
 	"time"
 )
 
+// High bit set by the Rust core on built-in kit actions to distinguish them
+// from app-defined actions created with NewAction.
 const actionBuiltin = 0x8000_0000
 
-// Action is an action of the app's action table, or a built-in one of GPUI or the kit.
+// Action identifies an application or built-in kit action registered with GPUI.
 type Action struct{ id uint32 }
 
-// IsBuiltin reports whether an action is GPUI's or the kit's rather than the app's.
+// IsBuiltin reports whether a refers to a built-in kit action rather than an
+// app-defined action.
 func (a Action) IsBuiltin() bool { return a.id&actionBuiltin != 0 }
 
+// PutAction encodes an Action ID onto o.
 func PutAction(o *Tape, a Action) { o.U32(a.id) }
 
-// NewAction names an action and returns it: the same name (and data) gives the same action.
-// data is the JSON a built-in action with fields takes ("" for none).
+// NewAction registers a new named app action with optional payload data and
+// returns its Action handle.
 func NewAction(cx *Cx, name string, data ...string) Action {
 	CheckCx(cx).Flush()
 	o := NewReq(CActionNew)
@@ -32,13 +36,12 @@ func NewAction(cx *Cx, name string, data ...string) Action {
 	return Action{r.U32()}
 }
 
-// KitActionValue is one of the kit's own action values (gk.NewCancelDefault(),
-// gk.NewSelectDownDefault()): a value node gk.ActionOf names as an Action.
+// KitActionValue is implemented by generated kit action value types accepted by
+// ActionOf.
 type KitActionValue interface{ valueNode() *Node }
 
-// ActionOf names one of the kit's own action values as an Action, which menus, key bindings and
-// Kbd take (PROTOCOLS.md 13.11). Make the value in the handler or init that calls; the same action
-// value always gives the same Action.
+// ActionOf converts a kit action value into an Action handle outside a view
+// function so it can be bound to keys or dispatched.
 func ActionOf(cx *Cx, v KitActionValue) Action {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -51,15 +54,18 @@ func ActionOf(cx *Cx, v KitActionValue) Action {
 	return Action{r.U32()}
 }
 
-// ActionHandler is what an element's OnAction takes: the action to listen for and the handler.
+// ActionHandler pairs an Action with the callback invoked when it fires on an
+// element.
 type ActionHandler struct {
 	action Action
 	fn     func(cx *Cx, a Action)
 }
 
-// Act pairs an action with its handler: gk.Div().OnAction(gk.Act(save, a.save)).
+// Act constructs an ActionHandler binding a to f.
 func Act(a Action, f func(cx *Cx, a Action)) ActionHandler { return ActionHandler{a, f} }
 
+// PutActionHandler encodes an element-level ActionHandler onto o and registers
+// its callback in the active view build's handler table.
 func PutActionHandler(o *Tape, a ActionHandler) {
 	if a.action.id == 0 {
 		Stop("OnAction: no action given (make one with gk.NewAction)")
@@ -71,15 +77,15 @@ func PutActionHandler(o *Tape, a ActionHandler) {
 	o.U32(Register(a.fn, ShapeAction))
 }
 
-// KeyBinding is keystrokes ("ctrl-s", "ctrl-k ctrl-c"), the action, and the key context it
-// applies in (When: "Editor", "Editor && !Readonly"; "" for everywhere).
+// KeyBinding maps a keystroke string to an Action, optionally restricted to a
+// GPUI key context expression in When.
 type KeyBinding struct {
 	Keys   string
 	Action Action
 	When   string
 }
 
-// BindKeys adds key bindings to the app's keymap. A later binding of the same keys wins.
+// BindKeys registers one or more key bindings with the application.
 func BindKeys(cx *Cx, bindings ...KeyBinding) {
 	t := CheckCx(cx)
 	o := NewReq(CBindKeys)
@@ -95,17 +101,17 @@ func BindKeys(cx *Cx, bindings ...KeyBinding) {
 	t.DeferOp(*o)
 }
 
-// ClearKeyBindings removes every key binding, the kit's included.
+// ClearKeyBindings removes all key bindings registered by the application.
 func ClearKeyBindings(cx *Cx) { CheckCx(cx).DeferOp(*NewReq(CClearKeyBindings)) }
 
-// ActionListener is an app-wide action listener (or a window-closed one); gk.Release ends it.
+// ActionListener is a releasable handle to a global action, window-close, or
+// app-quit callback.
 type ActionListener struct {
 	h    uint64
 	slot uint32
 }
 
-// OnAppAction runs f whenever the app action is dispatched and no element on the focus path
-// took it (GPUI's global action listeners).
+// OnAppAction registers a global handler for app-defined action a.
 func OnAppAction(cx *Cx, a Action, f func(cx *Cx, a Action)) ActionListener {
 	t := CheckCx(cx)
 	if a.IsBuiltin() {
@@ -121,9 +127,7 @@ func OnAppAction(cx *Cx, a Action, f func(cx *Cx, a Action)) ActionListener {
 	return ActionListener{r.U64(), slot}
 }
 
-// StopPropagation, in the handler of a click, a mouse or a key event, keeps the event from the
-// elements around the one whose handler runs: a click on a checkbox in a list row then does
-// not also select the row.
+// StopPropagation prevents the current event from bubbling to ancestor elements.
 func StopPropagation(cx *Cx) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -133,32 +137,24 @@ func StopPropagation(cx *Cx) {
 	MustCall(*NewReq(CStopPropagation))
 }
 
-// ShortcutOption changes a Shortcut.
+// ShortcutOption configures optional settings on Shortcut.
 type ShortcutOption func(*ShortcutOpts)
 
+// ShortcutOpts holds options applied when registering a keyboard shortcut.
 type ShortcutOpts struct{ When string }
 
-// WhenIn limits a shortcut's keys to a key context: only while the focus is inside an element
-// with .KeyContext(ctx).
+// WhenIn restricts a Shortcut to the given GPUI key context expression.
 func WhenIn(ctx string) ShortcutOption { return func(o *ShortcutOpts) { o.When = ctx } }
 
 var shortcutN int
 
-// ShortcutHandler is what gk.Shortcut runs: a func(cx), or a click handler (the method a
-// button's OnClick takes, so one method serves the button and its keys; it gets a ClickEvent of
-// Kind ClickKeyboard).
+// ShortcutHandler constrains Shortcut callbacks to plain or click handlers.
 type ShortcutHandler interface {
 	func(cx *Cx) | func(cx *Cx, e ClickEvent)
 }
 
-// Shortcut is a keyboard shortcut in one call: it makes an app action, binds keys to it and runs
-// f when they are pressed, wherever the focus is (an app-wide listener, so it keeps working
-// after a dialog or a click moved the focus). It returns the action, for a menu item (the menu
-// shows the keys) or for more keys (gk.BindKeys). Given in a view's init, f redraws that view.
-//
-//	a.newTask = gk.Shortcut(cx, "ctrl-n", a.addTask)              // func (a *App) addTask(cx *gk.Cx)
-//	gk.Shortcut(cx, "ctrl-t", a.toggleTheme)                       // also a button's OnClick
-//	gk.Shortcut(cx, "delete", a.deleteTask, gk.WhenIn("Tasks"))
+// Shortcut creates a unique Action, registers f as its global handler, and
+// binds keys (when non-empty) to that Action.
 func Shortcut[F ShortcutHandler](cx *Cx, keys string, f F, opts ...ShortcutOption) Action {
 	CheckCx(cx)
 	if Vb.Active {
@@ -189,15 +185,15 @@ func Shortcut[F ShortcutHandler](cx *Cx, keys string, f F, opts ...ShortcutOptio
 	return a
 }
 
-// DispatchAction dispatches an action to the focused element of the turn's window (as its key
-// binding would), or app-wide in a turn without a window. It runs after the handler.
+// DispatchAction dispatches action a to the currently focused element chain.
 func DispatchAction(cx *Cx, a Action) {
 	o := NewReq(CDispatchAction)
 	o.U32(a.id)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// ActionAvailable reports whether something on the focus path, or app-wide, takes the action.
+// ActionAvailable reports whether any focused element or global listener can
+// handle action a.
 func ActionAvailable(cx *Cx, a Action) bool {
 	CheckCx(cx).Flush()
 	o := NewReq(CActionAvailable)
@@ -206,8 +202,8 @@ func ActionAvailable(cx *Cx, a Action) bool {
 	return r.U8() != 0
 }
 
-// Keystrokes gives the keys of the action's binding that wins ("ctrl-s"), and false when it has
-// none. keyContext: only bindings of that context ("" for any).
+// Keystrokes returns the primary keystroke string bound to action a in
+// keyContext, and whether a binding exists.
 func Keystrokes(cx *Cx, a Action, keyContext string) (string, bool) {
 	CheckCx(cx).Flush()
 	o := NewReq(CActionKeystrokes)
@@ -220,21 +216,24 @@ func Keystrokes(cx *Cx, a Action, keyContext string) (string, bool) {
 	return r.Str(), true
 }
 
-// Timer fires a handler between frames, never in the middle of one. gk.Release cancels it.
+// Timer is a releasable handle to a one-shot or repeating UI-thread timer.
 type Timer struct {
 	h    uint64
 	slot uint32
 }
 
+// timersOnce tracks one-shot timers by handler slot so timerFired can drop the
+// slot automatically after the callback runs. timersLive maps all active timer
+// handles to their handler slots for cancellation via Release.
 var (
-	timersOnce = map[uint32]uint64{} // kept slot -> timer, one-shot timers that have not fired
-	timersLive = map[uint64]uint32{} // timer -> kept slot
+	timersOnce = map[uint32]uint64{}
+	timersLive = map[uint64]uint32{}
 )
 
-// After runs f once, d from now.
+// After schedules f to run once on the UI thread after duration d.
 func After(cx *Cx, d time.Duration, f func(cx *Cx)) Timer { return timerNew(cx, d, false, f) }
 
-// Every runs f every d until the timer is released.
+// Every schedules f to run repeatedly on the UI thread at interval d (at least 1 ms).
 func Every(cx *Cx, d time.Duration, f func(cx *Cx)) Timer { return timerNew(cx, d, true, f) }
 
 func timerNew(cx *Cx, d time.Duration, repeat bool, f func(cx *Cx)) Timer {
@@ -271,6 +270,7 @@ func timerOfSlot(slot uint32) (uint64, bool) {
 	return 0, false
 }
 
+// timerFired drops the kept handler slot for a one-shot timer once it has run.
 func timerFired(slot uint32) {
 	if th, ok := timersOnce[slot]; ok {
 		delete(timersOnce, slot)
@@ -282,7 +282,7 @@ func timerFired(slot uint32) {
 func releaseTimer(t *turn, tm Timer) {
 	slot, live := timersLive[tm.h]
 	if !live {
-		return // a one-shot timer that has fired, or one released before
+		return
 	}
 	delete(timersLive, tm.h)
 	delete(timersOnce, slot)
@@ -290,14 +290,15 @@ func releaseTimer(t *turn, tm Timer) {
 	releaseHandle(t, tm.h)
 }
 
-// ClipboardWrite puts text on the clipboard.
+// ClipboardWrite writes text to the system clipboard.
 func ClipboardWrite(cx *Cx, text string) {
 	o := NewReq(CClipboardWrite)
 	o.Str(text)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// ClipboardRead gives the clipboard's text, and false when it holds none.
+// ClipboardRead reads text from the system clipboard, returning false when the
+// clipboard has no text content.
 func ClipboardRead(cx *Cx) (string, bool) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CClipboardRead))}
@@ -307,17 +308,15 @@ func ClipboardRead(cx *Cx) (string, bool) {
 	return r.Str(), true
 }
 
+// Thread-safe queue of callbacks submitted from any goroutine via Post.
 var (
 	postMu    sync.Mutex
 	postQueue []func(*Cx)
 )
 
-// Post runs f on the UI thread, in a WAKE turn, with a cx. Any goroutine may call it; it is the
-// only function of this package that may be called off the UI thread. However fast posts come,
-// the library makes at most one WAKE turn per turn of its main loop, and the views they mark are
-// described once, before the next frame.
-//
-//	go func() { items := load(path); gk.Post(func(cx *gk.Cx) { a.items = items; gk.Refresh(cx) }) }()
+// Post schedules f to run on the UI thread during the next KWake turn.
+// Post is safe to call from any goroutine; it wakes the event loop only on
+// the transition from an empty queue to a non-empty queue.
 func Post(f func(cx *Cx)) {
 	if f == nil {
 		return
@@ -327,15 +326,13 @@ func Post(f func(cx *Cx)) {
 	postQueue = append(postQueue, f)
 	postMu.Unlock()
 	if first {
-		// Before gk.Run has started the library's loop this fails and is ignored: the first
-		// turn drains the queue.
 		postWake()
 	}
 }
 
-// Go runs work on a new goroutine and done with its result on the UI thread.
-//
-//	gk.Go(cx, func() []Article { return parse(path) }, func(cx *gk.Cx, as []Article) { a.articles = as; gk.Refresh(cx) })
+// Go runs work in a background goroutine and posts done back to the UI thread
+// with its result. Panics in work are captured into a *PanicError, latched on
+// the runtime, and delivered by waking the UI loop to exit cleanly.
 func Go[T any](cx *Cx, work func() T, done func(cx *Cx, v T)) {
 	CheckCx(cx)
 	if work == nil || done == nil {
@@ -343,8 +340,6 @@ func Go[T any](cx *Cx, work func() T, done func(cx *Cx, v T)) {
 	}
 	file, line, _ := appFrame(2)
 	go func() {
-		// A panic in work would end the program with Go's goroutine dump: it is recorded with
-		// whose it is, the app stops, and gk.Run panics again with it (rt_fail.go).
 		defer func() {
 			if r := recover(); r != nil {
 				p := &PanicError{Value: r, Where: fmt.Sprintf("the work function of the gk.Go at %s:%d", file, line), Stack: rdebug.Stack()}
@@ -364,7 +359,8 @@ func postsQueued() int {
 	return len(postQueue)
 }
 
-// drainPosts runs the queued posts, or the first limit of them (the rest stay queued).
+// drainPosts executes up to limit queued Post callbacks on the UI thread (or
+// all queued callbacks when limit < 0). If items remain, it wakes the loop again.
 func drainPosts(cx *Cx, limit int) {
 	if limit == 0 {
 		return
@@ -380,36 +376,39 @@ func drainPosts(cx *Cx, limit int) {
 	}
 	postMu.Unlock()
 	if left > 0 {
-		postWake() // the posts left behind may not have asked for a wake
+		postWake()
 	}
 	for _, f := range queue {
 		f(cx)
 	}
 }
 
-// DoneStatus says what happened to a request.
+// DoneStatus reports the outcome of an asynchronous platform dialog request.
 type DoneStatus uint8
 
+// Outcomes returned in PathsDone.Status and PromptDone.Status.
 const (
-	DoneAnswered  DoneStatus = 0 // the user chose (paths, a button)
-	DoneCancelled DoneStatus = 1 // the user dismissed it
-	DoneFailed    DoneStatus = 2 // the platform could not show it: Error says why
+	DoneAnswered  DoneStatus = 0
+	DoneCancelled DoneStatus = 1
+	DoneFailed    DoneStatus = 2
 )
 
-// PathsDone is what a file dialog answers.
+// PathsDone is the result passed to PromptForPaths and PromptForNewPath callbacks.
 type PathsDone struct {
 	Status DoneStatus
 	Paths  []string
 	Error  string
 }
 
-// PromptDone is what a prompt answers: the index of the button chosen.
+// PromptDone is the result passed to Prompt callbacks, with Answer indexing
+// into the answers slice supplied to Prompt.
 type PromptDone struct {
 	Status DoneStatus
 	Answer uint32
 }
 
-// Completion is a request that answers later. gk.Release cancels it while it waits.
+// Completion represents an in-flight asynchronous platform dialog request that
+// can be canceled by passing it to Release.
 type Completion struct {
 	h    uint64
 	slot uint32
@@ -457,13 +456,14 @@ func putOptStr(o *Tape, s string) {
 	}
 }
 
-// PathPrompt is what a file dialog may choose. Prompt: the text of its button, "" for the platform's.
+// PathPrompt configures a native open-file or open-directory dialog.
 type PathPrompt struct {
 	Files, Directories, Multiple bool
 	Prompt                       string
 }
 
-// PromptForPaths shows the platform's dialog for opening files or directories; f gets the answer.
+// PromptForPaths opens a native file or directory picker and invokes f when
+// the user finishes or cancels.
 func PromptForPaths(cx *Cx, p PathPrompt, f func(cx *Cx, d PathsDone)) Completion {
 	if !p.Files && !p.Directories {
 		Stop("gk.PromptForPaths was given a dialog that may choose neither files nor directories: set Files or Directories in the gk.PathPrompt")
@@ -476,7 +476,8 @@ func PromptForPaths(cx *Cx, p PathPrompt, f func(cx *Cx, d PathsDone)) Completio
 	return completionEnd(o, slot, gen)
 }
 
-// PromptForNewPath shows the platform's dialog for saving a new file, starting in directory.
+// PromptForNewPath opens a native save-file dialog starting in directory with
+// an optional suggestedName and invokes f when complete.
 func PromptForNewPath(cx *Cx, directory, suggestedName string, f func(cx *Cx, d PathsDone)) Completion {
 	o, slot, gen := completionBegin(cx, CPromptNewPath, f, ShapePaths)
 	o.Str(directory)
@@ -484,32 +485,34 @@ func PromptForNewPath(cx *Cx, directory, suggestedName string, f func(cx *Cx, d 
 	return completionEnd(o, slot, gen)
 }
 
-// PromptLevel is how serious a prompt is.
+// PromptLevel sets the severity icon of a native alert dialog.
 type PromptLevel uint8
 
+// Severity levels accepted by Prompt.
 const (
 	PromptInfo     PromptLevel = 0
 	PromptWarning  PromptLevel = 1
 	PromptCritical PromptLevel = 2
 )
 
-// PromptButtonKind marks a prompt's button as the OK or Cancel one.
+// PromptButtonKind classifies a button in a native alert dialog.
 type PromptButtonKind uint8
 
+// Button kinds accepted in PromptButton.Kind.
 const (
 	ButtonOther  PromptButtonKind = 0
 	ButtonOk     PromptButtonKind = 1
 	ButtonCancel PromptButtonKind = 2
 )
 
-// PromptButton is one answer of a prompt.
+// PromptButton defines one button shown by Prompt.
 type PromptButton struct {
 	Kind  PromptButtonKind
 	Label string
 }
 
-// Prompt asks a question in the turn's window with the platform's dialog where it has one and
-// GPUI's own otherwise; f gets the index of the button chosen.
+// Prompt displays a native modal alert dialog with the given buttons and
+// invokes f with the chosen button index or cancellation status.
 func Prompt(cx *Cx, level PromptLevel, message, detail string, answers []PromptButton, f func(cx *Cx, d PromptDone)) Completion {
 	if len(answers) == 0 {
 		Stop("gk.Prompt was given no answers: give at least one button, as in []gk.PromptButton{{Label: \"OK\"}}")
@@ -554,7 +557,8 @@ func completionDropKept(t *turn, slot uint32) bool {
 	return true
 }
 
-// doneTurn delivers an answer: the kept handler runs as for an event, then the completion is done.
+// doneTurn delivers a KDone completion callback and transitions the completion
+// handle to completionDone so a subsequent explicit Release is harmless.
 func doneTurn(cx *Cx, r *Reader) {
 	peek := *r
 	peek.U64()
@@ -569,15 +573,15 @@ func doneTurn(cx *Cx, r *Reader) {
 	}
 }
 
-// OpenURL has the platform open a URL with the user's browser. It runs after the handler.
+// OpenURL opens url in the system's default handler.
 func OpenURL(cx *Cx, url string) {
 	o := NewReq(COpenUrl)
 	o.Str(url)
 	CheckCx(cx).DeferOp(*o)
 }
 
-// PlatformAnswerPaths answers the oldest waiting file dialog (offscreen, or with
-// GK_SCRIPTED_PLATFORM=1: tests). It reports whether one was waiting.
+// PlatformAnswerPaths supplies a scripted answer to an open or save path dialog
+// in headless diagnostic tests.
 func PlatformAnswerPaths(cx *Cx, status DoneStatus, paths []string, newPath bool, errText string) bool {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformAnswer)
@@ -596,7 +600,8 @@ func PlatformAnswerPaths(cx *Cx, status DoneStatus, paths []string, newPath bool
 	return r.U8() != 0
 }
 
-// PlatformAnswerPrompt answers the oldest waiting prompt with the index of a button.
+// PlatformAnswerPrompt supplies a scripted button answer to a modal prompt in
+// headless diagnostic tests.
 func PlatformAnswerPrompt(cx *Cx, status DoneStatus, answer int) bool {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformAnswer)
@@ -607,5 +612,5 @@ func PlatformAnswerPrompt(cx *Cx, status DoneStatus, answer int) bool {
 	return r.U8() != 0
 }
 
-// MkAction is the action of a number the library handed back (generated readers).
+// MkAction constructs an Action from a raw action ID returned by the library.
 func MkAction(id uint32) Action { return Action{id} }

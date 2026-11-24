@@ -1,11 +1,5 @@
-// The lists and editor families' gallery pages, the Go twin of ref/src/bin/gallery/lists2_pages.rs,
-// call for call: selects and a combobox over
-// the library's search delegate (items as data, rows and group headers as row views) and a
-// table whose looks are data (docs/PROTOCOLS.md sections 9.9 and 9.10), a Markdown code block
-// highlighted by the app (an ask, 9.14), a patch parsed by the kit (DiffFile::parse, 9.15), an
-// input's token drawn by an item function (9.16), a diff's header suffixes, and an editor whose
-// diagnostics are lent and whose highlighter is the app's (9.17, 9.18). The steps of
-// ref/gallery/pages.txt open the menus, type and press keys.
+// Searchable lists, tables, text highlighting, and diff gallery pages: Select, Combobox,
+// custom table styling and static tables, Markdown code-block highlighters, inline tokens, and diffs.
 package main
 
 import (
@@ -20,19 +14,17 @@ import (
 )
 
 type lists2Pages struct {
-	select_ gktable.SelectState
-	search  gktable.SelectState
-	rows    gktable.SelectState
-	combo   gktable.ComboboxState
-	table   gktable.State
-	cells   gk.RowSource
-	values  gk.View // the "Values" group header cell
-	// docs/PROTOCOLS.md 9.14: a code block highlighter the app answers between frames
-	hl   gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]
-	diff gkeditor.DiffState // a patch parsed by DiffFile::parse (PROTOCOLS.md 9.15)
-	// docs/PROTOCOLS.md 9.16 to 9.18
-	token    gkeditor.InputState // an input with a token drawn by the app's item function (9.16)
-	editor   gkeditor.State      // diagnostics lent (9.17), a highlighter of the app's (9.18)
+	select_  gktable.SelectState
+	search   gktable.SelectState
+	rows     gktable.SelectState
+	combo    gktable.ComboboxState
+	table    gktable.State
+	cells    gk.RowSource
+	values   gk.View
+	hl       gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]
+	diff     gkeditor.DiffState
+	token    gkeditor.InputState
+	editor   gkeditor.State
 	keywords gk.Highlighter
 }
 
@@ -60,21 +52,17 @@ var lists2Fruit = []gk.SearchItem{
 
 var lists2Veg = []gk.SearchItem{{Value: "kale", Title: "Kale"}, {Value: "leek", Title: "Leek"}}
 
-// lists2HeaderRow is the row a search source's header row is asked at (gk.HeaderRow).
 const lists2HeaderRow = 0xffff_fffe
 
 func lists2PagesInit(a *App, cx *gk.Cx) {
 	p := &a.lists2
 	p.hl = gk.NewAsk(cx, textHighlightSpans)
-	// A patch parsed by the kit: how many files it holds, then each file by its index.
 	n, _ := gkeditor.DiffFileParseCount(cx, diffViewPatch).Value.Get()
 	files := make([]gkeditor.DiffFile, n)
 	for i := range files {
 		files[i] = gkeditor.NewDiffFileParseAt(diffViewPatch, i)
 	}
 	p.diff = gkeditor.NewDiffState(cx, files).Build()
-	// a token drawn by an item function of the app's (9.16), a diff's header suffixes, an editor
-	// whose diagnostics are lent and given back (9.17) and whose highlighter is the app's (9.18).
 	p.token = gkeditor.NewInputState(cx).DefaultValue("Hello world").Build()
 	_ = p.token.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gkeditor.NewInlineToken("t1", "world").WithLabel("World"))
 	p.keywords = gk.NewHighlighter(cx, editorKeywords, nil)
@@ -155,13 +143,10 @@ func lists2TableLook(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gktable.DataTable(a.lists2.table).ScrollbarVisible(false, false))
 }
 
-// text-highlight: a Markdown code block whose highlights the app gives (an ask, PROTOCOLS.md
-// 9.14): "proc" and "return" in red, as the Rust page's closure does.
 var textHighlightWords = []string{"proc", "return"}
 
 const textHighlightMD = "# Code\n\n```demo\nmain :: proc() {\n    return\n}\n```\n"
 
-// keywordRuns finds the keywords of textHighlightWords in text: one range per keyword.
 func keywordRuns(text string) []gk.Range {
 	var out []gk.Range
 	for i := 0; i < len(text); {
@@ -193,30 +178,24 @@ func textHighlight(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(360)).Child(gkeditor.BaseTextViewMarkdown("hl", textHighlightMD).CodeBlockHighlighter(a.lists2.hl))
 }
 
-// diff-view: a patch parsed by the kit (DiffFile::parse) shown by its Diff.
 const diffViewPatch = "diff --git a/hello.demo b/hello.demo\n--- a/hello.demo\n+++ b/hello.demo\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n"
 
 func diffView(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gkeditor.Diff(a.lists2.diff))
 }
 
-// text-token: the input's token drawn by an item function of the app's: the kit's InputToken over
-// the token's context, which the kit hands it (9.16, given with gk.Items since 9.41).
 func textToken(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(260)).Child(gkeditor.Input(a.lists2.token).Token(overlay.Items(cx, func(cx *gk.Cx, t gkeditor.InlineTokenContext) gk.Element {
 		return gkeditor.InputToken(t)
 	})))
 }
 
-// diff-header: each file's header ends with its path in brackets, an item function over the file.
 func diffHeader(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gkeditor.Diff(a.lists2.diff).RenderHeaderSuffix(overlay.Items(cx, func(cx *gk.Cx, f gkeditor.DiffFileRead) gk.Element {
 		return kit.Label(fmt.Sprintf("[%s]", f.Path(cx)))
 	})))
 }
 
-// editor-diagnostics: "proc" and "return" are keyword runs (the editor's resolver gives their
-// color), as the Rust page's highlighter answers.
 const editorDiagText = "main :: proc() {\n    helper()\n    return\n}\n"
 
 func editorKeywords(cx *gk.Cx, q gk.HighlightQuery) []gk.HighlightRun {

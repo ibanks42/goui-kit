@@ -1,11 +1,15 @@
 #!/bin/bash
-# one.sh BIN VARIANT SCENE [ARGS...]: run one binary of a scene and print its gk-meter line.
-#   BIN      rust | go                  (the Rust reference; the Go app)
-#   VARIANT  ship | diag                (which library, and which build of the reference)
-#   SCENE    panels | counter | ...     (bin/SCENE-go against lib/VARIANT/ref-SCENE)
-# Needs a display (gates/display.sh). GK_FRAMES defaults to 60,300. The per-frame CSV goes to
-# $GK_STATS (default gates/out/frames/SCENE-ARGS-BIN-VARIANT[-TAG].csv). Killed after
-# $GK_TIMEOUT seconds (default 90); exit 124 then means the run stalled.
+# Single-run launcher for frame-metered binaries (`gates/one.sh <rust|go> <ship|diag> <scene> [args...]`).
+#
+# Purpose:
+#   Provides a uniform invocation wrapper for `fps.sh` and `counter.sh` so Rust references
+#   (`$GK_LIB_ROOT/<variant>/ref-<scene>`) and Go binaries (`$GK_BIN/<scene>-go`) run against the
+#   same shared library (`LD_LIBRARY_PATH=$lib`), the same warmup/measured frame counts
+#   (`GK_FRAMES`, default `60,300`), and the same timeout (`GK_TIMEOUT`, default 90 s).
+#   Writes per-frame CSV telemetry to `GK_STATS` (default `gates/out/frames/<name>.csv`).
+#
+# Exit code: 2 for unknown binary or missing executable; otherwise the child's exit status.
+
 bin=$1; variant=$2; scene=$3; shift 3
 repo=$(cd "$(dirname "$0")/.." && pwd)
 lib=${GK_LIB_ROOT:-$repo/lib}/$variant

@@ -1,22 +1,7 @@
-// review3: five attacks on the protocols built since milestone 2 (timers, windows, actions, dock
-// panels, library objects behind handles), written by the review of 12 November 2026; the port of
-// core/tests/review3. Each runs offscreen (the diag library) under a gk-meter script;
-// core/tests/go/run-review3.sh checks the lines and the exit code. None may crash, hang, or run
-// app code against a view that is gone.
-//
-//	GK_PROTO=timer-after-view  a second window's view starts a repeating timer and an app-wide
-//	                           listener in its init; the window closes and the view is released:
-//	                           neither may run again with the released view's state
-//	GK_PROTO=close-own-window  a key binding's handler in a second window closes that window and
-//	                           dispatches another action in the same turn
-//	GK_PROTO=dock-panel-freed  the view of a docked panel is released while the dock shows it; the
-//	                           dock draws, is clicked, and is laid out again without the panel
-//	GK_PROTO=reentrant-action  an app-wide listener dispatches its own action again, releases
-//	                           itself and adds another listener while it runs, in a turn with a
-//	                           window (a key) and in one without (a timer started before any window)
-//	GK_PROTO=handle-after-owner a dock's layout and a dock context kept past the release of the dock
-//
-// handle-after-owner is in owner.go.
+// Command review3 runs regression tests for lifetime and reentrancy edge cases:
+// timers/listeners attached to released views, closing a window from its own
+// action handler, releasing a docked panel's view, reentrant action dispatch,
+// and retaining derived dock handles past their owner's release.
 package main
 
 import (
@@ -34,6 +19,8 @@ import (
 
 const ms = time.Millisecond
 
+// Child tracks callbacks owned by a secondary view in `timer-after-view` to
+// verify none fire once `dead` is set on release.
 type Child struct {
 	ticks    int
 	wrong    int
@@ -48,12 +35,12 @@ type App struct {
 	mode  string
 	root  gk.View
 	frame int
-	// timer-after-view
+
 	child  Child
 	childV gk.View
 	win    gk.Window
 	final  int
-	// close-own-window
+
 	close   gk.Action
 	ping    gk.Action
 	focus2  gk.FocusHandle
@@ -62,7 +49,7 @@ type App struct {
 	closes  int
 	closed  int
 	pings   int
-	// dock-panel-freed, handle-after-owner
+
 	dock     gkdock.Area
 	pa, pb   gkdock.Panel
 	paV, pbV gk.View
@@ -73,7 +60,7 @@ type App struct {
 	tree     gkdock.PaneTree
 	dockCtx  gkdock.Context
 	hasCtx   bool
-	// reentrant-action
+
 	l1, l2 gk.ActionListener
 	n1, n2 int
 	depth  int
@@ -81,8 +68,6 @@ type App struct {
 	phase  int
 	limit  int
 }
-
-// --- timer-after-view ---------------------------------------------------------------------------
 
 func (c *Child) tick(cx *gk.Cx) {
 	if c.dead {
@@ -127,7 +112,7 @@ func (a *App) dropChild(cx *gk.Cx) {
 	gk.CloseWindow(cx, a.win)
 	gk.Release(cx, a.childV)
 	a.child.dead = true
-	gk.DispatchAction(cx, a.child.ping) // the released view's listener must not hear it
+	gk.DispatchAction(cx, a.child.ping)
 }
 
 func (a *App) finalFired(cx *gk.Cx) {
@@ -135,8 +120,7 @@ func (a *App) finalFired(cx *gk.Cx) {
 }
 
 func (a *App) reportChild(cx *gk.Cx) {
-	// the app still holds the listener's and the timer's handles: releasing them now does nothing
-	// wrong, and a handler kept afterwards (in a slot the view's handlers had) still fires
+
 	gk.Release(cx, a.child.listener)
 	gk.Release(cx, a.child.timer)
 	gk.After(cx, 10*ms, a.finalFired)
@@ -145,6 +129,9 @@ func (a *App) reportChild(cx *gk.Cx) {
 		a.child.wrong, len(gk.Windows(cx)))
 }
 
+// timerAfterViewInit proves closing a child window and releasing its view stops
+// the child's repeating timer and action listener from firing (wrong=0, pings
+// stays at 1) while later timers on the surviving root window still run (final=1).
 func (a *App) timerAfterViewInit(cx *gk.Cx) {
 	gk.After(cx, 10*ms, a.openChild)
 	gk.After(cx, 60*ms, a.pingChild)
@@ -152,11 +139,9 @@ func (a *App) timerAfterViewInit(cx *gk.Cx) {
 	gk.After(cx, 220*ms, a.reportChild)
 }
 
-// --- close-own-window ---------------------------------------------------------------------------
-
 func (a *App) closeSelf(cx *gk.Cx, _ gk.Action) {
 	a.closes++
-	gk.CloseWindow(cx, gk.Window{}) // the turn's window: the one this handler's key press went to
+	gk.CloseWindow(cx, gk.Window{})
 	gk.DispatchAction(cx, a.ping)
 	fmt.Printf("review3 close-self n=%d\n", a.closes)
 }
@@ -192,6 +177,9 @@ func (a *App) reportClose(cx *gk.Cx) {
 		len(gk.Windows(cx)))
 }
 
+// closeOwnInit proves an action handler running inside a secondary window can
+// close its own window via gk.CloseWindow(cx, gk.Window{}) and dispatch another
+// action without deadlocking, firing OnWindowClosed once and returning windows=1.
 func (a *App) closeOwnInit(cx *gk.Cx) {
 	a.close = gk.NewAction(cx, "review::CloseWindow")
 	a.ping = gk.NewAction(cx, "review::Ping")
@@ -200,8 +188,6 @@ func (a *App) closeOwnInit(cx *gk.Cx) {
 	gk.After(cx, 10*ms, a.openSecond)
 	gk.After(cx, 200*ms, a.reportClose)
 }
-
-// --- dock-panel-freed ---------------------------------------------------------------------------
 
 func (a *App) paView(cx *gk.Cx) gk.Element {
 	a.aDrawn++
@@ -229,14 +215,14 @@ func (a *App) makePanels(cx *gk.Cx) {
 }
 
 func (a *App) freePanelView(cx *gk.Cx) {
-	gk.Release(cx, a.paV) // still docked, and the active tab
+	gk.Release(cx, a.paV)
 	a.freed = true
 	gk.Notify(cx, a.root)
 	fmt.Printf("review3 panel view released drawn=%d\n", a.aDrawn)
 }
 
 func (a *App) relayout(cx *gk.Cx) {
-	gk.Release(cx, a.pa) // the panel itself too, while the dock still holds it
+	gk.Release(cx, a.pa)
 	a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(a.pb))
 	gk.Notify(cx, a.root)
 }
@@ -245,6 +231,9 @@ func (a *App) reportDock(cx *gk.Cx) {
 	fmt.Printf("review3 dock-panel-freed described_after=%d frames=%d\n", a.aAfter, a.frame)
 }
 
+// dockFreedInit proves releasing a docked panel's backing view stops any future
+// view describes or click deliveries to that panel (described_after=0) while
+// allowing the dock to relayout around the remaining panel cleanly.
 func (a *App) dockFreedInit(cx *gk.Cx) {
 	a.dock = gkdock.NewAreaSkinned(cx, "review3")
 	a.makePanels(cx)
@@ -254,8 +243,6 @@ func (a *App) dockFreedInit(cx *gk.Cx) {
 	gk.After(cx, 150*ms, a.reportDock)
 }
 
-// --- reentrant-action ---------------------------------------------------------------------------
-
 func (a *App) ping1(cx *gk.Cx, _ gk.Action) {
 	a.depth++
 	if a.depth > 1 {
@@ -263,8 +250,8 @@ func (a *App) ping1(cx *gk.Cx, _ gk.Action) {
 	}
 	a.n1++
 	if a.n1 == 2 {
-		gk.Release(cx, a.l1)                       // itself, while it runs
-		a.l2 = gk.OnAppAction(cx, a.ping, a.ping2) // another one, while the dispatch runs
+		gk.Release(cx, a.l1)
+		a.l2 = gk.OnAppAction(cx, a.ping, a.ping2)
 	}
 	if a.n1+a.n2 < a.limit {
 		gk.DispatchAction(cx, a.ping)
@@ -289,7 +276,7 @@ func (a *App) reportWindowPhase(cx *gk.Cx) {
 }
 
 func (a *App) noWindowPing(cx *gk.Cx) {
-	// kept in the start turn, before any window: fires without one, so the dispatch has none
+
 	a.limit = 12
 	gk.DispatchAction(cx, a.ping)
 }
@@ -298,6 +285,9 @@ func (a *App) reportReentrant(cx *gk.Cx) {
 	fmt.Printf("review3 reentrant-action n1=%d n2=%d nested=%d\n", a.n1, a.n2, a.nested)
 }
 
+// reentrantInit proves dispatching an action from inside its own listener queues
+// iteratively rather than recursing (nested=0), swaps listeners cleanly mid-chain
+// (l1 runs twice then hands off to l2), and works both in a window and timer turn.
 func (a *App) reentrantInit(cx *gk.Cx) {
 	a.ping = gk.NewAction(cx, "review::Ping")
 	a.limit = 6
@@ -306,8 +296,6 @@ func (a *App) reentrantInit(cx *gk.Cx) {
 	gk.After(cx, 100*ms, a.reportWindowPhase)
 	gk.After(cx, 400*ms, a.reportReentrant)
 }
-
-// --- the app ------------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
@@ -335,7 +323,7 @@ func (a *App) onFrame(cx *gk.Cx) gk.Element {
 
 func (a *App) start(cx *gk.Cx) {
 	if a.mode == "reentrant-action" {
-		gk.After(cx, 200*ms, a.noWindowPing) // kept in the start turn: no window, the app's state
+		gk.After(cx, 200*ms, a.noWindowPing)
 	}
 	a.root = gk.NewView(a.init, a.onFrame)
 	gk.OpenWindow(cx, "review3", 640, 480, a.root)

@@ -1,34 +1,53 @@
-"""gk_model: reads the committed API extract (api/rustdoc/*.json.gz, rustdoc JSON with docs and
-spans removed) and classifies every public function of the kit crates by rule. The result is
-the language-neutral interface description (api/gk.api.json.gz) the emitters read.
+"""Semantic API model built from extracted rustdoc JSON and api/overrides.toml.
 
-Nothing here decides that an item compiles: rustc and the Go compiler are the judges.
-Standard library only. See docs/DESIGN.md section 13 and gen/README.md.
+Pipeline role:
+  Reads the four pinned crate rustdoc archives (`gpui`, `gpui_base`,
+  `gpui_component`, `gpui_kit`), applies `api/overrides.toml` and
+  `api/clone.json`, and builds an intermediate model consumed by:
+  - `gk_names.py` (canonical stem naming)
+  - `gk_rust.py` and `gk_fam.py` (opcode assignment and Rust decoder emission)
+  - `gk_go.py` and `gk_split.py` (Go package emission and splitting)
+  - `gkgen.py` (coverage, API description JSON, and reports)
+
+Core concepts in the model:
+  - **Nodes** (`self.nodes`): element types (`element=True`, implement `IntoElement`)
+    and builder-style value structs (`element=False`) encoded on the view tape.
+  - **States** (`self.states`): GPUI `Entity<T>` types kept behind opaque u64
+    handles in the runtime, driven through call ops.
+  - **Objects** (`self.objects`): non-entity Rust structs (and `Global` singletons)
+    also stored behind u64 handles in `self.states` with `obj=True`.
+  - **Descriptors**: tagged Python lists describing how a Rust parameter or return
+    type crosses the wire (for example `["int", "usize"]`, `["leaf", "color", ""]`,
+    `["rec", rt]`, `["denum", rt]`, `["into", rt]`, `["handler", key, ...]`).
+  - **Extension modules**: `gk_app`, `gk_values`, `gk_overlay`, `gk_lists`,
+    `gk_editor`, and `gk_items` hook into type scanning, descriptor resolution,
+    closure matching, and post-classification settlement.
 """
 import json
 import os
 import re
 import tomllib
 
-import gk_app  # the app family's rules: actions, key contexts (PROTOCOLS.md section 11)
-import gk_lists  # the lists and editor families' rules (PROTOCOLS.md sections 9.9 to 9.12)
-import gk_values  # the values family's rules (PROTOCOLS.md sections 13.8 to 13.12)
-import gk_overlay  # the overlays and dock families' rules (PROTOCOLS.md sections 11.6, 11.7)
-import gk_editor  # the editor family's rules (PROTOCOLS.md sections 9.20 to 9.26)
-import gk_items  # item procedures (PROTOCOLS.md 9.41)
+import gk_app
+import gk_lists
+import gk_values
+import gk_overlay
+import gk_editor
+import gk_items
 import rdj
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 API = os.path.join(REPO, "api")
+# Maps internal crate names to the public gpui_kit facade module prefix used in generated Rust.
 FACADE = {"gpui_component": "gpui_kit::component", "gpui_base": "gpui_kit::base", "gpui": "gpui_kit",
           "gpui_kit": "gpui_kit"}
 STD = {"core", "std", "alloc"}
-KIT = ("gpui_component", "gpui_base")  # priority order for names
+KIT = ("gpui_component", "gpui_base")
 CRATES = ("gpui", "gpui_base", "gpui_component", "gpui_kit")
 SHORT = {"gpui_component": "component", "gpui_base": "base", "gpui": "gpui", "gpui_kit": "kit"}
 
-# Skip reasons (the fixed list; DESIGN.md section 13 plus the four this generator needed).
+# Allowed skip reason prefixes enforced by Model.set() so every skipped item has a tracked category.
 SKIP_REASONS = {
     "platform-trait", "test-only", "third-party-type", "hidden", "feature-off", "rust-only-extension",
     "item-render-closure", "builder-getter", "builder-mutator", "value-helper", "deprecated", "unsafe",
@@ -36,7 +55,13 @@ SKIP_REASONS = {
 
 
 class Unsup(Exception):
-    """A parameter or function no rule binds. cat is 'skip:<reason>', 'todo:<protocol>' or 'norule'."""
+    """Raised during signature classification when a type or method cannot be bound directly.
+
+    `cat` uses prefixes:
+      - `skip:<reason>`: intentionally omitted (must be in SKIP_REASONS).
+      - `todo:<reason>`: unsupported pattern tracked in coverage reports.
+      - `norule`: unexpected signature; fails `make gen` unless `--allow-no-rule` is passed.
+    """
 
     def __init__(self, cat, detail=""):
         super().__init__(f"{cat} {detail}")
@@ -44,27 +69,38 @@ class Unsup(Exception):
 
 
 def last(path):
+    """Return the final `::`-separated segment of a Rust path."""
     return path.split("::")[-1]
 
 
 def snake(name):
+    """Convert CamelCase or acronym-bearing identifiers into lowercase snake_case."""
     s = re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", name)
     s = re.sub(r"(?<=[A-Z])([A-Z][a-z])", r"_\1", s)
     return s.lower()
 
 
 def ada(name):
+    """Convert an identifier into Ada_Case (capitalized snake_case segments)."""
     return "_".join(p[:1].upper() + p[1:] for p in snake(name).split("_") if p) or "X"
 
 
 class Api:
-    """The loaded crates with public-path lookup across them (through the kit's facade)."""
+    """Multi-crate rustdoc index resolving cross-crate item IDs to home crates and public facade paths.
+
+    Each crate in CRATES is loaded via `rdj.Crate` and walked with `rdj.Walk`.
+    Because rustdoc JSON references items from dependency crates by crate-local
+    IDs inside `paths`, `home()` maps any `(crate, id)` pair to the defining
+    crate and its canonical item ID, and `pubpath()` maps that to the shortest
+    re-exported `gpui_kit::...` path.
+    """
 
     def __init__(self, json_dir):
         self.crates, self.walks, self.by_def = {}, {}, {}
         for name in CRATES:
             p = os.path.join(json_dir, name + ".json")
             c = rdj.Crate(p if os.path.exists(p) else p + ".gz", name)
+            # Pin rustdoc JSON schema version so format shifts fail loudly instead of misparsing.
             if c.format != 61:
                 raise SystemExit(f"gkgen: rustdoc JSON format {c.format} of {name} is not the pinned 61")
             self.crates[name] = c
@@ -73,6 +109,11 @@ class Api:
         self._pub = {}
 
     def home(self, crate, iid):
+        """Resolve `(crate, iid)` to `(home_crate, home_id_or_path)`.
+
+        Normalizes `gpui_fast` external references to `gpui` so types resolve into
+        the loaded `gpui.json.gz` index.
+        """
         c = self.crates[crate]
         it = c.item(iid)
         if it is not None and it["crate_id"] == 0:
@@ -88,13 +129,14 @@ class Api:
         return ext, "::".join(p["path"])
 
     def item(self, crate, iid):
+        """Return `(home_crate, home_id, rustdoc_item)` or `(ext_crate, path, None)` for external items."""
         hc, hid = self.home(crate, iid)
         if hc in self.crates and hid is not None:
             return hc, hid, self.crates[hc].item(hid)
         return hc, hid, None
 
     def pubpath(self, crate, iid):
-        """The Rust path an application can write for the item, through the kit's facade."""
+        """Return the public `gpui_kit::...` (or `std::...`) path for `(crate, iid)`, or None if hidden."""
         hc, hid = self.home(crate, iid)
         if hc is None:
             return None
@@ -112,102 +154,133 @@ class Api:
 
 
 class Ctx:
-    """Where a type is read: the crate its ids belong to, generic substitutions and bounds."""
+    """Type-resolution context holding the active crate, `Self` type, generic substitutions, and trait bounds."""
 
     def __init__(self, crate, self_t=None, subst=None, bounds=None):
         self.crate, self.self_t, self.subst, self.bounds = crate, self_t, subst or {}, bounds or {}
 
     def at(self, crate):
+        """Return a context sharing bindings/substitutions but resolving local IDs in `crate`."""
         return self if crate == self.crate else Ctx(crate, self.self_t, self.subst, self.bounds)
 
 
 def path_args(rp):
+    """Extract angle-bracketed type arguments (ignoring lifetimes/consts) from a rustdoc resolved_path."""
     return [a["type"] for a in ((rp.get("args") or {}).get("angle_bracketed") or {}).get("args", [])
             if isinstance(a, dict) and "type" in a]
 
 
 def bound_parts(bounds):
-    """[(trait name, trait ref)] of a bound list, lifetimes dropped."""
+    """Extract `(trait_short_name, trait_dict)` pairs from a rustdoc generic bounds list."""
     return [(last(b["trait_bound"]["trait"]["path"]), b["trait_bound"]["trait"]) for b in bounds
             if "trait_bound" in b]
 
 
+# Wire width normalization for Rust integer primitives (usize/isize travel as fixed 64-bit values).
 INT_WIRE = {"u8": "u8", "u16": "u16", "u32": "u32", "usize": "u64", "u64": "u64",
             "i8": "i8", "i16": "i16", "i32": "i32", "isize": "i64", "i64": "i64"}
-# Event types the runtime encodes by hand (PROTOCOLS.md section 2): leaves when they travel out.
+# GPUI event structs serialized by hand-written runtime codecs in core/src/genapi.rs.
 EVENT_LEAF = {"ClickEvent": "click_event", "KeyDownEvent": "key_event", "KeyUpEvent": "key_event",
               "MouseDownEvent": "mouse_event", "MouseUpEvent": "mouse_event", "MouseMoveEvent": "mouse_event",
-              "DragMoveEvent": "drag_move_event"}  # DragMoveEvent<Drag>: the platform family (PROTOCOLS.md 13.31)
-# The runtime's built-in handler shapes (core/wire/ops.txt): payload, return -> number.
+              "DragMoveEvent": "drag_move_event"}
+# Fixed handler shape numbers reserved by the hand-written runtime (shapes 1..10).
 BUILTIN_SHAPES = {('[["leaf", "click_event"]]', "unit"): 1, ("[]", "bool"): 2, ("[]", "unit"): 3,
                   ('[["bool"]]', "unit"): 4, ('[["int", "u64"]]', "unit"): 5, ('[["str"]]', "unit"): 6,
                   ('[["leaf", "key_event"]]', "unit"): 7, ('[["leaf", "click_event"]]', "bool"): 8,
                   ('[["leaf", "mouse_event"]]', "unit"): 9, ('[["f64"]]', "unit"): 10}
-# gpui value types with a hand-written codec in the runtime (the closed list of DESIGN.md 13).
+# Primitive GPUI value types with dedicated wire codecs. Third element names an optional From<Hsla> target.
 LEAF = {"Pixels": ["leaf", "px", ""], "Rems": ["leaf", "rems", ""], "Hsla": ["leaf", "color", ""],
-        # Fill: a colour or a gradient (Styled::bg; core/src/genapi.rs `background`, PROTOCOLS.md 11.38)
         "Rgba": ["leaf", "color", "gpui_kit::Rgba"], "Fill": ["leaf", "color", "gpui_kit::Fill"],
         "Background": ["leaf", "color", "gpui_kit::Background"], "Length": ["leaf", "length", ""],
         "DefiniteLength": ["leaf", "definite_length", ""], "AbsoluteLength": ["leaf", "absolute_length", ""],
         "ElementId": ["leaf", "id", ""], "SharedString": ["str", "SharedString"],
         "AnyElement": ["child"]}
+
+
 def is_fill(d):
-    """A colour leaf where the kit takes a Fill (Styled::bg): it also takes a gradient, so the front
-    ends type it gk.Fill and write it with put_fill (PROTOCOLS.md 11.38)."""
+    """Return True when descriptor `d` is the GPUI Fill color/background leaf."""
     return d[:2] == ["leaf", "color"] and len(d) > 2 and d[2] == "gpui_kit::Fill"
 
 
+# Crates treated as core GPUI homes when recognizing built-in leaf and string types.
 GPUI_HOMES = {"gpui", "gpui_shared_string", "gpui_util", "gpui_collections"}
 HANDLES = {"FocusHandle"}
 LATER_HANDLES = {"ScrollHandle", "UniformListScrollHandle", "ListState", "Subscription", "Task"}
 CONTEXTS = {"Window": "window", "App": "app"}
+# Traits whose methods are Rust plumbing rather than bindable component builders.
 RUST_ONLY_TRAITS = {"RenderOnce", "IntoElement", "Element", "Render", "Focusable", "EventEmitter", "Global",
                     "Action", "FluentBuilder", "View", "TestTextExt", "From", "Default", "IntoIterator",
                     "Deref", "Clone", "Copy"}
 
 
 class Model:
+    """Complete classified representation of the gpui-kit API ready for Rust and Go code generation.
+
+    Construction executes the full model pipeline in order:
+      1. `scan_types()` + `gk_overlay.after_scan()` + `gk_values.after_scan()`
+         discover all concrete and instantiated node structs.
+      2. `classify_crate()` (for `gpui_component`, `gpui_base`) and `classify_gpui()`
+         classify every struct, trait, and free function into items and tables.
+      3. `theme_tokens()` extracts `ThemeColor` `Hsla` field names.
+      4. `gk_overlay.after_classify()` and `gk_values.after_classify()` attach
+         blanket traits, handed states, and runtime shims.
+      5. `settle()` resolves trait tables, conversions, object reachability,
+         pruning, directional flow, and unused-override checks.
+    """
+
     def __init__(self, json_dir, overrides_path):
         self.api = Api(json_dir)
         self.ov = tomllib.load(open(overrides_path, "rb"))
         self.ov_used = set()
         cpath = os.path.join(os.path.dirname(overrides_path), "clone.json")
         self.clones = {k: set(v) for k, v in json.load(open(cpath))["clone"].items()} if os.path.exists(cpath) else {}
-        self.nodes = {}      # key -> node type
-        self.enums = {}      # rust type -> unit enum
-        self.denums = {}     # rust type -> enum with data
-        self.records = {}    # rust type -> record
-        self.intos = {}      # rust type of the target -> Into set
-        self.shapes = {}     # key -> closure shape
-        self.traits = {}     # public path -> trait table
-        self.items = []      # every function, with its status
-        self.owners = []     # coverage rows
-        self.palette = []    # nullary functions returning a colour: palette constants
-        self.tokens = []     # nullary Styled methods: style tokens
-        self.style_ext = []  # (item, trait path): nullary methods of other style-only traits, tokens too
-        self.theme = []      # the colour fields of the kit's theme: theme tokens
-        self.states = {}     # public path -> a kit state type held in an entity
-        self.tinfo = {}      # (crate, id) -> facts about a type
+        self.nodes = {}
+        self.enums = {}
+        self.denums = {}
+        self.records = {}
+        self.intos = {}
+        self.shapes = {}
+        self.traits = {}
+        self.items = []
+        self.owners = []
+        self.palette = []
+        self.tokens = []
+        self.style_ext = []
+        self.theme = []
+        self.states = {}
+        self.tinfo = {}
         self._busy = set()
-        self._closure = 0   # > 0 while a closure's payload is read: objects travel there as before
-        self.items_handed = set()  # element nodes handed to item procedures (gk_items, PROTOCOLS.md 9.41)
-        self.objects = {}   # public path -> a library object type behind handles (PROTOCOLS.md section 13)
-        self._prefer_rec = False  # a call op's argument: a builder type that is a plain record travels as the record
+        self._closure = 0
+        self.items_handed = set()
+        self.objects = {}
+        self._prefer_rec = False
         self.scan_types()
-        gk_overlay.after_scan(self)  # wrappers for one element type (PROTOCOLS.md 11.6)
-        gk_values.after_scan(self)  # enum value nodes (PROTOCOLS.md 13.19)
+        gk_overlay.after_scan(self)
+        gk_values.after_scan(self)
         for crate in KIT:
             self.classify_crate(crate)
         self.classify_gpui()
         self.theme_tokens()
-        gk_overlay.after_classify(self)  # described values, blanket tables (PROTOCOLS.md 11.6)
-        gk_values.after_classify(self)  # blanket tables of the values family (PROTOCOLS.md 13.20)
+        gk_overlay.after_classify(self)
+        gk_values.after_classify(self)
         self.settle()
 
-    # ---------------------------------------------------------------- facts about types
 
     def info(self, hc, hid):
-        """Facts about a struct or enum, from its impl list."""
+        """Inspect and cache structural traits, impls, generic params, and role hints for a type.
+
+        Decision rules computed here govern how `scan_types()` and `classify_crate()` route
+        each struct/enum:
+        - `state` / `entity`: True when any inherent method borrows `Context<Self>`, or the
+          type implements `Render`, `EventEmitter`, or `Global` (or is listed in `[state].types`).
+          Types listed in `[state].objects` override this to plain library objects (`state=False`).
+        - `element`: True when `IntoElement` is implemented directly (or via blanket impl over
+          an `Element` impl).
+        - `clone`: True when `Clone` is in direct traits OR recorded in `api/clone.json`
+          (needed because rustdoc JSON drops std trait impls during `strip()`).
+        - `record`: True for non-`#[non_exhaustive]` plain/tuple structs with at least one
+          field and zero private/stripped fields.
+        """
         key = (hc, hid)
         if key in self.tinfo:
             return self.tinfo[key]
@@ -256,12 +329,8 @@ class Model:
         if f["traits"] & {"Render", "EventEmitter"}:
             f["entity"] = True
         if it["name"] in self.ov.get("state", {}).get("objects", []):
-            f["state"] = f["entity"] = False  # a value held as a library object ([state] objects, PROTOCOLS.md 13.31)
-        # gpui-fast 0.1.16 on: an Element gets IntoElement from `impl<T: Element> IntoElement for T`, a
-        # blanket impl (rustdoc lists it apart), instead of each element's own impl.
+            f["state"] = f["entity"] = False
         f["element"] = "IntoElement" in f["traits"] or "IntoElement" in f["blanket"] and "Element" in f["traits"]
-        # Clone, which the reduced extract drops: api/clone.json, read from the pinned sources
-        # (tools/clone_scan.py). An object handed out of a borrow is copied (PROTOCOLS.md 13).
         f["clone"] = "Clone" in f["traits"] or it["name"] in self.clones.get(hc, ())
         f["record"] = False
         if k == "struct" and not f["non_exhaustive"]:
@@ -274,12 +343,19 @@ class Model:
         return f
 
     def scan_types(self):
-        """Phase 1: which structs are node types (built by a constructor and builder calls)."""
-        self.node_of = {}  # (crate, id) -> node key, for non-generic node types
+        """Discover all element/value node structs across kit crates, gpui allowlist, and `[instantiate].types`.
+
+        A struct becomes a tape node if it is explicitly listed in `[gpui].types` or
+        `[node].types`, OR if it is a concrete, non-state struct that is either an element
+        or a builder-style value (has a constructor, `Default`, or is returned by a public
+        function, and is not a pure getter-only object or plain builderless record).
+        After scanning concrete structs, expands every generic monomorphization in
+        `[instantiate].types`.
+        """
+        self.node_of = {}
         self.returned = set()
         for crate in KIT:
             c, w = self.api.crates[crate], self.api.walks[crate]
-            # types a free function or a static method returns are constructible through it
             fns = [it for _, (_, it) in w.fns.items()]
             for _, (_, it) in w.types.items():
                 for im in self.info(crate, str(it["id"]))["impls"]:
@@ -309,22 +385,15 @@ class Model:
                     if not (f["ctor"] or f["default"] or (crate, iid) in self.returned or f["element"]):
                         continue
                     if not f["element"] and not f["builders"] and f["refs"]:
-                        continue  # an object with reads and calls, not a builder: the state protocol
+                        continue
                 self.add_node(crate, iid, f, self.api.pubpath(crate, iid), it["name"], {})
         for spec in self.ov.get("instantiate", {}).get("types", []):
-            # "Stateful<Div>": a generic wrapper instantiated for one argument list.
-            # "List<crate::shim_rows::GkListDelegate> as List": an element generic over a delegate,
-            # instantiated for the library's shim of it (docs/PROTOCOLS.md section 9.5).
-            # "LineChart<crate::data::Datum, SharedString, f64> as LineChart": a generic type
-            # instantiated for a whole argument list (docs/PROTOCOLS.md section 12).
             if self.instantiate_many(spec):
                 continue
             m = re.fullmatch(r"(\w+)<([\w:]+)>(?:\s+as\s+(\w+))?", spec)
             base = next(((cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items()
                          if it["name"] == m.group(1)), None)
             if m.group(2).startswith("crate::"):
-                # The one type of that name with a type parameter (gpui and the base crate have
-                # a `List` of their own that is not generic).
                 found = [(cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items()
                          if it["name"] == m.group(1) and self.info(cr, i)["generic"]]
                 if len(found) != 1:
@@ -344,30 +413,25 @@ class Model:
                           {f["generic"][0]: (arg[0], {"resolved_path": {"path": m.group(2), "id": int(arg[1]),
                                                                         "args": None}})}, inst=arg)
 
-    # ---------------------------------------------------------------- generic types, instantiated
 
     PRIMS = {"bool", "f32", "f64", "u8", "u16", "u32", "u64", "usize", "i8", "i16", "i32", "i64", "isize"}
 
     def data_types(self):
-        """Library types of the data protocol (`[instantiate] data`): a type parameter given one
-        of them is a row of a data table the app passes (docs/PROTOCOLS.md section 12)."""
         return set(self.ov.get("instantiate", {}).get("data", []))
 
     def inst_arg(self, crate, a):
-        """(crate, type ref, Rust source) of one argument of an `[instantiate] types` line: a
-        library type (`crate::...`), a primitive, or an upstream type by name."""
         if a.startswith("crate::"):
             return crate, {"verbatim": a}, a
         if a in self.PRIMS:
             return crate, {"primitive": a}, a
-        if a == "()":  # a parameter's default unit (`Editor<R = ()>`, gpui-kit 0.11)
+        if a == "()":
             return crate, {"tuple": []}, a
         found = [(cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items()
                  if it["name"] == a and not self.info(cr, i)["generic"]]
         if len(found) == 1:
             cr, i = found[0]
             return cr, {"resolved_path": {"path": a, "id": int(i), "args": None}}, self.api.pubpath(cr, i)
-        if a in LEAF:  # gpui's own value types (SharedString, Hsla, Pixels): through the crates' path tables
+        if a in LEAF:
             for cr in KIT:
                 for pid, p in self.api.crates[cr].paths.items():
                     if p["path"][-1] == a and p["kind"] == "struct" and self.api.home(cr, pid)[0] in GPUI_HOMES:
@@ -375,13 +439,10 @@ class Model:
         raise SystemExit(f"gkgen: overrides [instantiate] types: {a} names {len(found)} types")
 
     def instantiate_many(self, spec):
-        """`Base<A, B, ..> as Name`: one node type for a generic type with several parameters, or
-        with one parameter given a primitive, a gpui value type or a data type. False for the
-        one-argument forms the older rule reads."""
         m = re.fullmatch(r"(\w+)<(.+)>(?:\s+as\s+(\w+))?", spec)
         if m is None:
             raise SystemExit(f"gkgen: overrides [instantiate] types: not `Generic<Args> [as Name]`: {spec}")
-        args = gk_values.split_args(m.group(2))  # nested arguments: Sidebar<SidebarGroup<SidebarMenu>> (13.8)
+        args = gk_values.split_args(m.group(2))
         if len(args) == 1 and not (args[0] in self.PRIMS or args[0] in LEAF or args[0] == "()" or args[0] in self.data_types()) and \
                 (m.group(3) is None or args[0].startswith("crate::")):
             return False
@@ -402,7 +463,6 @@ class Model:
         return True
 
     def inst_self(self, crate, iid, f, node):
-        """The Self type of an instantiated node: the generic type applied to its arguments."""
         return (crate, {"resolved_path": {"path": f["name"], "id": int(iid), "args": {
             "angle_bracketed": {"args": [{"type": node["subst"][g][1]} for g in f["generic"]], "constraints": []}}}})
 
@@ -419,10 +479,14 @@ class Model:
         else:
             self.node_of[(crate, iid, inst)] = key
 
-    # ---------------------------------------------------------------- Rust type printer
 
     def rtype(self, ctx, t):
-        """The Rust source of a type, with public paths. Raises Unsup when it cannot be named."""
+        """Render a rustdoc type node into a fully qualified Rust path usable in generated code.
+
+        Substitutes `Self` and instantiated generic parameters via `ctx`, and resolves
+        facade paths through `Api.pubpath()`. Raises `Unsup` for hidden, third-party,
+        or unbounded generic types.
+        """
         if "primitive" in t:
             return t["primitive"]
         if "verbatim" in t:
@@ -441,8 +505,8 @@ class Model:
             if p is None and hc in GPUI_HOMES and last(rp["path"]) in LEAF:
                 p = "gpui_kit::" + last(rp["path"])
             if p is None and hc == "lsp_types" and last(rp["path"]) == "Position":
-                p = "lsp_types::Position"  # gk.Lsp_Position (gk_lists.gpui_value, PROTOCOLS.md 9.13)
-            p = p or gk_lists.third_party_path(hc, last(rp["path"]))  # ropey's Rope, LSP's CompletionItem (9.19)
+                p = "lsp_types::Position"
+            p = p or gk_lists.third_party_path(hc, last(rp["path"]))
             if p is None:
                 if hc in self.api.crates:
                     raise Unsup("skip:hidden", f"{rp['path']} has no public path")
@@ -457,25 +521,23 @@ class Model:
         if "slice" in t:
             return f"[{self.rtype(ctx, t['slice'])}]"
         if "qualified_path" in t:
-            r = gk_lists.qualified(self, ctx, t)  # an associated type of a library shim (PROTOCOLS.md 9.9)
+            r = gk_lists.qualified(self, ctx, t)
             if r:
                 return self.rtype(ctx.at(r[0]), r[1])
         raise Unsup("norule", f"type {rdj.ty(t)}")
 
-    # ---------------------------------------------------------------- the parameter rules
 
     def desc(self, ctx, t, out=False):
-        """The wire descriptor of a type: a JSON list. out=True: the value travels to the app."""
+        """Convert a rustdoc type node into a tagged wire descriptor list.
+
+        Set out=True when classifying return values or event payloads traveling
+        from Rust back to Go.
+        """
         if "verbatim" in t:
-            lv = gk_lists.libval(self, t["verbatim"], out)  # a library value type (PROTOCOLS.md 9.9)
+            lv = gk_lists.libval(self, t["verbatim"], out)
             if lv:
                 return lv
-            # A library type of the delegate protocol, an [instantiate] argument `crate::...`
-            # (a list's or table's delegate): the library makes it over the row source the app
-            # passes (docs/PROTOCOLS.md section 9.5). It never travels to the app.
             if t["verbatim"] in self.data_types():
-                # One row of a data table the app passes (docs/PROTOCOLS.md section 12). Only a
-                # whole table (`data`) or a closure over a row (`field`, `format`) is bound.
                 if out:
                     raise Unsup("todo:protocol: data (a row of a data table travelling to the app)", t["verbatim"])
                 return ["datum", t["verbatim"]]
@@ -506,7 +568,7 @@ class Model:
             if p == "str":
                 return ["str", "str"]
             if p == "char":
-                return ["char"]  # a char travels as its u32 (the lists and editor families, PROTOCOLS.md 9.12)
+                return ["char"]
             raise Unsup("norule", f"primitive {p}")
         if "borrowed_ref" in t:
             return self.borrowed(ctx, t["borrowed_ref"], out)
@@ -515,7 +577,7 @@ class Model:
                 return ["unit"]
             return ["tuple", [self.desc(ctx, x, out) for x in t["tuple"]], self.rtype(ctx, t)]
         if "array" in t and gk_values.array(self, ctx, t, out):
-            return gk_values.array(self, ctx, t, out)  # [T; N] (PROTOCOLS.md 13.10)
+            return gk_values.array(self, ctx, t, out)
         if "slice" in t or "array" in t:
             raise Unsup("norule", f"bare slice or array {rdj.ty(t)}")
         if "dyn_trait" in t:
@@ -528,7 +590,7 @@ class Model:
         if "resolved_path" in t:
             return self.resolved(ctx, t, out)
         if "qualified_path" in t:
-            r = gk_lists.qualified(self, ctx, t)  # an associated type of a library shim (PROTOCOLS.md 9.9)
+            r = gk_lists.qualified(self, ctx, t)
             if r:
                 return self.desc(ctx.at(r[0]), r[1], out)
             raise Unsup("todo:associated type (generic over an app type)", rdj.ty(t))
@@ -539,9 +601,14 @@ class Model:
         raise Unsup("norule", f"type {rdj.ty(t)}")
 
     def borrowed(self, ctx, b, out):
+        """Classify a `&T` or `&mut T` reference type.
+
+        Recognizes `&mut Window`/`&mut App` context borrows, `&str`, `&[T]` slices,
+        `&mut Obj` mutable object borrows, and shared references over wire-decodable types.
+        """
         inner, mut = b["type"], b["is_mutable"]
         if "qualified_path" in inner:
-            r = gk_lists.qualified(self, ctx, inner)  # &D::Item of a library shim (PROTOCOLS.md 9.9)
+            r = gk_lists.qualified(self, ctx, inner)
             if r:
                 return self.borrowed(ctx.at(r[0]), {"type": r[1], "is_mutable": mut}, out)
         if inner.get("primitive") == "str":
@@ -579,10 +646,16 @@ class Model:
         raise Unsup("todo:protocol: state (&mut argument)" if mut else "norule", "&" + rdj.ty(inner))
 
     def bounded(self, ctx, bounds, out):
-        eb = gk_editor.bounded(self, ctx, bounds, out)  # a Markdown plugin (PROTOCOLS.md 9.23)
+        """Classify an `impl Trait` or bounded generic parameter from its trait bounds.
+
+        Checks extension hooks first (MarkdownPlugin, element unions, output iterators),
+        then closure traits (`Fn`/`FnMut`/`FnOnce`), `Into<T>`, `AsRef<str>`,
+        `IntoElement`, `IntoIterator`, and `Hash` key bounds.
+        """
+        eb = gk_editor.bounded(self, ctx, bounds, out)
         if eb is not None:
             return eb
-        bi = gk_lists.bounded_out(self, ctx, bounds, out)  # an iterator read back: a list (9.11)
+        bi = gk_lists.bounded_out(self, ctx, bounds, out)
         if bi is not None:
             return bi
         parts = bound_parts(bounds)
@@ -620,15 +693,19 @@ class Model:
             if n == "Action":
                 raise Unsup("todo:protocol: actions (a typed action value)", "impl Action")
             if n == "Hash" and set(names) <= {"Hash", "Sized", "Send", "Sync", "Clone", "Eq", "PartialEq"}:
-                # A key upstream only hashes (appear_key: draw in again when it changes): a string
-                # is one, and every key an app has can be written as one.
                 return ["str", "SharedString"]
             if n in ("Render", "Focusable", "EventEmitter", "Panel", "PanelView"):
                 raise Unsup("todo:protocol: views (a generic over the app's view type)", n)
         raise Unsup("todo:generic type parameter without a closed set", " + ".join(names) or "unbounded")
 
     def into(self, ctx, target):
-        """`impl Into<T>`: T itself, or the closed set of T's From impls (DESIGN.md 13)."""
+        """Resolve an `impl Into<Target>` parameter into a direct descriptor or tagged Into set.
+
+        Collects `Target` itself plus every bindable `impl From<Src> for Target`
+        in the target's home crate. If only one unique wire representation remains,
+        returns that member directly (wrapped in `["from", ...]` when conversion is
+        needed); otherwise registers a multi-member set in `self.intos`.
+        """
         name = last(target["resolved_path"]["path"]) if "resolved_path" in target else None
         sub = self.stand_in(name)
         if sub is not None:
@@ -639,7 +716,7 @@ class Model:
         elif name in LEAF:
             d = list(LEAF[name])
             if d[0] == "leaf":
-                d[2] = ""  # the parameter converts by itself: hand it the base value
+                d[2] = ""
             elif d[0] == "str":
                 d[1] = "into"
             return d
@@ -654,7 +731,7 @@ class Model:
         members, first_err = [], None
         try:
             d0 = self.desc(ctx, target)
-            if d0[0] == "obj" and not d0[3]:  # a member is copied out of its handle (PROTOCOLS.md 13.12)
+            if d0[0] == "obj" and not d0[3]:
                 raise Unsup("todo:protocol: object (inside an Into set, of a type that cannot be copied)", rdj.ty(target))
             members.append((d0, None))
         except Unsup as e:
@@ -668,11 +745,11 @@ class Model:
                 if not im or not im.get("trait") or last(im["trait"]["path"]) != "From" or im.get("blanket_impl"):
                     continue
                 if any("type" in p["kind"] for p in im["generics"]["params"]):
-                    members += gk_values.from_implementors(self, hc, im)  # impl<T: Trait> From<T> (13.11)
+                    members += gk_values.from_implementors(self, hc, im)
                     continue
                 src = path_args(im["trait"])
                 if len(src) == 1 and gk_lists.from_str_ref(src[0]):
-                    members.append((["str", "&str"], "&str"))  # From<&str>: a string (PROTOCOLS.md 9.12)
+                    members.append((["str", "&str"], "&str"))
                     continue
                 if len(src) != 1 or "borrowed_ref" in src[0]:
                     continue
@@ -690,9 +767,6 @@ class Model:
         if not uniq:
             raise first_err or Unsup("norule", f"impl Into<{rdj.ty(target)}> with no bindable member")
         if len(uniq) == 2 and uniq[0][1] is None and uniq[0][0][0] == "node" and uniq[1][0][0] == "enum":
-            # An element made from an enum (Icon from an IconName): the parameter takes the enum
-            # alone, so `.Icon(gk.IconSearch)` keeps working; the element itself is made with
-            # its constructor (gk.Icon(gk.IconSearch)) where a child is wanted.
             uniq = uniq[1:]
         single = uniq[0][0] if uniq[0][1] is None else ["from", uniq[0][0], rt, uniq[0][1]]
         self.intos[rt] = {"target": rt, "name": name, "single": single,
@@ -700,10 +774,6 @@ class Model:
         return ["into", rt] if len(uniq) > 1 else single
 
     def stand_in(self, name):
-        """`[into] stand_in` of api/overrides.toml: an `impl Into<X>` whose X the extract cannot name
-        (a type in a private module of the kit, Button::icon's ButtonIcon) is bound as `impl
-        Into<Y>` for the public type Y given there, which converts into X upstream. Returns Y's
-        (crate, id, name), or None when X has no stand-in."""
         path = self.ov.get("into", {}).get("stand_in", {}).get(name or "")
         if path is None:
             return None
@@ -714,18 +784,25 @@ class Model:
         raise SystemExit(f"gk_model: [into] stand_in {name} = {path}: no public type of that path")
 
     def resolved(self, ctx, t, out):
+        """Classify a concrete `resolved_path` type.
+
+        Tries extension modules (`gk_values`, `gk_editor`, `gk_lists`, `gk_overlay`),
+        then standard wrappers (`Option`, `Vec`, `Box`/`Rc`/`Arc`, `Entity`, `Cow`,
+        `String`, `Duration`, `Range`, `PathBuf`, `Result`), GPUI leaves and handles,
+        and finally local crate nodes, enums, objects, and plain records.
+        """
         rp = t["resolved_path"]
         name, args = last(rp["path"]), path_args(rp)
-        vd = gk_values.resolved(self, ctx, t, out)  # results, maps, Rc<X>, Option<&mut Window> (13.9, 13.10)
+        vd = gk_values.resolved(self, ctx, t, out)
         if vd is not None:
             return vd
-        ea = gk_editor.alias(self, ctx, t, out)  # an alias of a closure of the editor family's (9.22)
+        ea = gk_editor.alias(self, ctx, t, out)
         if ea is not None:
             return ea
-        ld = gk_lists.resolved(self, ctx, t, out)  # Arc<[T]>, NonZeroU32 (PROTOCOLS.md 9.12)
+        ld = gk_lists.resolved(self, ctx, t, out)
         if ld is not None:
             return ld
-        od = gk_overlay.resolved(self, ctx, t, out)  # node ids, views, panels read back (PROTOCOLS.md 11.8)
+        od = gk_overlay.resolved(self, ctx, t, out)
         if od is not None:
             return od
         if name == "Option" and len(args) == 1:
@@ -745,18 +822,18 @@ class Model:
                         return self.closure(ctx, n, p["inputs"], p.get("output"), name.lower())
                     if n == "Action" and name == "Box":
                         if out and gk_editor.action_out(self):
-                            return ["action", "box"]  # read back as the app's action id (PROTOCOLS.md 9.37)
-                        if out:  # an action travels into the library only
+                            return ["action", "box"]
+                        if out:
                             raise Unsup("todo:event payload the binding cannot encode yet", "Box<dyn Action>")
                         return ["action", "box"]
             if a.get("primitive") == "str":
                 return ["str", "into"]
-            pv = gk_overlay.panel_view(self, ctx, name, a, out)  # Arc<dyn PanelView>: a dock panel (11.7)
+            pv = gk_overlay.panel_view(self, ctx, name, a, out)
             if pv:
                 return pv
             raise Unsup("todo:opaque library object without a constructor the binding can drive", rdj.ty(t))
         if name == "Entity" and len(args) == 1 and not out and gk_overlay.panel_entity(self, ctx, args[0]):
-            return gk_overlay.panel_entity(self, ctx, args[0])  # Entity<P: Panel>: a dock panel (11.7)
+            return gk_overlay.panel_entity(self, ctx, args[0])
         if name == "Entity" and len(args) == 1 and out:
             raise Unsup("todo:event payload the binding cannot encode yet", "Entity")
         if name == "Entity" and len(args) == 1:
@@ -773,7 +850,7 @@ class Model:
             if name == "String":
                 return ["str", "String"]
             if out and name == "Range" and len(args) == 1 and args[0].get("primitive") == "usize":
-                return ["leaf", "range", ""]  # genapi's Wire for Range<usize>: two u64
+                return ["leaf", "range", ""]
             if out and name in ("Duration", "Range", "PathBuf"):
                 raise Unsup("todo:event payload the binding cannot encode yet", name)
             if name == "Duration":
@@ -785,12 +862,12 @@ class Model:
             if name == "PathBuf":
                 return ["str", "PathBuf"]
             if name == "Result":
-                return gk_overlay.result_desc(self, ctx, args, out)  # Result<(), E> read back (11.6)
+                return gk_overlay.result_desc(self, ctx, args, out)
             raise Unsup("norule", f"std type {p or name}")
-        eg = gk_editor.gpui_value(self, hc, name, args, out)  # ElementId read back, EntityId (PROTOCOLS.md 9.24)
+        eg = gk_editor.gpui_value(self, hc, name, args, out)
         if eg:
             return eg
-        lg = gk_lists.gpui_value(self, hc, name, args, out)  # gpui's Font (PROTOCOLS.md 9.11)
+        lg = gk_lists.gpui_value(self, hc, name, args, out)
         if lg:
             return lg
         if hc == "gpui" and out and name in EVENT_LEAF:
@@ -817,7 +894,7 @@ class Model:
             return ["node", self.node_of[(hc, hid)]]
         a0, acr = (args[0] if len(args) == 1 else None), ctx.crate
         if a0 is not None and a0.get("generic") == "Self" and ctx.self_t:
-            acr, a0 = ctx.self_t  # Stateful<Self> in a trait method, read for one implementor
+            acr, a0 = ctx.self_t
         if a0 is not None and f["kind"] == "struct" and "resolved_path" in a0 and not path_args(a0["resolved_path"]):
             ahc, ahid = self.api.home(acr, a0["resolved_path"]["id"])
             if (hc, hid, (ahc, ahid)) in self.node_of:
@@ -826,7 +903,7 @@ class Model:
         if f["kind"] == "enum":
             return self.enum(ctx, hc, hid, f, rt, args, out)
         if self._closure and out and gk_lists.payload_object(self, hc, hid, f):
-            return ["obj", rt, self.api.pubpath(hc, hid), f["clone"]]  # an event's object (PROTOCOLS.md 9.12)
+            return ["obj", rt, self.api.pubpath(hc, hid), f["clone"]]
         if not self._closure and self.is_obj(hc, hid):
             return ["obj", rt, self.api.pubpath(hc, hid), f["clone"]]
         if f["state"]:
@@ -834,13 +911,12 @@ class Model:
         if f["record"]:
             return self.record(ctx, hc, hid, f, rt, args, out)
         if f["kind"] == "struct" and out and not f["generic"]:
-            return self.record(ctx, hc, hid, f, rt, args, out)  # an event: its public fields
+            return self.record(ctx, hc, hid, f, rt, args, out)
         if f["generic"]:
             raise Unsup("todo:generic library type (needs an instantiation)", rdj.ty(t))
         raise Unsup("todo:opaque library object without a constructor the binding can drive", name)
 
     def fields(self, ctx, c, ids, out, names=True):
-        """[{name, desc}] of struct or variant fields; None when a field cannot be bound."""
         res = []
         for n, fid in enumerate(ids):
             fi = c.item(fid) if fid is not None else None
@@ -848,8 +924,7 @@ class Model:
                 if out:
                     continue
                 return None
-            # A field of a record or variant: a library object there is one by handle (PROTOCOLS.md 13.12)
-            sv = self._closure  # (read back, a field keeps the older reading: its own record)
+            sv = self._closure
             self._closure = sv + 1 if out else 0
             try:
                 d = self.desc(ctx, fi["inner"]["struct_field"], out)
@@ -869,7 +944,6 @@ class Model:
         return Ctx(hc, None, subst)
 
     def resolve_arg(self, ctx, a):
-        """(crate, type) of a generic argument, followed through the current substitution."""
         while "generic" in a:
             g = a["generic"]
             if g == "Self" and ctx.self_t:
@@ -881,7 +955,13 @@ class Model:
         return ctx.crate, a
 
     def enum(self, ctx, hc, hid, f, rt, args, out):
-        hd = gk_editor.held(self, rt, out)  # read back: a value the library holds (PROTOCOLS.md 9.30)
+        """Register a unit enum in `self.enums` or a payload-bearing enum in `self.denums`.
+
+        Tracks `_busy` to detect recursive enums (delegating `BlockNode` to
+        `gk_editor.recursive`), captures per-variant target `cfg` attributes,
+        and marks individual variants `ok=False` when a field cannot cross the wire.
+        """
+        hd = gk_editor.held(self, rt, out)
         if hd is not None:
             return hd
         table = self.enums if rt in self.enums else self.denums
@@ -895,7 +975,7 @@ class Model:
                 e["in"] = True
             return [e["kind"], rt]
         if ("e", rt) in self._busy:
-            rec = gk_editor.recursive(self, rt, out)  # an enum inside its own variants, by a list (PROTOCOLS.md 9.30)
+            rec = gk_editor.recursive(self, rt, out)
             if rec is not None:
                 return rec
             raise Unsup("todo:recursive type", f["name"])
@@ -912,7 +992,7 @@ class Model:
                 v = {"name": vi["name"], "n": n, "shape": "unit", "fields": [], "ok": True}
                 vc = rdj.target_cfg(vi.get("attrs"))
                 if vc:
-                    v["cfg"] = vc  # a variant on some platforms only (gpui's WindowKind::LayerShell)
+                    v["cfg"] = vc
                 if isinstance(k, dict):
                     data = True
                     ids = k["tuple"] if "tuple" in k else k["struct"]["fields"]
@@ -929,7 +1009,7 @@ class Model:
                 variants.append(v)
         finally:
             self._busy.discard(("e", rt))
-        gk_editor.variant_ctors(self, f, rt, variants, out)  # variants made by a constructor (PROTOCOLS.md 9.29)
+        gk_editor.variant_ctors(self, f, rt, variants, out)
         ok = [v for v in variants if v["ok"]]
         if not ok and not out:
             raise Unsup("todo:enum with no variant the binding can build", f["name"])
@@ -937,13 +1017,11 @@ class Model:
              "variants": variants, "in": not out, "out": out, "constructible": bool(ok), "crate": hc}
         ec = self.api.walks[hc].cfg.get(str(hid))
         if ec:
-            e["cfg"] = ec  # a type on some platforms only (gpui's layer_shell::Layer, Linux)
+            e["cfg"] = ec
         (self.denums if data else self.enums)[rt] = e
         return [e["kind"], rt]
 
     def rec_complete(self, rt, seen=None):
-        """Whether a record and every record inside it has all its fields: only such a record can
-        be written by the app (one made first as an event's payload may have skipped fields)."""
         seen = set() if seen is None else seen
         r = self.records.get(rt)
         if r is None or rt in seen:
@@ -953,6 +1031,12 @@ class Model:
                                      for x in walk_desc(fd["desc"]) if x[0] == "rec")
 
     def record(self, ctx, hc, hid, f, rt, args, out):
+        """Register a plain or tuple struct in `self.records`.
+
+        Inbound records (`out=False`) require all fields to be public and wire-decodable
+        (`complete=True`). Outbound records (`out=True`, for events or readbacks) may
+        omit private or unencodable fields as long as at least one public field remains.
+        """
         if rt in self.records:
             r = self.records[rt]
             if not out and not self.rec_complete(rt):
@@ -986,7 +1070,6 @@ class Model:
         return ["rec", rt]
 
     def closure(self, ctx, kind, inputs, output, wrap, static=True):
-        """A closure parameter: handler, fragment, build or style closure (DESIGN.md 12)."""
         self._closure += 1
         try:
             return self.closure_desc(ctx, kind, inputs, output, wrap, static)
@@ -994,12 +1077,32 @@ class Model:
             self._closure -= 1
 
     def closure_desc(self, ctx, kind, inputs, output, wrap, static=True):
+        """Classify a Rust closure signature into a wire descriptor.
+
+        Evaluates closure families in strict precedence order because some signatures
+        match multiple patterns (for example, a closure returning `AnyElement` with a
+        `&Datum` argument must become `datum_rows` before generic `ctxrows`/`items`):
+        1. `gk_app.action_listener` / `gk_app.platform_closure` (action, AnyView, drop/a11y).
+        2. `data_closure` (chart `Field`/`Format` over `&Datum`).
+        3. `gk_values.closure` (comp6, drag preview/style, reactive `Cell`, `RenderOptions` fragment).
+        4. `gk_lists.expr_closure` (pure numeric/bool/enum -> scalar `Expr` formula).
+        5. `gk_editor.closure` (`tfrag`, `keyset`, `table`, `ctxlazy`, `viewrows`).
+        6. Endomorphism `T -> T`: `stylefn` (`StyleRefinement -> StyleRefinement`), `build`
+           (node builder closure), or `gk_editor.decorate` (`FnOnce(El) -> El` decorator).
+        7. Element-returning (`AnyElement` / `impl IntoElement`): `datum_rows`, `ctxrows`,
+           `build_over_handed`, `gk_items.closure`, `viewfn`, or zero-payload `fragment`.
+        8. Value-returning: `[rows]` shim overrides, `[values].event_closures`, `ask_closure`,
+           or typed-node `gk_items.closure`.
+        9. Void/bool event handlers: encodes payload args with `out=True`, normalizes
+           conversions via `strip_conv()`, and interns the signature in `self.shapes`
+           (matching `BUILTIN_SHAPES` 1..10 where applicable).
+        """
         app = gk_app.action_listener(self, ctx, inputs, output)
         if app:
             return app
         pc = gk_app.platform_closure(self, ctx, kind, inputs, output, wrap)
         if pc:
-            return pc  # closures given as data: can_drop, a drag's files, a prepaint order, a11y nodes (PROTOCOLS.md 13.31)
+            return pc
         params, payload = [], []
         try:
             ptypes = [self.rtype(ctx, t) for t in inputs]
@@ -1026,24 +1129,24 @@ class Model:
             return dc
         vc = gk_values.closure(self, ctx, kind, inputs, output, wrap, params, ptypes, payload)
         if vc is not None:
-            return vc  # value cells, a settings field's fragment (PROTOCOLS.md 13.19)
+            return vc
         ex = gk_lists.expr_closure(self, ctx, inputs, output, wrap, params, ptypes, payload)
         if ex is not None:
-            return ex  # numbers to a number: an expression (PROTOCOLS.md 9.12)
+            return ex
         ed = gk_editor.closure(self, ctx, kind, inputs, output, wrap, params, ptypes, payload)
         if ed is not None:
-            return ed  # typed fragments, key sets, tables, rows without a window, view rows (PROTOCOLS.md 9.20 to 9.22)
+            return ed
         if output is not None and len(payload) == 1 and rdj.ty(payload[0]) == out_s:
             if last(out_s) == "StyleRefinement" and len(params) == 1:
                 return ["stylefn", self.desc(ctx, payload[0])[1], wrap]
             d = self.desc(ctx, payload[0])
             if d[0] == "node":
                 if gk_overlay.context_build(params):
-                    return ["build", d[1], params, wrap, ptypes]  # a menu's builder (PROTOCOLS.md 11.6)
+                    return ["build", d[1], params, wrap, ptypes]
                 if queued or not has_cx and (kind != "FnOnce" or wrap != "impl" or len(params) != 1 or static):
                     dec = None if queued else gk_editor.decorate(self, d[1], kind, params, wrap, ptypes)
                     if dec:
-                        return dec  # a decorator kept and called later: a style and a row (PROTOCOLS.md 9.32)
+                        return dec
                     raise Unsup("todo:protocol: build closure that gets no window and app", out_s)
                 return ["build", d[1], params, wrap, ptypes]
             raise Unsup("todo:protocol: data (a closure that maps a value)", out_s)
@@ -1052,31 +1155,25 @@ class Model:
         if output is not None and not is_el and "generic" in output and output["generic"] in ctx.bounds:
             is_el = "IntoElement" in [n for n, _ in bound_parts(ctx.bounds[output["generic"]])]
         if is_el and has_cx and not queued and len(payload) == 1 and self.datum_arg(ctx, payload[0]) is not None:
-            # An element for one row of a data table (a chart's tooltip content): the row's view
-            # of a row source the app passes, keyed by the row's index (docs/PROTOCOLS.md
-            # section 12), described between frames like any row; one frame of nothing at first.
             return ["datum_rows", wrap, ptypes, self.datum_arg(ctx, payload[0])]
         if is_el:
             cr = payload and gk_lists.ctx_rows(self, ctx, kind, inputs, output, wrap, params, ptypes, payload)
             if cr:
-                return cr  # an element closure over values the kit hands it: a row source (PROTOCOLS.md 9.16)
+                return cr
             if payload:
                 bo = gk_items.build_over_handed(self, ctx, kind, inputs, output, wrap, params, ptypes, payload, static)
                 if bo:
-                    return bo  # FnOnce(Button) -> E: a build closure over the element handed in (PROTOCOLS.md 9.41)
+                    return bo
                 ic = gk_items.closure(self, ctx, kind, inputs, output, wrap, params, ptypes, payload, True)
                 if ic:
-                    return ic  # an item procedure (PROTOCOLS.md 9.41)
+                    return ic
                 raise Unsup("skip:item-render-closure", f"{kind}({', '.join(rdj.ty(t) for t in inputs)}) -> {out_s}")
             if params == ["window", "app_ref"]:
-                return gk_lists.view_closure(params, wrap, ptypes)  # an app view (PROTOCOLS.md 9.9)
+                return gk_lists.view_closure(params, wrap, ptypes)
             if not has_cx or queued:
                 raise Unsup("todo:protocol: fragment closure that gets no window and app", out_s)
             return ["fragment", params, wrap, ptypes]
         if out_s not in ("()", "bool") and output is not None:
-            # A closure a delegate shim serves over a row source ([rows] in overrides.toml): upstream
-            # calls it while it draws and it answers with rows the app described earlier
-            # (docs/PROTOCOLS.md section 9.5). Named by its signature in public paths.
             try:
                 sig = f"{kind}({', '.join(ptypes)}) -> {self.rtype(ctx, output)}"
             except Unsup:
@@ -1087,19 +1184,19 @@ class Model:
                 return ["rows", shim]
         ev = gk_values.event_closure(self, ctx, kind, ptypes, output, params, payload, wrap)
         if ev is not None:
-            return ev  # a closure upstream calls from an event, returning text (PROTOCOLS.md 13.12)
+            return ev
         ask = gk_lists.ask_closure(self, ctx, kind, inputs, output, wrap, params, ptypes, payload)
         if ask is not None:
-            return ask  # a data closure answered between frames (PROTOCOLS.md 9.14)
+            return ask
         if payload and output is not None and out_s not in ("()", "bool"):
             ic = gk_items.closure(self, ctx, kind, inputs, output, wrap, params, ptypes, payload, False)
             if ic:
-                return ic  # an item procedure that returns one element type (PROTOCOLS.md 9.41)
+                return ic
         if out_s not in ("()", "bool"):
             raise Unsup("todo:protocol: data (a closure that returns a value)", f"-> {out_s}")
         if queued and out_s != "()":
             raise Unsup("todo:protocol: queued events (a queued handler cannot return a value)", out_s)
-        if not (has_cx or queued or "app" in params) and not gk_overlay.observed(params, out_s, kind):  # 11.14
+        if not (has_cx or queued or "app" in params) and not gk_overlay.observed(params, out_s, kind):
             raise Unsup("todo:protocol: data (a closure that gets no window and app)", ", ".join(params))
         descs = []
         for t in payload:
@@ -1115,11 +1212,9 @@ class Model:
                                 "builtin": BUILTIN_SHAPES.get((json.dumps([strip_conv(d) for d in descs]), ret))}
         return ["handler", key, params, wrap, ptypes, descs]
 
-    # ---------------------------------------------------------------- data closures (section 12)
 
     def datum_arg(self, ctx, t):
-        """How a closure parameter reaches a row of a data table: "" for `&Datum`, the field's
-        name for a borrowed wrapper that carries one (`&ArcData<Datum>`: `data`), None otherwise."""
+        """Detect a `&Datum` (or `&Wrapper<&Datum>`) parameter and return the field accessor or ''."""
         if "borrowed_ref" not in t:
             return None
         inner = t["borrowed_ref"]["type"]
@@ -1155,8 +1250,6 @@ class Model:
         return None
 
     def ret_kind(self, ctx, t):
-        """What a data closure returns: (kind, Rust type) with kind text, num, opt or color; None
-        when the closure returns something no data closure makes."""
         if t is None:
             return None
         if "generic" in t:
@@ -1186,7 +1279,6 @@ class Model:
         hc, hid, it = self.api.item(ctx.crate, rp["id"])
         if it is None or args:
             return None
-        # An upstream type made from a string (RadarLabel: From<SharedString>): text, converted.
         c = self.api.crates[hc]
         for imp_id in it["inner"][c.kind(it)].get("impls", []):
             ii = c.item(imp_id)
@@ -1198,11 +1290,7 @@ class Model:
         return None
 
     def data_closure(self, ctx, inputs, output, wrap, params, ptypes):
-        """A closure upstream calls while it draws, over a row of a data table and numbers it
-        hands in, returning a value: app code may not run then (decision 3), so the app names
-        what it returns instead (docs/PROTOCOLS.md section 12). `field`: a column of the row
-        (`->x("month")`); `format`: a template over the numbers and the row's columns
-        (`->tooltip_value("{} visits")`). None when the closure is not one of these."""
+        """Match chart/plot data accessor closures (`field`) and label formatting closures (`format`)."""
         if output is None or any(p != "arg" for p in params) or not inputs:
             return None
         forms = []
@@ -1221,7 +1309,7 @@ class Model:
             elif d[0] == "int":
                 forms.append(["int", d[1]])
             else:
-                forms.append(["other"])  # a field closure ignores it; a template cannot show it
+                forms.append(["other"])
         datums = [f for f in forms if f[0] == "datum"]
         if len(datums) > 1:
             return None
@@ -1229,17 +1317,13 @@ class Model:
         if rk is None:
             return None
         if datums and (len(forms) == 1 or rk[0] != "text"):
-            # A colour or number from a row with other arguments too (a series index, the value):
-            # the row's column; the app writes into it what it would have computed.
             return ["field", rk[0], rk[1], wrap, ptypes, forms]
         if rk[0] == "text" and ["other"] not in forms:
             return ["format", rk[0], rk[1], wrap, ptypes, forms]
         return None
 
-    # ---------------------------------------------------------------- functions
 
     def fn_ctx(self, base, fn):
-        """The context of one function: its generic parameters' bounds."""
         bounds = dict(base.bounds)
         for p in fn["generics"]["params"]:
             if "type" in p["kind"]:
@@ -1250,7 +1334,7 @@ class Model:
                 bounds.setdefault(bp["type"]["generic"], [])
                 bounds[bp["type"]["generic"]] = bounds[bp["type"]["generic"]] + bp["bounds"]
         c = Ctx(base.crate, base.self_t, base.subst, bounds)
-        return gk_values.fn_ctx(self, c, fn)  # drag values, Into-only parameters (PROTOCOLS.md 13.20)
+        return gk_values.fn_ctx(self, c, fn)
 
     def args(self, ctx, params):
         res = []
@@ -1265,7 +1349,6 @@ class Model:
         return res
 
     def ret_node(self, ctx, out):
-        """The node key a return type names, 'self', or None."""
         if out is None:
             return None
         if "generic" in out and out["generic"] == "Self":
@@ -1282,13 +1365,12 @@ class Model:
               "trait": trait, "status": "todo", "reason": "", "kind": "", "args": [], "crate": fcrate}
         it["id"] = f"{owner}::{trait + '::' if trait else ''}{f['name']}"
         if f.get("id") is not None:
-            it["doc"] = [fcrate, str(f["id"])]  # its doc comment in api/rustdoc/docs.json.gz (gen/gk_doc.py)
+            it["doc"] = [fcrate, str(f["id"])]
         self.items.append(it)
         row["items"].append(it)
         return it, fn
 
     def set(self, it, e):
-        """Records why an item is not bound."""
         cat = e.cat
         if cat.startswith("skip:"):
             it["status"], it["reason"] = "skipped", cat[5:]
@@ -1300,11 +1382,14 @@ class Model:
         it["detail"] = e.detail
 
     def bindable(self, it, ctx, fn, params, kind, node, callee):
-        """Fills an item bound by rule: its arguments and where the op lives."""
+        """Attempt to classify all arguments of `fn` and mark `it` as bound or bridged.
+
+        Rejects methods with unmentioned caller-chosen type parameters or
+        non-cloneable object arguments passed to element builders. Sets status
+        to `bridged` when any argument uses a runtime protocol descriptor.
+        """
         try:
             text = " ".join(rdj.ty(t) for _, t in params)
-            # A parameter named only in the bounds of one that is named (`fill<F, B>(f: F) where
-            # F: Fn(&T) -> B`) is chosen by the closure's return type: it is named too.
             for w in fn["generics"].get("where_predicates", []):
                 bp = w.get("bound_predicate")
                 if bp and "generic" in bp["type"] and re.search(rf"\b{bp['type']['generic']}\b", text):
@@ -1328,7 +1413,7 @@ class Model:
         return True
 
     def classify_method(self, row, node, f, fcrate, ctx, role):
-        """One inherent method of a type."""
+        """Classify one inherent public method on a struct into ctor, op, convert, paint, ambient, or skip."""
         it, fn = self.new_item(row, row["path"], f, fcrate)
         ins = fn["sig"]["inputs"]
         out = fn["sig"].get("output")
@@ -1347,11 +1432,9 @@ class Model:
             rn = node["key"]
         tp = node["path"]
         if recv is None:
-            # values made by a static that returns several (PROTOCOLS.md 9.15): its _count and _at,
-            # beside the static itself read back as an ambient call when that rule binds it (13.15)
             listed = rn is None and gk_lists.list_ctor(self, node, it, fcrate, fn, fctx)
             if rn is None and gk_values.static_call(self, it, fcrate, fn, ctx.self_t):
-                return  # a static that returns a value or nothing: an ambient call (13.12)
+                return
             if listed:
                 return
             if rn is None:
@@ -1373,11 +1456,11 @@ class Model:
         elif recv == "&Self" and self.paints(it, node, f, fn, ins, out, tp):
             pass
         elif recv == "&Self" and gk_overlay.value_read(self, node, it, fcrate, fn, fctx):
-            pass  # a computation over a value the app builds: an ambient call (PROTOCOLS.md 11.15)
+            pass
         elif recv == "&Self":
             self.set(it, Unsup("skip:builder-getter", "a read of a builder the app is writing"))
         elif recv == "&mut Self" and gk_editor.mutator(self, node, it, fn, ctx, tp):
-            pass  # the in-place builder of an editor host value, applied as an op (PROTOCOLS.md 9.30)
+            pass
         elif recv == "&mut Self":
             self.set(it, Unsup("skip:builder-mutator", "the in-place form of a builder"))
         else:
@@ -1386,9 +1469,6 @@ class Model:
     PAINT_CTX = {"&mut Window": "window", "&mut gpui::Window": "window", "&mut App": "app", "&mut gpui::App": "app"}
 
     def paints(self, it, node, f, fn, ins, out, tp):
-        """`fn paint(&self, bounds: &Bounds<Pixels>, window: &mut Window[, cx: &mut App])` of a
-        value type (an axis, a grid, a plot shape): a part of a described plot, which the library
-        paints in its order (docs/PROTOCOLS.md section 12, "plots")."""
         if f["name"] != "paint" or out is not None or node["element"] or len(ins) not in (3, 4):
             return False
         if rdj.ty(ins[1][1]).replace("gpui::", "") != "&Bounds<Pixels>":
@@ -1401,14 +1481,13 @@ class Model:
         node["paint"] = it
         return True
 
-    # ---------------------------------------------------------------- kit state behind handles
 
+    # Descriptors legal inside call-op arguments (outside view-tape decoding).
     CALL_SAFE = {"bool", "int", "f32", "f64", "str", "leaf", "enum", "opt", "list", "tuple", "ref", "entity", "shim",
                  "obj", "refmut", "libval", "char", "font", "handler", "expr", "nonzero", "ask", "rangeof", "rcvec", "arcslice"}
 
     def classify_state(self, row, f, c, crate, ctx, tpath):
-        """A kit state type held in an entity: constructors, the `self -> Self` chain, reads
-        (&self), deferred writes (&mut self) and events (docs/PROTOCOLS.md section 5)."""
+        """Classify a GPUI Entity state struct: EventEmitter subscriptions plus inherent methods."""
         st = {"key": tpath, "path": tpath, "name": f["name"], "crate": crate, "ctors": [], "builders": [],
               "reads": [], "writes": [], "calls": [], "events": []}
         st["doc"] = [f["crate"], str(f["id"])]
@@ -1432,7 +1511,7 @@ class Model:
                                              "rust": self.rtype(Ctx(crate, ctx.self_t), path_args(tr)[0]),
                                              "id": f"{tpath}::subscribe::{rdj.ty(path_args(tr)[0])}", "status": "bridged"})
                     except Unsup:
-                        gk_editor.event_reads(self, st, crate, ctx, tpath, path_args(tr)[0])  # its reads (PROTOCOLS.md 9.35)
+                        gk_editor.event_reads(self, st, crate, ctx, tpath, path_args(tr)[0])
                 continue
             for mid in im["items"]:
                 fi = c.item(mid)
@@ -1442,6 +1521,7 @@ class Model:
                 self.state_method(row, st, fi, crate, ctx)
 
     def state_method(self, row, st, f, crate, ctx):
+        """Classify one method on a GPUI Entity state into state-ctor, state-builder, state-read, state-write, or state-call."""
         it, fn = self.new_item(row, row["path"], f, crate)
         if self.pre(it, f, fn):
             return
@@ -1449,15 +1529,13 @@ class Model:
         recv = rdj.ty(ins[0][1]) if ins and ins[0][0] == "self" else None
         fctx = self.fn_ctx(ctx, fn)
         out_s = rdj.ty(out) if out else "()"
-        out, out_s = gk_lists.shim_result(self, fctx, out, out_s)  # `&D`, `&mut D`: the delegate's source
+        out, out_s = gk_lists.shim_result(self, fctx, out, out_s)
         kind = {None: "state-ctor", "Self": "state-builder", "&Self": "state-read", "&mut Self": "state-write"}.get(recv)
         if kind == "state-read" and out_s == "()" and any(
                 re.match(r"&mut (Window|Context)\b", rdj.ty(t)) for _, t in ins[1:]):
-            # `fn focus(&self, window: &mut Window, cx: &mut Context<Self>)`: it needs the
-            # entity's update to get its context, so it is a buffered write like `&mut self`.
             kind = "state-write"
         if kind == "state-read" and out_s != "()" and gk_overlay.read_needs_window(ins):
-            kind = "state-call"  # a read that needs the window: run at once with the turn's (11.6)
+            kind = "state-call"
         fallible = kind in ("state-ctor", "state-builder") and gk_overlay.is_result_self(out_s, st["name"])
         lent = None
         try:
@@ -1467,14 +1545,12 @@ class Model:
                 raise Unsup("todo:protocol: calls (a static function that is not a constructor)" if recv is None
                             else "skip:rust-only-extension", out_s)
             if kind == "state-write" and out_s != "()":
-                # An update that returns a value: a call op run at once (not buffered), whose
-                # result comes back like a read's (PROTOCOLS.md section 5, "calls").
-                lent = "&" in out_s and gk_lists.lend(self, fctx, st, out)  # lent by the state (PROTOCOLS.md 9.17)
+                lent = "&" in out_s and gk_lists.lend(self, fctx, st, out)
                 if "&" in out_s and not lent:
                     raise Unsup("todo:protocol: state (an update that returns a value)", "a borrow: " + out_s)
                 kind = "state-call"
             args = []
-            text = gk_overlay.named_text(fn, " ".join(rdj.ty(t) for _, t in ins))  # where clauses (11.10)
+            text = gk_overlay.named_text(fn, " ".join(rdj.ty(t) for _, t in ins))
             for p in fn["generics"]["params"]:
                 if "type" in p["kind"] and not p["kind"]["type"].get("is_synthetic") and not re.search(rf"\b{p['name']}\b", text):
                     raise Unsup("todo:generic type parameter the caller chooses (no argument names it)", p["name"])
@@ -1493,7 +1569,7 @@ class Model:
                 d = self.call_desc(fctx, pt)
                 bad = self.call_bad(d, kind == "state-builder")
                 if bad and gk_editor.chain_cx(self, d, kind, it):
-                    bad = None  # decoded before the chain runs, with the call's context (PROTOCOLS.md 9.31)
+                    bad = None
                 if bad:
                     raise Unsup("todo:protocol: state (an argument only a view build can decode: " + bad + ")", s)
                 pn = pn if re.fullmatch(r"[a-z][a-z0-9_]*", pn) else f"arg{n}"
@@ -1518,41 +1594,43 @@ class Model:
         except Unsup as e:
             return self.set(it, e)
         it.update(kind=kind, status="bridged", callee=f"<{st['path']}>::{f['name']}", state=st["key"])
-        if fallible:  # Result<Self, E>: an error stops the app with its text (PROTOCOLS.md 11.6)
+        if fallible:
             it["callee"] = gk_overlay.fallible_callee(it["callee"], len(it["args"]) + (kind == "state-builder"))
         st[{"state-ctor": "ctors", "state-builder": "builders", "state-read": "reads", "state-write": "writes",
             "state-call": "calls"}[kind]].append(it)
 
     def call_bad(self, d, builder, seen=None):
-        """The first part of an argument a call op cannot decode, or None. A call op has no
-        decode context (no view, no element tree): scalars, strings, options, lists, tuples,
-        handles to kit state, and records, enums with data and Into sets made only of those
-        (decoded by their `_c` codecs). A colour (resolved against the theme) and a focus handle
-        at the top level of a call that is not a builder, whose op has the app context."""
+        """Check whether descriptor `d` is valid in a call op (or state builder when `builder=True`).
+
+        Returns None if every nested descriptor can be decoded without a view-build
+        `Dx` context; otherwise returns the offending descriptor tag. Marks nested
+        records, data enums, and Into sets as `callable=True` so `gk_rust.py` emits
+        their `_c(r)` call-mode decoder variants.
+        """
         seen = set() if seen is None else seen
-        eb = None if seen else gk_editor.call_bad(self, d, builder)  # a record with a colour, in place (PROTOCOLS.md 9.26)
+        eb = None if seen else gk_editor.call_bad(self, d, builder)
         if eb is not None:
             return eb[0]
         for x in walk_desc(d):
             k = x[0]
             if k == "node" and not builder and not seen and x[1] in self.nodes and not self.nodes[x[1]]["element"]:
-                continue  # a builder value made outside a view travels as a tape of its own (PROTOCOLS.md 13.6)
+                continue
             if k == "opt" and x[1][0] == "ref" and x[1][1][0] == "obj" and (builder or seen):
-                return "obj"  # Option<&Object> inside a record or a builder chain: nothing to lend from
+                return "obj"
             if k == "refmut" and (builder or seen) or k == "obj" and (builder or seen) and not x[3]:
-                return k  # inside a record or a builder chain an object is copied out of its handle (13.12)
+                return k
             if k == "rec" and x[1] in self.records and not self.records[x[1]]["complete"]:
-                return "rec"  # a record with fields the binding cannot write: only read
+                return "rec"
             if gk_overlay.view_built(self, x, builder, seen):
-                continue  # a view-built closure (PROTOCOLS.md 11.6)
+                continue
             if k in gk_editor.CALL_SAFE:
-                continue  # the editor family's PROTOCOLS.md 9.21 to 9.24
+                continue
             if gk_app.call_safe(x):
-                continue  # image sources as bytes and paths, anchors, caches (PROTOCOLS.md 13.31)
+                continue
             if k in gk_lists.CALL_SAFE:
-                continue  # a row source handle (PROTOCOLS.md 9.16, 9.18)
+                continue
             if k in gk_values.CALL_SAFE or (k == "ctx" and x[1] == "window_opt" and not builder and not seen):
-                continue  # the values family's descriptors (PROTOCOLS.md 13.10)
+                continue
             if k in self.CALL_SAFE and not (k == "leaf" and x[1] == "color") and not (k == "entity" and builder):
                 continue
             if k == "from":
@@ -1581,12 +1659,9 @@ class Model:
             return k
         return None
 
-    # ---------------------------------------------------------------- library objects behind handles
 
     def is_obj(self, hc, hid):
-        """A library object the app holds by handle (docs/PROTOCOLS.md section 13): a struct of
-        the kit that is not an entity, an element or builder, a plain record or generic, and has
-        reads or calls (`&self`, `&mut self`) or is a kit global."""
+        """Return True if `(hc, hid)` is a non-entity, non-generic struct managed behind an object handle."""
         if hc not in KIT or hid is None:
             return False
         key = ("obj?", hc, hid)
@@ -1602,9 +1677,7 @@ class Model:
         return ok
 
     def classify_object(self, row, f, c, crate, ctx, tpath):
-        """A library object: constructors and their `self -> Self` chain (a kept handle), the
-        global accessor of a kit global, reads, buffered writes, calls that return a value, and
-        the type's static functions (docs/PROTOCOLS.md section 13)."""
+        """Classify a runtime-managed library object struct (including GPUI `Global` singletons)."""
         st = {"key": tpath, "path": tpath, "name": f["name"], "crate": crate, "ctors": [], "builders": [],
               "reads": [], "writes": [], "calls": [], "events": [], "globals": [], "statics": [], "obj": True,
               "glob": "Global" in f["traits"], "clone": f["clone"]}
@@ -1621,7 +1694,7 @@ class Model:
                     continue
                 seen.add(fi["name"])
                 self.object_method(row, st, fi, crate, ctx)
-        gk_lists.default_ctor(self, st, f, crate)  # Default as the constructor (PROTOCOLS.md 9.13)
+        gk_lists.default_ctor(self, st, f, crate)
 
     OBJ_CTX = {"obj-ctor": ("window", "app", "app_ref"), "obj-builder": (), "obj-read": ("app_ref",),
                "obj-write": ("window", "window_ref", "app", "app_ref"), "obj-call": ("window", "window_ref", "app", "app_ref"),
@@ -1629,6 +1702,7 @@ class Model:
                "obj-scall": ("window", "window_ref", "app", "app_ref")}
 
     def object_method(self, row, st, f, crate, ctx):
+        """Classify one method on a library object into obj-ctor, obj-global, obj-builder, obj-read/write/call, or obj-static/scall."""
         it, fn = self.new_item(row, row["path"], f, crate)
         if self.pre(it, f, fn):
             return
@@ -1665,7 +1739,7 @@ class Model:
                 it["mut"] = True
             else:
                 raise Unsup("skip:rust-only-extension", f"receiver {recv}")
-            text = gk_overlay.named_text(fn, " ".join(rdj.ty(t) for _, t in ins))  # where clauses (11.10)
+            text = gk_overlay.named_text(fn, " ".join(rdj.ty(t) for _, t in ins))
             for p in fn["generics"]["params"]:
                 if "type" in p["kind"] and not p["kind"]["type"].get("is_synthetic") and not re.search(rf"\b{p['name']}\b", text):
                     raise Unsup("todo:generic type parameter the caller chooses (no argument names it)", p["name"])
@@ -1689,7 +1763,7 @@ class Model:
                     raise
                 bad = self.call_bad(d, kind == "obj-builder")
                 if bad and gk_editor.chain_cx(self, d, kind, it):
-                    bad = None  # decoded before the chain runs, with the call's context (PROTOCOLS.md 9.31)
+                    bad = None
                 if bad:
                     raise Unsup("todo:protocol: state (an argument only a view build can decode: " + bad + ")", s)
                 pn = pn if re.fullmatch(r"[a-z][a-z0-9_]*", pn) else f"arg{n}"
@@ -1712,9 +1786,6 @@ class Model:
             "obj-call": "calls", "obj-global": "globals", "obj-static": "statics", "obj-scall": "statics"}[kind]].append(it)
 
     def call_desc(self, ctx, t):
-        """An argument of a call op: a builder type that is also a plain record (IndexPath, whose
-        fields are public) is written as the record, which a call op can decode; as a builder it
-        could be made only inside a view build (PROTOCOLS.md section 13)."""
         d = self.desc(ctx, t)
         if not any(x[0] == "node" for x in walk_desc(d)):
             return d
@@ -1727,18 +1798,14 @@ class Model:
             self._prefer_rec = False
 
     def check_obj_ret(self, d, out_s):
-        """An object travels out as a new temporary handle: by value it is moved into the library,
-        anywhere else (a borrow, an option, a list) it is copied, so its type must be Clone."""
         if d[0] == "obj" or (d[0] == "fallible" and d[1][0] == "obj"):
-            return  # by value: moved into a new handle (a fallible one too, PROTOCOLS.md 13.9)
+            return
         for x in walk_desc(d):
             if x[0] == "obj":
                 if not x[3]:
                     raise Unsup("todo:protocol: object (a result that cannot be copied out of a borrow)", out_s)
 
     def obj_arg_ok(self, it):
-        """An element builder's object argument is copied out of its handle each time the tape is
-        decoded: by reference or by value, of a type that is Clone."""
         for a in it["args"]:
             for x in walk_desc(a["desc"]):
                 if x[0] == "refmut":
@@ -1748,13 +1815,16 @@ class Model:
         return True
 
     def reach_objects(self):
-        """The fixpoint over library objects the app can get: a bound constructor or global
-        accessor, or a bound function that hands one out (a result, an event payload). The
-        methods of one nothing hands out, and functions that take one, are not reachable."""
+        """Compute fixed-point reachability over library objects starting from constructors, globals, returns, and events.
+
+        Objects that no bound constructor, global accessor, return value, item
+        closure, or event payload can ever produce are marked unreachable (`self.dead_objs`),
+        and any method taking an unreachable object argument is downgraded to `todo`.
+        """
         why = "protocol: object (no constructor, global or bound function hands one out)"
         objs = self.objects
         items = self.all_items()
-        live = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        live = lambda i: i["status"] in ("bound", "bridged")
         reach = set()
         while True:
             new = set()
@@ -1763,18 +1833,18 @@ class Model:
                     new.add(key)
                 if key not in reach and any(live(i) and any(x[0] == "obj" and x[2] == key for x in walk_desc(i.get("ret") or ["unit"]))
                                             for i in st.get("statics", [])):
-                    new.add(key)  # a static that makes one, fallibly (Keyframes::try_new, PROTOCOLS.md 13.9)
+                    new.add(key)
             for it in items:
                 if not live(it) or (it.get("state") in objs and it["state"] not in reach):
                     continue
                 for x in walk_desc(it.get("ret") or ["unit"]):
                     if x[0] == "obj" and x[2] not in reach:
                         new.add(x[2])
-                new.update(k for k in gk_lists.handed_out(it) if k not in reach)  # a closure's context (9.16)
-                new.update(k for k in gk_editor.handed_out(it) if k not in reach)  # a plugin's inline context (9.23)
+                new.update(k for k in gk_lists.handed_out(it) if k not in reach)
+                new.update(k for k in gk_editor.handed_out(it) if k not in reach)
             for sh in self.shapes.values():
                 for d in sh["args"]:
-                    for x in gk_values.walk_tables(self, d):  # into an event's variants (PROTOCOLS.md 13.15)
+                    for x in gk_values.walk_tables(self, d):
                         if x[0] == "obj" and x[2] not in reach:
                             new.add(x[2])
             if not new:
@@ -1796,14 +1866,10 @@ class Model:
         for st in objs.values():
             st["statics"] = [i for i in st["statics"] if live(i)]
 
-    # ---------------------------------------------------------------- generic states, instantiated
 
     STATE_SPEC = re.compile(r"\s*(\w+)<\s*([\w:]+)\s*>\s+as\s+(\w+)\s*")
 
     def state_specs(self, crate, iid):
-        """The `[instantiate] states` lines of overrides.toml that name this generic type:
-        [(argument, name)], the argument an upstream type's name or a library type
-        (`crate::...`, a shim of the delegate protocol)."""
         name = self.api.crates[crate].item(iid)["name"]
         out = []
         for spec in self.ov.get("instantiate", {}).get("states", []):
@@ -1816,7 +1882,6 @@ class Model:
         return out
 
     def arg_type(self, arg):
-        """(crate, type ref, trait names it implements or None for any) of an instantiation's argument."""
         if arg.startswith("crate::"):
             return None, {"verbatim": arg}, None
         found = [(cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items() if it["name"] == arg]
@@ -1827,9 +1892,6 @@ class Model:
         return cr, {"resolved_path": {"path": arg, "id": int(i), "args": None}}, f["traits"] | f["blanket"]
 
     def impl_applies(self, crate, im, arg_ref, arg_traits):
-        """Whether an inherent impl of `Base<P>` holds for the argument, and the substitution.
-        `impl<M: Bound> Base<M>` holds when the argument implements every bound (a library type
-        is taken to implement them); `impl Base<Concrete>` when Concrete is the argument."""
         a = path_args(im["for"].get("resolved_path", {}))
         if len(a) != 1:
             return None
@@ -1844,14 +1906,13 @@ class Model:
                     bounds += bp["bounds"]
             if arg_traits is not None and any(n not in arg_traits for n, _ in bound_parts(bounds)):
                 return None
-            return {p: arg_ref[1]}  # the type; the caller pairs it with its crate
+            return {p: arg_ref[1]}
         if "resolved_path" in a and "resolved_path" in arg_ref[1]:
             if self.api.home(crate, a["resolved_path"]["id"]) == self.api.home(arg_ref[0], arg_ref[1]["resolved_path"]["id"]):
                 return {}
         return None
 
     def alias_path(self, crate, base_name, arg, name):
-        """The public path of `type Name = Base<Arg>` when upstream declares it."""
         c = self.api.crates[crate]
         for i, it in c.idx.items():
             ta = it.get("inner", {}).get("type_alias")
@@ -1863,11 +1924,7 @@ class Model:
         return None
 
     def instantiate_states(self, row, f, c, crate, iid, specs):
-        """`[instantiate] states`: one kit state type per `Base<Arg> as Name` (PROTOCOLS.md 9.6).
-        Every method of an impl that holds for the argument is classified as a state method of
-        that type, `Self` and the type parameter substituted. The coverage row keeps one item per
-        upstream function: bridged when some instantiation binds it, else the reason of the first
-        that has it."""
+        """Instantiate generic state types from `[instantiate] states` and attach summary rows."""
         base_path = self.api.pubpath(crate, iid)
         shadows = []
         for arg, name in specs:
@@ -1898,7 +1955,6 @@ class Model:
                     seen.add(fi["name"])
                     self.state_method(shadow, st, fi, crate, ctx)
             shadows.append(shadow)
-        # The row: one item per upstream function, as type_impls would list them.
         names = []
         for im in f["impls"]:
             if im.get("trait") is None:
@@ -1931,10 +1987,10 @@ class Model:
                                  "rust": self.rtype(Ctx(crate, ctx.self_t, ctx.subst), ev),
                                  "id": f"{tpath}::subscribe::{rdj.ty(ev)}", "status": "bridged"})
         except Unsup:
-            gk_editor.event_reads(self, st, crate, ctx, tpath, ev)  # its reads (PROTOCOLS.md 9.35)
+            gk_editor.event_reads(self, st, crate, ctx, tpath, ev)
 
     def pre(self, it, f, fn):
-        """Statuses that do not depend on the rules: overrides, deprecation, unsafe."""
+        """Apply early skip/todo filters: overrides `[skip]`, deprecated items, unsafe fns, and async fns."""
         ov = self.ov.get("skip", {})
         short = it["id"].split("::")[-2] + "::" + it["name"] if "::" in it["id"] else it["name"]
         for key in (it["id"], short):
@@ -1959,6 +2015,7 @@ class Model:
         return r
 
     def classify_crate(self, crate):
+        """Classify every public struct/enum, trait, and free function exported by a kit crate."""
         c, w = self.api.crates[crate], self.api.walks[crate]
         pre = SHORT[crate]
         for iid, (path, it) in sorted(w.types.items(), key=lambda kv: kv[1][0]):
@@ -1968,11 +2025,8 @@ class Model:
             shim_node = next((self.nodes[k] for o, k in self.node_of.items()
                               if len(o) == 3 and o[:2] == (crate, iid) and o[2][0] in ("shim", "inst")), None)
             if node is None and gk_values.multi_inst(self, crate, iid, f, c, f"{pre}::{it['name']}", tpath):
-                continue  # one generic builder instantiated several times (PROTOCOLS.md 13.19)
+                continue
             if node is None and shim_node is not None:
-                # A generic element instantiated for a delegate shim or an argument list
-                # ([instantiate] types): its methods are classified on that instance, `Self` and
-                # the parameters substituted.
                 node = shim_node
                 row = self.row(f"{pre}::{it['name']}", tpath, "component" if node["element"] else "builder", crate)
                 self_t = self.inst_self(crate, iid, f, node)
@@ -1981,7 +2035,7 @@ class Model:
                 self.type_impls(row, node, f2, c, crate, Ctx(crate, self_t, node["subst"]), "node")
                 continue
             if node is None and f["generic"] and gk_values.object_specs(self, crate, iid):
-                row = self.row(f"{pre}::{it['name']}", tpath, "state", crate)  # generic objects (PROTOCOLS.md 13.8)
+                row = self.row(f"{pre}::{it['name']}", tpath, "state", crate)
                 gk_values.instantiate_objects(self, row, f, c, crate, iid, gk_values.object_specs(self, crate, iid))
                 continue
             if node is not None:
@@ -2041,7 +2095,12 @@ class Model:
                     node["ctors"].append(it)
 
     def classify_trait(self, crate, iid, tit, rowname):
-        """A trait declaration: the builder methods become one shared table."""
+        """Classify a public trait's methods into style tokens, shared trait ops, type-changing converts, shims, or skips.
+
+        Methods with additional `where Self: Trait` bounds are split into a
+        separate sub-table keyed by `(crate, iid, tuple(extra))` so only nodes
+        implementing the extra bounds inherit those ops.
+        """
         c = self.api.crates[crate]
         tr = tit["inner"]["trait"]
         tpath = self.api.pubpath(crate, iid)
@@ -2050,7 +2109,7 @@ class Model:
             self.token_row = self.row("Styled (nullary methods, as style tokens)", tpath, "style", crate)
             row["name"] = "gpui::Styled (methods with arguments)"
         generic = any("type" in p["kind"] for p in tr["generics"]["params"])
-        selfgen = generic and gk_values.self_generic_trait(self, crate, tr)  # StyleSized<T: Styled> (13.11)
+        selfgen = generic and gk_values.self_generic_trait(self, crate, tr)
         generic = generic and not selfgen
         fns = [c.item(i) for i in tr["items"]]
         fns = [f for f in fns if f and "function" in f["inner"]]
@@ -2061,8 +2120,8 @@ class Model:
                  "extra": [], "extra_paths": [],
                  "via_style": tit["name"] in self.ov.get("traits", {}).get("via_style", [])}
         if selfgen:
-            table["path"] = f"{tpath}<E>"  # bound and called as E: StyleSized<E>
-            table["extra_paths"] = ["gpui_kit::Styled"]  # the trait's own bound on its parameter
+            table["path"] = f"{tpath}<E>"
+            table["extra_paths"] = ["gpui_kit::Styled"]
         role = self.ov.get("traits", {}).get("role", {}).get(tit["name"])
         if role:
             self.ov_used.add("traits.role." + tit["name"])
@@ -2074,7 +2133,6 @@ class Model:
             out = fn["sig"].get("output")
             shim = self.ov.get("shims", {}).get(f"{tit['name']}::{f['name']}")
             if shim:
-                # A method a hand-written shim of the delegate protocol implements (PROTOCOLS.md 9).
                 self.ov_used.add("shims." + f"{tit['name']}::{f['name']}")
                 it.update(kind="shim", status="bridged", reason="", detail=shim)
             elif role:
@@ -2111,11 +2169,6 @@ class Model:
                     else:
                         table["ops"].append(it)
                         if table["via_style"] and len(ins) == 1 and tit["name"] != "Styled":
-                            # A nullary method of a trait that only writes the style (the kit's
-                            # StyledExt: font_bold, h_flex, ...) is also a style token, as gpui's
-                            # Styled ones are (PROTOCOLS.md 11.36): `.Font_Bold` in a style list.
-                            # The method stays; the token is a second entry, not a second function,
-                            # made in gk_rust.number once quarantine has had its say.
                             self.style_ext.append((it, tpath))
             elif f in builders and out is not None:
                 it["status"], it["reason"] = "todo", "type-changing method (a wrapper instantiated per element type)"
@@ -2139,6 +2192,7 @@ class Model:
         raise Unsup("todo:generic type parameter without a closed set", "where Self: " + name)
 
     def classify_free(self, row, crate, iid, path, f):
+        """Classify a free function as a palette color, ambient call, or free node constructor."""
         it, fn = self.new_item(row, row["path"], f, crate)
         it["id"] = "::".join([FACADE[crate]] + path.split("::")[1:])
         if self.pre(it, f, fn):
@@ -2160,7 +2214,7 @@ class Model:
             self.nodes[rn]["ctors"].append(it)
 
     def classify_gpui(self):
-        """The parts of gpui the kit's elements are made of (overrides [gpui])."""
+        """Classify the curated subset of upstream `gpui` types, traits, and free functions from `[gpui]`."""
         inc = self.ov.get("gpui", {})
         c, w = self.api.crates["gpui"], self.api.walks["gpui"]
         for key, node in list(self.nodes.items()):
@@ -2187,7 +2241,7 @@ class Model:
                 self.classify_free(row, "gpui", iid, path, f)
 
     def theme_tokens(self):
-        """The Hsla fields of the kit's ThemeColor: colours the library resolves at replay."""
+        """Extract every public `Hsla` field name from `ThemeColor` into `self.theme`."""
         c = self.api.crates["gpui_component"]
         for _, (path, it) in self.api.walks["gpui_component"].types.items():
             if it["name"] == "ThemeColor" and "struct" in it["inner"]:
@@ -2197,9 +2251,14 @@ class Model:
                         self.theme.append(fi["name"])
 
     def impl_matches(self, im, node):
+        """Return True if impl block `im` applies to instantiated generic node `node`.
+
+        Unconstrained generic impls (`impl<T> Foo<T>`) match every instantiation; specialized
+        impls (`impl Foo<Div>`) match only when each concrete argument's short type name equals
+        the instantiation's substituted type (never matching `crate::` shim instantiations).
+        """
         args = path_args(im["for"]["resolved_path"]) if "resolved_path" in im["for"] else []
         if node["inst"][0] == "inst":
-            # An impl for some concrete arguments holds when each is the node's own.
             f = self.info(node["crate"], node["id"])
             for a, g in zip(args, f["generic"]):
                 mine = node["subst"][g][1]
@@ -2215,11 +2274,26 @@ class Model:
         return "resolved_path" in args[0] and last(args[0]["resolved_path"]["path"]) == \
             self.api.crates[node["inst"][0]].item(node["inst"][1])["name"]
 
-    # ---------------------------------------------------------------- after classification
 
     def settle(self):
-        """Trait tables per node, type-changing trait methods, names and the fixpoint over
-        types nothing can construct."""
+        """Finalize trait tables, run extension post-passes, prune unreachable items, and verify overrides.
+
+        Exact stage order matters because later passes depend on reachability and wire-direction
+        flags computed by earlier passes:
+        1. Resolve each node's `tables` (including conditional `extra`-bound sub-tables) and
+           instantiate type-changing trait conversions (`trait_convert`).
+        2. Drop methods on non-object, non-handed states that have no bound constructor.
+        3. `gk_overlay.post` -> `prune` -> `gk_editor.project` -> `gk_editor.before_reach`
+           (snapshots pre-prune object methods) -> `reach_objects` -> second `prune` if any
+           objects were found unreachable.
+        4. `flow()` propagates `in`/`out` wire flags transitively through records, data enums,
+           and `Into` sets.
+        5. `gk_editor.revive` -> `gk_values.post` (globals, pointer ctors, readbacks, handed
+           states, nested iterators, `out_flags`) -> `gk_editor.after_values` (lent edits,
+           flat record writes, event reads, answer sets, nested-iterator revival).
+        6. Assert that every entry in `[skip]`, `[shims]`, `[instantiate].states`, `[lists].*`,
+           `[editor].variants`, `[rows]`, `[traits.role]`, and `[shorthand]` was used.
+        """
         for node in self.nodes.values():
             tabs, seen = [], set()
             f = self.info(node["crate"], node["id"])
@@ -2238,22 +2312,22 @@ class Model:
                     self.trait_convert(node, t, cv)
             node["tables"] = tabs
         for st in self.states.values():
-            if not st["ctors"] and not st.get("obj") and not st.get("handed"):  # handed: PROTOCOLS.md 11.8
+            if not st["ctors"] and not st.get("obj") and not st.get("handed"):
                 for it in st["builders"] + st["reads"] + st["writes"] + st["calls"]:
                     it["status"], it["reason"] = "todo", "protocol: state (no constructor of the state type is bound)"
                 st["builders"], st["reads"], st["writes"], st["calls"], st["events"] = [], [], [], [], []
-        gk_overlay.post(self)  # the views family's statuses decided after the rules (PROTOCOLS.md 11.14 to 11.16)
+        gk_overlay.post(self)
         self.dead_objs = set()
         self.prune()
-        gk_editor.project(self)  # reads through a borrow (PROTOCOLS.md 9.27)
-        gk_editor.before_reach(self)  # objects a read-back value hands out (PROTOCOLS.md 9.25)
+        gk_editor.project(self)
+        gk_editor.before_reach(self)
         self.reach_objects()
         if self.dead_objs:
-            self.prune()  # records, variants and shapes made of an object nothing hands out
+            self.prune()
         self.flow()
-        gk_editor.revive(self)  # objects a read-back value hands out (PROTOCOLS.md 9.25)
-        gk_values.post(self)  # speech skipped, generic traits bound through instances (PROTOCOLS.md 13.8)
-        gk_editor.after_values(self)  # the editor host's items found usable late (PROTOCOLS.md 9.30)
+        gk_editor.revive(self)
+        gk_values.post(self)
+        gk_editor.after_values(self)
         for key in self.ov.get("skip", {}):
             if key not in self.ov_used:
                 raise SystemExit(f"gkgen: overrides [skip] key matches no function: {key}")
@@ -2271,8 +2345,6 @@ class Model:
         for key in self.ov.get("traits", {}).get("role", {}):
             if "traits.role." + key not in self.ov_used:
                 raise SystemExit(f"gkgen: overrides [traits.role] names no trait: {key}")
-        # Records a parameter may also take as one integer field alone (PROTOCOLS.md 11.36): the
-        # record's `shorthand` names the field; the description carries it to every emitter.
         for rt, field in self.ov.get("shorthand", {}).items():
             rec = self.records.get(rt)
             f = next((f for f in rec["fields"] if f["name"] == field), None) if rec and rec.get("in") else None
@@ -2281,6 +2353,7 @@ class Model:
             rec["shorthand"] = field
 
     def all_items(self):
+        """Return a deduplicated list of all items across `self.items`, node constructors, and conversions."""
         seen, out = set(), []
         for it in self.items + [i for n in self.nodes.values() for i in n["ctors"] + n.get("converts", [])]:
             if id(it) not in seen:
@@ -2289,14 +2362,22 @@ class Model:
         return out
 
     def prune(self, dead_types=()):
-        """The fixpoint over what cannot be built: a node type no bound constructor reaches
-        cannot be an argument, and neither can a record, variant or Into member made of one."""
+        """Iteratively drop nodes, types, shapes, and items that depend on unconstructible or quarantined types.
+
+        Runs to a fixed point:
+        - Any node with zero bound/bridged constructors enters `dead`.
+        - Records, data-enum variants, `Into` union members, and handler shapes referencing a
+          dead node, dead object, or dead type are disabled/removed.
+        - Any bound/bridged item whose argument, return type, or `from` node references a dead
+          entity is downgraded to `todo`, which may in turn remove the last constructor of another
+          node on the next iteration.
+        """
         opaque = "opaque library object without a constructor the binding can drive"
         dead_t = set(dead_types)
         items = self.all_items()
         while True:
             dead = {k for k, n in self.nodes.items() if not any(i["status"] in ("bound", "bridged") for i in n["ctors"])}
-            bad = lambda d: any((x[0] in ("node", "build", "stylefn") and x[1] in dead) or  # noqa: E731
+            bad = lambda d: any((x[0] in ("node", "build", "stylefn") and x[1] in dead) or
                                 (x[0] == "obj" and x[2] in self.dead_objs) or
                                 (x[0] in ("enum", "denum", "rec", "into") and (x[0], x[1]) in dead_t) or
                                 (x[0] == "handler" and ("shape", x[1]) in dead_t) for x in walk_desc(d))
@@ -2339,7 +2420,13 @@ class Model:
             st["events"] = [e for e in st["events"] if e["shape"] in self.shapes]
 
     def flow(self):
-        """in and out reach the types a type is made of."""
+        """Propagate `in`/`out` wire direction flags transitively through records, data enums, and `Into` sets.
+
+        Ensures that if a parent record or data enum is decoded from the wire (`in=True`) or
+        serialized back to Go (`out=True`), every nested record, enum, or data enum referenced
+        in its fields/variants receives the same direction flag so `gk_rust.py` and `gk_go.py`
+        emit all required `Unwire`/`Wire`/`put*`/`rd*` helpers.
+        """
         tables = {"enum": self.enums, "denum": self.denums, "rec": self.records}
         for s in self.intos.values():
             for mem in s["members"]:
@@ -2363,7 +2450,7 @@ class Model:
                                     u[flag], changed = True, True
 
     def trait_convert(self, node, table, cv):
-        """`InteractiveElement::id(self, ..) -> Stateful<Self>` for one concrete Self."""
+        """Instantiate a type-changing trait method (such as `InteractiveElement::id`) on `node`."""
         fn = cv["fn"]
         self_t = self.node_self(node)
         ctx = self.fn_ctx(Ctx(cv["fcrate"], self_t, node["subst"]), fn)
@@ -2398,7 +2485,7 @@ class Model:
 
 
 def strip_conv(d):
-    """A descriptor without its Rust conversion tags: what the wire and the app see."""
+    """Normalize a descriptor by removing Rust-side conversion tags so equivalent handler shapes dedupe."""
     if d[0] == "str":
         return ["str"]
     if d[0] == "leaf":
@@ -2417,6 +2504,7 @@ def strip_conv(d):
 
 
 def walk_desc(d):
+    """Yield `d` and every recursively nested container descriptor (opt, ref, list, tuple, etc.)."""
     yield d
     if d[0] in ("opt", "ref", "list", "from", "refmut", "fallible", "array"):
         yield from walk_desc(d[1])
@@ -2426,11 +2514,13 @@ def walk_desc(d):
 
 
 def uses_protocol(d):
+    """Return True if descriptor `d` relies on a runtime protocol beyond plain value serialization."""
     return any(x[0] in ("handler", "fragment", "build", "entity", "handle", "action", "stylefn", "shim", "rows",
                         "data", "field", "format", "datum_rows", "obj", "refmut", "viewfn", "expr", "ask", "dock",
-                        "ctxrows", "lent", "items") or x[0] in gk_app.PROTOCOL_KINDS  # the platform family's (13.31)
+                        "ctxrows", "lent", "items") or x[0] in gk_app.PROTOCOL_KINDS
                for x in walk_desc(d))
 
 
 def names_node(d, keys):
+    """Return True if descriptor `d` references any node key in `keys` via `node` or `build`."""
     return any(x[0] in ("node", "build") and x[1] in keys for x in walk_desc(d))

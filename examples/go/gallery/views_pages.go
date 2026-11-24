@@ -1,8 +1,5 @@
-// The views family's gallery pages, the Go twin of ref/src/bin/gallery/views_pages.rs,
-// call for call: a sidebar whose items are groups of
-// the kit's menus (SidebarGroup<SidebarMenu> and Sidebar<SidebarGroup<SidebarMenu>>), one group
-// collapsed; a context menu whose submenu item has an icon (PopupMenu::submenu_with_icon); a
-// context menu of items made as values (PopupMenuItem).
+// Additional menu and sidebar gallery pages: grouped sidebars, submenus with optional icons,
+// and mixed popup menu item variants.
 package main
 
 import (
@@ -22,7 +19,7 @@ var viewsPageTable = []Page{
 }
 
 func viewsPagesInit(a *App, cx *gk.Cx) {
-	a.views.zoomIn = gk.NewAction(cx, "gallery_menu::MenuZoomIn") // the Rust twin's actions (overlay_pages.rs)
+	a.views.zoomIn = gk.NewAction(cx, "gallery_menu::MenuZoomIn")
 	a.views.zoomOut = gk.NewAction(cx, "gallery_menu::MenuZoomOut")
 }
 

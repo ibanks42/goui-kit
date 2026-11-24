@@ -3,7 +3,7 @@
 Written by `gen/gkgen.py gen`. Counts are functions.
 
 - 7765 functions in 682 rows: 5199 bound, 1881 bridged, 682 skipped, 0 failed, 3 not attempted yet.
-- 489 node types (263 elements), 22 builder traits, 122 enums, 60 enums with data, 103 records, 27 Into sets, 68 handler shapes, 3146 style tokens, 244 palette colours, 140 theme colours.
+- 489 node types (263 elements), 22 builder traits, 122 enums, 60 enums with data, 103 records, 27 Into sets, 68 handler shapes, 3146 style tokens, 244 palette colors, 140 theme colors.
 - Names that collided: 5.
 
 ## Compiler rounds

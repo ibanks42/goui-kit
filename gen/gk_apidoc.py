@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-"""gk_apidoc.py [--check]: the component index of docs/API-GO.md, read from the generated Go
-package.
+"""Generate and verify the Go component index section of `docs/API-GO.md`.
 
-The index is written between two markers in the guide. It is read from the files an app compiles
-against (go/gk/gen_*.go), not from the generator's model, so what it names is what exists: every
-element type, value type and kit state type of the kit's component and base modules, its upstream
-type, its constructor as an app calls it, and the builders, reads, writes and events it has beyond
-the styling every element shares (the methods of gk.Div()).
+Why this reads `gen/out/build.go/flat/` instead of `go/gk/**`:
+The flat pre-split Go files preserve uniform doc headers (`// <Name> is ... <rust_path>`)
+and direct calls to `t<Trait>*` helper functions in `gen_traits.go`, which makes it
+straightforward to identify each type's canonical upstream module (`component::mod` vs
+`base::mod`), classify it as element vs kit state vs value, and filter out shared
+cross-cutting styling/accessibility traits (`SHARED_TRAITS`, `GO_SHARED_PREFIX`).
+After collecting the index, `q(name)` translates every flat symbol into its final
+subpackage-qualified name (`dock.Area`, `editor.InputState`, `gk.Button`, etc.) using
+`gen/out/build.go/table.json`.
 
-    python3 gen/gk_apidoc.py           rewrite the index (make gen runs it)
-    python3 gen/gk_apidoc.py --check   exit 1 if the guide's index is not what the package says
-                                       (gates/docs-go.sh)
-Python 3 standard library only.
+Usage:
+    python3 gen/gk_apidoc.py           rewrite the marked block in `docs/API-GO.md`
+    python3 gen/gk_apidoc.py --check   fail with exit 1 if `docs/API-GO.md` is stale
+                                       (invoked by `gates/docs-go.sh`)
+
+Invariants enforced:
+- Every state constructor taking a `RowSource` must have a human-readable example
+  expression in `GO_SOURCES` (failing loudly when a new row-backed state type appears).
+- `docs/API-GO.md` must contain both `GO_BEGIN` and `END` HTML comment markers.
 """
 import json
 import os
@@ -21,22 +29,22 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 END = "<!-- index:end -->"
 
-# Builders an index line shows first when a type has them: what an app reaches for.
+# Preferred method names listed first in each type's summary row (up to `SHOWN` methods)
+# before falling back to alphabetical ordering, keeping high-signal builders visible.
 FIRST = ["label", "title", "text", "child", "children", "value", "checked", "selected", "icon", "placeholder",
          "on_click", "on_change", "on_select", "tooltip", "description", "content", "footer", "prefix", "suffix",
          "primary", "ghost", "outline", "small", "large", "disabled"]
-SHOWN = 8  # builder names per line before "…"
+SHOWN = 8
 
-# Trait tables whose builders every element has (styling, events, children, scrolling, focus,
-# accessibility): an index line leaves them out. Other tables (ButtonVariants: .Primary, Sizable:
-# .Small) are the type's own vocabulary and are listed with its builders.
+# Cross-cutting styling, interactivity, and accessibility traits omitted from per-type rows
+# because nearly every element inherits them (mentioned once in the index intro line instead).
 SHARED_TRAITS = {"Styled", "Interactive_Element", "Stateful_Interactive_Element", "Parent_Element",
                  "Scrollable_Element", "Element_Ext", "Styled_Ext", "Focusable_Ext", "Theme_Styled",
                  "Theme_Styled_Parent_Element", "Accessible", "Accessibility_Ext"}
 
 
 def module_of(path):
-    """The upstream module an index section is named after: component::button, base::input, base."""
+    """Extract the `component::mod` or `base::mod` section heading from a canonical `gpui_kit::...` path."""
     parts = re.sub(r"<.*", "", path).split("::")
     if len(parts) >= 3 and parts[0] == "gpui_kit" and parts[1] in ("component", "base"):
         mod = parts[1] + ("::" + parts[2] if len(parts) > 3 else "")
@@ -45,52 +53,43 @@ def module_of(path):
 
 
 def short(path):
+    """Strip Rust module prefixes from a type path (keeping generic arguments readable)."""
     return re.sub(r"\w+::", "", path)
 
 
-# ---- The Go index (docs/API-GO.md), read from go/gk/gen_*.go ------------------------------------
-#
-# A type is declared by its doc comment
-# (`// ButtonEl is gpui_kit::component::button::Button.`) and a struct holding a node (an element,
-# or a value when it has valueNode) or a handle (kit state). Builders are its exported methods; a
-# method whose body calls a trait function (tStyledBg) belongs to that trait, and the shared traits
-# are left out. Read before or after gofmt alike (spacing is not significant).
-
-# The flat package the generator split (gen/gk_split.py) holds the declarations in the form these
-# patterns read; every name shown is then the one its package gives it now (table.json).
 GO_PKG = os.path.join(REPO, "gen", "out", "build.go", "flat")
 GO_TABLE = os.path.join(REPO, "gen", "out", "build.go", "table.json")
 _NAMES = {}
 
 
 def q(name):
-    """A flat name as an app writes it now: package.Name (gen/gk_split.py)."""
+    """Qualify a flat generated Go identifier with its split package from table.json."""
     if not _NAMES and os.path.exists(GO_TABLE):
         _NAMES.update(json.load(open(GO_TABLE))["names"])
     p, n = _NAMES.get(name, ("gk", name))
     return f"{p}.{n}"
 GO_DOC = os.path.join(REPO, "docs", "API-GO.md")
 GO_BEGIN = "<!-- index:begin (written by gen/gk_apidoc.py from the generated Go packages; do not edit) -->"
+# Matches generated type doc headers emitted by gk_go.py and their single-field struct declarations.
 GO_DECL = re.compile(r"^// (\w+) is (?:a handle to )?(`?)([\w:<>, ]+?)\2(?:[.,]| \().*\n"
                      r"type (\w+) struct ?\{ ?(n \*node|h uint64) ?\}", re.M)
 GO_FUNC = re.compile(r"^func (?:\((\w+) (\w+)\) )?(\w+)\(", re.M)
+# Matches generated trait helper comments in gen_traits.go so shared trait methods can be filtered out.
 GO_TRAITFN = re.compile(r"^// (t[A-Z]\w*): ([\w:<>, ]+)::(\w+)\.$", re.M)
-# putText and slotView are the Go package's .Text and .ChildView, which every parent element has.
 GO_TRAITCALL = re.compile(r"\b(t[A-Z]\w*|putText|slotView)\(e\.n\b")
-# Go's names for the shared trait tables (without underscores, as upstream spells them).
 GO_SHARED_TRAITS = {t.replace("_", "") for t in SHARED_TRAITS}
 GO_SHARED_PREFIX = ("A11y", "Accessibility", "Aria")
 GO_FIRST = ["".join(w.capitalize() for w in n.split("_")) for n in FIRST]
-# The call that makes the row source a kit state's constructor takes.
 GO_SOURCES = {
     "ComboboxState": "NewSearchSource(cx, items)",
     "ListState": "NewListSource(cx, count, row)",
     "SelectState": "NewSearchSource(cx, items)",
-    "TableState": "delegate",  # no Go table source yet: docs/API-GO.md says so
+    "TableState": "delegate",
 }
 
 
 def go_read_package():
+    """Read all flat pre-split `gen_*.go` files from `gen/out/build.go/flat/`."""
     out = {}
     for fn in sorted(os.listdir(GO_PKG)):
         if fn.startswith("gen_") and fn.endswith(".go"):
@@ -99,7 +98,7 @@ def go_read_package():
 
 
 def go_split(text, start):
-    """From the '(' at start: (the text inside the balanced parentheses, the index after them)."""
+    """Return `(inside_parens, next_index)` matching the `(` at `start` in Go source `text`."""
     depth = 0
     for i in range(start, len(text)):
         if text[i] == "(":
@@ -112,7 +111,7 @@ def go_split(text, start):
 
 
 def go_funcs(text, fn):
-    """Every func of a file: (receiver type or None, name, parameters, result, body, file)."""
+    """Extract `(receiver, name, params, result, body, filename)` tuples for every top-level Go func."""
     out = []
     for m in GO_FUNC.finditer(text):
         params, at = go_split(text, m.end() - 1)
@@ -120,7 +119,7 @@ def go_funcs(text, fn):
         rest = text[at:eol]
         brace = rest.find("{")
         result = rest[:brace].strip() if brace >= 0 else rest.strip()
-        if rest.rstrip().endswith("}"):  # a one-line body
+        if rest.rstrip().endswith("}"):
             body = rest[brace:]
         else:
             end = text.find("\n}\n", eol)
@@ -130,7 +129,7 @@ def go_funcs(text, fn):
 
 
 def go_params(sig):
-    """The parameter names an app writes: without the trailing style tokens (st ...Style)."""
+    """Extract parameter names from a Go signature string, omitting variadic `...Style` parameters."""
     parts, depth, cur = [], 0, ""
     for ch in sig:
         if ch in "([{":
@@ -153,6 +152,7 @@ def go_params(sig):
 
 
 def go_index(files):
+    """Parse flat generated Go files into per-module type entries and state-display callers."""
     decls, funcs, traitfn = [], [], {}
     for fn, text in files.items():
         for m in GO_DECL.finditer(text):
@@ -161,7 +161,7 @@ def go_index(files):
         for m in GO_TRAITFN.finditer(text):
             traitfn[m.group(1)] = m.group(2).split("::")[-1]
     traitfn["putText"] = traitfn["slotView"] = "ParentElement"
-    for recv, name, _, _, _, _ in funcs:  # trait functions written without a doc comment
+    for recv, name, _, _, _, _ in funcs:
         if recv is None and name.startswith("t") and name not in traitfn:
             hit = [t for t in GO_SHARED_TRAITS if name[1:].startswith(t)]
             if hit:
@@ -256,6 +256,7 @@ def go_ctor_text(c, kind, typ):
 
 
 def go_render(files):
+    """Render the Markdown component index block between GO_BEGIN and END."""
     sections, states_shown = go_index(files)
     out = [GO_BEGIN, ""]
     total = {"element": 0, "value": 0, "state": 0}
@@ -297,9 +298,9 @@ def go_render(files):
                     line += "; " + go_names_text(e["builders"])
             out.append(line)
         out.append("")
-    out.insert(2, f"{total['element']} element types, {total['state']} kit state types and {total['value']} value types, "
-                  f"in {len(sections)} upstream modules. Styling builders every element has (`.Bg`, `.W`, "
-                  "`.P`, `.BorderColor`, … and the style tokens) are not repeated per type.")
+    out.insert(2, f"{total['element']} element types, {total['state']} kit state types, and {total['value']} value types "
+                  f"across {len(sections)} upstream modules. Shared styling builders (`.Bg`, `.W`, "
+                  "`.P`, `.BorderColor`, and style tokens) are omitted from per-type rows.")
     out.insert(3, "")
     out.append(END)
     return "\n".join(out)
@@ -314,7 +315,7 @@ def go_names_text(names):
 
 
 def write(doc, begin, text, check):
-    """Puts text between begin and END in doc; with check, only compares. 0 when current."""
+    """Replace the marked index region in doc, or verify it matches when check is True."""
     cur = open(doc).read()
     if begin not in cur or END not in cur:
         print(f"gk_apidoc: {doc} has no index markers", file=sys.stderr)

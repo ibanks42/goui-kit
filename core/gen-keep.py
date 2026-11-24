@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
-"""Writes core/src/keep.rs (feature `all`): one reference per non-generic element type of the
-kit, so every component's render path is linked into the library and its size can be measured.
-Reads the component catalogue (core/data/components.json), which records the module a type is defined in, not the public
-path it is re-exported under. So each type has candidate paths (crate root, its module, the
-modules above that)
-and `cargo check -p gk-capi --features all` is the judge:
+"""Generate core/src/keep.rs to anchor IntoElement monomorphizations in the cdylib.
 
-    python3 core/gen-keep.py                 # write keep.rs from core/keep-choice.json
-    python3 core/gen-keep.py --errors LOG    # move each type the compiler refused in LOG
-                                                   # to its next candidate, or skip it
+Reads element types from core/data/components.json and picks a public module path
+for each non-generic element using core/keep-choice.json. Pass --errors <rustc-log>
+to advance failed paths to their next candidate module path.
 """
+
 import re
 import sys
 import json
@@ -20,6 +16,7 @@ cat = json.load(open(os.path.join(here, "data/components.json")))
 choice_path = os.path.join(here, "keep-choice.json")
 choice = json.load(open(choice_path)) if os.path.exists(choice_path) else {}
 
+# Build candidate re-export paths from broadest (crate root) to deepest module path.
 CRATE = {"gpui_base": "gpui_kit::base", "gpui_component": "gpui_kit::component"}
 types = {}
 for t in cat["types"]:
@@ -31,12 +28,13 @@ for t in cat["types"]:
     module = t["module"].replace("/", "::")
     cands = [f"{root}::{t['name']}"]
     parts = module.split("::") if module else []
-    for n in range(len(parts), 0, -1):  # the defining module, then each module above it
+    for n in range(len(parts), 0, -1):
         cands.append(f"{root}::{'::'.join(parts[:n])}::{t['name']}")
     types[f"{t['crate']}::{t['module']}::{t['name']}"] = cands
 keys = sorted(types)
 
 def lines():
+    """Return (type_key, selected_path) pairs for types with a remaining candidate."""
     out = []
     for k in keys:
         c = choice.get(k, 0)
@@ -44,11 +42,12 @@ def lines():
             out.append((k, types[k][c]))
     return out
 
+# Map compiler error line numbers back to type indices (first entry starts at line 10).
 if "--errors" in sys.argv:
     log = open(sys.argv[sys.argv.index("--errors") + 1]).read()
     bad = {int(m) for m in re.findall(r"capi/src/keep\.rs:(\d+):", log)}
     current = lines()
-    FIRST = 10  # line number of the first reference in keep.rs
+    FIRST = 10
     moved = 0
     for i, (k, _) in enumerate(current):
         if FIRST + i in bad:

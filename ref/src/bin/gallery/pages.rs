@@ -1,9 +1,8 @@
-//! The gallery's pages, written the way a Rust GPUI-kit app writes them. One function per
-//! line of ref/gallery/pages.txt; the Go twin (examples/go/gallery/pages.go) has the
-//! same pages in the same order, call for call. Change a page in both files in one commit.
-//!
-//! Rules that keep a page comparable: fixed sizes and fixed text, nothing animated (no
-//! loading spinners), nothing read from the clock or the environment.
+//! Core component gallery pages (`Label`, `div`, `Button`, `Input`, `Switch`,
+//! `Alert`, `Avatar`, `Badge`, `Checkbox`, `Progress`, `Separator`, `Tag`,
+//! `Radio`, `Rating`, `Breadcrumb`, `GroupBox`, `DescriptionList`, `Kbd`,
+//! `Link`, `Skeleton`, and `uniform_list`).
+
 use crate::Gallery;
 use gpui_kit::component::alert::Alert;
 use gpui_kit::component::avatar::{Avatar, AvatarGroup};
@@ -34,8 +33,8 @@ use gpui_kit::{
 
 type Cx<'a> = Context<'a, Gallery>;
 
-/// The element of page `id`. Every id of pages.txt has an arm; an unknown id is a mistake in
-/// that file and stops the reference.
+/// Renders one of the core component gallery pages by `id`, panicking if
+/// `pages.txt` references a page not handled by any gallery submodule.
 pub fn page(id: &str, g: &Gallery, _window: &mut Window, cx: &mut Cx) -> AnyElement {
     match id {
         "label-basic" => label_basic(cx),

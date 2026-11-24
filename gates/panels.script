@@ -1,6 +1,6 @@
-# The panels scene offscreen (60 panels of 64 labels, 2 changing before every frame): the first
-# frame, and frames after the per-frame handler changed panels. Rust (ref-panels --script) and
-# the Go app (GK_SCRIPT) under the same script; gates/go.sh compares the images.
+# Offscreen script for the panels pixel gate (gates/pixels.sh panels).
+# Renders 5 frames at 1400x900 and captures frames 1, 2, and 5 to check initial layout and
+# deterministic per-frame updates against ref-panels.
 size 1400 900
 frame
 shot 1-first.png

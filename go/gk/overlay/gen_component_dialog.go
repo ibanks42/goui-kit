@@ -15,7 +15,7 @@ type AlertDialogEl struct{ rt.ElAnimatableElement }
 //
 // By default, the dialog is not overlay closable with a OK button.
 //
-// AlertDialog is <gpui_kit::component::dialog::AlertDialog>::new.
+// AlertDialog calls <gpui_kit::component::dialog::AlertDialog>::new.
 func AlertDialog(st ...gk.Style) AlertDialogEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(634)
@@ -27,10 +27,10 @@ func AlertDialog(st ...gk.Style) AlertDialogEl {
 //
 // Use this to configure button text, variants, and visibility in one value. It overrides only the
 // fields `button_props` sets, so the Cancel button `Confirm` asked for and callbacks set earlier
-// survive, whatever the call order. For a single property, prefer the direct builders — `OkText`,
+// survive, whatever the call order. For a single property, prefer the direct builders - `OkText`,
 // `OkVariant`, `CancelText`, `CancelVariant`.
 //
-// ButtonProps is <gpui_kit::component::dialog::AlertDialog>::button_props.
+// ButtonProps calls <gpui_kit::component::dialog::AlertDialog>::button_props.
 func (e AlertDialogEl) ButtonProps(buttonProps DialogButtonProps) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(buttonProps.Core)))
@@ -39,7 +39,7 @@ func (e AlertDialogEl) ButtonProps(buttonProps DialogButtonProps) AlertDialogEl 
 
 // Sets the text of the Cancel button. Default is `Cancel`.
 //
-// CancelText is <gpui_kit::component::dialog::AlertDialog>::cancel_text.
+// CancelText calls <gpui_kit::component::dialog::AlertDialog>::cancel_text.
 func (e AlertDialogEl) CancelText(cancelText string) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(cancelText)
@@ -48,7 +48,7 @@ func (e AlertDialogEl) CancelText(cancelText string) AlertDialogEl {
 
 // Sets the variant of the Cancel button. Default is `ButtonVariant::default()`.
 //
-// CancelVariant is <gpui_kit::component::dialog::AlertDialog>::cancel_variant.
+// CancelVariant calls <gpui_kit::component::dialog::AlertDialog>::cancel_variant.
 func (e AlertDialogEl) CancelVariant(cancelVariant gk.ButtonVariant) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	putButtonVariant(o, cancelVariant)
@@ -58,7 +58,7 @@ func (e AlertDialogEl) CancelVariant(cancelVariant gk.ButtonVariant) AlertDialog
 // Centers the alert dialog vertically in the window, whatever its height, in place of the
 // `MarginTop` offset.
 //
-// Centered is <gpui_kit::component::dialog::AlertDialog>::centered.
+// Centered calls <gpui_kit::component::dialog::AlertDialog>::centered.
 func (e AlertDialogEl) Centered() AlertDialogEl {
 	rt.Op(rt.N(e.Core), 259)
 	return e
@@ -66,7 +66,7 @@ func (e AlertDialogEl) Centered() AlertDialogEl {
 
 // Set the close button of the alert dialog, defaults to `false`.
 //
-// CloseButton is <gpui_kit::component::dialog::AlertDialog>::close_button.
+// CloseButton calls <gpui_kit::component::dialog::AlertDialog>::close_button.
 func (e AlertDialogEl) CloseButton(closeButton bool) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(closeButton)
@@ -77,7 +77,7 @@ func (e AlertDialogEl) CloseButton(closeButton bool) AlertDialogEl {
 //
 // The default of `AlertDialogEl` has OK button.
 //
-// Confirm is <gpui_kit::component::dialog::AlertDialog>::confirm.
+// Confirm calls <gpui_kit::component::dialog::AlertDialog>::confirm.
 func (e AlertDialogEl) Confirm() AlertDialogEl {
 	rt.Op(rt.N(e.Core), 261)
 	return e
@@ -90,7 +90,7 @@ func (e AlertDialogEl) Confirm() AlertDialogEl {
 //
 // This method is typically used together with `.trigger()` for a fully declarative API.
 //
-// Content is <gpui_kit::component::dialog::AlertDialog>::content.
+// Content calls <gpui_kit::component::dialog::AlertDialog>::content.
 func (e AlertDialogEl) Content(builder DialogContentEl) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.TakeNode(rt.N(builder.Core), false))
@@ -99,7 +99,7 @@ func (e AlertDialogEl) Content(builder DialogContentEl) AlertDialogEl {
 
 // Sets the description of the alert dialog.
 //
-// Description is <gpui_kit::component::dialog::AlertDialog>::description.
+// Description calls <gpui_kit::component::dialog::AlertDialog>::description.
 func (e AlertDialogEl) Description(description gk.Element) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Take(description))
@@ -110,7 +110,7 @@ func (e AlertDialogEl) Description(description gk.Element) AlertDialogEl {
 //
 // Shares the surface, backdrop, and reduced-motion policy of `Entrance`.
 //
-// Entrance is <gpui_kit::component::dialog::AlertDialog>::entrance.
+// Entrance calls <gpui_kit::component::dialog::AlertDialog>::entrance.
 func (e AlertDialogEl) Entrance(entrance DialogEntrance) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.U16(uint16(entrance))
@@ -123,7 +123,7 @@ func (e AlertDialogEl) Entrance(entrance DialogEntrance) AlertDialogEl {
 //
 // If not set, a default footer with OK and optional Cancel button will be used.
 //
-// Footer is <gpui_kit::component::dialog::AlertDialog>::footer.
+// Footer calls <gpui_kit::component::dialog::AlertDialog>::footer.
 func (e AlertDialogEl) Footer(footer gk.Element) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U32(rt.Take(footer))
@@ -132,7 +132,7 @@ func (e AlertDialogEl) Footer(footer gk.Element) AlertDialogEl {
 
 // Sets the icon of the alert dialog, default is None.
 //
-// Icon is <gpui_kit::component::dialog::AlertDialog>::icon.
+// Icon calls <gpui_kit::component::dialog::AlertDialog>::icon.
 func (e AlertDialogEl) Icon(icon gk.Element) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.Take(icon))
@@ -141,7 +141,7 @@ func (e AlertDialogEl) Icon(icon gk.Element) AlertDialogEl {
 
 // Set whether to support keyboard esc to close the dialog, defaults to `true`.
 //
-// Keyboard is <gpui_kit::component::dialog::AlertDialog>::keyboard.
+// Keyboard calls <gpui_kit::component::dialog::AlertDialog>::keyboard.
 func (e AlertDialogEl) Keyboard(keyboard bool) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.Bool(keyboard)
@@ -154,7 +154,7 @@ func (e AlertDialogEl) Keyboard(keyboard bool) AlertDialogEl {
 // top edge, which pins short alerts near the top of a tall window. Pass a larger offset to seat an
 // alert further down, e.g. in the vertical middle of the window.
 //
-// MarginTop is <gpui_kit::component::dialog::AlertDialog>::margin_top.
+// MarginTop calls <gpui_kit::component::dialog::AlertDialog>::margin_top.
 func (e AlertDialogEl) MarginTop(marginTop float32) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.F32(marginTop)
@@ -163,7 +163,7 @@ func (e AlertDialogEl) MarginTop(marginTop float32) AlertDialogEl {
 
 // Sets the text of the OK button. Default is `OK`.
 //
-// OkText is <gpui_kit::component::dialog::AlertDialog>::ok_text.
+// OkText calls <gpui_kit::component::dialog::AlertDialog>::ok_text.
 func (e AlertDialogEl) OkText(okText string) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.Str(okText)
@@ -172,7 +172,7 @@ func (e AlertDialogEl) OkText(okText string) AlertDialogEl {
 
 // Sets the variant of the OK button. Default is `ButtonVariant::Primary`.
 //
-// OkVariant is <gpui_kit::component::dialog::AlertDialog>::ok_variant.
+// OkVariant calls <gpui_kit::component::dialog::AlertDialog>::ok_variant.
 func (e AlertDialogEl) OkVariant(okVariant gk.ButtonVariant) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 270)
 	putButtonVariant(o, okVariant)
@@ -184,7 +184,7 @@ func (e AlertDialogEl) OkVariant(okVariant gk.ButtonVariant) AlertDialogEl {
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnCancel is <gpui_kit::component::dialog::AlertDialog>::on_cancel.
+// OnCancel calls <gpui_kit::component::dialog::AlertDialog>::on_cancel.
 func (e AlertDialogEl) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U32(rt.Register(onCancel, 8))
@@ -195,14 +195,14 @@ func (e AlertDialogEl) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) 
 //
 // Called after `on_action` or `OnCancel` callback.
 //
-// OnClose is <gpui_kit::component::dialog::AlertDialog>::on_close.
+// OnClose calls <gpui_kit::component::dialog::AlertDialog>::on_close.
 func (e AlertDialogEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.U32(rt.Register(onClose, 1))
 	return e
 }
 
-// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+// OnCloseDo is the event-free convenience variant of OnClose.
 func (e AlertDialogEl) OnCloseDo(onClose func(cx *gk.Cx)) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.U32(rt.Register(onClose, 1))
@@ -214,7 +214,7 @@ func (e AlertDialogEl) OnCloseDo(onClose func(cx *gk.Cx)) AlertDialogEl {
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnOk is <gpui_kit::component::dialog::AlertDialog>::on_ok.
+// OnOk calls <gpui_kit::component::dialog::AlertDialog>::on_ok.
 func (e AlertDialogEl) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.U32(rt.Register(onOk, 8))
@@ -223,7 +223,7 @@ func (e AlertDialogEl) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) AlertDia
 
 // Show cancel button. Default is false.
 //
-// ShowCancel is <gpui_kit::component::dialog::AlertDialog>::show_cancel.
+// ShowCancel calls <gpui_kit::component::dialog::AlertDialog>::show_cancel.
 func (e AlertDialogEl) ShowCancel(showCancel bool) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 274)
 	o.Bool(showCancel)
@@ -232,7 +232,7 @@ func (e AlertDialogEl) ShowCancel(showCancel bool) AlertDialogEl {
 
 // Sets the title of the alert dialog.
 //
-// Title is <gpui_kit::component::dialog::AlertDialog>::title.
+// Title calls <gpui_kit::component::dialog::AlertDialog>::title.
 func (e AlertDialogEl) Title(title gk.Element) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 275)
 	o.U32(rt.Take(title))
@@ -250,7 +250,7 @@ func (e AlertDialogEl) Title(title gk.Element) AlertDialogEl {
 // The `title`, `description`, `icon`, and `button_props` will be ignored when used together with
 // `.trigger()`.
 //
-// Trigger is <gpui_kit::component::dialog::AlertDialog>::trigger.
+// Trigger calls <gpui_kit::component::dialog::AlertDialog>::trigger.
 func (e AlertDialogEl) Trigger(trigger gk.Element) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 276)
 	o.U32(rt.Take(trigger))
@@ -259,7 +259,7 @@ func (e AlertDialogEl) Trigger(trigger gk.Element) AlertDialogEl {
 
 // Sets the width of the alert dialog, defaults to 420px.
 //
-// Width is <gpui_kit::component::dialog::AlertDialog>::width.
+// Width calls <gpui_kit::component::dialog::AlertDialog>::width.
 func (e AlertDialogEl) Width(width float32) AlertDialogEl {
 	o := rt.Op(rt.N(e.Core), 277)
 	o.F32(width)
@@ -268,17 +268,21 @@ func (e AlertDialogEl) Width(width float32) AlertDialogEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AlertDialogEl) PopoverStyle() AlertDialogEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AlertDialogEl) RoundedFullStyle() AlertDialogEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -287,16 +291,18 @@ func (e AlertDialogEl) RoundedFullStyle() AlertDialogEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AlertDialogEl) FocusRingStyle() AlertDialogEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -309,24 +315,32 @@ func (e AlertDialogEl) FocusRingStyle() AlertDialogEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AlertDialogEl) KeepTextSelection(id gk.ID) AlertDialogEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AlertDialogEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AlertDialogEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AlertDialogEl) BorderE(width gk.Length) AlertDialogEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AlertDialogEl) BorderS(width gk.Length) AlertDialogEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -334,127 +348,169 @@ func (e AlertDialogEl) BorderS(width gk.Length) AlertDialogEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AlertDialogEl) FlexRowDir() AlertDialogEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AlertDialogEl) InsetE(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AlertDialogEl) InsetS(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AlertDialogEl) JustifyFlexEnd() AlertDialogEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AlertDialogEl) JustifyFlexStart() AlertDialogEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AlertDialogEl) Me(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AlertDialogEl) Ms(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AlertDialogEl) Pe(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AlertDialogEl) Ps(length gk.Length) AlertDialogEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AlertDialogEl) RoundedE(radius gk.Length) AlertDialogEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AlertDialogEl) RoundedS(radius gk.Length) AlertDialogEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AlertDialogEl) TextEnd() AlertDialogEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AlertDialogEl) TextStart() AlertDialogEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AlertDialogEl) CornerRadii(radius gk.Corners) AlertDialogEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AlertDialogEl) DebugBlue() AlertDialogEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AlertDialogEl) DebugFocused(focusHandle gk.FocusHandle) AlertDialogEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AlertDialogEl) DebugGreen() AlertDialogEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AlertDialogEl) DebugPink() AlertDialogEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AlertDialogEl) DebugRed() AlertDialogEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AlertDialogEl) DebugYellow() AlertDialogEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AlertDialogEl) FontBlack() AlertDialogEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AlertDialogEl) FontBold() AlertDialogEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AlertDialogEl) FontExtrabold() AlertDialogEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AlertDialogEl) FontExtralight() AlertDialogEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AlertDialogEl) FontLight() AlertDialogEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AlertDialogEl) FontMedium() AlertDialogEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AlertDialogEl) FontNormal() AlertDialogEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AlertDialogEl) FontSemibold() AlertDialogEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AlertDialogEl) FontThin() AlertDialogEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -463,18 +519,23 @@ func (e AlertDialogEl) FontThin() AlertDialogEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AlertDialogEl) HFlex() AlertDialogEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AlertDialogEl) Margins(margins gk.EdgesInto) AlertDialogEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AlertDialogEl) Paddings(paddings gk.EdgesInto) AlertDialogEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AlertDialogEl) RefineStyle(style gk.StyleRefinement) AlertDialogEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -484,21 +545,29 @@ func (e AlertDialogEl) RefineStyle(style gk.StyleRefinement) AlertDialogEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AlertDialogEl) VFlex() AlertDialogEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AlertDialogEl) Style(st ...gk.Style) AlertDialogEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AlertDialogEl) AspectRatio(ratio float32) AlertDialogEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AlertDialogEl) Bg(fill gk.Fill) AlertDialogEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AlertDialogEl) Border(length gk.Length) AlertDialogEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -506,12 +575,16 @@ func (e AlertDialogEl) Border(length gk.Length) AlertDialogEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AlertDialogEl) BorderB(length gk.Length) AlertDialogEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AlertDialogEl) BorderColor(borderColor gk.Color) AlertDialogEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -519,6 +592,8 @@ func (e AlertDialogEl) BorderColor(borderColor gk.Color) AlertDialogEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AlertDialogEl) BorderL(length gk.Length) AlertDialogEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -526,6 +601,8 @@ func (e AlertDialogEl) BorderL(length gk.Length) AlertDialogEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AlertDialogEl) BorderR(length gk.Length) AlertDialogEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -533,6 +610,8 @@ func (e AlertDialogEl) BorderR(length gk.Length) AlertDialogEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AlertDialogEl) BorderT(length gk.Length) AlertDialogEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -540,6 +619,8 @@ func (e AlertDialogEl) BorderT(length gk.Length) AlertDialogEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AlertDialogEl) BorderX(length gk.Length) AlertDialogEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -547,6 +628,8 @@ func (e AlertDialogEl) BorderX(length gk.Length) AlertDialogEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AlertDialogEl) BorderY(length gk.Length) AlertDialogEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -554,27 +637,37 @@ func (e AlertDialogEl) BorderY(length gk.Length) AlertDialogEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AlertDialogEl) Bottom(length gk.Length) AlertDialogEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AlertDialogEl) ColEnd(end int16) AlertDialogEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AlertDialogEl) ColSpan(span uint16) AlertDialogEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AlertDialogEl) ColStart(start int16) AlertDialogEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AlertDialogEl) Cursor(cursor gk.CursorStyle) AlertDialogEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -582,33 +675,45 @@ func (e AlertDialogEl) Cursor(cursor gk.CursorStyle) AlertDialogEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AlertDialogEl) FlexBasis(basis gk.Length) AlertDialogEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AlertDialogEl) FlexGrow(grow float32) AlertDialogEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AlertDialogEl) FlexShrink(shrink float32) AlertDialogEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AlertDialogEl) Font(font gk.Font) AlertDialogEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AlertDialogEl) FontFamily(familyName string) AlertDialogEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AlertDialogEl) FontFeatures(features gk.FontFeatures) AlertDialogEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -617,12 +722,16 @@ func (e AlertDialogEl) FontFeatures(features gk.FontFeatures) AlertDialogEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AlertDialogEl) FontWeight(weight gk.FontWeight) AlertDialogEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AlertDialogEl) Gap(length gk.Length) AlertDialogEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -630,6 +739,8 @@ func (e AlertDialogEl) Gap(length gk.Length) AlertDialogEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AlertDialogEl) GapX(length gk.Length) AlertDialogEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -637,18 +748,24 @@ func (e AlertDialogEl) GapX(length gk.Length) AlertDialogEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AlertDialogEl) GapY(length gk.Length) AlertDialogEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AlertDialogEl) GridCols(cols uint16) AlertDialogEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AlertDialogEl) GridColsMaxContent(cols uint16) AlertDialogEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -656,18 +773,24 @@ func (e AlertDialogEl) GridColsMaxContent(cols uint16) AlertDialogEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AlertDialogEl) GridColsMinContent(cols uint16) AlertDialogEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AlertDialogEl) GridRows(rows uint16) AlertDialogEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AlertDialogEl) GridRowsMaxContent(rows uint16) AlertDialogEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -675,16 +798,22 @@ func (e AlertDialogEl) GridRowsMaxContent(rows uint16) AlertDialogEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AlertDialogEl) GridRowsMinContent(rows uint16) AlertDialogEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AlertDialogEl) H(length gk.Length) AlertDialogEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AlertDialogEl) Inset(length gk.Length) AlertDialogEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -692,6 +821,8 @@ func (e AlertDialogEl) Inset(length gk.Length) AlertDialogEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AlertDialogEl) Left(length gk.Length) AlertDialogEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -699,33 +830,45 @@ func (e AlertDialogEl) Left(length gk.Length) AlertDialogEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AlertDialogEl) LineClamp(lines int) AlertDialogEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AlertDialogEl) LineHeight(lineHeight gk.Length) AlertDialogEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AlertDialogEl) M(length gk.Length) AlertDialogEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AlertDialogEl) MaxH(length gk.Length) AlertDialogEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AlertDialogEl) MaxSize(length gk.Length) AlertDialogEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AlertDialogEl) MaxW(length gk.Length) AlertDialogEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -733,21 +876,29 @@ func (e AlertDialogEl) MaxW(length gk.Length) AlertDialogEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AlertDialogEl) Mb(length gk.Length) AlertDialogEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AlertDialogEl) MinH(length gk.Length) AlertDialogEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AlertDialogEl) MinSize(length gk.Length) AlertDialogEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AlertDialogEl) MinW(length gk.Length) AlertDialogEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -755,65 +906,95 @@ func (e AlertDialogEl) MinW(length gk.Length) AlertDialogEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AlertDialogEl) Ml(length gk.Length) AlertDialogEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AlertDialogEl) Mr(length gk.Length) AlertDialogEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AlertDialogEl) Mt(length gk.Length) AlertDialogEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AlertDialogEl) Mx(length gk.Length) AlertDialogEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AlertDialogEl) My(length gk.Length) AlertDialogEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AlertDialogEl) Opacity(opacity float32) AlertDialogEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AlertDialogEl) P(length gk.Length) AlertDialogEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AlertDialogEl) Pb(length gk.Length) AlertDialogEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AlertDialogEl) Pl(length gk.Length) AlertDialogEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AlertDialogEl) Pr(length gk.Length) AlertDialogEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AlertDialogEl) Pt(length gk.Length) AlertDialogEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AlertDialogEl) Px(length gk.Length) AlertDialogEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AlertDialogEl) Py(length gk.Length) AlertDialogEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AlertDialogEl) Right(length gk.Length) AlertDialogEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AlertDialogEl) Rounded(length gk.Length) AlertDialogEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -821,6 +1002,8 @@ func (e AlertDialogEl) Rounded(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AlertDialogEl) RoundedB(length gk.Length) AlertDialogEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -828,6 +1011,8 @@ func (e AlertDialogEl) RoundedB(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AlertDialogEl) RoundedBl(length gk.Length) AlertDialogEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -835,6 +1020,8 @@ func (e AlertDialogEl) RoundedBl(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AlertDialogEl) RoundedBr(length gk.Length) AlertDialogEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -842,6 +1029,8 @@ func (e AlertDialogEl) RoundedBr(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AlertDialogEl) RoundedL(length gk.Length) AlertDialogEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -849,6 +1038,8 @@ func (e AlertDialogEl) RoundedL(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AlertDialogEl) RoundedR(length gk.Length) AlertDialogEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -856,6 +1047,8 @@ func (e AlertDialogEl) RoundedR(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AlertDialogEl) RoundedT(length gk.Length) AlertDialogEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -863,6 +1056,8 @@ func (e AlertDialogEl) RoundedT(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AlertDialogEl) RoundedTl(length gk.Length) AlertDialogEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -870,21 +1065,29 @@ func (e AlertDialogEl) RoundedTl(length gk.Length) AlertDialogEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AlertDialogEl) RoundedTr(length gk.Length) AlertDialogEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AlertDialogEl) RowEnd(end int16) AlertDialogEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AlertDialogEl) RowSpan(span uint16) AlertDialogEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AlertDialogEl) RowStart(start int16) AlertDialogEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -894,24 +1097,32 @@ func (e AlertDialogEl) RowStart(start int16) AlertDialogEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AlertDialogEl) ScrollbarWidth(width gk.Length) AlertDialogEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AlertDialogEl) Shadow(shadows []gk.BoxShadow) AlertDialogEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AlertDialogEl) Size(length gk.Length) AlertDialogEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AlertDialogEl) TextAlign(align gk.TextAlign) AlertDialogEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -920,23 +1131,31 @@ func (e AlertDialogEl) TextAlign(align gk.TextAlign) AlertDialogEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AlertDialogEl) TextBg(bg gk.Color) AlertDialogEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AlertDialogEl) TextColor(color gk.Color) AlertDialogEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AlertDialogEl) TextDecorationColor(color gk.Color) AlertDialogEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AlertDialogEl) TextOverflow(overflow gk.TextOverflow) AlertDialogEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -945,6 +1164,8 @@ func (e AlertDialogEl) TextOverflow(overflow gk.TextOverflow) AlertDialogEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AlertDialogEl) TextSize(size gk.Length) AlertDialogEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -952,26 +1173,35 @@ func (e AlertDialogEl) TextSize(size gk.Length) AlertDialogEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AlertDialogEl) Top(length gk.Length) AlertDialogEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AlertDialogEl) W(length gk.Length) AlertDialogEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e AlertDialogEl) Text(s string) AlertDialogEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AlertDialogEl) ChildView(v gk.View) AlertDialogEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AlertDialogEl) Child(child gk.Element) AlertDialogEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AlertDialogEl) Children(children ...gk.Element) AlertDialogEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -982,7 +1212,7 @@ type DialogEl struct{ rt.ElAnimatableElement }
 
 // Create a new dialog.
 //
-// Dialog is <gpui_kit::component::dialog::Dialog>::new.
+// Dialog calls <gpui_kit::component::dialog::Dialog>::new.
 func Dialog(st ...gk.Style) DialogEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(635)
@@ -999,7 +1229,7 @@ func Dialog(st ...gk.Style) DialogEl {
 // and the labels an `AlertDialogEl` default footer would use; the dialog surface itself renders no
 // buttons from them, see `Footer`.
 //
-// ButtonProps is <gpui_kit::component::dialog::Dialog>::button_props.
+// ButtonProps calls <gpui_kit::component::dialog::Dialog>::button_props.
 func (e DialogEl) ButtonProps(buttonProps DialogButtonProps) DialogEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(buttonProps.Core)))
@@ -1009,7 +1239,7 @@ func (e DialogEl) ButtonProps(buttonProps DialogButtonProps) DialogEl {
 // Centers the dialog vertically in the window, whatever its height, in place of the `MarginTop`
 // offset.
 //
-// Centered is <gpui_kit::component::dialog::Dialog>::centered.
+// Centered calls <gpui_kit::component::dialog::Dialog>::centered.
 func (e DialogEl) Centered() DialogEl {
 	rt.Op(rt.N(e.Core), 257)
 	return e
@@ -1017,7 +1247,7 @@ func (e DialogEl) Centered() DialogEl {
 
 // Sets the false to hide close icon, default: true
 //
-// CloseButton is <gpui_kit::component::dialog::Dialog>::close_button.
+// CloseButton calls <gpui_kit::component::dialog::Dialog>::close_button.
 func (e DialogEl) CloseButton(closeButton bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(closeButton)
@@ -1026,7 +1256,7 @@ func (e DialogEl) CloseButton(closeButton bool) DialogEl {
 
 // Sets the content of the dialog.
 //
-// Content is <gpui_kit::component::dialog::Dialog>::content.
+// Content calls <gpui_kit::component::dialog::Dialog>::content.
 func (e DialogEl) Content(builder DialogContentEl) DialogEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeNode(rt.N(builder.Core), false))
@@ -1038,7 +1268,7 @@ func (e DialogEl) Content(builder DialogContentEl) DialogEl {
 // This controls the surface and backdrop together, and closing animates both back out. Reduced
 // motion skips both and shows the final state immediately, as does `None`.
 //
-// Entrance is <gpui_kit::component::dialog::Dialog>::entrance.
+// Entrance calls <gpui_kit::component::dialog::Dialog>::entrance.
 func (e DialogEl) Entrance(entrance DialogEntrance) DialogEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U16(uint16(entrance))
@@ -1049,11 +1279,11 @@ func (e DialogEl) Entrance(entrance DialogEntrance) DialogEl {
 // action buttons.
 //
 // A plain `Dialog` never renders buttons from `button_props`: the props only install the callbacks
-// behind the `Confirm` and `Cancel` actions. Compose the action buttons yourself — typically with
-// a `DialogFooterEl` — or use an `AlertDialogEl`, which builds a default footer from
+// behind the `Confirm` and `Cancel` actions. Compose the action buttons yourself - typically with
+// a `DialogFooterEl` - or use an `AlertDialogEl`, which builds a default footer from
 // `button_props` when no footer is set.
 //
-// Footer is <gpui_kit::component::dialog::Dialog>::footer.
+// Footer calls <gpui_kit::component::dialog::Dialog>::footer.
 func (e DialogEl) Footer(footer gk.Element) DialogEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Take(footer))
@@ -1062,7 +1292,7 @@ func (e DialogEl) Footer(footer gk.Element) DialogEl {
 
 // Set whether to support keyboard esc to close the dialog, defaults to `true`.
 //
-// Keyboard is <gpui_kit::component::dialog::Dialog>::keyboard.
+// Keyboard calls <gpui_kit::component::dialog::Dialog>::keyboard.
 func (e DialogEl) Keyboard(keyboard bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(keyboard)
@@ -1071,7 +1301,7 @@ func (e DialogEl) Keyboard(keyboard bool) DialogEl {
 
 // Set the top offset of the dialog, defaults to None, will use the 1/10 of the viewport height.
 //
-// MarginTop is <gpui_kit::component::dialog::Dialog>::margin_top.
+// MarginTop calls <gpui_kit::component::dialog::Dialog>::margin_top.
 func (e DialogEl) MarginTop(marginTop float32) DialogEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.F32(marginTop)
@@ -1080,7 +1310,7 @@ func (e DialogEl) MarginTop(marginTop float32) DialogEl {
 
 // Set the maximum width of the dialog, defaults to `None`.
 //
-// MaxW is <gpui_kit::component::dialog::Dialog>::max_w.
+// MaxW calls <gpui_kit::component::dialog::Dialog>::max_w.
 func (e DialogEl) MaxW(maxWidth float32) DialogEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.F32(maxWidth)
@@ -1092,7 +1322,7 @@ func (e DialogEl) MaxW(maxWidth float32) DialogEl {
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnCancel is <gpui_kit::component::dialog::Dialog>::on_cancel.
+// OnCancel calls <gpui_kit::component::dialog::Dialog>::on_cancel.
 func (e DialogEl) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U32(rt.Register(onCancel, 8))
@@ -1103,14 +1333,14 @@ func (e DialogEl) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) Dialo
 //
 // Called after `OnOk` or `OnCancel` callback.
 //
-// OnClose is <gpui_kit::component::dialog::Dialog>::on_close.
+// OnClose calls <gpui_kit::component::dialog::Dialog>::on_close.
 func (e DialogEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) DialogEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.Register(onClose, 1))
 	return e
 }
 
-// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+// OnCloseDo is the event-free convenience variant of OnClose.
 func (e DialogEl) OnCloseDo(onClose func(cx *gk.Cx)) DialogEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.Register(onClose, 1))
@@ -1122,7 +1352,7 @@ func (e DialogEl) OnCloseDo(onClose func(cx *gk.Cx)) DialogEl {
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnOk is <gpui_kit::component::dialog::Dialog>::on_ok.
+// OnOk calls <gpui_kit::component::dialog::Dialog>::on_ok.
 func (e DialogEl) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U32(rt.Register(onOk, 8))
@@ -1131,7 +1361,7 @@ func (e DialogEl) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) DialogEl {
 
 // Set the overlay of the dialog, defaults to `true`.
 //
-// Overlay is <gpui_kit::component::dialog::Dialog>::overlay.
+// Overlay calls <gpui_kit::component::dialog::Dialog>::overlay.
 func (e DialogEl) Overlay(overlay bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.Bool(overlay)
@@ -1142,7 +1372,7 @@ func (e DialogEl) Overlay(overlay bool) DialogEl {
 //
 // When the overlay is clicked, the dialog will be closed.
 //
-// OverlayClosable is <gpui_kit::component::dialog::Dialog>::overlay_closable.
+// OverlayClosable calls <gpui_kit::component::dialog::Dialog>::overlay_closable.
 func (e DialogEl) OverlayClosable(overlayClosable bool) DialogEl {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.Bool(overlayClosable)
@@ -1151,7 +1381,7 @@ func (e DialogEl) OverlayClosable(overlayClosable bool) DialogEl {
 
 // Sets the title of the dialog.
 //
-// Title is <gpui_kit::component::dialog::Dialog>::title.
+// Title calls <gpui_kit::component::dialog::Dialog>::title.
 func (e DialogEl) Title(title gk.Element) DialogEl {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.U32(rt.Take(title))
@@ -1163,7 +1393,7 @@ func (e DialogEl) Title(title gk.Element) DialogEl {
 // When a trigger is set, the dialog will render as a trigger button that opens the dialog when
 // clicked.
 //
-// Trigger is <gpui_kit::component::dialog::Dialog>::trigger.
+// Trigger calls <gpui_kit::component::dialog::Dialog>::trigger.
 func (e DialogEl) Trigger(trigger gk.Element) DialogEl {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U32(rt.Take(trigger))
@@ -1176,7 +1406,7 @@ func (e DialogEl) Trigger(trigger gk.Element) DialogEl {
 //
 // See also `Width`
 //
-// W is <gpui_kit::component::dialog::Dialog>::w.
+// W calls <gpui_kit::component::dialog::Dialog>::w.
 func (e DialogEl) W(width float32) DialogEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.F32(width)
@@ -1187,7 +1417,7 @@ func (e DialogEl) W(width float32) DialogEl {
 //
 // The dialog is never wider than the viewport minus a margin on each side.
 //
-// Width is <gpui_kit::component::dialog::Dialog>::width.
+// Width calls <gpui_kit::component::dialog::Dialog>::width.
 func (e DialogEl) Width(width float32) DialogEl {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.F32(width)
@@ -1196,32 +1426,38 @@ func (e DialogEl) Width(width float32) DialogEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogEl) PopoverStyle() DialogEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogEl) RoundedFullStyle() DialogEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogEl) FocusRingStyle() DialogEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1234,24 +1470,32 @@ func (e DialogEl) FocusRingStyle() DialogEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogEl) KeepTextSelection(id gk.ID) DialogEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogEl) BorderE(width gk.Length) DialogEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogEl) BorderS(width gk.Length) DialogEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1259,106 +1503,148 @@ func (e DialogEl) BorderS(width gk.Length) DialogEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogEl) FlexRowDir() DialogEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogEl) InsetE(length gk.Length) DialogEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogEl) InsetS(length gk.Length) DialogEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogEl) JustifyFlexEnd() DialogEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogEl) JustifyFlexStart() DialogEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogEl) Me(length gk.Length) DialogEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogEl) Ms(length gk.Length) DialogEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogEl) Pe(length gk.Length) DialogEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogEl) Ps(length gk.Length) DialogEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogEl) RoundedE(radius gk.Length) DialogEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogEl) RoundedS(radius gk.Length) DialogEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogEl) TextEnd() DialogEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogEl) TextStart() DialogEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogEl) CornerRadii(radius gk.Corners) DialogEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogEl) DebugBlue() DialogEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogEl) DebugFocused(focusHandle gk.FocusHandle) DialogEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogEl) DebugGreen() DialogEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogEl) DebugPink() DialogEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogEl) DebugRed() DialogEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogEl) DebugYellow() DialogEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogEl) FontBlack() DialogEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogEl) FontBold() DialogEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogEl) FontExtrabold() DialogEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogEl) FontExtralight() DialogEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogEl) FontLight() DialogEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogEl) FontMedium() DialogEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogEl) FontNormal() DialogEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogEl) FontSemibold() DialogEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogEl) FontThin() DialogEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1367,18 +1653,23 @@ func (e DialogEl) FontThin() DialogEl { tStyledExtFontThin(rt.N(e.Core)); return
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogEl) HFlex() DialogEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogEl) Margins(margins gk.EdgesInto) DialogEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogEl) Paddings(paddings gk.EdgesInto) DialogEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogEl) RefineStyle(style gk.StyleRefinement) DialogEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1388,45 +1679,62 @@ func (e DialogEl) RefineStyle(style gk.StyleRefinement) DialogEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogEl) VFlex() DialogEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogEl) Text(s string) DialogEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogEl) ChildView(v gk.View) DialogEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogEl) Child(child gk.Element) DialogEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogEl) Children(children ...gk.Element) DialogEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogEl) Style(st ...gk.Style) DialogEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogEl) AspectRatio(ratio float32) DialogEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogEl) Bg(fill gk.Fill) DialogEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogEl) Border(length gk.Length) DialogEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogEl) BorderB(length gk.Length) DialogEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogEl) BorderColor(borderColor gk.Color) DialogEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1434,38 +1742,58 @@ func (e DialogEl) BorderColor(borderColor gk.Color) DialogEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogEl) BorderL(length gk.Length) DialogEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogEl) BorderR(length gk.Length) DialogEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogEl) BorderT(length gk.Length) DialogEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogEl) BorderX(length gk.Length) DialogEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogEl) BorderY(length gk.Length) DialogEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogEl) Bottom(length gk.Length) DialogEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogEl) ColEnd(end int16) DialogEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogEl) ColSpan(span uint16) DialogEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogEl) ColStart(start int16) DialogEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogEl) Cursor(cursor gk.CursorStyle) DialogEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1473,30 +1801,42 @@ func (e DialogEl) Cursor(cursor gk.CursorStyle) DialogEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogEl) FlexBasis(basis gk.Length) DialogEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogEl) FlexGrow(grow float32) DialogEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogEl) FlexShrink(shrink float32) DialogEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogEl) Font(font gk.Font) DialogEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogEl) FontFamily(familyName string) DialogEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogEl) FontFeatures(features gk.FontFeatures) DialogEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1505,26 +1845,38 @@ func (e DialogEl) FontFeatures(features gk.FontFeatures) DialogEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogEl) FontWeight(weight gk.FontWeight) DialogEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogEl) Gap(length gk.Length) DialogEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogEl) GapX(length gk.Length) DialogEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogEl) GapY(length gk.Length) DialogEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogEl) GridCols(cols uint16) DialogEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogEl) GridColsMaxContent(cols uint16) DialogEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1532,15 +1884,21 @@ func (e DialogEl) GridColsMaxContent(cols uint16) DialogEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogEl) GridColsMinContent(cols uint16) DialogEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogEl) GridRows(rows uint16) DialogEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogEl) GridRowsMaxContent(rows uint16) DialogEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1548,113 +1906,171 @@ func (e DialogEl) GridRowsMaxContent(rows uint16) DialogEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogEl) GridRowsMinContent(rows uint16) DialogEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogEl) H(length gk.Length) DialogEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogEl) Inset(length gk.Length) DialogEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogEl) Left(length gk.Length) DialogEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogEl) LineClamp(lines int) DialogEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogEl) LineHeight(lineHeight gk.Length) DialogEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogEl) M(length gk.Length) DialogEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogEl) MaxH(length gk.Length) DialogEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogEl) MaxSize(length gk.Length) DialogEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogEl) Mb(length gk.Length) DialogEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogEl) MinH(length gk.Length) DialogEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogEl) MinSize(length gk.Length) DialogEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogEl) MinW(length gk.Length) DialogEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogEl) Ml(length gk.Length) DialogEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogEl) Mr(length gk.Length) DialogEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogEl) Mt(length gk.Length) DialogEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogEl) Mx(length gk.Length) DialogEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogEl) My(length gk.Length) DialogEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogEl) Opacity(opacity float32) DialogEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogEl) P(length gk.Length) DialogEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogEl) Pb(length gk.Length) DialogEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogEl) Pl(length gk.Length) DialogEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogEl) Pr(length gk.Length) DialogEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogEl) Pt(length gk.Length) DialogEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogEl) Px(length gk.Length) DialogEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogEl) Py(length gk.Length) DialogEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogEl) Right(length gk.Length) DialogEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogEl) Rounded(length gk.Length) DialogEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogEl) RoundedB(length gk.Length) DialogEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1662,6 +2078,8 @@ func (e DialogEl) RoundedB(length gk.Length) DialogEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogEl) RoundedBl(length gk.Length) DialogEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1669,6 +2087,8 @@ func (e DialogEl) RoundedBl(length gk.Length) DialogEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogEl) RoundedBr(length gk.Length) DialogEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1676,6 +2096,8 @@ func (e DialogEl) RoundedBr(length gk.Length) DialogEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogEl) RoundedL(length gk.Length) DialogEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1683,6 +2105,8 @@ func (e DialogEl) RoundedL(length gk.Length) DialogEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogEl) RoundedR(length gk.Length) DialogEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1690,6 +2114,8 @@ func (e DialogEl) RoundedR(length gk.Length) DialogEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogEl) RoundedT(length gk.Length) DialogEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1697,6 +2123,8 @@ func (e DialogEl) RoundedT(length gk.Length) DialogEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogEl) RoundedTl(length gk.Length) DialogEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1704,39 +2132,55 @@ func (e DialogEl) RoundedTl(length gk.Length) DialogEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogEl) RoundedTr(length gk.Length) DialogEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogEl) RowEnd(end int16) DialogEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogEl) RowSpan(span uint16) DialogEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogEl) RowStart(start int16) DialogEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogEl) ScrollbarWidth(width gk.Length) DialogEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogEl) Shadow(shadows []gk.BoxShadow) DialogEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogEl) Size(length gk.Length) DialogEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogEl) TextAlign(align gk.TextAlign) DialogEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1745,20 +2189,28 @@ func (e DialogEl) TextAlign(align gk.TextAlign) DialogEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogEl) TextBg(bg gk.Color) DialogEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogEl) TextColor(color gk.Color) DialogEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogEl) TextDecorationColor(color gk.Color) DialogEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogEl) TextOverflow(overflow gk.TextOverflow) DialogEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1767,16 +2219,20 @@ func (e DialogEl) TextOverflow(overflow gk.TextOverflow) DialogEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogEl) TextSize(size gk.Length) DialogEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogEl) Top(length gk.Length) DialogEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // DialogActionEl is gpui_kit::component::dialog::DialogAction.
 type DialogActionEl struct{ rt.El }
 
-// DialogAction is <gpui_kit::component::dialog::DialogAction>::new.
+// DialogAction calls <gpui_kit::component::dialog::DialogAction>::new.
 func DialogAction() DialogActionEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(636)
@@ -1790,29 +2246,38 @@ func DialogAction() DialogActionEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogActionEl) KeepTextSelection(id gk.ID) DialogActionEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogActionEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogActionEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e DialogActionEl) Text(s string) DialogActionEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogActionEl) ChildView(v gk.View) DialogActionEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogActionEl) Child(child gk.Element) DialogActionEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogActionEl) Children(children ...gk.Element) DialogActionEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -1821,7 +2286,7 @@ func (e DialogActionEl) Children(children ...gk.Element) DialogActionEl {
 // DialogButtonProps is gpui_kit::component::dialog::DialogButtonProps.
 type DialogButtonProps struct{ rt.Val }
 
-// NewDialogButtonPropsDefault is <gpui_kit::component::dialog::DialogButtonProps as Default>::default.
+// NewDialogButtonPropsDefault calls <gpui_kit::component::dialog::DialogButtonProps as Default>::default.
 func NewDialogButtonPropsDefault() DialogButtonProps {
 	n := rt.NewValue(637)
 	return DialogButtonProps{Val: rt.MkVal(n)}
@@ -1829,7 +2294,7 @@ func NewDialogButtonPropsDefault() DialogButtonProps {
 
 // Sets the text of the Cancel button. Default is `Cancel`.
 //
-// CancelText is <gpui_kit::component::dialog::DialogButtonProps>::cancel_text.
+// CancelText calls <gpui_kit::component::dialog::DialogButtonProps>::cancel_text.
 func (e DialogButtonProps) CancelText(cancelText string) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(cancelText)
@@ -1838,7 +2303,7 @@ func (e DialogButtonProps) CancelText(cancelText string) DialogButtonProps {
 
 // Sets the variant of the Cancel button. Default is `ButtonVariant::default()`.
 //
-// CancelVariant is <gpui_kit::component::dialog::DialogButtonProps>::cancel_variant.
+// CancelVariant calls <gpui_kit::component::dialog::DialogButtonProps>::cancel_variant.
 func (e DialogButtonProps) CancelVariant(cancelVariant gk.ButtonVariant) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 257)
 	putButtonVariant(o, cancelVariant)
@@ -1847,7 +2312,7 @@ func (e DialogButtonProps) CancelVariant(cancelVariant gk.ButtonVariant) DialogB
 
 // Sets the text of the OK button. Default is `OK`.
 //
-// OkText is <gpui_kit::component::dialog::DialogButtonProps>::ok_text.
+// OkText calls <gpui_kit::component::dialog::DialogButtonProps>::ok_text.
 func (e DialogButtonProps) OkText(okText string) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(okText)
@@ -1856,7 +2321,7 @@ func (e DialogButtonProps) OkText(okText string) DialogButtonProps {
 
 // Sets the variant of the OK button. Default is `ButtonVariant::Primary`.
 //
-// OkVariant is <gpui_kit::component::dialog::DialogButtonProps>::ok_variant.
+// OkVariant calls <gpui_kit::component::dialog::DialogButtonProps>::ok_variant.
 func (e DialogButtonProps) OkVariant(okVariant gk.ButtonVariant) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 259)
 	putButtonVariant(o, okVariant)
@@ -1868,7 +2333,7 @@ func (e DialogButtonProps) OkVariant(okVariant gk.ButtonVariant) DialogButtonPro
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnCancel is <gpui_kit::component::dialog::DialogButtonProps>::on_cancel.
+// OnCancel calls <gpui_kit::component::dialog::DialogButtonProps>::on_cancel.
 func (e DialogButtonProps) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(onCancel, 8))
@@ -1880,7 +2345,7 @@ func (e DialogButtonProps) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bo
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
 // closed.
 //
-// OnOk is <gpui_kit::component::dialog::DialogButtonProps>::on_ok.
+// OnOk calls <gpui_kit::component::dialog::DialogButtonProps>::on_ok.
 func (e DialogButtonProps) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(onOk, 8))
@@ -1889,7 +2354,7 @@ func (e DialogButtonProps) OnOk(onOk func(cx *gk.Cx, e gk.ClickEvent) bool) Dial
 
 // Sets whether to show the Cancel button. Default is `false`.
 //
-// ShowCancel is <gpui_kit::component::dialog::DialogButtonProps>::show_cancel.
+// ShowCancel calls <gpui_kit::component::dialog::DialogButtonProps>::show_cancel.
 func (e DialogButtonProps) ShowCancel(showCancel bool) DialogButtonProps {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(showCancel)
@@ -1899,7 +2364,7 @@ func (e DialogButtonProps) ShowCancel(showCancel bool) DialogButtonProps {
 // DialogCloseEl is gpui_kit::component::dialog::DialogClose.
 type DialogCloseEl struct{ rt.El }
 
-// DialogClose is <gpui_kit::component::dialog::DialogClose>::new.
+// DialogClose calls <gpui_kit::component::dialog::DialogClose>::new.
 func DialogClose() DialogCloseEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(638)
@@ -1908,7 +2373,7 @@ func DialogClose() DialogCloseEl {
 
 // Styles a close button whose accessibility and activation are owned by Base.
 //
-// Trigger is <gpui_kit::component::dialog::DialogClose>::trigger.
+// Trigger calls <gpui_kit::component::dialog::DialogClose>::trigger.
 func (e DialogCloseEl) Trigger(build kit.ButtonEl) DialogCloseEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(build.Core), false))
@@ -1922,29 +2387,38 @@ func (e DialogCloseEl) Trigger(build kit.ButtonEl) DialogCloseEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogCloseEl) KeepTextSelection(id gk.ID) DialogCloseEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogCloseEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogCloseEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e DialogCloseEl) Text(s string) DialogCloseEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogCloseEl) ChildView(v gk.View) DialogCloseEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogCloseEl) Child(child gk.Element) DialogCloseEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogCloseEl) Children(children ...gk.Element) DialogCloseEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -1953,7 +2427,7 @@ func (e DialogCloseEl) Children(children ...gk.Element) DialogCloseEl {
 // DialogContentEl is gpui_kit::component::dialog::DialogContent.
 type DialogContentEl struct{ rt.ElAnimatableElement }
 
-// DialogContent is <gpui_kit::component::dialog::DialogContent>::new.
+// DialogContent calls <gpui_kit::component::dialog::DialogContent>::new.
 func DialogContent(st ...gk.Style) DialogContentEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(639)
@@ -1963,20 +2437,24 @@ func DialogContent(st ...gk.Style) DialogContentEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogContentEl) PopoverStyle() DialogContentEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogContentEl) RoundedFullStyle() DialogContentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1985,16 +2463,18 @@ func (e DialogContentEl) RoundedFullStyle() DialogContentEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogContentEl) FocusRingStyle() DialogContentEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2007,24 +2487,32 @@ func (e DialogContentEl) FocusRingStyle() DialogContentEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogContentEl) KeepTextSelection(id gk.ID) DialogContentEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogContentEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogContentEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogContentEl) BorderE(width gk.Length) DialogContentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogContentEl) BorderS(width gk.Length) DialogContentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2032,136 +2520,178 @@ func (e DialogContentEl) BorderS(width gk.Length) DialogContentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogContentEl) FlexRowDir() DialogContentEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogContentEl) InsetE(length gk.Length) DialogContentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogContentEl) InsetS(length gk.Length) DialogContentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogContentEl) JustifyFlexEnd() DialogContentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogContentEl) JustifyFlexStart() DialogContentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogContentEl) Me(length gk.Length) DialogContentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogContentEl) Ms(length gk.Length) DialogContentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogContentEl) Pe(length gk.Length) DialogContentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogContentEl) Ps(length gk.Length) DialogContentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogContentEl) RoundedE(radius gk.Length) DialogContentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogContentEl) RoundedS(radius gk.Length) DialogContentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogContentEl) TextEnd() DialogContentEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogContentEl) TextStart() DialogContentEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogContentEl) CornerRadii(radius gk.Corners) DialogContentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogContentEl) DebugBlue() DialogContentEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogContentEl) DebugFocused(focusHandle gk.FocusHandle) DialogContentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogContentEl) DebugGreen() DialogContentEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogContentEl) DebugPink() DialogContentEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogContentEl) DebugRed() DialogContentEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogContentEl) DebugYellow() DialogContentEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogContentEl) FontBlack() DialogContentEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogContentEl) FontBold() DialogContentEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogContentEl) FontExtrabold() DialogContentEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogContentEl) FontExtralight() DialogContentEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogContentEl) FontLight() DialogContentEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogContentEl) FontMedium() DialogContentEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogContentEl) FontNormal() DialogContentEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogContentEl) FontSemibold() DialogContentEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogContentEl) FontThin() DialogContentEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2170,18 +2700,23 @@ func (e DialogContentEl) FontThin() DialogContentEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogContentEl) HFlex() DialogContentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogContentEl) Margins(margins gk.EdgesInto) DialogContentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogContentEl) Paddings(paddings gk.EdgesInto) DialogContentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogContentEl) RefineStyle(style gk.StyleRefinement) DialogContentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2191,38 +2726,51 @@ func (e DialogContentEl) RefineStyle(style gk.StyleRefinement) DialogContentEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogContentEl) VFlex() DialogContentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogContentEl) Text(s string) DialogContentEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogContentEl) ChildView(v gk.View) DialogContentEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogContentEl) Child(child gk.Element) DialogContentEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogContentEl) Children(children ...gk.Element) DialogContentEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogContentEl) Style(st ...gk.Style) DialogContentEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogContentEl) AspectRatio(ratio float32) DialogContentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogContentEl) Bg(fill gk.Fill) DialogContentEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogContentEl) Border(length gk.Length) DialogContentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2230,12 +2778,16 @@ func (e DialogContentEl) Border(length gk.Length) DialogContentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogContentEl) BorderB(length gk.Length) DialogContentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogContentEl) BorderColor(borderColor gk.Color) DialogContentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2243,6 +2795,8 @@ func (e DialogContentEl) BorderColor(borderColor gk.Color) DialogContentEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogContentEl) BorderL(length gk.Length) DialogContentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2250,6 +2804,8 @@ func (e DialogContentEl) BorderL(length gk.Length) DialogContentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogContentEl) BorderR(length gk.Length) DialogContentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2257,6 +2813,8 @@ func (e DialogContentEl) BorderR(length gk.Length) DialogContentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogContentEl) BorderT(length gk.Length) DialogContentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2264,6 +2822,8 @@ func (e DialogContentEl) BorderT(length gk.Length) DialogContentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogContentEl) BorderX(length gk.Length) DialogContentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2271,6 +2831,8 @@ func (e DialogContentEl) BorderX(length gk.Length) DialogContentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogContentEl) BorderY(length gk.Length) DialogContentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2278,30 +2840,40 @@ func (e DialogContentEl) BorderY(length gk.Length) DialogContentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogContentEl) Bottom(length gk.Length) DialogContentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogContentEl) ColEnd(end int16) DialogContentEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogContentEl) ColSpan(span uint16) DialogContentEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogContentEl) ColStart(start int16) DialogContentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogContentEl) Cursor(cursor gk.CursorStyle) DialogContentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2309,36 +2881,48 @@ func (e DialogContentEl) Cursor(cursor gk.CursorStyle) DialogContentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogContentEl) FlexBasis(basis gk.Length) DialogContentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogContentEl) FlexGrow(grow float32) DialogContentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogContentEl) FlexShrink(shrink float32) DialogContentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogContentEl) Font(font gk.Font) DialogContentEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogContentEl) FontFamily(familyName string) DialogContentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogContentEl) FontFeatures(features gk.FontFeatures) DialogContentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2347,12 +2931,16 @@ func (e DialogContentEl) FontFeatures(features gk.FontFeatures) DialogContentEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogContentEl) FontWeight(weight gk.FontWeight) DialogContentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogContentEl) Gap(length gk.Length) DialogContentEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2360,6 +2948,8 @@ func (e DialogContentEl) Gap(length gk.Length) DialogContentEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogContentEl) GapX(length gk.Length) DialogContentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2367,18 +2957,24 @@ func (e DialogContentEl) GapX(length gk.Length) DialogContentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogContentEl) GapY(length gk.Length) DialogContentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogContentEl) GridCols(cols uint16) DialogContentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogContentEl) GridColsMaxContent(cols uint16) DialogContentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2386,18 +2982,24 @@ func (e DialogContentEl) GridColsMaxContent(cols uint16) DialogContentEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogContentEl) GridColsMinContent(cols uint16) DialogContentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogContentEl) GridRows(rows uint16) DialogContentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogContentEl) GridRowsMaxContent(rows uint16) DialogContentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2405,12 +3007,16 @@ func (e DialogContentEl) GridRowsMaxContent(rows uint16) DialogContentEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogContentEl) GridRowsMinContent(rows uint16) DialogContentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogContentEl) H(length gk.Length) DialogContentEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2418,6 +3024,8 @@ func (e DialogContentEl) H(length gk.Length) DialogContentEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogContentEl) Inset(length gk.Length) DialogContentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2425,6 +3033,8 @@ func (e DialogContentEl) Inset(length gk.Length) DialogContentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogContentEl) Left(length gk.Length) DialogContentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2432,36 +3042,48 @@ func (e DialogContentEl) Left(length gk.Length) DialogContentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogContentEl) LineClamp(lines int) DialogContentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogContentEl) LineHeight(lineHeight gk.Length) DialogContentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogContentEl) M(length gk.Length) DialogContentEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogContentEl) MaxH(length gk.Length) DialogContentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogContentEl) MaxSize(length gk.Length) DialogContentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DialogContentEl) MaxW(length gk.Length) DialogContentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2469,24 +3091,32 @@ func (e DialogContentEl) MaxW(length gk.Length) DialogContentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogContentEl) Mb(length gk.Length) DialogContentEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogContentEl) MinH(length gk.Length) DialogContentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogContentEl) MinSize(length gk.Length) DialogContentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogContentEl) MinW(length gk.Length) DialogContentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2494,6 +3124,8 @@ func (e DialogContentEl) MinW(length gk.Length) DialogContentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogContentEl) Ml(length gk.Length) DialogContentEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2501,6 +3133,8 @@ func (e DialogContentEl) Ml(length gk.Length) DialogContentEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogContentEl) Mr(length gk.Length) DialogContentEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2508,6 +3142,8 @@ func (e DialogContentEl) Mr(length gk.Length) DialogContentEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogContentEl) Mt(length gk.Length) DialogContentEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2515,6 +3151,8 @@ func (e DialogContentEl) Mt(length gk.Length) DialogContentEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogContentEl) Mx(length gk.Length) DialogContentEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2522,18 +3160,24 @@ func (e DialogContentEl) Mx(length gk.Length) DialogContentEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogContentEl) My(length gk.Length) DialogContentEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogContentEl) Opacity(opacity float32) DialogContentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogContentEl) P(length gk.Length) DialogContentEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2541,6 +3185,8 @@ func (e DialogContentEl) P(length gk.Length) DialogContentEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogContentEl) Pb(length gk.Length) DialogContentEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2548,6 +3194,8 @@ func (e DialogContentEl) Pb(length gk.Length) DialogContentEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogContentEl) Pl(length gk.Length) DialogContentEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2555,6 +3203,8 @@ func (e DialogContentEl) Pl(length gk.Length) DialogContentEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogContentEl) Pr(length gk.Length) DialogContentEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2562,6 +3212,8 @@ func (e DialogContentEl) Pr(length gk.Length) DialogContentEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogContentEl) Pt(length gk.Length) DialogContentEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2569,6 +3221,8 @@ func (e DialogContentEl) Pt(length gk.Length) DialogContentEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogContentEl) Px(length gk.Length) DialogContentEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2576,6 +3230,8 @@ func (e DialogContentEl) Px(length gk.Length) DialogContentEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogContentEl) Py(length gk.Length) DialogContentEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2583,12 +3239,16 @@ func (e DialogContentEl) Py(length gk.Length) DialogContentEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogContentEl) Right(length gk.Length) DialogContentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogContentEl) Rounded(length gk.Length) DialogContentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2596,6 +3256,8 @@ func (e DialogContentEl) Rounded(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogContentEl) RoundedB(length gk.Length) DialogContentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2603,6 +3265,8 @@ func (e DialogContentEl) RoundedB(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogContentEl) RoundedBl(length gk.Length) DialogContentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2610,6 +3274,8 @@ func (e DialogContentEl) RoundedBl(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogContentEl) RoundedBr(length gk.Length) DialogContentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2617,6 +3283,8 @@ func (e DialogContentEl) RoundedBr(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogContentEl) RoundedL(length gk.Length) DialogContentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2624,6 +3292,8 @@ func (e DialogContentEl) RoundedL(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogContentEl) RoundedR(length gk.Length) DialogContentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2631,6 +3301,8 @@ func (e DialogContentEl) RoundedR(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogContentEl) RoundedT(length gk.Length) DialogContentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2638,6 +3310,8 @@ func (e DialogContentEl) RoundedT(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogContentEl) RoundedTl(length gk.Length) DialogContentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2645,24 +3319,32 @@ func (e DialogContentEl) RoundedTl(length gk.Length) DialogContentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogContentEl) RoundedTr(length gk.Length) DialogContentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogContentEl) RowEnd(end int16) DialogContentEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogContentEl) RowSpan(span uint16) DialogContentEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogContentEl) RowStart(start int16) DialogContentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2672,24 +3354,32 @@ func (e DialogContentEl) RowStart(start int16) DialogContentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogContentEl) ScrollbarWidth(width gk.Length) DialogContentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogContentEl) Shadow(shadows []gk.BoxShadow) DialogContentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogContentEl) Size(length gk.Length) DialogContentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogContentEl) TextAlign(align gk.TextAlign) DialogContentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2698,6 +3388,8 @@ func (e DialogContentEl) TextAlign(align gk.TextAlign) DialogContentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogContentEl) TextBg(bg gk.Color) DialogContentEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2706,18 +3398,24 @@ func (e DialogContentEl) TextBg(bg gk.Color) DialogContentEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogContentEl) TextColor(color gk.Color) DialogContentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogContentEl) TextDecorationColor(color gk.Color) DialogContentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogContentEl) TextOverflow(overflow gk.TextOverflow) DialogContentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2726,6 +3424,8 @@ func (e DialogContentEl) TextOverflow(overflow gk.TextOverflow) DialogContentEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogContentEl) TextSize(size gk.Length) DialogContentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2733,12 +3433,16 @@ func (e DialogContentEl) TextSize(size gk.Length) DialogContentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogContentEl) Top(length gk.Length) DialogContentEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DialogContentEl) W(length gk.Length) DialogContentEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -2747,7 +3451,7 @@ func (e DialogContentEl) W(length gk.Length) DialogContentEl {
 // DialogDescriptionEl is gpui_kit::component::dialog::DialogDescription.
 type DialogDescriptionEl struct{ rt.ElAnimatableElement }
 
-// DialogDescription is <gpui_kit::component::dialog::DialogDescription>::new.
+// DialogDescription calls <gpui_kit::component::dialog::DialogDescription>::new.
 func DialogDescription(st ...gk.Style) DialogDescriptionEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(640)
@@ -2757,20 +3461,24 @@ func DialogDescription(st ...gk.Style) DialogDescriptionEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogDescriptionEl) PopoverStyle() DialogDescriptionEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogDescriptionEl) RoundedFullStyle() DialogDescriptionEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2779,16 +3487,18 @@ func (e DialogDescriptionEl) RoundedFullStyle() DialogDescriptionEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogDescriptionEl) FocusRingStyle() DialogDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2801,24 +3511,32 @@ func (e DialogDescriptionEl) FocusRingStyle() DialogDescriptionEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogDescriptionEl) KeepTextSelection(id gk.ID) DialogDescriptionEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogDescriptionEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogDescriptionEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogDescriptionEl) BorderE(width gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogDescriptionEl) BorderS(width gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2826,163 +3544,205 @@ func (e DialogDescriptionEl) BorderS(width gk.Length) DialogDescriptionEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogDescriptionEl) FlexRowDir() DialogDescriptionEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogDescriptionEl) InsetE(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogDescriptionEl) InsetS(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogDescriptionEl) JustifyFlexEnd() DialogDescriptionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogDescriptionEl) JustifyFlexStart() DialogDescriptionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogDescriptionEl) Me(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogDescriptionEl) Ms(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogDescriptionEl) Pe(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogDescriptionEl) Ps(length gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogDescriptionEl) RoundedE(radius gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogDescriptionEl) RoundedS(radius gk.Length) DialogDescriptionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogDescriptionEl) TextEnd() DialogDescriptionEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogDescriptionEl) TextStart() DialogDescriptionEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogDescriptionEl) CornerRadii(radius gk.Corners) DialogDescriptionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogDescriptionEl) DebugBlue() DialogDescriptionEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogDescriptionEl) DebugFocused(focusHandle gk.FocusHandle) DialogDescriptionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogDescriptionEl) DebugGreen() DialogDescriptionEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogDescriptionEl) DebugPink() DialogDescriptionEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogDescriptionEl) DebugRed() DialogDescriptionEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogDescriptionEl) DebugYellow() DialogDescriptionEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogDescriptionEl) FontBlack() DialogDescriptionEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogDescriptionEl) FontBold() DialogDescriptionEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogDescriptionEl) FontExtrabold() DialogDescriptionEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogDescriptionEl) FontExtralight() DialogDescriptionEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogDescriptionEl) FontLight() DialogDescriptionEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogDescriptionEl) FontMedium() DialogDescriptionEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogDescriptionEl) FontNormal() DialogDescriptionEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogDescriptionEl) FontSemibold() DialogDescriptionEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogDescriptionEl) FontThin() DialogDescriptionEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -2990,8 +3750,8 @@ func (e DialogDescriptionEl) FontThin() DialogDescriptionEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3000,18 +3760,23 @@ func (e DialogDescriptionEl) FontThin() DialogDescriptionEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogDescriptionEl) HFlex() DialogDescriptionEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogDescriptionEl) Margins(margins gk.EdgesInto) DialogDescriptionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogDescriptionEl) Paddings(paddings gk.EdgesInto) DialogDescriptionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogDescriptionEl) RefineStyle(style gk.StyleRefinement) DialogDescriptionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3021,50 +3786,63 @@ func (e DialogDescriptionEl) RefineStyle(style gk.StyleRefinement) DialogDescrip
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogDescriptionEl) VFlex() DialogDescriptionEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogDescriptionEl) Text(s string) DialogDescriptionEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogDescriptionEl) ChildView(v gk.View) DialogDescriptionEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogDescriptionEl) Child(child gk.Element) DialogDescriptionEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogDescriptionEl) Children(children ...gk.Element) DialogDescriptionEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogDescriptionEl) Style(st ...gk.Style) DialogDescriptionEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogDescriptionEl) AspectRatio(ratio float32) DialogDescriptionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogDescriptionEl) Bg(fill gk.Fill) DialogDescriptionEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogDescriptionEl) Border(length gk.Length) DialogDescriptionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3072,12 +3850,16 @@ func (e DialogDescriptionEl) Border(length gk.Length) DialogDescriptionEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogDescriptionEl) BorderB(length gk.Length) DialogDescriptionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogDescriptionEl) BorderColor(borderColor gk.Color) DialogDescriptionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3085,6 +3867,8 @@ func (e DialogDescriptionEl) BorderColor(borderColor gk.Color) DialogDescription
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogDescriptionEl) BorderL(length gk.Length) DialogDescriptionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3092,6 +3876,8 @@ func (e DialogDescriptionEl) BorderL(length gk.Length) DialogDescriptionEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogDescriptionEl) BorderR(length gk.Length) DialogDescriptionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3099,6 +3885,8 @@ func (e DialogDescriptionEl) BorderR(length gk.Length) DialogDescriptionEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogDescriptionEl) BorderT(length gk.Length) DialogDescriptionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3106,6 +3894,8 @@ func (e DialogDescriptionEl) BorderT(length gk.Length) DialogDescriptionEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogDescriptionEl) BorderX(length gk.Length) DialogDescriptionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3113,6 +3903,8 @@ func (e DialogDescriptionEl) BorderX(length gk.Length) DialogDescriptionEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogDescriptionEl) BorderY(length gk.Length) DialogDescriptionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3120,30 +3912,40 @@ func (e DialogDescriptionEl) BorderY(length gk.Length) DialogDescriptionEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogDescriptionEl) Bottom(length gk.Length) DialogDescriptionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogDescriptionEl) ColEnd(end int16) DialogDescriptionEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogDescriptionEl) ColSpan(span uint16) DialogDescriptionEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogDescriptionEl) ColStart(start int16) DialogDescriptionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogDescriptionEl) Cursor(cursor gk.CursorStyle) DialogDescriptionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3151,36 +3953,48 @@ func (e DialogDescriptionEl) Cursor(cursor gk.CursorStyle) DialogDescriptionEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogDescriptionEl) FlexBasis(basis gk.Length) DialogDescriptionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogDescriptionEl) FlexGrow(grow float32) DialogDescriptionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogDescriptionEl) FlexShrink(shrink float32) DialogDescriptionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogDescriptionEl) Font(font gk.Font) DialogDescriptionEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogDescriptionEl) FontFamily(familyName string) DialogDescriptionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogDescriptionEl) FontFeatures(features gk.FontFeatures) DialogDescriptionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3189,12 +4003,16 @@ func (e DialogDescriptionEl) FontFeatures(features gk.FontFeatures) DialogDescri
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogDescriptionEl) FontWeight(weight gk.FontWeight) DialogDescriptionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogDescriptionEl) Gap(length gk.Length) DialogDescriptionEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3202,6 +4020,8 @@ func (e DialogDescriptionEl) Gap(length gk.Length) DialogDescriptionEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogDescriptionEl) GapX(length gk.Length) DialogDescriptionEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3209,18 +4029,24 @@ func (e DialogDescriptionEl) GapX(length gk.Length) DialogDescriptionEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogDescriptionEl) GapY(length gk.Length) DialogDescriptionEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogDescriptionEl) GridCols(cols uint16) DialogDescriptionEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogDescriptionEl) GridColsMaxContent(cols uint16) DialogDescriptionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3228,18 +4054,24 @@ func (e DialogDescriptionEl) GridColsMaxContent(cols uint16) DialogDescriptionEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogDescriptionEl) GridColsMinContent(cols uint16) DialogDescriptionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogDescriptionEl) GridRows(rows uint16) DialogDescriptionEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogDescriptionEl) GridRowsMaxContent(rows uint16) DialogDescriptionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3247,12 +4079,16 @@ func (e DialogDescriptionEl) GridRowsMaxContent(rows uint16) DialogDescriptionEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogDescriptionEl) GridRowsMinContent(rows uint16) DialogDescriptionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogDescriptionEl) H(length gk.Length) DialogDescriptionEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3260,6 +4096,8 @@ func (e DialogDescriptionEl) H(length gk.Length) DialogDescriptionEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogDescriptionEl) Inset(length gk.Length) DialogDescriptionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3267,6 +4105,8 @@ func (e DialogDescriptionEl) Inset(length gk.Length) DialogDescriptionEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogDescriptionEl) Left(length gk.Length) DialogDescriptionEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3274,36 +4114,48 @@ func (e DialogDescriptionEl) Left(length gk.Length) DialogDescriptionEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogDescriptionEl) LineClamp(lines int) DialogDescriptionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogDescriptionEl) LineHeight(lineHeight gk.Length) DialogDescriptionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogDescriptionEl) M(length gk.Length) DialogDescriptionEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogDescriptionEl) MaxH(length gk.Length) DialogDescriptionEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogDescriptionEl) MaxSize(length gk.Length) DialogDescriptionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DialogDescriptionEl) MaxW(length gk.Length) DialogDescriptionEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3311,24 +4163,32 @@ func (e DialogDescriptionEl) MaxW(length gk.Length) DialogDescriptionEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogDescriptionEl) Mb(length gk.Length) DialogDescriptionEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogDescriptionEl) MinH(length gk.Length) DialogDescriptionEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogDescriptionEl) MinSize(length gk.Length) DialogDescriptionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogDescriptionEl) MinW(length gk.Length) DialogDescriptionEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3336,6 +4196,8 @@ func (e DialogDescriptionEl) MinW(length gk.Length) DialogDescriptionEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogDescriptionEl) Ml(length gk.Length) DialogDescriptionEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3343,6 +4205,8 @@ func (e DialogDescriptionEl) Ml(length gk.Length) DialogDescriptionEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogDescriptionEl) Mr(length gk.Length) DialogDescriptionEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3350,6 +4214,8 @@ func (e DialogDescriptionEl) Mr(length gk.Length) DialogDescriptionEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogDescriptionEl) Mt(length gk.Length) DialogDescriptionEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3357,6 +4223,8 @@ func (e DialogDescriptionEl) Mt(length gk.Length) DialogDescriptionEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogDescriptionEl) Mx(length gk.Length) DialogDescriptionEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3364,18 +4232,24 @@ func (e DialogDescriptionEl) Mx(length gk.Length) DialogDescriptionEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogDescriptionEl) My(length gk.Length) DialogDescriptionEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogDescriptionEl) Opacity(opacity float32) DialogDescriptionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogDescriptionEl) P(length gk.Length) DialogDescriptionEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3383,6 +4257,8 @@ func (e DialogDescriptionEl) P(length gk.Length) DialogDescriptionEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogDescriptionEl) Pb(length gk.Length) DialogDescriptionEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3390,6 +4266,8 @@ func (e DialogDescriptionEl) Pb(length gk.Length) DialogDescriptionEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogDescriptionEl) Pl(length gk.Length) DialogDescriptionEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3397,6 +4275,8 @@ func (e DialogDescriptionEl) Pl(length gk.Length) DialogDescriptionEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogDescriptionEl) Pr(length gk.Length) DialogDescriptionEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3404,6 +4284,8 @@ func (e DialogDescriptionEl) Pr(length gk.Length) DialogDescriptionEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogDescriptionEl) Pt(length gk.Length) DialogDescriptionEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3411,6 +4293,8 @@ func (e DialogDescriptionEl) Pt(length gk.Length) DialogDescriptionEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogDescriptionEl) Px(length gk.Length) DialogDescriptionEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3418,6 +4302,8 @@ func (e DialogDescriptionEl) Px(length gk.Length) DialogDescriptionEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogDescriptionEl) Py(length gk.Length) DialogDescriptionEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3425,12 +4311,16 @@ func (e DialogDescriptionEl) Py(length gk.Length) DialogDescriptionEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogDescriptionEl) Right(length gk.Length) DialogDescriptionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogDescriptionEl) Rounded(length gk.Length) DialogDescriptionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3438,6 +4328,8 @@ func (e DialogDescriptionEl) Rounded(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogDescriptionEl) RoundedB(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3445,6 +4337,8 @@ func (e DialogDescriptionEl) RoundedB(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogDescriptionEl) RoundedBl(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3452,6 +4346,8 @@ func (e DialogDescriptionEl) RoundedBl(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogDescriptionEl) RoundedBr(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3459,6 +4355,8 @@ func (e DialogDescriptionEl) RoundedBr(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogDescriptionEl) RoundedL(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3466,6 +4364,8 @@ func (e DialogDescriptionEl) RoundedL(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogDescriptionEl) RoundedR(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3473,6 +4373,8 @@ func (e DialogDescriptionEl) RoundedR(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogDescriptionEl) RoundedT(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3480,6 +4382,8 @@ func (e DialogDescriptionEl) RoundedT(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogDescriptionEl) RoundedTl(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3487,24 +4391,32 @@ func (e DialogDescriptionEl) RoundedTl(length gk.Length) DialogDescriptionEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogDescriptionEl) RoundedTr(length gk.Length) DialogDescriptionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogDescriptionEl) RowEnd(end int16) DialogDescriptionEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogDescriptionEl) RowSpan(span uint16) DialogDescriptionEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogDescriptionEl) RowStart(start int16) DialogDescriptionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3514,24 +4426,32 @@ func (e DialogDescriptionEl) RowStart(start int16) DialogDescriptionEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogDescriptionEl) ScrollbarWidth(width gk.Length) DialogDescriptionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogDescriptionEl) Shadow(shadows []gk.BoxShadow) DialogDescriptionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogDescriptionEl) Size(length gk.Length) DialogDescriptionEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogDescriptionEl) TextAlign(align gk.TextAlign) DialogDescriptionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3540,6 +4460,8 @@ func (e DialogDescriptionEl) TextAlign(align gk.TextAlign) DialogDescriptionEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogDescriptionEl) TextBg(bg gk.Color) DialogDescriptionEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3548,18 +4470,24 @@ func (e DialogDescriptionEl) TextBg(bg gk.Color) DialogDescriptionEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogDescriptionEl) TextColor(color gk.Color) DialogDescriptionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogDescriptionEl) TextDecorationColor(color gk.Color) DialogDescriptionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogDescriptionEl) TextOverflow(overflow gk.TextOverflow) DialogDescriptionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3568,6 +4496,8 @@ func (e DialogDescriptionEl) TextOverflow(overflow gk.TextOverflow) DialogDescri
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogDescriptionEl) TextSize(size gk.Length) DialogDescriptionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3575,12 +4505,16 @@ func (e DialogDescriptionEl) TextSize(size gk.Length) DialogDescriptionEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogDescriptionEl) Top(length gk.Length) DialogDescriptionEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DialogDescriptionEl) W(length gk.Length) DialogDescriptionEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -3589,7 +4523,7 @@ func (e DialogDescriptionEl) W(length gk.Length) DialogDescriptionEl {
 // DialogFooterEl is gpui_kit::component::dialog::DialogFooter.
 type DialogFooterEl struct{ rt.ElAnimatableElement }
 
-// DialogFooter is <gpui_kit::component::dialog::DialogFooter>::new.
+// DialogFooter calls <gpui_kit::component::dialog::DialogFooter>::new.
 func DialogFooter(st ...gk.Style) DialogFooterEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(641)
@@ -3599,20 +4533,24 @@ func DialogFooter(st ...gk.Style) DialogFooterEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogFooterEl) PopoverStyle() DialogFooterEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogFooterEl) RoundedFullStyle() DialogFooterEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3621,16 +4559,18 @@ func (e DialogFooterEl) RoundedFullStyle() DialogFooterEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogFooterEl) FocusRingStyle() DialogFooterEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3643,24 +4583,32 @@ func (e DialogFooterEl) FocusRingStyle() DialogFooterEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogFooterEl) KeepTextSelection(id gk.ID) DialogFooterEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogFooterEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogFooterEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogFooterEl) BorderE(width gk.Length) DialogFooterEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogFooterEl) BorderS(width gk.Length) DialogFooterEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3668,133 +4616,175 @@ func (e DialogFooterEl) BorderS(width gk.Length) DialogFooterEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogFooterEl) FlexRowDir() DialogFooterEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogFooterEl) InsetE(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogFooterEl) InsetS(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogFooterEl) JustifyFlexEnd() DialogFooterEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogFooterEl) JustifyFlexStart() DialogFooterEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogFooterEl) Me(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogFooterEl) Ms(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogFooterEl) Pe(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogFooterEl) Ps(length gk.Length) DialogFooterEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogFooterEl) RoundedE(radius gk.Length) DialogFooterEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogFooterEl) RoundedS(radius gk.Length) DialogFooterEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogFooterEl) TextEnd() DialogFooterEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogFooterEl) TextStart() DialogFooterEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogFooterEl) CornerRadii(radius gk.Corners) DialogFooterEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogFooterEl) DebugBlue() DialogFooterEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogFooterEl) DebugFocused(focusHandle gk.FocusHandle) DialogFooterEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogFooterEl) DebugGreen() DialogFooterEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogFooterEl) DebugPink() DialogFooterEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogFooterEl) DebugRed() DialogFooterEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogFooterEl) DebugYellow() DialogFooterEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogFooterEl) FontBlack() DialogFooterEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogFooterEl) FontBold() DialogFooterEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogFooterEl) FontExtrabold() DialogFooterEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogFooterEl) FontExtralight() DialogFooterEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogFooterEl) FontLight() DialogFooterEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogFooterEl) FontMedium() DialogFooterEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogFooterEl) FontNormal() DialogFooterEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogFooterEl) FontSemibold() DialogFooterEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogFooterEl) FontThin() DialogFooterEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3803,18 +4793,23 @@ func (e DialogFooterEl) FontThin() DialogFooterEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogFooterEl) HFlex() DialogFooterEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogFooterEl) Margins(margins gk.EdgesInto) DialogFooterEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogFooterEl) Paddings(paddings gk.EdgesInto) DialogFooterEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogFooterEl) RefineStyle(style gk.StyleRefinement) DialogFooterEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3824,38 +4819,51 @@ func (e DialogFooterEl) RefineStyle(style gk.StyleRefinement) DialogFooterEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogFooterEl) VFlex() DialogFooterEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogFooterEl) Text(s string) DialogFooterEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogFooterEl) ChildView(v gk.View) DialogFooterEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogFooterEl) Child(child gk.Element) DialogFooterEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogFooterEl) Children(children ...gk.Element) DialogFooterEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogFooterEl) Style(st ...gk.Style) DialogFooterEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogFooterEl) AspectRatio(ratio float32) DialogFooterEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogFooterEl) Bg(fill gk.Fill) DialogFooterEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogFooterEl) Border(length gk.Length) DialogFooterEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3863,12 +4871,16 @@ func (e DialogFooterEl) Border(length gk.Length) DialogFooterEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogFooterEl) BorderB(length gk.Length) DialogFooterEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogFooterEl) BorderColor(borderColor gk.Color) DialogFooterEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3876,6 +4888,8 @@ func (e DialogFooterEl) BorderColor(borderColor gk.Color) DialogFooterEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogFooterEl) BorderL(length gk.Length) DialogFooterEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3883,6 +4897,8 @@ func (e DialogFooterEl) BorderL(length gk.Length) DialogFooterEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogFooterEl) BorderR(length gk.Length) DialogFooterEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3890,6 +4906,8 @@ func (e DialogFooterEl) BorderR(length gk.Length) DialogFooterEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogFooterEl) BorderT(length gk.Length) DialogFooterEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3897,6 +4915,8 @@ func (e DialogFooterEl) BorderT(length gk.Length) DialogFooterEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogFooterEl) BorderX(length gk.Length) DialogFooterEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3904,6 +4924,8 @@ func (e DialogFooterEl) BorderX(length gk.Length) DialogFooterEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogFooterEl) BorderY(length gk.Length) DialogFooterEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3911,27 +4933,37 @@ func (e DialogFooterEl) BorderY(length gk.Length) DialogFooterEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogFooterEl) Bottom(length gk.Length) DialogFooterEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogFooterEl) ColEnd(end int16) DialogFooterEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogFooterEl) ColSpan(span uint16) DialogFooterEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogFooterEl) ColStart(start int16) DialogFooterEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogFooterEl) Cursor(cursor gk.CursorStyle) DialogFooterEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3939,33 +4971,45 @@ func (e DialogFooterEl) Cursor(cursor gk.CursorStyle) DialogFooterEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogFooterEl) FlexBasis(basis gk.Length) DialogFooterEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogFooterEl) FlexGrow(grow float32) DialogFooterEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogFooterEl) FlexShrink(shrink float32) DialogFooterEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogFooterEl) Font(font gk.Font) DialogFooterEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogFooterEl) FontFamily(familyName string) DialogFooterEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogFooterEl) FontFeatures(features gk.FontFeatures) DialogFooterEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3974,12 +5018,16 @@ func (e DialogFooterEl) FontFeatures(features gk.FontFeatures) DialogFooterEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogFooterEl) FontWeight(weight gk.FontWeight) DialogFooterEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogFooterEl) Gap(length gk.Length) DialogFooterEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3987,6 +5035,8 @@ func (e DialogFooterEl) Gap(length gk.Length) DialogFooterEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogFooterEl) GapX(length gk.Length) DialogFooterEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3994,18 +5044,24 @@ func (e DialogFooterEl) GapX(length gk.Length) DialogFooterEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogFooterEl) GapY(length gk.Length) DialogFooterEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogFooterEl) GridCols(cols uint16) DialogFooterEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogFooterEl) GridColsMaxContent(cols uint16) DialogFooterEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4013,18 +5069,24 @@ func (e DialogFooterEl) GridColsMaxContent(cols uint16) DialogFooterEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogFooterEl) GridColsMinContent(cols uint16) DialogFooterEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogFooterEl) GridRows(rows uint16) DialogFooterEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogFooterEl) GridRowsMaxContent(rows uint16) DialogFooterEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4032,16 +5094,22 @@ func (e DialogFooterEl) GridRowsMaxContent(rows uint16) DialogFooterEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogFooterEl) GridRowsMinContent(rows uint16) DialogFooterEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogFooterEl) H(length gk.Length) DialogFooterEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogFooterEl) Inset(length gk.Length) DialogFooterEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4049,6 +5117,8 @@ func (e DialogFooterEl) Inset(length gk.Length) DialogFooterEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogFooterEl) Left(length gk.Length) DialogFooterEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4056,33 +5126,45 @@ func (e DialogFooterEl) Left(length gk.Length) DialogFooterEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogFooterEl) LineClamp(lines int) DialogFooterEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogFooterEl) LineHeight(lineHeight gk.Length) DialogFooterEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogFooterEl) M(length gk.Length) DialogFooterEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogFooterEl) MaxH(length gk.Length) DialogFooterEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogFooterEl) MaxSize(length gk.Length) DialogFooterEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DialogFooterEl) MaxW(length gk.Length) DialogFooterEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4090,24 +5172,32 @@ func (e DialogFooterEl) MaxW(length gk.Length) DialogFooterEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogFooterEl) Mb(length gk.Length) DialogFooterEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogFooterEl) MinH(length gk.Length) DialogFooterEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogFooterEl) MinSize(length gk.Length) DialogFooterEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogFooterEl) MinW(length gk.Length) DialogFooterEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4115,6 +5205,8 @@ func (e DialogFooterEl) MinW(length gk.Length) DialogFooterEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogFooterEl) Ml(length gk.Length) DialogFooterEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4122,6 +5214,8 @@ func (e DialogFooterEl) Ml(length gk.Length) DialogFooterEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogFooterEl) Mr(length gk.Length) DialogFooterEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4129,6 +5223,8 @@ func (e DialogFooterEl) Mr(length gk.Length) DialogFooterEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogFooterEl) Mt(length gk.Length) DialogFooterEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4136,6 +5232,8 @@ func (e DialogFooterEl) Mt(length gk.Length) DialogFooterEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogFooterEl) Mx(length gk.Length) DialogFooterEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4143,22 +5241,30 @@ func (e DialogFooterEl) Mx(length gk.Length) DialogFooterEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogFooterEl) My(length gk.Length) DialogFooterEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogFooterEl) Opacity(opacity float32) DialogFooterEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogFooterEl) P(length gk.Length) DialogFooterEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogFooterEl) Pb(length gk.Length) DialogFooterEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4166,6 +5272,8 @@ func (e DialogFooterEl) Pb(length gk.Length) DialogFooterEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogFooterEl) Pl(length gk.Length) DialogFooterEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4173,6 +5281,8 @@ func (e DialogFooterEl) Pl(length gk.Length) DialogFooterEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogFooterEl) Pr(length gk.Length) DialogFooterEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4180,6 +5290,8 @@ func (e DialogFooterEl) Pr(length gk.Length) DialogFooterEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogFooterEl) Pt(length gk.Length) DialogFooterEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4187,6 +5299,8 @@ func (e DialogFooterEl) Pt(length gk.Length) DialogFooterEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogFooterEl) Px(length gk.Length) DialogFooterEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4194,6 +5308,8 @@ func (e DialogFooterEl) Px(length gk.Length) DialogFooterEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogFooterEl) Py(length gk.Length) DialogFooterEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4201,12 +5317,16 @@ func (e DialogFooterEl) Py(length gk.Length) DialogFooterEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogFooterEl) Right(length gk.Length) DialogFooterEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogFooterEl) Rounded(length gk.Length) DialogFooterEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4214,6 +5334,8 @@ func (e DialogFooterEl) Rounded(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogFooterEl) RoundedB(length gk.Length) DialogFooterEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4221,6 +5343,8 @@ func (e DialogFooterEl) RoundedB(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogFooterEl) RoundedBl(length gk.Length) DialogFooterEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4228,6 +5352,8 @@ func (e DialogFooterEl) RoundedBl(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogFooterEl) RoundedBr(length gk.Length) DialogFooterEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4235,6 +5361,8 @@ func (e DialogFooterEl) RoundedBr(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogFooterEl) RoundedL(length gk.Length) DialogFooterEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4242,6 +5370,8 @@ func (e DialogFooterEl) RoundedL(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogFooterEl) RoundedR(length gk.Length) DialogFooterEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4249,6 +5379,8 @@ func (e DialogFooterEl) RoundedR(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogFooterEl) RoundedT(length gk.Length) DialogFooterEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4256,6 +5388,8 @@ func (e DialogFooterEl) RoundedT(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogFooterEl) RoundedTl(length gk.Length) DialogFooterEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4263,21 +5397,29 @@ func (e DialogFooterEl) RoundedTl(length gk.Length) DialogFooterEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogFooterEl) RoundedTr(length gk.Length) DialogFooterEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogFooterEl) RowEnd(end int16) DialogFooterEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogFooterEl) RowSpan(span uint16) DialogFooterEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogFooterEl) RowStart(start int16) DialogFooterEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4287,24 +5429,32 @@ func (e DialogFooterEl) RowStart(start int16) DialogFooterEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogFooterEl) ScrollbarWidth(width gk.Length) DialogFooterEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogFooterEl) Shadow(shadows []gk.BoxShadow) DialogFooterEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogFooterEl) Size(length gk.Length) DialogFooterEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogFooterEl) TextAlign(align gk.TextAlign) DialogFooterEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4313,23 +5463,31 @@ func (e DialogFooterEl) TextAlign(align gk.TextAlign) DialogFooterEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogFooterEl) TextBg(bg gk.Color) DialogFooterEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogFooterEl) TextColor(color gk.Color) DialogFooterEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogFooterEl) TextDecorationColor(color gk.Color) DialogFooterEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogFooterEl) TextOverflow(overflow gk.TextOverflow) DialogFooterEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4338,6 +5496,8 @@ func (e DialogFooterEl) TextOverflow(overflow gk.TextOverflow) DialogFooterEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogFooterEl) TextSize(size gk.Length) DialogFooterEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4345,18 +5505,22 @@ func (e DialogFooterEl) TextSize(size gk.Length) DialogFooterEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogFooterEl) Top(length gk.Length) DialogFooterEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DialogFooterEl) W(length gk.Length) DialogFooterEl { tStyledW(rt.N(e.Core), length); return e }
 
 // DialogHeaderEl is gpui_kit::component::dialog::DialogHeader.
 type DialogHeaderEl struct{ rt.ElAnimatableElement }
 
-// DialogHeader is <gpui_kit::component::dialog::DialogHeader>::new.
+// DialogHeader calls <gpui_kit::component::dialog::DialogHeader>::new.
 func DialogHeader(st ...gk.Style) DialogHeaderEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(642)
@@ -4366,20 +5530,24 @@ func DialogHeader(st ...gk.Style) DialogHeaderEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogHeaderEl) PopoverStyle() DialogHeaderEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogHeaderEl) RoundedFullStyle() DialogHeaderEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -4388,16 +5556,18 @@ func (e DialogHeaderEl) RoundedFullStyle() DialogHeaderEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogHeaderEl) FocusRingStyle() DialogHeaderEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -4410,24 +5580,32 @@ func (e DialogHeaderEl) FocusRingStyle() DialogHeaderEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogHeaderEl) KeepTextSelection(id gk.ID) DialogHeaderEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogHeaderEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogHeaderEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogHeaderEl) BorderE(width gk.Length) DialogHeaderEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogHeaderEl) BorderS(width gk.Length) DialogHeaderEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4435,133 +5613,175 @@ func (e DialogHeaderEl) BorderS(width gk.Length) DialogHeaderEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogHeaderEl) FlexRowDir() DialogHeaderEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogHeaderEl) InsetE(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogHeaderEl) InsetS(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogHeaderEl) JustifyFlexEnd() DialogHeaderEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogHeaderEl) JustifyFlexStart() DialogHeaderEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogHeaderEl) Me(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogHeaderEl) Ms(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogHeaderEl) Pe(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogHeaderEl) Ps(length gk.Length) DialogHeaderEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogHeaderEl) RoundedE(radius gk.Length) DialogHeaderEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogHeaderEl) RoundedS(radius gk.Length) DialogHeaderEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogHeaderEl) TextEnd() DialogHeaderEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogHeaderEl) TextStart() DialogHeaderEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogHeaderEl) CornerRadii(radius gk.Corners) DialogHeaderEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogHeaderEl) DebugBlue() DialogHeaderEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogHeaderEl) DebugFocused(focusHandle gk.FocusHandle) DialogHeaderEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogHeaderEl) DebugGreen() DialogHeaderEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogHeaderEl) DebugPink() DialogHeaderEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogHeaderEl) DebugRed() DialogHeaderEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogHeaderEl) DebugYellow() DialogHeaderEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogHeaderEl) FontBlack() DialogHeaderEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogHeaderEl) FontBold() DialogHeaderEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogHeaderEl) FontExtrabold() DialogHeaderEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogHeaderEl) FontExtralight() DialogHeaderEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogHeaderEl) FontLight() DialogHeaderEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogHeaderEl) FontMedium() DialogHeaderEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogHeaderEl) FontNormal() DialogHeaderEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogHeaderEl) FontSemibold() DialogHeaderEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogHeaderEl) FontThin() DialogHeaderEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4570,18 +5790,23 @@ func (e DialogHeaderEl) FontThin() DialogHeaderEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogHeaderEl) HFlex() DialogHeaderEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogHeaderEl) Margins(margins gk.EdgesInto) DialogHeaderEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogHeaderEl) Paddings(paddings gk.EdgesInto) DialogHeaderEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogHeaderEl) RefineStyle(style gk.StyleRefinement) DialogHeaderEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4591,38 +5816,51 @@ func (e DialogHeaderEl) RefineStyle(style gk.StyleRefinement) DialogHeaderEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogHeaderEl) VFlex() DialogHeaderEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogHeaderEl) Text(s string) DialogHeaderEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogHeaderEl) ChildView(v gk.View) DialogHeaderEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogHeaderEl) Child(child gk.Element) DialogHeaderEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogHeaderEl) Children(children ...gk.Element) DialogHeaderEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogHeaderEl) Style(st ...gk.Style) DialogHeaderEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogHeaderEl) AspectRatio(ratio float32) DialogHeaderEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogHeaderEl) Bg(fill gk.Fill) DialogHeaderEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogHeaderEl) Border(length gk.Length) DialogHeaderEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4630,12 +5868,16 @@ func (e DialogHeaderEl) Border(length gk.Length) DialogHeaderEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogHeaderEl) BorderB(length gk.Length) DialogHeaderEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogHeaderEl) BorderColor(borderColor gk.Color) DialogHeaderEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4643,6 +5885,8 @@ func (e DialogHeaderEl) BorderColor(borderColor gk.Color) DialogHeaderEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogHeaderEl) BorderL(length gk.Length) DialogHeaderEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4650,6 +5894,8 @@ func (e DialogHeaderEl) BorderL(length gk.Length) DialogHeaderEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogHeaderEl) BorderR(length gk.Length) DialogHeaderEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4657,6 +5903,8 @@ func (e DialogHeaderEl) BorderR(length gk.Length) DialogHeaderEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogHeaderEl) BorderT(length gk.Length) DialogHeaderEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4664,6 +5912,8 @@ func (e DialogHeaderEl) BorderT(length gk.Length) DialogHeaderEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogHeaderEl) BorderX(length gk.Length) DialogHeaderEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4671,6 +5921,8 @@ func (e DialogHeaderEl) BorderX(length gk.Length) DialogHeaderEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogHeaderEl) BorderY(length gk.Length) DialogHeaderEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4678,27 +5930,37 @@ func (e DialogHeaderEl) BorderY(length gk.Length) DialogHeaderEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogHeaderEl) Bottom(length gk.Length) DialogHeaderEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogHeaderEl) ColEnd(end int16) DialogHeaderEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogHeaderEl) ColSpan(span uint16) DialogHeaderEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogHeaderEl) ColStart(start int16) DialogHeaderEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogHeaderEl) Cursor(cursor gk.CursorStyle) DialogHeaderEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4706,33 +5968,45 @@ func (e DialogHeaderEl) Cursor(cursor gk.CursorStyle) DialogHeaderEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogHeaderEl) FlexBasis(basis gk.Length) DialogHeaderEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogHeaderEl) FlexGrow(grow float32) DialogHeaderEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogHeaderEl) FlexShrink(shrink float32) DialogHeaderEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogHeaderEl) Font(font gk.Font) DialogHeaderEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogHeaderEl) FontFamily(familyName string) DialogHeaderEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogHeaderEl) FontFeatures(features gk.FontFeatures) DialogHeaderEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4741,12 +6015,16 @@ func (e DialogHeaderEl) FontFeatures(features gk.FontFeatures) DialogHeaderEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogHeaderEl) FontWeight(weight gk.FontWeight) DialogHeaderEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogHeaderEl) Gap(length gk.Length) DialogHeaderEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4754,6 +6032,8 @@ func (e DialogHeaderEl) Gap(length gk.Length) DialogHeaderEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogHeaderEl) GapX(length gk.Length) DialogHeaderEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4761,18 +6041,24 @@ func (e DialogHeaderEl) GapX(length gk.Length) DialogHeaderEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogHeaderEl) GapY(length gk.Length) DialogHeaderEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogHeaderEl) GridCols(cols uint16) DialogHeaderEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogHeaderEl) GridColsMaxContent(cols uint16) DialogHeaderEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4780,18 +6066,24 @@ func (e DialogHeaderEl) GridColsMaxContent(cols uint16) DialogHeaderEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogHeaderEl) GridColsMinContent(cols uint16) DialogHeaderEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogHeaderEl) GridRows(rows uint16) DialogHeaderEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogHeaderEl) GridRowsMaxContent(rows uint16) DialogHeaderEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4799,16 +6091,22 @@ func (e DialogHeaderEl) GridRowsMaxContent(rows uint16) DialogHeaderEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogHeaderEl) GridRowsMinContent(rows uint16) DialogHeaderEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogHeaderEl) H(length gk.Length) DialogHeaderEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogHeaderEl) Inset(length gk.Length) DialogHeaderEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4816,6 +6114,8 @@ func (e DialogHeaderEl) Inset(length gk.Length) DialogHeaderEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogHeaderEl) Left(length gk.Length) DialogHeaderEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4823,33 +6123,45 @@ func (e DialogHeaderEl) Left(length gk.Length) DialogHeaderEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogHeaderEl) LineClamp(lines int) DialogHeaderEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogHeaderEl) LineHeight(lineHeight gk.Length) DialogHeaderEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogHeaderEl) M(length gk.Length) DialogHeaderEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogHeaderEl) MaxH(length gk.Length) DialogHeaderEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogHeaderEl) MaxSize(length gk.Length) DialogHeaderEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DialogHeaderEl) MaxW(length gk.Length) DialogHeaderEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4857,24 +6169,32 @@ func (e DialogHeaderEl) MaxW(length gk.Length) DialogHeaderEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogHeaderEl) Mb(length gk.Length) DialogHeaderEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogHeaderEl) MinH(length gk.Length) DialogHeaderEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogHeaderEl) MinSize(length gk.Length) DialogHeaderEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogHeaderEl) MinW(length gk.Length) DialogHeaderEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4882,6 +6202,8 @@ func (e DialogHeaderEl) MinW(length gk.Length) DialogHeaderEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogHeaderEl) Ml(length gk.Length) DialogHeaderEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4889,6 +6211,8 @@ func (e DialogHeaderEl) Ml(length gk.Length) DialogHeaderEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogHeaderEl) Mr(length gk.Length) DialogHeaderEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4896,6 +6220,8 @@ func (e DialogHeaderEl) Mr(length gk.Length) DialogHeaderEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogHeaderEl) Mt(length gk.Length) DialogHeaderEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4903,6 +6229,8 @@ func (e DialogHeaderEl) Mt(length gk.Length) DialogHeaderEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogHeaderEl) Mx(length gk.Length) DialogHeaderEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4910,22 +6238,30 @@ func (e DialogHeaderEl) Mx(length gk.Length) DialogHeaderEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogHeaderEl) My(length gk.Length) DialogHeaderEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogHeaderEl) Opacity(opacity float32) DialogHeaderEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogHeaderEl) P(length gk.Length) DialogHeaderEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogHeaderEl) Pb(length gk.Length) DialogHeaderEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4933,6 +6269,8 @@ func (e DialogHeaderEl) Pb(length gk.Length) DialogHeaderEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogHeaderEl) Pl(length gk.Length) DialogHeaderEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4940,6 +6278,8 @@ func (e DialogHeaderEl) Pl(length gk.Length) DialogHeaderEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogHeaderEl) Pr(length gk.Length) DialogHeaderEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4947,6 +6287,8 @@ func (e DialogHeaderEl) Pr(length gk.Length) DialogHeaderEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogHeaderEl) Pt(length gk.Length) DialogHeaderEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4954,6 +6296,8 @@ func (e DialogHeaderEl) Pt(length gk.Length) DialogHeaderEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogHeaderEl) Px(length gk.Length) DialogHeaderEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4961,6 +6305,8 @@ func (e DialogHeaderEl) Px(length gk.Length) DialogHeaderEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogHeaderEl) Py(length gk.Length) DialogHeaderEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4968,12 +6314,16 @@ func (e DialogHeaderEl) Py(length gk.Length) DialogHeaderEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogHeaderEl) Right(length gk.Length) DialogHeaderEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogHeaderEl) Rounded(length gk.Length) DialogHeaderEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4981,6 +6331,8 @@ func (e DialogHeaderEl) Rounded(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogHeaderEl) RoundedB(length gk.Length) DialogHeaderEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4988,6 +6340,8 @@ func (e DialogHeaderEl) RoundedB(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogHeaderEl) RoundedBl(length gk.Length) DialogHeaderEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4995,6 +6349,8 @@ func (e DialogHeaderEl) RoundedBl(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogHeaderEl) RoundedBr(length gk.Length) DialogHeaderEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5002,6 +6358,8 @@ func (e DialogHeaderEl) RoundedBr(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogHeaderEl) RoundedL(length gk.Length) DialogHeaderEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5009,6 +6367,8 @@ func (e DialogHeaderEl) RoundedL(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogHeaderEl) RoundedR(length gk.Length) DialogHeaderEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5016,6 +6376,8 @@ func (e DialogHeaderEl) RoundedR(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogHeaderEl) RoundedT(length gk.Length) DialogHeaderEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5023,6 +6385,8 @@ func (e DialogHeaderEl) RoundedT(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogHeaderEl) RoundedTl(length gk.Length) DialogHeaderEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5030,21 +6394,29 @@ func (e DialogHeaderEl) RoundedTl(length gk.Length) DialogHeaderEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogHeaderEl) RoundedTr(length gk.Length) DialogHeaderEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogHeaderEl) RowEnd(end int16) DialogHeaderEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogHeaderEl) RowSpan(span uint16) DialogHeaderEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogHeaderEl) RowStart(start int16) DialogHeaderEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5054,24 +6426,32 @@ func (e DialogHeaderEl) RowStart(start int16) DialogHeaderEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogHeaderEl) ScrollbarWidth(width gk.Length) DialogHeaderEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogHeaderEl) Shadow(shadows []gk.BoxShadow) DialogHeaderEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogHeaderEl) Size(length gk.Length) DialogHeaderEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogHeaderEl) TextAlign(align gk.TextAlign) DialogHeaderEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5080,23 +6460,31 @@ func (e DialogHeaderEl) TextAlign(align gk.TextAlign) DialogHeaderEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogHeaderEl) TextBg(bg gk.Color) DialogHeaderEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogHeaderEl) TextColor(color gk.Color) DialogHeaderEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogHeaderEl) TextDecorationColor(color gk.Color) DialogHeaderEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogHeaderEl) TextOverflow(overflow gk.TextOverflow) DialogHeaderEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5105,6 +6493,8 @@ func (e DialogHeaderEl) TextOverflow(overflow gk.TextOverflow) DialogHeaderEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogHeaderEl) TextSize(size gk.Length) DialogHeaderEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5112,18 +6502,22 @@ func (e DialogHeaderEl) TextSize(size gk.Length) DialogHeaderEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogHeaderEl) Top(length gk.Length) DialogHeaderEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DialogHeaderEl) W(length gk.Length) DialogHeaderEl { tStyledW(rt.N(e.Core), length); return e }
 
 // DialogTitleEl is gpui_kit::component::dialog::DialogTitle.
 type DialogTitleEl struct{ rt.ElAnimatableElement }
 
-// DialogTitle is <gpui_kit::component::dialog::DialogTitle>::new.
+// DialogTitle calls <gpui_kit::component::dialog::DialogTitle>::new.
 func DialogTitle(st ...gk.Style) DialogTitleEl {
 	rt.UseComponentDialog()
 	n := rt.NewNode(643)
@@ -5133,17 +6527,21 @@ func DialogTitle(st ...gk.Style) DialogTitleEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DialogTitleEl) PopoverStyle() DialogTitleEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DialogTitleEl) RoundedFullStyle() DialogTitleEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -5152,16 +6550,18 @@ func (e DialogTitleEl) RoundedFullStyle() DialogTitleEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e DialogTitleEl) FocusRingStyle() DialogTitleEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -5174,24 +6574,32 @@ func (e DialogTitleEl) FocusRingStyle() DialogTitleEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e DialogTitleEl) KeepTextSelection(id gk.ID) DialogTitleEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e DialogTitleEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) DialogTitleEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DialogTitleEl) BorderE(width gk.Length) DialogTitleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DialogTitleEl) BorderS(width gk.Length) DialogTitleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -5199,127 +6607,169 @@ func (e DialogTitleEl) BorderS(width gk.Length) DialogTitleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DialogTitleEl) FlexRowDir() DialogTitleEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DialogTitleEl) InsetE(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DialogTitleEl) InsetS(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DialogTitleEl) JustifyFlexEnd() DialogTitleEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DialogTitleEl) JustifyFlexStart() DialogTitleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DialogTitleEl) Me(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DialogTitleEl) Ms(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DialogTitleEl) Pe(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DialogTitleEl) Ps(length gk.Length) DialogTitleEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DialogTitleEl) RoundedE(radius gk.Length) DialogTitleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DialogTitleEl) RoundedS(radius gk.Length) DialogTitleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DialogTitleEl) TextEnd() DialogTitleEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DialogTitleEl) TextStart() DialogTitleEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DialogTitleEl) CornerRadii(radius gk.Corners) DialogTitleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DialogTitleEl) DebugBlue() DialogTitleEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DialogTitleEl) DebugFocused(focusHandle gk.FocusHandle) DialogTitleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DialogTitleEl) DebugGreen() DialogTitleEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DialogTitleEl) DebugPink() DialogTitleEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DialogTitleEl) DebugRed() DialogTitleEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DialogTitleEl) DebugYellow() DialogTitleEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DialogTitleEl) FontBlack() DialogTitleEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DialogTitleEl) FontBold() DialogTitleEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DialogTitleEl) FontExtrabold() DialogTitleEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DialogTitleEl) FontExtralight() DialogTitleEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DialogTitleEl) FontLight() DialogTitleEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DialogTitleEl) FontMedium() DialogTitleEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DialogTitleEl) FontNormal() DialogTitleEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DialogTitleEl) FontSemibold() DialogTitleEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DialogTitleEl) FontThin() DialogTitleEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -5328,18 +6778,23 @@ func (e DialogTitleEl) FontThin() DialogTitleEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DialogTitleEl) HFlex() DialogTitleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DialogTitleEl) Margins(margins gk.EdgesInto) DialogTitleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DialogTitleEl) Paddings(paddings gk.EdgesInto) DialogTitleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DialogTitleEl) RefineStyle(style gk.StyleRefinement) DialogTitleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -5349,38 +6804,51 @@ func (e DialogTitleEl) RefineStyle(style gk.StyleRefinement) DialogTitleEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DialogTitleEl) VFlex() DialogTitleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e DialogTitleEl) Text(s string) DialogTitleEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DialogTitleEl) ChildView(v gk.View) DialogTitleEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DialogTitleEl) Child(child gk.Element) DialogTitleEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DialogTitleEl) Children(children ...gk.Element) DialogTitleEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DialogTitleEl) Style(st ...gk.Style) DialogTitleEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DialogTitleEl) AspectRatio(ratio float32) DialogTitleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DialogTitleEl) Bg(fill gk.Fill) DialogTitleEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DialogTitleEl) Border(length gk.Length) DialogTitleEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -5388,12 +6856,16 @@ func (e DialogTitleEl) Border(length gk.Length) DialogTitleEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DialogTitleEl) BorderB(length gk.Length) DialogTitleEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DialogTitleEl) BorderColor(borderColor gk.Color) DialogTitleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -5401,6 +6873,8 @@ func (e DialogTitleEl) BorderColor(borderColor gk.Color) DialogTitleEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DialogTitleEl) BorderL(length gk.Length) DialogTitleEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -5408,6 +6882,8 @@ func (e DialogTitleEl) BorderL(length gk.Length) DialogTitleEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DialogTitleEl) BorderR(length gk.Length) DialogTitleEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -5415,6 +6891,8 @@ func (e DialogTitleEl) BorderR(length gk.Length) DialogTitleEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DialogTitleEl) BorderT(length gk.Length) DialogTitleEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -5422,6 +6900,8 @@ func (e DialogTitleEl) BorderT(length gk.Length) DialogTitleEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DialogTitleEl) BorderX(length gk.Length) DialogTitleEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -5429,6 +6909,8 @@ func (e DialogTitleEl) BorderX(length gk.Length) DialogTitleEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DialogTitleEl) BorderY(length gk.Length) DialogTitleEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -5436,27 +6918,37 @@ func (e DialogTitleEl) BorderY(length gk.Length) DialogTitleEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DialogTitleEl) Bottom(length gk.Length) DialogTitleEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DialogTitleEl) ColEnd(end int16) DialogTitleEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DialogTitleEl) ColSpan(span uint16) DialogTitleEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DialogTitleEl) ColStart(start int16) DialogTitleEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DialogTitleEl) Cursor(cursor gk.CursorStyle) DialogTitleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -5464,33 +6956,45 @@ func (e DialogTitleEl) Cursor(cursor gk.CursorStyle) DialogTitleEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DialogTitleEl) FlexBasis(basis gk.Length) DialogTitleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DialogTitleEl) FlexGrow(grow float32) DialogTitleEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DialogTitleEl) FlexShrink(shrink float32) DialogTitleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DialogTitleEl) Font(font gk.Font) DialogTitleEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DialogTitleEl) FontFamily(familyName string) DialogTitleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DialogTitleEl) FontFeatures(features gk.FontFeatures) DialogTitleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -5499,12 +7003,16 @@ func (e DialogTitleEl) FontFeatures(features gk.FontFeatures) DialogTitleEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DialogTitleEl) FontWeight(weight gk.FontWeight) DialogTitleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DialogTitleEl) Gap(length gk.Length) DialogTitleEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -5512,6 +7020,8 @@ func (e DialogTitleEl) Gap(length gk.Length) DialogTitleEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DialogTitleEl) GapX(length gk.Length) DialogTitleEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -5519,18 +7029,24 @@ func (e DialogTitleEl) GapX(length gk.Length) DialogTitleEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DialogTitleEl) GapY(length gk.Length) DialogTitleEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DialogTitleEl) GridCols(cols uint16) DialogTitleEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DialogTitleEl) GridColsMaxContent(cols uint16) DialogTitleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -5538,18 +7054,24 @@ func (e DialogTitleEl) GridColsMaxContent(cols uint16) DialogTitleEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DialogTitleEl) GridColsMinContent(cols uint16) DialogTitleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DialogTitleEl) GridRows(rows uint16) DialogTitleEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DialogTitleEl) GridRowsMaxContent(rows uint16) DialogTitleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -5557,16 +7079,22 @@ func (e DialogTitleEl) GridRowsMaxContent(rows uint16) DialogTitleEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DialogTitleEl) GridRowsMinContent(rows uint16) DialogTitleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DialogTitleEl) H(length gk.Length) DialogTitleEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DialogTitleEl) Inset(length gk.Length) DialogTitleEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -5574,6 +7102,8 @@ func (e DialogTitleEl) Inset(length gk.Length) DialogTitleEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DialogTitleEl) Left(length gk.Length) DialogTitleEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -5581,33 +7111,45 @@ func (e DialogTitleEl) Left(length gk.Length) DialogTitleEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DialogTitleEl) LineClamp(lines int) DialogTitleEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DialogTitleEl) LineHeight(lineHeight gk.Length) DialogTitleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DialogTitleEl) M(length gk.Length) DialogTitleEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DialogTitleEl) MaxH(length gk.Length) DialogTitleEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DialogTitleEl) MaxSize(length gk.Length) DialogTitleEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DialogTitleEl) MaxW(length gk.Length) DialogTitleEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -5615,21 +7157,29 @@ func (e DialogTitleEl) MaxW(length gk.Length) DialogTitleEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DialogTitleEl) Mb(length gk.Length) DialogTitleEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DialogTitleEl) MinH(length gk.Length) DialogTitleEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DialogTitleEl) MinSize(length gk.Length) DialogTitleEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DialogTitleEl) MinW(length gk.Length) DialogTitleEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -5637,65 +7187,95 @@ func (e DialogTitleEl) MinW(length gk.Length) DialogTitleEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DialogTitleEl) Ml(length gk.Length) DialogTitleEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DialogTitleEl) Mr(length gk.Length) DialogTitleEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DialogTitleEl) Mt(length gk.Length) DialogTitleEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DialogTitleEl) Mx(length gk.Length) DialogTitleEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DialogTitleEl) My(length gk.Length) DialogTitleEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DialogTitleEl) Opacity(opacity float32) DialogTitleEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DialogTitleEl) P(length gk.Length) DialogTitleEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DialogTitleEl) Pb(length gk.Length) DialogTitleEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DialogTitleEl) Pl(length gk.Length) DialogTitleEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DialogTitleEl) Pr(length gk.Length) DialogTitleEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DialogTitleEl) Pt(length gk.Length) DialogTitleEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DialogTitleEl) Px(length gk.Length) DialogTitleEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DialogTitleEl) Py(length gk.Length) DialogTitleEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DialogTitleEl) Right(length gk.Length) DialogTitleEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DialogTitleEl) Rounded(length gk.Length) DialogTitleEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5703,6 +7283,8 @@ func (e DialogTitleEl) Rounded(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DialogTitleEl) RoundedB(length gk.Length) DialogTitleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5710,6 +7292,8 @@ func (e DialogTitleEl) RoundedB(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DialogTitleEl) RoundedBl(length gk.Length) DialogTitleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5717,6 +7301,8 @@ func (e DialogTitleEl) RoundedBl(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DialogTitleEl) RoundedBr(length gk.Length) DialogTitleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5724,6 +7310,8 @@ func (e DialogTitleEl) RoundedBr(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DialogTitleEl) RoundedL(length gk.Length) DialogTitleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5731,6 +7319,8 @@ func (e DialogTitleEl) RoundedL(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DialogTitleEl) RoundedR(length gk.Length) DialogTitleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5738,6 +7328,8 @@ func (e DialogTitleEl) RoundedR(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DialogTitleEl) RoundedT(length gk.Length) DialogTitleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5745,6 +7337,8 @@ func (e DialogTitleEl) RoundedT(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DialogTitleEl) RoundedTl(length gk.Length) DialogTitleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5752,21 +7346,29 @@ func (e DialogTitleEl) RoundedTl(length gk.Length) DialogTitleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DialogTitleEl) RoundedTr(length gk.Length) DialogTitleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DialogTitleEl) RowEnd(end int16) DialogTitleEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DialogTitleEl) RowSpan(span uint16) DialogTitleEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DialogTitleEl) RowStart(start int16) DialogTitleEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5776,24 +7378,32 @@ func (e DialogTitleEl) RowStart(start int16) DialogTitleEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DialogTitleEl) ScrollbarWidth(width gk.Length) DialogTitleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DialogTitleEl) Shadow(shadows []gk.BoxShadow) DialogTitleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DialogTitleEl) Size(length gk.Length) DialogTitleEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DialogTitleEl) TextAlign(align gk.TextAlign) DialogTitleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5802,23 +7412,31 @@ func (e DialogTitleEl) TextAlign(align gk.TextAlign) DialogTitleEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DialogTitleEl) TextBg(bg gk.Color) DialogTitleEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DialogTitleEl) TextColor(color gk.Color) DialogTitleEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DialogTitleEl) TextDecorationColor(color gk.Color) DialogTitleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DialogTitleEl) TextOverflow(overflow gk.TextOverflow) DialogTitleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5827,6 +7445,8 @@ func (e DialogTitleEl) TextOverflow(overflow gk.TextOverflow) DialogTitleEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DialogTitleEl) TextSize(size gk.Length) DialogTitleEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5834,10 +7454,14 @@ func (e DialogTitleEl) TextSize(size gk.Length) DialogTitleEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DialogTitleEl) Top(length gk.Length) DialogTitleEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DialogTitleEl) W(length gk.Length) DialogTitleEl { tStyledW(rt.N(e.Core), length); return e }

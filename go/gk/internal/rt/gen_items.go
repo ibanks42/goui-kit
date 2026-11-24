@@ -2,19 +2,20 @@
 
 package rt
 
-// AnySettingField is one of the kit's values of this kind: SettingFieldBool, SettingFieldNumber, SettingFieldText.
+// AnySettingField marks generated value types accepted for this trait: SettingFieldBool, SettingFieldNumber, SettingFieldText.
 type AnySettingField interface{ isAnySettingField() }
 
-// ResizeHandleRenderer is the app's rows (a gk.RowSource, made with gk.Items) or a renderer the kit makes (ResizeHandleRendererKit).
+// ResizeHandleRenderer accepts either a custom RowSource (from Items) or a built-in ResizeHandleRendererKit renderer.
 type ResizeHandleRenderer interface{ isResizeHandleRenderer() }
 
 func (RowSource) isResizeHandleRenderer() {}
 
-// ResizeHandleRendererKit is a renderer the kit makes.
+// ResizeHandleRendererKit selects a built-in upstream renderer for ResizeHandleRenderer.
 type ResizeHandleRendererKit uint16
 
 func (ResizeHandleRendererKit) isResizeHandleRenderer() {}
 
+// ResizeHandleRendererKit built-in renderer constants.
 const (
 	ResizeHandleRendererKitResizeHandleAppearance ResizeHandleRendererKit = 0 // gpui_kit::component::resize_handle_appearance
 )

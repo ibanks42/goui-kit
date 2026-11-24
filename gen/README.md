@@ -1,54 +1,43 @@
-# gen: the generator
+# Generator (`gen/`)
 
-Reads the extracted API of the pinned kit crates and writes the generated half of the
-binding: Rust decoders and call ops, the Go package, the coverage table. Python 3 standard
-library only; app developers never run it. Design: [../docs/DESIGN.md](../docs/DESIGN.md)
-section 13. What generated code calls: [../docs/PROTOCOLS.md](../docs/PROTOCOLS.md).
+Python and Go tooling that reads extracted rustdoc JSON from `api/rustdoc/` and generates the Rust decoder layer (`core/src/gen/`), split Go packages (`go/gk/`), generated Go test suites (`core/tests/go/{gensample,gen,app}`), coverage summaries (`api/coverage.json`, `docs/STATUS.md`), and the Go component index (`docs/API-GO.md`).
 
-## Commands
+## Entry point
 
-| command | needs | what |
-|---|---|---|
-| `make gen` (`python3 gen/gkgen.py gen`, then `gates/conformance.py`) | Python only, 2 s | classify every public function, apply `api/quarantine.json`, number from `api/opcodes.lock`, write the Rust decoders (`core/src/gen/`), the Go package (`go/gk/gen_*.go`), the generated tests (`core/tests/go/gensample`, `gen`, `app`), the opcode tables and the interface hash (`core/wire/gen.py`), `api/gk.api.json.gz`, `api/coverage.json`, `gen/out/report.md`, the coverage block of `docs/STATUS.md`, and the gallery's conformance pages. Exits 1 if a signature meets no rule (`gen/out/no-rule.md`) |
-| `make lib` | Rust | rustc as judge: the release build of the library with the generated decoders (a few minutes from cold, well under a minute after a generator change) |
-| `gen/round.sh [N]` | Rust | the quarantine loop: `cargo check --release -p gk-capi`, errors charged to items by line, regenerate, up to N rounds |
-| `make gates-quick` | the library | the Go compiler as judge (every example and the sample by generation build), and the gallery compares every page with Rust |
-| `gen/extract.sh`, then `python3 gen/gkgen.py strip DIR` | Rust, then Python | a new upstream pin: rustdoc JSON (about a minute and 1.5 GB of `target/`), reduced to `api/rustdoc/*.json.gz` (3.3 MB, committed), and the doc comments to `api/rustdoc/docs.json.gz` |
+Run `make gen` (which also regenerates `core/wire/`, runs `gofmt`, runs `gates/conformance.py`, and validates `gates/accept.py --check`), or invoke `gen/gkgen.py` directly:
 
-## Files
+```bash
+python3 gen/gkgen.py gen                   # generate Rust, Go, tests, coverage, and API index
+python3 gen/gkgen.py strip gen-json/public # pack raw rustdoc JSON into api/rustdoc/*.json.gz
+python3 gen/gkgen.py quarantine rust LOG   # record failing Rust lines in api/quarantine.json
+```
 
-| file | what |
-|---|---|
-| `gk_model.py` | the rules: one wire descriptor per parameter type, one status per function |
-| `gk_rust.py` | the Rust emitter and `api/opcodes.lock` |
-| `gk_names.py` | the stem of every name the package declares, before the Go emitter spells it |
-| `gk_go.py` | the Go emitter |
-| `gkgen.py` | the command line, quarantine, the sample, the reports, the families of what remains |
-| `gk_values.py` | the rules for values: generic objects (`[values] objects`), results, arrays, `Rc` objects, the theme's fields, kit action values, event closures (PROTOCOLS.md 13.8 to 13.12); `gates/accept.py` counts the values nothing accepts |
-| `rdj.py` | rustdoc JSON reader (format 61) |
-| `out/report.md` | counts by reason, compiler rounds, what was refused and why |
+## Pipeline stages and data flow
 
-Inputs under `../api/`: `rustdoc/` (the extract), `overrides.toml` (the only hand-edited
-input), `opcodes.lock` (append-only), `quarantine.json` (what a compiler refused).
+1. **Extract and strip** (`gen/extract.sh`, `gen/gkgen.py strip`, `gen/rdj.py`):
+   Extracts rustdoc JSON (format version 61) for `gpui`, `gpui_base`, `gpui_component`, and `gpui_kit`, grafts `#[doc(hidden)]` structs listed in `GRAFTS` (`Editor`), separates doc comments and intra-doc links into `api/rustdoc/docs.json.gz`, drops non-local trait impls (except `From`/`Default`), and writes deterministic `.json.gz` archives.
+2. **Model classification** (`gen/gk_model.py`, plus extensions `gk_app.py`, `gk_values.py`, `gk_overlay.py`, `gk_lists.py`, `gk_editor.py`, `gk_items.py`, `gk_comp6.py`):
+   Loads `api/rustdoc/`, `api/overrides.toml`, and `api/clone.json`. Classifies every public type, trait, and function into nodes, states, library objects, unit enums, data enums, records, `Into` sets, handler shapes, style tokens, and theme/palette colors. Applies `api/quarantine.json`, prunes unreachable dependencies, and propagates `in`/`out` wire flags. Generation fails if any upstream function hits `norule` (unless `--allow-no-rule`) or if any override entry goes unused.
+3. **Wire numbering and Rust emission** (`gen/gk_rust.py`, `gen/gk_fam.py`, `gen/gk_tests.py`):
+   Assigns append-only numeric IDs in `api/opcodes.lock` (node types >= 256, inherent ops >= 256, trait ops at `0x4000 + (trait_num << 7) + idx`, call ops >= 256, handler shapes >= 64). Emits `codecs.rs`, `style.rs`, `traits.rs`, `calls.rs`, `n_*.rs`, and `mod.rs`, then passes them through `gk_fam.Families.split()` to partition non-core families into `f_<fam>.rs` modules with `extern "C" fn gk_use_<fam>()` hooks for static dead-stripping. Records line-to-item provenance in `gen/out/rust-lines.json`.
+4. **Go emission and package splitting** (`gen/gk_names.py`, `gen/gk_doc.py`, `gen/gk_go.py`, `gen/gk_go_kinds.py`, `gen/gk_go_bridges.py`, `gen/gk_split.py`, `gen/gosplit/`):
+   Assigns collision-free stems (`gpui_component` > `gpui_base` > `gpui` > `gpui_kit`), adapts upstream rustdoc comments (logging omitted Rust-only sentences in `gen/out/doc-rust-only.md`), emits a flat `gk` package in memory plus `s/`, `palette/`, and `theme/`, injects `use<Family>()` hooks for static linking (`gen_use.go` / `gen_use_dyn.go`), and runs `gk_split.Split` + `gen/gosplit` to partition declarations across the acyclic package hierarchy (`internal/rt -> gk -> motion -> table -> editor -> base -> kit -> chart -> overlay -> dock`). Verifies that no Go or Rust string literal cites a `gk.<Name>` that moved out of root `gk`.
+5. **Generated tests and reports** (`gen/gk_tests_go.py`, `gen/gk_apidoc.py`, `gen/gkgen.py report`):
+   Emits `core/tests/go/{gensample/main.go,gen/main.go,app/gen_ambient.go}` and migrates their imports via `gosplit migrate`, refreshes the component index in `docs/API-GO.md`, writes `api/coverage.json`, `api/gk.api.json.gz`, and `gen/out/report.md`, and runs `tools/status.py` to keep `docs/STATUS.md` synchronized.
 
-Two tables of `overrides.toml` belong to the delegate families (PROTOCOLS.md section 9):
-`[instantiate] states` (`"Generic<Arg> as Name"`: a generic entity state instantiated as one
-state type; every method of an impl that holds for `Arg` is classified as a state method of
-`Name`, and the coverage row of the generic counts a function once, bridged when one
-instantiation binds it) and `[shims]` (`"Trait::method" = "where"`: a trait method a
-hand-written shim implements, counted as bridged).
+## Key invariants
 
-## How a function gets its status
+- **Append-only wire numbers**: `api/opcodes.lock` numbers are never renumbered or reused once assigned.
+- **No silent drops**: every upstream item must end up `bound`, `bridged`, `skipped` (with an explicit reason), `todo` (known gap), or `failed` (quarantined); `norule` stops generation.
+- **Unused overrides fail fast**: stale entries in `api/overrides.toml` (`[values]`, `[lists]`, `[editor]`, `[comp6]`, etc.) abort generation so config never rots silently.
+- **Static dead-stripping**: every non-core opcode emitted by generated Go code must trigger its family's `use<Family>()` registration hook; missing links panic loudly at runtime with the missing family name.
 
-- **bound**: a rule generated it and the compilers accepted it; nothing but the tape is
-  involved (constructors, builders, style tokens, colours).
-- **bridged**: generated against a protocol of the runtime (a handler, a fragment or build
-  closure, a state behind a handle, an action). Handlers and state run; actions are not
-  built in the runtime yet (docs/STATUS.md, "Runtime protocols").
-- **skipped**: left out on purpose, with one of the reasons in `SKIP_REASONS`.
-- **failed**: generated and refused by a compiler; the error is in `out/report.md`.
-- **not yet**: no rule fits; the reason names the missing protocol or rule.
+## Helper scripts and data files
 
-To add a rule: teach `Model.desc` the type (it returns a descriptor), teach `Rust.dec` and
-`Go.gtype` / `Go.put` / `Go.rd` the descriptor, run `make gen`, then `gen/round.sh` and
-`make gates-quick`.
+- `gen/extract.sh`: runs `cargo doc` with rustdoc JSON output for public and hidden passes into `gen-json/`.
+- `gen/check.sh`: runs `cargo check --release --locked -p gk-capi` and writes `gen/out/build.check.log`.
+- `gen/round.sh`: loops `gen/check.sh` and `gkgen.py quarantine rust` to isolate failing items when updating upstream crate pins.
+- `api/overrides.toml`: hand-maintained instantiations, skips, runtime shims, and Go naming rules.
+- `api/opcodes.lock`: append-only wire opcode registry; never edit or reorder existing numbers by hand.
+- `api/clone.json`: `Clone` struct inventory generated by `tools/clone_scan.py`.
+- `api/quarantine.json`: items temporarily excluded after compiler errors; stale entries are pruned automatically.

@@ -10,12 +10,12 @@ import (
 // Clamp a size into the range this dock may occupy: never below `PANEL_MIN_SIZE`, and never so
 // large it would squeeze the opposite dock (if any) below `PANEL_MIN_SIZE` either. The
 // `.max(PANEL_MIN_SIZE)` on the computed maximum matters when the area itself is narrower than
-// both minimums combined — it keeps the clamp range non-empty.
+// both minimums combined - it keeps the clamp range non-empty.
 //
 // `DockPlacement::Center` constrains nothing, so it hands the size back unchanged. See
 // `SizeFromPointer` for why that variant is answered rather than rejected.
 //
-// BaseDockSizingClamp is (|value: gpui_kit::base::dock::DockSizing, size| <gpui_kit::base::dock::DockSizing>::clamp(&value, size)).
+// BaseDockSizingClamp calls (|value: gpui_kit::base::dock::DockSizing, size| <gpui_kit::base::dock::DockSizing>::clamp(&value, size)).
 func BaseDockSizingClamp(cx *gk.Cx, value Sizing, size float32) float32 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1657)
@@ -33,7 +33,7 @@ func BaseDockSizingClamp(cx *gk.Cx, value Sizing, size float32) float32 {
 // application over it. `axis` resolves the same variant the same way, silently rather than by
 // panicking.
 //
-// BaseDockSizingSizeFromPointer is (|value: gpui_kit::base::dock::DockSizing, pointer| <gpui_kit::base::dock::DockSizing>::size_from_pointer(&value, pointer)).
+// BaseDockSizingSizeFromPointer calls (|value: gpui_kit::base::dock::DockSizing, pointer| <gpui_kit::base::dock::DockSizing>::size_from_pointer(&value, pointer)).
 func BaseDockSizingSizeFromPointer(cx *gk.Cx, value Sizing, pointer gk.GpuiPoint) float32 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1658)
@@ -50,12 +50,12 @@ func BaseDockSizingSizeFromPointer(cx *gk.Cx, value Sizing, pointer gk.GpuiPoint
 // `DockArea::add_panel_view(panel_handle(story), ..)`, and the closure a `register_panel` builder
 // returns.
 //
-// Base's own `DockLayout::panel` and `DockArea::add_panel` also accept a panel — a
-// `gpui_component::dock::Panel` is a `gpui_base::dock::Panel` — but they store the bare entity,
+// Base's own `DockLayout::panel` and `DockArea::add_panel` also accept a panel - a
+// `gpui_component::dock::Panel` is a `gpui_base::dock::Panel` - but they store the bare entity,
 // and a skin cannot recover presentation from one. Such a panel still docks, drags and persists;
 // it just draws its `panel_name` where its title would be.
 //
-// KitPanelHandle is gpui_kit::component::dock::panel_handle.
+// KitPanelHandle calls gpui_kit::component::dock::panel_handle.
 func KitPanelHandle(cx *gk.Cx, panel Panel) Panel {
 	rt.UseComponentDock()
 	o := rt.NewReq(1591)

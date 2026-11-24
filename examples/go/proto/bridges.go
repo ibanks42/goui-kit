@@ -1,11 +1,6 @@
+// Smoke tests for hand-written bridges: dock panels, layout save/restore, dock renderers,
+// table/tree/virtual-list sources, editor providers, motion wrappers, and app menus.
 package main
-
-// Smoke tests of the Go package's hand-written bridges (go/gk/rt_dock.go, rt_table.go,
-// rt_motion.go, rt_kit.go, rt_select.go, rt_editor.go), alongside core/tests/go/overlay (the
-// dock's skin, ids and saved layouts) and core/tests/go/rows (tables). gates/go-proto.sh checks the
-// lines they print (the bridge-* modes).
-//
-//	GK_PROTO=bridge-dock | bridge-kit
 
 import (
 	"fmt"
@@ -51,7 +46,6 @@ type bridges struct {
 	t0        time.Duration
 }
 
-// runBridges runs a bridge-* mode; false for any other mode.
 func runBridges(mode string) bool {
 	if !strings.HasPrefix(mode, "bridge-") {
 		return false
@@ -74,8 +68,6 @@ func (b *bridges) start(cx *gk.Cx) {
 	}
 	gk.OpenWindow(cx, "bridges", 640, 480, b.root)
 }
-
-// --- the dock: the skin's settings, ids, the pane tree, a saved layout --------------------------
 
 func (b *bridges) body(i int) func(cx *gk.Cx) gk.Element {
 	return func(cx *gk.Cx) gk.Element {
@@ -135,7 +127,6 @@ func (b *bridges) dockFrame(cx *gk.Cx) {
 	b.frame++
 	switch b.frame {
 	case 2:
-		// The skin's settings, buffered, then read back (PROTOCOLS.md 11.8; DockSkin).
 		gkdock.SetDockSkinPanelStyle(cx, b.dock, gkdock.PanelStyleTabBar)
 		gkdock.SetDockSkinToggleButtonVisible(cx, b.dock, false)
 		gkdock.SetDockSkinCloseButtonVisible(cx, b.dock, false)
@@ -185,8 +176,6 @@ func (b *bridges) dockFrame(cx *gk.Cx) {
 		fmt.Printf("bridges dock builds=%d\n", b.builds)
 	}
 }
-
-// --- the kit: a table, a tree, a virtual list, motion, Kbd, the code editor, select rules ------
 
 func (b *bridges) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	b.cells++

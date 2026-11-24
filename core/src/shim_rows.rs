@@ -1,29 +1,32 @@
-//! Delegate shims of the rows family: the kit's `ListDelegate`, `TableDelegate` and
-//! the tree's render closure, each answered from a row source (docs/PROTOCOLS.md section 9.5;
-//! the shared core is core/src/source.rs). Call ops 48 to 63, shapes 16 to 19. App code never
-//! runs from here: a delegate method answers from data the app pushed, draws rows the app
-//! described earlier (a placeholder for one frame when a row has none yet), and turns
-//! everything else into a queued event or a request the app answers later.
+//! Virtualized list, table, and tree delegates backed by row `Source`s.
 //!
-//! The states and elements over these shims are generated: `ListState<GkListDelegate>`,
-//! `TableState<GkTableDelegate>` (overrides.toml `[instantiate] states`, constructed with
-//! `from_source`), `List<GkListDelegate>`, `DataTable<GkTableDelegate>` (`[instantiate] types`),
-//! the tree's closure (`[rows]`: `tree_item`) and `TreeState`. This file holds only what the
-//! generator cannot write: the delegates themselves and the data ops.
-//!
-//! - **List** (`GkListDelegate`, `type Item = ListItem`): row `(section, row)` is key
-//!   `section << 32 | row`; a section's header and footer are rows `HEADER_ROW` and
-//!   `HEADER_ROW + 1` of it. A row's view describes a `ListItem`, decoded here into the value
-//!   the list then marks selected, so selection styling stays the kit's.
-//! - **Table** (`GkTableDelegate`): each row is one decoded row in section 0 (`key = row`),
-//!   whose tape root is `N_TABLE_CELLS` holding all columns' cell subtrees in column id order
-//!   (stable when the user moves a column). No GPUI view entity is created per row or cell;
-//!   `render_td` decodes each cell directly from the row's cached tape, and the rows beside the
-//!   visible ones are bound ahead (`source::table_bind_ahead`), so a steady scroll draws no
-//!   placeholder.
-//! - **Tree** (`tree_item`): row `ix` is the tree's flat entry `ix`; its view describes a
-//!   `ListItem` and reads the entry with `TREE_ENTRY` (a dependency: the row is described again
-//!   when the tree changes).
+//! Host code populates row tapes lazily through `crate::source`. This module
+//! adapts those row sources to gpui-kit's `ListDelegate`, `TableDelegate`, and
+//! `TreeState` callbacks, handling:
+//! - **Lists (`GkListDelegate`)**: section headers (`HEADER_ROW`) and footers
+//!   (`HEADER_ROW + 1`), custom empty/loading/initial auxiliary views mounted via
+//!   [`adopt`], host-driven async search (`LE_SEARCH` via `source::request`),
+//!   and infinite-scroll pagination (`LE_LOAD_MORE`).
+//! - **Tables (`GkTableDelegate`) and `N_TABLE_CELLS`**:
+//!   - Every row tape encodes an `N_TABLE_CELLS` root containing one child node
+//!     per logical column. `Tape::parse` pre-decodes plain `Label` and `N_TEXT`
+//!     cells into `Tape::table_cells` so `render_td` avoids creating a `Dx` per
+//!     cell on scroll.
+//!   - `render_tr` resets the single-row cache (`CurRow`) and invokes `bind_ahead`;
+//!     the first `render_td` call for that row fetches the `Rc<Tape>` once and all
+//!     remaining columns in that row reuse it directly.
+//!   - Visual column reordering updates `order: Vec<usize>` (visual position ->
+//!     logical column ID) so `render_td`, `cell_text`, `fit_column`, and
+//!     `perform_sort` always address the host's original logical column index.
+//!   - `bind_ahead` remembers `(rows_epoch, covered_range)` in `asked` and merges
+//!     overlapping prefetch ranges within the same epoch, avoiding redundant calls
+//!     into `source::table_bind_ahead` while the viewport stays within the 2x margin.
+//!   - Per-row context menus wrap a cell (or list/tree row root) in `N_ROW_MENU(child, menu)`:
+//!     normal rendering unwraps `child`, while `context_menu` locates `N_ROW_MENU`
+//!     and applies its popup-menu ops.
+//! - **Trees**: [`build_tree`] reconstructs nested `TreeItem`s from a flat pre-order
+//!   `(id, label, depth, flags)` wire stream, while [`tree_item`] and [`tree_menu`]
+//!   bind decoded row sources to `Tree` callbacks.
 
 use crate::generated;
 use crate::genapi::{self, Call, Dx, GkErr, GkResult, Put, R};
@@ -46,25 +49,25 @@ use std::collections::HashMap;
 use std::ops::Range;
 use std::rc::Rc;
 
-// --- what the app pushes besides rows ------------------------------------------------------
-
-/// What a delegate shows or reports besides its rows: data the app pushed (`ROWS_DATA`).
+/// Shared display and pagination options applied to either `GkListDelegate` or
+/// `GkTableDelegate` via `C_ROWS_DATA`.
 #[derive(Clone)]
 pub struct Extras {
-    /// `loading()`: the kit shows the loading view instead of the rows.
+    /// Whether the list or table is currently showing its loading state.
     loading: bool,
-    /// `has_more()` and `load_more_threshold()`: when the kit asks for more rows.
+    /// Whether additional pages can be loaded via `load_more`.
     has_more: bool,
+    /// Remaining-row threshold at which `load_more` fires.
     threshold: usize,
-    /// Views the app made for the empty, loading and initial states; 0: upstream's.
+    /// Optional host view handles for empty, loading, and initial states (`0` = default).
     empty: u64,
     loading_view: u64,
     initial: u64,
-    /// Tables: report the visible rows and columns as events (one per change while scrolling).
+    /// When true, emit `TE_VISIBLE_ROWS` and `TE_VISIBLE_COLUMNS` events to the host.
     visible_events: bool,
-    /// Lists: the height of a placeholder row (the rows' own height).
+    /// Fallback height in pixels for uncached list row placeholders.
     placeholder_h: f32,
-    /// Lists: draw each section's header and footer row (rows HEADER_ROW and HEADER_ROW + 1).
+    /// Enable section headers (`HEADER_ROW`) and footers (`HEADER_ROW + 1`) on lists.
     headers: bool,
     footers: bool,
 }
@@ -86,7 +89,7 @@ impl Default for Extras {
     }
 }
 
-/// A view the app gave as data, drawn by the kit: None when unset or released.
+/// Resolves an optional view handle (`0` means absent) into an `AnyView`.
 fn app_view(h: u64) -> Option<AnyView> {
     if h == 0 {
         return None;
@@ -94,12 +97,13 @@ fn app_view(h: u64) -> Option<AnyView> {
     rt::with(|s| s.view(h)).ok().map(Into::into)
 }
 
-/// The window a source draws in (a handle of kind WINDOW).
+/// Returns the window handle that owns row source `src`.
 fn source_window(src: u64) -> Option<u64> {
     rt::with(|s| s.source_mut(src).ok().map(|x| x.window))
 }
 
-/// Rows in section `section` of a source a view still draws; a released source stops.
+/// Returns the item count for `section` in `src`, aborting the app if `src`
+/// was already released while still displayed.
 fn count(src: u64, section: u32) -> usize {
     match source::count(src, section) {
         Ok(n) => n,
@@ -107,9 +111,7 @@ fn count(src: u64, section: u32) -> usize {
     }
 }
 
-// --- lists -----------------------------------------------------------------------------------
-
-/// List_Event kinds (shape LIST_EVENT): the `kind` field of the app's record.
+// Wire event kind tags sent on `SHAPE_LIST_EVENT`.
 const LE_SELECT: u16 = 0;
 const LE_RIGHT_CLICK: u16 = 1;
 const LE_CONFIRM: u16 = 2;
@@ -117,23 +119,23 @@ const LE_CANCEL: u16 = 3;
 const LE_LOAD_MORE: u16 = 4;
 const LE_SEARCH: u16 = 5;
 
-/// An index as the List_Event record carries it (Base_Index_Path: section, row, column).
 fn index(ix: Option<IndexPath>) -> Option<(usize, usize, usize)> {
     ix.map(|i| (i.section, i.row, i.column))
 }
 
-/// A list event, queued for the app: `(u64 id, u16 kind, opt<index>, bool secondary, str query)`.
 fn list_event(src: u64, kind: u16, ix: Option<IndexPath>, secondary: bool, cx: &mut App) {
     source::event(src, SHAPE_LIST_EVENT, &(0u64, (kind, index(ix), secondary, "")), cx);
 }
 
-/// The `ListDelegate` over a row source.
+/// `ListDelegate` backed by a row `Source` identified by `src`.
 pub struct GkListDelegate {
     pub src: u64,
     x: Extras,
 }
 
 impl GkListDelegate {
+    /// Creates a list delegate bound to row source `src` and marks the source
+    /// as tape-decoded (rows are parsed as `ListItem` tapes rather than views).
     pub fn from_source(src: u64) -> GkResult<Self> {
         source::count(src, 0)?;
         source::set_decoded(src);
@@ -144,12 +146,12 @@ impl GkListDelegate {
     }
 }
 
-/// The row `key` of `src` as the `ListItem` its view describes, or a placeholder row of height
-/// `h` while it has no view (one frame after a far jump).
+/// Decodes a cached row tape into a `ListItem`, unwrapping `N_ROW_MENU` if
+/// present, or returns a blank placeholder item of height `h` while loading.
 fn row_item(src: u64, key: u64, h: f32, window: &mut Window, cx: &mut App) -> ListItem {
     if let Some((tape, view)) = source::row_tape(src, key, window, cx) {
         let item = genapi::with_tape(&tape, view, window, cx, |dx: &mut Dx, root| {
-            let root = menu_child(dx, root); // a row with a menu (PROTOCOLS.md 11.24)
+            let root = menu_child(dx, root);
             generated::build_component_list_item(dx, root)
         });
         if let Some(item) = item {
@@ -159,8 +161,6 @@ fn row_item(src: u64, key: u64, h: f32, window: &mut Window, cx: &mut App) -> Li
     ListItem::new(("gk-row-placeholder", key as usize)).child(div().h(px(h)))
 }
 
-/// A delegate read back (`ListState::delegate`, `TableState::delegate`): the row source it is
-/// made over, which is what the app holds (docs/PROTOCOLS.md section 9.10).
 impl genapi::Wire for GkListDelegate {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u64(self.src);
@@ -173,7 +173,6 @@ impl genapi::Wire for GkTableDelegate {
     }
 }
 
-// `delegate_mut` hands out `&mut D`.
 impl genapi::Wire for &mut GkListDelegate {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u64(self.src);
@@ -189,7 +188,6 @@ impl genapi::Wire for &mut GkTableDelegate {
 impl ListDelegate for GkListDelegate {
     type Item = ListItem;
 
-    /// A request: the app answers it (`gk.answer`) after it has set the new counts.
     fn perform_search(
         &mut self,
         query: &str,
@@ -324,7 +322,7 @@ impl ListDelegate for GkListDelegate {
     }
 }
 
-/// Upstream's `render_empty` (ListDelegate and TableDelegate): an inbox icon.
+/// Default empty-state view when the host has not supplied `Extras::empty`.
 fn empty_default(cx: &App) -> AnyElement {
     h_flex()
         .size_full()
@@ -334,7 +332,7 @@ fn empty_default(cx: &App) -> AnyElement {
         .into_any_element()
 }
 
-/// Upstream's list `Loading` (list/loading.rs, private there): three skeleton rows.
+/// Default skeleton placeholder when the host has not supplied `Extras::loading_view`.
 fn list_loading_default() -> AnyElement {
     let item = || {
         ListItem::new("skeleton").disabled(true).child(
@@ -354,19 +352,13 @@ fn list_loading_default() -> AnyElement {
         .into_any_element()
 }
 
-// --- tables ----------------------------------------------------------------------------------
-
-/// Table_Delegate_Event kinds (shape TABLE_EVENT): the `kind` field of the app's record. The
-/// table's own events (selection, double clicks, widths) are TableState's, subscribed to with
-/// the generated `on_table_event`.
+// Wire event kind tags sent on `SHAPE_TABLE_EVENT`.
 const TE_SORT: u16 = 0;
 const TE_MOVE_COLUMN: u16 = 1;
 const TE_VISIBLE_ROWS: u16 = 2;
 const TE_VISIBLE_COLUMNS: u16 = 3;
 const TE_LOAD_MORE: u16 = 4;
 
-/// A table event, queued for the app: `(u64 id, u16 kind, u64 row, u64 col, u64 to, u16 sort)`.
-/// Columns are the app's column ids.
 fn table_event(src: u64, kind: u16, row: usize, col: usize, to: usize, sort: u16, cx: &mut App) {
     let payload = (0u64, (kind, row as u64, col as u64, to as u64), sort);
     source::event(src, SHAPE_TABLE_EVENT, &payload, cx);
@@ -380,54 +372,53 @@ fn sort_num(s: ColumnSort) -> u16 {
     }
 }
 
-/// Cached tape of the row currently being rendered by `DataTable`, cleared in `render_tr` so
-/// columns `1..cols` of the same row avoid repeated session lookups and `Rc` clones.
+/// Single-row tape cache populated on the first `render_td` call for a row and
+/// reused across all remaining columns in that row.
 enum CurRow {
     Empty,
     Missing(usize),
     Found(usize, Rc<Tape>, u64),
 }
 
-/// The `TableDelegate` over a row source whose rows each hold all columns' cells in one
-/// `N_TABLE_CELLS` tape.
+/// `TableDelegate` backed by a row `Source` where each row tape encodes an
+/// `N_TABLE_CELLS` container of per-column cells.
 pub struct GkTableDelegate {
     pub src: u64,
+    /// Column definitions indexed by logical column id.
     columns: Vec<Column>,
-    /// Position to column id: the order the user has moved the columns into.
+    /// Maps visual column position `col_ix` to logical column id in `columns`.
     order: Vec<usize>,
     x: Extras,
     watched: bool,
-    /// The rows `bind_ahead` last asked for and the frame it asked in: they are bound before the
-    /// next frame, so asking again for rows inside them in the same frame is skipped.
+    /// Last `(rows_epoch, prefetched_range)` requested via `bind_ahead`.
     asked: (u64, Range<usize>),
     cur_row: CurRow,
-    /// What the app pushed besides cells (TABLE_TEXTS, TABLE_ROW_LABELS, TABLE_LOOK).
     look: Look,
 }
 
-/// A table's texts and looks, pushed by the app (docs/PROTOCOLS.md section 9.10). Columns are
-/// the app's column ids (stable when the user moves a column).
+/// Optional visual and accessibility metadata configured by `C_TABLE_TEXTS`,
+/// `C_TABLE_ROW_LABELS`, and `C_TABLE_LOOK`.
 #[derive(Default)]
 struct Look {
-    /// A cell's text: `cell_text` (copying), and its screen-reader label `cell_label`.
+    /// Plain cell text indexed by `(row_ix, logical_col_id)` for copy/a11y.
     texts: HashMap<(usize, usize), SharedString>,
-    /// A row's screen-reader name; upstream's default (its cells' labels) when absent.
+    /// Explicit per-row accessible labels overriding the joined cell labels.
     row_labels: HashMap<usize, SharedString>,
-    /// `fit_column`: the width a double click on the column's resize handle gives.
+    /// Preferred auto-fit column widths keyed by logical column id.
     fit: HashMap<usize, f32>,
-    /// `group_headers`, levels from the top.
+    /// Multi-level column group headers, if configured.
     groups: Option<Vec<Vec<ColumnGroup>>>,
-    /// Views drawn as a group header cell, by the group's label (`render_group_th`).
+    /// Optional custom views for column group header cells, keyed by label.
     group_views: HashMap<SharedString, u64>,
-    /// `render_last_empty_col`: a view in place of upstream's 12 px filler (0: upstream's).
+    /// Optional custom view handle for the trailing empty column.
     last_col: u64,
-    /// Styles over upstream's header row and body rows (`render_header`, `render_tr`).
     header_style: Option<StyleRefinement>,
     row_style: Option<StyleRefinement>,
 }
 
 impl GkTableDelegate {
-    /// The delegate over `src`, with the columns given for it (TABLE_SOURCE_COLUMNS).
+    /// Creates a table delegate for `src`, adopting any columns staged earlier
+    /// by `C_TABLE_SOURCE_COLUMNS` or `source_columns`.
     pub fn from_source(src: u64) -> GkResult<Self> {
         source::count(src, 0)?;
         source::set_decoded(src);
@@ -451,6 +442,7 @@ impl GkTableDelegate {
         self.cur_row = CurRow::Empty;
     }
 
+    /// Translates a visual column position into its logical column id.
     fn id(&self, pos: usize) -> usize {
         self.order.get(pos).copied().unwrap_or(pos)
     }
@@ -459,8 +451,8 @@ impl GkTableDelegate {
         source::key(0, row as u32)
     }
 
-    /// Binds rows before they are drawn: when the row two screens past `rows` (or before it) has
-    /// no tape, asks for two screens behind and two more screens ahead in one ROWS turn.
+    /// Prefetches row tapes around `rows` with a 2x margin (minimum 24 rows)
+    /// whenever the current `rows_epoch` or cached window no longer covers it.
     fn bind_ahead(&mut self, rows: Range<usize>, window: &mut Window, cx: &mut Context<TableState<Self>>) {
         if self.columns.is_empty() || rows.is_empty() {
             return;
@@ -473,6 +465,7 @@ impl GkTableDelegate {
             return;
         }
         if let Some(asked) = source::table_bind_ahead(self.src, rows, window, cx) {
+            // Merge overlapping or adjacent prefetch ranges within the same epoch.
             if self.asked.0 == asked.0 && asked.1.start <= self.asked.1.end && self.asked.1.start <= asked.1.end {
                 self.asked.1 = self.asked.1.start.min(asked.1.start)..self.asked.1.end.max(asked.1.end);
             } else {
@@ -481,6 +474,7 @@ impl GkTableDelegate {
         }
     }
 
+    /// Registers the table entity as an observer of `self.src` once.
     fn watch(&mut self, cx: &mut Context<TableState<Self>>) {
         if !self.watched {
             self.watched = true;
@@ -521,7 +515,6 @@ impl TableDelegate for GkTableDelegate {
         _: &mut Window,
         _: &mut Context<TableState<Self>>,
     ) -> impl IntoElement {
-        // Upstream's default: the column's name.
         let name = self.columns.get(self.id(col_ix)).map(|c| c.name.clone()).unwrap_or_default();
         div().w_full().child(name)
     }
@@ -550,6 +543,7 @@ impl TableDelegate for GkTableDelegate {
         let col_id = self.id(col_ix);
         if let Some(cells) = &tape.table_cells {
             if let Some(cell) = cells.get(col_id) {
+                // Fast path: plain Label/Text cells skip full tape decoding.
                 return match cell {
                     TableCell::Label(s) => genapi::timed_decode(|| Label::new(s.clone()).into_any_element()),
                     TableCell::Text(s) => genapi::timed_decode(|| s.clone().into_any_element()),
@@ -595,7 +589,6 @@ impl TableDelegate for GkTableDelegate {
         _: &mut Window,
         _: &mut Context<TableState<Self>>,
     ) -> impl IntoElement {
-        // The app's view, or nothing: upstream's skeleton table is private to the kit.
         match app_view(self.x.loading_view) {
             Some(v) => v.into_any_element(),
             None => div().size_full().into_any_element(),
@@ -626,7 +619,7 @@ impl TableDelegate for GkTableDelegate {
         if let Some(l) = self.look.row_labels.get(&row_ix) {
             return Some(l.clone());
         }
-        // Upstream's default: the row's cell labels, joined with commas.
+        // Fall back to joining non-empty cell labels in visual column order.
         let parts: Vec<SharedString> = (0..self.columns_count(cx)).filter_map(|c| self.cell_label(row_ix, c, cx)).collect();
         (!parts.is_empty()).then(|| parts.iter().map(|p| p.as_ref()).collect::<Vec<&str>>().join(", ").into())
     }
@@ -650,7 +643,6 @@ impl TableDelegate for GkTableDelegate {
         if let Some(v) = self.look.group_views.get(label).and_then(|v| app_view(*v)) {
             return div().w(width).h_full().flex_shrink_0().child(v).into_any_element();
         }
-        // Upstream's default: the label centred, a border on the right.
         div()
             .w(width)
             .h_full()
@@ -674,6 +666,7 @@ impl TableDelegate for GkTableDelegate {
 
     fn render_tr(&mut self, row_ix: usize, window: &mut Window, cx: &mut Context<TableState<Self>>) -> Stateful<Div> {
         self.watch(cx);
+        // Reset the single-row cache before cells of `row_ix` are rendered.
         self.cur_row = CurRow::Empty;
         self.bind_ahead(row_ix..row_ix + 1, window, cx);
         let mut d = div().id(("row", row_ix));
@@ -683,8 +676,6 @@ impl TableDelegate for GkTableDelegate {
         d
     }
 
-    /// The menu a cell of the row describes (`gk.row_menu` at a cell's root, the first column that
-    /// has one), PROTOCOLS.md 11.24.
     fn context_menu(
         &mut self,
         row_ix: usize,
@@ -708,9 +699,6 @@ impl TableDelegate for GkTableDelegate {
         window: &mut Window,
         cx: &mut Context<TableState<Self>>,
     ) {
-        // Bind rows before they are drawn while the table scrolls (`bind_ahead`; the rows the
-        // table draws ask too, from `render_td`). A far jump still shows placeholders for one
-        // frame.
         self.bind_ahead(visible.clone(), window, cx);
         if self.x.visible_events {
             table_event(self.src, TE_VISIBLE_ROWS, visible.start, 0, visible.end, 0, cx);
@@ -729,9 +717,7 @@ impl TableDelegate for GkTableDelegate {
     }
 }
 
-/// One column as gk.Table_Column writes it: str key, str name, u16 align, opt<u16> sort,
-/// opt<[4]f32> paddings (top, right, bottom, left), f32 width, opt<u16> fixed, bool resizable,
-/// bool movable, bool selectable, f32 min_width, f32 max_width.
+/// Decodes a single `Column` definition from the wire stream.
 fn read_column(r: &mut R) -> Column {
     let key = SharedString::from(r.str().to_owned());
     let name = SharedString::from(r.str().to_owned());
@@ -782,15 +768,14 @@ fn read_columns(r: &mut R) -> Vec<Column> {
     (0..n).map(|_| read_column(r)).collect()
 }
 
-/// Columns given as the kit's own `Column` values (`TABLE_COLUMN_VALUES`, core/src/objects.rs,
-/// PROTOCOLS.md 13.6): for the table state about to be made over `src`.
+/// Stages columns for row source `src` prior to `GkTableDelegate::from_source`.
 pub(crate) fn source_columns(src: u64, columns: Vec<Column>) -> GkResult<()> {
     source::count(src, 0)?;
     SOURCE_COLUMNS.with(|m| m.borrow_mut().insert(src, columns));
     Ok(())
 }
 
-/// The same for a table state that exists: replaces its columns (as TABLE_SET_COLUMNS).
+/// Replaces columns on an existing `TableState<GkTableDelegate>` entity and refreshes it.
 pub(crate) fn state_columns(h: u64, c: &mut genapi::Call, columns: Vec<Column>) -> GkResult<()> {
     genapi::state_update_cx::<TableOf>(h, c, move |s, cx| {
         s.delegate_mut().set_columns(columns);
@@ -800,35 +785,30 @@ pub(crate) fn state_columns(h: u64, c: &mut genapi::Call, columns: Vec<Column>) 
 }
 
 thread_local! {
-    /// Columns given with a row source before its table state is made (TABLE_SOURCE_COLUMNS),
-    /// taken by `GkTableDelegate::from_source`.
+    /// Staging map holding initial columns set on a source before the table
+    /// delegate is constructed.
     static SOURCE_COLUMNS: RefCell<HashMap<u64, Vec<Column>>> = RefCell::new(HashMap::new());
 }
 
-// --- trees -----------------------------------------------------------------------------------
-
-/// The tree's render closure over a row source: entry `ix` is row `ix`, whose view describes
-/// a `ListItem` (it reads its entry with TREE_ENTRY, so it is described again when the tree
-/// changes). The tree marks it selected and disabled itself.
+/// Builds a tree row-renderer closure backed by row source `src`.
 pub fn tree_item(
     src: u64,
 ) -> impl Fn(usize, &TreeEntry, bool, &mut Window, &mut App) -> ListItem + 'static {
     source::set_decoded(src);
     move |ix, _entry, _selected, window, cx| {
-        // The entity that draws the rows is the tree state's view, being drawn now.
         source::watch(src, window.current_view());
         row_item(src, source::key(0, ix as u32), 0., window, cx)
     }
 }
 
-/// u32 n, then (str id, str label, u32 depth, u8 flags) each.
+/// Decodes flat pre-order tree rows: `(id: str, label: str, depth: u32, flags: u8)`.
 fn read_flat(r: &mut R) -> Vec<(String, String, u32, u8)> {
     let n = r.u32();
     (0..n).map(|_| (r.str().to_owned(), r.str().to_owned(), r.u32(), r.u8())).collect()
 }
 
-/// Builds the tree from a depth-first list of (id, label, depth, flags), flags 1 expanded, 2
-/// disabled.
+/// Reconstructs nested `TreeItem` hierarchies from a flat pre-order slice of
+/// `(id, label, depth, flags)` tuples (`flags & 1` = expanded, `flags & 2` = disabled).
 fn build_tree(flat: &[(String, String, u32, u8)]) -> Vec<TreeItem> {
     fn level(flat: &[(String, String, u32, u8)], at: &mut usize, depth: u32) -> Vec<TreeItem> {
         let mut out = Vec::new();
@@ -847,7 +827,7 @@ fn build_tree(flat: &[(String, String, u32, u8)]) -> Vec<TreeItem> {
     }
     let mut at = 0;
     let mut out = level(flat, &mut at, 0);
-    // A depth that jumps by more than one, or rows left over: the rest at the top level.
+    // Recover gracefully if the host omitted depth 0 or jumped depths.
     while at < flat.len() {
         let d = flat[at].2;
         out.extend(level(flat, &mut at, d));
@@ -855,10 +835,8 @@ fn build_tree(flat: &[(String, String, u32, u8)]) -> Vec<TreeItem> {
     out
 }
 
-// --- elements ------------------------------------------------------------------------------
-
-/// The family's element nodes: ROW_MENU (PROTOCOLS.md 11.24) and TABLE_CELLS; List, DataTable
-/// and Tree are generated over the shims.
+/// Decodes helper tape nodes `N_ROW_MENU` (renders its inner child, ignoring
+/// the attached menu subtree) and `N_TABLE_CELLS` (empty fallback if rendered directly).
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
     match ty {
         N_ROW_MENU => {
@@ -870,8 +848,8 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
     }
 }
 
-/// Context menu for a table row whose tape root is `N_TABLE_CELLS`: applies the menu of the first
-/// cell whose root is `N_ROW_MENU`.
+/// Populates a table row's context menu by scanning its `N_TABLE_CELLS` children
+/// for the first `N_ROW_MENU` wrapper and applying its popup-menu ops.
 fn table_row_menu(
     src: u64,
     key: u64,
@@ -903,20 +881,14 @@ fn table_row_menu(
     })
 }
 
-// --- per-row menus (docs/PROTOCOLS.md 11.24) ---------------------------------------------------
-
-/// Node ROW_MENU (`gk.row_menu(el, menu)`): u32 child node, u32 menu node (a described PopupMenu,
-/// 11.6). It draws as its child; the menu is the row's, described with the row ahead of the
-/// right-click that opens it. The child node of a ROW_MENU root, else the root.
+/// Unwraps `N_ROW_MENU` to return its inner row element node id.
 fn menu_child(dx: &mut Dx, root: u32) -> u32 {
     let (ty, args, _) = dx.node(root);
     if ty == N_ROW_MENU { dx.args(args).u32() } else { root }
 }
 
-/// The menu the first of `keys` whose view's root is a ROW_MENU describes, applied to the menu
-/// upstream hands in (its ops, as a view-built menu's are, 11.6), so its handlers are the row
-/// view's. A row with no view yet, or none with a menu, leaves the menu as upstream made it (empty:
-/// upstream opens nothing). Called when the row is right-clicked: never while a frame is drawn.
+/// Populates a `PopupMenu` from the first key in `keys` whose row tape has an
+/// `N_ROW_MENU` root node.
 pub fn row_menu(
     src: u64,
     keys: impl IntoIterator<Item = u64>,
@@ -947,18 +919,15 @@ pub fn row_menu(
     menu
 }
 
-/// `Tree::context_menu`'s closure over the tree's row source (`[rows]` in overrides.toml): the
-/// menu row `ix`'s view describes (`row_menu`).
+/// Builds a tree context-menu callback backed by row source `src`.
 pub fn tree_menu(
     src: u64,
 ) -> impl Fn(usize, &TreeEntry, gpui_kit::component::menu::PopupMenu, &mut Window, &mut Context<'_, TreeState>) -> gpui_kit::component::menu::PopupMenu + 'static {
     move |ix, _entry, menu, window, cx| row_menu(src, [source::key(0, ix as u32)], menu, window, cx)
 }
 
-// --- call ops --------------------------------------------------------------------------------
-
-/// Makes `view` (a view the app gave as data) drawn in the source's window: it is described
-/// before the next frame like any view.
+/// Mounts an auxiliary view handle into the window owning `src` and marks it
+/// dirty if it has not yet received an initial tape.
 fn adopt(view: u64, src: u64, c: &mut Call) {
     if view == 0 {
         return;
@@ -976,9 +945,8 @@ fn adopt(view: u64, src: u64, c: &mut Call) {
     }
 }
 
-/// ROWS_DATA after the state handle: u8 flags (1 loading, 2 has_more, 4 visible events, 8
-/// section headers, 16 section footers), u64 threshold, u64 empty view, u64 loading view, u64
-/// initial view, f32 placeholder height. Views are 0 for upstream's.
+/// Decodes `Extras` from `C_ROWS_DATA` (`flags: u8`, `threshold: u64`,
+/// `empty: u64`, `loading_view: u64`, `initial: u64`, `placeholder_h: f32`).
 fn read_extras(r: &mut R) -> Extras {
     let flags = r.u8();
     Extras {
@@ -998,11 +966,11 @@ fn read_extras(r: &mut R) -> Extras {
 type ListOf = ListState<GkListDelegate>;
 type TableOf = TableState<GkTableDelegate>;
 
-/// The family's call ops; None: not one of them.
+/// Dispatches list, table, and tree call opcodes, falling through to `shim_select::call`.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_ROWS_DATA => (|| {
-            // u64 list or table state, the delegate's data (read_extras).
+            // Applies `Extras` to either a `ListState` or `TableState` handle.
             let h = r.u64();
             let x = read_extras(r);
             if let Ok(list) = genapi::state::<ListOf>(h) {
@@ -1026,7 +994,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             })
         })(),
         C_TABLE_SOURCE_COLUMNS => (|| {
-            // u64 source, columns: the columns of the table state about to be made over it.
+            // Stages initial columns on a source before TableState creation.
             let src = r.u64();
             let columns = read_columns(r);
             source::count(src, 0)?;
@@ -1034,8 +1002,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_TABLE_SET_COLUMNS => (|| {
-            // u64 table state, columns. The app re-keys the cells itself (set_count) when the
-            // number of columns changes.
+            // Replaces columns on an existing TableState and refreshes layout.
             let h = r.u64();
             let columns = read_columns(r);
             genapi::state_update_cx::<TableOf>(h, c, move |s, cx| {
@@ -1045,8 +1012,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             })
         })(),
         C_TABLE_TEXTS => (|| {
-            // u64 table state, u8 replace, u64 first row, u32 rows, u32 columns, then rows *
-            // columns str (by column id; an empty text removes the cell's).
+            // Bulk-updates plain cell text for rows `lo .. lo + rows` across `0 .. cols`.
             let (h, replace, lo) = (r.u64(), r.u8() != 0, r.u64() as usize);
             let (rows, cols) = (r.u32() as usize, r.u32() as usize);
             let mut cells = Vec::with_capacity((rows * cols).min(1 << 16));
@@ -1071,7 +1037,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             })
         })(),
         C_TABLE_ROW_LABELS => (|| {
-            // u64 table state, u32 n, (u64 row, str label; empty: upstream's) each.
+            // Sets or clears per-row accessible labels (`empty` string removes the override).
             let h = r.u64();
             let n = r.u32() as usize;
             let mut labels = Vec::with_capacity(n.min(1 << 16));
@@ -1091,9 +1057,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             })
         })(),
         C_TABLE_LOOK => (|| {
-            // u64 table state; u32 n, (u32 column id, f32 fit width) each; u8 has groups, u32
-            // levels, (u32 n, (str label, u64 span) each) each; u32 n, (str label, u64 view) each;
-            // u64 last column view; header style and row style as values (u32 length 0: none).
+            // Updates table fit widths, group headers, custom views, and
+            // optional header/row `StyleRefinement` mini-tapes.
             let h = r.u64();
             let fit: HashMap<usize, f32> = (0..r.u32()).map(|_| (r.u32() as usize, r.f32())).collect();
             let has_groups = r.u8() != 0;
@@ -1111,6 +1076,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                 if n == 0 {
                     return Ok(None);
                 }
+                // Re-prefix the length because `value_arg` expects a length-prefixed slice.
                 let mut whole = Vec::with_capacity(4 + n);
                 whole.extend_from_slice(&(n as u32).to_le_bytes());
                 whole.extend_from_slice(r.bytes(n));
@@ -1131,19 +1097,17 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                 look.last_col = last_col;
                 look.header_style = header_style;
                 look.row_style = row_style;
-                // Upstream's rule after the group headers change.
                 s.refresh_header_layout(cx);
             })
         })(),
         C_TREE_SET_ITEMS => (|| {
-            // u64 tree state, u32 n, (str id, str label, u32 depth, u8 flags) each.
             let h = r.u64();
             let items = build_tree(&read_flat(r));
             genapi::state_update_cx::<TreeState>(h, c, move |s, cx| s.set_items(items, cx))
         })(),
         C_TREE_ENTRY => (|| {
-            // u64 tree state, u64 index -> u8 present, str id, str label, u64 depth, u8 flags
-            // (1 folder, 2 expanded, 4 disabled).
+            // Reads visible entry `ix` from `TreeState`: present u8, id, label,
+            // depth u64, flags u8 (1=folder, 2=expanded, 4=disabled).
             let (h, ix) = (r.u64(), r.u64() as usize);
             let bytes = genapi::state_read::<TreeState, _>(h, c, |s, _| {
                 let mut out = Vec::with_capacity(48);
@@ -1163,8 +1127,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.extend_from_slice(&bytes);
             Ok(())
         })(),
-        // The searchable-list family's ops (core/src/shim_select.rs), asked from here so that the
-        // shared dispatch in calls.rs needs no line of its own.
+
         _ => return crate::shim_select::call(op, r, c),
     })
 }

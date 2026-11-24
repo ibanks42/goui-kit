@@ -1,972 +1,250 @@
-# Design: Go bindings for GPUI-kit
+# Architecture and Design
 
-This document explains how the bindings work and why they are built the way they are. It is
-for people who want to understand or change the binding itself. If you only want to write an
-app, start with [GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) instead.
+This document explains the architectural decisions behind `gpui-kit-bindings`, the alternatives that were evaluated and rejected, the per-frame performance model (including how parity with pure Rust is measured by `gk-meter` and `gates/fps.sh`), the safety and lifetime invariants across the FFI boundary, and the end-to-end code generation pipeline.
 
-The exact runtime contract (every turn, message and rule, as built) is
-[PROTOCOLS.md](PROTOCOLS.md). The Go front end has its own design notes in [GO.md](GO.md).
-What is bound today is counted in [STATUS.md](STATUS.md).
+---
 
-Pinned upstream: gpui-kit 0.11.0, gpui-fast 0.1.19, gpui-pre 0.3.14 (which gpui-kit 0.11.0 pins
-exactly); rustc 1.99.1; rustdoc JSON format 61.
+## 1. Core Architectural Goals
 
-A few words used throughout:
+The binding exposes the full GPUI + GPUI-kit desktop UI stack (over 600 element constructors, 1,600 builder ops, 250 builder trait ops, 1,500 state/object calls, and 3,100 style tokens) to Go applications under four non-negotiable constraints:
 
-- **Tape**: the compact byte buffer an app's view procedure writes to describe its elements.
-  The Rust library turns a tape back into real GPUI-kit elements (section 6).
-- **Turn**: one call from the library into the app, on the UI thread, between frames. All app
-  code runs inside turns (section 7).
-- **Handle**: a 64-bit number that stands for an object living in the Rust library (a kit
-  state, a window, a focus handle). The app holds the number; the object stays in Rust.
-- **Crossing**: one call across the C boundary between the app and the library.
+1. **Zero Rust toolchain and zero C compiler** required for default Go application builds.
+2. **Frame-rate and memory parity** with an equivalent pure-Rust GPUI-kit application (verified within a tight margin by automated gates on real compositors).
+3. **Complete API coverage** derived mechanically from upstream rustdoc metadata so new GPUI-kit releases do not require hand-porting hundreds of widgets.
+4. **Hard safety guarantees** so any misuse in Go produces a clean Go error (`*gk.Error` or `*gk.PanicError`) with source location, never undefined behavior, silent misrendering, or an unhandled Rust panic unwinding across FFI.
 
-## 0. Scope and design choices
+Every major design choice in the repository follows directly from these four constraints.
 
-These choices shape everything below. Where a later section seems to disagree, this one wins.
+---
 
-1. **Styles are tokens.** `gk.VFlex(s.SizeFull, s.Gap2)`: GPUI's styling methods that take
-   no arguments are members of one enum, not thousands of separate methods. Styling methods
-   with arguments stay methods (`.W(gk.Px(120))`).
-2. **A handler marks its view for redraw automatically.** `gk.Quiet(cx)` inside it opts out. A view
-   whose description did not change costs no redraw.
-3. **One frame of placeholder rows after a far scrollbar jump is acceptable**, so that app
-   code never runs in the middle of a frame.
-4. **The default library leaves out tree-sitter syntax grammars, speech and `decimal`.** It is
-   built with the gpui-kit features `gpui-fast` and `syntect` (`syntect` always; `gpui-fast` by
-   default, see choice 9).
-5. **One pinned Go release.** The Go package is tested against one Go release (1.27.3); the CI
-   workflow names it.
-6. **One Rust library, one C interface.** The description of the interface names no
-   language. The Go package is generated from it and may not bend the C interface for its own
-   sake.
-7. **Three platforms: Linux x86-64, macOS (one universal library for Apple silicon and
-   Intel) and Windows x86-64.** Nothing in the C interface, the wire format or either
-   the package's public API is platform-specific. What differs per system sits in one file per
-   platform (`go/gk/internal/rt/rt_thread_{linux,darwin,windows}.go` for the thread id and how messages name the
-   library). All three libraries are built by CI (section 16). The frame-cost and pixel
-   gates run on Linux, where choice 8 is judged; the other platforms run the same code built
-   for their target.
-8. **Frame rate is the pass mark for everything.** A bound app must cost the same as a pure
-   Rust GPUI-kit app, within noise: at most 1.03 times Rust's main-thread CPU per frame plus
-   the measured Rust-against-Rust difference of the same run, for every scene, including
-   scenes that re-describe views on every frame. This is measured by the standing gates
-   (section 18), never assumed. A change whose gate fails is not done.
-9. **gpui-fast is the default engine; upstream GPUI is supported.** The library's `gpui-fast`
-   feature is on by default. `cargo build -p gk-capi --no-default-features` builds the same
-   library on upstream GPUI (gpui-pre 0.3.14) instead. `gk_info` reports which engine a library
-   uses (the `GK_FEAT_GPUI_FAST` bit and its version string), and the packages print it in
-   their diagnostics; neither refuses a library built without gpui-fast. The diagnostic variant
-   needs gpui-fast, because the retention counters it reads exist only there. The frame-cost
-   pass mark (choice 8) is judged on gpui-fast, which is what the published libraries use.
-10. **Go is the front end** on the library and C interface, generated from the description.
-    What Go needs that the interface lacks is added in a language-neutral form. Go's frame
-    cost and rebuild time are measured and reported. Its design is [GO.md](GO.md).
+## 2. Major Design Decisions and Rejected Alternatives
 
-**How progress is counted.** Nothing is hand-written that a rule can generate, nothing is
-tested by eye that a machine can test, and progress is the table in [STATUS.md](STATUS.md):
-per component, the functions in total, bound, bridged, skipped, failed, not attempted and
-verified. The generator rewrites it on every run.
+### 2.1 Seven C Functions + Binary Tape vs. Per-Widget FFI
 
-## 1. The approach in short
+**Decision**: Expose a fixed C ABI of 7 functions (`gk_info_get`, `gk_run`, `gk_headless_run`, `gk_call`, `gk_reply`, `gk_post`, `gk_last_error`) and one callback, and encode element trees into compact, little-endian byte buffers (**tapes**, format `GKT1`).
 
-The binding generates its API from the Rust API, and runs app code only between frames.
+**Rejected alternatives**:
 
-- The generator reads rustdoc's JSON output, classifies every public item by rule (plus one
-  small override file), and lets rustc judge the result: a generated item that does not
-  compile is quarantined with its error.
-- A view is described as a typed tape, which Rust decodes recursively into real GPUI-kit
-  elements, one decode function per type.
-- Handlers fire synchronously with the real `&mut Window` and `&mut App` behind a context
-  token, so they can return values and read true state.
-- Kit state is read with direct calls (generated from the `&self` methods), not mirrored in
-  the app.
-- State builders are chains generated from the `self -> Self` methods.
-- App code never runs inside a draw (not in render, layout, prepaint or paint).
-- A re-described view whose tape is byte-identical to the last one is dropped before
-  anything is notified.
-- Rows come from a row source that the library asks for by range, between frames.
-- Every closure parameter has one of five resolutions (section 12), every public item is
-  either bound or skipped with a reason from a fixed list, and wire numbers are append-only.
+- **One C function per GPUI widget and builder method**: At GPUI-kit's API scale (thousands of constructors and style methods), building a typical 200-element view would require 500 to 1,500 FFI calls per redraw. Even with a fast C trampoline, crossing the boundary hundreds of times per frame adds tens of microseconds of overhead, balloons the exported symbol table, and breaks ABI compatibility whenever upstream adds or changes a method. A tape builds the entire view in pure Go memory (zero FFI calls during view construction) and crosses the boundary once as a flat byte slice.
+- **JSON, Protobuf, or out-of-process IPC (pipes / sockets)**: Text parsing or schema framing per frame cannot match pure Rust at 240 Hz or 1,000 Hz. Out-of-process IPC also prevents synchronous in-turn state reads (`InputState::value`, `TableState::selected_row`) and native window/focus handle sharing.
+- **Retained foreign-language mirror of the widget tree**: Mirroring GPUI's element hierarchy in Go would duplicate ownership, force fine-grained attribute diffing across FFI, and fight GPUI's own immediate-mode `Render::render` model. Instead, Rust owns the real GPUI entities (`GkView`, `InputState`, `ListState`, `TableState`, `DockArea`), and Go views simply re-describe their element tree when dirty.
 
-Five details matter and are easy to get wrong:
+### 2.2 Pre-Frame Turns and Declarative Protocols vs. Mid-Frame Callbacks
 
-1. **When views are described.** Describing views inside `Render::render` would put app code
-   inside the draw; describing them at the end of every event would run them many times per
-   frame under a fast background stream. Instead there is one *pre-frame turn* per window per
-   frame, run from `Window::on_next_frame`. In gpui-fast those callbacks run before the frame
-   decides whether to draw, in the same frame request (`crates/gpui/src/window.rs` 2031 to
-   2075), and upstream's own benchmark `gpui_perf/examples/views_frames.rs` updates its panels
-   the same way. That is one crossing per frame that has dirty views, and none inside the draw.
-2. **A value the app read from kit state inside a view.** Replaying a cached tape when that
-   value changes would show stale content, because the app computed that content. Instead the
-   runtime observes the entity and marks the view dirty, so it is described again.
-3. **Events raised inside an entity's own update.** Delegate methods receive
-   `cx: &mut Context<TableState<Self>>`: the table entity is leased while they run, and
-   reading or updating a leased entity panics in GPUI (`entity_map.rs` 183 to 197, 317). Such
-   events are queued and delivered once the update has finished. Writes from every handler are
-   applied after the outermost update ends. A read that would hit a leased entity returns an
-   error instead of aborting.
-4. **Counters and the profiler.** gpui-fast's retention counters (`LayoutStats.views_built`,
-   `views_reused`, `Window::layout_stats`) exist only with the `test-support` feature, and
-   `gpui-fps` switches on gpui-fast's `profiler` feature, which upstream keeps opt-in. So the
-   shipped library links neither, and a second, diagnostic variant has both (section 3).
-5. **The inventory depends on the feature set.** Items behind `tree-sitter`, `syntect`,
-   `speech`, `decimal`, `inspector`, `test-support` and `profiler` are absent from rustdoc
-   JSON unless those features are on, and so are `#[doc(hidden)]` items. The library's
-   feature list is therefore part of the pin, and the API is extracted with exactly that list.
+**Decision**: Foreign code **never** executes while GPUI is inside `Render::render`, layout, prepaint, or paint. All foreign code runs in discrete **turns** (`INIT`, `WINDOW_INIT`, `FRAME`, `VIEWS`, `EVENT`, `ROWS`, `WAKE`, `DONE`) executed either between frames in the pre-frame hook or in response to input events.
 
-## 2. Requirements and how each is met
+**Rejected alternatives**:
 
-| requirement | how |
-|---|---|
-| GPUI-kit on gpui-fast by default, upstream GPUI on request | the library's default feature `gpui-fast` enables `gpui-kit/gpui-fast`; `gk_info` reports the engine (section 3) |
-| Go, first-class | one language-neutral interface description; one generator with an emitter per language |
-| frame rate equal to a pure Rust GPUI-kit app, measured | 0 crossings on frames without app-state change; views are separate retained entities; the frame-cost gate against a Rust reference built from the same lock file (section 18) |
-| Linux x86-64, macOS universal and Windows x86-64 | one download per system with the same contents; all three built by CI and published as GitHub releases (section 16) |
-| no Rust toolchain on the app developer's machine | the developer receives a prebuilt shared library and generated source; the generator needs only Python and is never needed by an app developer (section 16) |
-| a new upstream version is mostly a generator re-run | section 17 |
-| the whole interface, not a hand-picked subset | every public item of the pinned feature set is bound, bridged, skipped with a reason, or quarantined with a compiler error; the report lists all four (section 13) |
+- **Calling back into Go synchronously from `ListDelegate::render_item`, `TableDelegate::render_td`, `Canvas::paint`, or `PopupMenu` builders**:
+  1. **Re-entrant entity borrow panics**: During render and paint, GPUI holds mutable borrows on entities and window state. Invoking foreign code that might call `gk_call` back into GPUI can easily trigger fatal entity-lease or `RefCell` panics.
+  2. **Per-cell FFI multiplication**: A 10-column by 40-row visible table viewport would cross the FFI boundary 400 times on every scroll frame.
+  3. **Breaking view retention**: `gpui-fast` skips rebuilding unchanged views across frames; calling Go during paint would defeat view caching.
 
-## 3. Selecting the engine, and the library variants
+Instead, every upstream synchronous-draw callback maps onto one of five zero-mid-frame-callback protocols (specified in full in `docs/PROTOCOLS.md`):
 
-GPUI-kit runs on either upstream GPUI (gpui-pre) or gpui-fast, chosen by one Cargo feature of
-gpui-kit that is off by default upstream. This library turns it on by default. There is no
-`[patch]`, no renamed crate and no direct GPUI dependency. From the manifests at 0400b34:
+| Upstream synchronous callback pattern | Binding protocol | Mid-frame crossings |
+|---|---|---:|
+| Lists, tables, trees, virtual lists (`render_item`, `render_td`) | **Row sources (`K_ROWS`)**: visible + overscan rows are bound as retained `GkView` entities in the pre-frame hook (`N_TABLE_CELLS` packs all cells of a table row into one tape). Far scrollbar jumps show placeholders for at most one frame. | 0 |
+| Generic charts, scales, custom canvas plots | **Columnar `Datum` tables + described `N_PLOT` / `N_PLOT_PATH` / `N_PLOT_QUAD`**: row columns, `Field` names, `Format` templates, and paint primitives travel on the tape once per view build; Rust paints directly. | 0 |
+| Overlays (`Dialog`, `AlertDialog`, `Sheet`, `PopupMenu`, `Tooltip`) | **View-built closures (`ViewBuild`) and described values**: upstream's closure replays ops from a retained `GkView` or tape fragment when the overlay opens or redraws. | 0 |
+| Asynchronous or expensive draw lookups (syntax highlighters, LSP providers, `Ask`) | **Cached `Ask` channel (`SHAPE_ASK_EVENT`)**: cache misses paint a fallback for one frame and dispatch a queued request between frames; answers populate the cache and trigger a redraw. | 0 |
+| Synchronous validators and predicates (`Questionnaire`, `Calendar`, `SearchableList`) | **Declarative rules & value cells**: `QuestionnaireRules`, `SEARCH_RULES`, calendar date sets, `Expr` strings, and `ValueCell` evaluate natively in Rust. | 0 |
 
-- the workspace `Cargo.toml` has `gpui = { package = "gpui-pre", version = "=0.3.12" }`
-  (always) and `gpui-fast = { package = "gpui-fast", version = "0.1.14", features =
-  ["windows-manifest-provided-by-host"] }` (optional), plus `gpui-fast-platform` and
-  `gpui-fast-web`;
-- `crates/kit/Cargo.toml` has `gpui-fast = ["dep:gpui-fast", "dep:gpui-fast-platform",
-  "dep:gpui-fast-web", "gpui-base/gpui-fast", "gpui-component?/gpui-fast",
-  "gpui-kit-assets?/gpui-fast"]`; the default features are `component` and `assets`;
-- every kit crate starts with `#[cfg(feature = "gpui-fast")] extern crate gpui_fast as gpui;`
-  and the facade re-exports `::gpui_fast::*` in place of `::gpui::*`;
-- proc macros come from `gpui-pre-macros` in both cases and emit `gpui::` paths, which the
-  facade resolves with `pub use crate as gpui`;
-- `gpui_kit::GPUI_FAST: bool` reports the choice.
+### 2.3 View-Level Retained Tapes + Byte Diffing
 
-The library crate (`core/`, package `gk-capi`, library `libgpuikit`):
+**Decision**: Each `gk.View` maps 1:1 to a GPUI `Entity<GkView>` that stores an `Option<Rc<Tape>>`. Go diffs each newly encoded tape byte-for-byte (`bytes.Equal`) against the view's previous accepted tape before sending it to Rust.
 
-```toml
-[lib]
-name = "gpuikit"
-crate-type = ["cdylib", "staticlib"]
+**Why this matters**:
 
-[dependencies]
-gpui-kit = { version = "=0.11.0", features = ["syntect"] }
-gpui-fps = { version = "=0.11.0", features = ["gpui-fast"], optional = true }
+- **Zero-cost no-op redraws**: If an event handler marks a view dirty (or an observed state changes) without altering the resulting UI description, Go refreshes its local closure table in place (so closures capture updated values) and sends **zero bytes** to Rust, leaving GPUI's retained view untouched.
+- **Fine-grained retention**: Apps can split dynamic areas into child views (`gk.NewView` embedded with `.ChildView(v)`). When only a child view is dirtied (via `gk.Notify` or a `gk.Model[T]`), parent views do not re-run in Go and stay retained in `gpui-fast`.
 
-[features]
-default = ["gpui-fast"]
-gpui-fast = ["gpui-kit/gpui-fast", "gk-meter/gpui-fast"]
-diag = ["gpui-fast", "gpui-kit/test-support", "dep:gpui-fps", "gk-meter/diag"]
+### 2.4 Default `purego` Dynamic Loading vs. Cgo-Only Builds
 
-[profile.release]
-strip = "symbols"
-panic = "unwind"
+**Decision**: Default builds (`!gkstatic`) set `CGO_ENABLED=0` and load `libgpuikit.so` / `libgpuikit.dylib` / `gpuikit.dll` at startup via `github.com/ebitengine/purego`. An opt-in `-tags gkstatic` build links `libgpuikit_static.a` through cgo with linker dead-stripping (`--gc-sections` / `-dead_strip` / `ld.lld`).
+
+**Rejected alternatives**:
+
+- **Cgo-only**: Forces every Go user to install a C toolchain (and MinGW-w64 + `ld.lld` on Windows), breaks effortless `GOOS`/`GOARCH` cross-compilation, and slows iterative `go build` / `go test` loops.
+- **Dynamic-only**: Prevents single-binary distribution and forces small utilities to ship every GPUI-kit component family (charts, code editors, docks). With `-tags gkstatic`, `go/gk/internal/rt/gen_use.go` calls `gk_use_<family>()` only for component families referenced by the Go binary, so the linker strips unused Rust decoders and components out of the executable.
+
+---
+
+## 3. Performance Model
+
+### 3.1 Per-Frame Crossing Budget
+
+The binding is structured so common UI workloads cross the Go<->Rust boundary zero or one time per frame:
+
+| Workload | Crossings per frame | Mechanism |
+|---|---:|---|
+| Idle window (no state change) | **0** | `gpui-fast` retains every `GkView`; no pre-frame hook is scheduled. |
+| Cursor blink, hover style, `N_ANIMATED` transitions, or scroll within bound overscan rows | **0** | Executed entirely inside GPUI / Rust. |
+| Pure-Go click updating a view (for example, counter increment) | **1** | `K_EVENT` arrives with `flags & 1` (inline describe allowed). Go runs the click handler, runs `view`, writes the new tape into Section 4 of the same reply, and returns via `GK_FEAT_INLINE_REPLY` without calling `gk_reply`. |
+| Steady scrolling of a large list or table past overscan | **1** (`K_ROWS`) | Pre-frame hook binds a batch (`PREFETCH_PER_FRAME = 24` for pure prefetch, or viewport + overscan on miss) and collects all new row tapes in a single `K_ROWS` turn. |
+| Continuous Go-driven animation (`OnFrame`) | **1** (`K_FRAME`) | `K_FRAME` runs the Go callback and inline-describes dirty views in the same reply when `n_deferred == 0`. |
+
+### 3.2 Go-Side Allocation and Tape Budget
+
+Inside `go/gk/internal/rt/rt_emit.go` and `rt_turn.go`:
+
+- **Reusable builder slab**: Each view build reuses a single `rt.Vb` (one `[]byte` ops arena + one `[]Node` slice).
+- **Zero-pointer `Node` (`noscan`)**: `rt.Node` stores only integer offsets, opcodes, and build serials (no Go pointers), so the Go garbage collector marks the slab `noscan` and never traverses element trees during GC marks.
+- **Zero-allocation interface boxing**: Every public element type (`gk.DivEl`, `kit.ButtonEl`, etc.) is a single-field struct wrapping `*rt.Node`. Converting it to `gk.Element` stores the pointer directly in the interface data word with zero heap allocation.
+- **Write buffering**: State writes returning no value append to `t.DeferOp` and piggyback in Section 3 of the turn reply instead of making immediate `gk_call` trips. Whenever a subsequent synchronous read occurs in the same turn, `t.Flush` flushes pending writes first so program order is always preserved.
+
+### 3.3 FFI Boundary Optimizations
+
+Three low-level mechanisms close the remaining microsecond gap between pure Rust and Go:
+
+1. **Inline reply (`GK_FEAT_INLINE_REPLY`, bit 3)**: Instead of calling `gk_reply(cb, ptr, len)` (a second FFI call plus buffer copy), the Go callback writes `(inline_ptr, inline_len)` directly into the first two pointer-sized words of `gk_cb`, pointing into Go's rooted reply buffer (`replyMem`). Rust reads that slice immediately after `callback` returns.
+2. **Reflection-free `purego` callback trampoline (`rt_lib_dyn_fastcb.go`)**: By default, `purego.NewCallback` dispatches C->Go callbacks through `reflect.Value.Call`, allocating and reflecting on every turn. On Linux and macOS (`amd64` and `arm64`), `rt_lib_dyn_fastcb.go` probes a sentinel callback (`cbMarker`) at startup and, once verified, hooks `purego.callbackWrap_call` via `//go:linkname` to dispatch the fixed 5-argument `gk_callback` signature directly. Setting `GK_PUREGO_REFLECT=1` disables this bypass for benchmarking.
+3. **Slow-cadence Go scheduler keep-alive (`rt_keepalive.go`)**: At 60 Hz or slower (inter-frame gaps between 10 ms and 250 ms), the OS-thread-locked UI goroutine spends more than Go's 10 ms `sysmon` threshold inside C (`gk_run`). Go's `sysmon` retakes its `P` and pushes it onto `sched.pidle`. When the next frame callback re-enters Go, `exitsyscallTryGetP` pops that `P` without incrementing `P.schedtick`; ~6 us later, `sysmon` wakes, observes `schedwhen + 10ms <= now`, and sends `SIGURG` (`preemptone`), forcing `stoplockedm()` (`futex_wait`, adding +10 to 12 us and voluntary context switches on every frame). `rt_keepalive.go` tracks turn intervals and, during steady 10 to 250 ms cadences, wakes a lightweight background goroutine ~550 us before the next expected frame (nudged 2 ms earlier when `GOMAXPROCS > 1`) to call `runtime.Gosched()`, advancing `P.schedtick` and leaving a fresh `P` at the top of `sched.pidle`. Main-thread overhead is ~20 ns with zero extra main-thread wakeups; at 120 Hz+ or while idle, the goroutine sleeps completely. Disable with `GK_NO_KEEPALIVE=1`; print statistics with `GK_KEEPALIVE_STATS=1`.
+
+### 3.4 Rust-Side Decode Optimizations
+
+- **`FastTree` (`core/src/tape.rs`)**: Static, handlerless view tapes that render a second time compile lazily into a pre-parsed `FastTree`, avoiding per-frame opcode dispatch on unchanged views while automatically invalidating whenever `RELEASE_EPOCH` changes or a new tape arrives.
+- **`TableCell` pre-parse and `CurRow` cache (`core/src/tape.rs`, `core/src/shim_rows.rs`)**: `N_TABLE_CELLS` tapes pre-parse every column cell during `Tape::parse` into `Label` / `Text` / generic `Node` entries, and `GkTableDelegate` caches the active row across columns `1..N` (`CurRow`) alongside `ROWS_EPOCH` so multi-column tables do not re-borrow the session per cell.
+- **Direct `C_ROWS_PUSH` fast path (`core/src/rt.rs`)**: If an `EVENT` reply contains only `C_ROWS_PUSH` deferred ops and GPUI's defer queue is empty, the library applies them immediately without scheduling `cx.defer`.
+
+### 3.5 Anatomy of Three Representative Frames
+
+Tracing the exact work on both sides of the boundary clarifies where time goes and why each optimization exists:
+
+1. **Idle frame (60 Hz to 1,000 Hz, unchanged scene)**:
+   - Rust: no pre-frame hook is armed; `gpui-fast` reuses every retained `GkView` (`views_built = 0, views_reused = N`).
+   - Go: **0 crossings, 0 allocations, 0 CPU time**.
+2. **Interactive click frame (`examples/go/counter`, 1 click updating 1 child view)**:
+   - Rust: GPUI invokes the button's click closure -> `rt::fire` enters `gk_callback` with `K_EVENT` (`flags = 1`, inline describe enabled).
+   - Go: `fastWrap` dispatches without reflection; handler increments `a.count` and buffers `C_ROWS_PUSH` (if any); because `flags & 1 != 0` and the controls view did not call `gk_call` on its prior build, Go immediately runs `controlsView` into its reusable `rt.Vb` slab (zero heap allocations for `Node`s), checks `bytes.Equal` against the prior tape, writes the new tape into Section 4 of `replyMem`, stores `(inline_ptr, inline_len)` into `gk_cb`, and returns `0`.
+   - Rust: installs the new tape directly into `GkView` (marking only `controls` dirty), applies buffered `C_ROWS_PUSH` directly on the fast path, and GPUI rebuilds only the `controls` view while `root`, `echo`, and `list` remain retained. Total boundary crossings for the entire click-to-pixel cycle: **1**.
+3. **Steady 100,000-row table scroll frame (`examples/go/table`)**:
+   - Rust (during paint of frame `N`): `GkTableDelegate` reads already-bound `N_TABLE_CELLS` row tapes from `Source::rows`, caching `CurRow` across all 6 columns and using pre-parsed `TableCell::Label` entries. Any rows approaching the viewport edge are queued in `Source::ahead` via `table_bind_ahead`.
+   - Rust (pre-frame hook of frame `N+1`): `Source::plan()` selects up to `PREFETCH_PER_FRAME = 24` keys nearest `ahead_anchor` (and evicts farthest keys past `capacity`), emitting one `K_ROWS` turn.
+   - Go: binds all 24 rows, encodes all 24 `N_TABLE_CELLS` tapes into one reply buffer, and returns via `GK_FEAT_INLINE_REPLY`. Because none of those 24 rows drew a placeholder, `source.missed` is `false` and no extra redraw is forced. Total crossings: **1**, with **0** placeholder frames during steady scrolling.
+
+### 3.6 Measuring Parity (`gk-meter`, `gates/fps.sh`, `gates/memory.sh`)
+
+Performance is verified by automated gates rather than ad-hoc runs:
+
+- **`core/meter/` (`gk-meter`)**: Linked identically into both `libgpuikit` and the pure-Rust reference apps (`ref/`). Measures per-frame main-thread CPU time (`CLOCK_THREAD_CPUTIME_ID` on Unix, `GetThreadTimes` on Windows), inter-frame wall time, boundary counters (`callbacks`, `calls`, `callback_ns`, `decode_ns`, `tapes`, `tape_bytes`, per-turn-kind counts, `deferred_ops`, `rows_missing`, `placeholder_frames`), and in `diag` builds `gpui-fast`'s `Window::layout_stats()` (`views_built`, `views_reused`, `build_ns`, `prepaint_ns`, `paint_ns`). Also drives deterministic synthetic input (`GK_FRAMES`, `GK_CLICK`, `GK_SCROLL`, `GK_SIZE`).
+- **`gates/fps.sh` + `gates/fps-summary.py`**: Runs matched Go and Rust binaries in interleaved rounds (`rust`, `go`, `rust2`) under a private headless compositor (`gates/display.sh`: `kwin_wayland` at 60 Hz, `gamescope` up to 1,000 Hz, or `xvfb` at 60 Hz). Any round where the two Rust baselines drift by more than 5% (`|rust2/rust - 1| > 0.05`) is dropped as host jitter. The gate passes when Go's median frame CPU time is within `GK_BAR` (default `1.03`, i.e., 3% of Rust) plus the measured Rust-vs-Rust noise floor (`max(|median - 1|, 1.2533 * MAD_sigma / sqrt(n))`).
+- **`gates/counter.sh`**: Measures click-every-frame responsiveness and retained-view rebuild counts against the Rust counter reference.
+- **`gates/memory.sh`**: Drives sustained open/close, scroll, and allocation/release loops and checks that RSS and live handle counts plateau without leaks (including a leak-detector self-test in full `make gates`).
+
+---
+
+## 4. Safety and Lifetime Model
+
+A foundational rule of the binding is: **misuse in Go must always surface as a clean Go error with source location, never undefined behavior, silent misrendering, or a Rust abort.**
+
+### 4.1 Thread Affinity and Context Validity (`*gk.Cx`)
+
+- `gk.Run` locks its goroutine to the OS thread (`runtime.LockOSThread`) and records its goroutine identity (`uiG`) via `internal/goid` (direct `g` register read in assembly on `amd64`/`arm64`, `runtime.Stack` fallback elsewhere).
+- Every public function taking `*gk.Cx` checks:
+  1. `curG() == uiG` (stops immediately if called from another goroutine).
+  2. `cx != nil && cx.serial == activeTurn.serial` (stops immediately if a stored `*gk.Cx` is reused after its callback returned or across nested turns).
+  3. Turn-kind legality: state writes, `gk.Model.Set`, `gk.OpenWindow`, and `gk.Release` are rejected inside view builds (`K_VIEWS`, `K_ROWS`, inline describe).
+
+### 4.2 Element Single-Build and Single-Parent Rules (`rt.Vb`)
+
+Each `*rt.Node` stores the build serial of the `rt.Vb` that created it and a `used` bit:
+
+- Reusing an element from a previous build or another view stops with `*gk.Error`.
+- Attaching an element to two parents, attaching it to itself, or mutating it after attaching stops with `*gk.Error`.
+- Setting `GK_DEBUG=1` disables write buffering (so every call executes at its own Go line) and records `runtime.Caller` stacks on every node creation for pinpointing element errors.
+
+### 4.3 Four-Tier Handle Lifetime Model
+
+Every handle wraps a 64-bit generation-checked identifier (`kind | 24-bit generation | 32-bit index` in `rt.HCore`):
+
+1. **Explicit `gk.Release(cx, handle)`**: Immediately issues `C_RELEASE`, bumping the Rust slot generation and `RELEASE_EPOCH`, and marks the Go handle dead. Double release or use-after-release stops cleanly with `*gk.Error` (and if a released handle is somehow referenced in a tape, Rust's `shown` / `released_shown` triggers `rt::app_stop` -> `K_PANIC` with `is_app_stop = 1`).
+2. **View ownership**: Resources created during a view's `init`, event handlers, or frame hooks belong to that view. Releasing the view releases its owned states, child views, sources, subscriptions, and overlays in reverse creation order. Dock panels own their content view unless `dock.KeepWhenClosed` is set.
+3. **GC fallback (`runtime.AddCleanup` + `weak.Pointer`)**: Tracked kit states, library objects, and focus handles share a `*life` token. When Go's GC determines no copy of the handle remains reachable, the cleanup callback pushes the handle onto a concurrent queue and calls `gk_post`, releasing it on the UI thread during the next `K_WAKE` turn. Handles handed to Rust outside a view description (such as a panel inserted into a `DockArea`, or a handle pinned with `Held`) stay anchored in a Go map until Rust no longer holds them.
+4. **Temporary objects, `OBJ_PIN`, and `GenPin`**:
+   - Temporary `HK_OBJ` handles returned by reads, calls, or events are swept in the next frame's pre-frame hook unless retained (`gk.Retain` -> `C_OBJ_RETAIN`) or pinned to a view build (`C_OBJ_PIN`).
+   - View handler closures stay alive in Go's generation table until Rust's `Arc<GenPin>` drops and reports `(view, gen)` in a subsequent turn's `retired` header.
+
+### 4.4 Panic Boundary and Error Types
+
+Neither Go panics nor Rust panics ever unwind across the `extern "C"` boundary:
+
+- **Go panics**: Recovered at the callback wrapper, wrapped in `*gk.PanicError` (preserving original `Value`, `Unwrap()` for `error` values, and stack trace), followed by `C_QUIT` via `gk_call`. Once `gk_run` exits cleanly, `gk.Run` re-panics with `*gk.PanicError`.
+- **Rust panics**: Every C export and GPUI closure runs inside `std::panic::catch_unwind` (`rt::guard`). A panic inside `gk_call` poisons the session and returns `GK_ERR_POISONED`; a panic outside `gk_call` poisons the session, delivers `K_PANIC` (`is_app_stop = 0`), and calls `quit_soon()`. Go returns `*gk.LibraryError` from `gk.Run`.
+- **App contract violations**: Return `*gk.Error` from `gk.Run` with the offending Go file, line, and function. Nothing in `gpuikit.dev` calls `os.Exit`, so deferred cleanup in `main` always runs.
+
+All 92 misuse behaviors (runtime `*gk.Error` cases and compile-time type rejections) are verified by `gates/go-misuse.sh` and `examples/go/misuse*`.
+
+---
+
+## 5. End-to-End Code Generation Pipeline
+
+Rather than hand-maintaining bindings for hundreds of upstream types, `gen/` (pure Python 3 standard library) drives both the Rust library and the Go module from a committed rustdoc JSON snapshot of the upstream crates.
+
+```text
+upstream crates (gpui-pre / gpui-fast, gpui-kit)
+        │
+        ▼  gen/extract.sh  (cargo +nightly rustdoc --output-format json)
+        ▼  gen/gkgen.py strip
+api/rustdoc/*.json.gz + docs.json.gz  (committed snapshot)
+        │
+        ├── api/overrides.toml    (generic [instantiate], [rows], [shims], exclusions)
+        ├── api/opcodes.lock      (append-only wire numbers -> API_HASH)
+        ├── api/clone.json        (tools/clone_scan.py: Clone library objects)
+        └── api/quarantine.json   (items temporarily held back by gen/round.sh)
+        │
+        ▼  gen/gkgen.py gen
+        ├── gen/gk_model.py + family plugins (gk_app, gk_lists, gk_values, gk_overlay, gk_editor, gk_items, gk_comp6)
+        ├── gen/gk_rust.py + gk_fam.py ──► core/src/gen/{mod,codecs,nodes,calls,traits,...}.rs + gen/out/lines.json
+        ├── gen/gk_go.py + gk_split.py ──► go/gk/{,base,kit,editor,table,overlay,dock,chart,motion,s,theme,palette}/gen_*.go
+        │                                  + go/gk/internal/rt/gen_use.go
+        └── gen/gk_apidoc.py           ──► docs/API-GO.md (generated index)
+        │
+        ▼  core/wire/gen.py (core/wire/ops.txt + api/opcodes.lock)
+        ├── core/src/ops.rs
+        ├── core/include/gk_ops.h + go/gk/internal/rt/include/gk_ops.h
+        └── go/gk/internal/rt/gen_ops.go
+        │
+        ▼  gates/conformance.py + gates/accept.py --check
+        ├── examples/go/gallery/conf.go (generated conformance gallery pages)
+        └── api/coverage.json + docs/STATUS.md
 ```
 
-(simplified; `core/Cargo.toml` has the full list) with `extern crate gpui_kit as gpui;` at the
-crate root. `gpui_kit::GPUI_FAST` tells the library which engine it was built on, and `gk_info`
-passes that on in its feature bits and version string, so a program, a bug report or a gate can
-always tell which engine is running.
+### 5.1 Key Pipeline Properties
 
-Two variants are built from the same generated code, both on gpui-fast:
+1. **Deterministic, fail-closed classification**: Every public upstream item must either match a generator rule, appear in `api/overrides.toml`, or be explicitly excluded with a documented reason. Unmatched signatures fail `make gen` immediately and write `gen/out/no-rule.md`.
+2. **One-line-per-item Rust emission & automatic quarantine**: `gk_rust.py` puts every generated item on a single line and records `(file, line) -> item_id` in `gen/out/lines.json`. `gen/round.sh` runs `cargo check --release -p gk-capi` and automatically quarantines any item whose generated Rust fails to compile into `api/quarantine.json`, generating `gen/out/report.md` so upstream bumps remain incremental and diagnosable.
+3. **Acyclic Go package partitioning (`gen/gk_split.py`)**: Places declarations into family packages (`gk`, `motion`, `table`, `editor`, `base`, `kit`, `chart`, `overlay`, `dock`, plus `s`, `theme`, `palette`), moving referenced types downward and constructors upward so imports form a strict DAG with zero cycles, and emitting `internal/rt/gen_use.go` per-family registration calls for static linker dead-stripping.
+4. **Append-only ABI integrity**: `api/opcodes.lock` never reuses retired numbers, and `API_HASH` (64-bit FNV-1a over `ops.txt` + `opcodes.lock`) guarantees that a mismatched `libgpuikit` and Go module reject each other on the very first handshake call (`GK_ERR_VERSION`).
+### 5.2 Static Per-Family Dead-Stripping Architecture
 
-| variant | features | used for |
+Static Go binaries (`-tags gkstatic`) must not pay the binary-size cost of unused GPUI-kit subsystems (such as charts, docks, or the code editor) when an application only draws a few buttons and labels.
+
+`gen/gk_fam.py` partitions generated Rust decoders and call ops into independent component families, each registering its dispatch hooks inside a dedicated `#[no_mangle] pub extern "C" fn gk_use_<family>()` function instead of one monolithic `match` table:
+
+- **Dynamic library (`cdylib`)**: calls `gk_use_all()` once on load, activating every family.
+- **Static library (`staticlib`)**: never calls `gk_use_all()` unless the app explicitly calls `gk.LinkAll()`. Instead, `gen/gk_split.py` generates `go/gk/internal/rt/gen_use.go` with per-family registration calls referenced only from the Go packages that use each family. Combined with `-Wl,--gc-sections` (Linux), `-Wl,-dead_strip` (macOS), or `-fuse-ld=lld -Wl,--gc-sections` (Windows), the system linker discards unreferenced Rust families completely.
+
+### 5.3 Generator Rule Anatomy and `api/overrides.toml`
+
+The generator stays predictable by keeping all domain-specific knowledge in small, auditable modules rather than scattering special cases:
+
+- **`api/overrides.toml`**: declares generic instantiations (`[instantiate]` such as `ListState<GkListDelegate>`, `TableState<GkTableDelegate>`, `SelectState<GkSearchDelegate>`, `LineChart<Datum>`), delegate/tree shim hooks (`[rows]`), trait-to-bridge mappings (`[shims]`), and explicit exclusions for Rust-only APIs (raw pointers, allocator hooks, internal macros) with written reasons.
+- **Family plugins (`gen/gk_app.py`, `gk_lists.py`, `gk_values.py`, `gk_overlay.py`, `gk_editor.py`, `gk_items.py`, `gk_comp6.py`)**: each plugin handles one protocol family's closure shapes and type descriptors, keeping `gk_model.py` focused on general Rust type classification.
+- **Conformance gallery generation (`gates/conformance.py`)**: synthesizes `examples/go/gallery/conf.go` from the generated model so newly bound components automatically enter visual and runtime verification.
+
+---
+
+## 6. Verification Architecture
+
+Every architectural claim in this document is backed by an automated gate in `gates/`:
+
+| Claim | Enforcing Gate | How It Proves the Claim |
 |---|---|---|
-| ship | gpui-fast, syntect | apps, and the frame-cost gates |
-| diag | ship plus test-support and gpui-fps (profiler) | offscreen rendering, scripted input, retention counters, the FPS overlay, the pixel and protocol tests |
-
-Both are published; an app ships with the ship variant. A library built with
-`--no-default-features` is a ship variant on upstream GPUI; it is not published, and the gates
-that compare frame cost against gpui-fast's retention do not apply to it. The ship library is about 58 MB
-stripped on Linux.
-
-## 4. Architecture
-
-```
- app (Go)                              | libgpuikit (Rust, prebuilt)
- --------------------------------------+------------------------------------------
- state: plain structs                  | GkView entities: one per app view, hold a tape
- view procedures -> tape (bytes)   --->| decode tape -> real gpui-kit elements
- handler tables (ids)              <---| closures that carry (view, generation, handler id)
- handles (u64)                     --->| handle table: kit state entities, windows, focus,
- row sources: fill(range)          <-->|   scroll handles, subscriptions, tasks, row stores
- post queue (any thread)           --->| one wake on the main thread
-```
-
-The boundary is seven C functions and one callback. Everything else is data in two generated
-opcode tables: *element ops*, written into tapes and replayed into elements, and *call ops*,
-executed at once (or deferred) under a context token.
-
-## 5. C interface
-
-```c
-typedef struct gk_info {
-    uint32_t size, magic;
-    uint16_t abi_major, abi_minor;
-    uint64_t api_hash;              /* hash of the wire-relevant interface description */
-    uint32_t features;              /* GK_FEAT_GPUI_FAST, GK_FEAT_DIAG, ... */
-    const char *versions; size_t versions_len;   /* kit, gpui-fast, rustc, build number */
-} gk_info;
-
-typedef struct gk_cb gk_cb;         /* valid only inside the callback that received it */
-typedef int32_t (*gk_callback)(void *user, gk_cb *cb, uint32_t kind,
-                               const uint8_t *req, size_t len);
-typedef struct gk_app { uint32_t size; uint16_t abi_major, abi_minor; uint64_t api_hash;
-                        gk_callback callback; void *user; uint32_t flags; } gk_app;
-
-const gk_info *gk_info_get(void);                                   /* any thread */
-int32_t gk_run(const gk_app *app);                                  /* blocks; caller becomes the UI thread */
-int32_t gk_call(const uint8_t *req, size_t len,
-                const uint8_t **res, size_t *res_len);              /* UI thread, inside a callback */
-int32_t gk_reply(gk_cb *cb, const uint8_t *out, size_t len);        /* copies; inside that callback */
-int32_t gk_post(uint64_t token);                                    /* any thread */
-const char *gk_last_error(size_t *len);                             /* thread-local */
-int32_t gk_headless_run(const gk_app *app, const uint8_t *script, size_t len);  /* diag variant only */
-```
-
-Callback kinds: `INIT`, `WINDOW_INIT`, `FRAME`, `VIEWS`, `EVENT`, `ROWS`, `WAKE`, `DONE`,
-`QUIT`.
-
-Conventions:
-
-- **Memory.** Neither side keeps or frees the other's memory. `req` belongs to the library
-  and is valid during the callback. `gk_reply` copies before it returns; when `gk_info.features`
-  includes `GK_FEAT_INLINE_REPLY`, the callback may instead store `(ptr, len)` in the first two
-  words of `gk_cb` so the library parses the reply in place on return without copying or a
-  second crossing. `*res` from
-  `gk_call` belongs to the library and is valid until the next `gk_call`; both packages copy
-  it out at once. This satisfies cgo's pointer rules without pinning (the Go package's static
-  build; its default build calls the same functions through purego, GO.md section 8).
-- **Strings.** UTF-8; on the wire a u32 length then the bytes, never NUL-terminated.
-- **Enums.** Numbers assigned by the generator and fixed in `api/opcodes.lock`, never Rust
-  discriminants. Decoders have a catch-all that returns `GK_ERR_BAD_ENUM`.
-- **Records.** Fields in declaration order; an `Option` is a presence byte; an enum with data
-  is a u16 tag followed by its fields.
-- **Handles.** A u64 made of a kind (8 bits), a generation (24) and an index (32); 0 is nil.
-  A stale or wrong-kind handle gives `GK_ERR_STALE_HANDLE`, never undefined behaviour.
-  The library releases a handle only when asked (`RELEASE`); the Go package asks for
-  `gk.Release`, for what a released view made in its turns, and for kit state the collector
-  found unreachable (GO.md section 4). With `GK_DEBUG=1` the library prints live handles by kind
-  at exit.
-- **Errors.** Every export returns an i32 status; the message comes from `gk_last_error`.
-  The packages turn a non-zero status into a panic with the message and the app's call site,
-  except for operations upstream declares fallible, which return an error value.
-- **Panics and stops.** Every export and every Rust closure that enters the app runs inside
-  `catch_unwind`. A caught Rust panic poisons the library (`GK_ERR_POISONED` from then on, but
-  `QUIT` is still taken). Nothing unwinds across C and nothing exits the process: the Go
-  callback recovers a stop or a panic, records it, asks the library to quit, and `gk.Run`
-  returns the failure (a `*gk.Error` or `*gk.LibraryError`) or panics again with a
-  `*gk.PanicError` once `gk_run` has returned (PROTOCOLS.md section 3, GO.md section 5).
-- **Threads.** The thread that calls `gk_run` is the UI thread. `gk_call` and `gk_reply`
-  check the thread and that a callback is active (`GK_ERR_WRONG_THREAD`,
-  `GK_ERR_NO_CONTEXT`). The callback is only ever invoked on the UI thread. Nested callbacks
-  are allowed and counted; each level has its own context generation.
-- **Versions.** The package embeds `abi_major`, `abi_minor` and `api_hash` (the hash of
-  `core/wire/ops.txt` and `api/opcodes.lock`). Ops are append-only within a major version, so
-  `gk_run` accepts an app built against an older minor and refuses a different major or a
-  newer minor, naming both versions.
-- **Naming.** C: `gk_`, `GK_OP_<OWNER>_<METHOD>`, `GK_ENUM_<TYPE>_<VARIANT>`. Go: package `gk`,
-  the Rust names in CamelCase by fixed rules ([GO.md](GO.md) section 2). The generator applies three
-  more rules to every emitted name:
-  1. *Keywords.* A name that is a keyword of the target language gets a trailing underscore
-     (`type_` for a parameter named `type`). The keyword list is part of
-     each emitter, and the rename is recorded in the item's `names`.
-  2. *Unnamed parameters.* A parameter upstream writes as `_` (or a pattern) is named
-     `arg<N>` by its position among the method's own parameters, counted from 0
-     (`fn secondary_selected(self, _: bool)` takes `arg0`).
-  3. *Collisions after case conversion.* When two upstream names map to one target name
-     (`bottom_neg_1_2` and `bottom_neg_12` would both give `BottomNeg12` in Go), digit groups
-     that were separated by an underscore keep a separator, and any collision left over fails
-     generation until a `[rename]` entry settles it.
-
-## 6. Tape
-
-A tape is one byte buffer per view build: a header (view id, generation, node count, handler
-count, dependency list, root node), a node table (type, first op offset) and the op stream.
-An op is `u16 opcode, u32 offset of the next op of the same node, arguments`. On the app
-side an element is a node index plus the build's generation; a builder call appends one op
-and patches the previous op's link. Attaching a child writes a `CHILD` op holding the child's
-node index. Nothing is copied and nothing is allocated per call.
-
-Rust decodes it typed and recursively: `decode_button(node)` holds a real `Button` in a local
-and applies one match arm per op; a `CHILD` op recurses into the child's decode function and
-gets an `AnyElement`. There is no enum of all element types. A builder trait's ops are one
-generic function inlined into each implementor's decode loop, and the style-only traits run
-on a borrowed `StyleRefinement`, so an element is never moved in and out of a function per op.
-
-Rules of the format:
-
-- A node is attached once; both packages check it and the decoder marks nodes consumed.
-- **Methods that change the type** (`div().id(..) -> Stateful<Div>`,
-  `overflow_x_scrollbar(self) -> Scrollable<Self>`, `with_animation`) are constructors of a
-  node of the new type that take the old node as an argument. Generic wrappers are
-  instantiated for the types listed under `[instantiate]` in `api/overrides.toml`; each
-  instantiation gets its own type (`gk.div()->id("x")` gives a `Stateful_Div`).
-- **Styles.** `Styled` has one required method, `style(&mut self) -> &mut StyleRefinement`,
-  and about 3,200 provided ones. The ones with no arguments (about 3,150) are *style tokens*:
-  one `STYLE` op carries a list of u16 token numbers that a single non-generic Rust function
-  applies, so the table exists once in the library instead of once per styled type. Styled
-  methods with arguments are ordinary ops routed through the same function. Style closures
-  such as `hover(|style| ..)` take a described style: a `Style_Refinement` value built with
-  the same tokens and builders as an element (`gk.style_refinement_default()->bg(..)`), which
-  the library applies straight onto the style GPUI hands the closure.
-- **Colours** are an HSLA literal, a theme token or a palette id. Theme tokens are resolved
-  in Rust at replay, so a theme switch replays cached tapes without asking the app.
-- **Fragments** are sub-tapes that a Rust closure replays each time upstream calls it
-  (section 12).
-- **Dependencies.** The header lists the kit entities the view procedure read through
-  handles (section 9).
-- **Fast replay of unchanged tapes.** When a `GkView` renders the same tape more than once
-  (for example, parent wrapper views rebuilt on an input event), the runtime lazily compiles a
-  compact `FastTree` (`core/src/tape.rs`) for eligible subtrees (`Div`, `HFlex`, `VFlex`,
-  `ChildView`, `Label`, `Text`, `UniformList`). Each node keeps only its actual style ops,
-  resolves theme colors through `cx.theme()` on every render, and invalidates against a release
-  epoch so handle checks stay exact.
-- A value that is not an element (a style, a column) may be given to any number of builders
-  in one view build; an element still attaches once.
-
-## 7. Frame lifecycle and turns
-
-All app code runs in *turns*: one callback, on the UI thread, between frames.
-
-```
- input event ---------> EVENT turn (synchronous, inside GPUI's dispatch)
- any thread: gk_post -> WAKE turn (a foreground task on the main loop)
- timer, completion ---> EVENT / DONE turn
- delegate event ------> queued; EVENT turn when the entity's update has ended
- frame request -------> pre-frame hook: FRAME turn (only if the app asked), then
-                        VIEWS turn (only if a mounted view is dirty), then gpui-fast draws
- after the draw ------> ROWS turn (only if a row source has a range missing)
-```
-
-A turn's reply carries the return value (for handlers that have one), deferred call ops and
-dirty marks. The first dirty mark for a window registers that window's pre-frame hook with
-`Window::on_next_frame`, which also schedules a frame.
-
-The pre-frame hook, per window:
-
-1. If the app registered a frame handler (`cx->on_frame`), one `FRAME` turn. This is the only
-   way app code runs every frame, and it is opt-in. If the frame handler buffers no deferred
-   writes, the binding describes any dirty mounted views of that window inline in the same
-   reply, avoiding a separate `VIEWS` crossing.
-2. If any row source drew placeholders in the last frame, one `ROWS` turn that binds the new
-   rows and describes them (plus any already-dirty views) in the same reply.
-3. If any mounted view of the window is still dirty (for example after a `WAKE` turn, after a
-   frame handler that buffered kit-state writes, or after an `EVENT` turn whose dirty view
-   reads kit state), one `VIEWS` turn. The package runs the view procedure of each dirty
-   mounted view, plus any newly slotted view that has no tape yet, compares each new tape with
-   the view's current one, and replies with the tapes that differ. Pure-Go views dirtied by an
-   outermost `EVENT` turn are described inline at the end of that `EVENT` turn, so an input
-   frame needs only one crossing into Go as well.
-4. For each changed tape (from `EVENT`, `FRAME`, `ROWS` or `VIEWS`) Rust does
-   `view.update(cx, |v, cx| { v.set_tape(t); cx.notify() })`. An identical tape notifies
-   nothing.
-5. gpui-fast then draws in the same frame request: it renders exactly the notified views
-   (`GkView::render` only decodes) and reuses every other view from the last frame.
-
-What follows from this:
-
-- A frame with no app-state change costs 0 crossings and 0 decoding, and gpui-fast's
-  retention is untouched.
-- A frame with dirty views costs 1 crossing, however many views changed and however many
-  events or posts arrived since the last frame.
-- The result of a click is on screen in the same frame a Rust app would show it.
-- A dirty view that is not mounted stays dirty and is described when it is mounted.
-- App code never runs during a draw, so the two things gpui-fast's documentation warns about
-  (notifying during prepaint or paint, notifying every frame without a change) cannot happen
-  through the binding.
-
-Offscreen (the diag variant on `HeadlessAppContext`, which has no platform frame loop), the
-headless driver calls `Window::simulate_next_frame` before each capture, so the same hook
-runs.
-
-**Slow-cadence Go P refresh.** When the locked Go UI thread spends more than 10 ms inside
-`gk_run` between callbacks (60 Hz and below), Go's `sysmon` retakes its P and pushes it onto
-`sched.pidle`. Because `exitsyscall` increments `syscalltick` and never `schedtick`, the next
-callback's `exitsyscall` wakes `sysmon` into an immediate preemption (`SIGURG` plus
-`stoplockedm()`), adding ~10 us/frame on the main thread. When `GOMAXPROCS > 1`, `sysmon` also
-defers retaking an idle-syscall P until after 10 ms, so a single refresh can race with `sysmon`
-retaking the stale P back onto the top of `sched.pidle`. When consecutive windowed turns arrive
-10 to 250 ms apart, a single background goroutine in `go/gk/internal/rt/rt_keepalive.go` tracks
-the EMA-smoothed frame cadence and runs a two-stage wakeup: a brief nudge 2.0 ms before the
-target (past the 10 ms retake threshold and past the prior frame's render) so `sysmon` finishes
-retaking any stale P, followed by a `runtime.Gosched()` refresh ~550 us before the next
-expected callback (incrementing that P's `schedtick` via the global run queue and parking it at
-the top of `sched.pidle`). At 120 Hz and above (gaps under 10 ms) or offscreen the goroutine is
-never started, and once frames go idle it parks on a channel receive with no periodic wakeups.
-
-**Handler tables.** A handler id is valid for the tape generation it was registered in and
-the one before. The `VIEWS` request tells the package which generations are dead; only then
-is that generation's table retired. An event for an older generation is dropped and counted
-(printed with `GK_DEBUG=1`).
-
-**An identical tape still replaces the handler table.** Handler data (`gk.on(select, row_id)`)
-is not in the tape, so two builds can produce the same bytes with different data behind the
-same handler ids. When a re-described view's tape is identical to the current one, the tape is
-dropped and nothing is notified, but the package replaces that generation's handler table in
-place with the new build's: same ids, same generation, new procedures and data. The misuse
-gate has a case for this (the handler must see the data of the latest build).
-
-**When a write lands.** A write to kit state is visible to every later step of the same frame:
-
-1. Writes buffered in a turn are applied when that turn's reply is processed, as soon as no
-   entity is leased: for an `EVENT` turn, from the deferred callback that runs when the
-   outermost update has ended; for `INIT`, `WINDOW_INIT`, `WAKE`, `DONE` and `FRAME` turns,
-   which run outside any update, immediately after the callback returns.
-2. In the pre-frame hook the order is therefore: `FRAME` turn, apply its writes, mark dirty
-   every mounted view whose dependency list names an entity that was just written (the
-   runtime does this itself from the tape headers rather than waiting for GPUI's observers,
-   which would fire after the hook), then the `VIEWS` turn, then the draw. A write from a
-   per-frame handler is on screen in the frame that handler ran in, as in Rust.
-3. A view procedure may not write: a write or a notify during a `VIEWS` turn is an error at
-   the call site. So nothing is ever applied between the description and the draw.
-4. A write made while its target is leased (a queued delegate event) is applied from
-   `Window::defer`, before the next draw; reading the target back in that handler returns
-   `GK_ERR_BUSY`.
-
-Rule 2 has a gate: a per-frame handler writes an input's value, a view echoes it, and the
-echoed text must be in the same frame's pixels (`gates/pixels.sh writerule`, plus the
-`write-rule`, `frames` and `view-write` modes of `core/tests`).
-
-## 8. Mapping GPUI's app model
-
-The app never defines a Rust type. A small fixed set of Rust types in the library stands in.
-
-- **Application.** `gk_run` calls `gpui_kit::application().run(|cx| { gpui_kit::init(cx);
-  ... })`, sets up the session and makes the `INIT` turn.
-- **Views.** `GkView { id, tape, previous_tape, generation, focus_handle, deps }` implements
-  `Render` and `Focusable`. On the app side a view is a state pointer, an optional init
-  procedure and a view procedure: `gk.view(&state, init, view)`. `child_view(v)` embeds a
-  view in another's tape; a child's change does not alter the parent's tape, so the parent
-  stays retained. Splitting a window into views is the main performance tool.
-- **Windows.** `gk.open_window(cx, options, root_view)` calls `gpui_kit::open_window`, so the
-  root sits inside the kit's `Root` and dialogs, sheets, notifications and menus work. Inside
-  the build closure, with the window in hand, the runtime makes a `WINDOW_INIT` turn (the
-  view's init procedure, where kit state that needs a window is created: `InputState::new`
-  and `TableState::new` take `&mut Window`) and then describes the root view and everything
-  it slots, so the first frame is complete.
-- **Contexts.** `&mut App`, `&mut Window` and `&mut Context<T>` never cross the boundary.
-  During a callback the runtime keeps them in a scoped thread-local, and the app receives a
-  `gk.Cx` stamped with the callback's generation. A `Cx` kept after its callback fails its
-  check loudly. Each call op declares whether it needs a window; a turn without one (`INIT`,
-  `WAKE`) reaches a window through its handle.
-- **Kit state.** `InputState`, `TableState<D>`, `SliderState` and the other state types are
-  real entities in the handle table. Their `self -> Self` methods form a construction builder
-  (`gk.input_state(cx)->placeholder("Name")->build()`, one crossing for the chain); their
-  `&self` methods are reads; their `&mut self, .., cx: &mut Context<Self>` methods are
-  generated as `entity.update(cx, |s, cx| s.method(args, window, cx))`. Types generic over a
-  trait the app would implement are instantiated with the binding's bridge type
-  (`TableState<GkTable>`), listed in `api/overrides.toml`. Upstream's `InputBaseState<M>` is
-  instantiated by the generator as `InputState`, `EditorState` and `TextareaState`.
-- **Events from kit state** (the `EventEmitter` types): `gk.on_event(state, cx, handler)` is
-  `cx.subscribe`; the `Subscription` lives in the handle table until the state is released.
-- **Focus.** `cx->focus_handle()` returns a handle; `track_focus(h)` is a generated builder;
-  `focus(h)` is a call op; every `GkView` has its own `FocusHandle`.
-- **Actions and keys.** No macros. `gk.action("people::AddRow")` returns an id; in Rust all
-  app actions are one type, `GkAction { id }`, whose `partial_eq` compares ids.
-  `gk.bind_keys` builds `KeyBinding::new(keys, GkAction { id }, context)`.
-  `on_action(a, handler)` installs one `GkAction` listener per element that fires the handler
-  when the id matches and propagates otherwise. Kit and GPUI built-in actions are generated
-  name constants built with `App::build_action(name, json)`. Because
-  `App::is_action_available` goes by type, menu availability for app actions is coarse.
-- **Globals.** The app's globals are ordinary app variables. The kit's `Theme` global is read
-  and changed through generated get, modify and set call ops.
-
-## 9. Handlers, state and dependencies
-
-**Handlers are integer ids.** While a view is built, each handler is stored in that
-generation's handler table and the tape carries its index. The generated Rust closure for
-`on_click` is `move |ev, window, cx| rt::fire(view, generation, handler, SHAPE_CLICK, ev,
-window, cx)`. There is one trampoline per closure shape and one encoder per event payload
-type.
-
-**Element-listener handlers fire synchronously.** `fire` puts `&mut Window` and `&mut App` in
-the scoped context, makes an `EVENT` turn and reads the reply. So handlers with a return value
-work (`Fn(..) -> bool`, `on_paste`), and so do `stop_propagation` and `prevent_default`.
-
-**Queued events.** Events raised by a bridge from inside an entity's update (delegate methods:
-`perform_sort`, `load_more`, `confirm`, `set_selected_index`, `move_column`, `context_menu`,
-`perform_search`, `visible_rows_changed`) are queued and delivered from `Window::defer`,
-which runs when the outermost update has ended and before the next draw. Subscription events
-already arrive outside the emitter's update and fire directly.
-
-**Writes are deferred, reads are direct.**
-
-- Call ops that return nothing (`set_value`, `scroll_to_row`, `focus`, row batches, `notify`)
-  are buffered and travel in the turn's reply. Rust applies them from one deferred callback
-  when the outermost update has ended, in order, before the next draw. No write from app code
-  can meet a leased entity, and a typical handler costs 1 crossing.
-- A call op that returns a value goes through `gk_call` at once. It first flushes buffered
-  writes so order is preserved. Before touching an entity, a flush or read probes it with
-  `Entity::read` inside `catch_unwind`: a leased entity panics there before anything is
-  changed, and the probe turns that into `GK_ERR_BUSY` ("this state is being updated by the
-  component that called the handler; write to it without reading it back, or do it in
-  `cx->defer`"). The same situation is a panic in Rust.
-- With `GK_DEBUG=1` every op is sent at once, so an error points at its own line.
-
-**What a handler may do:** change app state; read and change kit state through handles; call
-any context method (focus, open a dialog or sheet, push a notification, dispatch an action,
-use the clipboard, open or close windows, quit, switch theme); create and release handles;
-mark views dirty; start background work. It may not use an element built in a view or keep
-the `Cx` (both are generation-checked).
-
-**Dirty marks.** The view that registered the handler is marked dirty when the handler
-returns, which is what Rust GPUI apps do anyway with `cx.listener` and `cx.notify()`.
-`gk.quiet(handler)` opts out; `view->notify()` marks any view; `gk.refresh(cx)` marks every
-view and every row a list shows. An unnecessary mark costs one view procedure and a memory
-compare, because an identical tape is dropped. A notify during a view build is an error at the
-call site.
-
-**App state** lives in the app's language and Rust never sees it. This is gpui-fast's
-"untracked state" case, so the binding does the bookkeeping:
-
-- `gk.Model[T]` holds a value and the set of views that read
-  it; `get` in a view build records the view, `set` or `update` marks those views dirty. No
-  crossing. It is optional: small apps need only the automatic mark.
-- A view procedure that reads kit state through a handle (`gk.value(s.name, cx)` inside a view)
-  records the handle in the tape's dependency list. When the tape is accepted, the runtime
-  observes those entities (`cx.observe`) and marks the view dirty when one notifies. That is
-  what a Rust view that reads `input.read(cx).value()` pays: one re-render per change.
-- Values read on the Rust side during replay (theme tokens, a kit entity an element is built
-  from, as in `Input::new(&entity)`) are tracked by gpui-fast itself.
-
-Typing in an input, dragging a slider, scrolling a table, hover and press are handled inside
-the kit's entities in Rust. No app code runs unless the app subscribed.
-
-Scroll positions, list state, resizable sizes, dock layouts and focus are kit or GPUI state
-behind handles, never mirrored in the app. Dock layouts and similar serde types cross as JSON
-text.
-
-A view that still shows kit state the app has released stops the program with a message
-naming both, rather than drawing garbage.
-
-## 10. Delegates and virtual lists
-
-Rule: the library never asks the app anything during layout, and never once per row.
-
-`TableDelegate`, `ListDelegate`, `SearchableListDelegate`, tree rows, `uniform_list`, `list`
-and `v_virtual_list` are each implemented once in Rust over *row sources*. The app supplies a
-row source: a count and a procedure that describes rows. Each row is a view of its own,
-pulled while the list draws and described before the next frame (PROTOCOLS.md section 9).
-
-- The first rows travel with the list's creation, so the first frame is complete.
-- When the list needs rows it does not have, it records the wanted range; after the frame, one
-  `ROWS` turn asks for that range plus overscan, and only that list's entity is notified.
-  Steady scrolling finds rows already present. A far jump (a dragged scrollbar) shows
-  placeholder rows for one frame (choice 3).
-- Live data: the app tells the source its count changed, or that a range is stale.
-- A table delegate answers from data: cell texts, row labels, fit widths and groups are values
-  the app gives, not callbacks.
-
-Scrolling a list of any size costs 0 crossings per frame and at most one `ROWS` turn now and
-then; the elements are the kit's own, so gpui-fast's scroll layers and retained rows apply
-unchanged. Charts take their data as a table too: with the row type fixed to the bridge row,
-`.x(|d| ..)` and `.y(|d| ..)` become column names.
-
-`perform_search -> Task<()>` returns a task that completes when the app has pushed the
-filtered rows.
-
-## 11. Background work and async
-
-Every export except `gk_post` belongs to the UI thread, and the library enforces it.
-
-- **Wake.** Each package keeps a mutex-protected queue in its own language. `gk.post` pushes
-  an item and calls `gk_post` only when the queue goes from empty to non-empty. Rust holds a
-  `SendForegroundExecutor` (`ForegroundExecutor::to_send()`, which is Send, Sync and Clone)
-  and spawns a main-thread task that makes one `WAKE` turn, in which the package drains its
-  whole queue. No payload crosses C. A thread that posts 10,000 times a second causes at most
-  one `WAKE` per turn of the main loop, and the views it dirties are described once per frame.
-- **Go:** `gk.Post(func(cx *gk.Cx) { ... })` from any goroutine, or `gk.Go(cx, work, done)`
-  as the convenience form. The package locks the main goroutine to the main OS thread in
-  `init`, and `gk.Run` must be called from `main`.
-- **Timers:** `cx->after(d, handler)` and `cx->every(d, handler)` are foreground tasks that fire
-  as handlers; releasing the handle drops the task, which cancels it.
-- **Requests that answer later** (`prompt_for_paths`, `Window::prompt`, file dialogs, and
-  upstream methods that return a `Task` or a oneshot receiver): the call op returns a
-  completion id; the runtime awaits on the main thread and delivers a `DONE` turn. Releasing
-  the id cancels.
-- **The kit asking the app for something asynchronous** (`CompletionProvider::completions`
-  returns `Task<Result<..>>`): the bridge fires an event with a request id and returns a task
-  backed by a oneshot; the app answers with `cx->complete(id, value)` whenever it likes.
-- `spawn` of app futures does not cross; goroutines and threads replace it.
-
-## 12. Closures and the remaining families
-
-Every closure parameter gets exactly one resolution. The generator refuses a closure with none.
-
-| resolution | what crosses | used for |
-|---|---|---|
-| `handler` | a handler id; fires as an `EVENT` turn | `on_*` listeners, subscriptions, actions |
-| `build` | a sub-tape of builder ops, applied once | `FnOnce(X) -> X`, style closures, menu builders |
-| `fragment` | a sub-tape that Rust replays whenever upstream calls it | dialog, sheet, popover, tooltip and empty-state bodies; render closures without an item argument |
-| `data` | values the app computed, shipped ahead | chart accessors (column names), row and cell content |
-| `queued` | a handler id; the event is delivered after the entity's update | delegate and provider methods that are really events |
-
-Content that must change while open (a dialog body) is a child view inside the fragment, so it
-has its own dirty flag. Render closures that take an item argument (a calendar's days, a tree's
-entries, a popover's content) are typed procedures the app writes and gives with `gk.items`;
-they run between frames, not while the component draws (PROTOCOLS.md 9.41). Closures that only
-map numbers are expressions, and animations are data, not closures (PROTOCOLS.md 13.30).
-
-Other families:
-
-- **Ambient context only:** call ops under the `Cx`, generated.
-- **Context<T> mutators:** generated `entity.update` wrappers.
-- **Borrowed results:** copied out; `&mut` plain data is get, modify, set.
-- **Stateful handles** (`FocusHandle`, `ScrollHandle`, `UniformListScrollHandle`,
-  `ListState`, `Subscription`, `Task`): the handle table; methods generated.
-- **Library objects that are not entities** (scales, menus, values a read hands out): kept
-  behind handles, temporary or kept, described in PROTOCOLS.md section 13.
-- **App-implemented traits.** `Render`, `View`, `Focusable`: `GkView`. `RenderOnce`,
-  `IntoElement`: not needed, since a component in the app's language is a procedure that
-  returns an element. `Action`: `GkAction`. Table, list, searchable and tree delegates: row
-  bridges. `Panel`: `GkPanel`, a `GkView` plus data and fragments, so dock panels are app
-  views. Editor providers: request ids, LSP types as JSON. Custom drawing: a plot or paint
-  list the app describes for known bounds. `EntityInputHandler`, `InputHandler`: not exposed;
-  the kit's Input, Textarea and Editor cover text entry. `AssetSource`: bytes or a directory
-  registered at start, no callback.
-- **Type-erased values.** `dyn Action` is the action value; a drag payload is the library's
-  drag value with a fragment as preview, and `on_drop` filters by tag.
-- **Platform and backend traits**, test-support items and third-party types are skipped by
-  role. chrono values are records, `serde_json` and lsp-types are JSON text, `Rope` is copied
-  text or a ranged read, bitflags are integers.
-- **Macros:** actions are made at run time; the style macros' output is already in the JSON
-  as `Styled` methods.
-- **gpui-fast-only API** (window composition, dynamic textures, scene layers): tagged
-  `fast_only`.
-- **Name collisions** between gpui, gpui-base and gpui-component: the priority is component,
-  then base, then gpui; the shadowed item gets a prefix by rule or a `[rename]` entry; an
-  unresolved collision fails generation.
-
-## 13. Generator
-
-Repository layout:
-
-```
-api/            the interface description, language-neutral: rustdoc/ (the extracted API,
-                committed), overrides.toml (the one hand-edited input), opcodes.lock
-                (append-only wire numbers), gk.api.json.gz (the classified API),
-                coverage.json, quarantine.json, clone.json, accesskit-role.json
-gen/            the generator: gkgen.py (classify, number, emit), rdj.py (rustdoc JSON
-                reader), gk_rust.py, gk_go.py and the family modules;
-                extract.sh (stage 1), check.sh and round.sh (the compile check)
-core/           the Rust library, package gk-capi, built as libgpuikit: src/ (the protocol
-                runtime by hand; src/gen/ generated), include/ (C headers), wire/ (the
-                runtime's own opcode table), meter/ (crate gk-meter: measuring and driving,
-                linked into the library and the references), tests/ (protocol tests)
-go/             the Go module gpuikit.dev: package gk and its packages (motion, table, editor,
-                base, kit, chart, overlay, dock), the runtime in gk/internal/rt; rt_*.go by
-                hand, gen_*.go generated (docs/GO.md section 1)
-examples/       example apps in Go, and the misuse cases
-ref/            pure Rust reference apps for the gates (crate gk-ref)
-gates/          the checks; all.sh runs them and prints one summary table
-tools/          building the library, the download and the release; status.py
-docs/           the guides, this design, PROTOCOLS.md, STATUS.md
-```
-
-Stages. Extraction and the compile check need Rust; everything else needs only Python and the
-committed files.
-
-1. **Extract** (`gen/extract.sh`). `cargo doc` with rustdoc's JSON output (`RUSTC_BOOTSTRAP=1`)
-   for gpui-fast, gpui-base, gpui-component and gpui-kit, with exactly the library's features,
-   plus a second pass with `--document-hidden-items`. The result is committed under
-   `api/rustdoc/`. The API is extracted from a debug build, so items that exist only in debug
-   builds (`DivInspector`, `ToggleInspector`, `Styled::debug`) are skipped as `feature-off`.
-   rustdoc records each item's cfg; the generator keeps the target part and writes
-   `#[cfg(..)]` on decoders of platform-only types (the Wayland layer shell exists on Linux
-   only). The doc comments go to `api/rustdoc/docs.json.gz`: `gen/gk_doc.py` writes them above
-   the Go functions, so an editor shows GPUI-kit's documentation on hover.
-   Intra-doc links become the binding's names, Rust examples are left out, and a sentence about
-   Rust-only mechanics (`cx.notify()`, borrowing, `crate::` paths) is rewritten or left out;
-   `gen/out/doc-rust-only.md` lists what was left out, so a new GPUI-kit version's additions
-   are easy to review.
-2. **Classify.** Rules plus `api/overrides.toml` plus `api/quarantine.json` give
-   `gk.api.json`: every type, enum, record, element, state type, method, closure shape and
-   bridge, with its class, the rule that bound it or the reason it is skipped, wire types,
-   names in C and Go, and an opcode from `opcodes.lock` (append-only: a removed item's
-   number is retired, never reused).
-3. **Emit.** `make gen` writes the Rust decoders into `core/src/gen/`, the Go package into
-   `go/gk/**/gen_*.go`, the opcode tables, a sample program that calls every generated function, the coverage table, STATUS.md and the
-   gallery's generated conformance pages. It takes about 2 seconds and needs no Rust.
-4. **Check.** rustc judges the result when the library is built. `gen/round.sh` runs the
-   quarantine loop: `cargo check` with JSON diagnostics, every generated arm sits between
-   `// @item <id>` markers, an error is mapped to its item, the item goes into the quarantine
-   file with the diagnostic, and emission re-runs.
-
-An item record in `gk.api.json`:
-
-```json
-{"id": "gpui_component::button::button::Button::on_click",
- "rust": "fn on_click(self, handler: impl Fn(&ClickEvent, &mut Window, &mut App) + 'static) -> Self",
- "sig_hash": "…", "owner": "Button", "owner_role": "element", "kind": "builder",
- "class": "HAND", "family": "closure", "resolution": "handler", "shape": "S017",
- "table": "element", "op": 1881,
- "args": [{"name": "handler", "wire": "handler", "event": "ClickEvent", "returns": "unit"}],
- "names": {"c": "GK_OP_BUTTON_ON_CLICK", "go": "OnClick"},
- "status": "bound"}
-```
-
-Wire types (a closed list): `u8 u16 u32 u64 i32 i64 f32 f64 bool str bytes enum:<T> rec:<T>
-opt<..> list<..> node handle:<kind> handler:<shape> fragment style color length pixels
-element_id action json`.
-
-Rules that bind without an override: a plain builder returning `Self`; a plain call; `impl
-Into<T>` and `AsRef` with T's closed set taken from the `From` impls; `Option`; `Vec`, slices
-and iterators; fieldless enums; enums with data; public-field or Copy structs as records;
-`Result`; element arguments; borrowed plain results; ambient context; state mutators; state
-reads; constructors taking `&Entity<State>`; type-changing methods (section 6); handler, build
-and fragment closures by shape; chart accessors once the row type is fixed; generic types
-instantiated for the argument lists they are used with.
-
-`api/overrides.toml` is the only hand-edited input. Its sections include `[skip]`,
-`[instantiate]`, `[bridge]`, `[into.primary]`, `[closure]` and `[rename]`. Every key must
-match an item, or generation fails.
-
-Checks at generation time (they fail before anything is built):
-
-- an unknown rustdoc JSON format version;
-- an override key that matches nothing;
-- a public item with no status: every item must be `bound`, `bridged`, `skipped` (with a reason
-  from a fixed list: platform-trait, test-only, third-party-type, hidden, feature-off,
-  superseded-by-<protocol>, rust-only-extension, item-render-closure) or `quarantined`;
-- a closure without a resolution, an event payload without a record, a handle kind without a
-  creator, an opaque argument type without a constructor the binding can drive;
-- a new name collision without a `[rename]`;
-- a wire number changed or reused;
-- coverage falling against `gates/coverage-baseline.json` without `--accept`.
-
-A few parts are hand-written because no rule fits them: the bridges in `core/src/hand.rs` and
-`go/gk/internal/rt/rt_source.go` (a uniform list over rows kept in the library, and `gk.text`, a
-string as an element), and the shims for the input, editor, select and rows families
-(`core/src/shim_*.rs`, `go/gk/rt_*.go`).
-
-Compile cost is designed for:
-
-- Rust: the decoder is one module per upstream module, and styles are decoded once, not per
-  type.
-- Go: no generics in the fluent API, so the package compiles once into Go's cache. A gate caps
-  the rebuild time after a one-line edit.
-
-## 15. Go API
-
-The Go front end is described in [GO.md](GO.md). In short:
-
-- Handlers are closures or method values; the garbage collector keeps captures alive, so there
-  is no handler-data rule. Each handler builder takes the event:
-  `OnClick(func(*gk.Cx, gk.ClickEvent))`.
-- Methods are real methods on concrete types, with no generics in the fluent API.
-- Style tokens are typed constants in a small package (`s.Gap3`), because Go has no implicit
-  enum selectors. Theme colours are in package `theme`.
-- There is no overloading: a parameter upstream declares as `impl Into<T>` takes the primary
-  member of T's closed set, and other members get a suffixed variant.
-- Strings returned to the app are Go strings and always safe to keep.
-- An element handle is a one-pointer struct into a node block allocated per view build and left
-  to the collector; a kept handle keeps its generation and is always detected.
-- Background work is goroutines with `gk.Post` and `gk.Go`.
-- The package loads the shared library at start-up and calls the seven functions through purego,
-  with one callback made by `purego.NewCallback`, so a build needs no C compiler and
-  cross-compiles; `-tags gkstatic` links the static library through cgo and one exported callback
-  instead. A panic in app code inside a turn ends the app and `gk.Run` panics again with it (a
-  `*gk.PanicError` with the original stack); a mistake is `gk.Run`'s error. Go's wasm targets
-  can load no library and are out of scope.
-
-## 16. Distribution: what lands on the developer's disk
-
-Rust is compiled only to build the library: by CI for releases, or by a contributor building
-from source. An app developer never needs Rust, a cargo cache or a `target/` directory.
-
-The developer downloads one archive per platform from the repository's GitHub releases:
-`gpuikit-VERSION-linux-x86_64.tar.zst`, `gpuikit-VERSION-macos-universal.tar.zst` or
-`gpuikit-VERSION-windows-x86_64.zip`, plus `SHA256SUMS`. All three hold the same files except the
-library. The diagnostic library (offscreen rendering, scripted input) is not shipped: it is for
-this repository's own tests.
-
-| file | what |
-|---|---|
-| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves: on Linux built against glibc 2.28, so programs run on any Linux with glibc 2.28 or newer; universal (arm64 and x86_64, minimum macOS 11.0) on macOS; MinGW's format on Windows |
-| `lib/libgpuikit_sys.so`, `libgpuikit_sys.a` | Linux: a linker script naming the system libraries the archive needs by their run-time names; Windows: the import library of the Windows API it links |
-| `windows/gpuikit.manifest`, `gpuikit.rc` | Windows: a program must embed or sit beside this manifest (per-monitor DPI v2, common controls 6), or it exits before `main` |
-| `include/` | the C headers |
-| `go/` | the Go module |
-| `examples/go/`, `docs/` | the example apps and the guides |
-| `VERSIONS`, `THIRD_PARTY.md`, licence texts | versions, hashes, what the library needs (glibc, minimum macOS, imported DLLs), and the licences of every crate linked in |
-
-A download is mostly the library: on Linux about 66 MB packed and 390 MB unpacked (the static
-archive keeps every component family; a program keeps only the ones it uses).
-
-Also on disk because of the developer's own toolchain: Go's build cache holds the compiled `gk`
-package. For comparison, a Rust developer of the same app holds a target
-directory of about 2 GB per checkout, a registry of 0.5 to 1.5 GB and a toolchain.
-
-Tools the developer needs: Go with a C compiler. Runtime libraries on
-Linux: libxkbcommon, libxkbcommon-x11, libxcb, libxcb-xkb, libXau, libgcc_s, libm, libc;
-Vulkan and Wayland are loaded at run time.
-
-Delivery:
-
-- Go: the app's `go.mod` requires `gpuikit.dev` and replaces it with the download's `go/`
-  folder.
-- Linking: by default the program loads the shared library at start-up (purego: no C compiler,
-  and GOOS cross-compiles), and ships beside it. With `-tags gkstatic`, the static library, into
-  the program: the library's dispatchers are
-  split by component family, and each generated function links the family
-  it uses (`gen/gk_fam.py`), so a program keeps only the families it calls into: one file, about
-  50 to 60 MB for a small app, where a program plus the shared library was 76 MB. Go can't carry
-  the linker flags in the package, so a Go build passes `-ldflags=-extldflags=-Wl,--gc-sections` (`-Wl,-dead_strip` on macOS; on
-  Windows `-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres`, since GNU ld keeps every
-  function with unwind data there; package `gk` embeds the manifest as a .syso). The download
-  ships both libraries (GO.md section 8).
-
-How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/build-lib.sh` on
-each system. Linux is linked by zig against glibc 2.28 (`tools/zigbuild.sh`, with a pinned zig
-and cargo-zigbuild). Windows is built natively with MSVC, because gpui-fast's build script
-compiles the release shaders with `fxc.exe` only on a Windows host. macOS builds both slices on
-one Apple silicon runner and joins them with `lipo`. `tools/dist.sh` assembles the download,
-`tools/dist-test.sh` builds the hello example in both languages from it and runs it
-offscreen, and a manual run on `main` with `release=VERSION` publishes release `vVERSION` once
-all three platforms pass (`tools/release-assets.sh` checks the archives and writes `SHA256SUMS`;
-the release makes the tag). CI runs for pull requests and releases only; releases run on `main`
-because only `main`'s Rust cache is shared with later runs. A release is never replaced: a fix is
-a new version.
-
-Licences: gpui-kit, gpui-fast and gpui-pre are Apache-2.0; the icon set is under the Lucide
-licence; `tools/licences.py` collects the licence texts of every crate linked in for each
-target.
-
-## 17. Upstream updates
-
-A new upstream version is mostly a re-run: change the pins in `Cargo.toml`, extract the API
-again (`gen/extract.sh`), run `make gen`, build the library (rustc judges the generated code;
-`gen/round.sh` quarantines what no longer compiles), run the gates, and read the coverage
-report.
-
-The library, the headers, both packages and the interface hash change together.
-
-What fails loudly before any build: the checks of section 13. What fails at the Rust compile: a
-generated arm whose rule no longer fits is quarantined with its error, and the release goes on
-without it; a hand-written bridge that no longer implements its trait is a hard error. What
-fails on the developer's machine: app code that used a removed method does not compile; a
-library and a package from different generations refuse to start, naming both versions.
-
-What needs a person: a new protocol family (a new delegate trait, a new kind of closure);
-behaviour that changed under an unchanged signature (caught by the conformance pixels and the
-examples); a rustdoc JSON format change (the reader is a few hundred lines); platform items.
-
-How much moves between versions: between gpui-pre 0.3.12 and gpui-fast 0.1.14, 5,014
-signatures were identical, none changed, none were removed and 58 were added. From gpui-kit 0.9.1
-to 0.10.0 (gpui-fast 0.1.14 to 0.1.16) nothing bound was removed and 67 functions were added (55
-bound or bridged, mostly the logical-direction styles `ps`, `pe`, `ms`, `me`, `border_s`, ..., on
-every element; 5 need a new protocol). One change needed a person: gpui-fast 0.1.16 gives every
-`Element` its `IntoElement` by a blanket impl, so the generator reads an element from either
-(`gk_model`: `f["element"]`), and the library's own elements implement `IntoElement` only for
-upstream GPUI (`editor_text.rs`). Read without it, 18 element types (`Div`, `Img`, `Svg`,
-`TextView`, ..) silently stopped being elements.
-
-From 0.10.0 to 0.11.0 (gpui-fast 0.1.16 to 0.1.19, gpui-pre 0.3.12 to 0.3.14) nothing bound was
-removed and every new function is bound or bridged. What needed a person: the date family moved
-from chrono to jiff (`civil::Date`, `Time`, `DateTime`, `Weekday`: the descriptor `civil`, Go
-`gk.CivilDate` and the rest, and the matcher parts read through a struct of the same fields,
-core/src/values.rs); `base::Editor` became generic over a line-number renderer (instantiated at
-its default, `Editor<()>`); `api/clone.json` had to be scanned again (`tools/clone_scan.py`; it had
-been left at 0.9.1, which hid that `DiffTextPosition` is Clone); gpui-fast's `Transformation`
-gained an alpha and `TimedTransformation` is new (`gk.TimedTransformation`); and gpui-fast's list
-layer now keeps two viewports of rows drawn on each side and regrows them over several frames
-after a fresh paint, so the table shim binds rows two screens ahead (core/src/shim_rows.rs).
-The kit's styled `component::input::Editor` sits in a `#[doc(hidden)]` module and was missing from
-the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `editor.Editor`
-is now the kit's styled editor and the unstyled one is `editor.BaseEditor`.
-
-## 18. Verification and the frame-rate gate
-
-Correctness, all runnable without a display:
-
-1. **Codecs:** every wire type and record is encoded by the package, decoded in Rust, and
-   checked by the generated protocol tests (`core/tests/go/gen`: every handler shape fired once,
-   every state type made, read, written, subscribed and released).
-2. **The sample:** `gates/go-gensample.sh` builds a program that calls every generated Go
-   function and checks that the runtime accepts the tapes it writes.
-3. **Conformance by generation:** for every bound element type a generated page calls its
-   builders with fixed arguments, natively in Rust (`ref/`) and through the package. The diag
-   library renders both offscreen (`HeadlessAppContext`, the real wgpu renderer and text
-   system) and the images must be byte-identical. Rendering is exact on one machine and driver
-   but not across machines, so reference and candidate are always rendered in the same run.
-   The gallery (`gates/gallery.sh`) adds hand-written pages (`examples/go/gallery`); the ones
-   that wait for a Go binding are listed in `gates/gallery-go-pending.txt` and reported as
-   pending. `gates/verified.json` records which pages were identical and which functions they
-   show.
-4. **Scripted interaction:** a script drives each example app and its Rust reference (click,
-   press, type, drag); the pixels after each step must match (`gates/pixels.sh`).
-5. **Protocol tests and attacks:** `examples/go/proto` and `core/tests/go` run the runtime's protocols, and attacks on the
-   C interface by a raw client (truncated, unknown and forged requests, stale handles, calls
-   from another thread).
-6. **Misuse:** stale handles, stale `Cx`, elements used twice, wrong thread, a panic on each
-   side, a read of a leased entity, and the Go misuse cases (`gates/go-misuse.sh`).
-
-**Frame rate.** Two builds that both keep up with the display both show its rate, so the pass
-mark is defined on cost (main-thread CPU per frame), with presented frames as a floor.
-
-- `gates/display.sh --hz N CMD` runs CMD in a private headless compositor with its own runtime
-  directory and a D-Bus session without service files: `kwin_wayland --virtual` (60 Hz) or
-  `gamescope --backend headless -r N` for other rates (240 gives a 4.166 ms frame interval,
-  1,000 gives 1.000 ms). On a machine where no compositor can reach the GPU,
-  `GK_DISPLAY=xvfb` uses a private Xvfb, which paces at 60 Hz only.
-- Windows are opened with `inactive_frame_interval: None`, because the default caps an
-  unfocused window at 30 frames a second.
-- `gates/fps.sh [--hz N] SCENE ARGS` is the gate. Per scene it runs the Rust reference and the
-  Go app, driven by the same Rust driver module (`gk-meter`,
-  linked into the library and into the reference), which injects input with
-  `Window::dispatch_event`. It runs interleaved rounds, takes medians and p95, and runs the
-  Rust reference a second time in every round to measure noise. A round whose two Rust runs
-  differ by more than 5 % was disturbed by another job and is left out.
-- `gk-meter` records main-thread CPU time per frame (`CLOCK_THREAD_CPUTIME_ID` on Linux,
-  `GetThreadTimes` on Windows), frame intervals, crossings and time inside callbacks, tape bytes
-  and decode time, and process memory. The diag build adds `views_built`, `views_reused` and
-  build, prepaint and paint times (`Window::layout_stats`).
-- **Pass mark** (choice 8), for every scene at every rate run:
-  (a) no more missed frames than the Rust reference (a frame interval over 1.5 periods; 1 % of
-  frames tolerated);
-  (b) median and p95 main-thread CPU per frame at most 1.03 times Rust's, plus the
-  Rust-against-Rust difference (or the standard error of its median, whichever is larger)
-  measured in the same run;
-  (c) the build judged is the Go app;
-  (d) 0 crossings on frames with no app-state change;
-  (e) `views_built` per frame equal to the Rust reference's (diag build).
-- Scenes: 60 panels of 64 labels with 0 and with 2 changing per frame (the shape of upstream's
-  `views_frames`); the counter with a click on every frame; a 100,000-row table scrolled every
-  frame (`make fps`, `make go-fps`).
-- Memory: `gates/memory.sh` checks over long offscreen runs that the app's resident memory
-  grows no more than the Rust reference's (2 MB allowance), and proves with `--selftest` that a
-  small leak per view build is caught.
-- Rebuild time: `gates/go-rebuild.sh` measures a Go rebuild after a one-line edit.
-
-## 19. Limits and known risks
-
-What the binding does not offer at Rust's level:
-
-- custom elements beyond a described plot or paint list; IME for custom text views (the kit's
-  inputs and editor handle text entry);
-- web targets (Go's wasm has no cgo);
-- a Rust panic ends the process: it is reported, not survived.
-
-Known risks and open points:
-
-1. **Synchronous handlers and leases.** The lease probe turns the known case into an error; a
-   kit component that calls an app closure from inside its own update is found only by testing
-   each component.
-2. **Actions through one Rust type:** menu availability and key hints for app actions are
-   coarse.
-3. **Rows:** a far scrollbar jump shows placeholder rows for one frame.
-4. **rustdoc JSON** is unstable and obtained with `RUSTC_BOOTSTRAP=1`; this is isolated behind
-   the committed extract and a pinned rustc.
-5. **macOS minimum.** The library says macOS 11.0, but gpui-fast's Metal shaders are compiled
-   with a 12.0 minimum, so drawing on macOS 11 is untested; Go 1.27 needs macOS 13 or newer.
-6. **High refresh rates** are measured under gamescope's headless output, not on a real panel.
-   A run there sometimes receives no frame callback at all; the gates repeat such runs.
-
-What is bound, what is not yet, and why, is listed per component in [STATUS.md](STATUS.md) and
-`api/coverage.json`.
+| Visual fidelity against pure Rust GPUI-kit | `gates/pixels.sh`, `gates/gallery.sh`, `gates/go-apps.sh` | Runs matched Go and pure-Rust (`ref/`) binaries offscreen through the identical `gk-meter` `HeadlessAppContext` driver and compares output PNGs byte-for-byte (or within strict pixel tolerances where subpixel rendering varies). |
+| Complete protocol correctness | `gates/go-proto.sh`, `core/tests/go/run.sh`, `gates/go-gensample.sh` | Drives every turn kind, built-in and generated handler shape (`C_TEST_FIRE_SHAPE`), handle lifetime tier (`OBJ_TEST_TEMPS`, `VALUES_TEST`, `HANDLES_TEST`), row source bind/evict cycle, dock renderer, editor provider, and platform completion. |
+| Hard safety on Go misuse | `gates/go-misuse.sh` | Executes 92 distinct misuse cases across `examples/go/misuse*` (stale `Cx`, off-thread calls, writes inside views, duplicate element attachment, released handles, bad UTF-8, bad chart columns, bad animations, compile-time type mismatches) and verifies exact `*gk.Error` diagnostics or compiler rejections. |
+| Frame-cost parity with Rust | `gates/fps.sh`, `gates/counter.sh`, `gates/go-rebuild.sh` | Measures main-thread CPU time (`CLOCK_THREAD_CPUTIME_ID`) across interleaved `rust`, `go`, `rust2` rounds under `gates/display.sh` at 60/240/1,000 Hz, plus `views_built` vs `views_reused` retention counts. |
+| No memory or handle leaks | `gates/memory.sh` | Runs sustained open/close, scroll, and create/release workloads and verifies RSS and live handle counts plateau, alongside a leak-detector self-test. |
+| Portable builds & static stripping | `gates/cross.sh`, `make go-static`, `tools/dist-test.sh` | Cross-compiles `CGO_ENABLED=0` binaries for macOS and Windows from Linux, builds all major Go apps with `-tags gkstatic` to confirm per-family `gk_use_*` registration, and tests unpacked release archives end to end. |
+| Documentation stays true | `gates/docs-go.sh`, `gates/readme-go.sh`, `gates/coverage.sh` | Verifies every Go code block in `README.md`, `GETTING-STARTED-GO.md`, `GO.md`, and `API-GO.md` matches a compiled, executed program line-for-line, and ratchets API coverage against `gates/coverage-baseline.json`. |

@@ -1,18 +1,18 @@
-//! A described plot (docs/PROTOCOLS.md section 12): `gk.plot(parts..)`, a plot the app writes
-//! as a list of parts instead of a `Plot` impl whose `paint` would run app code while the
-//! frame is drawn (decision 3). A part is any value type of the kit that paints itself in the
-//! plot's bounds (`PlotAxis`, `Grid`, the shapes over the app's rows); the generator lists
-//! them (`generated::paint_part`). The library implements `Plot` once, for `GkPlot`, and paints
-//! the parts in the order the app gave them, as a Rust `paint` that calls each part's `paint`.
+//! Custom GPUI `Plot` implementation (`GkPlot`) and decoders for `N_PLOT`, `N_PLOT_PATH`,
+//! and `N_PLOT_QUAD`, plus row-indexed lookup helpers for generated chart series.
 //!
-//! Node `PLOT 28`: u32 n, u32 value node each, then the options (PROTOCOLS.md 12.14): u8 has id,
-//! the id; u8 interactive; u64 appear generation (0: none). No ops.
+//! # Wire Layouts and Coordinate Space
 //!
-//! Besides the kit's parts, two of the binding's own (PROTOCOLS.md 12.17), value nodes the app makes
-//! with `gk.plot_line`, `gk.plot_area` and `gk.plot_quad`: what a Rust `paint` draws with gpui's
-//! `PathBuilder` and `paint_path`, and `paint_quad`, with a colour or a gradient (a Fill,
-//! `genapi::background`). Their positions are pixels from the plot's top left, as a Rust app adds
-//! `bounds.origin` to its own.
+//! All coordinates inside `N_PLOT_PATH` and `N_PLOT_QUAD` are expressed in local pixels relative
+//! to the laid-out `Bounds<Pixels>` origin passed to `Plot::paint`:
+//! - `N_PLOT`: `[n_parts: u32][part_node_id: u32*][has_id: u8][element_id?][interactive: u8][appear_gen: u64]`
+//!   (where `appear_gen == 0` disables appear-animation tracking).
+//! - `N_PLOT_PATH`: `[fill: u8 (1=fill+close, 0=stroke)][stroke_width: f32][n_pts: u32][(x: f32, y: f32)*][background]`
+//!   (paths with fewer than 2 points are skipped cleanly; `n_pts` pre-allocation caps at 65,536).
+//! - `N_PLOT_QUAD`: `[x: f32][y: f32][w: f32][h: f32][corner_radius: f32][background][border_width: f32][border_color]`
+//!   (negative dimensions clamp to `0.0`).
+//! - Any other child node opcode inside `N_PLOT` delegates to `generated::paint_part` for
+//!   upstream plot primitives (`PlotAxis`, `Grid`, `Bar`, `Area`, `Line`, `RadialLine`).
 
 use crate::generated::{self, PaintFn};
 use crate::genapi::Dx;
@@ -21,6 +21,8 @@ use gpui_kit::base::plot::{Plot, PlotElement};
 use gpui_kit::{AnyElement, App, Bounds, ElementId, IntoElement, Pixels, Window};
 use gpui_kit::{BorderStyle, PathBuilder, point, px, quad, size};
 
+/// `Plot` element that paints a list of decoded path, quad, and generated chart primitives
+/// relative to its laid-out bounds.
 pub struct GkPlot {
     parts: Vec<PaintFn>,
     id: Option<ElementId>,
@@ -56,6 +58,7 @@ impl IntoElement for GkPlot {
     }
 }
 
+/// Decodes an `N_PLOT` node and each of its child paint primitives into a [`GkPlot`].
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
     if ty != N_PLOT {
         return None;
@@ -70,7 +73,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
     Some(GkPlot { parts, id, interactive, appear }.into_any_element())
 }
 
-/// One part of a plot: the binding's own (a path, a quad) or a kit value that paints itself.
+/// Decodes one child primitive node of an `N_PLOT` container into a `PaintFn` closure.
 fn part(dx: &mut Dx, n: u32) -> Option<PaintFn> {
     let (ty, args, _) = dx.node(n);
     match ty {
@@ -117,17 +120,12 @@ fn part(dx: &mut Dx, n: u32) -> Option<PaintFn> {
     }
 }
 
-/// A list per row (docs/PROTOCOLS.md 12.16): what a closure over a row returns, from the list the
-/// app gave for each row of the data (row i's at index i; past the end, the type's default).
-/// `SankeyChart::labels`, `Bar::label`, `BarChart::fill_gradient`. The closure's other arguments
-/// (the node's throughput, the bar's position, the value range and its remap) are not used: the app
-/// wrote into each row's list what it would have computed from them.
+/// Returns the entry in `rows` corresponding to `d`'s row index, or `T::default()` if out of bounds.
 pub fn row_value<T: Clone + Default>(rows: &[T], d: &crate::data::Datum) -> T {
     rows.get(d.index()).cloned().unwrap_or_default()
 }
 
-/// `row_value` for a list of plot labels (`Bar::label`), which are not Clone: each copied field by
-/// field (its public fields; `Text` is non-exhaustive, so a copy starts from `Text::new`).
+/// Clones the plot label `Text` entries for `d`'s row index (upstream `Text` is not `Clone`).
 pub fn row_texts(rows: &[Vec<gpui_kit::base::plot::label::Text>], d: &crate::data::Datum) -> Vec<gpui_kit::base::plot::label::Text> {
     let Some(row) = rows.get(d.index()) else {
         return Vec::new();

@@ -1,14 +1,36 @@
-//! Dock panels as app views (docs/PROTOCOLS.md section 11.7).
+//! Dock-area panels, layout persistence, pane-tree inspection, skin settings, and custom
+//! `DockAreaRenderer` / `TabGroupRenderer` hooks.
 //!
-//! `GkPanel` is the library's one implementation of the kit's `Panel` traits (gpui-base's and the
-//! component layer's): an entity behind a state handle (`gk.DockPanel`) that draws an app view
-//! and answers every question the dock asks while it draws (name, tab name, title, closable,
-//! zoomable, visible, padding, title bar) from data the app pushed (`gk.panel_set`), never by
-//! calling the app. What the dock tells a panel (made active, zoomed, added to a tab group,
-//! removed) reaches the app as a queued event of shape PANEL_EVENT, after the dock's update has
-//! ended. Upstream's blanket `PanelView` impl over `Entity<GkPanel>` makes the
-//! `Arc<dyn PanelView>` the dock keeps, so the generated DockArea and DockLayout methods take a
-//! `gk.Dock_Panel` by rule.
+//! # Protocols and Invariants
+//!
+//! - **Panels ([`GkPanel`], [`PanelData`])**: wraps a host `GkView` to implement both
+//!   `base::dock::Panel` and `component::dock::Panel`. Panel names are interned once into
+//!   `&'static str` via [`intern`] as required by `BasePanel::panel_name`. Auxiliary handles
+//!   (`suffix`, `toolbar`, `menu_view`) are mounted/prepared by [`prepare`]; `toolbar_buttons`
+//!   walks `E_CHILD` ops on the toolbar view's tape to build `Vec<Button>`. Lifecycle callbacks
+//!   (`set_active`, `set_zoomed`, `on_added_to`, `on_removed`) emit queued `SHAPE_PANEL_EVENT`
+//!   notifications.
+//! - **Canonical handle caches (`NODE_IDS`, `HANDED`, `VIEWS`)**:
+//!   - `NODE_IDS` records every `NodeId` handed out to the host so returning an unknown raw `u64`
+//!     fails cleanly with `ERR_BAD_OP` instead of fabricating invalid `NodeId`s.
+//!   - `HANDED` maps `EntityId -> HK_STATE` so repeated reads of the same `DockArea`, `TabGroup`,
+//!     or `GkPanel` return identical handles via [`entity_handle`].
+//!   - `VIEWS` maps `GkView` `EntityId -> HK_VIEW` for round-tripping `AnyView` back to Go.
+//! - **Layout save/restore (`C_PANEL_REGISTER`, `C_PANEL_FILL`, `C_PANE_TREE_*`)**: because
+//!   `PanelRegistry::build_panel` is synchronous while Go constructs panels on a callback turn,
+//!   [`requested`] returns an empty placeholder `GkPanel` immediately and queues
+//!   `SHAPE_PANEL_BUILD`; the host attaches its view and metadata via `C_PANEL_FILL`. During
+//!   `PaneTree::from_state`, [`GkBuilder`] pins every created `Arc<dyn PanelView>` in thread-local
+//!   `BUILT` so panel entities stay alive until attached to the dock.
+//! - **Custom dock chrome ([`GkRenderer`], `BOOK`, `SLOT`)**: `hooks` is a 12-bit mask (`H_*`)
+//!   selecting which renderer hooks cross the wire. Each hooked site computes a snapshot hash
+//!   (`dock_snap` / `group_snap`) and only queues `SHAPE_DOCK_RENDER` when the hash changes,
+//!   releasing the previous request's context handles (`DockContext`/`TabGroupContext`). When the
+//!   host answers via `C_DOCK_RENDER_ANSWER`, [`GkRenderer::element`] stashes the upstream child
+//!   element in thread-local `SLOT`, decodes the host view tape (where `N_DOCK_SLOT` takes `SLOT`),
+//!   and clears `SLOT` on return so elements never leak across frames. Frame hooks (`H_FRAME`,
+//!   `H_SPLIT_FRAME`, `H_CENTER_FRAME`, `H_TAB_FRAME`, `H_TAB_CONTENT_FRAME`) require a div root
+//!   (`256..=258`) and abort via `rt::app_stop` otherwise.
 
 use crate::genapi::{self, Call, GkResult, HandlerRef, Put, R};
 use crate::ops::*;
@@ -22,31 +44,31 @@ use gpui_kit::{
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};
 
-/// What the dock asks a panel while it draws, as the app last pushed it.
+/// Host-supplied metadata and auxiliary view handles for a [`GkPanel`].
 #[derive(Clone)]
 pub struct PanelData {
     name: &'static str,
     tab_name: Option<SharedString>,
     title: SharedString,
     flags: u8,
-    /// PROTOCOLS.md 11.8: an app view drawn at the end of the title bar, a view whose
-    /// root's Button children are the toolbar, a view-built menu (gk.built -> Popup_Menu) applied
-    /// to the title bar's menu. 0: upstream's default.
+    /// Optional view handle rendered in `title_suffix`.
     suffix: u64,
+    /// Optional view handle whose root children are decoded as `toolbar_buttons`.
     toolbar: u64,
     menu: Option<std::rc::Rc<crate::overlay::ViewBuild>>,
     menu_view: u64,
-    /// The panel's own data in a saved layout (PanelInfo::Panel), JSON; empty for none.
+    /// JSON payload returned by `BasePanel::dump`.
     info: String,
 }
 
+/// Bit flags packed into [`PanelData::flags`].
 const NOT_CLOSABLE: u8 = 1;
 const NOT_ZOOMABLE: u8 = 2;
 const HIDDEN: u8 = 4;
 const NO_PADDING: u8 = 8;
 const NO_TITLE_BAR: u8 = 16;
 
-/// `panel_name` is `&'static str` upstream: each distinct name is kept once for the process.
+/// Interns a panel name into `&'static str` as required by `BasePanel::panel_name`.
 fn intern(name: &str) -> &'static str {
     static NAMES: OnceLock<Mutex<HashMap<String, &'static str>>> = OnceLock::new();
     let mut names = NAMES.get_or_init(Default::default).lock().unwrap();
@@ -68,7 +90,6 @@ fn read_data(r: &mut R) -> PanelData {
     PanelData { name, tab_name, title, flags, suffix, toolbar, menu: None, menu_view, info }
 }
 
-/// Draws the data's views in the turn's window and takes the menu's view.
 fn prepare(d: &mut PanelData, c: &mut Call) -> GkResult<()> {
     for v in [d.suffix, d.toolbar] {
         if v != 0 {
@@ -81,6 +102,7 @@ fn prepare(d: &mut PanelData, c: &mut Call) -> GkResult<()> {
     Ok(())
 }
 
+/// Dock panel entity bridging a host [`GkView`] into `gpui-kit`'s `BasePanel` and `KitPanel` traits.
 pub struct GkPanel {
     view: Option<Entity<GkView>>,
     focus: FocusHandle,
@@ -89,7 +111,7 @@ pub struct GkPanel {
     group: Option<WeakEntity<TabGroup>>,
 }
 
-/// PanelEvent kinds (go/gk/rt_dock.go).
+/// Wire event tags sent over `SHAPE_PANEL_EVENT`.
 const EV_ACTIVE: u8 = 0;
 const EV_ZOOMED: u8 = 1;
 const EV_ADDED: u8 = 2;
@@ -214,29 +236,27 @@ impl KitPanel for GkPanel {
     }
 }
 
-/// `Arc<dyn PanelView>` of a panel handle, for a call op: the kit's PanelHandle over the panel, so
-/// the kit's skin finds its presentation (title, tab name, title suffix, toolbar, menu: the skin
-/// asks `PanelHandle::of`, which only a PanelHandle answers; a bare entity draws the panel's name).
+/// Wraps a `GkPanel` state handle as a `base::dock::PanelView` for `DockArea` calls.
 pub fn panel_view(h: u64) -> GkResult<Arc<dyn PanelView>> {
     Ok(Arc::new(gpui_kit::component::dock::PanelHandle::new(genapi::state::<GkPanel>(h)?)))
 }
 
-/// The same in a tape: a released panel a view still shows stops the program.
+/// Tape-decode counterpart to [`panel_view`]; aborts via `app_stop` on a stale handle.
 pub fn panel_view_shown(h: u64) -> Arc<dyn PanelView> {
     Arc::new(gpui_kit::component::dock::PanelHandle::new(genapi::shown::<GkPanel>(h)))
 }
 
-/// The component layer's `Arc<dyn PanelView>` of a panel handle, for a call op.
+/// Wraps a `GkPanel` state handle as a `component::dock::PanelView` (`KitPanelView`).
 pub fn kit_panel_view(h: u64) -> GkResult<Arc<dyn KitPanelView>> {
     Ok(Arc::new(genapi::state::<GkPanel>(h)?))
 }
 
-/// The same in a tape.
+/// Tape-decode counterpart to [`kit_panel_view`]; aborts via `app_stop` on a stale handle.
 pub fn kit_panel_view_shown(h: u64) -> Arc<dyn KitPanelView> {
     Arc::new(genapi::shown::<GkPanel>(h))
 }
 
-/// Draws the view in the turn's window (or the first open one) and marks it for description.
+/// Mounts `view` into the active (or first open) window and marks it dirty so its tape is built.
 fn mount(view: u64, c: &mut Call) -> GkResult<Entity<GkView>> {
     let entity = rt::with(|s| s.view(view))?;
     let wh = match c.window_handle() {
@@ -250,10 +270,11 @@ fn mount(view: u64, c: &mut Call) -> GkResult<Entity<GkView>> {
     Ok(entity)
 }
 
-/// The dock's call ops (core/src/app.rs asks first).
+/// Handles `C_PANEL_NEW`, `C_PANEL_SET`, `C_PANEL_EMIT`, `C_DOCK_AREA_SKINNED`, and delegates
+/// layout, overlay, renderer, and pane-tree calls.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
-        // u64 view, data, u32 slot, u32 generation (0, 0: no events) -> u64 panel
+
         C_PANEL_NEW => (|| {
             let view = mount(r.u64(), c)?;
             let mut data = read_data(r);
@@ -267,7 +288,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.put_u64(h);
             Ok(())
         })(),
-        // u64 panel, data (buffered): the dock draws the new name and title
+
         C_PANEL_SET => (|| {
             let entity = genapi::state::<GkPanel>(r.u64())?;
             let mut data = read_data(r);
@@ -278,7 +299,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             });
             Ok(())
         })(),
-        // u64 panel, u8 event (0 zoom in, 1 zoom out, 2 layout changed) (buffered)
+
         C_PANEL_EMIT => (|| {
             let entity = genapi::state::<GkPanel>(r.u64())?;
             let ev = match r.u8() {
@@ -290,8 +311,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             entity.update(c.cx, |_, cx| cx.emit(ev));
             Ok(())
         })(),
-        // str id, u8 has version, u64 version -> u64 dock area: the kit's styled dock
-        // (DockSkin::dock_area, whose result pairs the area with its skin)
+
         C_DOCK_AREA_SKINNED => (|| {
             let id = SharedString::new(r.str());
             let version = if r.u8() != 0 { Some(r.u64() as usize) } else { r.u64(); None };
@@ -299,7 +319,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             let (area, skin) = DockSkin::dock_area(id, version, window, c.cx);
             let id = area.entity_id();
             let h = genapi::state_new(area, c);
-            HANDED.with(|m| m.borrow_mut().insert(id, h)); // read back as the same handle
+            HANDED.with(|m| m.borrow_mut().insert(id, h));
             SKINS.with(|s| s.borrow_mut().insert(h, skin));
             c.out.put_u64(h);
             Ok(())
@@ -308,36 +328,29 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     })
 }
 
-/// The dock's element nodes (hand::node asks first): a dock area drawn where the view puts it.
+/// Decodes `N_DOCK_VIEW` (an embedded `DockArea` entity) and `N_DOCK_SLOT` (takes the active
+/// upstream child element stashed by [`GkRenderer::element`]).
 pub fn node(dx: &mut genapi::Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
     match ty {
-        // u64 dock area
         N_DOCK_VIEW => {
             let mut r = dx.args(args);
             Some(genapi::shown::<DockArea>(r.u64()).into_any_element())
         }
-        // where a renderer's view puts the element the kit handed the hook (PROTOCOLS.md 11.9)
         N_DOCK_SLOT => Some(SLOT.with(|s| s.borrow_mut().take()).unwrap_or_else(|| gpui_kit::Empty.into_any_element())),
         _ => None,
     }
 }
-
-// ------------------------------------------------------------------ PROTOCOLS.md 11.8
-//
-// What the dock and the kit hand out and take back (the generator's descriptor family "dock"):
-// node ids (kept as the dock handed them out: NodeId has no public constructor), panel ids, app
-// views as AnyView, dock panels read back, durations, and entities read back as state handles.
 
 use gpui_kit::base::dock::{NodeId, PanelId};
 use gpui_kit::{AnyView, AnyWindowHandle, EntityId};
 use std::cell::RefCell;
 
 thread_local! {
-    /// Every NodeId the library handed to the app, by its number.
+    /// Remembers `NodeId` values handed to the host so wire `u64` IDs can be validated on return.
     static NODE_IDS: RefCell<HashMap<u64, NodeId>> = RefCell::new(HashMap::new());
-    /// The handle of each entity the library handed out as a state, and of each app view and
-    /// dock panel it was given, by the entity's id (a read back gives the same handle).
+    /// Canonical `EntityId -> HK_STATE` handle cache so repeated reads of an entity return the same handle.
     static HANDED: RefCell<HashMap<EntityId, u64>> = RefCell::new(HashMap::new());
+    /// Reverse index from `GkView` `EntityId` to its `HK_VIEW` handle.
     static VIEWS: RefCell<HashMap<EntityId, u64>> = RefCell::new(HashMap::new());
 }
 
@@ -346,14 +359,14 @@ fn remember_node(id: NodeId) -> u64 {
     id.as_u64()
 }
 
-/// A NodeId the app passes back: one the library handed out.
+/// Resolves a raw `u64` previously handed out by [`remember_node`] back to its `NodeId`.
 pub fn node_id(raw: u64) -> GkResult<NodeId> {
     NODE_IDS.with(|m| m.borrow().get(&raw).copied()).ok_or_else(|| {
         genapi::GkErr(ERR_BAD_OP, format!("node id {raw} was never handed out by the dock (ids come from its reads)"))
     })
 }
 
-/// The same in a tape: an unknown id there stops the program.
+/// Tape-decode counterpart to [`node_id`]; stops the app if `raw` was never issued by the dock.
 pub fn node_id_shown(raw: u64) -> NodeId {
     match node_id(raw) {
         Ok(id) => id,
@@ -361,22 +374,22 @@ pub fn node_id_shown(raw: u64) -> NodeId {
     }
 }
 
-/// An app view taken by a call op: drawn in the turn's window (or the first one) and marked dirty,
-/// so the frame that first draws it has its tape.
+/// Mounts host view `h` into the active window, caches its `EntityId -> handle` reverse entry,
+/// and returns it as a GPUI `AnyView`.
 pub fn any_view(h: u64, c: &mut Call) -> GkResult<AnyView> {
     let entity = mount(h, c)?;
     VIEWS.with(|m| m.borrow_mut().insert(entity.entity_id(), h));
     Ok(entity.into())
 }
 
-/// An app view inside a record or a builder chain of a call op.
+/// Resolves an already-mounted view handle `h` into `AnyView` without requiring a `Call` context.
 pub fn any_view_c(h: u64) -> GkResult<AnyView> {
     let entity = rt::with(|s| s.view(h))?;
     VIEWS.with(|m| m.borrow_mut().insert(entity.entity_id(), h));
     Ok(entity.into())
 }
 
-/// An app view in a tape: a released one stops the program.
+/// Tape-decode counterpart to [`any_view_c`]; stops the app on a stale view handle.
 pub fn any_view_shown(h: u64) -> AnyView {
     match any_view_c(h) {
         Ok(v) => v,
@@ -384,14 +397,12 @@ pub fn any_view_shown(h: u64) -> AnyView {
     }
 }
 
-/// The view handle of an AnyView read back: an app view the library was given, else 0.
 fn view_handle(v: &AnyView) -> u64 {
     let id = v.entity_id();
     let h = VIEWS.with(|m| m.borrow().get(&id).copied()).unwrap_or(0);
     if h != 0 && rt::with(|s| s.view(h).map(|e| e.entity_id() == id).unwrap_or(false)) { h } else { 0 }
 }
 
-/// The panel handle of a dock panel read back (0: one of the kit's own placeholders).
 fn panel_handle_of(v: AnyView) -> u64 {
     let id = v.entity_id();
     let h = HANDED.with(|m| m.borrow().get(&id).copied()).unwrap_or(0);
@@ -402,7 +413,7 @@ fn first_window() -> Option<AnyWindowHandle> {
     rt::with(|s| s.windows.first().copied().and_then(|w| s.window(w).ok()))
 }
 
-/// A state handle for an entity the kit hands out; the same one while it lives.
+/// Returns the canonical `HK_STATE` handle for `entity`, creating and caching one on first sight.
 pub fn entity_handle<T: 'static>(entity: &Entity<T>) -> u64 {
     let id = entity.entity_id();
     if let Some(h) = HANDED.with(|m| m.borrow().get(&id).copied()) {
@@ -416,7 +427,7 @@ pub fn entity_handle<T: 'static>(entity: &Entity<T>) -> u64 {
             rt::guard("marking a view dirty", || rt::mark_dirty(view, None, cx));
         })
     });
-    let window = first_window(); // its own borrow of the session: not inside the insert's
+    let window = first_window();
     let h = rt::with(|s| {
         s.insert(
             HK_STATE,
@@ -432,7 +443,7 @@ pub fn entity_handle<T: 'static>(entity: &Entity<T>) -> u64 {
     h
 }
 
-/// An entity read back, as its state handle.
+/// Uniform handle extraction for strong and weak GPUI entity references (`0` if a `WeakEntity` dropped).
 pub trait AsEntity {
     fn handle(&self) -> u64;
 }
@@ -452,15 +463,17 @@ impl<T: 'static> AsEntity for WeakEntity<T> {
     }
 }
 
+/// Writes an entity's canonical `u64` handle onto `out`.
 pub fn put_entity<E: AsEntity>(e: &E, out: &mut Vec<u8>) {
     out.put_u64(e.handle());
 }
 
-/// A duration read back: i64 nanoseconds (Go's time.Duration).
+/// Writes `Duration` as signed little-endian nanoseconds (clamped to `i64::MAX`).
 pub fn put_ms(d: &std::time::Duration, out: &mut Vec<u8>) {
     out.extend_from_slice(&(d.as_nanos().min(i64::MAX as u128) as i64).to_le_bytes());
 }
 
+/// Encodes `Option<T>` using custom serializer `f` with a 1-byte presence tag.
 pub fn opt_with<T>(v: &Option<T>, out: &mut Vec<u8>, f: impl Fn(&T, &mut Vec<u8>)) {
     match v {
         Some(x) => {
@@ -471,6 +484,7 @@ pub fn opt_with<T>(v: &Option<T>, out: &mut Vec<u8>, f: impl Fn(&T, &mut Vec<u8>
     }
 }
 
+/// Encodes slice `v` with a `u32` element count followed by `f` per element.
 pub fn list_with<T>(v: &[T], out: &mut Vec<u8>, f: impl Fn(&T, &mut Vec<u8>)) {
     out.put_u32(v.len() as u32);
     for x in v {
@@ -478,7 +492,7 @@ pub fn list_with<T>(v: &[T], out: &mut Vec<u8>, f: impl Fn(&T, &mut Vec<u8>)) {
     }
 }
 
-/// What the dock hands out, written in the wire form the app reads (a u64 each).
+/// Serialization trait for dock-domain identifiers, panel views, and layout structs.
 pub trait DockOut {
     fn put_dock(&self, out: &mut Vec<u8>);
 }
@@ -552,9 +566,8 @@ impl genapi::Wire for AnyView {
         self.put_dock(out)
     }
 }
-// (A duration's Wire impl, i64 nanoseconds, is the values family's: core/src/values.rs.)
 
-/// `genapi::Wire` over anything DockOut (the generated results write `Out(value)`).
+/// Newtype bridging any [`DockOut`] value to [`genapi::Wire`].
 pub struct Out<T>(pub T);
 impl<T: DockOut> genapi::Wire for Out<T> {
     fn put(&self, out: &mut Vec<u8>) {
@@ -562,18 +575,17 @@ impl<T: DockOut> genapi::Wire for Out<T> {
     }
 }
 
-/// The library's calls of PROTOCOLS.md 11.8 (asked from `call` above).
+/// Handles `C_PANEL_GROUP` and `C_PANEL_ID`, then chains to layout, overlay, renderer, and pane calls.
 fn call3(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
-        // u64 panel -> u64 tab group (kind STATE, 0: not in one): the group the dock told the panel
-        // it was added to (Panel::on_added_to)
+
         C_PANEL_GROUP => (|| {
             let entity = genapi::state::<GkPanel>(r.u64())?;
             let g = entity.read(c.cx).group.as_ref().and_then(|g| g.upgrade());
             c.out.put_u64(g.map(|g| entity_handle(&g)).unwrap_or(0));
             Ok(())
         })(),
-        // u64 panel -> u64 panel id (PanelId: the panel entity's id)
+
         C_PANEL_ID => (|| {
             let entity = genapi::state::<GkPanel>(r.u64())?;
             c.out.put_u64(PanelId::from(entity.entity_id()).as_u64());
@@ -588,20 +600,14 @@ fn call3(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     })
 }
 
-// ------------------------------------------------------------------ saved layouts (PROTOCOLS.md 11.8)
-//
-// DockArea::dump and load carry a DockAreaState: a wire tree both ways (PanelState is recursive and
-// PanelInfo::Panel holds JSON, as its text). Panels a load rebuilds come from the panel registry:
-// a name the app registered (gk.register_panel) makes a GkPanel that draws nothing yet and asks the
-// app for its view with a queued Panel_Build request; the app fills it (gk.panel_fill) between
-// frames, so a restored panel is empty for at most one frame.
-
 use gpui_kit::base::dock::{
     DockAreaState, DockPlacement, DockState, PaneTree, PanelBuildContext, PanelBuilder, PanelInfo, PanelRegistry,
     PanelSource, PanelState, RootKind,
 };
 use genapi::{Unwire, Wire};
 
+/// Wire encoding for `PanelInfo`: tag `0` = Stack (`[n: u32][px: f32*][axis: u64]`),
+/// tag `1` = Tabs (`[active_index: u64]`), tag `2` = Panel (`[json: str]`).
 impl Wire for PanelInfo {
     fn put(&self, out: &mut Vec<u8>) {
         match self {
@@ -736,8 +742,8 @@ impl DockOut for DockAreaState {
     }
 }
 
-/// A panel the registry builds for a name the app registered: draws nothing until the app fills it
-/// (gk.panel_fill), and asks for that with a queued Panel_Build request.
+/// Callback registered in `PanelRegistry` by `C_PANEL_REGISTER`: allocates an empty placeholder
+/// `GkPanel` immediately and queues `SHAPE_PANEL_BUILD` so the host fills it via `C_PANEL_FILL`.
 fn requested(h: HandlerRef, ctx: PanelBuildContext, cx: &mut App) -> Arc<dyn PanelView> {
     let state = ctx.state().clone();
     let entity = new_empty_panel(&state, cx);
@@ -747,6 +753,7 @@ fn requested(h: HandlerRef, ctx: PanelBuildContext, cx: &mut App) -> Arc<dyn Pan
     Arc::new(entity)
 }
 
+/// Creates an unpopulated `GkPanel` carrying only the persisted name and JSON info until filled.
 fn new_empty_panel(state: &PanelState, cx: &mut App) -> Entity<GkPanel> {
     let info = match &state.info {
         PanelInfo::Panel(v) if !v.is_null() => v.to_string(),
@@ -766,8 +773,7 @@ fn new_empty_panel(state: &PanelState, cx: &mut App) -> Entity<GkPanel> {
     cx.new(|cx| GkPanel { view: None, focus: cx.focus_handle(), data, events: None, group: None })
 }
 
-/// The panels a pane tree names, read from a dock area before the tree is written out (PanelSource
-/// methods get no context).
+/// Snapshot `PanelSource` pre-populated from a `DockArea` so `PaneTree::to_state` needs no `&App`.
 struct GkSource(HashMap<u64, (&'static str, bool, PanelState)>);
 
 impl PanelSource for GkSource {
@@ -782,7 +788,8 @@ impl PanelSource for GkSource {
     }
 }
 
-/// Builds the panels of a saved tree through the registry (an empty GkPanel for an unknown name).
+/// `PanelBuilder` adapter used by `C_PANE_TREE_FROM_STATE` to instantiate registered panels or
+/// fallback empty placeholders while pinning their `Arc<dyn PanelView>` in `BUILT`.
 struct GkBuilder<'w, 'c> {
     dock: WeakEntity<DockArea>,
     window: &'w mut Window,
@@ -790,7 +797,8 @@ struct GkBuilder<'w, 'c> {
 }
 
 thread_local! {
-    /// Panels a pane tree built from a saved state names (kept alive with the tree's panels).
+    /// Holds `PanelView` arcs created during `PaneTree::from_state` so they stay alive until
+    /// attached or returned.
     static BUILT: RefCell<Vec<Arc<dyn PanelView>>> = const { RefCell::new(Vec::new()) };
 }
 
@@ -806,10 +814,11 @@ impl PanelBuilder for GkBuilder<'_, '_> {
     }
 }
 
+/// Handles panel-registry and pane-tree persistence calls (`C_PANEL_REGISTER`, `C_PANEL_FILL`,
+/// `C_PANEL_BUILD_NOW`, `C_PANE_TREE_TO_STATE`, `C_PANE_TREE_FROM_STATE`).
 fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
-        // str name, u32 slot, u32 generation (a kept handler of shape PANEL_BUILD): the registry
-        // builds panels of that name for a load (immediate)
+
         C_PANEL_REGISTER => (|| {
             let name = r.str().to_string();
             let (slot, generation) = (r.u32(), r.u32());
@@ -817,8 +826,7 @@ fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             gpui_kit::base::dock::register_panel(c.cx, &name, move |ctx, _window, cx| requested(h, ctx, cx));
             Ok(())
         })(),
-        // u64 panel, u64 view, data, u32 slot, u32 generation (buffered): a requested panel's view
-        // and data, and its events handler
+
         C_PANEL_FILL => (|| {
             let entity = genapi::state::<GkPanel>(r.u64())?;
             let view = mount(r.u64(), c)?;
@@ -834,8 +842,7 @@ fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             });
             Ok(())
         })(),
-        // u64 dock area, PanelState -> opt<u64 panel>: PanelRegistry::build_panel with a build
-        // context made of the dock and the state (immediate; needs a window)
+
         C_PANEL_BUILD_NOW => (|| {
             let dock = genapi::state::<DockArea>(r.u64())?;
             let state = PanelState::get(r);
@@ -849,7 +856,7 @@ fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Out(built).put(c.out);
             Ok(())
         })(),
-        // u64 pane tree (object), u64 dock area -> PanelState: PaneTree::to_state over the dock's panels
+
         C_PANE_TREE_TO_STATE => (|| {
             let tree = genapi::obj_rc::<PaneTree>(r.u64())?;
             let dock = genapi::state::<DockArea>(r.u64())?;
@@ -864,8 +871,7 @@ fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             tree.to_state(&GkSource(map)).put(c.out);
             Ok(())
         })(),
-        // u64 dock area, PanelState, u16 root kind (0 split, 1 any) -> u64 pane tree (object, kept):
-        // PaneTree::from_state, panels built through the registry
+
         C_PANE_TREE_FROM_STATE => (|| {
             let dock = genapi::state::<DockArea>(r.u64())?;
             let state = PanelState::get(r);
@@ -880,20 +886,18 @@ fn layout_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     })
 }
 
-/// A pane node's shape (PaneNode::kind, whose PaneRef borrows the node) and its pre-order walk
-/// (PaneNode::walk, whose closure the library runs), as values.
+/// Handles pane-node inspection (`C_PANE_NODE_KIND`, `C_PANE_NODE_WALK`) and `C_DOCK_SKIN`.
 fn pane_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     use gpui_kit::base::dock::{PaneNode, PaneRef};
     Some(match op {
-        // u64 pane node -> u16 kind: 0 split (u16 axis, u32 n, u64 node each, u32 n, opt<f32> each),
-        // 1 tabs (u32 n, u64 panel id each, u64 active index); the children are temporary handles
+
         C_PANE_NODE_KIND => (|| {
             let node = genapi::obj_rc::<PaneNode>(r.u64())?;
             let node = node.try_borrow().map_err(|_| genapi::GkErr(ERR_BUSY, "the pane node is in use".into()))?;
             match node.kind() {
                 PaneRef::Split { axis, children, sizes } => {
                     c.out.put_u16(0);
-                    c.out.put_u16(if axis == gpui_kit::Axis::Vertical { 0 } else { 1 }); // gk.Axis
+                    c.out.put_u16(if axis == gpui_kit::Axis::Vertical { 0 } else { 1 });
                     c.out.put_u32(children.len() as u32);
                     for ch in children {
                         c.out.put_u64(crate::objects::obj_temp(ch.clone()));
@@ -914,8 +918,7 @@ fn pane_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             }
             Ok(())
         })(),
-        // u64 pane node -> u32 n, u64 node each (temporary handles): the node and its descendants
-        // in pre-order
+
         C_DOCK_SKIN => skin_call(r, c),
         C_PANE_NODE_WALK => (|| {
             let node = genapi::obj_rc::<PaneNode>(r.u64())?;
@@ -933,13 +936,12 @@ fn pane_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
 }
 
 thread_local! {
-    /// The skin of each dock area gk.dock_area_skinned made (DockSkin::dock_area pairs them).
+    /// Associates each `DockArea` state handle opened via `C_DOCK_AREA_SKINNED` with its `DockSkin`.
     static SKINS: RefCell<HashMap<u64, std::rc::Rc<DockSkin>>> = RefCell::new(HashMap::new());
 }
 
-/// u64 dock area, u8 what (0 panel style -> u16, 1 set style u16, 2 toggle button visible -> u8,
-/// 3 set it u8, 4 set the close button visible u8, 5 collapsed tab bar visible -> u8, 6 set it u8,
-/// 7 split divider line visible -> u8, 8 set it u8): DockSkin's reads and settings.
+/// Dispatches `C_DOCK_SKIN` sub-opcodes (`0..=8`) to read or update `DockSkin` visibility and
+/// panel-style flags on a skinned `DockArea`.
 fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     use gpui_kit::component::dock::PanelStyle;
     let h = r.u64();
@@ -965,24 +967,13 @@ fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     Ok(())
 }
 
-// ------------------------------------------------------------------ renderers (PROTOCOLS.md 11.9)
-//
-// `GkRenderer` is the library's one DockAreaRenderer and TabGroupRenderer: an object handle
-// (`gk.Dock_Renderer`) the app makes with the hooks it answers and a kept handler. A hook upstream
-// calls while it draws looks up the app view the app gave for (hook, key) (gk.dock_render_answer)
-// and draws it in place of upstream's default; a hook whose key has no answer for the context it is
-// drawn with sends one queued Dock_Render request (the context as library objects, kept until the
-// next request for that key) and draws upstream's default, or the older answer, this frame. The
-// element a hook is handed (a dock's content, the active panel) goes where the app's view put
-// gk.dock_slot(). A frame hook's view is a gk.div() (or h_flex, v_flex): that div, with upstream's
-// id, is the frame. App code never runs while the dock draws.
-
 use gpui_kit::base::dock::{DockAreaRenderer, DockContext, DropIndicator, TabGroupContext, TabGroupRenderer};
 use gpui_kit::base::ResizeHandleContext;
 use gpui_kit::{Axis, Div, ElementId, InteractiveElement as _, ParentElement as _, Stateful, Styled as _};
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 
+/// Hook bit indices for [`GkRenderer::hooks`].
 const H_FRAME: u8 = 0;
 const H_CENTER_FRAME: u8 = 1;
 const H_SPLIT_FRAME: u8 = 2;
@@ -996,6 +987,10 @@ const H_TAB_ACTIVE_PANEL: u8 = 9;
 const H_TAB_DROP_INDICATOR: u8 = 10;
 const H_TAB_EMPTY: u8 = 11;
 
+/// Host-driven implementation of `DockAreaRenderer` and `TabGroupRenderer`.
+///
+/// `hooks` is a bitmask of `H_*` hooks the host opted to customize; unmasked hooks fall back to
+/// upstream defaults without crossing the wire.
 #[derive(Clone, Copy)]
 pub struct GkRenderer {
     id: u64,
@@ -1005,11 +1000,11 @@ pub struct GkRenderer {
 
 #[derive(Default)]
 struct RenderBook {
-    /// (renderer, hook, key) -> the app's view for it
+    /// Host-supplied view handle per `(renderer_id, hook, key)` set by `C_DOCK_RENDER_ANSWER`.
     answers: HashMap<(u64, u8, u64), u64>,
-    /// (renderer, hook, key) -> the snapshot of the context last asked about
+    /// Last context hash requested for `(renderer_id, hook, key)` so unchanged frames do not re-ask.
     asked: HashMap<(u64, u8, u64), u64>,
-    /// (renderer, hook, key) -> the context objects of the newest request, released by the next
+    /// Owned `DockContext`/`TabGroupContext` handles kept alive for the latest request per key.
     ctx: HashMap<(u64, u8, u64), Vec<u64>>,
     sent: HashMap<u64, u32>,
     drawn: HashMap<u64, u32>,
@@ -1017,20 +1012,21 @@ struct RenderBook {
 
 thread_local! {
     static BOOK: RefCell<RenderBook> = RefCell::new(RenderBook::default());
-    /// The element the hook being drawn was handed, for the gk.dock_slot() of the app's view.
+    /// Active upstream child element exposed to `N_DOCK_SLOT` while decoding a renderer view tape.
     static SLOT: RefCell<Option<AnyElement>> = const { RefCell::new(None) };
 }
 
-/// A renderer argument (`Rc<dyn DockAreaRenderer>`, `Rc<dyn TabGroupRenderer>`).
+/// Resolves a `GkRenderer` object handle into an `Rc<GkRenderer>` for wire calls.
 pub fn renderer(h: u64) -> GkResult<Rc<GkRenderer>> {
     genapi::obj_clone::<GkRenderer>(h).map(Rc::new)
 }
 
+/// Tape-decode counterpart to [`renderer`]; stops the app on a stale handle.
 pub fn renderer_shown(h: u64) -> Rc<GkRenderer> {
     Rc::new(genapi::obj_shown::<GkRenderer>(h))
 }
 
-/// What a request tells the app besides its hook and key.
+/// Wire payload fields for a `SHAPE_DOCK_RENDER` request describing one dock/tab-group hook site.
 #[derive(Default)]
 struct Req {
     node: u64,
@@ -1079,7 +1075,6 @@ fn placement_num(p: DockPlacement) -> u16 {
     }
 }
 
-/// gk.Axis's number (upstream's order: Vertical 0, Horizontal 1).
 fn axis_num(a: Axis) -> u16 {
     if a == Axis::Vertical { 0 } else { 1 }
 }
@@ -1105,8 +1100,10 @@ fn group_req(g: &TabGroupContext) -> Req {
 }
 
 impl GkRenderer {
-    /// The app's view for (hook, key), asking for one (once per context) when the app answers this
-    /// hook and has none for this context. None: upstream's default.
+    /// Looks up the host view answering `(self.id, hook, key)`, sending a queued
+    /// `SHAPE_DOCK_RENDER` request whenever the context snapshot `sn` changed since the last ask.
+    ///
+    /// Context object handles from the previous request for the same key are released once replaced.
     fn view(&self, hook: u8, key: u64, sn: u64, make: impl FnOnce() -> Req, cx: &mut App) -> Option<u64> {
         if self.hooks & (1u32 << hook) == 0 {
             return None;
@@ -1138,8 +1135,8 @@ impl GkRenderer {
         BOOK.with(|b| *b.borrow_mut().drawn.entry(self.id).or_default() += 1);
     }
 
-    /// The app's view as an element, with `slot` where it put gk.dock_slot(); None before its first
-    /// description.
+    /// Decodes `view`'s current tape with `slot` stashed in thread-local `SLOT` for `N_DOCK_SLOT`.
+    /// Returns `Err(slot)` without losing `slot` if the view has no tape yet.
     fn element(&self, view: u64, slot: Option<AnyElement>, window: &mut Window, cx: &mut App) -> Result<AnyElement, Option<AnyElement>> {
         let tape = rt::with(|s| s.view(view)).ok().and_then(|e| e.read(cx).tape.clone());
         let Some(tape) = tape else { return Err(slot) };
@@ -1150,7 +1147,8 @@ impl GkRenderer {
         Ok(el)
     }
 
-    /// A frame hook: the app's root div with upstream's id, or upstream's default.
+    /// Decodes a `Stateful<Div>` frame hook (`256..=258` = Div/HFlex/VFlex), stopping the app if
+    /// the host returned a non-div root node.
     fn frame(&self, hook: u8, key: u64, sn: u64, id: ElementId, make: impl FnOnce() -> Req, window: &mut Window, cx: &mut App) -> Stateful<Div> {
         let Some(view) = self.view(hook, key, sn, make, cx) else { return gpui_kit::div().id(id) };
         let tape = rt::with(|s| s.view(view)).ok().and_then(|e| e.read(cx).tape.clone());
@@ -1172,7 +1170,6 @@ impl GkRenderer {
         d.unwrap_or_else(gpui_kit::div).id(id)
     }
 
-    /// An element hook: the app's view (with `slot`), or `default`.
     fn el(
         &self,
         hook: u8,
@@ -1231,8 +1228,7 @@ impl DockAreaRenderer for GkRenderer {
         if self.hooks & (1u32 << H_PLACEHOLDER) == 0 {
             return None;
         }
-        // a panel the registry cannot build: an empty GkPanel the app fills (gk.panel_fill) when the
-        // request arrives, as a restored panel is (PROTOCOLS.md 11.8)
+
         let entity = new_empty_panel(state, cx);
         let req = Req { panel: entity_handle(&entity), name: state.panel_name.clone(), ..Req::default() };
         BOOK.with(|b| *b.borrow_mut().sent.entry(self.id).or_default() += 1);
@@ -1275,7 +1271,7 @@ impl TabGroupRenderer for GkRenderer {
     }
 
     fn render_drop_indicator(&self, indicator: DropIndicator, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
-        // the app's view, drawn in the rectangle the drop would fill (asked once: its look, not its place)
+
         let el = self.el(H_TAB_DROP_INDICATOR, 0, 1, None, Req::default, window, cx).ok()?;
         let to = indicator.to();
         Some(
@@ -1296,10 +1292,12 @@ impl TabGroupRenderer for GkRenderer {
     }
 }
 
-/// The renderers' call ops.
+/// Handles custom renderer registration, hook answers, dock-toggle subscriptions, and renderer
+/// test counters (`C_DOCK_RENDERER_NEW`, `C_DOCK_RENDER_ANSWER`, `C_DOCK_TOGGLE_SUBSCRIBE`,
+/// `C_DOCK_RENDER_TEST`).
 fn render_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
-        // u32 hooks, u32 slot, u32 generation -> u64 renderer (kind OBJ)
+
         C_DOCK_RENDERER_NEW => {
             let (hooks, slot, generation) = (r.u32(), r.u32(), r.u32());
             let events = HandlerRef { view: 0, generation, handler: slot };
@@ -1311,7 +1309,7 @@ fn render_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.put_u64(h);
             Ok(())
         }
-        // u64 renderer, u8 hook, u64 key, u64 view (buffered): every window draws again
+
         C_DOCK_RENDER_ANSWER => (|| {
             let (h, hook, key, view) = (r.u64(), r.u8(), r.u64(), r.u64());
             genapi::obj_clone::<GkRenderer>(h)?;
@@ -1322,8 +1320,7 @@ fn render_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.cx.refresh_windows();
             Ok(())
         })(),
-        // u64 dock area, u32 slot, u32 generation -> u64 subscription: the kit's DockToggleEvent (a dock
-        // the user opened or closed through the skin), Dock_Toggle {u16 placement, u8 open} to the handler
+
         C_DOCK_TOGGLE_SUBSCRIBE => (|| {
             let (h, slot, generation) = (r.u64(), r.u32(), r.u32());
             let sub = genapi::state_subscribe_with::<DockArea, gpui_kit::component::dock::DockToggleEvent>(
@@ -1340,7 +1337,7 @@ fn render_call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.put_u64(sub);
             Ok(())
         })(),
-        // u64 renderer -> u32 requests sent, u32 answers kept, u32 hooks drawn from an answer
+
         C_DOCK_RENDER_TEST => {
             let h = r.u64();
             let (sent, answers, drawn) = BOOK.with(|b| {

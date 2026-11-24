@@ -1,16 +1,3 @@
-// The component protocol tests (docs/PROTOCOLS.md 11.18 to 11.26), in the values test app:
-//
-//	c6-background   try_parse_background read back as gk.BackgroundValue (11.23; background.go)
-//	c6-matcher      a calendar's disabled matcher of every variant, written and read back (11.21;
-//	                dates.go)
-//	c6-q-rules      a questionnaire item's validator as rules, checked by the library (11.26;
-//	                qrules.go)
-//	c6-resize       a resizable group whose handles the app draws: the snapshot of the kit's context
-//	                (11.18) read by the row, described again when the pointer moves over the handle
-//	                (resize.go)
-//	c6-chains       colours and value nodes in a constructor's builder chain (11.27, the editor
-//	                family's rule of 9.31): a colour picker's default value, a grid's default areas,
-//	                a tree's items, an ordinal scale's colours and its colour for unknown values
 package main
 
 import (
@@ -22,9 +9,14 @@ import (
 )
 
 func init() {
+	// Register builder-chain readback tests for ColorPicker, GridLayout, Tree, and ScaleOrdinal.
 	modes["c6-chains"] = &mode{click: once(chains)}
 }
 
+// chains proves fluent builder chains preserve every configured property across
+// ColorPickerState (hue=0.50), GridLayoutState (2 areas), TreeState (2 valid
+// entries then invalid index 2), and ScaleOrdinal (overridden range b_h=0.75
+// plus neutral unknown fallback L=0.50, S=0.00).
 func chains(a *App, cx *gk.Cx) {
 	picker := base.NewColorPickerState(cx).DefaultValue(gk.HSLA(0.5, 1, 0.5, 1)).Build()
 	v, has := picker.Value(cx).Get()

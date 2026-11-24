@@ -1,12 +1,3 @@
-// history, conflict, fold, owner, bad-owner and editor-style:
-//
-//	history       History.Retain (History<SharedString>::retain, a predicate as a key set)
-//	conflict      gk.ParseConflicts (DiffFile::parse_conflicts as gk.Fallible[gk.DiffFileRead])
-//	fold          EditorState.SetFoldPlaceholderRenderer over an item function of the folded line
-//	              (gk.Items), on the kit's code editor (gk.CodeEditor)
-//	owner         gk.EntityID, gk.EntityIDOf, InputBaseEl.SemanticOwner
-//	editor-style  gk.NewAsk, gk.NewHighlighter, gk.HighlightQuery, gk.HighlightRun and
-//	              gk.InputEditorStyle (its HighlightStyles is an ask)
 package main
 
 import (
@@ -20,7 +11,7 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
-// The state of these modes.
+// ed holds handles shared by editor-specific test modes (folds, highlighter, styles).
 var ed struct {
 	folds    gk.RowSource
 	foldRows int
@@ -29,6 +20,8 @@ var ed struct {
 }
 
 func init() {
+	// history proves History.Retain filters pushed entries ["a","b","c","d"] down
+	// to ["b","d"] while preserving order and current selection.
 	modes["history"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.hist = gk.NewHistory(cx).Build()
 		for _, e := range []string{"a", "b", "c", "d"} {
@@ -46,6 +39,7 @@ func init() {
 	}, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 fold described=%d\n", ed.foldRows)
 	}, script: foldScript()}
+	// owner proves SemanticOwner accepts an editor handle via gk.EntityIDOf and renders cleanly.
 	modes["owner"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.ed = editor.NewState(cx).DefaultValue("x").Build()
 	}, view: func(a *App, cx *gk.Cx) gk.Element {
@@ -53,6 +47,7 @@ func init() {
 		fmt.Printf("editor2 owner drawn\n")
 		return body
 	}, script: "frame\nframe\n"}
+	// bad-owner proves passing a non-text handle (History) to SemanticOwner fails cleanly.
 	modes["bad-owner"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.hist = gk.NewHistory(cx).Build()
 	}, view: func(a *App, cx *gk.Cx) gk.Element {
@@ -61,6 +56,8 @@ func init() {
 	modes["editor-style"] = &mode{init: styleInit, view: editorBox, script: "frame\nadvance 100\nframe\nadvance 100\nframe\nframe\n"}
 }
 
+// conflictStep proves ParseConflicts extracts 1 conflict block with "ours"/"theirs"
+// labels and no diff3 base section (base=false, base_label=false).
 func conflictStep(a *App, cx *gk.Cx) {
 	f := editor.ParseConflicts(cx, "a.txt", conflictText)
 	file, ok := f.Value.Get()
@@ -79,14 +76,15 @@ func conflictStep(a *App, cx *gk.Cx) {
 	}
 }
 
-// Go: an item function is handed the folded line, not its row: the row printed is the line's
-// (one fold, line 0).
 func (a *App) foldRow(cx *gk.Cx, line int) gk.Element {
 	ed.foldRows++
 	fmt.Printf("editor2 fold row=%d line=%d\n", line, line)
 	return kit.Label("...")
 }
 
+// foldInit configures line folding with a fold candidate on lines 0..2 so
+// clicking the fold gutter proves SetFoldPlaceholderRenderer invokes foldRow
+// with line=0.
 func foldInit(a *App, cx *gk.Cx) {
 	ed.folds = overlay.Items(cx, a.foldRow)
 	a.ed = editor.NewState(cx).DefaultValue(foldText).Build()
@@ -96,9 +94,6 @@ func foldInit(a *App, cx *gk.Cx) {
 	a.ed.ApplyHighlighterFoldCandidates(cx, []gk.FoldRange{{StartLine: 0, EndLine: 2}})
 }
 
-// Clicks along the first line's gutter, each followed by a frame: the one on the fold icon folds
-// line 0 (a second one there unfolds it); a frame while it is folded draws the placeholder, the row
-// of the folded line.
 func foldScript() string {
 	var b strings.Builder
 	b.WriteString("frame\n")
@@ -127,6 +122,8 @@ func (a *App) styleFor(cx *gk.Cx, name string) gk.Option[gk.HighlightStyle] {
 	return gk.Option[gk.HighlightStyle]{}
 }
 
+// styleInit pairs a custom Highlighter emitting "keyword" spans with an Ask
+// style map in SetEditorStyle, proving the editor queries styleFor("keyword").
 func styleInit(a *App, cx *gk.Cx) {
 	ed.styles = gk.NewAsk(cx, a.styleFor)
 	ed.hl = gk.NewHighlighter(cx, a.keywordRuns, nil, "demo")

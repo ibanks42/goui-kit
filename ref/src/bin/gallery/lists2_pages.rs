@@ -1,10 +1,6 @@
-//! The lists and editor families' gallery pages (docs/PROTOCOLS.md sections 9.9 and 9.10), written
-//! the way a Rust GPUI-kit app writes them: a Select over a SearchableVec of its own item type, a
-//! searchable Select over groups, a Select whose delegate draws its own rows and group headers,
-//! a multiple Combobox, and a table whose delegate gives group headers, a header and a row style
-//! and a group header cell of its own. The Go twin is examples/go/gallery/lists2_pages.go,
-//! over the library's search delegate and table shim; the pages' lines are in
-//! ref/gallery/pages.txt. Each page has its own state, made once when the gallery starts.
+//! Select, combobox, styled/static tables, diff viewer, inline tokens,
+//! markdown code-block highlighting, and editor diagnostic gallery pages.
+
 use crate::Gallery;
 use gpui_kit::component::combobox::{Combobox, ComboboxState};
 use gpui_kit::component::label::Label;
@@ -20,8 +16,7 @@ use gpui_kit::{
     Pixels, SharedString, Stateful, Styled, Task, Window, div, px,
 };
 
-/// An item: value, title, a trigger display, a
-/// disabled flag.
+/// Select/combobox option item exercising disabled rows and custom `display_title`.
 #[derive(Clone)]
 pub struct Fruit {
     value: SharedString,
@@ -69,7 +64,6 @@ fn groups() -> SearchableVec<SearchableGroup<Fruit>> {
     ])
 }
 
-/// A delegate that draws its own rows ("> Title") and group headers ("== fruit ==").
 pub struct Rows {
     inner: SearchableVec<SearchableGroup<Fruit>>,
 }
@@ -103,6 +97,8 @@ impl SearchableListDelegate for Rows {
     }
 }
 
+/// Persistent state entities for `lists2-*`, `diff-*`, `text-token`, and
+/// `editor-diagnostics` gallery pages.
 pub struct Lists2Pages {
     pub select: Entity<SelectState<SearchableVec<Fruit>>>,
     pub search: Entity<SelectState<SearchableVec<SearchableGroup<Fruit>>>>,
@@ -110,7 +106,6 @@ pub struct Lists2Pages {
     pub combo: Entity<ComboboxState<SearchableVec<Fruit>>>,
     pub table: Entity<TableState<Look>>,
     pub diff: Entity<gpui_kit::component::diff::DiffState>,
-    // docs/PROTOCOLS.md 9.16 to 9.18
     pub token: Entity<gpui_kit::base::input::InputState>,
     pub editor: Entity<gpui_kit::base::input::EditorState>,
 }
@@ -147,8 +142,6 @@ impl Lists2Pages {
     }
 }
 
-/// A table whose delegate gives group headers, a styled header row and styled body rows, and a
-/// group header cell of its own for "Values".
 pub struct Look {
     columns: Vec<Column>,
 }
@@ -208,7 +201,7 @@ impl TableDelegate for Look {
     }
 }
 
-/// The page of `id`, or None when it is not one of this family's.
+/// Renders a `lists2-*`, `diff-*`, `text-*`, or `editor-diagnostics` page.
 pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
     let p = &g.lists2;
     Some(match id {
@@ -261,8 +254,6 @@ pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
     })
 }
 
-/// text-highlight: a Markdown code block highlighted by the app's closure: "proc" and "return"
-/// in red (docs/PROTOCOLS.md 9.14).
 const TEXT_HIGHLIGHT_MD: &str = "# Code\n\n```demo\nmain :: proc() {\n    return\n}\n```\n";
 
 fn text_highlight_spans(code: &str) -> Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)> {
@@ -286,23 +277,19 @@ fn text_highlight_spans(code: &str) -> Vec<(std::ops::Range<usize>, gpui_kit::Hi
     out
 }
 
-/// diff-view: a patch parsed by the kit, shown by its Diff.
 const DIFF_VIEW_PATCH: &str = "diff --git a/hello.demo b/hello.demo\n--- a/hello.demo\n+++ b/hello.demo\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n";
 
-// --- docs/PROTOCOLS.md 9.16 to 9.18 ---------------------------------------------------
-
-/// editor-diagnostics: the editor's text, a diagnostic on `helper` (line 1, columns 4 to 10), and
-/// "proc" and "return" highlighted as keywords by the app's highlighter.
 pub const EDITOR_DIAG_TEXT: &str = "main :: proc() {\n    helper()\n    return\n}\n";
 
-/// A highlighter as a Rust app writes one: "proc" and "return" are "keyword" runs, resolved by the
-/// editor's resolver (the theme's syntax colours); the Go page answers the same runs between
-/// frames (gk.NewHighlighter).
+/// Simple `InputHighlighter` highlighting `proc` and `return` keywords for
+/// `editor-diagnostics`.
 #[derive(Default)]
 pub struct Keywords {
     text: String,
 }
 
+/// Scans `text` for literal `"proc"` and `"return"` occurrences and emits
+/// `(byte_range, "keyword")` runs.
 pub fn keyword_runs(text: &str) -> Vec<(std::ops::Range<usize>, &'static str)> {
     let b = text.as_bytes();
     let mut out = Vec::new();

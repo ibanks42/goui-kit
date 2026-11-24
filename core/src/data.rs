@@ -1,12 +1,9 @@
-//! The data protocol (docs/PROTOCOLS.md section 12). A chart, plot shape or scale that is
-//! generic over the type of one row of data is instantiated by the generator for `Datum`, a
-//! row of a table the app passed with the element (`gk.data(rows[:])`), and every closure
-//! upstream calls on a row while it draws is answered from that table: a column (`Field`) or
-//! a template over the numbers upstream hands in and the row's columns (`Format`). No app code
-//! runs while a frame is drawn (decision 3), and the app's rows are copied once per
-//! description of the view, as a Rust app clones its rows into the chart it builds.
+//! Columnar chart data tables ([`Table`], [`Datum`]), cached field lookups ([`Field`]),
+//! and format-string evaluation ([`Format`]) for generic gpui-kit chart components.
 //!
-//! Generated decoders call `rows`, `Field::new` and `Format::new` and nothing else here.
+//! Upstream chart elements are generic over a row type `T`. Generated decoders instantiate them
+//! with [`Datum`], a cheap `Rc<Table>` + row-index handle decoded from a columnar wire payload:
+//! `[n_cols: u16][(kind: u8, name: str)*][row_count: u32][row_values*]`.
 
 use crate::genapi::{self, R};
 use gpui_kit::{App, Hsla, SharedString};
@@ -14,58 +11,57 @@ use std::cell::Cell;
 use std::fmt::Write as _;
 use std::rc::Rc;
 
+/// Wire column type tags.
 const NUM: u8 = 0;
 const TEXT: u8 = 1;
 const COLOR: u8 = 2;
 const OPT: u8 = 3;
 const NUM32: u8 = 4;
 
-/// One column of a table.
+/// Typed column storage inside a [`Table`].
 pub enum Col {
     Num(Vec<f64>),
-    /// Numbers the app keeps as f32: shown as text the way an f32 prints.
+    /// Single-precision numeric column for chart accessors that expect `f32` formatting.
     Num32(Vec<f32>),
     Text(Vec<SharedString>),
     Color(Vec<Hsla>),
     Opt(Vec<Option<f64>>),
 }
 
-/// The rows the app passed with one element: its columns by name.
+/// Shared columnar table referenced by every [`Datum`] belonging to one chart dataset.
 pub struct Table {
     names: Vec<SharedString>,
     cols: Vec<Col>,
 }
 
-/// One row of a table: what a generic chart is instantiated with for its `T`.
+/// Row handle passed to generic gpui-kit chart accessors, carrying a shared [`Table`],
+/// zero-based `row` index, and optional series `key` for dynamic-column lookups.
 #[derive(Clone)]
 pub struct Datum {
     table: Rc<Table>,
     row: u32,
-    /// The column a keyed closure names (`Stack::value(Fn(&T, &str))`, PROTOCOLS.md 12.15): a field
-    /// given as "" reads this column.
+    /// Optional series key used when a [`Field`] has an empty name (stacked-series accessors).
     key: Option<SharedString>,
 }
 
 impl Datum {
-    /// The row's index in the table the app passed (a key of a row source over the rows).
+    /// Returns this datum's zero-based row index inside its [`Table`].
     pub fn index(&self) -> usize {
         self.row as usize
     }
 
-    /// The row with the column a keyed closure was handed (generated: `f.opt(&a0.keyed(a1))`).
+    /// Returns a clone of this datum bound to series column `key`.
     pub fn keyed(&self, key: &str) -> Datum {
         Datum { table: self.table.clone(), row: self.row, key: Some(SharedString::new(key)) }
     }
 }
 
-/// Reads a table: u16 columns, (u8 kind, str name) each, u32 rows, then the rows one after
-/// the other. Colours are resolved against the theme here, when the view is decoded.
+/// Decodes a wire data table into a `Vec<Datum>`, resolving theme color tokens against `cx`.
 pub fn rows(r: &mut R, cx: &App) -> Vec<Datum> {
     rows_with(r, Some(cx))
 }
 
-/// `rows` in a builder chain of an object's constructor, which has no app context: a theme colour
-/// in the rows is transparent there (PROTOCOLS.md 12.15).
+/// Decodes a wire data table without theme context (theme color tokens fall back to transparent).
 pub fn rows_plain(r: &mut R) -> Vec<Datum> {
     rows_with(r, None)
 }
@@ -122,26 +118,24 @@ fn rows_with(r: &mut R, cx: Option<&App>) -> Vec<Datum> {
     (0..count as u32).map(|row| Datum { table: table.clone(), row, key: None }).collect()
 }
 
-/// A number as text, as upstream writes a raw value (`format!("{}", v)`).
 fn number_text(v: f64) -> SharedString {
     SharedString::from(format!("{v}"))
 }
 
-/// A column of the row, named by the app (`->x("month")`). The column's index is looked up
-/// once per table and kept.
+/// Column accessor that caches `(table_ptr, col_index)` so repeated per-row lookups stay O(1).
 pub struct Field {
     name: SharedString,
     at: Cell<(usize, usize)>,
 }
 
 impl Field {
+    /// Creates a field accessor targeting column `name` (or `Datum::key` if `name` is empty).
     pub fn new(name: &str) -> Self {
         Field { name: SharedString::new(name), at: Cell::new((0, 0)) }
     }
 
     fn col<'a>(&self, d: &'a Datum) -> Option<&'a Col> {
         if self.name.is_empty() {
-            // a keyed closure's field: the column the key names (Stack::value)
             let c = d.table.names.iter().position(|n| Some(n) == d.key.as_ref())?;
             return d.table.cols.get(c);
         }
@@ -155,6 +149,7 @@ impl Field {
         d.table.cols.get(c)
     }
 
+    /// Reads this column as text, converting numeric values via default `Display` formatting.
     pub fn text(&self, d: &Datum) -> SharedString {
         let i = d.row as usize;
         match self.col(d) {
@@ -166,7 +161,7 @@ impl Field {
         }
     }
 
-    /// A number; a gap (Maybe without a value) and a column that is no number are 0.
+    /// Reads this column as `f64`, returning `0.0` for missing or non-numeric cells.
     pub fn num(&self, d: &Datum) -> f64 {
         let i = d.row as usize;
         match self.col(d) {
@@ -177,6 +172,7 @@ impl Field {
         }
     }
 
+    /// Reads this column as `Option<f64>`, preserving `None` in optional columns.
     pub fn opt(&self, d: &Datum) -> Option<f64> {
         let i = d.row as usize;
         match self.col(d) {
@@ -187,6 +183,7 @@ impl Field {
         }
     }
 
+    /// Reads this column as an `Hsla` color, defaulting to transparent black if absent.
     pub fn color(&self, d: &Datum) -> Hsla {
         match self.col(d) {
             Some(Col::Color(v)) => v[d.row as usize],
@@ -207,16 +204,14 @@ struct Spec {
     precision: Option<usize>,
 }
 
-/// A template over the numbers upstream hands a closure and the row's columns
-/// (`->tooltip_value("{} visits")`): "{}" the next number, "{1}" the second, "{:.2}" two
-/// decimals, "{:,}" thousands separated by commas, "{month}" a column of the row, "{{" and
-/// "}}" a brace. The binding checks a template before it sends it; what it cannot read here
-/// is kept as text.
+/// Pre-parsed label/tooltip format template supporting `{}`, `{0}`, `{col}`, optional `,`
+/// thousands grouping and `.N` decimal precision (`{value:,.2}`), plus `{{` / `}}` escapes.
 pub struct Format {
     parts: Vec<Part>,
 }
 
 impl Format {
+    /// Parses format string `t` into literal segments and positional or named column placeholders.
     pub fn new(t: &str) -> Self {
         let mut parts = Vec::new();
         let mut lit = String::new();
@@ -261,6 +256,7 @@ impl Format {
         Format { parts }
     }
 
+    /// Evaluates the template against an optional [`Datum`] and positional numeric arguments `nums`.
     pub fn text(&self, d: Option<&Datum>, nums: &[Arg]) -> SharedString {
         let mut out = String::new();
         for p in &self.parts {
@@ -291,8 +287,7 @@ impl Format {
     }
 }
 
-/// A number a closure was handed, in its own type: an f32 prints as upstream's closure would
-/// print it (0.35, not 0.3499999940395355).
+/// Positional numeric argument passed into [`Format::text`].
 #[derive(Clone, Copy)]
 pub enum Arg {
     F64(f64),
@@ -316,7 +311,7 @@ fn number(out: &mut String, v: f64, spec: Spec) {
     group(out, &s, spec.group && v.is_finite());
 }
 
-/// Writes a formatted number, with commas between the thousands when asked.
+/// Appends decimal string `s` to `out`, inserting ASCII commas every 3 integer digits when `comma` is set.
 fn group(out: &mut String, s: &str, comma: bool) {
     if !comma {
         out.push_str(s);
@@ -336,9 +331,7 @@ fn group(out: &mut String, s: &str, comma: bool) {
     }
 }
 
-/// The element for one row of a table (a chart's tooltip content): the view of the row
-/// source `src` for the row's index, described between frames by the app's row procedure.
-/// The view that draws it is told when the row arrives; until then nothing is drawn.
+/// Renders the row view in row source `src` matching `d.row`, watching `src` for updates.
 pub fn row_element(src: u64, d: &Datum, window: &mut gpui_kit::Window, cx: &mut App) -> gpui_kit::AnyElement {
     use gpui_kit::IntoElement as _;
     crate::source::watch(src, window.current_view());
@@ -347,11 +340,6 @@ pub fn row_element(src: u64, d: &Datum, window: &mut gpui_kit::Window, cx: &mut 
         crate::source::Row::Missing => gpui_kit::div().into_any_element(),
     }
 }
-
-// ------------------------------------------------------------------ PROTOCOLS.md 12.15
-//
-// Kit values over rows read back: a row is its index in the rows the app passed (ArcData,
-// StackSeries and StackPoint in go/gk/rt_data.go).
 
 use crate::genapi::Wire;
 use gpui_kit::base::plot::shape::{ArcData, StackSeries};

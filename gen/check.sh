@@ -1,9 +1,8 @@
 #!/bin/bash
-# check.sh [JOBS]: "rustc is the judge". cargo check of the library with the
-# generated Rust in core/src/gen, in the release profile (an item that exists only in a
-# debug build of the kit must not pass), with the compiler's errors one per line in
-# gen/out/build.check.log (which gen/round.sh hands to `gkgen.py quarantine rust`). Prints
-# the wall time. Always exits 0: the log says whether it compiled.
+# Run `cargo check` on gk-capi in release mode, logging compiler diagnostics to
+# gen/out/build.check.log in short message format for `gkgen.py quarantine rust`.
+# Always exits 0 after printing summary lines so gen/round.sh can parse the log.
+# Usage: gen/check.sh [JOBS]
 set -uo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p gen/out

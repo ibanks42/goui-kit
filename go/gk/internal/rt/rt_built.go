@@ -5,15 +5,16 @@ import (
 	"strings"
 )
 
-// Built is the view behind a view-built closure whose function describes a T (a DialogEl, a
-// SheetEl, a PopupMenu). Make it once (in init) and give it to the call that opens the overlay
-// each time; gk.Release(cx, b.View) forgets it.
+// Built wraps a View whose render function produces a specific element or value
+// type T, used for overlays such as dialogs, sheets, and popovers.
 type Built[T any] struct{ View }
 
+// ValueEl adapts a value node into an Element so a Built view can return kit
+// values (such as menus or tooltips) through the standard view tape pipeline.
 type ValueEl struct{ ElCore }
 
-// NewBuilt makes the view that describes a T with render. Only in a handler or init: a view
-// function may not make views.
+// NewBuilt creates a reusable Built[T] view from render. The returned view must
+// be created outside a view function and kept across turns.
 func NewBuilt[T any](cx *Cx, render func(cx *Cx) T) Built[T] {
 	CheckCx(cx)
 	if Vb.Active {
@@ -28,7 +29,7 @@ func NewBuilt[T any](cx *Cx, render func(cx *Cx) T) Built[T] {
 		case Element:
 			return n
 		case value:
-			return ValueEl{MkElCore(n.valueNode())} // a described value (a popup menu): its node is the root
+			return ValueEl{MkElCore(n.valueNode())}
 		}
 		Stop("the function given to gk.NewBuilt returned a %T, which is not a kit element or value: return what the overlay shows (a overlay.Dialog(), overlay.AlertDialog(), overlay.Sheet(), a menu)", x)
 		return nil
@@ -36,31 +37,29 @@ func NewBuilt[T any](cx *Cx, render func(cx *Cx) T) Built[T] {
 	return Built[T]{v}
 }
 
-// Builder is what an overlay opens with (overlay.OpenDialog, OpenSheet, ...): a Built[T] made once
-// with gk.NewBuilt, or the function that describes the overlay, given right there:
-//
-//	overlay.OpenDialog(cx, func(cx *gk.Cx) overlay.DialogEl { return overlay.Dialog().Title(..) })
-//
-// A function gets a view of its own for the place in the app's code that opens it (one view per
-// call site and per view whose handler runs it): opening again from there shows the newer
-// function, and the view is released with the view that owns it.
+// Builder constrains overlay-opening APIs to accept either a pre-created
+// Built[T] handle or an inline render closure func(*Cx) T.
 type Builder[T any] interface {
 	Built[T] | func(cx *Cx) T
 }
 
+// builtKey identifies an inline overlay call site by owning view and caller PC
+// so repeated calls from the same line reuse one underlying View instead of
+// leaking a new view on every open.
 type builtKey struct {
-	owner uint64  // the view whose turn opened it (0: none)
-	pc    uintptr // where in the app's code
+	owner uint64
+	pc    uintptr
 }
 
 type builtSite struct {
 	view View
-	fn   any // the func(*Cx) T given last
+	fn   any
 }
 
 var builtSites = map[builtKey]*builtSite{}
 
-// BuiltView is the view b names: a Built's own, or the call site's view for a function.
+// BuiltView resolves a Builder[T] into a live View, reusing a per-call-site
+// Built[T] view when given an inline closure.
 func BuiltView[T any, B Builder[T]](cx *Cx, b B) View {
 	switch x := any(b).(type) {
 	case Built[T]:
@@ -89,7 +88,7 @@ func BuiltView[T any, B Builder[T]](cx *Cx, b B) View {
 	panic("unreachable")
 }
 
-// forgetBuiltSites drops the call-site views of a view being released (their views go with it).
+// forgetBuiltSites removes cached inline overlay sites owned by a released view.
 func forgetBuiltSites(owner uint64) {
 	for k := range builtSites {
 		if k.owner == owner {
@@ -98,7 +97,8 @@ func forgetBuiltSites(owner uint64) {
 	}
 }
 
-// appPC is the program counter of the innermost caller outside this package (appFrame's line).
+// appPC returns the program counter of the first application stack frame above
+// skip frames, used to key cached inline BuiltView sites.
 func appPC(skip int) uintptr {
 	pcs := make([]uintptr, 32)
 	n := runtime.Callers(skip, pcs)
@@ -114,8 +114,8 @@ func appPC(skip int) uintptr {
 	}
 }
 
-// putBuilt writes a view-built closure: the view's handle, described again before the overlay
-// is built from it (a dialog opened again shows the state of now).
+// PutBuilt encodes a Built view handle onto o and marks it dirty in the current
+// turn so it is described before the overlay renders.
 func PutBuilt(o *Tape, v View) {
 	if v.h == 0 {
 		Stop("no view given: make it with gk.NewBuilt(cx, function), once, in init")

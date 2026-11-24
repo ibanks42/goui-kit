@@ -12,6 +12,7 @@ import (
 // CalendarItemKind is gpui_kit::base::CalendarItemKind.
 type CalendarItemKind uint16
 
+// CalendarItemKind enum values.
 const (
 	CalendarItemKindPrevious    CalendarItemKind = 0
 	CalendarItemKindMonthToggle CalendarItemKind = 1
@@ -26,6 +27,7 @@ const (
 // CalendarView is gpui_kit::base::CalendarView.
 type CalendarView uint16
 
+// CalendarView enum values.
 const (
 	CalendarViewDay   CalendarView = 0
 	CalendarViewMonth CalendarView = 1
@@ -35,6 +37,7 @@ const (
 // CheckboxState is gpui_kit::base::CheckboxState.
 type CheckboxState uint16
 
+// CheckboxState enum values.
 const (
 	CheckboxStateUnchecked     CheckboxState = 0
 	CheckboxStateChecked       CheckboxState = 1
@@ -44,6 +47,7 @@ const (
 // HandleEdge is gpui_kit::base::HandleEdge.
 type HandleEdge uint16
 
+// HandleEdge enum values.
 const (
 	HandleEdgeLeading  HandleEdge = 0
 	HandleEdgeTrailing HandleEdge = 1
@@ -52,6 +56,7 @@ const (
 // HourCycle is gpui_kit::base::HourCycle.
 type HourCycle uint16
 
+// HourCycle enum values.
 const (
 	HourCycleH23 HourCycle = 0
 	HourCycleH12 HourCycle = 1
@@ -60,6 +65,7 @@ const (
 // NavMotion is gpui_kit::base::NavMotion.
 type NavMotion uint16
 
+// NavMotion enum values.
 const (
 	NavMotionAnimated  NavMotion = 0
 	NavMotionImmediate NavMotion = 1
@@ -68,6 +74,7 @@ const (
 // NavOperation is gpui_kit::base::NavOperation.
 type NavOperation uint16
 
+// NavOperation enum values.
 const (
 	NavOperationPush    NavOperation = 0
 	NavOperationPop     NavOperation = 1
@@ -77,6 +84,7 @@ const (
 // NavStackEvent is gpui_kit::base::NavStackEvent.
 type NavStackEvent uint16
 
+// NavStackEvent enum values.
 const (
 	NavStackEventPushed    NavStackEvent = 0
 	NavStackEventPopped    NavStackEvent = 1
@@ -88,6 +96,7 @@ const (
 // QuestionnaireItemStatus is gpui_kit::base::questionnaire::QuestionnaireItemStatus.
 type QuestionnaireItemStatus uint16
 
+// QuestionnaireItemStatus enum values.
 const (
 	QuestionnaireItemStatusUnanswered QuestionnaireItemStatus = 0
 	QuestionnaireItemStatusAnswered   QuestionnaireItemStatus = 1
@@ -97,6 +106,7 @@ const (
 // QuestionnaireShortcutMode is gpui_kit::base::questionnaire::QuestionnaireShortcutMode.
 type QuestionnaireShortcutMode uint16
 
+// QuestionnaireShortcutMode enum values.
 const (
 	QuestionnaireShortcutModeLetters QuestionnaireShortcutMode = 0
 	QuestionnaireShortcutModeNumbers QuestionnaireShortcutMode = 1
@@ -105,6 +115,7 @@ const (
 // ResizablePanelEvent is gpui_kit::base::ResizablePanelEvent.
 type ResizablePanelEvent uint16
 
+// ResizablePanelEvent enum values.
 const (
 	ResizablePanelEventResized ResizablePanelEvent = 0
 )
@@ -112,6 +123,7 @@ const (
 // ResizeHandleState is gpui_kit::base::ResizeHandleState.
 type ResizeHandleState uint16
 
+// ResizeHandleState enum values.
 const (
 	ResizeHandleStateIdle     ResizeHandleState = 0
 	ResizeHandleStateHovered  ResizeHandleState = 1
@@ -122,6 +134,7 @@ const (
 // SliderScale is gpui_kit::base::slider::SliderScale.
 type SliderScale uint16
 
+// SliderScale enum values.
 const (
 	SliderScaleLinear      SliderScale = 0
 	SliderScaleLogarithmic SliderScale = 1
@@ -130,6 +143,7 @@ const (
 // TimePrecision is gpui_kit::base::TimePrecision.
 type TimePrecision uint16
 
+// TimePrecision enum values.
 const (
 	TimePrecisionMinute TimePrecision = 0
 	TimePrecisionSecond TimePrecision = 1
@@ -138,6 +152,7 @@ const (
 // TimeSegment is gpui_kit::base::TimeSegment.
 type TimeSegment uint16
 
+// TimeSegment enum values.
 const (
 	TimeSegmentHour   TimeSegment = 0
 	TimeSegmentMinute TimeSegment = 1
@@ -145,7 +160,7 @@ const (
 	TimeSegmentPeriod TimeSegment = 3
 )
 
-// BaseCalendarItemState is crate::items::Reads<'_, gpui_kit::base::CalendarItemState>. Only the fields the binding can carry.
+// BaseCalendarItemState mirrors crate::items::Reads<'_, gpui_kit::base::CalendarItemState>. Includes only wire-supported fields.
 type CalendarItemState struct {
 	Kind       CalendarItemKind
 	IsActive   bool
@@ -155,7 +170,7 @@ type CalendarItemState struct {
 	IsToday    bool
 }
 
-// BaseGridArea is gpui_kit::base::GridArea. Only the fields the binding can carry.
+// BaseGridArea mirrors gpui_kit::base::GridArea. Includes only wire-supported fields.
 type BaseGridArea struct {
 	ID         string
 	Col        int
@@ -169,7 +184,7 @@ type BaseGridArea struct {
 	Locked     bool
 }
 
-// BaseTreeEntryState is crate::items::Reads<'_, gpui_kit::base::TreeEntryState>. Only the fields the binding can carry.
+// BaseTreeEntryState mirrors crate::items::Reads<'_, gpui_kit::base::TreeEntryState>. Includes only wire-supported fields.
 type TreeEntryState struct {
 	IsSelected     bool
 	IsRightClicked bool
@@ -269,7 +284,7 @@ func putHighlightStyle(o *rt.Tape, v gk.HighlightStyle) {
 	}
 }
 
-// HoverCardStateReads is crate::items::Reads<'_, gpui_kit::base::HoverCardState>. Only the fields the binding can carry.
+// HoverCardStateReads mirrors crate::items::Reads<'_, gpui_kit::base::HoverCardState>. Includes only wire-supported fields.
 type HoverCardStateReads struct {
 	IsOpen bool
 }
@@ -299,7 +314,7 @@ func putModifiers(o *rt.Tape, v gk.Modifiers) {
 	o.Bool(v.Function)
 }
 
-// NavPageReads is crate::items::Reads<'_, gpui_kit::base::NavPage>. Only the fields the binding can carry.
+// NavPageReads mirrors crate::items::Reads<'_, gpui_kit::base::NavPage>. Includes only wire-supported fields.
 type NavPageReads struct {
 	Index     int
 	Phase     motion.PresencePhase
@@ -307,12 +322,12 @@ type NavPageReads struct {
 	Progress  float32
 }
 
-// PopoverStateReads is crate::items::Reads<'_, gpui_kit::base::PopoverState>. Only the fields the binding can carry.
+// PopoverStateReads mirrors crate::items::Reads<'_, gpui_kit::base::PopoverState>. Includes only wire-supported fields.
 type PopoverStateReads struct {
 	IsOpen bool
 }
 
-// ResizeHandleContext is gpui_kit::base::ResizeHandleContext. Only the fields the binding can carry.
+// ResizeHandleContext mirrors gpui_kit::base::ResizeHandleContext. Includes only wire-supported fields.
 type ResizeHandleContext struct {
 	Axis     gk.Axis
 	Edge     gk.Option[HandleEdge]
@@ -330,7 +345,7 @@ func putStrikethroughStyle(o *rt.Tape, v gk.StrikethroughStyle) {
 	}
 }
 
-// TimeFieldSegmentState is crate::items::Reads<'_, gpui_kit::base::TimeFieldSegmentState>. Only the fields the binding can carry.
+// TimeFieldSegmentState mirrors crate::items::Reads<'_, gpui_kit::base::TimeFieldSegmentState>. Includes only wire-supported fields.
 type TimeFieldSegmentState struct {
 	Segment    TimeSegment
 	Value      uint32
@@ -338,7 +353,7 @@ type TimeFieldSegmentState struct {
 	IsDisabled bool
 }
 
-// TreeEntryReads is crate::items::Reads<'_, gpui_kit::base::TreeEntry>. Only the fields the binding can carry.
+// TreeEntryReads mirrors crate::items::Reads<'_, gpui_kit::base::TreeEntry>. Includes only wire-supported fields.
 type TreeEntryReads struct {
 	Item       table.BaseTreeItem
 	Depth      int
@@ -359,37 +374,37 @@ func putUnderlineStyle(o *rt.Tape, v gk.UnderlineStyle) {
 	o.Bool(v.Wavy)
 }
 
-// CalendarEvent is gpui_kit::base::CalendarEvent: one struct type per variant.
+// CalendarEvent represents gpui_kit::base::CalendarEvent with one struct type per variant.
 type CalendarEvent interface{ isCalendarEvent() }
 
-// CalendarEventSelected is gpui_kit::base::CalendarEvent::Selected.
+// CalendarEventSelected represents gpui_kit::base::CalendarEvent::Selected.
 type CalendarEventSelected struct {
 	Value Date
 }
 
 func (CalendarEventSelected) isCalendarEvent() {}
 
-// ColorPickerEvent is gpui_kit::base::ColorPickerEvent: one struct type per variant.
+// ColorPickerEvent represents gpui_kit::base::ColorPickerEvent with one struct type per variant.
 type ColorPickerEvent interface{ isColorPickerEvent() }
 
-// ColorPickerEventChange is gpui_kit::base::ColorPickerEvent::Change.
+// ColorPickerEventChange represents gpui_kit::base::ColorPickerEvent::Change.
 type ColorPickerEventChange struct {
 	Value gk.Option[gk.Hsla]
 }
 
 func (ColorPickerEventChange) isColorPickerEvent() {}
 
-// Date is gpui_kit::base::Date: one struct type per variant.
+// Date represents gpui_kit::base::Date with one struct type per variant.
 type Date interface{ isDate() }
 
-// DateSingle is gpui_kit::base::Date::Single.
+// DateSingle represents gpui_kit::base::Date::Single.
 type DateSingle struct {
 	Value gk.Option[gk.CivilDate]
 }
 
 func (DateSingle) isDate() {}
 
-// DateRange is gpui_kit::base::Date::Range.
+// DateRange represents gpui_kit::base::Date::Range.
 type DateRange struct {
 	V0 gk.Option[gk.CivilDate]
 	V1 gk.Option[gk.CivilDate]
@@ -428,17 +443,17 @@ func putDate(o *rt.Tape, v Date) {
 	}
 }
 
-// GridLayoutEvent is gpui_kit::base::GridLayoutEvent: one struct type per variant.
+// GridLayoutEvent represents gpui_kit::base::GridLayoutEvent with one struct type per variant.
 type GridLayoutEvent interface{ isGridLayoutEvent() }
 
-// GridLayoutEventChange is gpui_kit::base::GridLayoutEvent::Change.
+// GridLayoutEventChange represents gpui_kit::base::GridLayoutEvent::Change.
 type GridLayoutEventChange struct {
 	Value []BaseGridArea
 }
 
 func (GridLayoutEventChange) isGridLayoutEvent() {}
 
-// GridLayoutEventSelect is gpui_kit::base::GridLayoutEvent::Select.
+// GridLayoutEventSelect represents gpui_kit::base::GridLayoutEvent::Select.
 type GridLayoutEventSelect struct {
 	Value gk.Option[string]
 }
@@ -469,31 +484,31 @@ func putImageSource(o *rt.Tape, v gk.ImageSource) {
 	}
 }
 
-// Matcher is gpui_kit::base::Matcher: one struct type per variant.
+// Matcher represents gpui_kit::base::Matcher with one struct type per variant.
 type Matcher interface{ isMatcher() }
 
-// MatcherDayOfWeek is gpui_kit::base::Matcher::DayOfWeek.
+// MatcherDayOfWeek represents gpui_kit::base::Matcher::DayOfWeek.
 type MatcherDayOfWeek struct {
 	Value []uint32
 }
 
 func (MatcherDayOfWeek) isMatcher() {}
 
-// MatcherInterval is gpui_kit::base::Matcher::Interval.
+// MatcherInterval represents gpui_kit::base::Matcher::Interval.
 type MatcherInterval struct {
 	Value gk.IntervalMatcher
 }
 
 func (MatcherInterval) isMatcher() {}
 
-// MatcherRange is gpui_kit::base::Matcher::Range.
+// MatcherRange represents gpui_kit::base::Matcher::Range.
 type MatcherRange struct {
 	Value gk.RangeMatcher
 }
 
 func (MatcherRange) isMatcher() {}
 
-// MatcherCustom is gpui_kit::base::Matcher::Custom.
+// MatcherCustom represents gpui_kit::base::Matcher::Custom.
 type MatcherCustom struct {
 	Value []gk.CivilDate
 }
@@ -543,27 +558,27 @@ func putMouseButton(o *rt.Tape, v gk.MouseButton) {
 	}
 }
 
-// PaginationItem is gpui_kit::base::PaginationItem: one struct type per variant.
+// PaginationItem represents gpui_kit::base::PaginationItem with one struct type per variant.
 type PaginationItem interface{ isPaginationItem() }
 
-// PaginationItemPage is gpui_kit::base::PaginationItem::Page.
+// PaginationItemPage represents gpui_kit::base::PaginationItem::Page.
 type PaginationItemPage struct {
 	Value int
 }
 
 func (PaginationItemPage) isPaginationItem() {}
 
-// PaginationItemEllipsis is gpui_kit::base::PaginationItem::Ellipsis.
+// PaginationItemEllipsis represents gpui_kit::base::PaginationItem::Ellipsis.
 type PaginationItemEllipsis struct {
 	Value gk.Range
 }
 
 func (PaginationItemEllipsis) isPaginationItem() {}
 
-// QuestionnaireEvent is gpui_kit::base::questionnaire::QuestionnaireEvent: one struct type per variant.
+// QuestionnaireEvent represents gpui_kit::base::questionnaire::QuestionnaireEvent with one struct type per variant.
 type QuestionnaireEvent interface{ isQuestionnaireEvent() }
 
-// QuestionnaireEventCurrentItemChanged is gpui_kit::base::questionnaire::QuestionnaireEvent::CurrentItemChanged.
+// QuestionnaireEventCurrentItemChanged represents gpui_kit::base::questionnaire::QuestionnaireEvent::CurrentItemChanged.
 type QuestionnaireEventCurrentItemChanged struct {
 	Previous gk.Option[string]
 	Current  gk.Option[string]
@@ -571,43 +586,43 @@ type QuestionnaireEventCurrentItemChanged struct {
 
 func (QuestionnaireEventCurrentItemChanged) isQuestionnaireEvent() {}
 
-// QuestionnaireEventAnswerChanged is gpui_kit::base::questionnaire::QuestionnaireEvent::AnswerChanged.
+// QuestionnaireEventAnswerChanged represents gpui_kit::base::questionnaire::QuestionnaireEvent::AnswerChanged.
 type QuestionnaireEventAnswerChanged struct {
 	Value QuestionnaireAnswerChange
 }
 
 func (QuestionnaireEventAnswerChanged) isQuestionnaireEvent() {}
 
-// QuestionnaireEventCompleted is gpui_kit::base::questionnaire::QuestionnaireEvent::Completed.
+// QuestionnaireEventCompleted represents gpui_kit::base::questionnaire::QuestionnaireEvent::Completed.
 type QuestionnaireEventCompleted struct {
 	Value QuestionnaireSubmission
 }
 
 func (QuestionnaireEventCompleted) isQuestionnaireEvent() {}
 
-// QuestionnaireEventSubmit is gpui_kit::base::questionnaire::QuestionnaireEvent::Submit.
+// QuestionnaireEventSubmit represents gpui_kit::base::questionnaire::QuestionnaireEvent::Submit.
 type QuestionnaireEventSubmit struct {
 	Value QuestionnaireSubmission
 }
 
 func (QuestionnaireEventSubmit) isQuestionnaireEvent() {}
 
-// QuestionnaireValidationError is gpui_kit::base::questionnaire::QuestionnaireValidationError: one struct type per variant.
+// QuestionnaireValidationError represents gpui_kit::base::questionnaire::QuestionnaireValidationError with one struct type per variant.
 type QuestionnaireValidationError interface{ isQuestionnaireValidationError() }
 
-// QuestionnaireValidationErrorRequired is gpui_kit::base::questionnaire::QuestionnaireValidationError::Required.
+// QuestionnaireValidationErrorRequired represents gpui_kit::base::questionnaire::QuestionnaireValidationError::Required.
 type QuestionnaireValidationErrorRequired struct {
 }
 
 func (QuestionnaireValidationErrorRequired) isQuestionnaireValidationError() {}
 
-// QuestionnaireValidationErrorUnanswered is gpui_kit::base::questionnaire::QuestionnaireValidationError::Unanswered.
+// QuestionnaireValidationErrorUnanswered represents gpui_kit::base::questionnaire::QuestionnaireValidationError::Unanswered.
 type QuestionnaireValidationErrorUnanswered struct {
 }
 
 func (QuestionnaireValidationErrorUnanswered) isQuestionnaireValidationError() {}
 
-// QuestionnaireValidationErrorMessage is gpui_kit::base::questionnaire::QuestionnaireValidationError::Message.
+// QuestionnaireValidationErrorMessage represents gpui_kit::base::questionnaire::QuestionnaireValidationError::Message.
 type QuestionnaireValidationErrorMessage struct {
 	Value string
 }
@@ -647,34 +662,34 @@ func putRoleOverride(o *rt.Tape, v gk.RoleOverride) {
 	}
 }
 
-// SliderEvent is gpui_kit::base::slider::SliderEvent: one struct type per variant.
+// SliderEvent represents gpui_kit::base::slider::SliderEvent with one struct type per variant.
 type SliderEvent interface{ isSliderEvent() }
 
-// SliderEventChange is gpui_kit::base::slider::SliderEvent::Change.
+// SliderEventChange represents gpui_kit::base::slider::SliderEvent::Change.
 type SliderEventChange struct {
 	Value SliderValue
 }
 
 func (SliderEventChange) isSliderEvent() {}
 
-// SliderEventRelease is gpui_kit::base::slider::SliderEvent::Release.
+// SliderEventRelease represents gpui_kit::base::slider::SliderEvent::Release.
 type SliderEventRelease struct {
 	Value SliderValue
 }
 
 func (SliderEventRelease) isSliderEvent() {}
 
-// SliderValue is gpui_kit::base::slider::SliderValue: one struct type per variant.
+// SliderValue represents gpui_kit::base::slider::SliderValue with one struct type per variant.
 type SliderValue interface{ isSliderValue() }
 
-// SliderValueSingle is gpui_kit::base::slider::SliderValue::Single.
+// SliderValueSingle represents gpui_kit::base::slider::SliderValue::Single.
 type SliderValueSingle struct {
 	Value float32
 }
 
 func (SliderValueSingle) isSliderValue() {}
 
-// SliderValueRange is gpui_kit::base::slider::SliderValue::Range.
+// SliderValueRange represents gpui_kit::base::slider::SliderValue::Range.
 type SliderValueRange struct {
 	V0 float32
 	V1 float32
@@ -717,17 +732,17 @@ func putTextOverflow(o *rt.Tape, v gk.TextOverflow) {
 	}
 }
 
-// TimeFieldEvent is gpui_kit::base::TimeFieldEvent: one struct type per variant.
+// TimeFieldEvent represents gpui_kit::base::TimeFieldEvent with one struct type per variant.
 type TimeFieldEvent interface{ isTimeFieldEvent() }
 
-// TimeFieldEventChange is gpui_kit::base::TimeFieldEvent::Change.
+// TimeFieldEventChange represents gpui_kit::base::TimeFieldEvent::Change.
 type TimeFieldEventChange struct {
 	Value gk.CivilTime
 }
 
 func (TimeFieldEventChange) isTimeFieldEvent() {}
 
-// DateInto is what `impl Into<gpui_kit::base::Date>` accepts: one of Date, CivilDate, TupleCivilDateCivilDate.
+// DateInto accepts any Go type accepted by `impl Into<gpui_kit::base::Date>`: Date, CivilDate, TupleCivilDateCivilDate.
 type DateInto interface{}
 
 func putDateInto(o *rt.Tape, v DateInto) {
@@ -789,7 +804,7 @@ func putImageSourceInto(o *rt.Tape, v gk.ImageSourceInto) {
 	}
 }
 
-// MatcherInto is what `impl Into<gpui_kit::base::Matcher>` accepts: one of Matcher, []uint32.
+// MatcherInto accepts any Go type accepted by `impl Into<gpui_kit::base::Matcher>`: Matcher, []uint32.
 type MatcherInto interface{}
 
 func putMatcherInto(o *rt.Tape, v MatcherInto) {
@@ -810,7 +825,7 @@ func putMatcherInto(o *rt.Tape, v MatcherInto) {
 	}
 }
 
-// ResizablePanelInto is what `impl Into<gpui_kit::base::ResizablePanel>` accepts: one of ResizablePanelEl, ResizablePanelGroupEl.
+// ResizablePanelInto accepts any Go type accepted by `impl Into<gpui_kit::base::ResizablePanel>`: ResizablePanelEl, ResizablePanelGroupEl.
 type ResizablePanelInto interface{}
 
 func putResizablePanelInto(o *rt.Tape, v ResizablePanelInto) {
@@ -828,7 +843,7 @@ func putResizablePanelInto(o *rt.Tape, v ResizablePanelInto) {
 	}
 }
 
-// SliderValueInto is what `impl Into<gpui_kit::base::slider::SliderValue>` accepts: one of SliderValue, float32, TupleFloat32Float32.
+// SliderValueInto accepts any Go type accepted by `impl Into<gpui_kit::base::slider::SliderValue>`: SliderValue, float32, TupleFloat32Float32.
 type SliderValueInto interface{}
 
 func putSliderValueInto(o *rt.Tape, v SliderValueInto) {
@@ -851,7 +866,7 @@ func putSliderValueInto(o *rt.Tape, v SliderValueInto) {
 	}
 }
 
-// Event67 is the payload of handlers of shape 67: (CheckboxState, &ClickEvent).
+// Event67 holds the multi-argument payload for handler shape 67 (CheckboxState, &ClickEvent).
 type Event67 struct {
 	A0 CheckboxState
 	A1 gk.ClickEvent
@@ -967,11 +982,13 @@ func init() {
 	}})
 }
 
+// TupleCalendarItemKindInt32 holds a 2-element tuple (CalendarItemKind, int32).
 type TupleCalendarItemKindInt32 struct {
 	V0 CalendarItemKind
 	V1 int32
 }
 
+// TupleStringQuestionnaireAnswerRead holds a 2-element tuple (string, QuestionnaireAnswerRead).
 type TupleStringQuestionnaireAnswerRead struct {
 	V0 string
 	V1 QuestionnaireAnswerRead

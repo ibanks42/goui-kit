@@ -16,7 +16,7 @@ type PlotMotion struct{ rt.Val }
 
 // How a plot's data marks appear the first time it is painted; see `PlotAppear`.
 //
-// WithAppear is <gpui_kit::base::PlotMotion>::with_appear.
+// WithAppear calls <gpui_kit::base::PlotMotion>::with_appear.
 func (e PlotMotion) WithAppear(appear Transition) PlotMotion {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(appear.Core)))
@@ -25,7 +25,7 @@ func (e PlotMotion) WithAppear(appear Transition) PlotMotion {
 
 // How the hover fades in when the cursor lands on a datum.
 //
-// WithEnter is <gpui_kit::base::PlotMotion>::with_enter.
+// WithEnter calls <gpui_kit::base::PlotMotion>::with_enter.
 func (e PlotMotion) WithEnter(enter Transition) PlotMotion {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(enter.Core)))
@@ -34,7 +34,7 @@ func (e PlotMotion) WithEnter(enter Transition) PlotMotion {
 
 // How the hover fades out after the cursor leaves.
 //
-// WithExit is <gpui_kit::base::PlotMotion>::with_exit.
+// WithExit calls <gpui_kit::base::PlotMotion>::with_exit.
 func (e PlotMotion) WithExit(exit Transition) PlotMotion {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(exit.Core)))
@@ -43,7 +43,7 @@ func (e PlotMotion) WithExit(exit Transition) PlotMotion {
 
 // The spring a crosshair, highlight band or hover dot follows the hovered datum with.
 //
-// WithPointer is <gpui_kit::base::PlotMotion>::with_pointer.
+// WithPointer calls <gpui_kit::base::PlotMotion>::with_pointer.
 func (e PlotMotion) WithPointer(pointer Spring) PlotMotion {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(pointer.Core)))
@@ -53,19 +53,19 @@ func (e PlotMotion) WithPointer(pointer Spring) PlotMotion {
 // PlotTheme is gpui_kit::base::PlotTheme.
 type PlotTheme struct{ rt.Val }
 
-// NewPlotTheme is <gpui_kit::base::PlotTheme>::new.
+// NewPlotTheme calls <gpui_kit::base::PlotTheme>::new.
 func NewPlotTheme() PlotTheme {
 	n := rt.NewValue(348)
 	return PlotTheme{Val: rt.MkVal(n)}
 }
 
-// NewPlotThemeDefault is <gpui_kit::base::PlotTheme as Default>::default.
+// NewPlotThemeDefault calls <gpui_kit::base::PlotTheme as Default>::default.
 func NewPlotThemeDefault() PlotTheme {
 	n := rt.NewValue(347)
 	return PlotTheme{Val: rt.MkVal(n)}
 }
 
-// WithMotion is <gpui_kit::base::PlotTheme>::with_motion.
+// WithMotion calls <gpui_kit::base::PlotTheme>::with_motion.
 func (e PlotTheme) WithMotion(motion PlotMotion) PlotTheme {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(motion.Core)))
@@ -75,7 +75,7 @@ func (e PlotTheme) WithMotion(motion PlotMotion) PlotTheme {
 // ResizableTheme is gpui_kit::base::ResizableTheme.
 type ResizableTheme struct{ rt.Val }
 
-// NewResizableThemeDefault is <gpui_kit::base::ResizableTheme as Default>::default.
+// NewResizableThemeDefault calls <gpui_kit::base::ResizableTheme as Default>::default.
 func NewResizableThemeDefault() ResizableTheme {
 	n := rt.NewValue(362)
 	return ResizableTheme{Val: rt.MkVal(n)}
@@ -88,7 +88,7 @@ type ScrollbarEl struct{ rt.El }
 //
 // This will have both vertical and horizontal scrollbars.
 //
-// Scrollbar is <gpui_kit::base::Scrollbar>::new.
+// Scrollbar calls <gpui_kit::base::Scrollbar>::new.
 func Scrollbar(scrollHandle ScrollHandle) ScrollbarEl {
 	rt.UseBaseScrollbar()
 	n := rt.NewNode(841)
@@ -99,7 +99,7 @@ func Scrollbar(scrollHandle ScrollHandle) ScrollbarEl {
 
 // Create with horizontal scrollbar.
 //
-// ScrollbarHorizontal is <gpui_kit::base::Scrollbar>::horizontal.
+// ScrollbarHorizontal calls <gpui_kit::base::Scrollbar>::horizontal.
 func ScrollbarHorizontal(scrollHandle ScrollHandle) ScrollbarEl {
 	rt.UseBaseScrollbar()
 	n := rt.NewNode(840)
@@ -110,7 +110,7 @@ func ScrollbarHorizontal(scrollHandle ScrollHandle) ScrollbarEl {
 
 // Create with vertical scrollbar.
 //
-// ScrollbarVertical is <gpui_kit::base::Scrollbar>::vertical.
+// ScrollbarVertical calls <gpui_kit::base::Scrollbar>::vertical.
 func ScrollbarVertical(scrollHandle ScrollHandle) ScrollbarEl {
 	rt.UseBaseScrollbar()
 	n := rt.NewNode(842)
@@ -121,7 +121,7 @@ func ScrollbarVertical(scrollHandle ScrollHandle) ScrollbarEl {
 
 // Set scrollbar axis.
 //
-// Axis is <gpui_kit::base::Scrollbar>::axis.
+// Axis calls <gpui_kit::base::Scrollbar>::axis.
 func (e ScrollbarEl) Axis(axis ScrollbarAxisInto) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	putScrollbarAxisInto(o, axis)
@@ -132,7 +132,7 @@ func (e ScrollbarEl) Axis(axis ScrollbarAxisInto) ScrollbarEl {
 //
 // NOTE: In most cases, you don't need to set a specific id for scrollbar.
 //
-// ID is <gpui_kit::base::Scrollbar>::id.
+// ID calls <gpui_kit::base::Scrollbar>::id.
 func (e ScrollbarEl) ID(id ID) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutID(o, id)
@@ -143,7 +143,7 @@ func (e ScrollbarEl) ID(id ID) ScrollbarEl {
 //
 // If unset, the current application theme projection is used.
 //
-// Mode is <gpui_kit::base::Scrollbar>::mode.
+// Mode calls <gpui_kit::base::Scrollbar>::mode.
 func (e ScrollbarEl) Mode(mode ScrollbarMode) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U16(uint16(mode))
@@ -155,7 +155,7 @@ func (e ScrollbarEl) Mode(mode ScrollbarMode) ScrollbarEl {
 // When both scrollbars are shown, the horizontal track ends before the vertical one, on the
 // vertical scrollbar's side.
 //
-// Placement is <gpui_kit::base::Scrollbar>::placement.
+// Placement calls <gpui_kit::base::Scrollbar>::placement.
 func (e ScrollbarEl) Placement(placement ScrollbarPlacement) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U16(uint16(placement))
@@ -166,14 +166,14 @@ func (e ScrollbarEl) Placement(placement ScrollbarPlacement) ScrollbarEl {
 //
 // Default will sync the `content_size` from `scroll_handle`.
 //
-// ScrollSize is <gpui_kit::base::Scrollbar>::scroll_size.
+// ScrollSize calls <gpui_kit::base::Scrollbar>::scroll_size.
 func (e ScrollbarEl) ScrollSize(scrollSize GpuiSize) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	putGpuiSize(o, scrollSize)
 	return e
 }
 
-// Styles is <gpui_kit::base::Scrollbar>::styles.
+// Styles calls <gpui_kit::base::Scrollbar>::styles.
 func (e ScrollbarEl) Styles(build ScrollbarStyles) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
@@ -186,7 +186,7 @@ func (e ScrollbarEl) Styles(build ScrollbarStyles) ScrollbarEl {
 // viewports, such as the text editor, can use this when their visible bounds differ from the
 // handle's layout bounds.
 //
-// ViewportBounds is <gpui_kit::base::Scrollbar>::viewport_bounds.
+// ViewportBounds calls <gpui_kit::base::Scrollbar>::viewport_bounds.
 func (e ScrollbarEl) ViewportBounds(bounds Bounds) ScrollbarEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	putBounds(o, bounds)
@@ -199,7 +199,7 @@ func (e ScrollbarEl) ViewportBounds(bounds Bounds) ScrollbarEl {
 // and is therefore defined by a positioned overlay container rather than by the underlying scroll
 // handle.
 //
-// ViewportFromLayout is <gpui_kit::base::Scrollbar>::viewport_from_layout.
+// ViewportFromLayout calls <gpui_kit::base::Scrollbar>::viewport_from_layout.
 func (e ScrollbarEl) ViewportFromLayout() ScrollbarEl {
 	rt.Op(rt.N(e.Core), 262)
 	return e
@@ -208,7 +208,7 @@ func (e ScrollbarEl) ViewportFromLayout() ScrollbarEl {
 // ScrollbarMotion is gpui_kit::base::ScrollbarMotion.
 type ScrollbarMotion struct{ rt.Val }
 
-// NewScrollbarMotionDefault is <gpui_kit::base::ScrollbarMotion as Default>::default.
+// NewScrollbarMotionDefault calls <gpui_kit::base::ScrollbarMotion as Default>::default.
 func NewScrollbarMotionDefault() ScrollbarMotion {
 	n := rt.NewValue(365)
 	return ScrollbarMotion{Val: rt.MkVal(n)}
@@ -216,7 +216,7 @@ func NewScrollbarMotionDefault() ScrollbarMotion {
 
 // How long the scrollbar takes to become fully visible.
 //
-// WithEnter is <gpui_kit::base::ScrollbarMotion>::with_enter.
+// WithEnter calls <gpui_kit::base::ScrollbarMotion>::with_enter.
 func (e ScrollbarMotion) WithEnter(enter time.Duration) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutMs(o, enter)
@@ -225,7 +225,7 @@ func (e ScrollbarMotion) WithEnter(enter time.Duration) ScrollbarMotion {
 
 // Which entrance choreography to play.
 //
-// WithEntrance is <gpui_kit::base::ScrollbarMotion>::with_entrance.
+// WithEntrance calls <gpui_kit::base::ScrollbarMotion>::with_entrance.
 func (e ScrollbarMotion) WithEntrance(entrance ScrollbarEntrance) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(entrance))
@@ -234,7 +234,7 @@ func (e ScrollbarMotion) WithEntrance(entrance ScrollbarEntrance) ScrollbarMotio
 
 // How long the scrollbar takes to fade away once the idle hold expires.
 //
-// WithExit is <gpui_kit::base::ScrollbarMotion>::with_exit.
+// WithExit calls <gpui_kit::base::ScrollbarMotion>::with_exit.
 func (e ScrollbarMotion) WithExit(exit time.Duration) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutMs(o, exit)
@@ -243,7 +243,7 @@ func (e ScrollbarMotion) WithExit(exit time.Duration) ScrollbarMotion {
 
 // How long the thumb takes to reach a new width.
 //
-// WithExpand is <gpui_kit::base::ScrollbarMotion>::with_expand.
+// WithExpand calls <gpui_kit::base::ScrollbarMotion>::with_expand.
 func (e ScrollbarMotion) WithExpand(expand time.Duration) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutMs(o, expand)
@@ -252,7 +252,7 @@ func (e ScrollbarMotion) WithExpand(expand time.Duration) ScrollbarMotion {
 
 // How long visibility is held after the last scroll, drag, or hover.
 //
-// WithIdle is <gpui_kit::base::ScrollbarMotion>::with_idle.
+// WithIdle calls <gpui_kit::base::ScrollbarMotion>::with_idle.
 func (e ScrollbarMotion) WithIdle(idle time.Duration) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 260)
 	rt.PutMs(o, idle)
@@ -261,7 +261,7 @@ func (e ScrollbarMotion) WithIdle(idle time.Duration) ScrollbarMotion {
 
 // Which entrance choreography to play when hover reveals the thumb.
 //
-// WithThumbHoverEntrance is <gpui_kit::base::ScrollbarMotion>::with_thumb_hover_entrance.
+// WithThumbHoverEntrance calls <gpui_kit::base::ScrollbarMotion>::with_thumb_hover_entrance.
 func (e ScrollbarMotion) WithThumbHoverEntrance(entrance ScrollbarEntrance) ScrollbarMotion {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U16(uint16(entrance))
@@ -271,48 +271,48 @@ func (e ScrollbarMotion) WithThumbHoverEntrance(entrance ScrollbarEntrance) Scro
 // ScrollbarStyles is gpui_kit::base::ScrollbarStyles.
 type ScrollbarStyles struct{ rt.Val }
 
-// NewScrollbarStylesDefault is <gpui_kit::base::ScrollbarStyles as Default>::default.
+// NewScrollbarStylesDefault calls <gpui_kit::base::ScrollbarStyles as Default>::default.
 func NewScrollbarStylesDefault() ScrollbarStyles {
 	n := rt.NewValue(366)
 	return ScrollbarStyles{Val: rt.MkVal(n)}
 }
 
-// Thumb is <gpui_kit::base::ScrollbarStyles>::thumb.
+// Thumb calls <gpui_kit::base::ScrollbarStyles>::thumb.
 func (e ScrollbarStyles) Thumb(build ScrollbarThumbStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// ThumbActive is <gpui_kit::base::ScrollbarStyles>::thumb_active.
+// ThumbActive calls <gpui_kit::base::ScrollbarStyles>::thumb_active.
 func (e ScrollbarStyles) ThumbActive(build ScrollbarThumbStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// ThumbHover is <gpui_kit::base::ScrollbarStyles>::thumb_hover.
+// ThumbHover calls <gpui_kit::base::ScrollbarStyles>::thumb_hover.
 func (e ScrollbarStyles) ThumbHover(build ScrollbarThumbStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// Track is <gpui_kit::base::ScrollbarStyles>::track.
+// Track calls <gpui_kit::base::ScrollbarStyles>::track.
 func (e ScrollbarStyles) Track(build ScrollbarTrackStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// TrackActive is <gpui_kit::base::ScrollbarStyles>::track_active.
+// TrackActive calls <gpui_kit::base::ScrollbarStyles>::track_active.
 func (e ScrollbarStyles) TrackActive(build ScrollbarTrackStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
 	return e
 }
 
-// TrackHover is <gpui_kit::base::ScrollbarStyles>::track_hover.
+// TrackHover calls <gpui_kit::base::ScrollbarStyles>::track_hover.
 func (e ScrollbarStyles) TrackHover(build ScrollbarTrackStyle) ScrollbarStyles {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.TakeValue(rt.N(build.Core)))
@@ -322,33 +322,33 @@ func (e ScrollbarStyles) TrackHover(build ScrollbarTrackStyle) ScrollbarStyles {
 // ScrollbarTheme is gpui_kit::base::ScrollbarTheme.
 type ScrollbarTheme struct{ rt.Val }
 
-// NewScrollbarTheme is <gpui_kit::base::ScrollbarTheme>::new.
+// NewScrollbarTheme calls <gpui_kit::base::ScrollbarTheme>::new.
 func NewScrollbarTheme() ScrollbarTheme {
 	n := rt.NewValue(368)
 	return ScrollbarTheme{Val: rt.MkVal(n)}
 }
 
-// NewScrollbarThemeDefault is <gpui_kit::base::ScrollbarTheme as Default>::default.
+// NewScrollbarThemeDefault calls <gpui_kit::base::ScrollbarTheme as Default>::default.
 func NewScrollbarThemeDefault() ScrollbarTheme {
 	n := rt.NewValue(367)
 	return ScrollbarTheme{Val: rt.MkVal(n)}
 }
 
-// WithMode is <gpui_kit::base::ScrollbarTheme>::with_mode.
+// WithMode calls <gpui_kit::base::ScrollbarTheme>::with_mode.
 func (e ScrollbarTheme) WithMode(mode ScrollbarMode) ScrollbarTheme {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(mode))
 	return e
 }
 
-// WithMotion is <gpui_kit::base::ScrollbarTheme>::with_motion.
+// WithMotion calls <gpui_kit::base::ScrollbarTheme>::with_motion.
 func (e ScrollbarTheme) WithMotion(motion ScrollbarMotion) ScrollbarTheme {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(motion.Core)))
 	return e
 }
 
-// WithStyles is <gpui_kit::base::ScrollbarTheme>::with_styles.
+// WithStyles calls <gpui_kit::base::ScrollbarTheme>::with_styles.
 func (e ScrollbarTheme) WithStyles(styles ScrollbarStyles) ScrollbarTheme {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(styles.Core)))
@@ -358,41 +358,41 @@ func (e ScrollbarTheme) WithStyles(styles ScrollbarStyles) ScrollbarTheme {
 // ScrollbarThumbStyle is gpui_kit::base::ScrollbarThumbStyle.
 type ScrollbarThumbStyle struct{ rt.Val }
 
-// NewScrollbarThumbStyleDefault is <gpui_kit::base::ScrollbarThumbStyle as Default>::default.
+// NewScrollbarThumbStyleDefault calls <gpui_kit::base::ScrollbarThumbStyle as Default>::default.
 func NewScrollbarThumbStyleDefault() ScrollbarThumbStyle {
 	n := rt.NewValue(369)
 	return ScrollbarThumbStyle{Val: rt.MkVal(n)}
 }
 
-// Bg is <gpui_kit::base::ScrollbarThumbStyle>::bg.
+// Bg calls <gpui_kit::base::ScrollbarThumbStyle>::bg.
 func (e ScrollbarThumbStyle) Bg(background Color) ScrollbarThumbStyle {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, background)
 	return e
 }
 
-// Inset is <gpui_kit::base::ScrollbarThumbStyle>::inset.
+// Inset calls <gpui_kit::base::ScrollbarThumbStyle>::inset.
 func (e ScrollbarThumbStyle) Inset(inset float32) ScrollbarThumbStyle {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.F32(inset)
 	return e
 }
 
-// MinLength is <gpui_kit::base::ScrollbarThumbStyle>::min_length.
+// MinLength calls <gpui_kit::base::ScrollbarThumbStyle>::min_length.
 func (e ScrollbarThumbStyle) MinLength(minLength float32) ScrollbarThumbStyle {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(minLength)
 	return e
 }
 
-// Radius is <gpui_kit::base::ScrollbarThumbStyle>::radius.
+// Radius calls <gpui_kit::base::ScrollbarThumbStyle>::radius.
 func (e ScrollbarThumbStyle) Radius(radius float32) ScrollbarThumbStyle {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(radius)
 	return e
 }
 
-// Width is <gpui_kit::base::ScrollbarThumbStyle>::width.
+// Width calls <gpui_kit::base::ScrollbarThumbStyle>::width.
 func (e ScrollbarThumbStyle) Width(width float32) ScrollbarThumbStyle {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.F32(width)
@@ -402,27 +402,27 @@ func (e ScrollbarThumbStyle) Width(width float32) ScrollbarThumbStyle {
 // ScrollbarTrackStyle is gpui_kit::base::ScrollbarTrackStyle.
 type ScrollbarTrackStyle struct{ rt.Val }
 
-// NewScrollbarTrackStyleDefault is <gpui_kit::base::ScrollbarTrackStyle as Default>::default.
+// NewScrollbarTrackStyleDefault calls <gpui_kit::base::ScrollbarTrackStyle as Default>::default.
 func NewScrollbarTrackStyleDefault() ScrollbarTrackStyle {
 	n := rt.NewValue(370)
 	return ScrollbarTrackStyle{Val: rt.MkVal(n)}
 }
 
-// Bg is <gpui_kit::base::ScrollbarTrackStyle>::bg.
+// Bg calls <gpui_kit::base::ScrollbarTrackStyle>::bg.
 func (e ScrollbarTrackStyle) Bg(background Color) ScrollbarTrackStyle {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, background)
 	return e
 }
 
-// BorderColor is <gpui_kit::base::ScrollbarTrackStyle>::border_color.
+// BorderColor calls <gpui_kit::base::ScrollbarTrackStyle>::border_color.
 func (e ScrollbarTrackStyle) BorderColor(border Color) ScrollbarTrackStyle {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, border)
 	return e
 }
 
-// Width is <gpui_kit::base::ScrollbarTrackStyle>::width.
+// Width calls <gpui_kit::base::ScrollbarTrackStyle>::width.
 func (e ScrollbarTrackStyle) Width(width float32) ScrollbarTrackStyle {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(width)
@@ -432,7 +432,7 @@ func (e ScrollbarTrackStyle) Width(width float32) ScrollbarTrackStyle {
 // SemanticThemeTokens is gpui_kit::base::SemanticThemeTokens.
 type SemanticThemeTokens struct{ rt.Val }
 
-// NewSemanticThemeTokensDefault is <gpui_kit::base::SemanticThemeTokens as Default>::default.
+// NewSemanticThemeTokensDefault calls <gpui_kit::base::SemanticThemeTokens as Default>::default.
 func NewSemanticThemeTokensDefault() SemanticThemeTokens {
 	n := rt.NewValue(373)
 	return SemanticThemeTokens{Val: rt.MkVal(n)}
@@ -441,7 +441,7 @@ func NewSemanticThemeTokensDefault() SemanticThemeTokens {
 // Spring is gpui_kit::base::Spring.
 type Spring struct{ rt.Val }
 
-// Sets the damping ratio, which is `1.0` — no overshoot — by default.
+// Sets the damping ratio, which is `1.0` - no overshoot - by default.
 //
 // Below `1.0` the spring passes its target and comes back; above `1.0` it approaches slowly.
 // Overshoot suits a value with room to pass its target and nothing to collide with. A height, an
@@ -454,7 +454,7 @@ type Spring struct{ rt.Val }
 // Panics when `ratio` is negative or non-finite. Use `try_with_damping` when the value is not a
 // trusted constant.
 //
-// WithDamping is <gpui_kit::base::Spring>::with_damping.
+// WithDamping calls <gpui_kit::base::Spring>::with_damping.
 func (e Spring) WithDamping(ratio float32) Spring {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F32(ratio)
@@ -471,7 +471,7 @@ func (e Spring) WithDamping(ratio float32) Spring {
 // Panics when `epsilon` is zero, negative, or non-finite. Use `try_with_epsilon` when the value is
 // not a trusted constant.
 //
-// WithEpsilon is <gpui_kit::base::Spring>::with_epsilon.
+// WithEpsilon calls <gpui_kit::base::Spring>::with_epsilon.
 func (e Spring) WithEpsilon(epsilon float32) Spring {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.F32(epsilon)
@@ -480,16 +480,16 @@ func (e Spring) WithEpsilon(epsilon float32) Spring {
 
 // Sets whether the spring travels to its target or adopts it on the spot.
 //
-// A value the pointer is already moving — a panel being dragged by its resize handle — must not
+// A value the pointer is already moving - a panel being dragged by its resize handle - must not
 // lag behind the pointer, so the spring stops travelling for as long as the drag lasts. Retained
 // state stays pinned to the target meanwhile, so travel resumes from the value the drag released
 // rather than from wherever the spring was when it began.
 //
 // This says at the call that the motion is suspended, and it says it without disturbing the
-// response, damping or tolerance the spring is configured with — which a policy swapped out for
+// response, damping or tolerance the spring is configured with - which a policy swapped out for
 // the length of the drag would have to restate or discard.
 //
-// WithTravel is <gpui_kit::base::Spring>::with_travel.
+// WithTravel calls <gpui_kit::base::Spring>::with_travel.
 func (e Spring) WithTravel(travel bool) Spring {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(travel)
@@ -499,7 +499,7 @@ func (e Spring) WithTravel(travel bool) Spring {
 // StateStyle is gpui_kit::base::StateStyle.
 type StateStyle struct{ rt.Val }
 
-// NewStateStyleDefault is <gpui_kit::base::StateStyle as Default>::default.
+// NewStateStyleDefault calls <gpui_kit::base::StateStyle as Default>::default.
 func NewStateStyleDefault(st ...Style) StateStyle {
 	n := rt.NewValue(384)
 	rt.Tokens(n, st)
@@ -507,12 +507,16 @@ func NewStateStyleDefault(st ...Style) StateStyle {
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e StateStyle) BorderE(width Length) StateStyle {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e StateStyle) BorderS(width Length) StateStyle {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -520,109 +524,151 @@ func (e StateStyle) BorderS(width Length) StateStyle {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e StateStyle) FlexRowDir() StateStyle { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e StateStyle) InsetE(length Length) StateStyle {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e StateStyle) InsetS(length Length) StateStyle {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e StateStyle) JustifyFlexEnd() StateStyle {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e StateStyle) JustifyFlexStart() StateStyle {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e StateStyle) Me(length Length) StateStyle { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e StateStyle) Ms(length Length) StateStyle { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e StateStyle) Pe(length Length) StateStyle { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e StateStyle) Ps(length Length) StateStyle { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e StateStyle) RoundedE(radius Length) StateStyle {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e StateStyle) RoundedS(radius Length) StateStyle {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e StateStyle) TextEnd() StateStyle { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e StateStyle) TextStart() StateStyle { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e StateStyle) CornerRadii(radius Corners) StateStyle {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e StateStyle) DebugBlue() StateStyle { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e StateStyle) DebugFocused(focusHandle FocusHandle) StateStyle {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e StateStyle) DebugGreen() StateStyle { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e StateStyle) DebugPink() StateStyle { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e StateStyle) DebugRed() StateStyle { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e StateStyle) DebugYellow() StateStyle { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e StateStyle) FontBlack() StateStyle { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e StateStyle) FontBold() StateStyle { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e StateStyle) FontExtrabold() StateStyle { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e StateStyle) FontExtralight() StateStyle { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e StateStyle) FontLight() StateStyle { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e StateStyle) FontMedium() StateStyle { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e StateStyle) FontNormal() StateStyle { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e StateStyle) FontSemibold() StateStyle { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e StateStyle) FontThin() StateStyle { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -631,18 +677,23 @@ func (e StateStyle) FontThin() StateStyle { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e StateStyle) HFlex() StateStyle { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e StateStyle) Margins(margins EdgesInto) StateStyle {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e StateStyle) Paddings(paddings EdgesInto) StateStyle {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e StateStyle) RefineStyle(style StyleRefinement) StateStyle {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -652,28 +703,40 @@ func (e StateStyle) RefineStyle(style StyleRefinement) StateStyle {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e StateStyle) VFlex() StateStyle { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e StateStyle) Style(st ...Style) StateStyle { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e StateStyle) AspectRatio(ratio float32) StateStyle {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e StateStyle) Bg(fill Fill) StateStyle { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e StateStyle) Border(length Length) StateStyle { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e StateStyle) BorderB(length Length) StateStyle { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e StateStyle) BorderColor(borderColor Color) StateStyle {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -681,38 +744,58 @@ func (e StateStyle) BorderColor(borderColor Color) StateStyle {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e StateStyle) BorderL(length Length) StateStyle { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e StateStyle) BorderR(length Length) StateStyle { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e StateStyle) BorderT(length Length) StateStyle { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e StateStyle) BorderX(length Length) StateStyle { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e StateStyle) BorderY(length Length) StateStyle { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e StateStyle) Bottom(length Length) StateStyle { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e StateStyle) ColEnd(end int16) StateStyle { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e StateStyle) ColSpan(span uint16) StateStyle { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e StateStyle) ColStart(start int16) StateStyle { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e StateStyle) Cursor(cursor CursorStyle) StateStyle {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -720,30 +803,42 @@ func (e StateStyle) Cursor(cursor CursorStyle) StateStyle {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e StateStyle) FlexBasis(basis Length) StateStyle {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e StateStyle) FlexGrow(grow float32) StateStyle { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e StateStyle) FlexShrink(shrink float32) StateStyle {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e StateStyle) Font(font Font) StateStyle { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e StateStyle) FontFamily(familyName string) StateStyle {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e StateStyle) FontFeatures(features FontFeatures) StateStyle {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -752,26 +847,38 @@ func (e StateStyle) FontFeatures(features FontFeatures) StateStyle {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e StateStyle) FontWeight(weight FontWeight) StateStyle {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e StateStyle) Gap(length Length) StateStyle { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e StateStyle) GapX(length Length) StateStyle { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e StateStyle) GapY(length Length) StateStyle { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e StateStyle) GridCols(cols uint16) StateStyle { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e StateStyle) GridColsMaxContent(cols uint16) StateStyle {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -779,15 +886,21 @@ func (e StateStyle) GridColsMaxContent(cols uint16) StateStyle {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e StateStyle) GridColsMinContent(cols uint16) StateStyle {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e StateStyle) GridRows(rows uint16) StateStyle { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e StateStyle) GridRowsMaxContent(rows uint16) StateStyle {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -795,119 +908,179 @@ func (e StateStyle) GridRowsMaxContent(rows uint16) StateStyle {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e StateStyle) GridRowsMinContent(rows uint16) StateStyle {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e StateStyle) H(length Length) StateStyle { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e StateStyle) Inset(length Length) StateStyle { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e StateStyle) Left(length Length) StateStyle { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e StateStyle) LineClamp(lines int) StateStyle { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e StateStyle) LineHeight(lineHeight Length) StateStyle {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e StateStyle) M(length Length) StateStyle { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e StateStyle) MaxH(length Length) StateStyle { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e StateStyle) MaxSize(length Length) StateStyle { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e StateStyle) MaxW(length Length) StateStyle { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e StateStyle) Mb(length Length) StateStyle { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e StateStyle) MinH(length Length) StateStyle { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e StateStyle) MinSize(length Length) StateStyle { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e StateStyle) MinW(length Length) StateStyle { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e StateStyle) Ml(length Length) StateStyle { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e StateStyle) Mr(length Length) StateStyle { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e StateStyle) Mt(length Length) StateStyle { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e StateStyle) Mx(length Length) StateStyle { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e StateStyle) My(length Length) StateStyle { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e StateStyle) Opacity(opacity float32) StateStyle {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e StateStyle) P(length Length) StateStyle { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e StateStyle) Pb(length Length) StateStyle { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e StateStyle) Pl(length Length) StateStyle { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e StateStyle) Pr(length Length) StateStyle { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e StateStyle) Pt(length Length) StateStyle { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e StateStyle) Px(length Length) StateStyle { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e StateStyle) Py(length Length) StateStyle { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e StateStyle) Right(length Length) StateStyle { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e StateStyle) Rounded(length Length) StateStyle { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e StateStyle) RoundedB(length Length) StateStyle {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -915,6 +1088,8 @@ func (e StateStyle) RoundedB(length Length) StateStyle {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e StateStyle) RoundedBl(length Length) StateStyle {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -922,6 +1097,8 @@ func (e StateStyle) RoundedBl(length Length) StateStyle {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e StateStyle) RoundedBr(length Length) StateStyle {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -929,6 +1106,8 @@ func (e StateStyle) RoundedBr(length Length) StateStyle {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e StateStyle) RoundedL(length Length) StateStyle {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -936,6 +1115,8 @@ func (e StateStyle) RoundedL(length Length) StateStyle {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e StateStyle) RoundedR(length Length) StateStyle {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -943,6 +1124,8 @@ func (e StateStyle) RoundedR(length Length) StateStyle {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e StateStyle) RoundedT(length Length) StateStyle {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -950,6 +1133,8 @@ func (e StateStyle) RoundedT(length Length) StateStyle {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e StateStyle) RoundedTl(length Length) StateStyle {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -957,39 +1142,55 @@ func (e StateStyle) RoundedTl(length Length) StateStyle {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e StateStyle) RoundedTr(length Length) StateStyle {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e StateStyle) RowEnd(end int16) StateStyle { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e StateStyle) RowSpan(span uint16) StateStyle { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e StateStyle) RowStart(start int16) StateStyle { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e StateStyle) ScrollbarWidth(width Length) StateStyle {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e StateStyle) Shadow(shadows []BoxShadow) StateStyle {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e StateStyle) Size(length Length) StateStyle { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e StateStyle) TextAlign(align TextAlign) StateStyle {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -998,23 +1199,31 @@ func (e StateStyle) TextAlign(align TextAlign) StateStyle {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e StateStyle) TextBg(bg Color) StateStyle { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e StateStyle) TextColor(color Color) StateStyle {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e StateStyle) TextDecorationColor(color Color) StateStyle {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e StateStyle) TextOverflow(overflow TextOverflow) StateStyle {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1023,33 +1232,39 @@ func (e StateStyle) TextOverflow(overflow TextOverflow) StateStyle {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e StateStyle) TextSize(size Length) StateStyle { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e StateStyle) Top(length Length) StateStyle { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e StateStyle) W(length Length) StateStyle { tStyledW(rt.N(e.Core), length); return e }
 
 // Transition is gpui_kit::base::Transition.
 type Transition struct{ rt.Val }
 
-// Delay is <gpui_kit::base::Transition>::delay.
+// Delay calls <gpui_kit::base::Transition>::delay.
 func (e Transition) Delay(delay SignedDurationInto) Transition {
 	o := rt.Op(rt.N(e.Core), 256)
 	putSignedDurationInto(o, delay)
 	return e
 }
 
-// Ease is <gpui_kit::base::Transition>::ease.
+// Ease calls <gpui_kit::base::Transition>::ease.
 func (e Transition) Ease(easing string) Transition {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutExpr(o, easing, 1)
 	return e
 }
 
-// Easing is <gpui_kit::base::Transition>::easing.
+// Easing calls <gpui_kit::base::Transition>::easing.
 func (e Transition) Easing(easing Easing) Transition {
 	o := rt.Op(rt.N(e.Core), 257)
 	putEasing(o, easing)
@@ -1062,7 +1277,7 @@ func (e Transition) Easing(easing Easing) Transition {
 // `Transition`, `transition_with_status` and `Sample` read it. `Presence` still finishes at once
 // under reduced motion.
 //
-// ReducedMotion is <gpui_kit::base::Transition>::reduced_motion.
+// ReducedMotion calls <gpui_kit::base::Transition>::reduced_motion.
 func (e Transition) ReducedMotion(behavior ReducedMotion) Transition {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U16(uint16(behavior))

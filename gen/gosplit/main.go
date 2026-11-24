@@ -1,16 +1,11 @@
-// gosplit: the Go half of splitting the generated Go package into its packages (gen/gk_split.py,
-// docs/GO.md section 1). The generator writes each package's files with the flat names it always
-// used (one namespace, the runtime's own lower-case names); this tool resolves every name against
-// the table gk_split.py writes and rewrites it where it now lives: another package's name gets its
-// package qualifier and an import, a renamed one its new name. It works on the syntax tree, so a
-// field name, a struct key, a parameter or a local never changes.
+// Command gosplit performs Go AST analysis and rewriting for gen/gk_split.py.
 //
-//	gosplit refs FILE...            the top-level declarations of FILEs and the package-level
-//	                                names each refers to (JSON, for gk_split.py)
-//	gosplit apply TABLE FILE...     rewrite generated files in place (flat names to split ones)
-//	gosplit migrate TABLE FILE...   rewrite code that imports gpuikit.dev/gk: gk.X to where X lives
-//	                                now (examples, tests, the gallery's generated pages)
-//	gosplit text TABLE FILE...      the same for prose (Markdown): every gk.X in the text
+// Subcommands:
+//
+//	gosplit refs FILE...            emit JSON listing top-level declarations and identifier refs
+//	gosplit apply TABLE FILE...     rewrite flat generated package files into split package layout
+//	gosplit migrate TABLE FILE...   update caller Go files from flat gk.X imports to split packages
+//	gosplit text TABLE FILE...      rewrite gk.X references inside plain text or Markdown files
 package main
 
 import (
@@ -52,8 +47,7 @@ func main() {
 	}
 }
 
-// ---------------------------------------------------------------- refs
-
+// decl describes one top-level declaration extracted by `gosplit refs` for gk_split.py.
 type decl struct {
 	File    string   `json:"file"`
 	I       int      `json:"i"`
@@ -66,6 +60,7 @@ type decl struct {
 	Imports []string `json:"imports,omitempty"`
 }
 
+// recvName unwraps pointer and generic-index wrappers to return a method receiver's base type name.
 func recvName(e ast.Expr) string {
 	switch x := e.(type) {
 	case *ast.StarExpr:
@@ -80,8 +75,8 @@ func recvName(e ast.Expr) string {
 	return ""
 }
 
-// skipSet marks the identifiers that are no package-level name: selectors' names, struct field
-// names, the keys of struct literals, parameter and result names.
+// skipSet collects AST identifiers that do not refer to package-level symbols
+// (selector fields, struct literal keys, parameter/field names, method names, and labels).
 func skipSet(n ast.Node) map[*ast.Ident]bool {
 	skip := map[*ast.Ident]bool{}
 	ast.Inspect(n, func(x ast.Node) bool {
@@ -104,7 +99,7 @@ func skipSet(n ast.Node) map[*ast.Ident]bool {
 			}
 		case *ast.FuncDecl:
 			if y.Recv != nil {
-				skip[y.Name] = true // a method's name is no package-level name
+				skip[y.Name] = true
 			}
 		case *ast.LabeledStmt:
 			skip[y.Label] = true
@@ -118,8 +113,7 @@ func skipSet(n ast.Node) map[*ast.Ident]bool {
 	return skip
 }
 
-// globalIdents calls f for every identifier of n that names something at package level (not a
-// local, a parameter, a field or a selector's name).
+// globalIdents visits every identifier under n that resolves to a package-level symbol.
 func globalIdents(n ast.Node, top map[*ast.Object]bool, f func(*ast.Ident)) {
 	skip := skipSet(n)
 	ast.Inspect(n, func(x ast.Node) bool {
@@ -135,6 +129,7 @@ func globalIdents(n ast.Node, top map[*ast.Object]bool, f func(*ast.Ident)) {
 	})
 }
 
+// declStart returns the byte position where declaration d begins, including any attached doc comment.
 func declStart(d ast.Decl) token.Pos {
 	switch x := d.(type) {
 	case *ast.FuncDecl:
@@ -149,6 +144,7 @@ func declStart(d ast.Decl) token.Pos {
 	return d.Pos()
 }
 
+// refs parses each Go source file and prints a JSON array of decl records with byte spans and symbol refs.
 func refs(files []string) error {
 	var out []decl
 	for _, path := range files {
@@ -199,7 +195,7 @@ func refs(files []string) error {
 			globalIdents(d, top, func(id *ast.Ident) {
 				set[id.Name] = true
 			})
-			// a declaration does not refer to the names it declares
+
 			if dd.Kind != "method" && dd.Kind != "func" {
 				for _, n := range dd.Names {
 					delete(set, n)
@@ -218,23 +214,14 @@ func refs(files []string) error {
 	return enc.Encode(out)
 }
 
-// ---------------------------------------------------------------- the table
-
 type table struct {
-	Module string            `json:"module"` // gpuikit.dev
-	Pkgs   map[string]string `json:"pkgs"`   // package name -> import path
-	// Names: a flat name -> [package, name]: every generated name and every hand-written name
-	// generated code or app code may give with its flat (old) spelling.
-	Names map[string][2]string `json:"names"`
-	// Local: unexported generated helpers every package that uses one holds its own copy of.
-	Local []string `json:"local"`
-	// Sels: lower-case methods and fields of the runtime's types that generated code calls, and
-	// their exported names.
-	Sels map[string]string `json:"sels"`
-	// Public: the packages app code may import (migrate never names another).
-	Public []string `json:"public"`
-	// Rt: the names internal/rt declares itself (generated code there names them as they are).
-	Rt []string `json:"rt"`
+	Module string               `json:"module"` // Go module path prefix (gpuikit.dev).
+	Pkgs   map[string]string    `json:"pkgs"`   // Short package name to full import path.
+	Names  map[string][2]string `json:"names"`  // Flat symbol name to [targetPkg, targetName].
+	Local  []string             `json:"local"`  // Unexported helpers duplicated into each using package.
+	Sels   map[string]string    `json:"sels"`   // Unexported runtime field/method selectors to exported names.
+	Public []string             `json:"public"` // User-facing packages eligible for migrate/text rewrites.
+	Rt     []string             `json:"rt"`     // Symbols declared inside internal/rt.
 
 	local  map[string]bool
 	public map[string]bool
@@ -288,8 +275,6 @@ func init() {
 	}
 }
 
-// ---------------------------------------------------------------- edits
-
 type edit struct {
 	at, end int
 	text    string
@@ -307,7 +292,7 @@ func applyEdits(src []byte, es []edit) []byte {
 	pos := 0
 	for _, e := range es {
 		if e.at < pos {
-			continue // overlaps an earlier edit (cannot happen for well-formed input)
+			continue
 		}
 		b.Write(src[pos:e.at])
 		b.WriteString(e.text)
@@ -317,7 +302,7 @@ func applyEdits(src []byte, es []edit) []byte {
 	return b.Bytes()
 }
 
-// importBlock is the import declaration of a file: the given imports, std first.
+// importBlock formats a grouped Go import block with stdlib packages before module imports.
 func importBlock(imps map[string]string) string {
 	if len(imps) == 0 {
 		return ""
@@ -351,8 +336,7 @@ func importBlock(imps map[string]string) string {
 	return b.String()
 }
 
-// replaceImports swaps the file's import declarations for imps (or adds them after the package
-// clause).
+// replaceImports rewrites existing import declarations in af to match imps, inserting one if needed.
 func replaceImports(fset *token.FileSet, af *ast.File, imps map[string]string, es []edit) []edit {
 	block := importBlock(imps)
 	first := true
@@ -376,7 +360,7 @@ func replaceImports(fset *token.FileSet, af *ast.File, imps map[string]string, e
 	return es
 }
 
-// usedImports: the file's imports whose name a selector uses (cgo's "C" always kept).
+// usedImports returns the subset of af's imports referenced by selectors (always preserving "C", "_", and ".").
 func usedImports(af *ast.File) map[string]string {
 	names := map[string]bool{}
 	ast.Inspect(af, func(x ast.Node) bool {
@@ -403,8 +387,11 @@ func usedImports(af *ast.File) map[string]string {
 	return out
 }
 
-// ---------------------------------------------------------------- apply (generated code)
-
+// applyFile rewrites one generated split-package Go file in place:
+//   - replaces `.n` / `.h` field accesses and `T{h: ...}` literals with rt.N/rt.H/rt.MkH helpers,
+//   - renames selectors listed in t.Sels,
+//   - qualifies cross-package identifiers and updates renamed declarations from t.Names,
+//   - rebuilds the file's import block to include exactly the referenced stdlib and module packages.
 func applyFile(t *table, path string) error {
 	src, err := os.ReadFile(path)
 	if err != nil {
@@ -426,7 +413,7 @@ func applyFile(t *table, path string) error {
 	imps := usedImports(af)
 	for p := range imps {
 		if strings.HasPrefix(p, t.Module+"/") || p == t.Module {
-			delete(imps, p) // recomputed below
+			delete(imps, p)
 		}
 	}
 	need := func(p string) string {
@@ -441,7 +428,7 @@ func applyFile(t *table, path string) error {
 		return p + "."
 	}
 	var bad []string
-	// the standard packages generated code names (an import the file does not have is added)
+
 	std := map[string]string{"time": "time", "fmt": "fmt", "math": "math", "strings": "strings", "strconv": "strconv",
 		"unsafe": "unsafe", "sort": "sort", "reflect": "reflect", "os": "os", "errors": "errors", "sync": "sync",
 		"utf8": "unicode/utf8", "bits": "math/bits", "slices": "slices", "atomic": "sync/atomic", "runtime": "runtime"}
@@ -458,7 +445,7 @@ func applyFile(t *table, path string) error {
 		}
 		return true
 	})
-	// package-qualified names the generator wrote itself (rt.MkEl): keep, import the package
+
 	isPkgIdent := func(id *ast.Ident) bool {
 		_, ok := t.Pkgs[id.Name]
 		return ok && id.Obj == nil
@@ -490,7 +477,7 @@ func applyFile(t *table, path string) error {
 		}
 		return true
 	})
-	// T{h: v}: a handle made from its number
+
 	ast.Inspect(af, func(x ast.Node) bool {
 		c, ok := x.(*ast.CompositeLit)
 		if !ok || len(c.Elts) != 1 {
@@ -517,7 +504,7 @@ func applyFile(t *table, path string) error {
 		e, ok := t.Names[name]
 		if !ok {
 			if decl || (id.Obj != nil && top[id.Obj]) {
-				return // declared in this file and known to nobody else
+				return
 			}
 			bad = append(bad, fmt.Sprintf("%s: %s: no package declares %s", path, fset.Position(id.Pos()), name))
 			return
@@ -558,7 +545,7 @@ func applyFile(t *table, path string) error {
 			if isPkgIdent(id) || stdIdent[id] || id.Name == "C" {
 				return
 			}
-			// the declared names themselves were handled above
+
 			switch x := d.(type) {
 			case *ast.FuncDecl:
 				if id == x.Name {
@@ -608,8 +595,9 @@ func writeIfChanged(path string, old, b []byte) error {
 	return os.WriteFile(path, b, 0o644)
 }
 
-// ---------------------------------------------------------------- migrate (app code)
-
+// migrateFile updates a caller Go file (such as a generated test or example) from flat `gk.Symbol`
+// references to the split subpackages in t.Names, adding aliases when a subpackage name collides
+// with a local variable or top-level declaration.
 func migrateFile(t *table, path string) error {
 	src, err := os.ReadFile(path)
 	if err != nil {
@@ -633,7 +621,7 @@ func migrateFile(t *table, path string) error {
 		return nil
 	}
 	off := func(p token.Pos) int { return fset.Position(p).Offset }
-	// names the file uses for itself: an import added must not shadow one
+
 	own := map[string]bool{}
 	ast.Inspect(af, func(x ast.Node) bool {
 		if id, ok := x.(*ast.Ident); ok && id.Obj != nil {
@@ -647,7 +635,7 @@ func migrateFile(t *table, path string) error {
 		}
 	}
 	imps := usedImports(af)
-	alias := map[string]string{} // package -> the name the file gives it
+	alias := map[string]string{}
 	for p, a := range imps {
 		if strings.HasPrefix(p, t.Module+"/gk") {
 			n := p[strings.LastIndex(p, "/")+1:]
@@ -674,8 +662,7 @@ func migrateFile(t *table, path string) error {
 			if ok && id.Obj == nil {
 				for p, a := range alias {
 					if _, split := t.Pkgs[p]; a == id.Name && p != "gk" && split {
-						// a name of a split package that has moved since (to another package,
-						// keeping its name): follow it
+
 						if !t.has(p, s.Sel.Name) {
 							if q := t.movedTo(s.Sel.Name); q != "" {
 								use[q] = true
@@ -733,7 +720,7 @@ func migrateFile(t *table, path string) error {
 	}
 	for p := range use {
 		if _, ok := t.Pkgs[p]; !ok {
-			continue // gk/s, gk/theme, gk/palette: kept above
+			continue
 		}
 		a := alias[p]
 		if p == "gk" {
@@ -766,10 +753,10 @@ func (t *table) index() {
 	}
 }
 
-// has: package p declares name n now.
+// has reports whether package p currently declares symbol n.
 func (t *table) has(p, n string) bool { t.index(); return t.byNew[n][p] }
 
-// movedTo: the one public package that declares n now ("" for none or several).
+// movedTo returns the unique public package declaring n, or "" if none or ambiguous.
 func (t *table) movedTo(n string) string {
 	t.index()
 	q := ""
@@ -787,6 +774,7 @@ func (t *table) movedTo(n string) string {
 
 var gkRef = regexp.MustCompile(`\bgk\.([A-Z]\w*)`)
 
+// textFile rewrites plain-text `gk.<Exported>` mentions in docs or non-Go files using t.Names.
 func textFile(t *table, path string) error {
 	src, err := os.ReadFile(path)
 	if err != nil {

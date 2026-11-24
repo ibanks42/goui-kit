@@ -5,10 +5,8 @@ import (
 	"time"
 )
 
-// Transformation is a scale (1 is the svg's size), a translation in pixels and a rotation in
-// radians, about the svg's centre, and an alpha that multiplies the svg's own (none is 1, opaque;
-// unlike an element's opacity it applies to the svg alone). Make one with gk.NewTransformation: the
-// zero value has a zero scale, which draws nothing.
+// Transformation defines a 2D affine transform (scale, translation, rotation in
+// radians) and optional opacity alpha for SVG elements.
 type Transformation struct {
 	Scale     [2]float32
 	Translate [2]float32
@@ -16,24 +14,26 @@ type Transformation struct {
 	Alpha     Option[float32]
 }
 
-// NewTransformation is the identity: scale 1, no translation, no rotation, opaque.
+// NewTransformation returns the identity Transformation (scale 1, 1; zero
+// translation and rotation; unset alpha).
 func NewTransformation() Transformation { return Transformation{Scale: [2]float32{1, 1}} }
 
-// Scaled sets the scale.
+// Scaled returns a copy of t with Scale set to (x, y).
 func (t Transformation) Scaled(x, y float32) Transformation { t.Scale = [2]float32{x, y}; return t }
 
-// Translated sets the translation in pixels.
+// Translated returns a copy of t with Translate set to (x, y).
 func (t Transformation) Translated(x, y float32) Transformation {
 	t.Translate = [2]float32{x, y}
 	return t
 }
 
-// Rotated sets the rotation in radians.
+// Rotated returns a copy of t with Rotate set to radians.
 func (t Transformation) Rotated(radians float32) Transformation { t.Rotate = radians; return t }
 
-// WithAlpha sets the alpha.
+// WithAlpha returns a copy of t with Alpha set to a.
 func (t Transformation) WithAlpha(a float32) Transformation { t.Alpha = Some(a); return t }
 
+// PutTransformation encodes t onto o, defaulting an unset Alpha to 1.
 func PutTransformation(o *Tape, t Transformation) {
 	o.F32(t.Scale[0])
 	o.F32(t.Scale[1])
@@ -47,11 +47,10 @@ func PutTransformation(o *Tape, t Transformation) {
 	o.F32(a)
 }
 
-// SvgEasing is how a value of a TimedTransformation changes over one pass (gpui's Easing of an svg,
-// not gk.Easing of an animation). Heartbeat is two quick beats then a rest: it reaches To at the
-// first beat and is back at From by the end of the period.
+// SvgEasing selects the interpolation curve for an animated SVG transform channel.
 type SvgEasing uint8
 
+// Easing curves accepted by TimedTransformation.
 const (
 	SvgEasingLinear SvgEasing = iota
 	SvgEasingQuadratic
@@ -60,11 +59,8 @@ const (
 	SvgEasingHeartbeat
 )
 
-// TimedTransformation is gpui's TimedTransformation: the svg moves from From to To over every
-// Period, forever, drawn by the library without a turn of the app (it replaces
-// WithTransformation; layout and hit testing keep the svg's place). Each value has its own easing;
-// Alternate goes back from To to From within each period instead of jumping; MaxFPS (0: no limit)
-// caps the frames a second asked for while nothing else needs one.
+// TimedTransformation animates an SVG element between From and To over Period
+// with per-channel easing curves, optional ping-pong alternation, and FPS cap.
 type TimedTransformation struct {
 	Period            time.Duration
 	From, To          Transformation
@@ -76,19 +72,20 @@ type TimedTransformation struct {
 	MaxFPS            float32
 }
 
-// NewTimedTransform moves from `from` to `to` every period, every value with one easing.
+// NewTimedTransform creates a TimedTransformation using easing for all four channels.
 func NewTimedTransform(period time.Duration, from, to Transformation, easing SvgEasing) TimedTransformation {
 	return TimedTransformation{Period: period, From: from, To: to, ScaleEasing: easing, TranslationEasing: easing,
 		RotationEasing: easing, AlphaEasing: easing}
 }
 
-// NewTimedRotation turns `from` clockwise, one full turn every period (TimedTransformation::rotation).
+// NewTimedRotation creates a continuous linear 2*pi rotation animation starting at from.
 func NewTimedRotation(period time.Duration, from Transformation) TimedTransformation {
 	to := from
 	to.Rotate += 2 * math.Pi
 	return NewTimedTransform(period, from, to, SvgEasingLinear)
 }
 
+// PutTimedTransformation validates all four easing enums and encodes t onto o.
 func PutTimedTransformation(o *Tape, t TimedTransformation) {
 	for _, e := range [4]SvgEasing{t.ScaleEasing, t.TranslationEasing, t.RotationEasing, t.AlphaEasing} {
 		if e > SvgEasingHeartbeat {

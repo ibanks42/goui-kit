@@ -1,10 +1,9 @@
-//! ref-expenses: the Rust reference for examples/go/expenses, written
-//! the way a Rust GPUI-kit app is written, call for call with the Go app: a form with validation
-//! adds an expense (what, amount, category); the list shows them with a delete button each (a
-//! ListDelegate); a bar chart shows the total per category.
+//! Pure-Rust expense tracker reference app with form validation, a virtualized
+//! list, a category bar chart, and toast notifications.
 //!
-//!   ref-expenses                  a real window
-//!   ref-expenses --script FILE    offscreen, driven by a gk-meter script (diag build)
+//! Mirrors the Go expenses example for parity testing and supports headless
+//! `--script <path>` execution under the `diag` feature.
+
 use gpui_kit::base::{h_flex, v_flex};
 use gpui_kit::component::button::{Button, ButtonVariants};
 use gpui_kit::component::chart::BarChart;
@@ -23,6 +22,7 @@ use gpui_kit::{
 use std::cell::RefCell;
 use std::rc::Rc;
 
+/// Fixed list of expense categories indexed by `Expense::category`.
 const CATEGORIES: [&str; 4] = ["Food", "Transport", "Home", "Fun"];
 
 #[derive(Clone)]
@@ -32,8 +32,7 @@ struct Expense {
     category: usize,
 }
 
-/// A select's item: the Go app's gk.SearchItem{Value: name}, whose title is its value when it
-/// gives none.
+/// Select dropdown option wrapping a category name.
 #[derive(Clone)]
 struct Item {
     value: SharedString,
@@ -57,6 +56,7 @@ impl SearchableListItem for Item {
 
 type Shared = Rc<RefCell<Vec<Expense>>>;
 
+/// `ListDelegate` rendering each expense row with an inline delete button.
 struct ExpenseRows {
     expenses: Shared,
     app: WeakEntity<ExpensesApp>,
@@ -83,6 +83,7 @@ impl ListDelegate for ExpenseRows {
                     .child(Tag::secondary().text_xs().child(CATEGORIES[e.category]))
                     .child(Label::new(format!("{:.2}", e.amount)).w(px(70.)))
                     .child(Button::new(("delete", row)).ghost().xsmall().icon(IconName::Delete).on_click(move |_, _, cx| {
+                        // Prevent the row click handler from also selecting the removed item.
                         cx.stop_propagation();
                         app.update(cx, |a, cx| {
                             a.expenses.borrow_mut().remove(row);
@@ -97,13 +98,14 @@ impl ListDelegate for ExpenseRows {
     fn set_selected_index(&mut self, _: Option<IndexPath>, _: &mut Window, _: &mut Context<ListState<Self>>) {}
 }
 
+/// Root application state holding form inputs, expense rows, and validation errors.
 struct ExpensesApp {
     expenses: Shared,
     what: Entity<InputState>,
     amount: Entity<InputState>,
     category: Entity<SelectState<SearchableVec<Item>>>,
     list: Entity<ListState<ExpenseRows>>,
-    // the fields' messages, "" while a field is valid
+    /// Per-field validation messages cleared as the user edits after a failed submit.
     what_err: String,
     amount_err: String,
     category_err: String,
@@ -137,7 +139,6 @@ impl ExpensesApp {
         ExpensesApp { expenses, what, amount, category, list, what_err: String::new(), amount_err: String::new(), category_err: String::new(), _subs: subs }
     }
 
-    /// Every view and the list drawn again (the Go app's gk.Refresh).
     fn refresh(&mut self, cx: &mut Context<Self>) {
         self.list.update(cx, |_, cx| cx.notify());
         cx.notify();
@@ -173,7 +174,6 @@ impl ExpensesApp {
             .child(div().h(px(220.)).child(BarChart::new(totals).band(|t| t.0.clone()).value(|t| t.1)))
     }
 
-    /// Checks the fields, sets their messages, and returns the expense they describe.
     fn validate(&mut self, cx: &mut Context<Self>) -> Option<Expense> {
         let what = self.what.read(cx).value().trim().to_string();
         self.what_err = if what.is_empty() { "Say what it was for".into() } else { String::new() };
@@ -217,7 +217,6 @@ impl ExpensesApp {
         self.refresh(cx);
     }
 
-    /// Updates the messages once one is shown, so a fixed field loses its message.
     fn revalidate(&mut self, cx: &mut Context<Self>) {
         if !self.what_err.is_empty() || !self.amount_err.is_empty() || !self.category_err.is_empty() {
             self.validate(cx);
@@ -226,12 +225,10 @@ impl ExpensesApp {
     }
 }
 
-/// The Go app's strconv.ParseFloat for the texts a person types here.
 fn parse_float(text: &str) -> Option<f64> {
     text.parse::<f64>().ok()
 }
 
-/// A form field with its message under it while it has one.
 fn field(label: &'static str, input: impl IntoElement, message: &str) -> Field {
     let mut f = Field::new().label(label).child(input);
     if !message.is_empty() {

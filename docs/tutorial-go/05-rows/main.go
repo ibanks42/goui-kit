@@ -1,4 +1,4 @@
-// Step 5 of the Go tutorial: handlers in a row (a checkbox, a delete button).
+// Step 5 of the Go tutorial: add interactive checkboxes and delete buttons inside list rows.
 package main
 
 import (
@@ -35,6 +35,9 @@ func (a *App) init(cx *gk.Cx) {
 	gk.Refresh(cx)
 }
 
+// itemRow embeds interactive controls inside each list row.
+// Every control uses gk.Key(..., row) for a unique ID, and calls gk.StopPropagation(cx)
+// so clicking the checkbox or delete button does not also select or confirm the row.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	row, it := at.Row, a.items[at.Row]
 	name := kit.Label(it.Name)
@@ -43,7 +46,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
-			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
+			gk.StopPropagation(cx)
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).

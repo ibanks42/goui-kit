@@ -1,21 +1,5 @@
-// The editor family's gallery pages (docs/PROTOCOLS.md 9.20 to 9.40), the Go twin of
-// ref/src/bin/gallery/editor_pages.rs, call for call:
-//
-//	editor5-surface   a block surface: the app's Div around a blockquote's blocks (a typed fragment)
-//	editor5-heading   a text style's headings by level (a table the app gives for Fn(u8) -> style)
-//	editor5-plugin    Markdown plugins: the kit's frontmatter plugin, a data plugin drawing ```badge
-//	                  code blocks as rows of the app's, another drawing inline code inside the line
-//	editor5-tooltip   a link's tooltip: the row of the link's URL (an item function over a value)
-//	editor6-host      the editor host (9.30): the app's blocks (a heading, a paragraph of inline
-//	                  nodes, a list of items, a code block) and parsed ones (held values) drawn by
-//	                  gk.BlockHost, a selection painted behind a keyed leaf
-//	editor7-number    decorators kept for later (9.32, 9.40): a number input's buttons given a style
-//	                  and a row each (gk.Decorate), the state made in init
-//	editor7-scroller  a message scroller scrolled up: its jump button decorated (a style, a row); no
-//	                  scrollbar (its fade after a scroll follows the wall clock, so no two runs agree)
-//	editor7-lsp       the Lsp's completion highlighter (9.33, an ask): the menu the app presents on a
-//	                  click, each label highlighted where the app says
-//	editor7-diagnostic  a diagnostic presented on a click (9.34): the editor's popover
+// Editor and Markdown gallery pages: custom block surfaces, heading styles, data plugins,
+// link tooltips, BlockHost with held parsed blocks, number inputs, message scrollers, and LSP UI.
 package main
 
 import (
@@ -30,20 +14,19 @@ import (
 )
 
 type editorPages struct {
-	blocks  gk.RowSource // editor5-plugin: the badge blocks
-	inlines gk.RowSource // editor5-plugin: the inline code
-	tips    gk.RowSource // editor5-tooltip: one row per URL
-	held    []editor.BlockNodeHeld
-	// the editor7-* pages
-	number   editor.InputState // editor7-number
+	blocks   gk.RowSource
+	inlines  gk.RowSource
+	tips     gk.RowSource
+	held     []editor.BlockNodeHeld
+	number   editor.InputState
 	plus     gk.RowSource
 	minus    gk.RowSource
-	scroller kit.MessageScrollerState // editor7-scroller
+	scroller kit.MessageScrollerState
 	messages gk.RowSource
 	jump     gk.RowSource
-	lsp      editor.State // editor7-lsp
+	lsp      editor.State
 	hl       gk.Ask[gk.TupleStringCompletionItem, []gk.Range]
-	diag     editor.State // editor7-diagnostic
+	diag     editor.State
 }
 
 const (
@@ -81,7 +64,6 @@ func editorPagesInit(a *App, cx *gk.Cx) {
 		gk.Retain(cx, b)
 		p.held = append(p.held, b)
 	}
-	// the editor7-* pages
 	p.number = editor.NewInputState(cx).DefaultValue("4").Build()
 	p.plus = gk.NewRowSource(cx, 1, editorRowLabel("+"), gk.Initial(1))
 	p.minus = gk.NewRowSource(cx, 1, editorRowLabel("-"), gk.Initial(1))
@@ -102,16 +84,12 @@ func editorSurface(a *App, cx *gk.Cx) gk.Element {
 }
 
 func editorHeading(a *App, cx *gk.Cx) gk.Element {
-	// By level: 0 is never asked, 1 and 2 are colored, the rest (past the end) upstream's default.
 	levels := []gk.StyleRefinement{
 		gk.NewStyleRefinementDefault(),
 		gk.NewStyleRefinementDefault().TextColor(theme.Danger),
 		gk.NewStyleRefinementDefault().TextColor(theme.Success),
 	}
 	style := editor.NewBaseTextViewStyleDefault().WithHeading(levels)
-	// The next page's text view drawn here first: a plugin's rows are described the frame after
-	// its nodes are parsed, and a page's first shot is taken on its first frame. Laid out with no
-	// height, so this page does not show it.
 	return gk.Div().W(gk.Px(360)).Child(editor.BaseTextViewMarkdown("heading", editorHeadingMD).Style(style)).
 		Child(gk.Div(s.OverflowHidden).H(gk.Px(0)).Child(editorPlugin(a, cx)))
 }
@@ -120,8 +98,6 @@ func editorBadgeRow(cx *gk.Cx, n gk.MarkdownNodeRead) gk.Element {
 	return kit.Label(fmt.Sprintf("[%s]", n.AsText(cx)))
 }
 
-// editorCodeRow is an inline plugin's row: the node is the first value the kit hands it (then the
-// inline render context, which this row does not read).
 func editorCodeRow(cx *gk.Cx, n gk.MarkdownNodeRead) gk.Element {
 	return kit.Label(fmt.Sprintf("<%s>", n.AsText(cx)))
 }
@@ -163,8 +139,6 @@ func editorHost(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(420)).Child(editor.BlockHost("editor6-host", bs, nil, gk.Option[editor.RenderContext]{}, decs, nil))
 }
 
-// --- docs/PROTOCOLS.md 9.38 to 9.40
-
 func editorNumber(a *App, cx *gk.Cx) gk.Element {
 	p := &a.editor
 	return gk.Div().W(gk.Px(200)).Child(editor.BaseNumberInput(p.number).
@@ -178,7 +152,6 @@ func editorScroller(a *App, cx *gk.Cx) gk.Element {
 		WithJumpButtonRenderer(gk.Decorate{Style: gk.Some(gk.NewStyleRefinementDefault().Bg(theme.Danger)), Content: p.jump}))
 }
 
-// editorHighlight: the completion menu's highlighter, the second and third character of each label.
 func editorHighlight(cx *gk.Cx, key gk.TupleStringCompletionItem) []gk.Range {
 	n := len(key.V1.Label)
 	return []gk.Range{{Lo: min(1, n), Hi: min(3, n)}}

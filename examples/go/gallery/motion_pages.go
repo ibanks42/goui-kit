@@ -1,11 +1,5 @@
-// The platform and motion families' gallery pages, the Go twin of
-// ref/src/bin/gallery/motion_pages.rs, call for call (docs/PROTOCOLS.md 13.30): gpui's with_animation and a chain of animations with the kit's
-// easing curves, the kit's EffectTransition, and the kit's motion values (transition, spring,
-// keyframes, presence, a TransitionState kept with the page's data) sampled while the library
-// draws, the focus trap, and gpui's element leftovers (PROTOCOLS.md 13.31: drop targets, image
-// caches, a scroll anchor, synthetic accessibility children, prepaint order, a text selection
-// scope, virtual lists). Offscreen the clock moves only on `advance`, so every frame is at a fixed
-// time and the pages compare byte for byte with Rust.
+// Motion and element gallery pages: animations, chained tracks, transitions, springs,
+// keyframes, presence, focus traps, drag-and-drop, image caches, scroll anchors, and virtual lists.
 package main
 
 import (
@@ -24,9 +18,8 @@ type motionPages struct {
 	frames motion.Keyframes
 	state  motion.TransitionState
 	focus  gk.FocusHandle
-	// the elem-* pages
 	cache  gk.ImageCache
-	pic    gk.RenderImage // made once from pixels: gpui keeps one texture for it
+	pic    gk.RenderImage
 	scroll gk.ScrollHandle
 	anchor gk.ScrollAnchor
 	scope  motion.TextSelectionScope
@@ -43,7 +36,6 @@ var motionPageTable = []Page{
 	{"motion-keyframes", motionKeyframes},
 	{"motion-presence", motionPresence},
 	{"motion-focus-trap", motionFocusTrap},
-	// PROTOCOLS.md 13.31: gpui's element leftovers
 	{"elem-drop", elemDrop},
 	{"elem-image", elemImage},
 	{"elem-scope", elemScope},
@@ -55,8 +47,6 @@ var (
 	motionBlue = gk.HSLA(0.6, 0.7, 0.5, 1)
 )
 
-// elemPNG is a 4 x 4 PNG; ImageSource's Path variant reads it from elemPNGPath (written where
-// the gallery runs, as the Rust twin does).
 var elemPNG = []byte{
 	137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 4, 0, 0, 0, 4, 8, 6, 0, 0, 0, 169, 241, 158,
 	126, 0, 0, 0, 26, 73, 68, 65, 84, 120, 218, 99, 248, 127, 130, 225, 63, 67, 195, 255, 255, 48, 154, 1, 153, 3, 166, 9,
@@ -74,7 +64,7 @@ func motionPagesInit(a *App, cx *gk.Cx) {
 		panic(err)
 	}
 	mp.frames = k
-	gk.Retain(cx, mp.frames) // a fallible constructor hands out a temporary handle
+	gk.Retain(cx, mp.frames)
 	mp.state = motion.NewTransitionStateDefault(cx)
 	mp.focus = gk.NewFocusHandle(cx)
 	mp.cache = gk.NewImageCache(cx)
@@ -87,7 +77,6 @@ func motionPagesInit(a *App, cx *gk.Cx) {
 	_ = os.WriteFile(elemPNGPath, elemPNG, 0o644)
 }
 
-// elemChecker is a 4 x 4 checker of two colors, as RGBA pixels.
 func elemChecker() gk.PixelImage {
 	px := make([]byte, 4*4*4)
 	for y := range 4 {
@@ -183,10 +172,6 @@ func motionFocusTrap(a *App, cx *gk.Cx) gk.Element {
 	return motion.FocusTrap(gk.Div(s.Flex, s.Gap2, s.P2, s.Border1).W(gk.Px(320)).TrackFocus(a.motion.focus).
 		Child(kit.Button("one").Label("One")).Child(kit.Button("two").Label("Two")), "trap", a.motion.focus)
 }
-
-// --- PROTOCOLS.md 13.31: gpui's element leftovers. The drop targets take data where Rust gives
-// closures: can_drop's ids, the files a drag becomes outside the window; the images are bytes and
-// pixels.
 
 func elemDrop(a *App, cx *gk.Cx) gk.Element {
 	dropped := func(cx *gk.Cx, d gk.DragValue) { a.count++ }

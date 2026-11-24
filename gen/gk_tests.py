@@ -1,20 +1,9 @@
-"""The generated protocol tests (core/tests/go/gen, docs/PROTOCOLS.md section 8): one case per
-handler shape and one per generated state type, written by `make gen` from the same model the
-decoders and the package are written from, so a new shape or state type is tested the day the
-generator first emits it.
+"""Synthetic handler-shape payload generator and Rust test_shape() emitter.
 
-Shapes. Every shape the package registers is fired once through the library (call op
-TEST_FIRE_SHAPE) with a payload whose bytes are written here from the wire model, the model
-the Rust `Wire` impls are emitted from. When the generated codecs can build that payload as
-the Rust types a real listener hands over, the library decodes it into those types and fires
-through their own `Wire` impls (typed); otherwise it fires the bytes as they are (raw). The
-app's handler, registered for the payload type the package registered, encodes what it
-received again: the test passes when those bytes are the bytes sent, the return value
-arrives, and the typed flag is the one predicted here.
-
-States. Every generated state type with a constructor this file can call: made (through its
-builder chain, every builder once), every read, write and call once with fixed arguments,
-every event subscribed; read again in a later turn, after the writes were applied; released.
+Builds deterministic wire byte payloads for every registered handler shape in
+the model (Bytes, shapes()), and emits the `#[cfg(feature = "diag")]` Rust
+function `test_shape` into core/src/gen/mod.rs so protocol tests can round-trip
+typed Rust event payloads through generated Wire implementations.
 """
 import struct
 
@@ -24,8 +13,7 @@ INT_FMT = {"u8": "B", "u16": "H", "u32": "I", "u64": "Q", "i8": "b", "i16": "h",
 
 
 def decodable(m, d):
-    """True when the generated codecs (the `_c` decoders of call ops) read this descriptor into
-    the Rust type with the same bytes its `Wire` impl writes."""
+    """Return True if descriptor d can be decoded by generated Rust call-mode codecs."""
     k = d[0]
     if k in ("bool", "f32", "f64"):
         return True
@@ -34,7 +22,7 @@ def decodable(m, d):
     if k == "str":
         return len(d) < 2 or d[1].lstrip("&") in ("str", "asref", "String", "SharedString", "into")
     if k == "leaf":
-        return d[1] == "px"  # a colour goes in as a Color (literal or theme) and out as Hsla
+        return d[1] == "px"
     if k == "enum":
         e = m.enums[d[1]]
         return bool(e["in"] and e["variants"])
@@ -52,8 +40,11 @@ def decodable(m, d):
 
 
 def pick_variant(m, e):
-    """The variant a sample takes: the last one the binding carries with data (so a tag that is
-    off by one, or a field read in the wrong order, shows), else the last unit variant."""
+    """Choose a representative variant of data enum `e` for round-trip payload testing.
+
+    Prefers the last inbound-decodable payload variant when `e` is callable; otherwise
+    falls back to the last payload or unit variant.
+    """
     ok = [v for v in e["variants"] if v["ok"]]
     data = [v for v in ok if v["fields"]]
     typed = [v for v in data if v.get("in", True) and all(decodable(m, f["desc"]) for f in v["fields"])]
@@ -63,16 +54,18 @@ def pick_variant(m, e):
 
 
 class Bytes:
-    """Sample payload bytes, value by value, as the Rust `Wire` impls write them."""
+    """Synthesizes deterministic little-endian wire payloads for handler shape descriptors."""
 
     def __init__(self, m):
         self.m, self.n = m, 0
 
     def next(self):
+        """Return a monotonically increasing sequence number so nested fields get distinct test values."""
         self.n += 1
         return self.n
 
     def of(self, d, depth=0):
+        """Pack one synthetic wire value for descriptor `d` matching Rust `genapi::Wire` layout."""
         m, k = self.m, d[0]
         if depth > 6:
             raise ValueError("too deep")
@@ -94,11 +87,11 @@ class Bytes:
                 return struct.pack("<f", n + 0.5)
             if d[1] == "color":
                 return struct.pack("<4f", 0.25, 0.5, 0.75, 1.0)
-            if d[1] == "click_event":  # position, button, modifiers, click count, kind
+            if d[1] == "click_event":
                 return struct.pack("<2fBBIB", 12.5, 7.25, 1, 5, 2, 0)
-            if d[1] == "mouse_event":  # position, button, modifiers, click count
+            if d[1] == "mouse_event":
                 return struct.pack("<2fBBI", 3.5, 9.0, 2, 1, 1)
-            if d[1] == "key_event":  # key, key_char (an Option), modifiers, held
+            if d[1] == "key_event":
                 return struct.pack("<I", 1) + b"k" + b"\x01" + struct.pack("<I", 1) + b"K" + b"\x04\x01"
             raise ValueError(f"leaf {d[1]}")
         if k == "enum":
@@ -119,20 +112,19 @@ class Bytes:
             return struct.pack("<I", 2) + self.of(d[1], depth + 1) + self.of(d[1], depth + 1)
         if k == "tuple":
             return b"".join(self.of(x, depth + 1) for x in d[1])
-        if k == "action":  # an action's id (the app family's shape ACTION)
+        if k == "action":
             return struct.pack("<I", 7)
         raise ValueError(k)
 
 
 def shapes(m):
-    """Every shape the package registers: number, return, the Rust payload as written, sample
-    bytes, and whether the library can fire it typed."""
+    """Build synthetic payload specs for every registered handler shape in ascending shape-ID order."""
     out = []
     for key in sorted(m.shapes, key=lambda k: m.shapes[k]["num"]):
         sh = m.shapes[key]
         num = sh["num"]
         try:
-            bs = Bytes(m)  # one counter over all arguments, so two arguments of one type differ
+            bs = Bytes(m)
             payload = b"".join(bs.of(a) for a in sh["args"])
         except ValueError as e:
             out.append({"num": num, "skip": str(e), "rust": sh["rust"]})
@@ -143,13 +135,19 @@ def shapes(m):
 
 
 class TDec:
-    """Decoders the test alone needs: the payload types that only ever travel out (events), built
-    from the same bytes their Wire impls write. Generated into the diagnostic library only."""
+    """Emits diag-only Rust test decoders for shape payloads that lack normal inbound codecs.
+
+    Event structs and data enums that only travel Rust -> Go do not have regular inbound
+    `_c` decoders; `TDec` synthesizes private `t_*` helper functions under
+    `#[cfg(feature = "diag")]` so `TEST_FIRE_SHAPE` can reconstruct concrete Rust values
+    and exercise their `Wire::put` round-trip.
+    """
 
     def __init__(self, rust, m):
         self.rust, self.m, self.fns, self.busy = rust, m, {}, set()
 
     def ok(self, d):
+        """Return True if descriptor `d` can be reconstructed into a concrete Rust value by `expr()`."""
         m, k = self.m, d[0]
         if decodable(m, d):
             return True
@@ -187,7 +185,7 @@ class TDec:
             return "r.str().to_string()"
         if decodable(m, d):
             return self.rust.dec(d)
-        if k == "leaf":  # an Hsla, as it travels out
+        if k == "leaf":
             return "gpui_kit::Hsla { h: r.f32(), s: r.f32(), l: r.f32(), a: r.f32() }"
         if k in ("enum", "rec", "denum"):
             t = {"enum": m.enums, "rec": m.records, "denum": m.denums}[k][d[1]]
@@ -217,7 +215,7 @@ class TDec:
             else:
                 body = f"{t['path']} {{ " + ", ".join(f"{f['name']}: {self.expr(f['desc'])}" for f in t["fields"]) + " }"
             return f"fn {name}(r: &mut R) -> Option<{rt}> {{ Some({body}) }}"
-        v = pick_variant(self.m, t)  # the one variant the sample sends
+        v = pick_variant(self.m, t)
         if v["shape"] == "unit":
             body = f"{t['path']}::{v['name']}"
         elif v["shape"] == "tuple":
@@ -229,18 +227,15 @@ class TDec:
 
 
 def typed(m, d, td=None):
-    """True when the diagnostic library can build this payload argument in Rust."""
     return decodable(m, d) or (td is not None and td.ok(d)) or (td is None and TDec(None, m).ok(d))
 
 
 def rust_test_shape(rust, m):
-    """The generated half of call op TEST_FIRE_SHAPE (mod.rs): decode the payload into the Rust
-    types and fire through their Wire impls. Only in the diagnostic library."""
+    """Emit the diag-gated `test_shape` function and helper decoders for core/src/gen/mod.rs."""
     td = TDec(rust, m)
-    L = ["/// The handler-shape test (core/tests/gen, call op TEST_FIRE_SHAPE): decodes the payload of",
-         "/// `shape` into the Rust types its listeners hand over and fires `h` through their own Wire",
-         "/// impls; the handler's return value comes back encoded. None when this library cannot build",
-         "/// that payload (the runtime then fires the bytes as they are).",
+    L = ["/// Test helper for TEST_FIRE_SHAPE (diag builds): decodes wire bytes for `shape` into",
+         "/// concrete Rust payload values, fires handler `h` through its `Wire` impl, and returns",
+         "/// the encoded return bytes. Returns None when no typed decoder exists for `shape`.",
          '#[cfg(feature = "diag")]',
          "pub fn test_shape(shape: u16, h: genapi::HandlerRef, r: &mut R, window: &mut gpui_kit::Window, "
          "cx: &mut gpui_kit::App) -> Option<Vec<u8>> {",
@@ -253,7 +248,7 @@ def rust_test_shape(rust, m):
         lets = " ".join(f"let a{n} = {td.expr(a)};" for n, a in enumerate(sh["args"]))
         refs = [f"&a{n}" for n in range(len(sh["args"]))]
         payload = refs[0] if len(refs) == 1 else "&(" + ", ".join(refs) + ")"
-        if sh["ret"] == "str":  # values family (13.12): text returned, encoded as on the wire
+        if sh["ret"] == "str":
             fire = (f"let v: gpui_kit::SharedString = genapi::fire(h, {sh['num']}, {payload}, window, cx); "
                     "let mut b = Vec::new(); genapi::Put::put_str(&mut b, &v); Some(b)")
         elif sh["ret"] == "bool":

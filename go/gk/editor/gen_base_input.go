@@ -12,7 +12,7 @@ import (
 // ActivateToken is gpui_kit::base::input::ActivateToken.
 type ActivateToken struct{ rt.Val }
 
-// NewActivateTokenDefault is <gpui_kit::base::input::ActivateToken as Default>::default.
+// NewActivateTokenDefault calls <gpui_kit::base::input::ActivateToken as Default>::default.
 func NewActivateTokenDefault() ActivateToken {
 	rt.UseBaseInput()
 	n := rt.NewValue(459)
@@ -22,7 +22,7 @@ func NewActivateTokenDefault() ActivateToken {
 // AddCursorAbove is gpui_kit::base::input::AddCursorAbove.
 type AddCursorAbove struct{ rt.Val }
 
-// NewAddCursorAboveDefault is <gpui_kit::base::input::AddCursorAbove as Default>::default.
+// NewAddCursorAboveDefault calls <gpui_kit::base::input::AddCursorAbove as Default>::default.
 func NewAddCursorAboveDefault() AddCursorAbove {
 	rt.UseBaseInput()
 	n := rt.NewValue(460)
@@ -32,7 +32,7 @@ func NewAddCursorAboveDefault() AddCursorAbove {
 // AddCursorBelow is gpui_kit::base::input::AddCursorBelow.
 type AddCursorBelow struct{ rt.Val }
 
-// NewAddCursorBelowDefault is <gpui_kit::base::input::AddCursorBelow as Default>::default.
+// NewAddCursorBelowDefault calls <gpui_kit::base::input::AddCursorBelow as Default>::default.
 func NewAddCursorBelowDefault() AddCursorBelow {
 	rt.UseBaseInput()
 	n := rt.NewValue(461)
@@ -42,7 +42,7 @@ func NewAddCursorBelowDefault() AddCursorBelow {
 // AutoClosingPair is gpui_kit::base::input::AutoClosingPair.
 type AutoClosingPair struct{ rt.Val }
 
-// NewAutoClosingPair is <gpui_kit::base::input::AutoClosingPair>::new.
+// NewAutoClosingPair calls <gpui_kit::base::input::AutoClosingPair>::new.
 func NewAutoClosingPair(open string, close_ string) AutoClosingPair {
 	n := rt.NewValue(462)
 	o := rt.NodeArgs(n)
@@ -51,7 +51,7 @@ func NewAutoClosingPair(open string, close_ string) AutoClosingPair {
 	return AutoClosingPair{Val: rt.MkVal(n)}
 }
 
-// NotIn is <gpui_kit::base::input::AutoClosingPair>::not_in.
+// NotIn calls <gpui_kit::base::input::AutoClosingPair>::not_in.
 func (e AutoClosingPair) NotIn(contexts []gk.SyntaxContext) AutoClosingPair {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(uint32(len(contexts)))
@@ -64,7 +64,7 @@ func (e AutoClosingPair) NotIn(contexts []gk.SyntaxContext) AutoClosingPair {
 // Backspace is gpui_kit::base::input::Backspace.
 type Backspace struct{ rt.Val }
 
-// NewBackspaceDefault is <gpui_kit::base::input::Backspace as Default>::default.
+// NewBackspaceDefault calls <gpui_kit::base::input::Backspace as Default>::default.
 func NewBackspaceDefault() Backspace {
 	rt.UseBaseInput()
 	n := rt.NewValue(463)
@@ -74,7 +74,7 @@ func NewBackspaceDefault() Backspace {
 // BracketPair is gpui_kit::base::input::BracketPair.
 type BracketPair struct{ rt.Val }
 
-// NewBracketPair is <gpui_kit::base::input::BracketPair>::new.
+// NewBracketPair calls <gpui_kit::base::input::BracketPair>::new.
 func NewBracketPair(open string, close_ string) BracketPair {
 	n := rt.NewValue(464)
 	o := rt.NodeArgs(n)
@@ -86,7 +86,7 @@ func NewBracketPair(open string, close_ string) BracketPair {
 // Copy is gpui_kit::base::input::Copy.
 type Copy struct{ rt.Val }
 
-// NewCopyDefault is <gpui_kit::base::input::Copy as Default>::default.
+// NewCopyDefault calls <gpui_kit::base::input::Copy as Default>::default.
 func NewCopyDefault() Copy {
 	rt.UseBaseInput()
 	n := rt.NewValue(465)
@@ -95,7 +95,7 @@ func NewCopyDefault() Copy {
 
 // Alternate visible and hidden phases of `interval` each; zero means steady.
 //
-// NewCursorBlinkBlinking is <gpui_kit::base::input::CursorBlink>::blinking.
+// NewCursorBlinkBlinking calls <gpui_kit::base::input::CursorBlink>::blinking.
 func NewCursorBlinkBlinking(interval time.Duration) gk.CursorBlink {
 	n := rt.NewValue(467)
 	o := rt.NodeArgs(n)
@@ -103,7 +103,7 @@ func NewCursorBlinkBlinking(interval time.Duration) gk.CursorBlink {
 	return gk.CursorBlink{Val: rt.MkVal(n)}
 }
 
-// NewCursorBlinkDefault is <gpui_kit::base::input::CursorBlink as Default>::default.
+// NewCursorBlinkDefault calls <gpui_kit::base::input::CursorBlink as Default>::default.
 func NewCursorBlinkDefault() gk.CursorBlink {
 	n := rt.NewValue(466)
 	return gk.CursorBlink{Val: rt.MkVal(n)}
@@ -111,7 +111,7 @@ func NewCursorBlinkDefault() gk.CursorBlink {
 
 // Keep the focused caret visible without a timer.
 //
-// NewCursorBlinkSteady is <gpui_kit::base::input::CursorBlink>::steady.
+// NewCursorBlinkSteady calls <gpui_kit::base::input::CursorBlink>::steady.
 func NewCursorBlinkSteady() gk.CursorBlink {
 	n := rt.NewValue(468)
 	return gk.CursorBlink{Val: rt.MkVal(n)}
@@ -120,7 +120,7 @@ func NewCursorBlinkSteady() gk.CursorBlink {
 // Cut is gpui_kit::base::input::Cut.
 type Cut struct{ rt.Val }
 
-// NewCutDefault is <gpui_kit::base::input::Cut as Default>::default.
+// NewCutDefault calls <gpui_kit::base::input::Cut as Default>::default.
 func NewCutDefault() Cut {
 	rt.UseBaseInput()
 	n := rt.NewValue(469)
@@ -130,7 +130,7 @@ func NewCutDefault() Cut {
 // Delete is gpui_kit::base::input::Delete.
 type Delete struct{ rt.Val }
 
-// NewDeleteDefault is <gpui_kit::base::input::Delete as Default>::default.
+// NewDeleteDefault calls <gpui_kit::base::input::Delete as Default>::default.
 func NewDeleteDefault() Delete {
 	rt.UseBaseInput()
 	n := rt.NewValue(470)
@@ -140,7 +140,7 @@ func NewDeleteDefault() Delete {
 // DeleteToBeginningOfLine is gpui_kit::base::input::DeleteToBeginningOfLine.
 type DeleteToBeginningOfLine struct{ rt.Val }
 
-// NewDeleteToBeginningOfLineDefault is <gpui_kit::base::input::DeleteToBeginningOfLine as Default>::default.
+// NewDeleteToBeginningOfLineDefault calls <gpui_kit::base::input::DeleteToBeginningOfLine as Default>::default.
 func NewDeleteToBeginningOfLineDefault() DeleteToBeginningOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(471)
@@ -150,7 +150,7 @@ func NewDeleteToBeginningOfLineDefault() DeleteToBeginningOfLine {
 // DeleteToEndOfLine is gpui_kit::base::input::DeleteToEndOfLine.
 type DeleteToEndOfLine struct{ rt.Val }
 
-// NewDeleteToEndOfLineDefault is <gpui_kit::base::input::DeleteToEndOfLine as Default>::default.
+// NewDeleteToEndOfLineDefault calls <gpui_kit::base::input::DeleteToEndOfLine as Default>::default.
 func NewDeleteToEndOfLineDefault() DeleteToEndOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(472)
@@ -160,7 +160,7 @@ func NewDeleteToEndOfLineDefault() DeleteToEndOfLine {
 // DeleteToNextWordEnd is gpui_kit::base::input::DeleteToNextWordEnd.
 type DeleteToNextWordEnd struct{ rt.Val }
 
-// NewDeleteToNextWordEndDefault is <gpui_kit::base::input::DeleteToNextWordEnd as Default>::default.
+// NewDeleteToNextWordEndDefault calls <gpui_kit::base::input::DeleteToNextWordEnd as Default>::default.
 func NewDeleteToNextWordEndDefault() DeleteToNextWordEnd {
 	rt.UseBaseInput()
 	n := rt.NewValue(473)
@@ -170,7 +170,7 @@ func NewDeleteToNextWordEndDefault() DeleteToNextWordEnd {
 // DeleteToPreviousWordStart is gpui_kit::base::input::DeleteToPreviousWordStart.
 type DeleteToPreviousWordStart struct{ rt.Val }
 
-// NewDeleteToPreviousWordStartDefault is <gpui_kit::base::input::DeleteToPreviousWordStart as Default>::default.
+// NewDeleteToPreviousWordStartDefault calls <gpui_kit::base::input::DeleteToPreviousWordStart as Default>::default.
 func NewDeleteToPreviousWordStartDefault() DeleteToPreviousWordStart {
 	rt.UseBaseInput()
 	n := rt.NewValue(474)
@@ -180,7 +180,7 @@ func NewDeleteToPreviousWordStartDefault() DeleteToPreviousWordStart {
 // Diagnostic is gpui_kit::base::input::Diagnostic.
 type Diagnostic struct{ rt.Val }
 
-// NewDiagnostic is <gpui_kit::base::input::Diagnostic>::new.
+// NewDiagnostic calls <gpui_kit::base::input::Diagnostic>::new.
 func NewDiagnostic(range_ [2]gk.LspPosition, message string) Diagnostic {
 	n := rt.NewValue(846)
 	o := rt.NodeArgs(n)
@@ -190,27 +190,27 @@ func NewDiagnostic(range_ [2]gk.LspPosition, message string) Diagnostic {
 	return Diagnostic{Val: rt.MkVal(n)}
 }
 
-// NewDiagnosticDefault is <gpui_kit::base::input::Diagnostic as Default>::default.
+// NewDiagnosticDefault calls <gpui_kit::base::input::Diagnostic as Default>::default.
 func NewDiagnosticDefault() Diagnostic {
 	n := rt.NewValue(475)
 	return Diagnostic{Val: rt.MkVal(n)}
 }
 
-// WithCode is <gpui_kit::base::input::Diagnostic>::with_code.
+// WithCode calls <gpui_kit::base::input::Diagnostic>::with_code.
 func (e Diagnostic) WithCode(code string) Diagnostic {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(code)
 	return e
 }
 
-// WithSeverity is <gpui_kit::base::input::Diagnostic>::with_severity.
+// WithSeverity calls <gpui_kit::base::input::Diagnostic>::with_severity.
 func (e Diagnostic) WithSeverity(severity DiagnosticSeverity) Diagnostic {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(severity))
 	return e
 }
 
-// WithSource is <gpui_kit::base::input::Diagnostic>::with_source.
+// WithSource calls <gpui_kit::base::input::Diagnostic>::with_source.
 func (e Diagnostic) WithSource(source string) Diagnostic {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(source)
@@ -220,7 +220,7 @@ func (e Diagnostic) WithSource(source string) Diagnostic {
 // Escape is gpui_kit::base::input::Escape.
 type Escape struct{ rt.Val }
 
-// NewEscapeDefault is <gpui_kit::base::input::Escape as Default>::default.
+// NewEscapeDefault calls <gpui_kit::base::input::Escape as Default>::default.
 func NewEscapeDefault() Escape {
 	rt.UseBaseInput()
 	n := rt.NewValue(478)
@@ -230,7 +230,7 @@ func NewEscapeDefault() Escape {
 // GoToDefinition is gpui_kit::base::input::GoToDefinition.
 type GoToDefinition struct{ rt.Val }
 
-// NewGoToDefinitionDefault is <gpui_kit::base::input::GoToDefinition as Default>::default.
+// NewGoToDefinitionDefault calls <gpui_kit::base::input::GoToDefinition as Default>::default.
 func NewGoToDefinitionDefault() GoToDefinition {
 	rt.UseBaseInput()
 	n := rt.NewValue(479)
@@ -242,7 +242,7 @@ type GutterDecoration struct{ rt.Val }
 
 // Create a mark with the editor foreground color.
 //
-// NewGutterDecoration is <gpui_kit::base::input::GutterDecoration>::new.
+// NewGutterDecoration calls <gpui_kit::base::input::GutterDecoration>::new.
 func NewGutterDecoration(range_ gk.Range) GutterDecoration {
 	n := rt.NewValue(481)
 	o := rt.NodeArgs(n)
@@ -250,7 +250,7 @@ func NewGutterDecoration(range_ gk.Range) GutterDecoration {
 	return GutterDecoration{Val: rt.MkVal(n)}
 }
 
-// NewGutterDecorationDefault is <gpui_kit::base::input::GutterDecoration as Default>::default.
+// NewGutterDecorationDefault calls <gpui_kit::base::input::GutterDecoration as Default>::default.
 func NewGutterDecorationDefault() GutterDecoration {
 	n := rt.NewValue(480)
 	return GutterDecoration{Val: rt.MkVal(n)}
@@ -258,7 +258,7 @@ func NewGutterDecorationDefault() GutterDecoration {
 
 // Set the color instead of the editor foreground fallback.
 //
-// WithColor is <gpui_kit::base::input::GutterDecoration>::with_color.
+// WithColor calls <gpui_kit::base::input::GutterDecoration>::with_color.
 func (e GutterDecoration) WithColor(color gk.Color) GutterDecoration {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -267,7 +267,7 @@ func (e GutterDecoration) WithColor(color gk.Color) GutterDecoration {
 
 // Set the color for the bar on a fold's row when the range starts inside that fold.
 //
-// WithFoldedColor is <gpui_kit::base::input::GutterDecoration>::with_folded_color.
+// WithFoldedColor calls <gpui_kit::base::input::GutterDecoration>::with_folded_color.
 func (e GutterDecoration) WithFoldedColor(color gk.Color) GutterDecoration {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, color)
@@ -277,7 +277,7 @@ func (e GutterDecoration) WithFoldedColor(color gk.Color) GutterDecoration {
 // Indent is gpui_kit::base::input::Indent.
 type Indent struct{ rt.Val }
 
-// NewIndentDefault is <gpui_kit::base::input::Indent as Default>::default.
+// NewIndentDefault calls <gpui_kit::base::input::Indent as Default>::default.
 func NewIndentDefault() Indent {
 	rt.UseBaseInput()
 	n := rt.NewValue(482)
@@ -287,7 +287,7 @@ func NewIndentDefault() Indent {
 // IndentInline is gpui_kit::base::input::IndentInline.
 type IndentInline struct{ rt.Val }
 
-// NewIndentInlineDefault is <gpui_kit::base::input::IndentInline as Default>::default.
+// NewIndentInlineDefault calls <gpui_kit::base::input::IndentInline as Default>::default.
 func NewIndentInlineDefault() IndentInline {
 	rt.UseBaseInput()
 	n := rt.NewValue(483)
@@ -297,7 +297,7 @@ func NewIndentInlineDefault() IndentInline {
 // IndentationRules is gpui_kit::base::input::IndentationRules.
 type IndentationRules struct{ rt.Val }
 
-// NewIndentationRulesDefault is <gpui_kit::base::input::IndentationRules as Default>::default.
+// NewIndentationRulesDefault calls <gpui_kit::base::input::IndentationRules as Default>::default.
 func NewIndentationRulesDefault() IndentationRules {
 	n := rt.NewValue(484)
 	return IndentationRules{Val: rt.MkVal(n)}
@@ -306,7 +306,7 @@ func NewIndentationRulesDefault() IndentationRules {
 // InlineToken is gpui_kit::base::input::InlineToken.
 type InlineToken struct{ rt.Val }
 
-// NewInlineToken is <gpui_kit::base::input::InlineToken>::new.
+// NewInlineToken calls <gpui_kit::base::input::InlineToken>::new.
 func NewInlineToken(id string, text string) InlineToken {
 	n := rt.NewValue(485)
 	o := rt.NodeArgs(n)
@@ -315,7 +315,7 @@ func NewInlineToken(id string, text string) InlineToken {
 	return InlineToken{Val: rt.MkVal(n)}
 }
 
-// WithLabel is <gpui_kit::base::input::InlineToken>::with_label.
+// WithLabel calls <gpui_kit::base::input::InlineToken>::with_label.
 func (e InlineToken) WithLabel(label string) InlineToken {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -325,7 +325,7 @@ func (e InlineToken) WithLabel(label string) InlineToken {
 // InputAccessibility is gpui_kit::base::input::InputAccessibility.
 type InputAccessibility struct{ rt.Val }
 
-// NewInputAccessibility is <gpui_kit::base::input::InputAccessibility>::new.
+// NewInputAccessibility calls <gpui_kit::base::input::InputAccessibility>::new.
 func NewInputAccessibility(role gk.Option[gk.Role]) InputAccessibility {
 	n := rt.NewValue(871)
 	o := rt.NodeArgs(n)
@@ -338,7 +338,7 @@ func NewInputAccessibility(role gk.Option[gk.Role]) InputAccessibility {
 	return InputAccessibility{Val: rt.MkVal(n)}
 }
 
-// WithAccessibilityID is <gpui_kit::base::input::InputAccessibility>::with_accessibility_id.
+// WithAccessibilityID calls <gpui_kit::base::input::InputAccessibility>::with_accessibility_id.
 func (e InputAccessibility) WithAccessibilityID(id gk.Option[string]) InputAccessibility {
 	o := rt.Op(rt.N(e.Core), 257)
 	if x0, ok := id.Get(); ok {
@@ -350,7 +350,7 @@ func (e InputAccessibility) WithAccessibilityID(id gk.Option[string]) InputAcces
 	return e
 }
 
-// WithLabel is <gpui_kit::base::input::InputAccessibility>::with_label.
+// WithLabel calls <gpui_kit::base::input::InputAccessibility>::with_label.
 func (e InputAccessibility) WithLabel(label gk.Option[string]) InputAccessibility {
 	o := rt.Op(rt.N(e.Core), 258)
 	if x0, ok := label.Get(); ok {
@@ -362,7 +362,7 @@ func (e InputAccessibility) WithLabel(label gk.Option[string]) InputAccessibilit
 	return e
 }
 
-// WithPlaceholder is <gpui_kit::base::input::InputAccessibility>::with_placeholder.
+// WithPlaceholder calls <gpui_kit::base::input::InputAccessibility>::with_placeholder.
 func (e InputAccessibility) WithPlaceholder(placeholder gk.Option[string]) InputAccessibility {
 	o := rt.Op(rt.N(e.Core), 259)
 	if x0, ok := placeholder.Get(); ok {
@@ -376,7 +376,7 @@ func (e InputAccessibility) WithPlaceholder(placeholder gk.Option[string]) Input
 
 // Suppress values for secret content even when the mask is revealed.
 //
-// WithValueExposed is <gpui_kit::base::input::InputAccessibility>::with_value_exposed.
+// WithValueExposed calls <gpui_kit::base::input::InputAccessibility>::with_value_exposed.
 func (e InputAccessibility) WithValueExposed(exposed bool) InputAccessibility {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(exposed)
@@ -386,7 +386,7 @@ func (e InputAccessibility) WithValueExposed(exposed bool) InputAccessibility {
 // Lsp is gpui_kit::base::input::Lsp.
 type Lsp struct{ rt.Val }
 
-// NewLspDefault is <gpui_kit::base::input::Lsp as Default>::default.
+// NewLspDefault calls <gpui_kit::base::input::Lsp as Default>::default.
 func NewLspDefault() Lsp {
 	n := rt.NewValue(488)
 	return Lsp{Val: rt.MkVal(n)}
@@ -394,7 +394,7 @@ func NewLspDefault() Lsp {
 
 // Set the completion label highlighter when constructing the LSP configuration.
 //
-// WithCompletionHighlighter is <gpui_kit::base::input::Lsp>::with_completion_highlighter.
+// WithCompletionHighlighter calls <gpui_kit::base::input::Lsp>::with_completion_highlighter.
 func (e Lsp) WithCompletionHighlighter(highlighter gk.Ask[gk.TupleStringCompletionItem, []gk.Range]) Lsp {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(rt.H(highlighter.Src.HCore))
@@ -404,7 +404,7 @@ func (e Lsp) WithCompletionHighlighter(highlighter gk.Ask[gk.TupleStringCompleti
 // BaseMoveDown is gpui_kit::base::input::MoveDown.
 type BaseMoveDown struct{ rt.Val }
 
-// NewBaseMoveDownDefault is <gpui_kit::base::input::MoveDown as Default>::default.
+// NewBaseMoveDownDefault calls <gpui_kit::base::input::MoveDown as Default>::default.
 func NewBaseMoveDownDefault() BaseMoveDown {
 	rt.UseBaseInput()
 	n := rt.NewValue(489)
@@ -414,7 +414,7 @@ func NewBaseMoveDownDefault() BaseMoveDown {
 // MoveEnd is gpui_kit::base::input::MoveEnd.
 type MoveEnd struct{ rt.Val }
 
-// NewMoveEndDefault is <gpui_kit::base::input::MoveEnd as Default>::default.
+// NewMoveEndDefault calls <gpui_kit::base::input::MoveEnd as Default>::default.
 func NewMoveEndDefault() MoveEnd {
 	rt.UseBaseInput()
 	n := rt.NewValue(490)
@@ -424,7 +424,7 @@ func NewMoveEndDefault() MoveEnd {
 // MoveHome is gpui_kit::base::input::MoveHome.
 type MoveHome struct{ rt.Val }
 
-// NewMoveHomeDefault is <gpui_kit::base::input::MoveHome as Default>::default.
+// NewMoveHomeDefault calls <gpui_kit::base::input::MoveHome as Default>::default.
 func NewMoveHomeDefault() MoveHome {
 	rt.UseBaseInput()
 	n := rt.NewValue(491)
@@ -434,7 +434,7 @@ func NewMoveHomeDefault() MoveHome {
 // BaseMoveLeft is gpui_kit::base::input::MoveLeft.
 type BaseMoveLeft struct{ rt.Val }
 
-// NewBaseMoveLeftDefault is <gpui_kit::base::input::MoveLeft as Default>::default.
+// NewBaseMoveLeftDefault calls <gpui_kit::base::input::MoveLeft as Default>::default.
 func NewBaseMoveLeftDefault() BaseMoveLeft {
 	rt.UseBaseInput()
 	n := rt.NewValue(492)
@@ -444,7 +444,7 @@ func NewBaseMoveLeftDefault() BaseMoveLeft {
 // MovePageDown is gpui_kit::base::input::MovePageDown.
 type MovePageDown struct{ rt.Val }
 
-// NewMovePageDownDefault is <gpui_kit::base::input::MovePageDown as Default>::default.
+// NewMovePageDownDefault calls <gpui_kit::base::input::MovePageDown as Default>::default.
 func NewMovePageDownDefault() MovePageDown {
 	rt.UseBaseInput()
 	n := rt.NewValue(493)
@@ -454,7 +454,7 @@ func NewMovePageDownDefault() MovePageDown {
 // MovePageUp is gpui_kit::base::input::MovePageUp.
 type MovePageUp struct{ rt.Val }
 
-// NewMovePageUpDefault is <gpui_kit::base::input::MovePageUp as Default>::default.
+// NewMovePageUpDefault calls <gpui_kit::base::input::MovePageUp as Default>::default.
 func NewMovePageUpDefault() MovePageUp {
 	rt.UseBaseInput()
 	n := rt.NewValue(494)
@@ -464,7 +464,7 @@ func NewMovePageUpDefault() MovePageUp {
 // BaseMoveRight is gpui_kit::base::input::MoveRight.
 type BaseMoveRight struct{ rt.Val }
 
-// NewBaseMoveRightDefault is <gpui_kit::base::input::MoveRight as Default>::default.
+// NewBaseMoveRightDefault calls <gpui_kit::base::input::MoveRight as Default>::default.
 func NewBaseMoveRightDefault() BaseMoveRight {
 	rt.UseBaseInput()
 	n := rt.NewValue(495)
@@ -474,7 +474,7 @@ func NewBaseMoveRightDefault() BaseMoveRight {
 // MoveToEnd is gpui_kit::base::input::MoveToEnd.
 type MoveToEnd struct{ rt.Val }
 
-// NewMoveToEndDefault is <gpui_kit::base::input::MoveToEnd as Default>::default.
+// NewMoveToEndDefault calls <gpui_kit::base::input::MoveToEnd as Default>::default.
 func NewMoveToEndDefault() MoveToEnd {
 	rt.UseBaseInput()
 	n := rt.NewValue(496)
@@ -484,7 +484,7 @@ func NewMoveToEndDefault() MoveToEnd {
 // MoveToEndOfLine is gpui_kit::base::input::MoveToEndOfLine.
 type MoveToEndOfLine struct{ rt.Val }
 
-// NewMoveToEndOfLineDefault is <gpui_kit::base::input::MoveToEndOfLine as Default>::default.
+// NewMoveToEndOfLineDefault calls <gpui_kit::base::input::MoveToEndOfLine as Default>::default.
 func NewMoveToEndOfLineDefault() MoveToEndOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(497)
@@ -494,7 +494,7 @@ func NewMoveToEndOfLineDefault() MoveToEndOfLine {
 // MoveToNextWord is gpui_kit::base::input::MoveToNextWord.
 type MoveToNextWord struct{ rt.Val }
 
-// NewMoveToNextWordDefault is <gpui_kit::base::input::MoveToNextWord as Default>::default.
+// NewMoveToNextWordDefault calls <gpui_kit::base::input::MoveToNextWord as Default>::default.
 func NewMoveToNextWordDefault() MoveToNextWord {
 	rt.UseBaseInput()
 	n := rt.NewValue(498)
@@ -504,7 +504,7 @@ func NewMoveToNextWordDefault() MoveToNextWord {
 // MoveToPreviousWord is gpui_kit::base::input::MoveToPreviousWord.
 type MoveToPreviousWord struct{ rt.Val }
 
-// NewMoveToPreviousWordDefault is <gpui_kit::base::input::MoveToPreviousWord as Default>::default.
+// NewMoveToPreviousWordDefault calls <gpui_kit::base::input::MoveToPreviousWord as Default>::default.
 func NewMoveToPreviousWordDefault() MoveToPreviousWord {
 	rt.UseBaseInput()
 	n := rt.NewValue(499)
@@ -514,7 +514,7 @@ func NewMoveToPreviousWordDefault() MoveToPreviousWord {
 // MoveToStart is gpui_kit::base::input::MoveToStart.
 type MoveToStart struct{ rt.Val }
 
-// NewMoveToStartDefault is <gpui_kit::base::input::MoveToStart as Default>::default.
+// NewMoveToStartDefault calls <gpui_kit::base::input::MoveToStart as Default>::default.
 func NewMoveToStartDefault() MoveToStart {
 	rt.UseBaseInput()
 	n := rt.NewValue(500)
@@ -524,7 +524,7 @@ func NewMoveToStartDefault() MoveToStart {
 // MoveToStartOfLine is gpui_kit::base::input::MoveToStartOfLine.
 type MoveToStartOfLine struct{ rt.Val }
 
-// NewMoveToStartOfLineDefault is <gpui_kit::base::input::MoveToStartOfLine as Default>::default.
+// NewMoveToStartOfLineDefault calls <gpui_kit::base::input::MoveToStartOfLine as Default>::default.
 func NewMoveToStartOfLineDefault() MoveToStartOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(501)
@@ -534,7 +534,7 @@ func NewMoveToStartOfLineDefault() MoveToStartOfLine {
 // BaseMoveUp is gpui_kit::base::input::MoveUp.
 type BaseMoveUp struct{ rt.Val }
 
-// NewBaseMoveUpDefault is <gpui_kit::base::input::MoveUp as Default>::default.
+// NewBaseMoveUpDefault calls <gpui_kit::base::input::MoveUp as Default>::default.
 func NewBaseMoveUpDefault() BaseMoveUp {
 	rt.UseBaseInput()
 	n := rt.NewValue(502)
@@ -544,7 +544,7 @@ func NewBaseMoveUpDefault() BaseMoveUp {
 // Outdent is gpui_kit::base::input::Outdent.
 type Outdent struct{ rt.Val }
 
-// NewOutdentDefault is <gpui_kit::base::input::Outdent as Default>::default.
+// NewOutdentDefault calls <gpui_kit::base::input::Outdent as Default>::default.
 func NewOutdentDefault() Outdent {
 	rt.UseBaseInput()
 	n := rt.NewValue(505)
@@ -554,7 +554,7 @@ func NewOutdentDefault() Outdent {
 // OutdentInline is gpui_kit::base::input::OutdentInline.
 type OutdentInline struct{ rt.Val }
 
-// NewOutdentInlineDefault is <gpui_kit::base::input::OutdentInline as Default>::default.
+// NewOutdentInlineDefault calls <gpui_kit::base::input::OutdentInline as Default>::default.
 func NewOutdentInlineDefault() OutdentInline {
 	rt.UseBaseInput()
 	n := rt.NewValue(506)
@@ -566,7 +566,7 @@ type OverviewRulerDecoration struct{ rt.Val }
 
 // Create a mark in the center lane with the editor foreground color.
 //
-// NewOverviewRulerDecoration is <gpui_kit::base::input::OverviewRulerDecoration>::new.
+// NewOverviewRulerDecoration calls <gpui_kit::base::input::OverviewRulerDecoration>::new.
 func NewOverviewRulerDecoration(range_ gk.Range) OverviewRulerDecoration {
 	n := rt.NewValue(508)
 	o := rt.NodeArgs(n)
@@ -574,7 +574,7 @@ func NewOverviewRulerDecoration(range_ gk.Range) OverviewRulerDecoration {
 	return OverviewRulerDecoration{Val: rt.MkVal(n)}
 }
 
-// NewOverviewRulerDecorationDefault is <gpui_kit::base::input::OverviewRulerDecoration as Default>::default.
+// NewOverviewRulerDecorationDefault calls <gpui_kit::base::input::OverviewRulerDecoration as Default>::default.
 func NewOverviewRulerDecorationDefault() OverviewRulerDecoration {
 	n := rt.NewValue(507)
 	return OverviewRulerDecoration{Val: rt.MkVal(n)}
@@ -582,7 +582,7 @@ func NewOverviewRulerDecorationDefault() OverviewRulerDecoration {
 
 // Set the color instead of the editor foreground fallback.
 //
-// WithColor is <gpui_kit::base::input::OverviewRulerDecoration>::with_color.
+// WithColor calls <gpui_kit::base::input::OverviewRulerDecoration>::with_color.
 func (e OverviewRulerDecoration) WithColor(color gk.Color) OverviewRulerDecoration {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -591,7 +591,7 @@ func (e OverviewRulerDecoration) WithColor(color gk.Color) OverviewRulerDecorati
 
 // Set the lane that this mark uses.
 //
-// WithLane is <gpui_kit::base::input::OverviewRulerDecoration>::with_lane.
+// WithLane calls <gpui_kit::base::input::OverviewRulerDecoration>::with_lane.
 func (e OverviewRulerDecoration) WithLane(lane OverviewRulerLane) OverviewRulerDecoration {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(lane))
@@ -601,7 +601,7 @@ func (e OverviewRulerDecoration) WithLane(lane OverviewRulerLane) OverviewRulerD
 // Paste is gpui_kit::base::input::Paste.
 type Paste struct{ rt.Val }
 
-// NewPasteDefault is <gpui_kit::base::input::Paste as Default>::default.
+// NewPasteDefault calls <gpui_kit::base::input::Paste as Default>::default.
 func NewPasteDefault() Paste {
 	rt.UseBaseInput()
 	n := rt.NewValue(509)
@@ -613,7 +613,7 @@ type RangeDecoration struct{ rt.Val }
 
 // Create a frame using the editor foreground color.
 //
-// NewRangeDecoration is <gpui_kit::base::input::RangeDecoration>::new.
+// NewRangeDecoration calls <gpui_kit::base::input::RangeDecoration>::new.
 func NewRangeDecoration(range_ gk.Range) RangeDecoration {
 	n := rt.NewValue(510)
 	o := rt.NodeArgs(n)
@@ -623,7 +623,7 @@ func NewRangeDecoration(range_ gk.Range) RangeDecoration {
 
 // Override the editor foreground fallback with an application-owned color.
 //
-// WithColor is <gpui_kit::base::input::RangeDecoration>::with_color.
+// WithColor calls <gpui_kit::base::input::RangeDecoration>::with_color.
 func (e RangeDecoration) WithColor(color gk.Color) RangeDecoration {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -632,7 +632,7 @@ func (e RangeDecoration) WithColor(color gk.Color) RangeDecoration {
 
 // Choose a fill or frame without changing text layout.
 //
-// WithStyle is <gpui_kit::base::input::RangeDecoration>::with_style.
+// WithStyle calls <gpui_kit::base::input::RangeDecoration>::with_style.
 func (e RangeDecoration) WithStyle(style RangeDecorationStyle) RangeDecoration {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(style))
@@ -642,7 +642,7 @@ func (e RangeDecoration) WithStyle(style RangeDecorationStyle) RangeDecoration {
 // Redo is gpui_kit::base::input::Redo.
 type Redo struct{ rt.Val }
 
-// NewRedoDefault is <gpui_kit::base::input::Redo as Default>::default.
+// NewRedoDefault calls <gpui_kit::base::input::Redo as Default>::default.
 func NewRedoDefault() Redo {
 	rt.UseBaseInput()
 	n := rt.NewValue(511)
@@ -652,7 +652,7 @@ func NewRedoDefault() Redo {
 // Replace is gpui_kit::base::input::Replace.
 type Replace struct{ rt.Val }
 
-// NewReplaceDefault is <gpui_kit::base::input::Replace as Default>::default.
+// NewReplaceDefault calls <gpui_kit::base::input::Replace as Default>::default.
 func NewReplaceDefault() Replace {
 	rt.UseBaseInput()
 	n := rt.NewValue(512)
@@ -662,7 +662,7 @@ func NewReplaceDefault() Replace {
 // Search is gpui_kit::base::input::Search.
 type Search struct{ rt.Val }
 
-// NewSearchDefault is <gpui_kit::base::input::Search as Default>::default.
+// NewSearchDefault calls <gpui_kit::base::input::Search as Default>::default.
 func NewSearchDefault() Search {
 	rt.UseBaseInput()
 	n := rt.NewValue(513)
@@ -672,7 +672,7 @@ func NewSearchDefault() Search {
 // SelectAll is gpui_kit::base::input::SelectAll.
 type SelectAll struct{ rt.Val }
 
-// NewSelectAllDefault is <gpui_kit::base::input::SelectAll as Default>::default.
+// NewSelectAllDefault calls <gpui_kit::base::input::SelectAll as Default>::default.
 func NewSelectAllDefault() SelectAll {
 	rt.UseBaseInput()
 	n := rt.NewValue(514)
@@ -682,7 +682,7 @@ func NewSelectAllDefault() SelectAll {
 // SelectToEnd is gpui_kit::base::input::SelectToEnd.
 type SelectToEnd struct{ rt.Val }
 
-// NewSelectToEndDefault is <gpui_kit::base::input::SelectToEnd as Default>::default.
+// NewSelectToEndDefault calls <gpui_kit::base::input::SelectToEnd as Default>::default.
 func NewSelectToEndDefault() SelectToEnd {
 	rt.UseBaseInput()
 	n := rt.NewValue(515)
@@ -692,7 +692,7 @@ func NewSelectToEndDefault() SelectToEnd {
 // SelectToEndOfLine is gpui_kit::base::input::SelectToEndOfLine.
 type SelectToEndOfLine struct{ rt.Val }
 
-// NewSelectToEndOfLineDefault is <gpui_kit::base::input::SelectToEndOfLine as Default>::default.
+// NewSelectToEndOfLineDefault calls <gpui_kit::base::input::SelectToEndOfLine as Default>::default.
 func NewSelectToEndOfLineDefault() SelectToEndOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(516)
@@ -702,7 +702,7 @@ func NewSelectToEndOfLineDefault() SelectToEndOfLine {
 // SelectToNextWordEnd is gpui_kit::base::input::SelectToNextWordEnd.
 type SelectToNextWordEnd struct{ rt.Val }
 
-// NewSelectToNextWordEndDefault is <gpui_kit::base::input::SelectToNextWordEnd as Default>::default.
+// NewSelectToNextWordEndDefault calls <gpui_kit::base::input::SelectToNextWordEnd as Default>::default.
 func NewSelectToNextWordEndDefault() SelectToNextWordEnd {
 	rt.UseBaseInput()
 	n := rt.NewValue(517)
@@ -712,7 +712,7 @@ func NewSelectToNextWordEndDefault() SelectToNextWordEnd {
 // SelectToPreviousWordStart is gpui_kit::base::input::SelectToPreviousWordStart.
 type SelectToPreviousWordStart struct{ rt.Val }
 
-// NewSelectToPreviousWordStartDefault is <gpui_kit::base::input::SelectToPreviousWordStart as Default>::default.
+// NewSelectToPreviousWordStartDefault calls <gpui_kit::base::input::SelectToPreviousWordStart as Default>::default.
 func NewSelectToPreviousWordStartDefault() SelectToPreviousWordStart {
 	rt.UseBaseInput()
 	n := rt.NewValue(518)
@@ -722,7 +722,7 @@ func NewSelectToPreviousWordStartDefault() SelectToPreviousWordStart {
 // SelectToStart is gpui_kit::base::input::SelectToStart.
 type SelectToStart struct{ rt.Val }
 
-// NewSelectToStartDefault is <gpui_kit::base::input::SelectToStart as Default>::default.
+// NewSelectToStartDefault calls <gpui_kit::base::input::SelectToStart as Default>::default.
 func NewSelectToStartDefault() SelectToStart {
 	rt.UseBaseInput()
 	n := rt.NewValue(519)
@@ -732,7 +732,7 @@ func NewSelectToStartDefault() SelectToStart {
 // SelectToStartOfLine is gpui_kit::base::input::SelectToStartOfLine.
 type SelectToStartOfLine struct{ rt.Val }
 
-// NewSelectToStartOfLineDefault is <gpui_kit::base::input::SelectToStartOfLine as Default>::default.
+// NewSelectToStartOfLineDefault calls <gpui_kit::base::input::SelectToStartOfLine as Default>::default.
 func NewSelectToStartOfLineDefault() SelectToStartOfLine {
 	rt.UseBaseInput()
 	n := rt.NewValue(520)
@@ -742,7 +742,7 @@ func NewSelectToStartOfLineDefault() SelectToStartOfLine {
 // ShowCharacterPalette is gpui_kit::base::input::ShowCharacterPalette.
 type ShowCharacterPalette struct{ rt.Val }
 
-// NewShowCharacterPaletteDefault is <gpui_kit::base::input::ShowCharacterPalette as Default>::default.
+// NewShowCharacterPaletteDefault calls <gpui_kit::base::input::ShowCharacterPalette as Default>::default.
 func NewShowCharacterPaletteDefault() ShowCharacterPalette {
 	rt.UseBaseInput()
 	n := rt.NewValue(521)
@@ -752,7 +752,7 @@ func NewShowCharacterPaletteDefault() ShowCharacterPalette {
 // ShowCompletions is gpui_kit::base::input::ShowCompletions.
 type ShowCompletions struct{ rt.Val }
 
-// NewShowCompletionsDefault is <gpui_kit::base::input::ShowCompletions as Default>::default.
+// NewShowCompletionsDefault calls <gpui_kit::base::input::ShowCompletions as Default>::default.
 func NewShowCompletionsDefault() ShowCompletions {
 	rt.UseBaseInput()
 	n := rt.NewValue(522)
@@ -762,7 +762,7 @@ func NewShowCompletionsDefault() ShowCompletions {
 // TextareaExtras is gpui_kit::base::input::TextareaExtras.
 type TextareaExtras struct{ rt.Val }
 
-// NewTextareaExtrasDefault is <gpui_kit::base::input::TextareaExtras as Default>::default.
+// NewTextareaExtrasDefault calls <gpui_kit::base::input::TextareaExtras as Default>::default.
 func NewTextareaExtrasDefault() TextareaExtras {
 	n := rt.NewValue(888)
 	return TextareaExtras{Val: rt.MkVal(n)}
@@ -771,7 +771,7 @@ func NewTextareaExtrasDefault() TextareaExtras {
 // ToggleCodeActions is gpui_kit::base::input::ToggleCodeActions.
 type ToggleCodeActions struct{ rt.Val }
 
-// NewToggleCodeActionsDefault is <gpui_kit::base::input::ToggleCodeActions as Default>::default.
+// NewToggleCodeActionsDefault calls <gpui_kit::base::input::ToggleCodeActions as Default>::default.
 func NewToggleCodeActionsDefault() ToggleCodeActions {
 	rt.UseBaseInput()
 	n := rt.NewValue(523)
@@ -781,7 +781,7 @@ func NewToggleCodeActionsDefault() ToggleCodeActions {
 // Undo is gpui_kit::base::input::Undo.
 type Undo struct{ rt.Val }
 
-// NewUndoDefault is <gpui_kit::base::input::Undo as Default>::default.
+// NewUndoDefault calls <gpui_kit::base::input::Undo as Default>::default.
 func NewUndoDefault() Undo {
 	rt.UseBaseInput()
 	n := rt.NewValue(524)
@@ -791,20 +791,20 @@ func NewUndoDefault() Undo {
 // LanguageConfig is gpui_kit::base::input::language_config::LanguageConfig.
 type LanguageConfig struct{ rt.Val }
 
-// NewLanguageConfigDefault is <gpui_kit::base::input::language_config::LanguageConfig as Default>::default.
+// NewLanguageConfigDefault calls <gpui_kit::base::input::language_config::LanguageConfig as Default>::default.
 func NewLanguageConfigDefault() LanguageConfig {
 	n := rt.NewValue(525)
 	return LanguageConfig{Val: rt.MkVal(n)}
 }
 
-// AutoCloseBefore is <gpui_kit::base::input::language_config::LanguageConfig>::auto_close_before.
+// AutoCloseBefore calls <gpui_kit::base::input::language_config::LanguageConfig>::auto_close_before.
 func (e LanguageConfig) AutoCloseBefore(characters string) LanguageConfig {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(characters)
 	return e
 }
 
-// AutoClosingPairs is <gpui_kit::base::input::language_config::LanguageConfig>::auto_closing_pairs.
+// AutoClosingPairs calls <gpui_kit::base::input::language_config::LanguageConfig>::auto_closing_pairs.
 func (e LanguageConfig) AutoClosingPairs(pairs []AutoClosingPair) LanguageConfig {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(pairs)))
@@ -814,7 +814,7 @@ func (e LanguageConfig) AutoClosingPairs(pairs []AutoClosingPair) LanguageConfig
 	return e
 }
 
-// Brackets is <gpui_kit::base::input::language_config::LanguageConfig>::brackets.
+// Brackets calls <gpui_kit::base::input::language_config::LanguageConfig>::brackets.
 func (e LanguageConfig) Brackets(pairs []BracketPair) LanguageConfig {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(pairs)))
@@ -824,7 +824,7 @@ func (e LanguageConfig) Brackets(pairs []BracketPair) LanguageConfig {
 	return e
 }
 
-// IndentationRules is <gpui_kit::base::input::language_config::LanguageConfig>::indentation_rules.
+// IndentationRules calls <gpui_kit::base::input::language_config::LanguageConfig>::indentation_rules.
 func (e LanguageConfig) IndentationRules(rules IndentationRules) LanguageConfig {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(rules.Core)))

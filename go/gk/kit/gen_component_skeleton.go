@@ -12,7 +12,7 @@ type SkeletonEl struct{ rt.ElAnimatableElement }
 
 // Create a new Skeleton element.
 //
-// Skeleton is <gpui_kit::component::skeleton::Skeleton>::new.
+// Skeleton calls <gpui_kit::component::skeleton::Skeleton>::new.
 func Skeleton(st ...gk.Style) SkeletonEl {
 	rt.UseComponentSkeleton()
 	n := rt.NewNode(759)
@@ -22,7 +22,7 @@ func Skeleton(st ...gk.Style) SkeletonEl {
 
 // Set use secondary color.
 //
-// Secondary is <gpui_kit::component::skeleton::Skeleton>::secondary.
+// Secondary calls <gpui_kit::component::skeleton::Skeleton>::secondary.
 func (e SkeletonEl) Secondary() SkeletonEl {
 	rt.Op(rt.N(e.Core), 256)
 	return e
@@ -30,29 +30,37 @@ func (e SkeletonEl) Secondary() SkeletonEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SkeletonEl) PopoverStyle() SkeletonEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SkeletonEl) RoundedFullStyle() SkeletonEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SkeletonEl) BorderE(width gk.Length) SkeletonEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SkeletonEl) BorderS(width gk.Length) SkeletonEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -60,121 +68,163 @@ func (e SkeletonEl) BorderS(width gk.Length) SkeletonEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SkeletonEl) FlexRowDir() SkeletonEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SkeletonEl) InsetE(length gk.Length) SkeletonEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SkeletonEl) InsetS(length gk.Length) SkeletonEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SkeletonEl) JustifyFlexEnd() SkeletonEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SkeletonEl) JustifyFlexStart() SkeletonEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SkeletonEl) Me(length gk.Length) SkeletonEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SkeletonEl) Ms(length gk.Length) SkeletonEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SkeletonEl) Pe(length gk.Length) SkeletonEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SkeletonEl) Ps(length gk.Length) SkeletonEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SkeletonEl) RoundedE(radius gk.Length) SkeletonEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SkeletonEl) RoundedS(radius gk.Length) SkeletonEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SkeletonEl) TextEnd() SkeletonEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SkeletonEl) TextStart() SkeletonEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SkeletonEl) CornerRadii(radius gk.Corners) SkeletonEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SkeletonEl) DebugBlue() SkeletonEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SkeletonEl) DebugFocused(focusHandle gk.FocusHandle) SkeletonEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SkeletonEl) DebugGreen() SkeletonEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SkeletonEl) DebugPink() SkeletonEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SkeletonEl) DebugRed() SkeletonEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SkeletonEl) DebugYellow() SkeletonEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SkeletonEl) FontBlack() SkeletonEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SkeletonEl) FontBold() SkeletonEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SkeletonEl) FontExtrabold() SkeletonEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SkeletonEl) FontExtralight() SkeletonEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SkeletonEl) FontLight() SkeletonEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SkeletonEl) FontMedium() SkeletonEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SkeletonEl) FontNormal() SkeletonEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SkeletonEl) FontSemibold() SkeletonEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SkeletonEl) FontThin() SkeletonEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -183,18 +233,23 @@ func (e SkeletonEl) FontThin() SkeletonEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SkeletonEl) HFlex() SkeletonEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SkeletonEl) Margins(margins gk.EdgesInto) SkeletonEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SkeletonEl) Paddings(paddings gk.EdgesInto) SkeletonEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SkeletonEl) RefineStyle(style gk.StyleRefinement) SkeletonEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -204,21 +259,29 @@ func (e SkeletonEl) RefineStyle(style gk.StyleRefinement) SkeletonEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SkeletonEl) VFlex() SkeletonEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SkeletonEl) Style(st ...gk.Style) SkeletonEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SkeletonEl) AspectRatio(ratio float32) SkeletonEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SkeletonEl) Bg(fill gk.Fill) SkeletonEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SkeletonEl) Border(length gk.Length) SkeletonEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -226,12 +289,16 @@ func (e SkeletonEl) Border(length gk.Length) SkeletonEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SkeletonEl) BorderB(length gk.Length) SkeletonEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SkeletonEl) BorderColor(borderColor gk.Color) SkeletonEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -239,6 +306,8 @@ func (e SkeletonEl) BorderColor(borderColor gk.Color) SkeletonEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SkeletonEl) BorderL(length gk.Length) SkeletonEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -246,6 +315,8 @@ func (e SkeletonEl) BorderL(length gk.Length) SkeletonEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SkeletonEl) BorderR(length gk.Length) SkeletonEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -253,6 +324,8 @@ func (e SkeletonEl) BorderR(length gk.Length) SkeletonEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SkeletonEl) BorderT(length gk.Length) SkeletonEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -260,6 +333,8 @@ func (e SkeletonEl) BorderT(length gk.Length) SkeletonEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SkeletonEl) BorderX(length gk.Length) SkeletonEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -267,6 +342,8 @@ func (e SkeletonEl) BorderX(length gk.Length) SkeletonEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SkeletonEl) BorderY(length gk.Length) SkeletonEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -274,21 +351,31 @@ func (e SkeletonEl) BorderY(length gk.Length) SkeletonEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SkeletonEl) Bottom(length gk.Length) SkeletonEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SkeletonEl) ColEnd(end int16) SkeletonEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SkeletonEl) ColSpan(span uint16) SkeletonEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SkeletonEl) ColStart(start int16) SkeletonEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SkeletonEl) Cursor(cursor gk.CursorStyle) SkeletonEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -296,30 +383,42 @@ func (e SkeletonEl) Cursor(cursor gk.CursorStyle) SkeletonEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SkeletonEl) FlexBasis(basis gk.Length) SkeletonEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SkeletonEl) FlexGrow(grow float32) SkeletonEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SkeletonEl) FlexShrink(shrink float32) SkeletonEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SkeletonEl) Font(font gk.Font) SkeletonEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SkeletonEl) FontFamily(familyName string) SkeletonEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SkeletonEl) FontFeatures(features gk.FontFeatures) SkeletonEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -328,26 +427,38 @@ func (e SkeletonEl) FontFeatures(features gk.FontFeatures) SkeletonEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SkeletonEl) FontWeight(weight gk.FontWeight) SkeletonEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SkeletonEl) Gap(length gk.Length) SkeletonEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SkeletonEl) GapX(length gk.Length) SkeletonEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SkeletonEl) GapY(length gk.Length) SkeletonEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SkeletonEl) GridCols(cols uint16) SkeletonEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SkeletonEl) GridColsMaxContent(cols uint16) SkeletonEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -355,15 +466,21 @@ func (e SkeletonEl) GridColsMaxContent(cols uint16) SkeletonEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SkeletonEl) GridColsMinContent(cols uint16) SkeletonEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SkeletonEl) GridRows(rows uint16) SkeletonEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SkeletonEl) GridRowsMaxContent(rows uint16) SkeletonEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -371,121 +488,179 @@ func (e SkeletonEl) GridRowsMaxContent(rows uint16) SkeletonEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SkeletonEl) GridRowsMinContent(rows uint16) SkeletonEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SkeletonEl) H(length gk.Length) SkeletonEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SkeletonEl) Inset(length gk.Length) SkeletonEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SkeletonEl) Left(length gk.Length) SkeletonEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SkeletonEl) LineClamp(lines int) SkeletonEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SkeletonEl) LineHeight(lineHeight gk.Length) SkeletonEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SkeletonEl) M(length gk.Length) SkeletonEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SkeletonEl) MaxH(length gk.Length) SkeletonEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SkeletonEl) MaxSize(length gk.Length) SkeletonEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SkeletonEl) MaxW(length gk.Length) SkeletonEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SkeletonEl) Mb(length gk.Length) SkeletonEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SkeletonEl) MinH(length gk.Length) SkeletonEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SkeletonEl) MinSize(length gk.Length) SkeletonEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SkeletonEl) MinW(length gk.Length) SkeletonEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SkeletonEl) Ml(length gk.Length) SkeletonEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SkeletonEl) Mr(length gk.Length) SkeletonEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SkeletonEl) Mt(length gk.Length) SkeletonEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SkeletonEl) Mx(length gk.Length) SkeletonEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SkeletonEl) My(length gk.Length) SkeletonEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SkeletonEl) Opacity(opacity float32) SkeletonEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SkeletonEl) P(length gk.Length) SkeletonEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SkeletonEl) Pb(length gk.Length) SkeletonEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SkeletonEl) Pl(length gk.Length) SkeletonEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SkeletonEl) Pr(length gk.Length) SkeletonEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SkeletonEl) Pt(length gk.Length) SkeletonEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SkeletonEl) Px(length gk.Length) SkeletonEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SkeletonEl) Py(length gk.Length) SkeletonEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SkeletonEl) Right(length gk.Length) SkeletonEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SkeletonEl) Rounded(length gk.Length) SkeletonEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -493,6 +668,8 @@ func (e SkeletonEl) Rounded(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SkeletonEl) RoundedB(length gk.Length) SkeletonEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -500,6 +677,8 @@ func (e SkeletonEl) RoundedB(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SkeletonEl) RoundedBl(length gk.Length) SkeletonEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -507,6 +686,8 @@ func (e SkeletonEl) RoundedBl(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SkeletonEl) RoundedBr(length gk.Length) SkeletonEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -514,6 +695,8 @@ func (e SkeletonEl) RoundedBr(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SkeletonEl) RoundedL(length gk.Length) SkeletonEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -521,6 +704,8 @@ func (e SkeletonEl) RoundedL(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SkeletonEl) RoundedR(length gk.Length) SkeletonEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -528,6 +713,8 @@ func (e SkeletonEl) RoundedR(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SkeletonEl) RoundedT(length gk.Length) SkeletonEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -535,6 +722,8 @@ func (e SkeletonEl) RoundedT(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SkeletonEl) RoundedTl(length gk.Length) SkeletonEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -542,39 +731,55 @@ func (e SkeletonEl) RoundedTl(length gk.Length) SkeletonEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SkeletonEl) RoundedTr(length gk.Length) SkeletonEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SkeletonEl) RowEnd(end int16) SkeletonEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SkeletonEl) RowSpan(span uint16) SkeletonEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SkeletonEl) RowStart(start int16) SkeletonEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SkeletonEl) ScrollbarWidth(width gk.Length) SkeletonEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SkeletonEl) Shadow(shadows []gk.BoxShadow) SkeletonEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SkeletonEl) Size(length gk.Length) SkeletonEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SkeletonEl) TextAlign(align gk.TextAlign) SkeletonEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -583,23 +788,31 @@ func (e SkeletonEl) TextAlign(align gk.TextAlign) SkeletonEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SkeletonEl) TextBg(bg gk.Color) SkeletonEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SkeletonEl) TextColor(color gk.Color) SkeletonEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SkeletonEl) TextDecorationColor(color gk.Color) SkeletonEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SkeletonEl) TextOverflow(overflow gk.TextOverflow) SkeletonEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -608,6 +821,8 @@ func (e SkeletonEl) TextOverflow(overflow gk.TextOverflow) SkeletonEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SkeletonEl) TextSize(size gk.Length) SkeletonEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -615,7 +830,11 @@ func (e SkeletonEl) TextSize(size gk.Length) SkeletonEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SkeletonEl) Top(length gk.Length) SkeletonEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SkeletonEl) W(length gk.Length) SkeletonEl { tStyledW(rt.N(e.Core), length); return e }

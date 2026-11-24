@@ -1,25 +1,18 @@
 #!/usr/bin/env python3
-"""macho.py: read and join Mach-O files without Apple's tools, on any system (standard library only).
+"""Inspect, verify, and assemble 64-bit Mach-O thin and universal (fat) binaries.
 
-  macho.py info FILE|-                 one line per slice: architecture, file type, install name
-                                       (LC_ID_DYLIB) and minimum macOS (LC_BUILD_VERSION, or the older
-                                       LC_VERSION_MIN_MACOSX); `-` reads standard input
-  macho.py check FILE|- ARCH... [--kind KIND] [--id NAME] [--minos VERSION]
-                                       exits non-zero unless FILE is a KIND (default dylib; or
-                                       executable, or archive: a static library) with exactly the
-                                       slices ARCH... (arm64, x86_64),
-                                       each with install name NAME and minimum macOS VERSION when
-                                       given
-  macho.py fat OUT THIN...             joins thin Mach-O files into one universal file, as
-                                       `lipo -create -output OUT THIN...` does
+Usage:
+    macho.py info FILE|-
+    macho.py check FILE|- ARCH... [--kind KIND] [--id NAME] [--minos VER]
+    macho.py fat OUT_FILE THIN_FILE...
 
-tools/release-assets.sh checks the macOS download's universal library with `check` (on the Linux
-release runner, which has no lipo or otool); gates/cross.sh makes its universal stand-in library
-with `fat` and checks the Go programs it links with `check --kind executable`. On a Mac, lipo -info and otool -l say the same.
+Runs on any OS (pure Python stdlib) so Linux release checks can inspect macOS
+universal dylibs and static archives without Apple tooling.
 """
 import struct
 import sys
 
+# Mach-O magic constants, CPU type IDs, file types, and load command tags.
 FAT_MAGIC, FAT_MAGIC_64 = 0xCAFEBABE, 0xCAFEBABF
 MH_MAGIC_64 = 0xFEEDFACF
 CPU = {0x01000007: "x86_64", 0x0100000C: "arm64"}
@@ -30,12 +23,12 @@ PLATFORM_MACOS = 1
 
 
 def version(v):
+    """Decode a packed Mach-O X.Y.Z version integer into a dotted string."""
     return f"{v >> 16}.{(v >> 8) & 0xFF}" + (f".{v & 0xFF}" if v & 0xFF else "")
 
 
 def thin(data, off=0, cpu=None):
-    """One 64-bit little-endian Mach-O slice at data[off:]: (arch, filetype, install name, minos). A
-    static archive's slice (ar's "!<arch>" magic) is an "archive", named by the universal header's cpu."""
+    """Parse one thin 64-bit Mach-O image (or ar archive) at byte offset `off`."""
     if data[off:off + 8] == b"!<arch>\n":
         return CPU.get(cpu, f"cpu{cpu:#x}" if cpu is not None else "unknown"), "archive", None, None
     magic, cputype, _sub, filetype, ncmds, _size, _flags, _res = struct.unpack_from("<8I", data, off)
@@ -60,7 +53,7 @@ def thin(data, off=0, cpu=None):
 
 
 def slices(data):
-    """Every slice of a universal or thin file, in file order."""
+    """Return metadata tuples for every architecture slice in a thin or fat Mach-O buffer."""
     (magic,) = struct.unpack_from(">I", data, 0)
     if magic not in (FAT_MAGIC, FAT_MAGIC_64):
         return [thin(data)]
@@ -83,8 +76,7 @@ def read(path):
 
 
 def fat(out, inputs):
-    """A universal file of the thin inputs, each slice aligned to 16 KiB (arm64's page; lipo
-    aligns x86_64 slices to 4 KiB, and either is valid for both)."""
+    """Pack distinct thin 64-bit Mach-O files into a 16 KiB-aligned universal Mach-O binary."""
     align = 14
     parts = []
     for path in inputs:

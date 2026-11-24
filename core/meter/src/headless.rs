@@ -1,51 +1,29 @@
-//! The offscreen driver (diag builds): one app window on gpui's HeadlessAppContext with the
-//! real wgpu renderer and text system, no display and no compositor, driven by a script. The
-//! Rust reference and the library run the same driver, so their PNGs can be compared byte for
-//! byte in one run.
+//! Headless script runner for offscreen rendering, synthetic input, and screenshot capture.
 //!
-//! Script, one command per line:
-//!   size W H          window size; must come first (default 640 480)
-//!   frame             run pending tasks, the pre-frame callbacks and one draw
-//!   shot FILE.png     write the last drawn frame
-//!   click X Y         left click at a window position, then a frame
-//!   type TEXT         one keystroke per character to the focused element, a frame after each
-//!   move X Y          move the pointer to a window position, then a frame (hover)
-//!   key NAME          one named keystroke ("enter", "escape", "ctrl-a"), then a frame
-//!   sleep MS          let other threads run for MS milliseconds (background posts)
-//!   stat              print the boundary counters
-//!   scroll X Y DY     a scroll of DY pixels at a window position (negative: content up), then a frame
-//!   dblclick X Y      a double click at a window position, then a frame
-//!   rclick X Y        a right click at a window position: a move, a press and a release, each in
-//!                     its own update with pending tasks run between (as a real window delivers
-//!                     them), then a frame
-//!   drag X1 Y1 X2 Y2  press at the first position, move to the second with the button held
-//!                     (four moves, a frame after each), release, then a frame
-//!   answer WHAT       answers the oldest platform request of its kind the app made offscreen,
-//!                     through what the app registered (`on_answer`): `paths P..`, `new-path P`,
-//!                     `prompt N`, `cancel paths|new-path|prompt`, inside an update of the driven
-//!                     window (what the answer defers runs before the frame); then a frame
-//!                     (PROTOCOLS.md 11.31, 11.32)
+//! Used under the `diag` feature by both `libgpuikit` and the pure-Rust reference apps to drive
+//! deterministic frame-by-frame test sessions without an X11 or Wayland display.
 
 use gpui_kit::{AnyWindowHandle, App, HeadlessAppContext, Keystroke, Window, point, px};
 use std::cell::RefCell;
 use std::sync::Arc;
 
 thread_local! {
-    /// What answers the script's `answer` lines: the library's scripted platform, or a Rust twin's.
+    /// Optional app-registered callback invoked by the script `answer` command
+    /// to resolve pending platform prompts (such as file dialogs).
     static ANSWER: RefCell<Option<Box<dyn FnMut(&str, &mut App) -> anyhow::Result<()>>>> = RefCell::new(None);
 }
 
-/// Registers what answers the script's `answer WHAT` lines (file dialogs, prompts) offscreen.
+/// Registers the handler called when a headless script executes an `answer <text>` command.
 pub fn on_answer(f: impl FnMut(&str, &mut App) -> anyhow::Result<()> + 'static) {
     ANSWER.with(|a| *a.borrow_mut() = Some(Box::new(f)));
 }
 
-/// GK_TRACE_TURNS=1: each script line and each frame on stderr (the library adds its turns).
 fn tracing() -> bool {
     static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *ON.get_or_init(|| std::env::var("GK_TRACE_TURNS").is_ok_and(|v| v == "1"))
 }
 
+/// Runs queued next-frame callbacks on `window` and performs one draw cycle.
 fn step(window: &mut Window, cx: &mut App) {
     let n = window.simulate_next_frame(cx);
     if tracing() {
@@ -54,11 +32,7 @@ fn step(window: &mut Window, cx: &mut App) {
     window.draw(cx).clear(cx);
 }
 
-/// Runs what the last command started, then one frame of the driven window. When that command
-/// closed the driven window (a key binding or a click whose handler closes its own window, a timer
-/// that closes it), the script goes on with the first window still open, as `window 0` would, and
-/// says so; with no window left it stops with an error. Before 12 Nov 2026 the frame after such a
-/// command failed with "window not found" and ended the run.
+/// Drains background tasks, falls back to window 0 if the active window closed, and draws a frame.
 fn settle(cx: &mut HeadlessAppContext, handle: &mut AnyWindowHandle) -> anyhow::Result<()> {
     cx.run_until_parked();
     let open = cx.update(|cx| cx.windows());
@@ -75,26 +49,39 @@ fn settle(cx: &mut HeadlessAppContext, handle: &mut AnyWindowHandle) -> anyhow::
 
 static STOP: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
-/// Ends the script early: the line running finishes, the rest are not run, and `run` returns.
-/// The offscreen platform has no loop that `App::quit` ends, so the app's quit (and a binding
-/// that stops the app after a mistake in its code) asks here. Any thread.
+/// Signals the running headless script loop to stop after the current command.
 pub fn stop() {
     STOP.store(true, std::sync::atomic::Ordering::SeqCst);
 }
 
-/// Whether `stop` was called since the script started.
+/// Reports whether [`stop`] has been called for the current headless run.
 pub fn stopped() -> bool {
     STOP.load(std::sync::atomic::Ordering::SeqCst)
 }
 
-/// Runs `script`. `open` is called once inside the app, after `gpui_kit::init`, and returns
-/// the window to drive; it must build its window with `gk_meter::window_options`.
+/// Runs a headless script after opening a window with `open`.
 pub fn run(script: &str, open: impl FnOnce(&mut App) -> AnyWindowHandle) -> anyhow::Result<()> {
     run_opt(script, |cx| Some(open(cx)))
 }
 
-/// `run` for an app that may open no window: `open` returns none when the app stopped (`stop`)
-/// before it opened one, and the script is not run.
+/// Runs a newline-delimited headless script against a `HeadlessAppContext`.
+///
+/// Blank lines and lines starting with `#` are ignored. An optional leading `size W H` sets the
+/// initial window size via [`crate::window_options`] before `open` runs.
+///
+/// Supported commands:
+/// - `frame`: drain background tasks and render one frame
+/// - `shot PATH`: capture the current window framebuffer to a PNG at `PATH`
+/// - `click X Y` / `dblclick X Y` / `rclick X Y`: dispatch synthetic pointer clicks and settle
+/// - `move X Y`: dispatch a mouse-move event and settle
+/// - `scroll X Y DY`: dispatch a vertical pixel scroll at `(X, Y)` and settle
+/// - `drag X1 Y1 X2 Y2`: press at `(X1, Y1)`, move in 4 steps to `(X2, Y2)`, and release
+/// - `type TEXT`: parse and dispatch each character in `TEXT` as a keystroke
+/// - `key SPEC`: parse and dispatch one GPUI keystroke spec (for example `cmd-s` or `enter`)
+/// - `sleep MS` / `advance MS`: sleep wall time or advance GPUI's virtual clock by `MS` ms
+/// - `window N` / `windows`: switch active window to index `N` or print the open window count
+/// - `answer ARGS`: pass `ARGS` to the [`on_answer`] callback to resolve scripted OS dialogs
+/// - `stat`: print current [`crate::counters`] snapshot
 pub fn run_opt(script: &str, open: impl FnOnce(&mut App) -> Option<AnyWindowHandle>) -> anyhow::Result<()> {
     STOP.store(false, std::sync::atomic::Ordering::SeqCst);
     let mut lines = script.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#'));
@@ -201,11 +188,7 @@ pub fn run_opt(script: &str, open: impl FnOnce(&mut App) -> Option<AnyWindowHand
                 if v.len() != 2 {
                     anyhow::bail!("rclick needs 2 numbers: {line}");
                 }
-                // Before 12 Nov 2026 the three were dispatched in one update, so what the move's and
-                // the press's handlers deferred ran only after the release, and nothing was drawn
-                // between them. Now each update's end runs what it deferred and (gpui's test-support
-                // flush) draws a window it dirtied, as a real window draws frames during a click
-                // (PROTOCOLS.md 11.32).
+                // Park between move, down, and up so context-menu handlers can react to each step.
                 for input in crate::right_click_inputs(point(px(v[0]), px(v[1]))) {
                     cx.update_window(handle, |_, window, cx| {
                         window.dispatch_event(input, cx);
@@ -225,6 +208,7 @@ pub fn run_opt(script: &str, open: impl FnOnce(&mut App) -> Option<AnyWindowHand
                     anyhow::bail!("{cmd} needs {want} numbers: {line}");
                 }
                 let a = point(px(v[0]), px(v[1]));
+                // Drag spans 6 phases: press (0), four interpolated moves (1..=4), and release (5).
                 let phases = if cmd == "drag" { 6 } else { 1 };
                 for phase in 0..phases {
                     cx.update_window(handle, |_, window, cx| match cmd {
@@ -249,16 +233,11 @@ pub fn run_opt(script: &str, open: impl FnOnce(&mut App) -> Option<AnyWindowHand
             }
             "answer" => {
                 cx.run_until_parked();
+                // Take the closure out of the thread-local before calling it so re-entrant hooks do not panic.
                 let mut hook = ANSWER.with(|a| a.borrow_mut().take());
                 let Some(f) = hook.as_mut() else {
                     anyhow::bail!("answer: the app registered nothing that answers platform requests: {line}");
                 };
-                // Inside an update of the driven window, as a platform's answer arrives in an update
-                // of the app: what the answer defers (the library's DONE turn, a twin's handler) runs
-                // when that update ends, before the frame below. HeadlessAppContext::update calls its
-                // closure without ending an update, so before 12 Nov 2026 the deferred work waited for
-                // the end of the frame's own update, after the draw: the change was in the next frame
-                // (PROTOCOLS.md 11.32).
                 let res = cx
                     .update_window(handle, |_, _, cx| f(rest.trim(), cx))
                     .unwrap_or_else(|e| Err(e));

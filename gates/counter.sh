@@ -1,11 +1,12 @@
 #!/bin/bash
-# counter.sh [--hz N]: the counter-app gate (latency and handler cost). The Rust reference
-# and the Go app (bin/counter-go), diag library, real window in a private compositor; a click on "Add" is
-# injected 5 ms after a frame request (between two frames, as real input arrives) every 30
-# frames. Pass: the changed views are built in the same frame as in Rust (frame offset after
-# the click), and a click costs the Go app 1 EVENT turn and at most 1 VIEWS turn. The line is
-# "GATE counter click-go".
-#   gates/counter.sh
+# Click-latency and protocol-turn gate (`gates/counter.sh [--hz N]`).
+# Gates: frame latency from click injection to view rebuild and protocol turn count on `counter`.
+# Method: runs Rust (`ref-counter`) and Go (`counter-go`) on lib/diag inside one headless display.sh
+# session (default 60 Hz, 60 warmup + 240 measured frames, synthetic clicks via GK_CLICK=40,32,90,30),
+# recording per-frame CSVs for gates/counter-summary.py.
+# PASS: gates/counter-summary.py exits 0 (Go rebuilds on the same frame offset as Rust with 1 EVENT
+# turn and at most 1 VIEWS turn per click).
+
 here=$(cd "$(dirname "$0")" && pwd)
 hz=60; if [ "${1:-}" = --hz ]; then hz=$2; shift 2; fi
 front=go

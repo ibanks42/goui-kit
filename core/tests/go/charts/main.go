@@ -1,13 +1,4 @@
-// charts: the protocol tests of the charts' calculators over the app's rows (docs/PROTOCOLS.md
-// 12.15), the port of core/tests/charts: the pie and stack layouts as library objects instantiated
-// for a row of a data table, their value closures answered from a column (or, for a stack, from the
-// column each key names), their results read back with each row as its index in the rows the app
-// passed. Each mode runs offscreen (the diag library) and prints lines core/tests/go/run-charts.sh
-// checks.
-//
-//	GK_PROTO=pie | stack
-//
-// Both modes are in arcs.go.
+// Command charts runs headless protocol tests for chart layout helpers (`pie`, `stack`).
 package main
 
 import (
@@ -26,7 +17,7 @@ type App struct {
 	root gk.View
 }
 
-// modes: what a timer runs 10 ms in, by mode. They register from arcs.go.
+// modes maps GK_PROTO values to chart layout test functions.
 var modes = map[string]func(a *App, cx *gk.Cx){}
 
 func (a *App) rootView(cx *gk.Cx) gk.Element {

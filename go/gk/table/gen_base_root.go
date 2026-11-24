@@ -12,7 +12,7 @@ import (
 // BaseComboboxEl is gpui_kit::base::Combobox.
 type BaseComboboxEl struct{ rt.ElAnimatableElement }
 
-// BaseCombobox is <gpui_kit::base::Combobox>::new.
+// BaseCombobox calls <gpui_kit::base::Combobox>::new.
 func BaseCombobox(id gk.ID, st ...gk.Style) BaseComboboxEl {
 	rt.UseBaseCombobox()
 	n := rt.NewNode(305)
@@ -22,21 +22,21 @@ func BaseCombobox(id gk.ID, st ...gk.Style) BaseComboboxEl {
 	return BaseComboboxEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// ContentFocusHandle is <gpui_kit::base::Combobox>::content_focus_handle.
+// ContentFocusHandle calls <gpui_kit::base::Combobox>::content_focus_handle.
 func (e BaseComboboxEl) ContentFocusHandle(focusHandle gk.FocusHandle) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
-// Disabled is <gpui_kit::base::Combobox>::disabled.
+// Disabled calls <gpui_kit::base::Combobox>::disabled.
 func (e BaseComboboxEl) Disabled(disabled bool) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
 	return e
 }
 
-// FocusHandle is <gpui_kit::base::Combobox>::focus_handle.
+// FocusHandle calls <gpui_kit::base::Combobox>::focus_handle.
 func (e BaseComboboxEl) FocusHandle(focusHandle gk.FocusHandle) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(rt.Held(rt.H(focusHandle.HCore)))
@@ -45,7 +45,7 @@ func (e BaseComboboxEl) FocusHandle(focusHandle gk.FocusHandle) BaseComboboxEl {
 
 // Handles the Confirm action while the combobox is open.
 //
-// OnConfirm is <gpui_kit::base::Combobox>::on_confirm.
+// OnConfirm calls <gpui_kit::base::Combobox>::on_confirm.
 func (e BaseComboboxEl) OnConfirm(handler func(cx *gk.Cx)) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Register(handler, 3))
@@ -57,21 +57,21 @@ func (e BaseComboboxEl) OnConfirm(handler func(cx *gk.Cx)) BaseComboboxEl {
 // This runs before the controlled open state is asked to close, so a combobox that commits its
 // pending value on dismissal can still read that value here.
 //
-// OnDismiss is <gpui_kit::base::Combobox>::on_dismiss.
+// OnDismiss calls <gpui_kit::base::Combobox>::on_dismiss.
 func (e BaseComboboxEl) OnDismiss(handler func(cx *gk.Cx)) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 3))
 	return e
 }
 
-// OnOpenChange is <gpui_kit::base::Combobox>::on_open_change.
+// OnOpenChange calls <gpui_kit::base::Combobox>::on_open_change.
 func (e BaseComboboxEl) OnOpenChange(handler func(cx *gk.Cx, e bool)) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(handler, 4))
 	return e
 }
 
-// Open is <gpui_kit::base::Combobox>::open.
+// Open calls <gpui_kit::base::Combobox>::open.
 func (e BaseComboboxEl) Open(open bool) BaseComboboxEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(open)
@@ -85,24 +85,32 @@ func (e BaseComboboxEl) Open(open bool) BaseComboboxEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseComboboxEl) KeepTextSelection(id gk.ID) BaseComboboxEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseComboboxEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseComboboxEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseComboboxEl) BorderE(width gk.Length) BaseComboboxEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseComboboxEl) BorderS(width gk.Length) BaseComboboxEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -110,133 +118,175 @@ func (e BaseComboboxEl) BorderS(width gk.Length) BaseComboboxEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseComboboxEl) FlexRowDir() BaseComboboxEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseComboboxEl) InsetE(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseComboboxEl) InsetS(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseComboboxEl) JustifyFlexEnd() BaseComboboxEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseComboboxEl) JustifyFlexStart() BaseComboboxEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseComboboxEl) Me(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseComboboxEl) Ms(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseComboboxEl) Pe(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseComboboxEl) Ps(length gk.Length) BaseComboboxEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseComboboxEl) RoundedE(radius gk.Length) BaseComboboxEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseComboboxEl) RoundedS(radius gk.Length) BaseComboboxEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseComboboxEl) TextEnd() BaseComboboxEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseComboboxEl) TextStart() BaseComboboxEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseComboboxEl) CornerRadii(radius gk.Corners) BaseComboboxEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseComboboxEl) DebugBlue() BaseComboboxEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseComboboxEl) DebugFocused(focusHandle gk.FocusHandle) BaseComboboxEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseComboboxEl) DebugGreen() BaseComboboxEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseComboboxEl) DebugPink() BaseComboboxEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseComboboxEl) DebugRed() BaseComboboxEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseComboboxEl) DebugYellow() BaseComboboxEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseComboboxEl) FontBlack() BaseComboboxEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseComboboxEl) FontBold() BaseComboboxEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseComboboxEl) FontExtrabold() BaseComboboxEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseComboboxEl) FontExtralight() BaseComboboxEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseComboboxEl) FontLight() BaseComboboxEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseComboboxEl) FontMedium() BaseComboboxEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseComboboxEl) FontNormal() BaseComboboxEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseComboboxEl) FontSemibold() BaseComboboxEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseComboboxEl) FontThin() BaseComboboxEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -245,18 +295,23 @@ func (e BaseComboboxEl) FontThin() BaseComboboxEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseComboboxEl) HFlex() BaseComboboxEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseComboboxEl) Margins(margins gk.EdgesInto) BaseComboboxEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseComboboxEl) Paddings(paddings gk.EdgesInto) BaseComboboxEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseComboboxEl) RefineStyle(style gk.StyleRefinement) BaseComboboxEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -266,21 +321,29 @@ func (e BaseComboboxEl) RefineStyle(style gk.StyleRefinement) BaseComboboxEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseComboboxEl) VFlex() BaseComboboxEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseComboboxEl) Style(st ...gk.Style) BaseComboboxEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseComboboxEl) AspectRatio(ratio float32) BaseComboboxEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseComboboxEl) Bg(fill gk.Fill) BaseComboboxEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseComboboxEl) Border(length gk.Length) BaseComboboxEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -288,12 +351,16 @@ func (e BaseComboboxEl) Border(length gk.Length) BaseComboboxEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseComboboxEl) BorderB(length gk.Length) BaseComboboxEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseComboboxEl) BorderColor(borderColor gk.Color) BaseComboboxEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -301,6 +368,8 @@ func (e BaseComboboxEl) BorderColor(borderColor gk.Color) BaseComboboxEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseComboboxEl) BorderL(length gk.Length) BaseComboboxEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -308,6 +377,8 @@ func (e BaseComboboxEl) BorderL(length gk.Length) BaseComboboxEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseComboboxEl) BorderR(length gk.Length) BaseComboboxEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -315,6 +386,8 @@ func (e BaseComboboxEl) BorderR(length gk.Length) BaseComboboxEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseComboboxEl) BorderT(length gk.Length) BaseComboboxEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -322,6 +395,8 @@ func (e BaseComboboxEl) BorderT(length gk.Length) BaseComboboxEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseComboboxEl) BorderX(length gk.Length) BaseComboboxEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -329,6 +404,8 @@ func (e BaseComboboxEl) BorderX(length gk.Length) BaseComboboxEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseComboboxEl) BorderY(length gk.Length) BaseComboboxEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -336,27 +413,37 @@ func (e BaseComboboxEl) BorderY(length gk.Length) BaseComboboxEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseComboboxEl) Bottom(length gk.Length) BaseComboboxEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseComboboxEl) ColEnd(end int16) BaseComboboxEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseComboboxEl) ColSpan(span uint16) BaseComboboxEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseComboboxEl) ColStart(start int16) BaseComboboxEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseComboboxEl) Cursor(cursor gk.CursorStyle) BaseComboboxEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -364,33 +451,45 @@ func (e BaseComboboxEl) Cursor(cursor gk.CursorStyle) BaseComboboxEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseComboboxEl) FlexBasis(basis gk.Length) BaseComboboxEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseComboboxEl) FlexGrow(grow float32) BaseComboboxEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseComboboxEl) FlexShrink(shrink float32) BaseComboboxEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseComboboxEl) Font(font gk.Font) BaseComboboxEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseComboboxEl) FontFamily(familyName string) BaseComboboxEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseComboboxEl) FontFeatures(features gk.FontFeatures) BaseComboboxEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -399,12 +498,16 @@ func (e BaseComboboxEl) FontFeatures(features gk.FontFeatures) BaseComboboxEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseComboboxEl) FontWeight(weight gk.FontWeight) BaseComboboxEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseComboboxEl) Gap(length gk.Length) BaseComboboxEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -412,6 +515,8 @@ func (e BaseComboboxEl) Gap(length gk.Length) BaseComboboxEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseComboboxEl) GapX(length gk.Length) BaseComboboxEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -419,18 +524,24 @@ func (e BaseComboboxEl) GapX(length gk.Length) BaseComboboxEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseComboboxEl) GapY(length gk.Length) BaseComboboxEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseComboboxEl) GridCols(cols uint16) BaseComboboxEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseComboboxEl) GridColsMaxContent(cols uint16) BaseComboboxEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -438,18 +549,24 @@ func (e BaseComboboxEl) GridColsMaxContent(cols uint16) BaseComboboxEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseComboboxEl) GridColsMinContent(cols uint16) BaseComboboxEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseComboboxEl) GridRows(rows uint16) BaseComboboxEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseComboboxEl) GridRowsMaxContent(rows uint16) BaseComboboxEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -457,16 +574,22 @@ func (e BaseComboboxEl) GridRowsMaxContent(rows uint16) BaseComboboxEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseComboboxEl) GridRowsMinContent(rows uint16) BaseComboboxEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseComboboxEl) H(length gk.Length) BaseComboboxEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseComboboxEl) Inset(length gk.Length) BaseComboboxEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -474,6 +597,8 @@ func (e BaseComboboxEl) Inset(length gk.Length) BaseComboboxEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseComboboxEl) Left(length gk.Length) BaseComboboxEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -481,33 +606,45 @@ func (e BaseComboboxEl) Left(length gk.Length) BaseComboboxEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseComboboxEl) LineClamp(lines int) BaseComboboxEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseComboboxEl) LineHeight(lineHeight gk.Length) BaseComboboxEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseComboboxEl) M(length gk.Length) BaseComboboxEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseComboboxEl) MaxH(length gk.Length) BaseComboboxEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseComboboxEl) MaxSize(length gk.Length) BaseComboboxEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseComboboxEl) MaxW(length gk.Length) BaseComboboxEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -515,24 +652,32 @@ func (e BaseComboboxEl) MaxW(length gk.Length) BaseComboboxEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseComboboxEl) Mb(length gk.Length) BaseComboboxEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseComboboxEl) MinH(length gk.Length) BaseComboboxEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseComboboxEl) MinSize(length gk.Length) BaseComboboxEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseComboboxEl) MinW(length gk.Length) BaseComboboxEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -540,6 +685,8 @@ func (e BaseComboboxEl) MinW(length gk.Length) BaseComboboxEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseComboboxEl) Ml(length gk.Length) BaseComboboxEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -547,6 +694,8 @@ func (e BaseComboboxEl) Ml(length gk.Length) BaseComboboxEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseComboboxEl) Mr(length gk.Length) BaseComboboxEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -554,6 +703,8 @@ func (e BaseComboboxEl) Mr(length gk.Length) BaseComboboxEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseComboboxEl) Mt(length gk.Length) BaseComboboxEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -561,6 +712,8 @@ func (e BaseComboboxEl) Mt(length gk.Length) BaseComboboxEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseComboboxEl) Mx(length gk.Length) BaseComboboxEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -568,22 +721,30 @@ func (e BaseComboboxEl) Mx(length gk.Length) BaseComboboxEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseComboboxEl) My(length gk.Length) BaseComboboxEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseComboboxEl) Opacity(opacity float32) BaseComboboxEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseComboboxEl) P(length gk.Length) BaseComboboxEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseComboboxEl) Pb(length gk.Length) BaseComboboxEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -591,6 +752,8 @@ func (e BaseComboboxEl) Pb(length gk.Length) BaseComboboxEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseComboboxEl) Pl(length gk.Length) BaseComboboxEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -598,6 +761,8 @@ func (e BaseComboboxEl) Pl(length gk.Length) BaseComboboxEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseComboboxEl) Pr(length gk.Length) BaseComboboxEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -605,6 +770,8 @@ func (e BaseComboboxEl) Pr(length gk.Length) BaseComboboxEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseComboboxEl) Pt(length gk.Length) BaseComboboxEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -612,6 +779,8 @@ func (e BaseComboboxEl) Pt(length gk.Length) BaseComboboxEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseComboboxEl) Px(length gk.Length) BaseComboboxEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -619,6 +788,8 @@ func (e BaseComboboxEl) Px(length gk.Length) BaseComboboxEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseComboboxEl) Py(length gk.Length) BaseComboboxEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -626,12 +797,16 @@ func (e BaseComboboxEl) Py(length gk.Length) BaseComboboxEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseComboboxEl) Right(length gk.Length) BaseComboboxEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseComboboxEl) Rounded(length gk.Length) BaseComboboxEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -639,6 +814,8 @@ func (e BaseComboboxEl) Rounded(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseComboboxEl) RoundedB(length gk.Length) BaseComboboxEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -646,6 +823,8 @@ func (e BaseComboboxEl) RoundedB(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseComboboxEl) RoundedBl(length gk.Length) BaseComboboxEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -653,6 +832,8 @@ func (e BaseComboboxEl) RoundedBl(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseComboboxEl) RoundedBr(length gk.Length) BaseComboboxEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -660,6 +841,8 @@ func (e BaseComboboxEl) RoundedBr(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseComboboxEl) RoundedL(length gk.Length) BaseComboboxEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -667,6 +850,8 @@ func (e BaseComboboxEl) RoundedL(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseComboboxEl) RoundedR(length gk.Length) BaseComboboxEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -674,6 +859,8 @@ func (e BaseComboboxEl) RoundedR(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseComboboxEl) RoundedT(length gk.Length) BaseComboboxEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -681,6 +868,8 @@ func (e BaseComboboxEl) RoundedT(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseComboboxEl) RoundedTl(length gk.Length) BaseComboboxEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -688,21 +877,29 @@ func (e BaseComboboxEl) RoundedTl(length gk.Length) BaseComboboxEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseComboboxEl) RoundedTr(length gk.Length) BaseComboboxEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseComboboxEl) RowEnd(end int16) BaseComboboxEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseComboboxEl) RowSpan(span uint16) BaseComboboxEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseComboboxEl) RowStart(start int16) BaseComboboxEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -712,24 +909,32 @@ func (e BaseComboboxEl) RowStart(start int16) BaseComboboxEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseComboboxEl) ScrollbarWidth(width gk.Length) BaseComboboxEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseComboboxEl) Shadow(shadows []gk.BoxShadow) BaseComboboxEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseComboboxEl) Size(length gk.Length) BaseComboboxEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseComboboxEl) TextAlign(align gk.TextAlign) BaseComboboxEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -738,23 +943,31 @@ func (e BaseComboboxEl) TextAlign(align gk.TextAlign) BaseComboboxEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseComboboxEl) TextBg(bg gk.Color) BaseComboboxEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseComboboxEl) TextColor(color gk.Color) BaseComboboxEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseComboboxEl) TextDecorationColor(color gk.Color) BaseComboboxEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseComboboxEl) TextOverflow(overflow gk.TextOverflow) BaseComboboxEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -763,6 +976,8 @@ func (e BaseComboboxEl) TextOverflow(overflow gk.TextOverflow) BaseComboboxEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseComboboxEl) TextSize(size gk.Length) BaseComboboxEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -770,32 +985,41 @@ func (e BaseComboboxEl) TextSize(size gk.Length) BaseComboboxEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseComboboxEl) Top(length gk.Length) BaseComboboxEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseComboboxEl) W(length gk.Length) BaseComboboxEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e BaseComboboxEl) Text(s string) BaseComboboxEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseComboboxEl) ChildView(v gk.View) BaseComboboxEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseComboboxEl) Child(child gk.Element) BaseComboboxEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseComboboxEl) Children(children ...gk.Element) BaseComboboxEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// NewListSettingsDefault is <gpui_kit::base::ListSettings as Default>::default.
+// NewListSettingsDefault calls <gpui_kit::base::ListSettings as Default>::default.
 func NewListSettingsDefault() gk.ListSettings {
 	n := rt.NewValue(335)
 	return gk.ListSettings{Val: rt.MkVal(n)}
@@ -804,7 +1028,7 @@ func NewListSettingsDefault() gk.ListSettings {
 // BaseSelectEl is gpui_kit::base::Select.
 type BaseSelectEl struct{ rt.ElAnimatableElement }
 
-// BaseSelect is <gpui_kit::base::Select>::new.
+// BaseSelect calls <gpui_kit::base::Select>::new.
 func BaseSelect(id gk.ID, st ...gk.Style) BaseSelectEl {
 	rt.UseBaseSelect()
 	n := rt.NewNode(371)
@@ -816,7 +1040,7 @@ func BaseSelect(id gk.ID, st ...gk.Style) BaseSelectEl {
 
 // Sets the accessible name exposed by the controlled root.
 //
-// AccessibilityLabel is <gpui_kit::base::Select>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::Select>::accessibility_label.
 func (e BaseSelectEl) AccessibilityLabel(label string) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -827,7 +1051,7 @@ func (e BaseSelectEl) AccessibilityLabel(label string) BaseSelectEl {
 //
 // Supply a readable selection title, not the current search query or cursor.
 //
-// AccessibilityValue is <gpui_kit::base::Select>::accessibility_value.
+// AccessibilityValue calls <gpui_kit::base::Select>::accessibility_value.
 func (e BaseSelectEl) AccessibilityValue(value string) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(value)
@@ -836,7 +1060,7 @@ func (e BaseSelectEl) AccessibilityValue(value string) BaseSelectEl {
 
 // Supplies the focus handle that receives keyboard navigation while open.
 //
-// ContentFocusHandle is <gpui_kit::base::Select>::content_focus_handle.
+// ContentFocusHandle calls <gpui_kit::base::Select>::content_focus_handle.
 func (e BaseSelectEl) ContentFocusHandle(focusHandle gk.FocusHandle) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U64(rt.Held(rt.H(focusHandle.HCore)))
@@ -845,7 +1069,7 @@ func (e BaseSelectEl) ContentFocusHandle(focusHandle gk.FocusHandle) BaseSelectE
 
 // Prevents keyboard and accessible activation and removes the trigger from tab traversal.
 //
-// Disabled is <gpui_kit::base::Select>::disabled.
+// Disabled calls <gpui_kit::base::Select>::disabled.
 func (e BaseSelectEl) Disabled(disabled bool) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(disabled)
@@ -854,7 +1078,7 @@ func (e BaseSelectEl) Disabled(disabled bool) BaseSelectEl {
 
 // Supplies the focus handle for the select trigger.
 //
-// FocusHandle is <gpui_kit::base::Select>::focus_handle.
+// FocusHandle calls <gpui_kit::base::Select>::focus_handle.
 func (e BaseSelectEl) FocusHandle(focusHandle gk.FocusHandle) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U64(rt.Held(rt.H(focusHandle.HCore)))
@@ -865,7 +1089,7 @@ func (e BaseSelectEl) FocusHandle(focusHandle gk.FocusHandle) BaseSelectEl {
 //
 // Confirming a closed select opens it instead, so this never runs for that case.
 //
-// OnConfirm is <gpui_kit::base::Select>::on_confirm.
+// OnConfirm calls <gpui_kit::base::Select>::on_confirm.
 func (e BaseSelectEl) OnConfirm(handler func(cx *gk.Cx)) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(handler, 3))
@@ -878,7 +1102,7 @@ func (e BaseSelectEl) OnConfirm(handler func(cx *gk.Cx)) BaseSelectEl {
 // This runs before the controlled open state is asked to close, so a caller that commits its
 // pending value on dismissal can still read that value here.
 //
-// OnDismiss is <gpui_kit::base::Select>::on_dismiss.
+// OnDismiss calls <gpui_kit::base::Select>::on_dismiss.
 func (e BaseSelectEl) OnDismiss(handler func(cx *gk.Cx)) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.Register(handler, 3))
@@ -887,7 +1111,7 @@ func (e BaseSelectEl) OnDismiss(handler func(cx *gk.Cx)) BaseSelectEl {
 
 // Handles requests to update the controlled open state.
 //
-// OnOpenChange is <gpui_kit::base::Select>::on_open_change.
+// OnOpenChange calls <gpui_kit::base::Select>::on_open_change.
 func (e BaseSelectEl) OnOpenChange(handler func(cx *gk.Cx, e bool)) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(handler, 4))
@@ -896,7 +1120,7 @@ func (e BaseSelectEl) OnOpenChange(handler func(cx *gk.Cx, e bool)) BaseSelectEl
 
 // Sets the application-controlled open state.
 //
-// Open is <gpui_kit::base::Select>::open.
+// Open calls <gpui_kit::base::Select>::open.
 func (e BaseSelectEl) Open(open bool) BaseSelectEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Bool(open)
@@ -910,24 +1134,32 @@ func (e BaseSelectEl) Open(open bool) BaseSelectEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseSelectEl) KeepTextSelection(id gk.ID) BaseSelectEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseSelectEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseSelectEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseSelectEl) BorderE(width gk.Length) BaseSelectEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseSelectEl) BorderS(width gk.Length) BaseSelectEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -935,121 +1167,163 @@ func (e BaseSelectEl) BorderS(width gk.Length) BaseSelectEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseSelectEl) FlexRowDir() BaseSelectEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseSelectEl) InsetE(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseSelectEl) InsetS(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseSelectEl) JustifyFlexEnd() BaseSelectEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseSelectEl) JustifyFlexStart() BaseSelectEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseSelectEl) Me(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseSelectEl) Ms(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseSelectEl) Pe(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseSelectEl) Ps(length gk.Length) BaseSelectEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseSelectEl) RoundedE(radius gk.Length) BaseSelectEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseSelectEl) RoundedS(radius gk.Length) BaseSelectEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseSelectEl) TextEnd() BaseSelectEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseSelectEl) TextStart() BaseSelectEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseSelectEl) CornerRadii(radius gk.Corners) BaseSelectEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseSelectEl) DebugBlue() BaseSelectEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseSelectEl) DebugFocused(focusHandle gk.FocusHandle) BaseSelectEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseSelectEl) DebugGreen() BaseSelectEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseSelectEl) DebugPink() BaseSelectEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseSelectEl) DebugRed() BaseSelectEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseSelectEl) DebugYellow() BaseSelectEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseSelectEl) FontBlack() BaseSelectEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseSelectEl) FontBold() BaseSelectEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseSelectEl) FontExtrabold() BaseSelectEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseSelectEl) FontExtralight() BaseSelectEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseSelectEl) FontLight() BaseSelectEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseSelectEl) FontMedium() BaseSelectEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseSelectEl) FontNormal() BaseSelectEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseSelectEl) FontSemibold() BaseSelectEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseSelectEl) FontThin() BaseSelectEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1058,18 +1332,23 @@ func (e BaseSelectEl) FontThin() BaseSelectEl { tStyledExtFontThin(rt.N(e.Core))
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseSelectEl) HFlex() BaseSelectEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseSelectEl) Margins(margins gk.EdgesInto) BaseSelectEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseSelectEl) Paddings(paddings gk.EdgesInto) BaseSelectEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseSelectEl) RefineStyle(style gk.StyleRefinement) BaseSelectEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1079,21 +1358,29 @@ func (e BaseSelectEl) RefineStyle(style gk.StyleRefinement) BaseSelectEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseSelectEl) VFlex() BaseSelectEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseSelectEl) Style(st ...gk.Style) BaseSelectEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseSelectEl) AspectRatio(ratio float32) BaseSelectEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseSelectEl) Bg(fill gk.Fill) BaseSelectEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseSelectEl) Border(length gk.Length) BaseSelectEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1101,12 +1388,16 @@ func (e BaseSelectEl) Border(length gk.Length) BaseSelectEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseSelectEl) BorderB(length gk.Length) BaseSelectEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseSelectEl) BorderColor(borderColor gk.Color) BaseSelectEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1114,6 +1405,8 @@ func (e BaseSelectEl) BorderColor(borderColor gk.Color) BaseSelectEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseSelectEl) BorderL(length gk.Length) BaseSelectEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1121,6 +1414,8 @@ func (e BaseSelectEl) BorderL(length gk.Length) BaseSelectEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseSelectEl) BorderR(length gk.Length) BaseSelectEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1128,6 +1423,8 @@ func (e BaseSelectEl) BorderR(length gk.Length) BaseSelectEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseSelectEl) BorderT(length gk.Length) BaseSelectEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1135,6 +1432,8 @@ func (e BaseSelectEl) BorderT(length gk.Length) BaseSelectEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseSelectEl) BorderX(length gk.Length) BaseSelectEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1142,6 +1441,8 @@ func (e BaseSelectEl) BorderX(length gk.Length) BaseSelectEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseSelectEl) BorderY(length gk.Length) BaseSelectEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1149,24 +1450,34 @@ func (e BaseSelectEl) BorderY(length gk.Length) BaseSelectEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseSelectEl) Bottom(length gk.Length) BaseSelectEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseSelectEl) ColEnd(end int16) BaseSelectEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseSelectEl) ColSpan(span uint16) BaseSelectEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseSelectEl) ColStart(start int16) BaseSelectEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseSelectEl) Cursor(cursor gk.CursorStyle) BaseSelectEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1174,33 +1485,45 @@ func (e BaseSelectEl) Cursor(cursor gk.CursorStyle) BaseSelectEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseSelectEl) FlexBasis(basis gk.Length) BaseSelectEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseSelectEl) FlexGrow(grow float32) BaseSelectEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseSelectEl) FlexShrink(shrink float32) BaseSelectEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseSelectEl) Font(font gk.Font) BaseSelectEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseSelectEl) FontFamily(familyName string) BaseSelectEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseSelectEl) FontFeatures(features gk.FontFeatures) BaseSelectEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1209,16 +1532,22 @@ func (e BaseSelectEl) FontFeatures(features gk.FontFeatures) BaseSelectEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseSelectEl) FontWeight(weight gk.FontWeight) BaseSelectEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseSelectEl) Gap(length gk.Length) BaseSelectEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseSelectEl) GapX(length gk.Length) BaseSelectEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1226,18 +1555,24 @@ func (e BaseSelectEl) GapX(length gk.Length) BaseSelectEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseSelectEl) GapY(length gk.Length) BaseSelectEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseSelectEl) GridCols(cols uint16) BaseSelectEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseSelectEl) GridColsMaxContent(cols uint16) BaseSelectEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1245,18 +1580,24 @@ func (e BaseSelectEl) GridColsMaxContent(cols uint16) BaseSelectEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseSelectEl) GridColsMinContent(cols uint16) BaseSelectEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseSelectEl) GridRows(rows uint16) BaseSelectEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseSelectEl) GridRowsMaxContent(rows uint16) BaseSelectEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1264,16 +1605,22 @@ func (e BaseSelectEl) GridRowsMaxContent(rows uint16) BaseSelectEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseSelectEl) GridRowsMinContent(rows uint16) BaseSelectEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseSelectEl) H(length gk.Length) BaseSelectEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseSelectEl) Inset(length gk.Length) BaseSelectEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1281,6 +1628,8 @@ func (e BaseSelectEl) Inset(length gk.Length) BaseSelectEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseSelectEl) Left(length gk.Length) BaseSelectEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1288,33 +1637,45 @@ func (e BaseSelectEl) Left(length gk.Length) BaseSelectEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseSelectEl) LineClamp(lines int) BaseSelectEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseSelectEl) LineHeight(lineHeight gk.Length) BaseSelectEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseSelectEl) M(length gk.Length) BaseSelectEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseSelectEl) MaxH(length gk.Length) BaseSelectEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseSelectEl) MaxSize(length gk.Length) BaseSelectEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseSelectEl) MaxW(length gk.Length) BaseSelectEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1322,21 +1683,29 @@ func (e BaseSelectEl) MaxW(length gk.Length) BaseSelectEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseSelectEl) Mb(length gk.Length) BaseSelectEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseSelectEl) MinH(length gk.Length) BaseSelectEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseSelectEl) MinSize(length gk.Length) BaseSelectEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseSelectEl) MinW(length gk.Length) BaseSelectEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1344,65 +1713,95 @@ func (e BaseSelectEl) MinW(length gk.Length) BaseSelectEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseSelectEl) Ml(length gk.Length) BaseSelectEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseSelectEl) Mr(length gk.Length) BaseSelectEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseSelectEl) Mt(length gk.Length) BaseSelectEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseSelectEl) Mx(length gk.Length) BaseSelectEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseSelectEl) My(length gk.Length) BaseSelectEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseSelectEl) Opacity(opacity float32) BaseSelectEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseSelectEl) P(length gk.Length) BaseSelectEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseSelectEl) Pb(length gk.Length) BaseSelectEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseSelectEl) Pl(length gk.Length) BaseSelectEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseSelectEl) Pr(length gk.Length) BaseSelectEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseSelectEl) Pt(length gk.Length) BaseSelectEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseSelectEl) Px(length gk.Length) BaseSelectEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseSelectEl) Py(length gk.Length) BaseSelectEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseSelectEl) Right(length gk.Length) BaseSelectEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseSelectEl) Rounded(length gk.Length) BaseSelectEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1410,6 +1809,8 @@ func (e BaseSelectEl) Rounded(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseSelectEl) RoundedB(length gk.Length) BaseSelectEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1417,6 +1818,8 @@ func (e BaseSelectEl) RoundedB(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseSelectEl) RoundedBl(length gk.Length) BaseSelectEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1424,6 +1827,8 @@ func (e BaseSelectEl) RoundedBl(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseSelectEl) RoundedBr(length gk.Length) BaseSelectEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1431,6 +1836,8 @@ func (e BaseSelectEl) RoundedBr(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseSelectEl) RoundedL(length gk.Length) BaseSelectEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1438,6 +1845,8 @@ func (e BaseSelectEl) RoundedL(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseSelectEl) RoundedR(length gk.Length) BaseSelectEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1445,6 +1854,8 @@ func (e BaseSelectEl) RoundedR(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseSelectEl) RoundedT(length gk.Length) BaseSelectEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1452,6 +1863,8 @@ func (e BaseSelectEl) RoundedT(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseSelectEl) RoundedTl(length gk.Length) BaseSelectEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1459,18 +1872,26 @@ func (e BaseSelectEl) RoundedTl(length gk.Length) BaseSelectEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseSelectEl) RoundedTr(length gk.Length) BaseSelectEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseSelectEl) RowEnd(end int16) BaseSelectEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseSelectEl) RowSpan(span uint16) BaseSelectEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseSelectEl) RowStart(start int16) BaseSelectEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1480,24 +1901,32 @@ func (e BaseSelectEl) RowStart(start int16) BaseSelectEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseSelectEl) ScrollbarWidth(width gk.Length) BaseSelectEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseSelectEl) Shadow(shadows []gk.BoxShadow) BaseSelectEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseSelectEl) Size(length gk.Length) BaseSelectEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseSelectEl) TextAlign(align gk.TextAlign) BaseSelectEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1506,23 +1935,31 @@ func (e BaseSelectEl) TextAlign(align gk.TextAlign) BaseSelectEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseSelectEl) TextBg(bg gk.Color) BaseSelectEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseSelectEl) TextColor(color gk.Color) BaseSelectEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseSelectEl) TextDecorationColor(color gk.Color) BaseSelectEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseSelectEl) TextOverflow(overflow gk.TextOverflow) BaseSelectEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1531,6 +1968,8 @@ func (e BaseSelectEl) TextOverflow(overflow gk.TextOverflow) BaseSelectEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseSelectEl) TextSize(size gk.Length) BaseSelectEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1538,23 +1977,32 @@ func (e BaseSelectEl) TextSize(size gk.Length) BaseSelectEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseSelectEl) Top(length gk.Length) BaseSelectEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseSelectEl) W(length gk.Length) BaseSelectEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e BaseSelectEl) Text(s string) BaseSelectEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseSelectEl) ChildView(v gk.View) BaseSelectEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseSelectEl) Child(child gk.Element) BaseSelectEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseSelectEl) Children(children ...gk.Element) BaseSelectEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -1565,7 +2013,7 @@ type BaseTableEl struct{ rt.ElAnimatableElement }
 
 // Create an unstyled semantic table root.
 //
-// BaseTable is <gpui_kit::base::Table>::new.
+// BaseTable calls <gpui_kit::base::Table>::new.
 func BaseTable(id gk.ID, st ...gk.Style) BaseTableEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(393)
@@ -1577,7 +2025,7 @@ func BaseTable(id gk.ID, st ...gk.Style) BaseTableEl {
 
 // Sets the table's accessible name.
 //
-// AccessibilityLabel is <gpui_kit::base::Table>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::base::Table>::accessibility_label.
 func (e BaseTableEl) AccessibilityLabel(label string) BaseTableEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -1586,7 +2034,7 @@ func (e BaseTableEl) AccessibilityLabel(label string) BaseTableEl {
 
 // Sets the total number of columns, including columns outside the rendered range.
 //
-// ColumnCount is <gpui_kit::base::Table>::column_count.
+// ColumnCount calls <gpui_kit::base::Table>::column_count.
 func (e BaseTableEl) ColumnCount(count int) BaseTableEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutUsize(o, count)
@@ -1597,7 +2045,7 @@ func (e BaseTableEl) ColumnCount(count int) BaseTableEl {
 // needs this to announce "row 5 of 200" for a virtualized table whose rendered rows are only a
 // window onto the data.
 //
-// RowCount is <gpui_kit::base::Table>::row_count.
+// RowCount calls <gpui_kit::base::Table>::row_count.
 func (e BaseTableEl) RowCount(count int) BaseTableEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutUsize(o, count)
@@ -1611,24 +2059,32 @@ func (e BaseTableEl) RowCount(count int) BaseTableEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableEl) KeepTextSelection(id gk.ID) BaseTableEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableEl) BorderE(width gk.Length) BaseTableEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableEl) BorderS(width gk.Length) BaseTableEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1636,121 +2092,163 @@ func (e BaseTableEl) BorderS(width gk.Length) BaseTableEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableEl) FlexRowDir() BaseTableEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableEl) InsetE(length gk.Length) BaseTableEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableEl) InsetS(length gk.Length) BaseTableEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableEl) JustifyFlexEnd() BaseTableEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableEl) JustifyFlexStart() BaseTableEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableEl) Me(length gk.Length) BaseTableEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableEl) Ms(length gk.Length) BaseTableEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableEl) Pe(length gk.Length) BaseTableEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableEl) Ps(length gk.Length) BaseTableEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableEl) RoundedE(radius gk.Length) BaseTableEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableEl) RoundedS(radius gk.Length) BaseTableEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableEl) TextEnd() BaseTableEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableEl) TextStart() BaseTableEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableEl) CornerRadii(radius gk.Corners) BaseTableEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableEl) DebugBlue() BaseTableEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableEl) DebugGreen() BaseTableEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableEl) DebugPink() BaseTableEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableEl) DebugRed() BaseTableEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableEl) DebugYellow() BaseTableEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableEl) FontBlack() BaseTableEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableEl) FontBold() BaseTableEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableEl) FontExtrabold() BaseTableEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableEl) FontExtralight() BaseTableEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableEl) FontLight() BaseTableEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableEl) FontMedium() BaseTableEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableEl) FontNormal() BaseTableEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableEl) FontSemibold() BaseTableEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableEl) FontThin() BaseTableEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1759,18 +2257,23 @@ func (e BaseTableEl) FontThin() BaseTableEl { tStyledExtFontThin(rt.N(e.Core)); 
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableEl) HFlex() BaseTableEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableEl) Margins(margins gk.EdgesInto) BaseTableEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableEl) Paddings(paddings gk.EdgesInto) BaseTableEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableEl) RefineStyle(style gk.StyleRefinement) BaseTableEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1780,21 +2283,29 @@ func (e BaseTableEl) RefineStyle(style gk.StyleRefinement) BaseTableEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableEl) VFlex() BaseTableEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableEl) Style(st ...gk.Style) BaseTableEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableEl) AspectRatio(ratio float32) BaseTableEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableEl) Bg(fill gk.Fill) BaseTableEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableEl) Border(length gk.Length) BaseTableEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1802,12 +2313,16 @@ func (e BaseTableEl) Border(length gk.Length) BaseTableEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableEl) BorderB(length gk.Length) BaseTableEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableEl) BorderColor(borderColor gk.Color) BaseTableEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1815,6 +2330,8 @@ func (e BaseTableEl) BorderColor(borderColor gk.Color) BaseTableEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableEl) BorderL(length gk.Length) BaseTableEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1822,6 +2339,8 @@ func (e BaseTableEl) BorderL(length gk.Length) BaseTableEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableEl) BorderR(length gk.Length) BaseTableEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1829,6 +2348,8 @@ func (e BaseTableEl) BorderR(length gk.Length) BaseTableEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableEl) BorderT(length gk.Length) BaseTableEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1836,6 +2357,8 @@ func (e BaseTableEl) BorderT(length gk.Length) BaseTableEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableEl) BorderX(length gk.Length) BaseTableEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1843,6 +2366,8 @@ func (e BaseTableEl) BorderX(length gk.Length) BaseTableEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableEl) BorderY(length gk.Length) BaseTableEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1850,24 +2375,34 @@ func (e BaseTableEl) BorderY(length gk.Length) BaseTableEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableEl) Bottom(length gk.Length) BaseTableEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableEl) ColEnd(end int16) BaseTableEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableEl) ColSpan(span uint16) BaseTableEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableEl) ColStart(start int16) BaseTableEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableEl) Cursor(cursor gk.CursorStyle) BaseTableEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1875,33 +2410,45 @@ func (e BaseTableEl) Cursor(cursor gk.CursorStyle) BaseTableEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableEl) FlexBasis(basis gk.Length) BaseTableEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableEl) FlexGrow(grow float32) BaseTableEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableEl) FlexShrink(shrink float32) BaseTableEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableEl) Font(font gk.Font) BaseTableEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableEl) FontFamily(familyName string) BaseTableEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableEl) FontFeatures(features gk.FontFeatures) BaseTableEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1910,26 +2457,38 @@ func (e BaseTableEl) FontFeatures(features gk.FontFeatures) BaseTableEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableEl) FontWeight(weight gk.FontWeight) BaseTableEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableEl) Gap(length gk.Length) BaseTableEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableEl) GapX(length gk.Length) BaseTableEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableEl) GapY(length gk.Length) BaseTableEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableEl) GridCols(cols uint16) BaseTableEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableEl) GridColsMaxContent(cols uint16) BaseTableEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1937,15 +2496,21 @@ func (e BaseTableEl) GridColsMaxContent(cols uint16) BaseTableEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableEl) GridColsMinContent(cols uint16) BaseTableEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableEl) GridRows(rows uint16) BaseTableEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableEl) GridRowsMaxContent(rows uint16) BaseTableEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1953,16 +2518,22 @@ func (e BaseTableEl) GridRowsMaxContent(rows uint16) BaseTableEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableEl) GridRowsMinContent(rows uint16) BaseTableEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableEl) H(length gk.Length) BaseTableEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableEl) Inset(length gk.Length) BaseTableEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1970,113 +2541,165 @@ func (e BaseTableEl) Inset(length gk.Length) BaseTableEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableEl) Left(length gk.Length) BaseTableEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableEl) LineClamp(lines int) BaseTableEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableEl) LineHeight(lineHeight gk.Length) BaseTableEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableEl) M(length gk.Length) BaseTableEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableEl) MaxH(length gk.Length) BaseTableEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableEl) MaxSize(length gk.Length) BaseTableEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableEl) MaxW(length gk.Length) BaseTableEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableEl) Mb(length gk.Length) BaseTableEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableEl) MinH(length gk.Length) BaseTableEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableEl) MinSize(length gk.Length) BaseTableEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableEl) MinW(length gk.Length) BaseTableEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableEl) Ml(length gk.Length) BaseTableEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableEl) Mr(length gk.Length) BaseTableEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableEl) Mt(length gk.Length) BaseTableEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableEl) Mx(length gk.Length) BaseTableEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableEl) My(length gk.Length) BaseTableEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableEl) Opacity(opacity float32) BaseTableEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableEl) P(length gk.Length) BaseTableEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableEl) Pb(length gk.Length) BaseTableEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableEl) Pl(length gk.Length) BaseTableEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableEl) Pr(length gk.Length) BaseTableEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableEl) Pt(length gk.Length) BaseTableEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableEl) Px(length gk.Length) BaseTableEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableEl) Py(length gk.Length) BaseTableEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableEl) Right(length gk.Length) BaseTableEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableEl) Rounded(length gk.Length) BaseTableEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2084,6 +2707,8 @@ func (e BaseTableEl) Rounded(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableEl) RoundedB(length gk.Length) BaseTableEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2091,6 +2716,8 @@ func (e BaseTableEl) RoundedB(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableEl) RoundedBl(length gk.Length) BaseTableEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2098,6 +2725,8 @@ func (e BaseTableEl) RoundedBl(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableEl) RoundedBr(length gk.Length) BaseTableEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2105,6 +2734,8 @@ func (e BaseTableEl) RoundedBr(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableEl) RoundedL(length gk.Length) BaseTableEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2112,6 +2743,8 @@ func (e BaseTableEl) RoundedL(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableEl) RoundedR(length gk.Length) BaseTableEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2119,6 +2752,8 @@ func (e BaseTableEl) RoundedR(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableEl) RoundedT(length gk.Length) BaseTableEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2126,6 +2761,8 @@ func (e BaseTableEl) RoundedT(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableEl) RoundedTl(length gk.Length) BaseTableEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2133,18 +2770,26 @@ func (e BaseTableEl) RoundedTl(length gk.Length) BaseTableEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableEl) RoundedTr(length gk.Length) BaseTableEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableEl) RowEnd(end int16) BaseTableEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableEl) RowSpan(span uint16) BaseTableEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableEl) RowStart(start int16) BaseTableEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2154,21 +2799,29 @@ func (e BaseTableEl) RowStart(start int16) BaseTableEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableEl) ScrollbarWidth(width gk.Length) BaseTableEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableEl) Shadow(shadows []gk.BoxShadow) BaseTableEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableEl) Size(length gk.Length) BaseTableEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableEl) TextAlign(align gk.TextAlign) BaseTableEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2177,23 +2830,31 @@ func (e BaseTableEl) TextAlign(align gk.TextAlign) BaseTableEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableEl) TextBg(bg gk.Color) BaseTableEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableEl) TextColor(color gk.Color) BaseTableEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableEl) TextDecorationColor(color gk.Color) BaseTableEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableEl) TextOverflow(overflow gk.TextOverflow) BaseTableEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2202,6 +2863,8 @@ func (e BaseTableEl) TextOverflow(overflow gk.TextOverflow) BaseTableEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableEl) TextSize(size gk.Length) BaseTableEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2209,23 +2872,32 @@ func (e BaseTableEl) TextSize(size gk.Length) BaseTableEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableEl) Top(length gk.Length) BaseTableEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableEl) W(length gk.Length) BaseTableEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e BaseTableEl) Text(s string) BaseTableEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableEl) ChildView(v gk.View) BaseTableEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableEl) Child(child gk.Element) BaseTableEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableEl) Children(children ...gk.Element) BaseTableEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -2235,6 +2907,8 @@ func (e BaseTableEl) Children(children ...gk.Element) BaseTableEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableEl) BlockMouseExceptScroll() BaseTableEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -2242,6 +2916,8 @@ func (e BaseTableEl) BlockMouseExceptScroll() BaseTableEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableEl) CanDrop(predicate gk.DropAccept) BaseTableEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -2251,6 +2927,8 @@ func (e BaseTableEl) CanDrop(predicate gk.DropAccept) BaseTableEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableEl) CaptureAction(listener gk.ActionHandler) BaseTableEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -2260,12 +2938,14 @@ func (e BaseTableEl) CaptureAction(listener gk.ActionHandler) BaseTableEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2275,12 +2955,14 @@ func (e BaseTableEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableEl
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -2290,6 +2972,8 @@ func (e BaseTableEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2299,6 +2983,8 @@ func (e BaseTableEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Bas
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2308,6 +2994,8 @@ func (e BaseTableEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseT
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2317,12 +3005,16 @@ func (e BaseTableEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePre
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableEl) DragOver(f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -2330,6 +3022,8 @@ func (e BaseTableEl) DragOver(f gk.StyleRefinement) BaseTableEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableEl) Focus(f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -2339,30 +3033,40 @@ func (e BaseTableEl) Focus(f gk.StyleRefinement) BaseTableEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableEl) FocusVisible(f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableEl) Group(group string) BaseTableEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableEl) Hover(f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -2370,6 +3074,8 @@ func (e BaseTableEl) Hover(f gk.StyleRefinement) BaseTableEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableEl) InFocus(f gk.StyleRefinement) BaseTableEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -2377,6 +3083,8 @@ func (e BaseTableEl) InFocus(f gk.StyleRefinement) BaseTableEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableEl) KeyContext(keyContext string) BaseTableEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -2384,12 +3092,16 @@ func (e BaseTableEl) KeyContext(keyContext string) BaseTableEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableEl) Occlude() BaseTableEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableEl) OnAction(listener gk.ActionHandler) BaseTableEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -2399,12 +3111,14 @@ func (e BaseTableEl) OnAction(listener gk.ActionHandler) BaseTableEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2415,6 +3129,8 @@ func (e BaseTableEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -2425,6 +3141,8 @@ func (e BaseTableEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEven
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -2436,6 +3154,8 @@ func (e BaseTableEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e 
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -2445,6 +3165,8 @@ func (e BaseTableEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) Ba
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -2457,6 +3179,8 @@ func (e BaseTableEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableE
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -2466,6 +3190,8 @@ func (e BaseTableEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2475,6 +3201,8 @@ func (e BaseTableEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTabl
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2484,6 +3212,8 @@ func (e BaseTableEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableE
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -2493,12 +3223,14 @@ func (e BaseTableEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersC
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -2509,12 +3241,14 @@ func (e BaseTableEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.C
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -2524,12 +3258,14 @@ func (e BaseTableEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -2539,12 +3275,14 @@ func (e BaseTableEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -2554,6 +3292,8 @@ func (e BaseTableEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2563,12 +3303,14 @@ func (e BaseTableEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressure
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -2579,12 +3321,14 @@ func (e BaseTableEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -2594,6 +3338,8 @@ func (e BaseTableEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -2603,6 +3349,8 @@ func (e BaseTableEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTabl
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -2612,11 +3360,15 @@ func (e BaseTableEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTa
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableEl) TabGroup() BaseTableEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableEl) TabIndex(index int) BaseTableEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -2626,6 +3378,8 @@ func (e BaseTableEl) TabIndex(index int) BaseTableEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableEl) TabStop(tabStop bool) BaseTableEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -2633,6 +3387,8 @@ func (e BaseTableEl) TabStop(tabStop bool) BaseTableEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -2640,12 +3396,14 @@ func (e BaseTableEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableEl) WindowControlArea(area gk.WindowControlArea) BaseTableEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -2653,6 +3411,8 @@ func (e BaseTableEl) WindowControlArea(area gk.WindowControlArea) BaseTableEl {
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -2664,25 +3424,31 @@ func (e BaseTableEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableEl) AccessibilityID(id string) BaseTableEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableEl) Active(f gk.StyleRefinement) BaseTableEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -2691,19 +3457,25 @@ func (e BaseTableEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseT
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableEl) AriaActiveDescendant() BaseTableEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableEl) AriaColumnCount(count int) BaseTableEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableEl) AriaColumnIndex(index int) BaseTableEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -2712,12 +3484,16 @@ func (e BaseTableEl) AriaColumnIndex(index int) BaseTableEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableEl) AriaDescription(description string) BaseTableEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableEl) AriaExpanded(expanded bool) BaseTableEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -2728,36 +3504,48 @@ func (e BaseTableEl) AriaExpanded(expanded bool) BaseTableEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableEl) AriaKeyshortcuts(keyshortcuts string) BaseTableEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableEl) AriaLabel(label string) BaseTableEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableEl) AriaLevel(level int) BaseTableEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableEl) AriaMaxNumericValue(value float64) BaseTableEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableEl) AriaMinNumericValue(value float64) BaseTableEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableEl) AriaNumericValue(value float64) BaseTableEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -2765,6 +3553,8 @@ func (e BaseTableEl) AriaNumericValue(value float64) BaseTableEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableEl) AriaNumericValueStep(step float64) BaseTableEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -2772,42 +3562,56 @@ func (e BaseTableEl) AriaNumericValueStep(step float64) BaseTableEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableEl) AriaPlaceholder(placeholder string) BaseTableEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableEl) AriaPositionInSet(position int) BaseTableEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableEl) AriaRowCount(count int) BaseTableEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableEl) AriaRowIndex(index int) BaseTableEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableEl) AriaSelected(selected bool) BaseTableEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableEl) AriaSizeOfSet(size int) BaseTableEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableEl) AriaValue(value string) BaseTableEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -2817,18 +3621,24 @@ func (e BaseTableEl) AriaValue(value string) BaseTableEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableEl) Focusable() BaseTableEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -2837,6 +3647,8 @@ func (e BaseTableEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTab
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -2845,6 +3657,8 @@ func (e BaseTableEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableEl {
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -2854,12 +3668,14 @@ func (e BaseTableEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableEl
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -2869,12 +3685,14 @@ func (e BaseTableEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -2886,6 +3704,8 @@ func (e BaseTableEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -2900,24 +3720,32 @@ func (e BaseTableEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableEl
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableEl) OverflowScroll() BaseTableEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableEl) OverflowXScroll() BaseTableEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableEl) OverflowYScroll() BaseTableEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -2926,6 +3754,8 @@ func (e BaseTableEl) OverflowYScroll() BaseTableEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableEl) RestrictScrollToAxis() BaseTableEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -2934,6 +3764,8 @@ func (e BaseTableEl) RestrictScrollToAxis() BaseTableEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableEl) Role(role gk.Role) BaseTableEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -2941,6 +3773,8 @@ func (e BaseTableEl) Role(role gk.Role) BaseTableEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -2950,12 +3784,16 @@ func (e BaseTableEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableEl) TooltipShowDelay(delay time.Duration) BaseTableEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -2966,7 +3804,7 @@ type BaseTableBodyEl struct{ rt.ElAnimatableElement }
 
 // Create An unstyled table body group.
 //
-// BaseTableBody is <gpui_kit::base::TableBody>::new.
+// BaseTableBody calls <gpui_kit::base::TableBody>::new.
 func BaseTableBody(id gk.ID, st ...gk.Style) BaseTableBodyEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(394)
@@ -2983,24 +3821,32 @@ func BaseTableBody(id gk.ID, st ...gk.Style) BaseTableBodyEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableBodyEl) KeepTextSelection(id gk.ID) BaseTableBodyEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableBodyEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableBodyEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableBodyEl) BorderE(width gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableBodyEl) BorderS(width gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3008,136 +3854,178 @@ func (e BaseTableBodyEl) BorderS(width gk.Length) BaseTableBodyEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableBodyEl) FlexRowDir() BaseTableBodyEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableBodyEl) InsetE(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableBodyEl) InsetS(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableBodyEl) JustifyFlexEnd() BaseTableBodyEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableBodyEl) JustifyFlexStart() BaseTableBodyEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableBodyEl) Me(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableBodyEl) Ms(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableBodyEl) Pe(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableBodyEl) Ps(length gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableBodyEl) RoundedE(radius gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableBodyEl) RoundedS(radius gk.Length) BaseTableBodyEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableBodyEl) TextEnd() BaseTableBodyEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableBodyEl) TextStart() BaseTableBodyEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableBodyEl) CornerRadii(radius gk.Corners) BaseTableBodyEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableBodyEl) DebugBlue() BaseTableBodyEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableBodyEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableBodyEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableBodyEl) DebugGreen() BaseTableBodyEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableBodyEl) DebugPink() BaseTableBodyEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableBodyEl) DebugRed() BaseTableBodyEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableBodyEl) DebugYellow() BaseTableBodyEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableBodyEl) FontBlack() BaseTableBodyEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableBodyEl) FontBold() BaseTableBodyEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableBodyEl) FontExtrabold() BaseTableBodyEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableBodyEl) FontExtralight() BaseTableBodyEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableBodyEl) FontLight() BaseTableBodyEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableBodyEl) FontMedium() BaseTableBodyEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableBodyEl) FontNormal() BaseTableBodyEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableBodyEl) FontSemibold() BaseTableBodyEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableBodyEl) FontThin() BaseTableBodyEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3146,18 +4034,23 @@ func (e BaseTableBodyEl) FontThin() BaseTableBodyEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableBodyEl) HFlex() BaseTableBodyEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableBodyEl) Margins(margins gk.EdgesInto) BaseTableBodyEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableBodyEl) Paddings(paddings gk.EdgesInto) BaseTableBodyEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableBodyEl) RefineStyle(style gk.StyleRefinement) BaseTableBodyEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3167,21 +4060,29 @@ func (e BaseTableBodyEl) RefineStyle(style gk.StyleRefinement) BaseTableBodyEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableBodyEl) VFlex() BaseTableBodyEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableBodyEl) Style(st ...gk.Style) BaseTableBodyEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableBodyEl) AspectRatio(ratio float32) BaseTableBodyEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableBodyEl) Bg(fill gk.Fill) BaseTableBodyEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableBodyEl) Border(length gk.Length) BaseTableBodyEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3189,12 +4090,16 @@ func (e BaseTableBodyEl) Border(length gk.Length) BaseTableBodyEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableBodyEl) BorderB(length gk.Length) BaseTableBodyEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableBodyEl) BorderColor(borderColor gk.Color) BaseTableBodyEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3202,6 +4107,8 @@ func (e BaseTableBodyEl) BorderColor(borderColor gk.Color) BaseTableBodyEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableBodyEl) BorderL(length gk.Length) BaseTableBodyEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3209,6 +4116,8 @@ func (e BaseTableBodyEl) BorderL(length gk.Length) BaseTableBodyEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableBodyEl) BorderR(length gk.Length) BaseTableBodyEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3216,6 +4125,8 @@ func (e BaseTableBodyEl) BorderR(length gk.Length) BaseTableBodyEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableBodyEl) BorderT(length gk.Length) BaseTableBodyEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3223,6 +4134,8 @@ func (e BaseTableBodyEl) BorderT(length gk.Length) BaseTableBodyEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableBodyEl) BorderX(length gk.Length) BaseTableBodyEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3230,6 +4143,8 @@ func (e BaseTableBodyEl) BorderX(length gk.Length) BaseTableBodyEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableBodyEl) BorderY(length gk.Length) BaseTableBodyEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3237,30 +4152,40 @@ func (e BaseTableBodyEl) BorderY(length gk.Length) BaseTableBodyEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableBodyEl) Bottom(length gk.Length) BaseTableBodyEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableBodyEl) ColEnd(end int16) BaseTableBodyEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableBodyEl) ColSpan(span uint16) BaseTableBodyEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableBodyEl) ColStart(start int16) BaseTableBodyEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableBodyEl) Cursor(cursor gk.CursorStyle) BaseTableBodyEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3268,36 +4193,48 @@ func (e BaseTableBodyEl) Cursor(cursor gk.CursorStyle) BaseTableBodyEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableBodyEl) FlexBasis(basis gk.Length) BaseTableBodyEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableBodyEl) FlexGrow(grow float32) BaseTableBodyEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableBodyEl) FlexShrink(shrink float32) BaseTableBodyEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableBodyEl) Font(font gk.Font) BaseTableBodyEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableBodyEl) FontFamily(familyName string) BaseTableBodyEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableBodyEl) FontFeatures(features gk.FontFeatures) BaseTableBodyEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3306,12 +4243,16 @@ func (e BaseTableBodyEl) FontFeatures(features gk.FontFeatures) BaseTableBodyEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableBodyEl) FontWeight(weight gk.FontWeight) BaseTableBodyEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableBodyEl) Gap(length gk.Length) BaseTableBodyEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3319,6 +4260,8 @@ func (e BaseTableBodyEl) Gap(length gk.Length) BaseTableBodyEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableBodyEl) GapX(length gk.Length) BaseTableBodyEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3326,18 +4269,24 @@ func (e BaseTableBodyEl) GapX(length gk.Length) BaseTableBodyEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableBodyEl) GapY(length gk.Length) BaseTableBodyEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableBodyEl) GridCols(cols uint16) BaseTableBodyEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableBodyEl) GridColsMaxContent(cols uint16) BaseTableBodyEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3345,18 +4294,24 @@ func (e BaseTableBodyEl) GridColsMaxContent(cols uint16) BaseTableBodyEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableBodyEl) GridColsMinContent(cols uint16) BaseTableBodyEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableBodyEl) GridRows(rows uint16) BaseTableBodyEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableBodyEl) GridRowsMaxContent(rows uint16) BaseTableBodyEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3364,12 +4319,16 @@ func (e BaseTableBodyEl) GridRowsMaxContent(rows uint16) BaseTableBodyEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableBodyEl) GridRowsMinContent(rows uint16) BaseTableBodyEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableBodyEl) H(length gk.Length) BaseTableBodyEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3377,6 +4336,8 @@ func (e BaseTableBodyEl) H(length gk.Length) BaseTableBodyEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableBodyEl) Inset(length gk.Length) BaseTableBodyEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3384,6 +4345,8 @@ func (e BaseTableBodyEl) Inset(length gk.Length) BaseTableBodyEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableBodyEl) Left(length gk.Length) BaseTableBodyEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3391,36 +4354,48 @@ func (e BaseTableBodyEl) Left(length gk.Length) BaseTableBodyEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableBodyEl) LineClamp(lines int) BaseTableBodyEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableBodyEl) LineHeight(lineHeight gk.Length) BaseTableBodyEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableBodyEl) M(length gk.Length) BaseTableBodyEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableBodyEl) MaxH(length gk.Length) BaseTableBodyEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableBodyEl) MaxSize(length gk.Length) BaseTableBodyEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableBodyEl) MaxW(length gk.Length) BaseTableBodyEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3428,24 +4403,32 @@ func (e BaseTableBodyEl) MaxW(length gk.Length) BaseTableBodyEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableBodyEl) Mb(length gk.Length) BaseTableBodyEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableBodyEl) MinH(length gk.Length) BaseTableBodyEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableBodyEl) MinSize(length gk.Length) BaseTableBodyEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableBodyEl) MinW(length gk.Length) BaseTableBodyEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3453,6 +4436,8 @@ func (e BaseTableBodyEl) MinW(length gk.Length) BaseTableBodyEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableBodyEl) Ml(length gk.Length) BaseTableBodyEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3460,6 +4445,8 @@ func (e BaseTableBodyEl) Ml(length gk.Length) BaseTableBodyEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableBodyEl) Mr(length gk.Length) BaseTableBodyEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3467,6 +4454,8 @@ func (e BaseTableBodyEl) Mr(length gk.Length) BaseTableBodyEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableBodyEl) Mt(length gk.Length) BaseTableBodyEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3474,6 +4463,8 @@ func (e BaseTableBodyEl) Mt(length gk.Length) BaseTableBodyEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableBodyEl) Mx(length gk.Length) BaseTableBodyEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3481,18 +4472,24 @@ func (e BaseTableBodyEl) Mx(length gk.Length) BaseTableBodyEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableBodyEl) My(length gk.Length) BaseTableBodyEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableBodyEl) Opacity(opacity float32) BaseTableBodyEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableBodyEl) P(length gk.Length) BaseTableBodyEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3500,6 +4497,8 @@ func (e BaseTableBodyEl) P(length gk.Length) BaseTableBodyEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableBodyEl) Pb(length gk.Length) BaseTableBodyEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3507,6 +4506,8 @@ func (e BaseTableBodyEl) Pb(length gk.Length) BaseTableBodyEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableBodyEl) Pl(length gk.Length) BaseTableBodyEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3514,6 +4515,8 @@ func (e BaseTableBodyEl) Pl(length gk.Length) BaseTableBodyEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableBodyEl) Pr(length gk.Length) BaseTableBodyEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3521,6 +4524,8 @@ func (e BaseTableBodyEl) Pr(length gk.Length) BaseTableBodyEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableBodyEl) Pt(length gk.Length) BaseTableBodyEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3528,6 +4533,8 @@ func (e BaseTableBodyEl) Pt(length gk.Length) BaseTableBodyEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableBodyEl) Px(length gk.Length) BaseTableBodyEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3535,6 +4542,8 @@ func (e BaseTableBodyEl) Px(length gk.Length) BaseTableBodyEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableBodyEl) Py(length gk.Length) BaseTableBodyEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3542,12 +4551,16 @@ func (e BaseTableBodyEl) Py(length gk.Length) BaseTableBodyEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableBodyEl) Right(length gk.Length) BaseTableBodyEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableBodyEl) Rounded(length gk.Length) BaseTableBodyEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3555,6 +4568,8 @@ func (e BaseTableBodyEl) Rounded(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableBodyEl) RoundedB(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3562,6 +4577,8 @@ func (e BaseTableBodyEl) RoundedB(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableBodyEl) RoundedBl(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3569,6 +4586,8 @@ func (e BaseTableBodyEl) RoundedBl(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableBodyEl) RoundedBr(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3576,6 +4595,8 @@ func (e BaseTableBodyEl) RoundedBr(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableBodyEl) RoundedL(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3583,6 +4604,8 @@ func (e BaseTableBodyEl) RoundedL(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableBodyEl) RoundedR(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3590,6 +4613,8 @@ func (e BaseTableBodyEl) RoundedR(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableBodyEl) RoundedT(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3597,6 +4622,8 @@ func (e BaseTableBodyEl) RoundedT(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableBodyEl) RoundedTl(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3604,24 +4631,32 @@ func (e BaseTableBodyEl) RoundedTl(length gk.Length) BaseTableBodyEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableBodyEl) RoundedTr(length gk.Length) BaseTableBodyEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableBodyEl) RowEnd(end int16) BaseTableBodyEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableBodyEl) RowSpan(span uint16) BaseTableBodyEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableBodyEl) RowStart(start int16) BaseTableBodyEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3631,24 +4666,32 @@ func (e BaseTableBodyEl) RowStart(start int16) BaseTableBodyEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableBodyEl) ScrollbarWidth(width gk.Length) BaseTableBodyEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableBodyEl) Shadow(shadows []gk.BoxShadow) BaseTableBodyEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableBodyEl) Size(length gk.Length) BaseTableBodyEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableBodyEl) TextAlign(align gk.TextAlign) BaseTableBodyEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3657,6 +4700,8 @@ func (e BaseTableBodyEl) TextAlign(align gk.TextAlign) BaseTableBodyEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableBodyEl) TextBg(bg gk.Color) BaseTableBodyEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3665,18 +4710,24 @@ func (e BaseTableBodyEl) TextBg(bg gk.Color) BaseTableBodyEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableBodyEl) TextColor(color gk.Color) BaseTableBodyEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableBodyEl) TextDecorationColor(color gk.Color) BaseTableBodyEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableBodyEl) TextOverflow(overflow gk.TextOverflow) BaseTableBodyEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3685,6 +4736,8 @@ func (e BaseTableBodyEl) TextOverflow(overflow gk.TextOverflow) BaseTableBodyEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableBodyEl) TextSize(size gk.Length) BaseTableBodyEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3692,29 +4745,38 @@ func (e BaseTableBodyEl) TextSize(size gk.Length) BaseTableBodyEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableBodyEl) Top(length gk.Length) BaseTableBodyEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableBodyEl) W(length gk.Length) BaseTableBodyEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseTableBodyEl) Text(s string) BaseTableBodyEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableBodyEl) ChildView(v gk.View) BaseTableBodyEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableBodyEl) Child(child gk.Element) BaseTableBodyEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableBodyEl) Children(children ...gk.Element) BaseTableBodyEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -3724,6 +4786,8 @@ func (e BaseTableBodyEl) Children(children ...gk.Element) BaseTableBodyEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableBodyEl) BlockMouseExceptScroll() BaseTableBodyEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -3731,6 +4795,8 @@ func (e BaseTableBodyEl) BlockMouseExceptScroll() BaseTableBodyEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableBodyEl) CanDrop(predicate gk.DropAccept) BaseTableBodyEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -3740,6 +4806,8 @@ func (e BaseTableBodyEl) CanDrop(predicate gk.DropAccept) BaseTableBodyEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableBodyEl) CaptureAction(listener gk.ActionHandler) BaseTableBodyEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -3749,12 +4817,14 @@ func (e BaseTableBodyEl) CaptureAction(listener gk.ActionHandler) BaseTableBodyE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableBodyEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableBodyEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -3764,12 +4834,14 @@ func (e BaseTableBodyEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTab
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableBodyEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableBodyEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -3779,6 +4851,8 @@ func (e BaseTableBodyEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTable
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableBodyEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableBodyEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -3788,6 +4862,8 @@ func (e BaseTableBodyEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableBodyEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableBodyEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -3797,6 +4873,8 @@ func (e BaseTableBodyEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) B
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableBodyEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableBodyEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -3806,12 +4884,16 @@ func (e BaseTableBodyEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableBodyEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableBodyEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableBodyEl) DragOver(f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -3819,6 +4901,8 @@ func (e BaseTableBodyEl) DragOver(f gk.StyleRefinement) BaseTableBodyEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableBodyEl) Focus(f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -3828,30 +4912,40 @@ func (e BaseTableBodyEl) Focus(f gk.StyleRefinement) BaseTableBodyEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableBodyEl) FocusVisible(f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableBodyEl) Group(group string) BaseTableBodyEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableBodyEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableBodyEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableBodyEl) Hover(f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -3859,6 +4953,8 @@ func (e BaseTableBodyEl) Hover(f gk.StyleRefinement) BaseTableBodyEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableBodyEl) InFocus(f gk.StyleRefinement) BaseTableBodyEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -3866,6 +4962,8 @@ func (e BaseTableBodyEl) InFocus(f gk.StyleRefinement) BaseTableBodyEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableBodyEl) KeyContext(keyContext string) BaseTableBodyEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -3873,6 +4971,8 @@ func (e BaseTableBodyEl) KeyContext(keyContext string) BaseTableBodyEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableBodyEl) Occlude() BaseTableBodyEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -3882,6 +4982,8 @@ func (e BaseTableBodyEl) Occlude() BaseTableBodyEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableBodyEl) OnAction(listener gk.ActionHandler) BaseTableBodyEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -3891,12 +4993,14 @@ func (e BaseTableBodyEl) OnAction(listener gk.ActionHandler) BaseTableBodyEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableBodyEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableBodyEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -3907,6 +5011,8 @@ func (e BaseTableBodyEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableBod
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableBodyEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableBodyEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -3917,6 +5023,8 @@ func (e BaseTableBodyEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableBodyEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableBodyEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -3928,6 +5036,8 @@ func (e BaseTableBodyEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableBodyEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableBodyEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -3937,6 +5047,8 @@ func (e BaseTableBodyEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableBodyEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableBodyEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -3949,6 +5061,8 @@ func (e BaseTableBodyEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTa
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableBodyEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableBodyEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -3958,6 +5072,8 @@ func (e BaseTableBodyEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableBodyEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableBodyEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -3967,6 +5083,8 @@ func (e BaseTableBodyEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Base
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableBodyEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableBodyEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -3976,6 +5094,8 @@ func (e BaseTableBodyEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTa
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableBodyEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableBodyEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -3985,12 +5105,14 @@ func (e BaseTableBodyEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableBodyEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableBodyEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -4001,12 +5123,14 @@ func (e BaseTableBodyEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableBodyEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableBodyEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -4016,12 +5140,14 @@ func (e BaseTableBodyEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableBod
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableBodyEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableBodyEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -4031,12 +5157,14 @@ func (e BaseTableBodyEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableBodyEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableBodyEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableBodyEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -4046,6 +5174,8 @@ func (e BaseTableBodyEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableBodyEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableBodyEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -4055,12 +5185,14 @@ func (e BaseTableBodyEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableBodyEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableBodyEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -4071,12 +5203,14 @@ func (e BaseTableBodyEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableBodyEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableBodyEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableBodyEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -4086,6 +5220,8 @@ func (e BaseTableBodyEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableBodyEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableBodyEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -4095,6 +5231,8 @@ func (e BaseTableBodyEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Base
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableBodyEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableBodyEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -4104,6 +5242,8 @@ func (e BaseTableBodyEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Ba
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableBodyEl) TabGroup() BaseTableBodyEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -4112,6 +5252,8 @@ func (e BaseTableBodyEl) TabGroup() BaseTableBodyEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableBodyEl) TabIndex(index int) BaseTableBodyEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -4121,6 +5263,8 @@ func (e BaseTableBodyEl) TabIndex(index int) BaseTableBodyEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableBodyEl) TabStop(tabStop bool) BaseTableBodyEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -4128,6 +5272,8 @@ func (e BaseTableBodyEl) TabStop(tabStop bool) BaseTableBodyEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableBodyEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableBodyEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -4135,12 +5281,14 @@ func (e BaseTableBodyEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableBodyEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableBodyEl) WindowControlArea(area gk.WindowControlArea) BaseTableBodyEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -4148,6 +5296,8 @@ func (e BaseTableBodyEl) WindowControlArea(area gk.WindowControlArea) BaseTableB
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableBodyEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableBodyEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -4159,25 +5309,31 @@ func (e BaseTableBodyEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableBodyEl
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableBodyEl) AccessibilityID(id string) BaseTableBodyEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableBodyEl) Active(f gk.StyleRefinement) BaseTableBodyEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableBodyEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableBodyEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -4186,19 +5342,25 @@ func (e BaseTableBodyEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) B
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableBodyEl) AriaActiveDescendant() BaseTableBodyEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableBodyEl) AriaColumnCount(count int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableBodyEl) AriaColumnIndex(index int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -4207,12 +5369,16 @@ func (e BaseTableBodyEl) AriaColumnIndex(index int) BaseTableBodyEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableBodyEl) AriaDescription(description string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableBodyEl) AriaExpanded(expanded bool) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -4223,36 +5389,48 @@ func (e BaseTableBodyEl) AriaExpanded(expanded bool) BaseTableBodyEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableBodyEl) AriaKeyshortcuts(keyshortcuts string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableBodyEl) AriaLabel(label string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableBodyEl) AriaLevel(level int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableBodyEl) AriaMaxNumericValue(value float64) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableBodyEl) AriaMinNumericValue(value float64) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableBodyEl) AriaNumericValue(value float64) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -4260,6 +5438,8 @@ func (e BaseTableBodyEl) AriaNumericValue(value float64) BaseTableBodyEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableBodyEl) AriaNumericValueStep(step float64) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -4267,42 +5447,56 @@ func (e BaseTableBodyEl) AriaNumericValueStep(step float64) BaseTableBodyEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableBodyEl) AriaPlaceholder(placeholder string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableBodyEl) AriaPositionInSet(position int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableBodyEl) AriaRowCount(count int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableBodyEl) AriaRowIndex(index int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableBodyEl) AriaSelected(selected bool) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableBodyEl) AriaSizeOfSet(size int) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableBodyEl) AriaValue(value string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -4312,18 +5506,24 @@ func (e BaseTableBodyEl) AriaValue(value string) BaseTableBodyEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableBodyEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableBodyEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableBodyEl) Focusable() BaseTableBodyEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableBodyEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableBodyEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -4332,6 +5532,8 @@ func (e BaseTableBodyEl) GroupActive(groupName string, f gk.StyleRefinement) Bas
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableBodyEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableBodyEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -4340,6 +5542,8 @@ func (e BaseTableBodyEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableB
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableBodyEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableBodyEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -4349,12 +5553,14 @@ func (e BaseTableBodyEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTab
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableBodyEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableBodyEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableBodyEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -4364,12 +5570,14 @@ func (e BaseTableBodyEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableBodyEl 
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableBodyEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableBodyEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableBodyEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -4381,6 +5589,8 @@ func (e BaseTableBodyEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableBodyEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableBodyEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableBodyEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -4395,24 +5605,32 @@ func (e BaseTableBodyEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTab
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableBodyEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableBodyEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableBodyEl) OverflowScroll() BaseTableBodyEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableBodyEl) OverflowXScroll() BaseTableBodyEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableBodyEl) OverflowYScroll() BaseTableBodyEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -4421,6 +5639,8 @@ func (e BaseTableBodyEl) OverflowYScroll() BaseTableBodyEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableBodyEl) RestrictScrollToAxis() BaseTableBodyEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -4429,6 +5649,8 @@ func (e BaseTableBodyEl) RestrictScrollToAxis() BaseTableBodyEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableBodyEl) Role(role gk.Role) BaseTableBodyEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -4436,6 +5658,8 @@ func (e BaseTableBodyEl) Role(role gk.Role) BaseTableBodyEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableBodyEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableBodyEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -4445,12 +5669,16 @@ func (e BaseTableBodyEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableBodyEl 
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableBodyEl) TooltipShowDelay(delay time.Duration) BaseTableBodyEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableBodyEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableBodyEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -4461,7 +5689,7 @@ type BaseTableCaptionEl struct{ rt.ElAnimatableElement }
 
 // Create an unstyled table caption slot.
 //
-// BaseTableCaption is <gpui_kit::base::TableCaption>::new.
+// BaseTableCaption calls <gpui_kit::base::TableCaption>::new.
 func BaseTableCaption(id gk.ID, st ...gk.Style) BaseTableCaptionEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(395)
@@ -4478,24 +5706,32 @@ func BaseTableCaption(id gk.ID, st ...gk.Style) BaseTableCaptionEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableCaptionEl) KeepTextSelection(id gk.ID) BaseTableCaptionEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableCaptionEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableCaptionEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableCaptionEl) BorderE(width gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableCaptionEl) BorderS(width gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4503,163 +5739,205 @@ func (e BaseTableCaptionEl) BorderS(width gk.Length) BaseTableCaptionEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableCaptionEl) FlexRowDir() BaseTableCaptionEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableCaptionEl) InsetE(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableCaptionEl) InsetS(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableCaptionEl) JustifyFlexEnd() BaseTableCaptionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableCaptionEl) JustifyFlexStart() BaseTableCaptionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableCaptionEl) Me(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableCaptionEl) Ms(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableCaptionEl) Pe(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableCaptionEl) Ps(length gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableCaptionEl) RoundedE(radius gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableCaptionEl) RoundedS(radius gk.Length) BaseTableCaptionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableCaptionEl) TextEnd() BaseTableCaptionEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableCaptionEl) TextStart() BaseTableCaptionEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableCaptionEl) CornerRadii(radius gk.Corners) BaseTableCaptionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableCaptionEl) DebugBlue() BaseTableCaptionEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableCaptionEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableCaptionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableCaptionEl) DebugGreen() BaseTableCaptionEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableCaptionEl) DebugPink() BaseTableCaptionEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableCaptionEl) DebugRed() BaseTableCaptionEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableCaptionEl) DebugYellow() BaseTableCaptionEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableCaptionEl) FontBlack() BaseTableCaptionEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableCaptionEl) FontBold() BaseTableCaptionEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableCaptionEl) FontExtrabold() BaseTableCaptionEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableCaptionEl) FontExtralight() BaseTableCaptionEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableCaptionEl) FontLight() BaseTableCaptionEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableCaptionEl) FontMedium() BaseTableCaptionEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableCaptionEl) FontNormal() BaseTableCaptionEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableCaptionEl) FontSemibold() BaseTableCaptionEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableCaptionEl) FontThin() BaseTableCaptionEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4668,18 +5946,23 @@ func (e BaseTableCaptionEl) FontThin() BaseTableCaptionEl { tStyledExtFontThin(r
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableCaptionEl) HFlex() BaseTableCaptionEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableCaptionEl) Margins(margins gk.EdgesInto) BaseTableCaptionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableCaptionEl) Paddings(paddings gk.EdgesInto) BaseTableCaptionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableCaptionEl) RefineStyle(style gk.StyleRefinement) BaseTableCaptionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4689,27 +5972,35 @@ func (e BaseTableCaptionEl) RefineStyle(style gk.StyleRefinement) BaseTableCapti
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableCaptionEl) VFlex() BaseTableCaptionEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableCaptionEl) Style(st ...gk.Style) BaseTableCaptionEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableCaptionEl) AspectRatio(ratio float32) BaseTableCaptionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableCaptionEl) Bg(fill gk.Fill) BaseTableCaptionEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableCaptionEl) Border(length gk.Length) BaseTableCaptionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4717,12 +6008,16 @@ func (e BaseTableCaptionEl) Border(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableCaptionEl) BorderB(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableCaptionEl) BorderColor(borderColor gk.Color) BaseTableCaptionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4730,6 +6025,8 @@ func (e BaseTableCaptionEl) BorderColor(borderColor gk.Color) BaseTableCaptionEl
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableCaptionEl) BorderL(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4737,6 +6034,8 @@ func (e BaseTableCaptionEl) BorderL(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableCaptionEl) BorderR(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4744,6 +6043,8 @@ func (e BaseTableCaptionEl) BorderR(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableCaptionEl) BorderT(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4751,6 +6052,8 @@ func (e BaseTableCaptionEl) BorderT(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableCaptionEl) BorderX(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4758,6 +6061,8 @@ func (e BaseTableCaptionEl) BorderX(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableCaptionEl) BorderY(length gk.Length) BaseTableCaptionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4765,30 +6070,40 @@ func (e BaseTableCaptionEl) BorderY(length gk.Length) BaseTableCaptionEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableCaptionEl) Bottom(length gk.Length) BaseTableCaptionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableCaptionEl) ColEnd(end int16) BaseTableCaptionEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableCaptionEl) ColSpan(span uint16) BaseTableCaptionEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableCaptionEl) ColStart(start int16) BaseTableCaptionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableCaptionEl) Cursor(cursor gk.CursorStyle) BaseTableCaptionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4796,36 +6111,48 @@ func (e BaseTableCaptionEl) Cursor(cursor gk.CursorStyle) BaseTableCaptionEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableCaptionEl) FlexBasis(basis gk.Length) BaseTableCaptionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableCaptionEl) FlexGrow(grow float32) BaseTableCaptionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableCaptionEl) FlexShrink(shrink float32) BaseTableCaptionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableCaptionEl) Font(font gk.Font) BaseTableCaptionEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableCaptionEl) FontFamily(familyName string) BaseTableCaptionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableCaptionEl) FontFeatures(features gk.FontFeatures) BaseTableCaptionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4834,12 +6161,16 @@ func (e BaseTableCaptionEl) FontFeatures(features gk.FontFeatures) BaseTableCapt
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableCaptionEl) FontWeight(weight gk.FontWeight) BaseTableCaptionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableCaptionEl) Gap(length gk.Length) BaseTableCaptionEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4847,6 +6178,8 @@ func (e BaseTableCaptionEl) Gap(length gk.Length) BaseTableCaptionEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableCaptionEl) GapX(length gk.Length) BaseTableCaptionEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4854,18 +6187,24 @@ func (e BaseTableCaptionEl) GapX(length gk.Length) BaseTableCaptionEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableCaptionEl) GapY(length gk.Length) BaseTableCaptionEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableCaptionEl) GridCols(cols uint16) BaseTableCaptionEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableCaptionEl) GridColsMaxContent(cols uint16) BaseTableCaptionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4873,18 +6212,24 @@ func (e BaseTableCaptionEl) GridColsMaxContent(cols uint16) BaseTableCaptionEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableCaptionEl) GridColsMinContent(cols uint16) BaseTableCaptionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableCaptionEl) GridRows(rows uint16) BaseTableCaptionEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableCaptionEl) GridRowsMaxContent(rows uint16) BaseTableCaptionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4892,12 +6237,16 @@ func (e BaseTableCaptionEl) GridRowsMaxContent(rows uint16) BaseTableCaptionEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableCaptionEl) GridRowsMinContent(rows uint16) BaseTableCaptionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableCaptionEl) H(length gk.Length) BaseTableCaptionEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4905,6 +6254,8 @@ func (e BaseTableCaptionEl) H(length gk.Length) BaseTableCaptionEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableCaptionEl) Inset(length gk.Length) BaseTableCaptionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4912,6 +6263,8 @@ func (e BaseTableCaptionEl) Inset(length gk.Length) BaseTableCaptionEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableCaptionEl) Left(length gk.Length) BaseTableCaptionEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4919,36 +6272,48 @@ func (e BaseTableCaptionEl) Left(length gk.Length) BaseTableCaptionEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableCaptionEl) LineClamp(lines int) BaseTableCaptionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableCaptionEl) LineHeight(lineHeight gk.Length) BaseTableCaptionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableCaptionEl) M(length gk.Length) BaseTableCaptionEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableCaptionEl) MaxH(length gk.Length) BaseTableCaptionEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableCaptionEl) MaxSize(length gk.Length) BaseTableCaptionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableCaptionEl) MaxW(length gk.Length) BaseTableCaptionEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4956,24 +6321,32 @@ func (e BaseTableCaptionEl) MaxW(length gk.Length) BaseTableCaptionEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableCaptionEl) Mb(length gk.Length) BaseTableCaptionEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableCaptionEl) MinH(length gk.Length) BaseTableCaptionEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableCaptionEl) MinSize(length gk.Length) BaseTableCaptionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableCaptionEl) MinW(length gk.Length) BaseTableCaptionEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4981,6 +6354,8 @@ func (e BaseTableCaptionEl) MinW(length gk.Length) BaseTableCaptionEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableCaptionEl) Ml(length gk.Length) BaseTableCaptionEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4988,6 +6363,8 @@ func (e BaseTableCaptionEl) Ml(length gk.Length) BaseTableCaptionEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableCaptionEl) Mr(length gk.Length) BaseTableCaptionEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4995,6 +6372,8 @@ func (e BaseTableCaptionEl) Mr(length gk.Length) BaseTableCaptionEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableCaptionEl) Mt(length gk.Length) BaseTableCaptionEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -5002,6 +6381,8 @@ func (e BaseTableCaptionEl) Mt(length gk.Length) BaseTableCaptionEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableCaptionEl) Mx(length gk.Length) BaseTableCaptionEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -5009,18 +6390,24 @@ func (e BaseTableCaptionEl) Mx(length gk.Length) BaseTableCaptionEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableCaptionEl) My(length gk.Length) BaseTableCaptionEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableCaptionEl) Opacity(opacity float32) BaseTableCaptionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableCaptionEl) P(length gk.Length) BaseTableCaptionEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5028,6 +6415,8 @@ func (e BaseTableCaptionEl) P(length gk.Length) BaseTableCaptionEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableCaptionEl) Pb(length gk.Length) BaseTableCaptionEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5035,6 +6424,8 @@ func (e BaseTableCaptionEl) Pb(length gk.Length) BaseTableCaptionEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableCaptionEl) Pl(length gk.Length) BaseTableCaptionEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5042,6 +6433,8 @@ func (e BaseTableCaptionEl) Pl(length gk.Length) BaseTableCaptionEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableCaptionEl) Pr(length gk.Length) BaseTableCaptionEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5049,6 +6442,8 @@ func (e BaseTableCaptionEl) Pr(length gk.Length) BaseTableCaptionEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableCaptionEl) Pt(length gk.Length) BaseTableCaptionEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5056,6 +6451,8 @@ func (e BaseTableCaptionEl) Pt(length gk.Length) BaseTableCaptionEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableCaptionEl) Px(length gk.Length) BaseTableCaptionEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5063,6 +6460,8 @@ func (e BaseTableCaptionEl) Px(length gk.Length) BaseTableCaptionEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableCaptionEl) Py(length gk.Length) BaseTableCaptionEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5070,12 +6469,16 @@ func (e BaseTableCaptionEl) Py(length gk.Length) BaseTableCaptionEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableCaptionEl) Right(length gk.Length) BaseTableCaptionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableCaptionEl) Rounded(length gk.Length) BaseTableCaptionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5083,6 +6486,8 @@ func (e BaseTableCaptionEl) Rounded(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableCaptionEl) RoundedB(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5090,6 +6495,8 @@ func (e BaseTableCaptionEl) RoundedB(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableCaptionEl) RoundedBl(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5097,6 +6504,8 @@ func (e BaseTableCaptionEl) RoundedBl(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableCaptionEl) RoundedBr(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5104,6 +6513,8 @@ func (e BaseTableCaptionEl) RoundedBr(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableCaptionEl) RoundedL(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5111,6 +6522,8 @@ func (e BaseTableCaptionEl) RoundedL(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableCaptionEl) RoundedR(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5118,6 +6531,8 @@ func (e BaseTableCaptionEl) RoundedR(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableCaptionEl) RoundedT(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5125,6 +6540,8 @@ func (e BaseTableCaptionEl) RoundedT(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableCaptionEl) RoundedTl(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5132,24 +6549,32 @@ func (e BaseTableCaptionEl) RoundedTl(length gk.Length) BaseTableCaptionEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableCaptionEl) RoundedTr(length gk.Length) BaseTableCaptionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableCaptionEl) RowEnd(end int16) BaseTableCaptionEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableCaptionEl) RowSpan(span uint16) BaseTableCaptionEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableCaptionEl) RowStart(start int16) BaseTableCaptionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5159,24 +6584,32 @@ func (e BaseTableCaptionEl) RowStart(start int16) BaseTableCaptionEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableCaptionEl) ScrollbarWidth(width gk.Length) BaseTableCaptionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableCaptionEl) Shadow(shadows []gk.BoxShadow) BaseTableCaptionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableCaptionEl) Size(length gk.Length) BaseTableCaptionEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableCaptionEl) TextAlign(align gk.TextAlign) BaseTableCaptionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5185,6 +6618,8 @@ func (e BaseTableCaptionEl) TextAlign(align gk.TextAlign) BaseTableCaptionEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableCaptionEl) TextBg(bg gk.Color) BaseTableCaptionEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5193,18 +6628,24 @@ func (e BaseTableCaptionEl) TextBg(bg gk.Color) BaseTableCaptionEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableCaptionEl) TextColor(color gk.Color) BaseTableCaptionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableCaptionEl) TextDecorationColor(color gk.Color) BaseTableCaptionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableCaptionEl) TextOverflow(overflow gk.TextOverflow) BaseTableCaptionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5213,6 +6654,8 @@ func (e BaseTableCaptionEl) TextOverflow(overflow gk.TextOverflow) BaseTableCapt
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableCaptionEl) TextSize(size gk.Length) BaseTableCaptionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5220,32 +6663,41 @@ func (e BaseTableCaptionEl) TextSize(size gk.Length) BaseTableCaptionEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableCaptionEl) Top(length gk.Length) BaseTableCaptionEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableCaptionEl) W(length gk.Length) BaseTableCaptionEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseTableCaptionEl) Text(s string) BaseTableCaptionEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableCaptionEl) ChildView(v gk.View) BaseTableCaptionEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableCaptionEl) Child(child gk.Element) BaseTableCaptionEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableCaptionEl) Children(children ...gk.Element) BaseTableCaptionEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -5255,6 +6707,8 @@ func (e BaseTableCaptionEl) Children(children ...gk.Element) BaseTableCaptionEl 
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableCaptionEl) BlockMouseExceptScroll() BaseTableCaptionEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -5262,6 +6716,8 @@ func (e BaseTableCaptionEl) BlockMouseExceptScroll() BaseTableCaptionEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableCaptionEl) CanDrop(predicate gk.DropAccept) BaseTableCaptionEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -5271,6 +6727,8 @@ func (e BaseTableCaptionEl) CanDrop(predicate gk.DropAccept) BaseTableCaptionEl 
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableCaptionEl) CaptureAction(listener gk.ActionHandler) BaseTableCaptionEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -5280,12 +6738,14 @@ func (e BaseTableCaptionEl) CaptureAction(listener gk.ActionHandler) BaseTableCa
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableCaptionEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableCaptionEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -5295,12 +6755,14 @@ func (e BaseTableCaptionEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) Base
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableCaptionEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableCaptionEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -5310,6 +6772,8 @@ func (e BaseTableCaptionEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTa
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableCaptionEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCaptionEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -5319,6 +6783,8 @@ func (e BaseTableCaptionEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEven
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableCaptionEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCaptionEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -5328,6 +6794,8 @@ func (e BaseTableCaptionEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableCaptionEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableCaptionEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -5337,12 +6805,16 @@ func (e BaseTableCaptionEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.M
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableCaptionEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableCaptionEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableCaptionEl) DragOver(f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -5350,6 +6822,8 @@ func (e BaseTableCaptionEl) DragOver(f gk.StyleRefinement) BaseTableCaptionEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableCaptionEl) Focus(f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -5359,30 +6833,40 @@ func (e BaseTableCaptionEl) Focus(f gk.StyleRefinement) BaseTableCaptionEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableCaptionEl) FocusVisible(f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableCaptionEl) Group(group string) BaseTableCaptionEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableCaptionEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableCaptionEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableCaptionEl) Hover(f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -5390,6 +6874,8 @@ func (e BaseTableCaptionEl) Hover(f gk.StyleRefinement) BaseTableCaptionEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableCaptionEl) InFocus(f gk.StyleRefinement) BaseTableCaptionEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -5397,6 +6883,8 @@ func (e BaseTableCaptionEl) InFocus(f gk.StyleRefinement) BaseTableCaptionEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableCaptionEl) KeyContext(keyContext string) BaseTableCaptionEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -5404,6 +6892,8 @@ func (e BaseTableCaptionEl) KeyContext(keyContext string) BaseTableCaptionEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableCaptionEl) Occlude() BaseTableCaptionEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -5413,6 +6903,8 @@ func (e BaseTableCaptionEl) Occlude() BaseTableCaptionEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableCaptionEl) OnAction(listener gk.ActionHandler) BaseTableCaptionEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -5422,12 +6914,14 @@ func (e BaseTableCaptionEl) OnAction(listener gk.ActionHandler) BaseTableCaption
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableCaptionEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableCaptionEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -5438,6 +6932,8 @@ func (e BaseTableCaptionEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTable
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableCaptionEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -5448,6 +6944,8 @@ func (e BaseTableCaptionEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGest
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableCaptionEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableCaptionEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -5459,6 +6957,8 @@ func (e BaseTableCaptionEl) OnBoxedAction(action gk.Action, listener func(cx *gk
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableCaptionEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -5468,6 +6968,8 @@ func (e BaseTableCaptionEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEve
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableCaptionEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableCaptionEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -5480,6 +6982,8 @@ func (e BaseTableCaptionEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) Bas
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableCaptionEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -5489,6 +6993,8 @@ func (e BaseTableCaptionEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDro
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableCaptionEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -5498,6 +7004,8 @@ func (e BaseTableCaptionEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) B
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableCaptionEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -5507,6 +7015,8 @@ func (e BaseTableCaptionEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Bas
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableCaptionEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -5516,12 +7026,14 @@ func (e BaseTableCaptionEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Mod
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableCaptionEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableCaptionEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -5532,12 +7044,14 @@ func (e BaseTableCaptionEl) OnMouseDownDo(button gk.MouseButton, listener func(c
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableCaptionEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableCaptionEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -5547,12 +7061,14 @@ func (e BaseTableCaptionEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTable
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableCaptionEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableCaptionEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -5562,12 +7078,14 @@ func (e BaseTableCaptionEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableCap
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableCaptionEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableCaptionEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -5577,6 +7095,8 @@ func (e BaseTableCaptionEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableCap
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableCaptionEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -5586,12 +7106,14 @@ func (e BaseTableCaptionEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MouseP
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableCaptionEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableCaptionEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -5602,12 +7124,14 @@ func (e BaseTableCaptionEl) OnMouseUpDo(button gk.MouseButton, listener func(cx 
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableCaptionEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableCaptionEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -5617,6 +7141,8 @@ func (e BaseTableCaptionEl) OnMouseUpOutDo(button gk.MouseButton, listener func(
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableCaptionEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -5626,6 +7152,8 @@ func (e BaseTableCaptionEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) B
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableCaptionEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableCaptionEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -5635,6 +7163,8 @@ func (e BaseTableCaptionEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent))
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableCaptionEl) TabGroup() BaseTableCaptionEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -5643,6 +7173,8 @@ func (e BaseTableCaptionEl) TabGroup() BaseTableCaptionEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableCaptionEl) TabIndex(index int) BaseTableCaptionEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -5652,6 +7184,8 @@ func (e BaseTableCaptionEl) TabIndex(index int) BaseTableCaptionEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableCaptionEl) TabStop(tabStop bool) BaseTableCaptionEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -5659,6 +7193,8 @@ func (e BaseTableCaptionEl) TabStop(tabStop bool) BaseTableCaptionEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableCaptionEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableCaptionEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -5666,12 +7202,14 @@ func (e BaseTableCaptionEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableCapt
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableCaptionEl) WindowControlArea(area gk.WindowControlArea) BaseTableCaptionEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -5679,6 +7217,8 @@ func (e BaseTableCaptionEl) WindowControlArea(area gk.WindowControlArea) BaseTab
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableCaptionEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableCaptionEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -5690,25 +7230,31 @@ func (e BaseTableCaptionEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableCap
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableCaptionEl) AccessibilityID(id string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableCaptionEl) Active(f gk.StyleRefinement) BaseTableCaptionEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableCaptionEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableCaptionEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -5717,19 +7263,25 @@ func (e BaseTableCaptionEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableCaptionEl) AriaActiveDescendant() BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableCaptionEl) AriaColumnCount(count int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableCaptionEl) AriaColumnIndex(index int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -5738,12 +7290,16 @@ func (e BaseTableCaptionEl) AriaColumnIndex(index int) BaseTableCaptionEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableCaptionEl) AriaDescription(description string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableCaptionEl) AriaExpanded(expanded bool) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -5754,36 +7310,48 @@ func (e BaseTableCaptionEl) AriaExpanded(expanded bool) BaseTableCaptionEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableCaptionEl) AriaKeyshortcuts(keyshortcuts string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableCaptionEl) AriaLabel(label string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableCaptionEl) AriaLevel(level int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableCaptionEl) AriaMaxNumericValue(value float64) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableCaptionEl) AriaMinNumericValue(value float64) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableCaptionEl) AriaNumericValue(value float64) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -5791,6 +7359,8 @@ func (e BaseTableCaptionEl) AriaNumericValue(value float64) BaseTableCaptionEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableCaptionEl) AriaNumericValueStep(step float64) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -5798,42 +7368,56 @@ func (e BaseTableCaptionEl) AriaNumericValueStep(step float64) BaseTableCaptionE
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableCaptionEl) AriaPlaceholder(placeholder string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableCaptionEl) AriaPositionInSet(position int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableCaptionEl) AriaRowCount(count int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableCaptionEl) AriaRowIndex(index int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableCaptionEl) AriaSelected(selected bool) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableCaptionEl) AriaSizeOfSet(size int) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableCaptionEl) AriaValue(value string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -5843,18 +7427,24 @@ func (e BaseTableCaptionEl) AriaValue(value string) BaseTableCaptionEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableCaptionEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableCaptionEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableCaptionEl) Focusable() BaseTableCaptionEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableCaptionEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableCaptionEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -5863,6 +7453,8 @@ func (e BaseTableCaptionEl) GroupActive(groupName string, f gk.StyleRefinement) 
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableCaptionEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableCaptionEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -5871,6 +7463,8 @@ func (e BaseTableCaptionEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTab
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableCaptionEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableCaptionEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -5880,12 +7474,14 @@ func (e BaseTableCaptionEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) Base
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableCaptionEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableCaptionEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -5895,12 +7491,14 @@ func (e BaseTableCaptionEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableCapt
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableCaptionEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableCaptionEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -5912,6 +7510,8 @@ func (e BaseTableCaptionEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableCaption
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableCaptionEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -5926,24 +7526,32 @@ func (e BaseTableCaptionEl) OnDrag(value gk.DragValue, constructor gk.View) Base
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableCaptionEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableCaptionEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableCaptionEl) OverflowScroll() BaseTableCaptionEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableCaptionEl) OverflowXScroll() BaseTableCaptionEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableCaptionEl) OverflowYScroll() BaseTableCaptionEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -5952,6 +7560,8 @@ func (e BaseTableCaptionEl) OverflowYScroll() BaseTableCaptionEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableCaptionEl) RestrictScrollToAxis() BaseTableCaptionEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -5960,6 +7570,8 @@ func (e BaseTableCaptionEl) RestrictScrollToAxis() BaseTableCaptionEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableCaptionEl) Role(role gk.Role) BaseTableCaptionEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -5967,6 +7579,8 @@ func (e BaseTableCaptionEl) Role(role gk.Role) BaseTableCaptionEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableCaptionEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableCaptionEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -5976,12 +7590,16 @@ func (e BaseTableCaptionEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableCapt
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableCaptionEl) TooltipShowDelay(delay time.Duration) BaseTableCaptionEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableCaptionEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableCaptionEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -5992,7 +7610,7 @@ type BaseTableCellEl struct{ rt.ElAnimatableElement }
 
 // Create An unstyled table data cell. with a one-based accessibility index.
 //
-// BaseTableCell is <gpui_kit::base::TableCell>::new.
+// BaseTableCell calls <gpui_kit::base::TableCell>::new.
 func BaseTableCell(id gk.ID, columnIndex int, st ...gk.Style) BaseTableCellEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(396)
@@ -6010,24 +7628,32 @@ func BaseTableCell(id gk.ID, columnIndex int, st ...gk.Style) BaseTableCellEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableCellEl) KeepTextSelection(id gk.ID) BaseTableCellEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableCellEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableCellEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableCellEl) BorderE(width gk.Length) BaseTableCellEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableCellEl) BorderS(width gk.Length) BaseTableCellEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -6035,136 +7661,178 @@ func (e BaseTableCellEl) BorderS(width gk.Length) BaseTableCellEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableCellEl) FlexRowDir() BaseTableCellEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableCellEl) InsetE(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableCellEl) InsetS(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableCellEl) JustifyFlexEnd() BaseTableCellEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableCellEl) JustifyFlexStart() BaseTableCellEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableCellEl) Me(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableCellEl) Ms(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableCellEl) Pe(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableCellEl) Ps(length gk.Length) BaseTableCellEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableCellEl) RoundedE(radius gk.Length) BaseTableCellEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableCellEl) RoundedS(radius gk.Length) BaseTableCellEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableCellEl) TextEnd() BaseTableCellEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableCellEl) TextStart() BaseTableCellEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableCellEl) CornerRadii(radius gk.Corners) BaseTableCellEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableCellEl) DebugBlue() BaseTableCellEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableCellEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableCellEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableCellEl) DebugGreen() BaseTableCellEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableCellEl) DebugPink() BaseTableCellEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableCellEl) DebugRed() BaseTableCellEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableCellEl) DebugYellow() BaseTableCellEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableCellEl) FontBlack() BaseTableCellEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableCellEl) FontBold() BaseTableCellEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableCellEl) FontExtrabold() BaseTableCellEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableCellEl) FontExtralight() BaseTableCellEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableCellEl) FontLight() BaseTableCellEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableCellEl) FontMedium() BaseTableCellEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableCellEl) FontNormal() BaseTableCellEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableCellEl) FontSemibold() BaseTableCellEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableCellEl) FontThin() BaseTableCellEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -6173,18 +7841,23 @@ func (e BaseTableCellEl) FontThin() BaseTableCellEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableCellEl) HFlex() BaseTableCellEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableCellEl) Margins(margins gk.EdgesInto) BaseTableCellEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableCellEl) Paddings(paddings gk.EdgesInto) BaseTableCellEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableCellEl) RefineStyle(style gk.StyleRefinement) BaseTableCellEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -6194,21 +7867,29 @@ func (e BaseTableCellEl) RefineStyle(style gk.StyleRefinement) BaseTableCellEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableCellEl) VFlex() BaseTableCellEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableCellEl) Style(st ...gk.Style) BaseTableCellEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableCellEl) AspectRatio(ratio float32) BaseTableCellEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableCellEl) Bg(fill gk.Fill) BaseTableCellEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableCellEl) Border(length gk.Length) BaseTableCellEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -6216,12 +7897,16 @@ func (e BaseTableCellEl) Border(length gk.Length) BaseTableCellEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableCellEl) BorderB(length gk.Length) BaseTableCellEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableCellEl) BorderColor(borderColor gk.Color) BaseTableCellEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -6229,6 +7914,8 @@ func (e BaseTableCellEl) BorderColor(borderColor gk.Color) BaseTableCellEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableCellEl) BorderL(length gk.Length) BaseTableCellEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -6236,6 +7923,8 @@ func (e BaseTableCellEl) BorderL(length gk.Length) BaseTableCellEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableCellEl) BorderR(length gk.Length) BaseTableCellEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -6243,6 +7932,8 @@ func (e BaseTableCellEl) BorderR(length gk.Length) BaseTableCellEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableCellEl) BorderT(length gk.Length) BaseTableCellEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -6250,6 +7941,8 @@ func (e BaseTableCellEl) BorderT(length gk.Length) BaseTableCellEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableCellEl) BorderX(length gk.Length) BaseTableCellEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -6257,6 +7950,8 @@ func (e BaseTableCellEl) BorderX(length gk.Length) BaseTableCellEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableCellEl) BorderY(length gk.Length) BaseTableCellEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -6264,30 +7959,40 @@ func (e BaseTableCellEl) BorderY(length gk.Length) BaseTableCellEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableCellEl) Bottom(length gk.Length) BaseTableCellEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableCellEl) ColEnd(end int16) BaseTableCellEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableCellEl) ColSpan(span uint16) BaseTableCellEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableCellEl) ColStart(start int16) BaseTableCellEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableCellEl) Cursor(cursor gk.CursorStyle) BaseTableCellEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -6295,36 +8000,48 @@ func (e BaseTableCellEl) Cursor(cursor gk.CursorStyle) BaseTableCellEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableCellEl) FlexBasis(basis gk.Length) BaseTableCellEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableCellEl) FlexGrow(grow float32) BaseTableCellEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableCellEl) FlexShrink(shrink float32) BaseTableCellEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableCellEl) Font(font gk.Font) BaseTableCellEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableCellEl) FontFamily(familyName string) BaseTableCellEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableCellEl) FontFeatures(features gk.FontFeatures) BaseTableCellEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -6333,12 +8050,16 @@ func (e BaseTableCellEl) FontFeatures(features gk.FontFeatures) BaseTableCellEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableCellEl) FontWeight(weight gk.FontWeight) BaseTableCellEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableCellEl) Gap(length gk.Length) BaseTableCellEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -6346,6 +8067,8 @@ func (e BaseTableCellEl) Gap(length gk.Length) BaseTableCellEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableCellEl) GapX(length gk.Length) BaseTableCellEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -6353,18 +8076,24 @@ func (e BaseTableCellEl) GapX(length gk.Length) BaseTableCellEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableCellEl) GapY(length gk.Length) BaseTableCellEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableCellEl) GridCols(cols uint16) BaseTableCellEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableCellEl) GridColsMaxContent(cols uint16) BaseTableCellEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -6372,18 +8101,24 @@ func (e BaseTableCellEl) GridColsMaxContent(cols uint16) BaseTableCellEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableCellEl) GridColsMinContent(cols uint16) BaseTableCellEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableCellEl) GridRows(rows uint16) BaseTableCellEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableCellEl) GridRowsMaxContent(rows uint16) BaseTableCellEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -6391,12 +8126,16 @@ func (e BaseTableCellEl) GridRowsMaxContent(rows uint16) BaseTableCellEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableCellEl) GridRowsMinContent(rows uint16) BaseTableCellEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableCellEl) H(length gk.Length) BaseTableCellEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -6404,6 +8143,8 @@ func (e BaseTableCellEl) H(length gk.Length) BaseTableCellEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableCellEl) Inset(length gk.Length) BaseTableCellEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -6411,6 +8152,8 @@ func (e BaseTableCellEl) Inset(length gk.Length) BaseTableCellEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableCellEl) Left(length gk.Length) BaseTableCellEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -6418,36 +8161,48 @@ func (e BaseTableCellEl) Left(length gk.Length) BaseTableCellEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableCellEl) LineClamp(lines int) BaseTableCellEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableCellEl) LineHeight(lineHeight gk.Length) BaseTableCellEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableCellEl) M(length gk.Length) BaseTableCellEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableCellEl) MaxH(length gk.Length) BaseTableCellEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableCellEl) MaxSize(length gk.Length) BaseTableCellEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableCellEl) MaxW(length gk.Length) BaseTableCellEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -6455,24 +8210,32 @@ func (e BaseTableCellEl) MaxW(length gk.Length) BaseTableCellEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableCellEl) Mb(length gk.Length) BaseTableCellEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableCellEl) MinH(length gk.Length) BaseTableCellEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableCellEl) MinSize(length gk.Length) BaseTableCellEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableCellEl) MinW(length gk.Length) BaseTableCellEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -6480,6 +8243,8 @@ func (e BaseTableCellEl) MinW(length gk.Length) BaseTableCellEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableCellEl) Ml(length gk.Length) BaseTableCellEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -6487,6 +8252,8 @@ func (e BaseTableCellEl) Ml(length gk.Length) BaseTableCellEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableCellEl) Mr(length gk.Length) BaseTableCellEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -6494,6 +8261,8 @@ func (e BaseTableCellEl) Mr(length gk.Length) BaseTableCellEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableCellEl) Mt(length gk.Length) BaseTableCellEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -6501,6 +8270,8 @@ func (e BaseTableCellEl) Mt(length gk.Length) BaseTableCellEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableCellEl) Mx(length gk.Length) BaseTableCellEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -6508,18 +8279,24 @@ func (e BaseTableCellEl) Mx(length gk.Length) BaseTableCellEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableCellEl) My(length gk.Length) BaseTableCellEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableCellEl) Opacity(opacity float32) BaseTableCellEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableCellEl) P(length gk.Length) BaseTableCellEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -6527,6 +8304,8 @@ func (e BaseTableCellEl) P(length gk.Length) BaseTableCellEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableCellEl) Pb(length gk.Length) BaseTableCellEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -6534,6 +8313,8 @@ func (e BaseTableCellEl) Pb(length gk.Length) BaseTableCellEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableCellEl) Pl(length gk.Length) BaseTableCellEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -6541,6 +8322,8 @@ func (e BaseTableCellEl) Pl(length gk.Length) BaseTableCellEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableCellEl) Pr(length gk.Length) BaseTableCellEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -6548,6 +8331,8 @@ func (e BaseTableCellEl) Pr(length gk.Length) BaseTableCellEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableCellEl) Pt(length gk.Length) BaseTableCellEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -6555,6 +8340,8 @@ func (e BaseTableCellEl) Pt(length gk.Length) BaseTableCellEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableCellEl) Px(length gk.Length) BaseTableCellEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -6562,6 +8349,8 @@ func (e BaseTableCellEl) Px(length gk.Length) BaseTableCellEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableCellEl) Py(length gk.Length) BaseTableCellEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -6569,12 +8358,16 @@ func (e BaseTableCellEl) Py(length gk.Length) BaseTableCellEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableCellEl) Right(length gk.Length) BaseTableCellEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableCellEl) Rounded(length gk.Length) BaseTableCellEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -6582,6 +8375,8 @@ func (e BaseTableCellEl) Rounded(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableCellEl) RoundedB(length gk.Length) BaseTableCellEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -6589,6 +8384,8 @@ func (e BaseTableCellEl) RoundedB(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableCellEl) RoundedBl(length gk.Length) BaseTableCellEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -6596,6 +8393,8 @@ func (e BaseTableCellEl) RoundedBl(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableCellEl) RoundedBr(length gk.Length) BaseTableCellEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -6603,6 +8402,8 @@ func (e BaseTableCellEl) RoundedBr(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableCellEl) RoundedL(length gk.Length) BaseTableCellEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -6610,6 +8411,8 @@ func (e BaseTableCellEl) RoundedL(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableCellEl) RoundedR(length gk.Length) BaseTableCellEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -6617,6 +8420,8 @@ func (e BaseTableCellEl) RoundedR(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableCellEl) RoundedT(length gk.Length) BaseTableCellEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -6624,6 +8429,8 @@ func (e BaseTableCellEl) RoundedT(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableCellEl) RoundedTl(length gk.Length) BaseTableCellEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -6631,24 +8438,32 @@ func (e BaseTableCellEl) RoundedTl(length gk.Length) BaseTableCellEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableCellEl) RoundedTr(length gk.Length) BaseTableCellEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableCellEl) RowEnd(end int16) BaseTableCellEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableCellEl) RowSpan(span uint16) BaseTableCellEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableCellEl) RowStart(start int16) BaseTableCellEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -6658,24 +8473,32 @@ func (e BaseTableCellEl) RowStart(start int16) BaseTableCellEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableCellEl) ScrollbarWidth(width gk.Length) BaseTableCellEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableCellEl) Shadow(shadows []gk.BoxShadow) BaseTableCellEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableCellEl) Size(length gk.Length) BaseTableCellEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableCellEl) TextAlign(align gk.TextAlign) BaseTableCellEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -6684,6 +8507,8 @@ func (e BaseTableCellEl) TextAlign(align gk.TextAlign) BaseTableCellEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableCellEl) TextBg(bg gk.Color) BaseTableCellEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -6692,18 +8517,24 @@ func (e BaseTableCellEl) TextBg(bg gk.Color) BaseTableCellEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableCellEl) TextColor(color gk.Color) BaseTableCellEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableCellEl) TextDecorationColor(color gk.Color) BaseTableCellEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableCellEl) TextOverflow(overflow gk.TextOverflow) BaseTableCellEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -6712,6 +8543,8 @@ func (e BaseTableCellEl) TextOverflow(overflow gk.TextOverflow) BaseTableCellEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableCellEl) TextSize(size gk.Length) BaseTableCellEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -6719,29 +8552,38 @@ func (e BaseTableCellEl) TextSize(size gk.Length) BaseTableCellEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableCellEl) Top(length gk.Length) BaseTableCellEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableCellEl) W(length gk.Length) BaseTableCellEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseTableCellEl) Text(s string) BaseTableCellEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableCellEl) ChildView(v gk.View) BaseTableCellEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableCellEl) Child(child gk.Element) BaseTableCellEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableCellEl) Children(children ...gk.Element) BaseTableCellEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -6751,6 +8593,8 @@ func (e BaseTableCellEl) Children(children ...gk.Element) BaseTableCellEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableCellEl) BlockMouseExceptScroll() BaseTableCellEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -6758,6 +8602,8 @@ func (e BaseTableCellEl) BlockMouseExceptScroll() BaseTableCellEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableCellEl) CanDrop(predicate gk.DropAccept) BaseTableCellEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -6767,6 +8613,8 @@ func (e BaseTableCellEl) CanDrop(predicate gk.DropAccept) BaseTableCellEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableCellEl) CaptureAction(listener gk.ActionHandler) BaseTableCellEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -6776,12 +8624,14 @@ func (e BaseTableCellEl) CaptureAction(listener gk.ActionHandler) BaseTableCellE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableCellEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableCellEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -6791,12 +8641,14 @@ func (e BaseTableCellEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTab
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableCellEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableCellEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -6806,6 +8658,8 @@ func (e BaseTableCellEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTable
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableCellEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCellEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -6815,6 +8669,8 @@ func (e BaseTableCellEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableCellEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCellEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -6824,6 +8680,8 @@ func (e BaseTableCellEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) B
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableCellEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableCellEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -6833,12 +8691,16 @@ func (e BaseTableCellEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableCellEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableCellEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableCellEl) DragOver(f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -6846,6 +8708,8 @@ func (e BaseTableCellEl) DragOver(f gk.StyleRefinement) BaseTableCellEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableCellEl) Focus(f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -6855,30 +8719,40 @@ func (e BaseTableCellEl) Focus(f gk.StyleRefinement) BaseTableCellEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableCellEl) FocusVisible(f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableCellEl) Group(group string) BaseTableCellEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableCellEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableCellEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableCellEl) Hover(f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -6886,6 +8760,8 @@ func (e BaseTableCellEl) Hover(f gk.StyleRefinement) BaseTableCellEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableCellEl) InFocus(f gk.StyleRefinement) BaseTableCellEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -6893,6 +8769,8 @@ func (e BaseTableCellEl) InFocus(f gk.StyleRefinement) BaseTableCellEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableCellEl) KeyContext(keyContext string) BaseTableCellEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -6900,6 +8778,8 @@ func (e BaseTableCellEl) KeyContext(keyContext string) BaseTableCellEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableCellEl) Occlude() BaseTableCellEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -6909,6 +8789,8 @@ func (e BaseTableCellEl) Occlude() BaseTableCellEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableCellEl) OnAction(listener gk.ActionHandler) BaseTableCellEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -6918,12 +8800,14 @@ func (e BaseTableCellEl) OnAction(listener gk.ActionHandler) BaseTableCellEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableCellEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableCellEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -6934,6 +8818,8 @@ func (e BaseTableCellEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableCel
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableCellEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableCellEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -6944,6 +8830,8 @@ func (e BaseTableCellEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableCellEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableCellEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -6955,6 +8843,8 @@ func (e BaseTableCellEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableCellEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableCellEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -6964,6 +8854,8 @@ func (e BaseTableCellEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableCellEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableCellEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -6976,6 +8868,8 @@ func (e BaseTableCellEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTa
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableCellEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableCellEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -6985,6 +8879,8 @@ func (e BaseTableCellEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableCellEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCellEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -6994,6 +8890,8 @@ func (e BaseTableCellEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Base
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableCellEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableCellEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -7003,6 +8901,8 @@ func (e BaseTableCellEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTa
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableCellEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableCellEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -7012,12 +8912,14 @@ func (e BaseTableCellEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableCellEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableCellEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -7028,12 +8930,14 @@ func (e BaseTableCellEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableCellEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableCellEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -7043,12 +8947,14 @@ func (e BaseTableCellEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableCel
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableCellEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableCellEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -7058,12 +8964,14 @@ func (e BaseTableCellEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableCellEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableCellEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableCellEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -7073,6 +8981,8 @@ func (e BaseTableCellEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableCellEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableCellEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableCellEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -7082,12 +8992,14 @@ func (e BaseTableCellEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableCellEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableCellEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -7098,12 +9010,14 @@ func (e BaseTableCellEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableCellEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableCellEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableCellEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableCellEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -7113,6 +9027,8 @@ func (e BaseTableCellEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableCellEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableCellEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -7122,6 +9038,8 @@ func (e BaseTableCellEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Base
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableCellEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableCellEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -7131,6 +9049,8 @@ func (e BaseTableCellEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Ba
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableCellEl) TabGroup() BaseTableCellEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -7139,6 +9059,8 @@ func (e BaseTableCellEl) TabGroup() BaseTableCellEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableCellEl) TabIndex(index int) BaseTableCellEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -7148,6 +9070,8 @@ func (e BaseTableCellEl) TabIndex(index int) BaseTableCellEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableCellEl) TabStop(tabStop bool) BaseTableCellEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -7155,6 +9079,8 @@ func (e BaseTableCellEl) TabStop(tabStop bool) BaseTableCellEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableCellEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableCellEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -7162,12 +9088,14 @@ func (e BaseTableCellEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableCellEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableCellEl) WindowControlArea(area gk.WindowControlArea) BaseTableCellEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -7175,6 +9103,8 @@ func (e BaseTableCellEl) WindowControlArea(area gk.WindowControlArea) BaseTableC
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableCellEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableCellEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -7186,25 +9116,31 @@ func (e BaseTableCellEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableCellEl
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableCellEl) AccessibilityID(id string) BaseTableCellEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableCellEl) Active(f gk.StyleRefinement) BaseTableCellEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableCellEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableCellEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -7213,19 +9149,25 @@ func (e BaseTableCellEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) B
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableCellEl) AriaActiveDescendant() BaseTableCellEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableCellEl) AriaColumnCount(count int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableCellEl) AriaColumnIndex(index int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -7234,12 +9176,16 @@ func (e BaseTableCellEl) AriaColumnIndex(index int) BaseTableCellEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableCellEl) AriaDescription(description string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableCellEl) AriaExpanded(expanded bool) BaseTableCellEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -7250,36 +9196,48 @@ func (e BaseTableCellEl) AriaExpanded(expanded bool) BaseTableCellEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableCellEl) AriaKeyshortcuts(keyshortcuts string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableCellEl) AriaLabel(label string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableCellEl) AriaLevel(level int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableCellEl) AriaMaxNumericValue(value float64) BaseTableCellEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableCellEl) AriaMinNumericValue(value float64) BaseTableCellEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableCellEl) AriaNumericValue(value float64) BaseTableCellEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -7287,6 +9245,8 @@ func (e BaseTableCellEl) AriaNumericValue(value float64) BaseTableCellEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableCellEl) AriaNumericValueStep(step float64) BaseTableCellEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -7294,42 +9254,56 @@ func (e BaseTableCellEl) AriaNumericValueStep(step float64) BaseTableCellEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableCellEl) AriaPlaceholder(placeholder string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableCellEl) AriaPositionInSet(position int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableCellEl) AriaRowCount(count int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableCellEl) AriaRowIndex(index int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableCellEl) AriaSelected(selected bool) BaseTableCellEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableCellEl) AriaSizeOfSet(size int) BaseTableCellEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableCellEl) AriaValue(value string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -7339,18 +9313,24 @@ func (e BaseTableCellEl) AriaValue(value string) BaseTableCellEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableCellEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableCellEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableCellEl) Focusable() BaseTableCellEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableCellEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableCellEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -7359,6 +9339,8 @@ func (e BaseTableCellEl) GroupActive(groupName string, f gk.StyleRefinement) Bas
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableCellEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableCellEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -7367,6 +9349,8 @@ func (e BaseTableCellEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableC
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableCellEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableCellEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -7376,12 +9360,14 @@ func (e BaseTableCellEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTab
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableCellEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableCellEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableCellEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -7391,12 +9377,14 @@ func (e BaseTableCellEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableCellEl 
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableCellEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableCellEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableCellEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -7408,6 +9396,8 @@ func (e BaseTableCellEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableCellEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableCellEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableCellEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -7422,24 +9412,32 @@ func (e BaseTableCellEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTab
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableCellEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableCellEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableCellEl) OverflowScroll() BaseTableCellEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableCellEl) OverflowXScroll() BaseTableCellEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableCellEl) OverflowYScroll() BaseTableCellEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -7448,6 +9446,8 @@ func (e BaseTableCellEl) OverflowYScroll() BaseTableCellEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableCellEl) RestrictScrollToAxis() BaseTableCellEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -7456,6 +9456,8 @@ func (e BaseTableCellEl) RestrictScrollToAxis() BaseTableCellEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableCellEl) Role(role gk.Role) BaseTableCellEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -7463,6 +9465,8 @@ func (e BaseTableCellEl) Role(role gk.Role) BaseTableCellEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableCellEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableCellEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -7472,12 +9476,16 @@ func (e BaseTableCellEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableCellEl 
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableCellEl) TooltipShowDelay(delay time.Duration) BaseTableCellEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableCellEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableCellEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -7488,7 +9496,7 @@ type BaseTableHeadEl struct{ rt.ElAnimatableElement }
 
 // Create An unstyled table column header. with a one-based accessibility index.
 //
-// BaseTableHead is <gpui_kit::base::TableHead>::new.
+// BaseTableHead calls <gpui_kit::base::TableHead>::new.
 func BaseTableHead(id gk.ID, columnIndex int, st ...gk.Style) BaseTableHeadEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(397)
@@ -7506,24 +9514,32 @@ func BaseTableHead(id gk.ID, columnIndex int, st ...gk.Style) BaseTableHeadEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableHeadEl) KeepTextSelection(id gk.ID) BaseTableHeadEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableHeadEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableHeadEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableHeadEl) BorderE(width gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableHeadEl) BorderS(width gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -7531,136 +9547,178 @@ func (e BaseTableHeadEl) BorderS(width gk.Length) BaseTableHeadEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableHeadEl) FlexRowDir() BaseTableHeadEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableHeadEl) InsetE(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableHeadEl) InsetS(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableHeadEl) JustifyFlexEnd() BaseTableHeadEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableHeadEl) JustifyFlexStart() BaseTableHeadEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableHeadEl) Me(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableHeadEl) Ms(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableHeadEl) Pe(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableHeadEl) Ps(length gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableHeadEl) RoundedE(radius gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableHeadEl) RoundedS(radius gk.Length) BaseTableHeadEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableHeadEl) TextEnd() BaseTableHeadEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableHeadEl) TextStart() BaseTableHeadEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableHeadEl) CornerRadii(radius gk.Corners) BaseTableHeadEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableHeadEl) DebugBlue() BaseTableHeadEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableHeadEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableHeadEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableHeadEl) DebugGreen() BaseTableHeadEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableHeadEl) DebugPink() BaseTableHeadEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableHeadEl) DebugRed() BaseTableHeadEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableHeadEl) DebugYellow() BaseTableHeadEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableHeadEl) FontBlack() BaseTableHeadEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableHeadEl) FontBold() BaseTableHeadEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableHeadEl) FontExtrabold() BaseTableHeadEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableHeadEl) FontExtralight() BaseTableHeadEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableHeadEl) FontLight() BaseTableHeadEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableHeadEl) FontMedium() BaseTableHeadEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableHeadEl) FontNormal() BaseTableHeadEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableHeadEl) FontSemibold() BaseTableHeadEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableHeadEl) FontThin() BaseTableHeadEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -7669,18 +9727,23 @@ func (e BaseTableHeadEl) FontThin() BaseTableHeadEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableHeadEl) HFlex() BaseTableHeadEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableHeadEl) Margins(margins gk.EdgesInto) BaseTableHeadEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableHeadEl) Paddings(paddings gk.EdgesInto) BaseTableHeadEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableHeadEl) RefineStyle(style gk.StyleRefinement) BaseTableHeadEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -7690,21 +9753,29 @@ func (e BaseTableHeadEl) RefineStyle(style gk.StyleRefinement) BaseTableHeadEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableHeadEl) VFlex() BaseTableHeadEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableHeadEl) Style(st ...gk.Style) BaseTableHeadEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableHeadEl) AspectRatio(ratio float32) BaseTableHeadEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableHeadEl) Bg(fill gk.Fill) BaseTableHeadEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableHeadEl) Border(length gk.Length) BaseTableHeadEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -7712,12 +9783,16 @@ func (e BaseTableHeadEl) Border(length gk.Length) BaseTableHeadEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableHeadEl) BorderB(length gk.Length) BaseTableHeadEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableHeadEl) BorderColor(borderColor gk.Color) BaseTableHeadEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -7725,6 +9800,8 @@ func (e BaseTableHeadEl) BorderColor(borderColor gk.Color) BaseTableHeadEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableHeadEl) BorderL(length gk.Length) BaseTableHeadEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -7732,6 +9809,8 @@ func (e BaseTableHeadEl) BorderL(length gk.Length) BaseTableHeadEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableHeadEl) BorderR(length gk.Length) BaseTableHeadEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -7739,6 +9818,8 @@ func (e BaseTableHeadEl) BorderR(length gk.Length) BaseTableHeadEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableHeadEl) BorderT(length gk.Length) BaseTableHeadEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -7746,6 +9827,8 @@ func (e BaseTableHeadEl) BorderT(length gk.Length) BaseTableHeadEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableHeadEl) BorderX(length gk.Length) BaseTableHeadEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -7753,6 +9836,8 @@ func (e BaseTableHeadEl) BorderX(length gk.Length) BaseTableHeadEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableHeadEl) BorderY(length gk.Length) BaseTableHeadEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -7760,30 +9845,40 @@ func (e BaseTableHeadEl) BorderY(length gk.Length) BaseTableHeadEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableHeadEl) Bottom(length gk.Length) BaseTableHeadEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableHeadEl) ColEnd(end int16) BaseTableHeadEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableHeadEl) ColSpan(span uint16) BaseTableHeadEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableHeadEl) ColStart(start int16) BaseTableHeadEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableHeadEl) Cursor(cursor gk.CursorStyle) BaseTableHeadEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -7791,36 +9886,48 @@ func (e BaseTableHeadEl) Cursor(cursor gk.CursorStyle) BaseTableHeadEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableHeadEl) FlexBasis(basis gk.Length) BaseTableHeadEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableHeadEl) FlexGrow(grow float32) BaseTableHeadEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableHeadEl) FlexShrink(shrink float32) BaseTableHeadEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableHeadEl) Font(font gk.Font) BaseTableHeadEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableHeadEl) FontFamily(familyName string) BaseTableHeadEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableHeadEl) FontFeatures(features gk.FontFeatures) BaseTableHeadEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -7829,12 +9936,16 @@ func (e BaseTableHeadEl) FontFeatures(features gk.FontFeatures) BaseTableHeadEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableHeadEl) FontWeight(weight gk.FontWeight) BaseTableHeadEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableHeadEl) Gap(length gk.Length) BaseTableHeadEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -7842,6 +9953,8 @@ func (e BaseTableHeadEl) Gap(length gk.Length) BaseTableHeadEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableHeadEl) GapX(length gk.Length) BaseTableHeadEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -7849,18 +9962,24 @@ func (e BaseTableHeadEl) GapX(length gk.Length) BaseTableHeadEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableHeadEl) GapY(length gk.Length) BaseTableHeadEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableHeadEl) GridCols(cols uint16) BaseTableHeadEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableHeadEl) GridColsMaxContent(cols uint16) BaseTableHeadEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -7868,18 +9987,24 @@ func (e BaseTableHeadEl) GridColsMaxContent(cols uint16) BaseTableHeadEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableHeadEl) GridColsMinContent(cols uint16) BaseTableHeadEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableHeadEl) GridRows(rows uint16) BaseTableHeadEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableHeadEl) GridRowsMaxContent(rows uint16) BaseTableHeadEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -7887,12 +10012,16 @@ func (e BaseTableHeadEl) GridRowsMaxContent(rows uint16) BaseTableHeadEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableHeadEl) GridRowsMinContent(rows uint16) BaseTableHeadEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableHeadEl) H(length gk.Length) BaseTableHeadEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -7900,6 +10029,8 @@ func (e BaseTableHeadEl) H(length gk.Length) BaseTableHeadEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableHeadEl) Inset(length gk.Length) BaseTableHeadEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -7907,6 +10038,8 @@ func (e BaseTableHeadEl) Inset(length gk.Length) BaseTableHeadEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableHeadEl) Left(length gk.Length) BaseTableHeadEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -7914,36 +10047,48 @@ func (e BaseTableHeadEl) Left(length gk.Length) BaseTableHeadEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableHeadEl) LineClamp(lines int) BaseTableHeadEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableHeadEl) LineHeight(lineHeight gk.Length) BaseTableHeadEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableHeadEl) M(length gk.Length) BaseTableHeadEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableHeadEl) MaxH(length gk.Length) BaseTableHeadEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableHeadEl) MaxSize(length gk.Length) BaseTableHeadEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableHeadEl) MaxW(length gk.Length) BaseTableHeadEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -7951,24 +10096,32 @@ func (e BaseTableHeadEl) MaxW(length gk.Length) BaseTableHeadEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableHeadEl) Mb(length gk.Length) BaseTableHeadEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableHeadEl) MinH(length gk.Length) BaseTableHeadEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableHeadEl) MinSize(length gk.Length) BaseTableHeadEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableHeadEl) MinW(length gk.Length) BaseTableHeadEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -7976,6 +10129,8 @@ func (e BaseTableHeadEl) MinW(length gk.Length) BaseTableHeadEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableHeadEl) Ml(length gk.Length) BaseTableHeadEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -7983,6 +10138,8 @@ func (e BaseTableHeadEl) Ml(length gk.Length) BaseTableHeadEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableHeadEl) Mr(length gk.Length) BaseTableHeadEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -7990,6 +10147,8 @@ func (e BaseTableHeadEl) Mr(length gk.Length) BaseTableHeadEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableHeadEl) Mt(length gk.Length) BaseTableHeadEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -7997,6 +10156,8 @@ func (e BaseTableHeadEl) Mt(length gk.Length) BaseTableHeadEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableHeadEl) Mx(length gk.Length) BaseTableHeadEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -8004,18 +10165,24 @@ func (e BaseTableHeadEl) Mx(length gk.Length) BaseTableHeadEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableHeadEl) My(length gk.Length) BaseTableHeadEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableHeadEl) Opacity(opacity float32) BaseTableHeadEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableHeadEl) P(length gk.Length) BaseTableHeadEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -8023,6 +10190,8 @@ func (e BaseTableHeadEl) P(length gk.Length) BaseTableHeadEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableHeadEl) Pb(length gk.Length) BaseTableHeadEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -8030,6 +10199,8 @@ func (e BaseTableHeadEl) Pb(length gk.Length) BaseTableHeadEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableHeadEl) Pl(length gk.Length) BaseTableHeadEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -8037,6 +10208,8 @@ func (e BaseTableHeadEl) Pl(length gk.Length) BaseTableHeadEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableHeadEl) Pr(length gk.Length) BaseTableHeadEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -8044,6 +10217,8 @@ func (e BaseTableHeadEl) Pr(length gk.Length) BaseTableHeadEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableHeadEl) Pt(length gk.Length) BaseTableHeadEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -8051,6 +10226,8 @@ func (e BaseTableHeadEl) Pt(length gk.Length) BaseTableHeadEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableHeadEl) Px(length gk.Length) BaseTableHeadEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -8058,6 +10235,8 @@ func (e BaseTableHeadEl) Px(length gk.Length) BaseTableHeadEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableHeadEl) Py(length gk.Length) BaseTableHeadEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -8065,12 +10244,16 @@ func (e BaseTableHeadEl) Py(length gk.Length) BaseTableHeadEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableHeadEl) Right(length gk.Length) BaseTableHeadEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableHeadEl) Rounded(length gk.Length) BaseTableHeadEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -8078,6 +10261,8 @@ func (e BaseTableHeadEl) Rounded(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableHeadEl) RoundedB(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -8085,6 +10270,8 @@ func (e BaseTableHeadEl) RoundedB(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableHeadEl) RoundedBl(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -8092,6 +10279,8 @@ func (e BaseTableHeadEl) RoundedBl(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableHeadEl) RoundedBr(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -8099,6 +10288,8 @@ func (e BaseTableHeadEl) RoundedBr(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableHeadEl) RoundedL(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -8106,6 +10297,8 @@ func (e BaseTableHeadEl) RoundedL(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableHeadEl) RoundedR(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -8113,6 +10306,8 @@ func (e BaseTableHeadEl) RoundedR(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableHeadEl) RoundedT(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -8120,6 +10315,8 @@ func (e BaseTableHeadEl) RoundedT(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableHeadEl) RoundedTl(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -8127,24 +10324,32 @@ func (e BaseTableHeadEl) RoundedTl(length gk.Length) BaseTableHeadEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableHeadEl) RoundedTr(length gk.Length) BaseTableHeadEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableHeadEl) RowEnd(end int16) BaseTableHeadEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableHeadEl) RowSpan(span uint16) BaseTableHeadEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableHeadEl) RowStart(start int16) BaseTableHeadEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -8154,24 +10359,32 @@ func (e BaseTableHeadEl) RowStart(start int16) BaseTableHeadEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableHeadEl) ScrollbarWidth(width gk.Length) BaseTableHeadEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableHeadEl) Shadow(shadows []gk.BoxShadow) BaseTableHeadEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableHeadEl) Size(length gk.Length) BaseTableHeadEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableHeadEl) TextAlign(align gk.TextAlign) BaseTableHeadEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -8180,6 +10393,8 @@ func (e BaseTableHeadEl) TextAlign(align gk.TextAlign) BaseTableHeadEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableHeadEl) TextBg(bg gk.Color) BaseTableHeadEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -8188,18 +10403,24 @@ func (e BaseTableHeadEl) TextBg(bg gk.Color) BaseTableHeadEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableHeadEl) TextColor(color gk.Color) BaseTableHeadEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableHeadEl) TextDecorationColor(color gk.Color) BaseTableHeadEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableHeadEl) TextOverflow(overflow gk.TextOverflow) BaseTableHeadEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -8208,6 +10429,8 @@ func (e BaseTableHeadEl) TextOverflow(overflow gk.TextOverflow) BaseTableHeadEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableHeadEl) TextSize(size gk.Length) BaseTableHeadEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -8215,29 +10438,38 @@ func (e BaseTableHeadEl) TextSize(size gk.Length) BaseTableHeadEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableHeadEl) Top(length gk.Length) BaseTableHeadEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableHeadEl) W(length gk.Length) BaseTableHeadEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseTableHeadEl) Text(s string) BaseTableHeadEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableHeadEl) ChildView(v gk.View) BaseTableHeadEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableHeadEl) Child(child gk.Element) BaseTableHeadEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableHeadEl) Children(children ...gk.Element) BaseTableHeadEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -8247,6 +10479,8 @@ func (e BaseTableHeadEl) Children(children ...gk.Element) BaseTableHeadEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableHeadEl) BlockMouseExceptScroll() BaseTableHeadEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -8254,6 +10488,8 @@ func (e BaseTableHeadEl) BlockMouseExceptScroll() BaseTableHeadEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableHeadEl) CanDrop(predicate gk.DropAccept) BaseTableHeadEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -8263,6 +10499,8 @@ func (e BaseTableHeadEl) CanDrop(predicate gk.DropAccept) BaseTableHeadEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableHeadEl) CaptureAction(listener gk.ActionHandler) BaseTableHeadEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -8272,12 +10510,14 @@ func (e BaseTableHeadEl) CaptureAction(listener gk.ActionHandler) BaseTableHeadE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableHeadEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableHeadEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -8287,12 +10527,14 @@ func (e BaseTableHeadEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTab
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableHeadEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableHeadEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -8302,6 +10544,8 @@ func (e BaseTableHeadEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTable
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableHeadEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeadEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -8311,6 +10555,8 @@ func (e BaseTableHeadEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableHeadEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeadEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -8320,6 +10566,8 @@ func (e BaseTableHeadEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) B
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableHeadEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableHeadEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -8329,12 +10577,16 @@ func (e BaseTableHeadEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableHeadEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableHeadEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableHeadEl) DragOver(f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -8342,6 +10594,8 @@ func (e BaseTableHeadEl) DragOver(f gk.StyleRefinement) BaseTableHeadEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableHeadEl) Focus(f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -8351,30 +10605,40 @@ func (e BaseTableHeadEl) Focus(f gk.StyleRefinement) BaseTableHeadEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableHeadEl) FocusVisible(f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableHeadEl) Group(group string) BaseTableHeadEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableHeadEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableHeadEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableHeadEl) Hover(f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -8382,6 +10646,8 @@ func (e BaseTableHeadEl) Hover(f gk.StyleRefinement) BaseTableHeadEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableHeadEl) InFocus(f gk.StyleRefinement) BaseTableHeadEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -8389,6 +10655,8 @@ func (e BaseTableHeadEl) InFocus(f gk.StyleRefinement) BaseTableHeadEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableHeadEl) KeyContext(keyContext string) BaseTableHeadEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -8396,6 +10664,8 @@ func (e BaseTableHeadEl) KeyContext(keyContext string) BaseTableHeadEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableHeadEl) Occlude() BaseTableHeadEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -8405,6 +10675,8 @@ func (e BaseTableHeadEl) Occlude() BaseTableHeadEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableHeadEl) OnAction(listener gk.ActionHandler) BaseTableHeadEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -8414,12 +10686,14 @@ func (e BaseTableHeadEl) OnAction(listener gk.ActionHandler) BaseTableHeadEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableHeadEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableHeadEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -8430,6 +10704,8 @@ func (e BaseTableHeadEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableHea
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableHeadEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableHeadEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -8440,6 +10716,8 @@ func (e BaseTableHeadEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableHeadEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableHeadEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -8451,6 +10729,8 @@ func (e BaseTableHeadEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableHeadEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableHeadEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -8460,6 +10740,8 @@ func (e BaseTableHeadEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableHeadEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableHeadEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -8472,6 +10754,8 @@ func (e BaseTableHeadEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTa
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableHeadEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableHeadEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -8481,6 +10765,8 @@ func (e BaseTableHeadEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableHeadEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeadEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -8490,6 +10776,8 @@ func (e BaseTableHeadEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Base
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableHeadEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeadEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -8499,6 +10787,8 @@ func (e BaseTableHeadEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTa
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableHeadEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableHeadEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -8508,12 +10798,14 @@ func (e BaseTableHeadEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableHeadEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableHeadEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -8524,12 +10816,14 @@ func (e BaseTableHeadEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableHeadEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableHeadEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -8539,12 +10833,14 @@ func (e BaseTableHeadEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableHea
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableHeadEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableHeadEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -8554,12 +10850,14 @@ func (e BaseTableHeadEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableHeadEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableHeadEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableHeadEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -8569,6 +10867,8 @@ func (e BaseTableHeadEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableHeadEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableHeadEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -8578,12 +10878,14 @@ func (e BaseTableHeadEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableHeadEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableHeadEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -8594,12 +10896,14 @@ func (e BaseTableHeadEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableHeadEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeadEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableHeadEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -8609,6 +10913,8 @@ func (e BaseTableHeadEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableHeadEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableHeadEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -8618,6 +10924,8 @@ func (e BaseTableHeadEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Base
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableHeadEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableHeadEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -8627,6 +10935,8 @@ func (e BaseTableHeadEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Ba
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableHeadEl) TabGroup() BaseTableHeadEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -8635,6 +10945,8 @@ func (e BaseTableHeadEl) TabGroup() BaseTableHeadEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableHeadEl) TabIndex(index int) BaseTableHeadEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -8644,6 +10956,8 @@ func (e BaseTableHeadEl) TabIndex(index int) BaseTableHeadEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableHeadEl) TabStop(tabStop bool) BaseTableHeadEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -8651,6 +10965,8 @@ func (e BaseTableHeadEl) TabStop(tabStop bool) BaseTableHeadEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableHeadEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableHeadEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -8658,12 +10974,14 @@ func (e BaseTableHeadEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableHeadEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableHeadEl) WindowControlArea(area gk.WindowControlArea) BaseTableHeadEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -8671,6 +10989,8 @@ func (e BaseTableHeadEl) WindowControlArea(area gk.WindowControlArea) BaseTableH
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableHeadEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableHeadEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -8682,25 +11002,31 @@ func (e BaseTableHeadEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableHeadEl
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableHeadEl) AccessibilityID(id string) BaseTableHeadEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableHeadEl) Active(f gk.StyleRefinement) BaseTableHeadEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableHeadEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableHeadEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -8709,19 +11035,25 @@ func (e BaseTableHeadEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) B
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableHeadEl) AriaActiveDescendant() BaseTableHeadEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableHeadEl) AriaColumnCount(count int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableHeadEl) AriaColumnIndex(index int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -8730,12 +11062,16 @@ func (e BaseTableHeadEl) AriaColumnIndex(index int) BaseTableHeadEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableHeadEl) AriaDescription(description string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableHeadEl) AriaExpanded(expanded bool) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -8746,36 +11082,48 @@ func (e BaseTableHeadEl) AriaExpanded(expanded bool) BaseTableHeadEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableHeadEl) AriaKeyshortcuts(keyshortcuts string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableHeadEl) AriaLabel(label string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableHeadEl) AriaLevel(level int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableHeadEl) AriaMaxNumericValue(value float64) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableHeadEl) AriaMinNumericValue(value float64) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableHeadEl) AriaNumericValue(value float64) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -8783,6 +11131,8 @@ func (e BaseTableHeadEl) AriaNumericValue(value float64) BaseTableHeadEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableHeadEl) AriaNumericValueStep(step float64) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -8790,42 +11140,56 @@ func (e BaseTableHeadEl) AriaNumericValueStep(step float64) BaseTableHeadEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableHeadEl) AriaPlaceholder(placeholder string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableHeadEl) AriaPositionInSet(position int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableHeadEl) AriaRowCount(count int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableHeadEl) AriaRowIndex(index int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableHeadEl) AriaSelected(selected bool) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableHeadEl) AriaSizeOfSet(size int) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableHeadEl) AriaValue(value string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -8835,18 +11199,24 @@ func (e BaseTableHeadEl) AriaValue(value string) BaseTableHeadEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableHeadEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableHeadEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableHeadEl) Focusable() BaseTableHeadEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableHeadEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableHeadEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -8855,6 +11225,8 @@ func (e BaseTableHeadEl) GroupActive(groupName string, f gk.StyleRefinement) Bas
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableHeadEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableHeadEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -8863,6 +11235,8 @@ func (e BaseTableHeadEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableH
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableHeadEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeadEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -8872,12 +11246,14 @@ func (e BaseTableHeadEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTab
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableHeadEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableHeadEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableHeadEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -8887,12 +11263,14 @@ func (e BaseTableHeadEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableHeadEl 
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableHeadEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableHeadEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableHeadEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -8904,6 +11282,8 @@ func (e BaseTableHeadEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableHeadEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableHeadEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableHeadEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -8918,24 +11298,32 @@ func (e BaseTableHeadEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTab
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableHeadEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableHeadEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableHeadEl) OverflowScroll() BaseTableHeadEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableHeadEl) OverflowXScroll() BaseTableHeadEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableHeadEl) OverflowYScroll() BaseTableHeadEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -8944,6 +11332,8 @@ func (e BaseTableHeadEl) OverflowYScroll() BaseTableHeadEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableHeadEl) RestrictScrollToAxis() BaseTableHeadEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -8952,6 +11342,8 @@ func (e BaseTableHeadEl) RestrictScrollToAxis() BaseTableHeadEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableHeadEl) Role(role gk.Role) BaseTableHeadEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -8959,6 +11351,8 @@ func (e BaseTableHeadEl) Role(role gk.Role) BaseTableHeadEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableHeadEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeadEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -8968,12 +11362,16 @@ func (e BaseTableHeadEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeadEl 
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableHeadEl) TooltipShowDelay(delay time.Duration) BaseTableHeadEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableHeadEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableHeadEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -8984,7 +11382,7 @@ type BaseTableHeaderEl struct{ rt.ElAnimatableElement }
 
 // Create An unstyled table header group.
 //
-// BaseTableHeader is <gpui_kit::base::TableHeader>::new.
+// BaseTableHeader calls <gpui_kit::base::TableHeader>::new.
 func BaseTableHeader(id gk.ID, st ...gk.Style) BaseTableHeaderEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(398)
@@ -9001,24 +11399,32 @@ func BaseTableHeader(id gk.ID, st ...gk.Style) BaseTableHeaderEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableHeaderEl) KeepTextSelection(id gk.ID) BaseTableHeaderEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableHeaderEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableHeaderEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableHeaderEl) BorderE(width gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableHeaderEl) BorderS(width gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -9026,151 +11432,193 @@ func (e BaseTableHeaderEl) BorderS(width gk.Length) BaseTableHeaderEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableHeaderEl) FlexRowDir() BaseTableHeaderEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableHeaderEl) InsetE(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableHeaderEl) InsetS(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableHeaderEl) JustifyFlexEnd() BaseTableHeaderEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableHeaderEl) JustifyFlexStart() BaseTableHeaderEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableHeaderEl) Me(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableHeaderEl) Ms(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableHeaderEl) Pe(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableHeaderEl) Ps(length gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableHeaderEl) RoundedE(radius gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableHeaderEl) RoundedS(radius gk.Length) BaseTableHeaderEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableHeaderEl) TextEnd() BaseTableHeaderEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableHeaderEl) TextStart() BaseTableHeaderEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableHeaderEl) CornerRadii(radius gk.Corners) BaseTableHeaderEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableHeaderEl) DebugBlue() BaseTableHeaderEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableHeaderEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableHeaderEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableHeaderEl) DebugGreen() BaseTableHeaderEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableHeaderEl) DebugPink() BaseTableHeaderEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableHeaderEl) DebugRed() BaseTableHeaderEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableHeaderEl) DebugYellow() BaseTableHeaderEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableHeaderEl) FontBlack() BaseTableHeaderEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableHeaderEl) FontBold() BaseTableHeaderEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableHeaderEl) FontExtrabold() BaseTableHeaderEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableHeaderEl) FontExtralight() BaseTableHeaderEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableHeaderEl) FontLight() BaseTableHeaderEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableHeaderEl) FontMedium() BaseTableHeaderEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableHeaderEl) FontNormal() BaseTableHeaderEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableHeaderEl) FontSemibold() BaseTableHeaderEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableHeaderEl) FontThin() BaseTableHeaderEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -9179,18 +11627,23 @@ func (e BaseTableHeaderEl) FontThin() BaseTableHeaderEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableHeaderEl) HFlex() BaseTableHeaderEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableHeaderEl) Margins(margins gk.EdgesInto) BaseTableHeaderEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableHeaderEl) Paddings(paddings gk.EdgesInto) BaseTableHeaderEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableHeaderEl) RefineStyle(style gk.StyleRefinement) BaseTableHeaderEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -9200,27 +11653,35 @@ func (e BaseTableHeaderEl) RefineStyle(style gk.StyleRefinement) BaseTableHeader
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableHeaderEl) VFlex() BaseTableHeaderEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableHeaderEl) Style(st ...gk.Style) BaseTableHeaderEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableHeaderEl) AspectRatio(ratio float32) BaseTableHeaderEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableHeaderEl) Bg(fill gk.Fill) BaseTableHeaderEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableHeaderEl) Border(length gk.Length) BaseTableHeaderEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -9228,12 +11689,16 @@ func (e BaseTableHeaderEl) Border(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableHeaderEl) BorderB(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableHeaderEl) BorderColor(borderColor gk.Color) BaseTableHeaderEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -9241,6 +11706,8 @@ func (e BaseTableHeaderEl) BorderColor(borderColor gk.Color) BaseTableHeaderEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableHeaderEl) BorderL(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -9248,6 +11715,8 @@ func (e BaseTableHeaderEl) BorderL(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableHeaderEl) BorderR(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -9255,6 +11724,8 @@ func (e BaseTableHeaderEl) BorderR(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableHeaderEl) BorderT(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -9262,6 +11733,8 @@ func (e BaseTableHeaderEl) BorderT(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableHeaderEl) BorderX(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -9269,6 +11742,8 @@ func (e BaseTableHeaderEl) BorderX(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableHeaderEl) BorderY(length gk.Length) BaseTableHeaderEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -9276,30 +11751,40 @@ func (e BaseTableHeaderEl) BorderY(length gk.Length) BaseTableHeaderEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableHeaderEl) Bottom(length gk.Length) BaseTableHeaderEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableHeaderEl) ColEnd(end int16) BaseTableHeaderEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableHeaderEl) ColSpan(span uint16) BaseTableHeaderEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableHeaderEl) ColStart(start int16) BaseTableHeaderEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableHeaderEl) Cursor(cursor gk.CursorStyle) BaseTableHeaderEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -9307,36 +11792,48 @@ func (e BaseTableHeaderEl) Cursor(cursor gk.CursorStyle) BaseTableHeaderEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableHeaderEl) FlexBasis(basis gk.Length) BaseTableHeaderEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableHeaderEl) FlexGrow(grow float32) BaseTableHeaderEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableHeaderEl) FlexShrink(shrink float32) BaseTableHeaderEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableHeaderEl) Font(font gk.Font) BaseTableHeaderEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableHeaderEl) FontFamily(familyName string) BaseTableHeaderEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableHeaderEl) FontFeatures(features gk.FontFeatures) BaseTableHeaderEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -9345,12 +11842,16 @@ func (e BaseTableHeaderEl) FontFeatures(features gk.FontFeatures) BaseTableHeade
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableHeaderEl) FontWeight(weight gk.FontWeight) BaseTableHeaderEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableHeaderEl) Gap(length gk.Length) BaseTableHeaderEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -9358,6 +11859,8 @@ func (e BaseTableHeaderEl) Gap(length gk.Length) BaseTableHeaderEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableHeaderEl) GapX(length gk.Length) BaseTableHeaderEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -9365,18 +11868,24 @@ func (e BaseTableHeaderEl) GapX(length gk.Length) BaseTableHeaderEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableHeaderEl) GapY(length gk.Length) BaseTableHeaderEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableHeaderEl) GridCols(cols uint16) BaseTableHeaderEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableHeaderEl) GridColsMaxContent(cols uint16) BaseTableHeaderEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -9384,18 +11893,24 @@ func (e BaseTableHeaderEl) GridColsMaxContent(cols uint16) BaseTableHeaderEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableHeaderEl) GridColsMinContent(cols uint16) BaseTableHeaderEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableHeaderEl) GridRows(rows uint16) BaseTableHeaderEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableHeaderEl) GridRowsMaxContent(rows uint16) BaseTableHeaderEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -9403,12 +11918,16 @@ func (e BaseTableHeaderEl) GridRowsMaxContent(rows uint16) BaseTableHeaderEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableHeaderEl) GridRowsMinContent(rows uint16) BaseTableHeaderEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableHeaderEl) H(length gk.Length) BaseTableHeaderEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -9416,6 +11935,8 @@ func (e BaseTableHeaderEl) H(length gk.Length) BaseTableHeaderEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableHeaderEl) Inset(length gk.Length) BaseTableHeaderEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -9423,6 +11944,8 @@ func (e BaseTableHeaderEl) Inset(length gk.Length) BaseTableHeaderEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableHeaderEl) Left(length gk.Length) BaseTableHeaderEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -9430,36 +11953,48 @@ func (e BaseTableHeaderEl) Left(length gk.Length) BaseTableHeaderEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableHeaderEl) LineClamp(lines int) BaseTableHeaderEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableHeaderEl) LineHeight(lineHeight gk.Length) BaseTableHeaderEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableHeaderEl) M(length gk.Length) BaseTableHeaderEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableHeaderEl) MaxH(length gk.Length) BaseTableHeaderEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableHeaderEl) MaxSize(length gk.Length) BaseTableHeaderEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableHeaderEl) MaxW(length gk.Length) BaseTableHeaderEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -9467,24 +12002,32 @@ func (e BaseTableHeaderEl) MaxW(length gk.Length) BaseTableHeaderEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableHeaderEl) Mb(length gk.Length) BaseTableHeaderEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableHeaderEl) MinH(length gk.Length) BaseTableHeaderEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableHeaderEl) MinSize(length gk.Length) BaseTableHeaderEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableHeaderEl) MinW(length gk.Length) BaseTableHeaderEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -9492,6 +12035,8 @@ func (e BaseTableHeaderEl) MinW(length gk.Length) BaseTableHeaderEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableHeaderEl) Ml(length gk.Length) BaseTableHeaderEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -9499,6 +12044,8 @@ func (e BaseTableHeaderEl) Ml(length gk.Length) BaseTableHeaderEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableHeaderEl) Mr(length gk.Length) BaseTableHeaderEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -9506,6 +12053,8 @@ func (e BaseTableHeaderEl) Mr(length gk.Length) BaseTableHeaderEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableHeaderEl) Mt(length gk.Length) BaseTableHeaderEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -9513,6 +12062,8 @@ func (e BaseTableHeaderEl) Mt(length gk.Length) BaseTableHeaderEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableHeaderEl) Mx(length gk.Length) BaseTableHeaderEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -9520,18 +12071,24 @@ func (e BaseTableHeaderEl) Mx(length gk.Length) BaseTableHeaderEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableHeaderEl) My(length gk.Length) BaseTableHeaderEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableHeaderEl) Opacity(opacity float32) BaseTableHeaderEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableHeaderEl) P(length gk.Length) BaseTableHeaderEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -9539,6 +12096,8 @@ func (e BaseTableHeaderEl) P(length gk.Length) BaseTableHeaderEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableHeaderEl) Pb(length gk.Length) BaseTableHeaderEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -9546,6 +12105,8 @@ func (e BaseTableHeaderEl) Pb(length gk.Length) BaseTableHeaderEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableHeaderEl) Pl(length gk.Length) BaseTableHeaderEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -9553,6 +12114,8 @@ func (e BaseTableHeaderEl) Pl(length gk.Length) BaseTableHeaderEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableHeaderEl) Pr(length gk.Length) BaseTableHeaderEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -9560,6 +12123,8 @@ func (e BaseTableHeaderEl) Pr(length gk.Length) BaseTableHeaderEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableHeaderEl) Pt(length gk.Length) BaseTableHeaderEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -9567,6 +12132,8 @@ func (e BaseTableHeaderEl) Pt(length gk.Length) BaseTableHeaderEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableHeaderEl) Px(length gk.Length) BaseTableHeaderEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -9574,6 +12141,8 @@ func (e BaseTableHeaderEl) Px(length gk.Length) BaseTableHeaderEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableHeaderEl) Py(length gk.Length) BaseTableHeaderEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -9581,12 +12150,16 @@ func (e BaseTableHeaderEl) Py(length gk.Length) BaseTableHeaderEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableHeaderEl) Right(length gk.Length) BaseTableHeaderEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableHeaderEl) Rounded(length gk.Length) BaseTableHeaderEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -9594,6 +12167,8 @@ func (e BaseTableHeaderEl) Rounded(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableHeaderEl) RoundedB(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -9601,6 +12176,8 @@ func (e BaseTableHeaderEl) RoundedB(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableHeaderEl) RoundedBl(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -9608,6 +12185,8 @@ func (e BaseTableHeaderEl) RoundedBl(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableHeaderEl) RoundedBr(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -9615,6 +12194,8 @@ func (e BaseTableHeaderEl) RoundedBr(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableHeaderEl) RoundedL(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -9622,6 +12203,8 @@ func (e BaseTableHeaderEl) RoundedL(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableHeaderEl) RoundedR(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -9629,6 +12212,8 @@ func (e BaseTableHeaderEl) RoundedR(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableHeaderEl) RoundedT(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -9636,6 +12221,8 @@ func (e BaseTableHeaderEl) RoundedT(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableHeaderEl) RoundedTl(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -9643,24 +12230,32 @@ func (e BaseTableHeaderEl) RoundedTl(length gk.Length) BaseTableHeaderEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableHeaderEl) RoundedTr(length gk.Length) BaseTableHeaderEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableHeaderEl) RowEnd(end int16) BaseTableHeaderEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableHeaderEl) RowSpan(span uint16) BaseTableHeaderEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableHeaderEl) RowStart(start int16) BaseTableHeaderEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -9670,24 +12265,32 @@ func (e BaseTableHeaderEl) RowStart(start int16) BaseTableHeaderEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableHeaderEl) ScrollbarWidth(width gk.Length) BaseTableHeaderEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableHeaderEl) Shadow(shadows []gk.BoxShadow) BaseTableHeaderEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableHeaderEl) Size(length gk.Length) BaseTableHeaderEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableHeaderEl) TextAlign(align gk.TextAlign) BaseTableHeaderEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -9696,6 +12299,8 @@ func (e BaseTableHeaderEl) TextAlign(align gk.TextAlign) BaseTableHeaderEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableHeaderEl) TextBg(bg gk.Color) BaseTableHeaderEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -9704,18 +12309,24 @@ func (e BaseTableHeaderEl) TextBg(bg gk.Color) BaseTableHeaderEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableHeaderEl) TextColor(color gk.Color) BaseTableHeaderEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableHeaderEl) TextDecorationColor(color gk.Color) BaseTableHeaderEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableHeaderEl) TextOverflow(overflow gk.TextOverflow) BaseTableHeaderEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -9724,6 +12335,8 @@ func (e BaseTableHeaderEl) TextOverflow(overflow gk.TextOverflow) BaseTableHeade
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableHeaderEl) TextSize(size gk.Length) BaseTableHeaderEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -9731,32 +12344,41 @@ func (e BaseTableHeaderEl) TextSize(size gk.Length) BaseTableHeaderEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableHeaderEl) Top(length gk.Length) BaseTableHeaderEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableHeaderEl) W(length gk.Length) BaseTableHeaderEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BaseTableHeaderEl) Text(s string) BaseTableHeaderEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableHeaderEl) ChildView(v gk.View) BaseTableHeaderEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableHeaderEl) Child(child gk.Element) BaseTableHeaderEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableHeaderEl) Children(children ...gk.Element) BaseTableHeaderEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -9766,6 +12388,8 @@ func (e BaseTableHeaderEl) Children(children ...gk.Element) BaseTableHeaderEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableHeaderEl) BlockMouseExceptScroll() BaseTableHeaderEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -9773,6 +12397,8 @@ func (e BaseTableHeaderEl) BlockMouseExceptScroll() BaseTableHeaderEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableHeaderEl) CanDrop(predicate gk.DropAccept) BaseTableHeaderEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -9782,6 +12408,8 @@ func (e BaseTableHeaderEl) CanDrop(predicate gk.DropAccept) BaseTableHeaderEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableHeaderEl) CaptureAction(listener gk.ActionHandler) BaseTableHeaderEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -9791,12 +12419,14 @@ func (e BaseTableHeaderEl) CaptureAction(listener gk.ActionHandler) BaseTableHea
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableHeaderEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableHeaderEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -9806,12 +12436,14 @@ func (e BaseTableHeaderEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseT
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableHeaderEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableHeaderEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -9821,6 +12453,8 @@ func (e BaseTableHeaderEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTab
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableHeaderEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeaderEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -9830,6 +12464,8 @@ func (e BaseTableHeaderEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableHeaderEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeaderEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -9839,6 +12475,8 @@ func (e BaseTableHeaderEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent))
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableHeaderEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableHeaderEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -9848,12 +12486,16 @@ func (e BaseTableHeaderEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mo
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableHeaderEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableHeaderEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableHeaderEl) DragOver(f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -9861,6 +12503,8 @@ func (e BaseTableHeaderEl) DragOver(f gk.StyleRefinement) BaseTableHeaderEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableHeaderEl) Focus(f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -9870,30 +12514,40 @@ func (e BaseTableHeaderEl) Focus(f gk.StyleRefinement) BaseTableHeaderEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableHeaderEl) FocusVisible(f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableHeaderEl) Group(group string) BaseTableHeaderEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableHeaderEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableHeaderEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableHeaderEl) Hover(f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -9901,6 +12555,8 @@ func (e BaseTableHeaderEl) Hover(f gk.StyleRefinement) BaseTableHeaderEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableHeaderEl) InFocus(f gk.StyleRefinement) BaseTableHeaderEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -9908,6 +12564,8 @@ func (e BaseTableHeaderEl) InFocus(f gk.StyleRefinement) BaseTableHeaderEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableHeaderEl) KeyContext(keyContext string) BaseTableHeaderEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -9915,6 +12573,8 @@ func (e BaseTableHeaderEl) KeyContext(keyContext string) BaseTableHeaderEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableHeaderEl) Occlude() BaseTableHeaderEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -9924,6 +12584,8 @@ func (e BaseTableHeaderEl) Occlude() BaseTableHeaderEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableHeaderEl) OnAction(listener gk.ActionHandler) BaseTableHeaderEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -9933,12 +12595,14 @@ func (e BaseTableHeaderEl) OnAction(listener gk.ActionHandler) BaseTableHeaderEl
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableHeaderEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableHeaderEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -9949,6 +12613,8 @@ func (e BaseTableHeaderEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableH
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableHeaderEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -9959,6 +12625,8 @@ func (e BaseTableHeaderEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestu
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableHeaderEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableHeaderEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -9970,6 +12638,8 @@ func (e BaseTableHeaderEl) OnBoxedAction(action gk.Action, listener func(cx *gk.
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableHeaderEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -9979,6 +12649,8 @@ func (e BaseTableHeaderEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEven
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableHeaderEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableHeaderEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -9991,6 +12663,8 @@ func (e BaseTableHeaderEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) Base
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableHeaderEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -10000,6 +12674,8 @@ func (e BaseTableHeaderEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDrop
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableHeaderEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -10009,6 +12685,8 @@ func (e BaseTableHeaderEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Ba
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableHeaderEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -10018,6 +12696,8 @@ func (e BaseTableHeaderEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Base
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableHeaderEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -10027,12 +12707,14 @@ func (e BaseTableHeaderEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableHeaderEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableHeaderEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -10043,12 +12725,14 @@ func (e BaseTableHeaderEl) OnMouseDownDo(button gk.MouseButton, listener func(cx
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableHeaderEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableHeaderEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -10058,12 +12742,14 @@ func (e BaseTableHeaderEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableH
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableHeaderEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableHeaderEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -10073,12 +12759,14 @@ func (e BaseTableHeaderEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableHead
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableHeaderEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableHeaderEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -10088,6 +12776,8 @@ func (e BaseTableHeaderEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableHead
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableHeaderEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -10097,12 +12787,14 @@ func (e BaseTableHeaderEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePr
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableHeaderEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableHeaderEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -10113,12 +12805,14 @@ func (e BaseTableHeaderEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableHeaderEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableHeaderEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -10128,6 +12822,8 @@ func (e BaseTableHeaderEl) OnMouseUpOutDo(button gk.MouseButton, listener func(c
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableHeaderEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -10137,6 +12833,8 @@ func (e BaseTableHeaderEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Ba
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableHeaderEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableHeaderEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -10146,6 +12844,8 @@ func (e BaseTableHeaderEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) 
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableHeaderEl) TabGroup() BaseTableHeaderEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -10154,6 +12854,8 @@ func (e BaseTableHeaderEl) TabGroup() BaseTableHeaderEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableHeaderEl) TabIndex(index int) BaseTableHeaderEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -10163,6 +12865,8 @@ func (e BaseTableHeaderEl) TabIndex(index int) BaseTableHeaderEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableHeaderEl) TabStop(tabStop bool) BaseTableHeaderEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -10170,6 +12874,8 @@ func (e BaseTableHeaderEl) TabStop(tabStop bool) BaseTableHeaderEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableHeaderEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableHeaderEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -10177,12 +12883,14 @@ func (e BaseTableHeaderEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableHeade
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableHeaderEl) WindowControlArea(area gk.WindowControlArea) BaseTableHeaderEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -10190,6 +12898,8 @@ func (e BaseTableHeaderEl) WindowControlArea(area gk.WindowControlArea) BaseTabl
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableHeaderEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableHeaderEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -10201,25 +12911,31 @@ func (e BaseTableHeaderEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableHead
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableHeaderEl) AccessibilityID(id string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableHeaderEl) Active(f gk.StyleRefinement) BaseTableHeaderEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableHeaderEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableHeaderEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -10228,19 +12944,25 @@ func (e BaseTableHeaderEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor])
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableHeaderEl) AriaActiveDescendant() BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableHeaderEl) AriaColumnCount(count int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableHeaderEl) AriaColumnIndex(index int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -10249,12 +12971,16 @@ func (e BaseTableHeaderEl) AriaColumnIndex(index int) BaseTableHeaderEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableHeaderEl) AriaDescription(description string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableHeaderEl) AriaExpanded(expanded bool) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -10265,36 +12991,48 @@ func (e BaseTableHeaderEl) AriaExpanded(expanded bool) BaseTableHeaderEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableHeaderEl) AriaKeyshortcuts(keyshortcuts string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableHeaderEl) AriaLabel(label string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableHeaderEl) AriaLevel(level int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableHeaderEl) AriaMaxNumericValue(value float64) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableHeaderEl) AriaMinNumericValue(value float64) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableHeaderEl) AriaNumericValue(value float64) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -10302,6 +13040,8 @@ func (e BaseTableHeaderEl) AriaNumericValue(value float64) BaseTableHeaderEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableHeaderEl) AriaNumericValueStep(step float64) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -10309,42 +13049,56 @@ func (e BaseTableHeaderEl) AriaNumericValueStep(step float64) BaseTableHeaderEl 
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableHeaderEl) AriaPlaceholder(placeholder string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableHeaderEl) AriaPositionInSet(position int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableHeaderEl) AriaRowCount(count int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableHeaderEl) AriaRowIndex(index int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableHeaderEl) AriaSelected(selected bool) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableHeaderEl) AriaSizeOfSet(size int) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableHeaderEl) AriaValue(value string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -10354,18 +13108,24 @@ func (e BaseTableHeaderEl) AriaValue(value string) BaseTableHeaderEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableHeaderEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableHeaderEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableHeaderEl) Focusable() BaseTableHeaderEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableHeaderEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableHeaderEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -10374,6 +13134,8 @@ func (e BaseTableHeaderEl) GroupActive(groupName string, f gk.StyleRefinement) B
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableHeaderEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableHeaderEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -10382,6 +13144,8 @@ func (e BaseTableHeaderEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTabl
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableHeaderEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeaderEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -10391,12 +13155,14 @@ func (e BaseTableHeaderEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseT
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableHeaderEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableHeaderEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -10406,12 +13172,14 @@ func (e BaseTableHeaderEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableHeade
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableHeaderEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableHeaderEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -10423,6 +13191,8 @@ func (e BaseTableHeaderEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableHeaderEl
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableHeaderEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -10437,24 +13207,32 @@ func (e BaseTableHeaderEl) OnDrag(value gk.DragValue, constructor gk.View) BaseT
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableHeaderEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableHeaderEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableHeaderEl) OverflowScroll() BaseTableHeaderEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableHeaderEl) OverflowXScroll() BaseTableHeaderEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableHeaderEl) OverflowYScroll() BaseTableHeaderEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -10463,6 +13241,8 @@ func (e BaseTableHeaderEl) OverflowYScroll() BaseTableHeaderEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableHeaderEl) RestrictScrollToAxis() BaseTableHeaderEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -10471,6 +13251,8 @@ func (e BaseTableHeaderEl) RestrictScrollToAxis() BaseTableHeaderEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableHeaderEl) Role(role gk.Role) BaseTableHeaderEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -10478,6 +13260,8 @@ func (e BaseTableHeaderEl) Role(role gk.Role) BaseTableHeaderEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableHeaderEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeaderEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -10487,12 +13271,16 @@ func (e BaseTableHeaderEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableHeade
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableHeaderEl) TooltipShowDelay(delay time.Duration) BaseTableHeaderEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableHeaderEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableHeaderEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -10503,7 +13291,7 @@ type BaseTableRowEl struct{ rt.ElAnimatableElement }
 
 // Create an unstyled semantic table row with a one-based accessibility index.
 //
-// BaseTableRow is <gpui_kit::base::TableRow>::new.
+// BaseTableRow calls <gpui_kit::base::TableRow>::new.
 func BaseTableRow(id gk.ID, rowIndex int, st ...gk.Style) BaseTableRowEl {
 	rt.UseBaseTable()
 	n := rt.NewNode(399)
@@ -10521,24 +13309,32 @@ func BaseTableRow(id gk.ID, rowIndex int, st ...gk.Style) BaseTableRowEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BaseTableRowEl) KeepTextSelection(id gk.ID) BaseTableRowEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BaseTableRowEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BaseTableRowEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTableRowEl) BorderE(width gk.Length) BaseTableRowEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTableRowEl) BorderS(width gk.Length) BaseTableRowEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -10546,133 +13342,175 @@ func (e BaseTableRowEl) BorderS(width gk.Length) BaseTableRowEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTableRowEl) FlexRowDir() BaseTableRowEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTableRowEl) InsetE(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTableRowEl) InsetS(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTableRowEl) JustifyFlexEnd() BaseTableRowEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTableRowEl) JustifyFlexStart() BaseTableRowEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTableRowEl) Me(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTableRowEl) Ms(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTableRowEl) Pe(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTableRowEl) Ps(length gk.Length) BaseTableRowEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTableRowEl) RoundedE(radius gk.Length) BaseTableRowEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTableRowEl) RoundedS(radius gk.Length) BaseTableRowEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTableRowEl) TextEnd() BaseTableRowEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTableRowEl) TextStart() BaseTableRowEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTableRowEl) CornerRadii(radius gk.Corners) BaseTableRowEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTableRowEl) DebugBlue() BaseTableRowEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTableRowEl) DebugFocused(focusHandle gk.FocusHandle) BaseTableRowEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTableRowEl) DebugGreen() BaseTableRowEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTableRowEl) DebugPink() BaseTableRowEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTableRowEl) DebugRed() BaseTableRowEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTableRowEl) DebugYellow() BaseTableRowEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTableRowEl) FontBlack() BaseTableRowEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTableRowEl) FontBold() BaseTableRowEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTableRowEl) FontExtrabold() BaseTableRowEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTableRowEl) FontExtralight() BaseTableRowEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTableRowEl) FontLight() BaseTableRowEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTableRowEl) FontMedium() BaseTableRowEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTableRowEl) FontNormal() BaseTableRowEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTableRowEl) FontSemibold() BaseTableRowEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTableRowEl) FontThin() BaseTableRowEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -10681,18 +13519,23 @@ func (e BaseTableRowEl) FontThin() BaseTableRowEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTableRowEl) HFlex() BaseTableRowEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTableRowEl) Margins(margins gk.EdgesInto) BaseTableRowEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTableRowEl) Paddings(paddings gk.EdgesInto) BaseTableRowEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTableRowEl) RefineStyle(style gk.StyleRefinement) BaseTableRowEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -10702,21 +13545,29 @@ func (e BaseTableRowEl) RefineStyle(style gk.StyleRefinement) BaseTableRowEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTableRowEl) VFlex() BaseTableRowEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTableRowEl) Style(st ...gk.Style) BaseTableRowEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTableRowEl) AspectRatio(ratio float32) BaseTableRowEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTableRowEl) Bg(fill gk.Fill) BaseTableRowEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTableRowEl) Border(length gk.Length) BaseTableRowEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -10724,12 +13575,16 @@ func (e BaseTableRowEl) Border(length gk.Length) BaseTableRowEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTableRowEl) BorderB(length gk.Length) BaseTableRowEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTableRowEl) BorderColor(borderColor gk.Color) BaseTableRowEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -10737,6 +13592,8 @@ func (e BaseTableRowEl) BorderColor(borderColor gk.Color) BaseTableRowEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTableRowEl) BorderL(length gk.Length) BaseTableRowEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -10744,6 +13601,8 @@ func (e BaseTableRowEl) BorderL(length gk.Length) BaseTableRowEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTableRowEl) BorderR(length gk.Length) BaseTableRowEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -10751,6 +13610,8 @@ func (e BaseTableRowEl) BorderR(length gk.Length) BaseTableRowEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTableRowEl) BorderT(length gk.Length) BaseTableRowEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -10758,6 +13619,8 @@ func (e BaseTableRowEl) BorderT(length gk.Length) BaseTableRowEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTableRowEl) BorderX(length gk.Length) BaseTableRowEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -10765,6 +13628,8 @@ func (e BaseTableRowEl) BorderX(length gk.Length) BaseTableRowEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTableRowEl) BorderY(length gk.Length) BaseTableRowEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -10772,27 +13637,37 @@ func (e BaseTableRowEl) BorderY(length gk.Length) BaseTableRowEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTableRowEl) Bottom(length gk.Length) BaseTableRowEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTableRowEl) ColEnd(end int16) BaseTableRowEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTableRowEl) ColSpan(span uint16) BaseTableRowEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTableRowEl) ColStart(start int16) BaseTableRowEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTableRowEl) Cursor(cursor gk.CursorStyle) BaseTableRowEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -10800,33 +13675,45 @@ func (e BaseTableRowEl) Cursor(cursor gk.CursorStyle) BaseTableRowEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTableRowEl) FlexBasis(basis gk.Length) BaseTableRowEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTableRowEl) FlexGrow(grow float32) BaseTableRowEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTableRowEl) FlexShrink(shrink float32) BaseTableRowEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTableRowEl) Font(font gk.Font) BaseTableRowEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTableRowEl) FontFamily(familyName string) BaseTableRowEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTableRowEl) FontFeatures(features gk.FontFeatures) BaseTableRowEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -10835,12 +13722,16 @@ func (e BaseTableRowEl) FontFeatures(features gk.FontFeatures) BaseTableRowEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTableRowEl) FontWeight(weight gk.FontWeight) BaseTableRowEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTableRowEl) Gap(length gk.Length) BaseTableRowEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -10848,6 +13739,8 @@ func (e BaseTableRowEl) Gap(length gk.Length) BaseTableRowEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTableRowEl) GapX(length gk.Length) BaseTableRowEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -10855,18 +13748,24 @@ func (e BaseTableRowEl) GapX(length gk.Length) BaseTableRowEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTableRowEl) GapY(length gk.Length) BaseTableRowEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTableRowEl) GridCols(cols uint16) BaseTableRowEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTableRowEl) GridColsMaxContent(cols uint16) BaseTableRowEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -10874,18 +13773,24 @@ func (e BaseTableRowEl) GridColsMaxContent(cols uint16) BaseTableRowEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTableRowEl) GridColsMinContent(cols uint16) BaseTableRowEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTableRowEl) GridRows(rows uint16) BaseTableRowEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTableRowEl) GridRowsMaxContent(rows uint16) BaseTableRowEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -10893,16 +13798,22 @@ func (e BaseTableRowEl) GridRowsMaxContent(rows uint16) BaseTableRowEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTableRowEl) GridRowsMinContent(rows uint16) BaseTableRowEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTableRowEl) H(length gk.Length) BaseTableRowEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTableRowEl) Inset(length gk.Length) BaseTableRowEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -10910,6 +13821,8 @@ func (e BaseTableRowEl) Inset(length gk.Length) BaseTableRowEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTableRowEl) Left(length gk.Length) BaseTableRowEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -10917,33 +13830,45 @@ func (e BaseTableRowEl) Left(length gk.Length) BaseTableRowEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTableRowEl) LineClamp(lines int) BaseTableRowEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTableRowEl) LineHeight(lineHeight gk.Length) BaseTableRowEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTableRowEl) M(length gk.Length) BaseTableRowEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTableRowEl) MaxH(length gk.Length) BaseTableRowEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTableRowEl) MaxSize(length gk.Length) BaseTableRowEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTableRowEl) MaxW(length gk.Length) BaseTableRowEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -10951,24 +13876,32 @@ func (e BaseTableRowEl) MaxW(length gk.Length) BaseTableRowEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTableRowEl) Mb(length gk.Length) BaseTableRowEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTableRowEl) MinH(length gk.Length) BaseTableRowEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTableRowEl) MinSize(length gk.Length) BaseTableRowEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTableRowEl) MinW(length gk.Length) BaseTableRowEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -10976,6 +13909,8 @@ func (e BaseTableRowEl) MinW(length gk.Length) BaseTableRowEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTableRowEl) Ml(length gk.Length) BaseTableRowEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -10983,6 +13918,8 @@ func (e BaseTableRowEl) Ml(length gk.Length) BaseTableRowEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTableRowEl) Mr(length gk.Length) BaseTableRowEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -10990,6 +13927,8 @@ func (e BaseTableRowEl) Mr(length gk.Length) BaseTableRowEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTableRowEl) Mt(length gk.Length) BaseTableRowEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -10997,6 +13936,8 @@ func (e BaseTableRowEl) Mt(length gk.Length) BaseTableRowEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTableRowEl) Mx(length gk.Length) BaseTableRowEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -11004,22 +13945,30 @@ func (e BaseTableRowEl) Mx(length gk.Length) BaseTableRowEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTableRowEl) My(length gk.Length) BaseTableRowEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTableRowEl) Opacity(opacity float32) BaseTableRowEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTableRowEl) P(length gk.Length) BaseTableRowEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTableRowEl) Pb(length gk.Length) BaseTableRowEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -11027,6 +13976,8 @@ func (e BaseTableRowEl) Pb(length gk.Length) BaseTableRowEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTableRowEl) Pl(length gk.Length) BaseTableRowEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -11034,6 +13985,8 @@ func (e BaseTableRowEl) Pl(length gk.Length) BaseTableRowEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTableRowEl) Pr(length gk.Length) BaseTableRowEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -11041,6 +13994,8 @@ func (e BaseTableRowEl) Pr(length gk.Length) BaseTableRowEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTableRowEl) Pt(length gk.Length) BaseTableRowEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -11048,6 +14003,8 @@ func (e BaseTableRowEl) Pt(length gk.Length) BaseTableRowEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTableRowEl) Px(length gk.Length) BaseTableRowEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -11055,6 +14012,8 @@ func (e BaseTableRowEl) Px(length gk.Length) BaseTableRowEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTableRowEl) Py(length gk.Length) BaseTableRowEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -11062,12 +14021,16 @@ func (e BaseTableRowEl) Py(length gk.Length) BaseTableRowEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTableRowEl) Right(length gk.Length) BaseTableRowEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTableRowEl) Rounded(length gk.Length) BaseTableRowEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -11075,6 +14038,8 @@ func (e BaseTableRowEl) Rounded(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTableRowEl) RoundedB(length gk.Length) BaseTableRowEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -11082,6 +14047,8 @@ func (e BaseTableRowEl) RoundedB(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTableRowEl) RoundedBl(length gk.Length) BaseTableRowEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -11089,6 +14056,8 @@ func (e BaseTableRowEl) RoundedBl(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTableRowEl) RoundedBr(length gk.Length) BaseTableRowEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -11096,6 +14065,8 @@ func (e BaseTableRowEl) RoundedBr(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTableRowEl) RoundedL(length gk.Length) BaseTableRowEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -11103,6 +14074,8 @@ func (e BaseTableRowEl) RoundedL(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTableRowEl) RoundedR(length gk.Length) BaseTableRowEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -11110,6 +14083,8 @@ func (e BaseTableRowEl) RoundedR(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTableRowEl) RoundedT(length gk.Length) BaseTableRowEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -11117,6 +14092,8 @@ func (e BaseTableRowEl) RoundedT(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTableRowEl) RoundedTl(length gk.Length) BaseTableRowEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -11124,21 +14101,29 @@ func (e BaseTableRowEl) RoundedTl(length gk.Length) BaseTableRowEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTableRowEl) RoundedTr(length gk.Length) BaseTableRowEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTableRowEl) RowEnd(end int16) BaseTableRowEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTableRowEl) RowSpan(span uint16) BaseTableRowEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTableRowEl) RowStart(start int16) BaseTableRowEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -11148,24 +14133,32 @@ func (e BaseTableRowEl) RowStart(start int16) BaseTableRowEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTableRowEl) ScrollbarWidth(width gk.Length) BaseTableRowEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTableRowEl) Shadow(shadows []gk.BoxShadow) BaseTableRowEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTableRowEl) Size(length gk.Length) BaseTableRowEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTableRowEl) TextAlign(align gk.TextAlign) BaseTableRowEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -11174,23 +14167,31 @@ func (e BaseTableRowEl) TextAlign(align gk.TextAlign) BaseTableRowEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTableRowEl) TextBg(bg gk.Color) BaseTableRowEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTableRowEl) TextColor(color gk.Color) BaseTableRowEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTableRowEl) TextDecorationColor(color gk.Color) BaseTableRowEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTableRowEl) TextOverflow(overflow gk.TextOverflow) BaseTableRowEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -11199,6 +14200,8 @@ func (e BaseTableRowEl) TextOverflow(overflow gk.TextOverflow) BaseTableRowEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTableRowEl) TextSize(size gk.Length) BaseTableRowEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -11206,26 +14209,35 @@ func (e BaseTableRowEl) TextSize(size gk.Length) BaseTableRowEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTableRowEl) Top(length gk.Length) BaseTableRowEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTableRowEl) W(length gk.Length) BaseTableRowEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e BaseTableRowEl) Text(s string) BaseTableRowEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BaseTableRowEl) ChildView(v gk.View) BaseTableRowEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BaseTableRowEl) Child(child gk.Element) BaseTableRowEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BaseTableRowEl) Children(children ...gk.Element) BaseTableRowEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -11235,6 +14247,8 @@ func (e BaseTableRowEl) Children(children ...gk.Element) BaseTableRowEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e BaseTableRowEl) BlockMouseExceptScroll() BaseTableRowEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -11242,6 +14256,8 @@ func (e BaseTableRowEl) BlockMouseExceptScroll() BaseTableRowEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e BaseTableRowEl) CanDrop(predicate gk.DropAccept) BaseTableRowEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -11251,6 +14267,8 @@ func (e BaseTableRowEl) CanDrop(predicate gk.DropAccept) BaseTableRowEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e BaseTableRowEl) CaptureAction(listener gk.ActionHandler) BaseTableRowEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -11260,12 +14278,14 @@ func (e BaseTableRowEl) CaptureAction(listener gk.ActionHandler) BaseTableRowEl 
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e BaseTableRowEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e BaseTableRowEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -11275,12 +14295,14 @@ func (e BaseTableRowEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTabl
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e BaseTableRowEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e BaseTableRowEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -11290,6 +14312,8 @@ func (e BaseTableRowEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) BaseTableR
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e BaseTableRowEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableRowEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -11299,6 +14323,8 @@ func (e BaseTableRowEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) 
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e BaseTableRowEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableRowEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -11308,6 +14334,8 @@ func (e BaseTableRowEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Ba
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e BaseTableRowEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableRowEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -11317,12 +14345,16 @@ func (e BaseTableRowEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mouse
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e BaseTableRowEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableRowEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e BaseTableRowEl) DragOver(f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -11330,6 +14362,8 @@ func (e BaseTableRowEl) DragOver(f gk.StyleRefinement) BaseTableRowEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e BaseTableRowEl) Focus(f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -11339,30 +14373,40 @@ func (e BaseTableRowEl) Focus(f gk.StyleRefinement) BaseTableRowEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e BaseTableRowEl) FocusVisible(f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e BaseTableRowEl) Group(group string) BaseTableRowEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e BaseTableRowEl) GroupDragOver(groupName string, f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e BaseTableRowEl) GroupHover(groupName string, f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e BaseTableRowEl) Hover(f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -11370,6 +14414,8 @@ func (e BaseTableRowEl) Hover(f gk.StyleRefinement) BaseTableRowEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e BaseTableRowEl) InFocus(f gk.StyleRefinement) BaseTableRowEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -11377,6 +14423,8 @@ func (e BaseTableRowEl) InFocus(f gk.StyleRefinement) BaseTableRowEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e BaseTableRowEl) KeyContext(keyContext string) BaseTableRowEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -11384,12 +14432,16 @@ func (e BaseTableRowEl) KeyContext(keyContext string) BaseTableRowEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e BaseTableRowEl) Occlude() BaseTableRowEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e BaseTableRowEl) OnAction(listener gk.ActionHandler) BaseTableRowEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -11399,12 +14451,14 @@ func (e BaseTableRowEl) OnAction(listener gk.ActionHandler) BaseTableRowEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e BaseTableRowEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e BaseTableRowEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -11415,6 +14469,8 @@ func (e BaseTableRowEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) BaseTableRowE
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e BaseTableRowEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) BaseTableRowEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -11425,6 +14481,8 @@ func (e BaseTableRowEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureE
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e BaseTableRowEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) BaseTableRowEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -11436,6 +14494,8 @@ func (e BaseTableRowEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx,
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e BaseTableRowEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) BaseTableRowEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -11445,6 +14505,8 @@ func (e BaseTableRowEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent))
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e BaseTableRowEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTableRowEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -11457,6 +14519,8 @@ func (e BaseTableRowEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) BaseTab
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e BaseTableRowEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) BaseTableRowEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -11466,6 +14530,8 @@ func (e BaseTableRowEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEve
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e BaseTableRowEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableRowEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -11475,6 +14541,8 @@ func (e BaseTableRowEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseT
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e BaseTableRowEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTableRowEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -11484,6 +14552,8 @@ func (e BaseTableRowEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) BaseTab
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e BaseTableRowEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) BaseTableRowEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -11493,12 +14563,14 @@ func (e BaseTableRowEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifie
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e BaseTableRowEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e BaseTableRowEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -11509,12 +14581,14 @@ func (e BaseTableRowEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *g
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e BaseTableRowEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e BaseTableRowEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -11524,12 +14598,14 @@ func (e BaseTableRowEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) BaseTableRowE
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e BaseTableRowEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e BaseTableRowEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -11539,12 +14615,14 @@ func (e BaseTableRowEl) OnMouseExitDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e BaseTableRowEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e BaseTableRowEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -11554,6 +14632,8 @@ func (e BaseTableRowEl) OnMouseMoveDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e BaseTableRowEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) BaseTableRowEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -11563,12 +14643,14 @@ func (e BaseTableRowEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePress
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e BaseTableRowEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e BaseTableRowEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -11579,12 +14661,14 @@ func (e BaseTableRowEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e BaseTableRowEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) BaseTableRowEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e BaseTableRowEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) BaseTableRowEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -11594,6 +14678,8 @@ func (e BaseTableRowEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e BaseTableRowEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseTableRowEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -11603,6 +14689,8 @@ func (e BaseTableRowEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) BaseT
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e BaseTableRowEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) BaseTableRowEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -11612,6 +14700,8 @@ func (e BaseTableRowEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Bas
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e BaseTableRowEl) TabGroup() BaseTableRowEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -11620,6 +14710,8 @@ func (e BaseTableRowEl) TabGroup() BaseTableRowEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e BaseTableRowEl) TabIndex(index int) BaseTableRowEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -11629,6 +14721,8 @@ func (e BaseTableRowEl) TabIndex(index int) BaseTableRowEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e BaseTableRowEl) TabStop(tabStop bool) BaseTableRowEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -11636,6 +14730,8 @@ func (e BaseTableRowEl) TabStop(tabStop bool) BaseTableRowEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e BaseTableRowEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableRowEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -11643,12 +14739,14 @@ func (e BaseTableRowEl) TrackFocus(focusHandle gk.FocusHandle) BaseTableRowEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e BaseTableRowEl) WindowControlArea(area gk.WindowControlArea) BaseTableRowEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -11656,6 +14754,8 @@ func (e BaseTableRowEl) WindowControlArea(area gk.WindowControlArea) BaseTableRo
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e BaseTableRowEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableRowEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -11667,25 +14767,31 @@ func (e BaseTableRowEl) A11ySyntheticChildren(f []gk.A11yChild) BaseTableRowEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e BaseTableRowEl) AccessibilityID(id string) BaseTableRowEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e BaseTableRowEl) Active(f gk.StyleRefinement) BaseTableRowEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e BaseTableRowEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) BaseTableRowEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -11694,19 +14800,25 @@ func (e BaseTableRowEl) AnchorScroll(scrollAnchor gk.Option[gk.ScrollAnchor]) Ba
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e BaseTableRowEl) AriaActiveDescendant() BaseTableRowEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e BaseTableRowEl) AriaColumnCount(count int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e BaseTableRowEl) AriaColumnIndex(index int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -11715,12 +14827,16 @@ func (e BaseTableRowEl) AriaColumnIndex(index int) BaseTableRowEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e BaseTableRowEl) AriaDescription(description string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e BaseTableRowEl) AriaExpanded(expanded bool) BaseTableRowEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -11731,36 +14847,48 @@ func (e BaseTableRowEl) AriaExpanded(expanded bool) BaseTableRowEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e BaseTableRowEl) AriaKeyshortcuts(keyshortcuts string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e BaseTableRowEl) AriaLabel(label string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e BaseTableRowEl) AriaLevel(level int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e BaseTableRowEl) AriaMaxNumericValue(value float64) BaseTableRowEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e BaseTableRowEl) AriaMinNumericValue(value float64) BaseTableRowEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e BaseTableRowEl) AriaNumericValue(value float64) BaseTableRowEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -11768,6 +14896,8 @@ func (e BaseTableRowEl) AriaNumericValue(value float64) BaseTableRowEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e BaseTableRowEl) AriaNumericValueStep(step float64) BaseTableRowEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -11775,42 +14905,56 @@ func (e BaseTableRowEl) AriaNumericValueStep(step float64) BaseTableRowEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e BaseTableRowEl) AriaPlaceholder(placeholder string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e BaseTableRowEl) AriaPositionInSet(position int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e BaseTableRowEl) AriaRowCount(count int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e BaseTableRowEl) AriaRowIndex(index int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e BaseTableRowEl) AriaSelected(selected bool) BaseTableRowEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e BaseTableRowEl) AriaSizeOfSet(size int) BaseTableRowEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e BaseTableRowEl) AriaValue(value string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -11820,18 +14964,24 @@ func (e BaseTableRowEl) AriaValue(value string) BaseTableRowEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e BaseTableRowEl) ExternalDragPayload(resolver gk.ExternalDragPayload) BaseTableRowEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e BaseTableRowEl) Focusable() BaseTableRowEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e BaseTableRowEl) GroupActive(groupName string, f gk.StyleRefinement) BaseTableRowEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -11840,6 +14990,8 @@ func (e BaseTableRowEl) GroupActive(groupName string, f gk.StyleRefinement) Base
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e BaseTableRowEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableRowEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -11848,6 +15000,8 @@ func (e BaseTableRowEl) HoverListenerMode(mode gk.HoverListenerMode) BaseTableRo
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e BaseTableRowEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTableRowEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -11857,12 +15011,14 @@ func (e BaseTableRowEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) BaseTabl
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e BaseTableRowEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableRowEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e BaseTableRowEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -11872,12 +15028,14 @@ func (e BaseTableRowEl) OnAuxClickDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e BaseTableRowEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) BaseTableRowEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e BaseTableRowEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -11889,6 +15047,8 @@ func (e BaseTableRowEl) OnClickDo(listener func(cx *gk.Cx)) BaseTableRowEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e BaseTableRowEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTableRowEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -11903,24 +15063,32 @@ func (e BaseTableRowEl) OnDrag(value gk.DragValue, constructor gk.View) BaseTabl
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e BaseTableRowEl) OnHover(listener func(cx *gk.Cx, e bool)) BaseTableRowEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e BaseTableRowEl) OverflowScroll() BaseTableRowEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e BaseTableRowEl) OverflowXScroll() BaseTableRowEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e BaseTableRowEl) OverflowYScroll() BaseTableRowEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -11929,6 +15097,8 @@ func (e BaseTableRowEl) OverflowYScroll() BaseTableRowEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e BaseTableRowEl) RestrictScrollToAxis() BaseTableRowEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -11937,6 +15107,8 @@ func (e BaseTableRowEl) RestrictScrollToAxis() BaseTableRowEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e BaseTableRowEl) Role(role gk.Role) BaseTableRowEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -11944,6 +15116,8 @@ func (e BaseTableRowEl) Role(role gk.Role) BaseTableRowEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e BaseTableRowEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableRowEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -11953,12 +15127,16 @@ func (e BaseTableRowEl) Tooltip(buildTooltip gk.ViewOrTooltip) BaseTableRowEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e BaseTableRowEl) TooltipShowDelay(delay time.Duration) BaseTableRowEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e BaseTableRowEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableRowEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -11967,7 +15145,7 @@ func (e BaseTableRowEl) TrackScroll(scrollHandle gk.ScrollHandle) BaseTableRowEl
 // BaseTreeEl is gpui_kit::base::Tree.
 type BaseTreeEl struct{ rt.ElAnimatableElement }
 
-// BaseTree is <gpui_kit::base::Tree>::new.
+// BaseTree calls <gpui_kit::base::Tree>::new.
 func BaseTree(state TreeState, st ...gk.Style) BaseTreeEl {
 	rt.UseBaseTree()
 	n := rt.NewNode(426)
@@ -11979,7 +15157,7 @@ func BaseTree(state TreeState, st ...gk.Style) BaseTreeEl {
 
 // Supplies the application-owned content for each visible entry.
 //
-// Item is <gpui_kit::base::Tree>::item.
+// Item calls <gpui_kit::base::Tree>::item.
 func (e BaseTreeEl) Item(renderItem gk.RowSource) BaseTreeEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U64(rt.ItemsCheck(renderItem, 12))
@@ -11988,7 +15166,7 @@ func (e BaseTreeEl) Item(renderItem gk.RowSource) BaseTreeEl {
 
 // Applies caller-owned presentation to the internal virtual list.
 //
-// ListStyle is <gpui_kit::base::Tree>::list_style.
+// ListStyle calls <gpui_kit::base::Tree>::list_style.
 func (e BaseTreeEl) ListStyle(style gk.StyleRefinement) BaseTreeEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -11996,12 +15174,16 @@ func (e BaseTreeEl) ListStyle(style gk.StyleRefinement) BaseTreeEl {
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BaseTreeEl) BorderE(width gk.Length) BaseTreeEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BaseTreeEl) BorderS(width gk.Length) BaseTreeEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -12009,121 +15191,163 @@ func (e BaseTreeEl) BorderS(width gk.Length) BaseTreeEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BaseTreeEl) FlexRowDir() BaseTreeEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BaseTreeEl) InsetE(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BaseTreeEl) InsetS(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BaseTreeEl) JustifyFlexEnd() BaseTreeEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BaseTreeEl) JustifyFlexStart() BaseTreeEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BaseTreeEl) Me(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BaseTreeEl) Ms(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BaseTreeEl) Pe(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BaseTreeEl) Ps(length gk.Length) BaseTreeEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BaseTreeEl) RoundedE(radius gk.Length) BaseTreeEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BaseTreeEl) RoundedS(radius gk.Length) BaseTreeEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BaseTreeEl) TextEnd() BaseTreeEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BaseTreeEl) TextStart() BaseTreeEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BaseTreeEl) CornerRadii(radius gk.Corners) BaseTreeEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BaseTreeEl) DebugBlue() BaseTreeEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BaseTreeEl) DebugFocused(focusHandle gk.FocusHandle) BaseTreeEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BaseTreeEl) DebugGreen() BaseTreeEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BaseTreeEl) DebugPink() BaseTreeEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BaseTreeEl) DebugRed() BaseTreeEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BaseTreeEl) DebugYellow() BaseTreeEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BaseTreeEl) FontBlack() BaseTreeEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BaseTreeEl) FontBold() BaseTreeEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BaseTreeEl) FontExtrabold() BaseTreeEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BaseTreeEl) FontExtralight() BaseTreeEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BaseTreeEl) FontLight() BaseTreeEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BaseTreeEl) FontMedium() BaseTreeEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BaseTreeEl) FontNormal() BaseTreeEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BaseTreeEl) FontSemibold() BaseTreeEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BaseTreeEl) FontThin() BaseTreeEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -12132,18 +15356,23 @@ func (e BaseTreeEl) FontThin() BaseTreeEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BaseTreeEl) HFlex() BaseTreeEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BaseTreeEl) Margins(margins gk.EdgesInto) BaseTreeEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BaseTreeEl) Paddings(paddings gk.EdgesInto) BaseTreeEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BaseTreeEl) RefineStyle(style gk.StyleRefinement) BaseTreeEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -12153,21 +15382,29 @@ func (e BaseTreeEl) RefineStyle(style gk.StyleRefinement) BaseTreeEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BaseTreeEl) VFlex() BaseTreeEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BaseTreeEl) Style(st ...gk.Style) BaseTreeEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BaseTreeEl) AspectRatio(ratio float32) BaseTreeEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BaseTreeEl) Bg(fill gk.Fill) BaseTreeEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BaseTreeEl) Border(length gk.Length) BaseTreeEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -12175,12 +15412,16 @@ func (e BaseTreeEl) Border(length gk.Length) BaseTreeEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BaseTreeEl) BorderB(length gk.Length) BaseTreeEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BaseTreeEl) BorderColor(borderColor gk.Color) BaseTreeEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -12188,6 +15429,8 @@ func (e BaseTreeEl) BorderColor(borderColor gk.Color) BaseTreeEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BaseTreeEl) BorderL(length gk.Length) BaseTreeEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -12195,6 +15438,8 @@ func (e BaseTreeEl) BorderL(length gk.Length) BaseTreeEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BaseTreeEl) BorderR(length gk.Length) BaseTreeEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -12202,6 +15447,8 @@ func (e BaseTreeEl) BorderR(length gk.Length) BaseTreeEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BaseTreeEl) BorderT(length gk.Length) BaseTreeEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -12209,6 +15456,8 @@ func (e BaseTreeEl) BorderT(length gk.Length) BaseTreeEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BaseTreeEl) BorderX(length gk.Length) BaseTreeEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -12216,6 +15465,8 @@ func (e BaseTreeEl) BorderX(length gk.Length) BaseTreeEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BaseTreeEl) BorderY(length gk.Length) BaseTreeEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -12223,21 +15474,31 @@ func (e BaseTreeEl) BorderY(length gk.Length) BaseTreeEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BaseTreeEl) Bottom(length gk.Length) BaseTreeEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BaseTreeEl) ColEnd(end int16) BaseTreeEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BaseTreeEl) ColSpan(span uint16) BaseTreeEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BaseTreeEl) ColStart(start int16) BaseTreeEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BaseTreeEl) Cursor(cursor gk.CursorStyle) BaseTreeEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -12245,30 +15506,42 @@ func (e BaseTreeEl) Cursor(cursor gk.CursorStyle) BaseTreeEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BaseTreeEl) FlexBasis(basis gk.Length) BaseTreeEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BaseTreeEl) FlexGrow(grow float32) BaseTreeEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BaseTreeEl) FlexShrink(shrink float32) BaseTreeEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BaseTreeEl) Font(font gk.Font) BaseTreeEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BaseTreeEl) FontFamily(familyName string) BaseTreeEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BaseTreeEl) FontFeatures(features gk.FontFeatures) BaseTreeEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -12277,26 +15550,38 @@ func (e BaseTreeEl) FontFeatures(features gk.FontFeatures) BaseTreeEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BaseTreeEl) FontWeight(weight gk.FontWeight) BaseTreeEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BaseTreeEl) Gap(length gk.Length) BaseTreeEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BaseTreeEl) GapX(length gk.Length) BaseTreeEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BaseTreeEl) GapY(length gk.Length) BaseTreeEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BaseTreeEl) GridCols(cols uint16) BaseTreeEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BaseTreeEl) GridColsMaxContent(cols uint16) BaseTreeEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -12304,15 +15589,21 @@ func (e BaseTreeEl) GridColsMaxContent(cols uint16) BaseTreeEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BaseTreeEl) GridColsMinContent(cols uint16) BaseTreeEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BaseTreeEl) GridRows(rows uint16) BaseTreeEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BaseTreeEl) GridRowsMaxContent(rows uint16) BaseTreeEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -12320,121 +15611,179 @@ func (e BaseTreeEl) GridRowsMaxContent(rows uint16) BaseTreeEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BaseTreeEl) GridRowsMinContent(rows uint16) BaseTreeEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BaseTreeEl) H(length gk.Length) BaseTreeEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BaseTreeEl) Inset(length gk.Length) BaseTreeEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BaseTreeEl) Left(length gk.Length) BaseTreeEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BaseTreeEl) LineClamp(lines int) BaseTreeEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BaseTreeEl) LineHeight(lineHeight gk.Length) BaseTreeEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BaseTreeEl) M(length gk.Length) BaseTreeEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BaseTreeEl) MaxH(length gk.Length) BaseTreeEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BaseTreeEl) MaxSize(length gk.Length) BaseTreeEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BaseTreeEl) MaxW(length gk.Length) BaseTreeEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BaseTreeEl) Mb(length gk.Length) BaseTreeEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BaseTreeEl) MinH(length gk.Length) BaseTreeEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BaseTreeEl) MinSize(length gk.Length) BaseTreeEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BaseTreeEl) MinW(length gk.Length) BaseTreeEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BaseTreeEl) Ml(length gk.Length) BaseTreeEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BaseTreeEl) Mr(length gk.Length) BaseTreeEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BaseTreeEl) Mt(length gk.Length) BaseTreeEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BaseTreeEl) Mx(length gk.Length) BaseTreeEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BaseTreeEl) My(length gk.Length) BaseTreeEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BaseTreeEl) Opacity(opacity float32) BaseTreeEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BaseTreeEl) P(length gk.Length) BaseTreeEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BaseTreeEl) Pb(length gk.Length) BaseTreeEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BaseTreeEl) Pl(length gk.Length) BaseTreeEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BaseTreeEl) Pr(length gk.Length) BaseTreeEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BaseTreeEl) Pt(length gk.Length) BaseTreeEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BaseTreeEl) Px(length gk.Length) BaseTreeEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BaseTreeEl) Py(length gk.Length) BaseTreeEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BaseTreeEl) Right(length gk.Length) BaseTreeEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BaseTreeEl) Rounded(length gk.Length) BaseTreeEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -12442,6 +15791,8 @@ func (e BaseTreeEl) Rounded(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BaseTreeEl) RoundedB(length gk.Length) BaseTreeEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -12449,6 +15800,8 @@ func (e BaseTreeEl) RoundedB(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BaseTreeEl) RoundedBl(length gk.Length) BaseTreeEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -12456,6 +15809,8 @@ func (e BaseTreeEl) RoundedBl(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BaseTreeEl) RoundedBr(length gk.Length) BaseTreeEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -12463,6 +15818,8 @@ func (e BaseTreeEl) RoundedBr(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BaseTreeEl) RoundedL(length gk.Length) BaseTreeEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -12470,6 +15827,8 @@ func (e BaseTreeEl) RoundedL(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BaseTreeEl) RoundedR(length gk.Length) BaseTreeEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -12477,6 +15836,8 @@ func (e BaseTreeEl) RoundedR(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BaseTreeEl) RoundedT(length gk.Length) BaseTreeEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -12484,6 +15845,8 @@ func (e BaseTreeEl) RoundedT(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BaseTreeEl) RoundedTl(length gk.Length) BaseTreeEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -12491,39 +15854,55 @@ func (e BaseTreeEl) RoundedTl(length gk.Length) BaseTreeEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BaseTreeEl) RoundedTr(length gk.Length) BaseTreeEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BaseTreeEl) RowEnd(end int16) BaseTreeEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BaseTreeEl) RowSpan(span uint16) BaseTreeEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BaseTreeEl) RowStart(start int16) BaseTreeEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BaseTreeEl) ScrollbarWidth(width gk.Length) BaseTreeEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BaseTreeEl) Shadow(shadows []gk.BoxShadow) BaseTreeEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BaseTreeEl) Size(length gk.Length) BaseTreeEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BaseTreeEl) TextAlign(align gk.TextAlign) BaseTreeEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -12532,23 +15911,31 @@ func (e BaseTreeEl) TextAlign(align gk.TextAlign) BaseTreeEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BaseTreeEl) TextBg(bg gk.Color) BaseTreeEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BaseTreeEl) TextColor(color gk.Color) BaseTreeEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BaseTreeEl) TextDecorationColor(color gk.Color) BaseTreeEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BaseTreeEl) TextOverflow(overflow gk.TextOverflow) BaseTreeEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -12557,6 +15944,8 @@ func (e BaseTreeEl) TextOverflow(overflow gk.TextOverflow) BaseTreeEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BaseTreeEl) TextSize(size gk.Length) BaseTreeEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -12564,15 +15953,19 @@ func (e BaseTreeEl) TextSize(size gk.Length) BaseTreeEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BaseTreeEl) Top(length gk.Length) BaseTreeEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BaseTreeEl) W(length gk.Length) BaseTreeEl { tStyledW(rt.N(e.Core), length); return e }
 
 // TreeItem is gpui_kit::base::TreeItem.
 type TreeItem struct{ rt.Val }
 
-// NewTreeItem is <gpui_kit::base::TreeItem>::new.
+// NewTreeItem calls <gpui_kit::base::TreeItem>::new.
 func NewTreeItem(id string, label string) TreeItem {
 	n := rt.NewValue(428)
 	o := rt.NodeArgs(n)
@@ -12581,14 +15974,14 @@ func NewTreeItem(id string, label string) TreeItem {
 	return TreeItem{Val: rt.MkVal(n)}
 }
 
-// Child is <gpui_kit::base::TreeItem>::child.
+// Child calls <gpui_kit::base::TreeItem>::child.
 func (e TreeItem) Child(child TreeItem) TreeItem {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
 	return e
 }
 
-// Children is <gpui_kit::base::TreeItem>::children.
+// Children calls <gpui_kit::base::TreeItem>::children.
 func (e TreeItem) Children(children []TreeItem) TreeItem {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(children)))
@@ -12598,14 +15991,14 @@ func (e TreeItem) Children(children []TreeItem) TreeItem {
 	return e
 }
 
-// Disabled is <gpui_kit::base::TreeItem>::disabled.
+// Disabled calls <gpui_kit::base::TreeItem>::disabled.
 func (e TreeItem) Disabled(disabled bool) TreeItem {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(disabled)
 	return e
 }
 
-// Expanded is <gpui_kit::base::TreeItem>::expanded.
+// Expanded calls <gpui_kit::base::TreeItem>::expanded.
 func (e TreeItem) Expanded(expanded bool) TreeItem {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(expanded)

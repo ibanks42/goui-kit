@@ -1,15 +1,20 @@
 #!/bin/bash
-# go.sh [PHASE...]: the Go front end's gate rows (docs/GO.md). Phases:
-#   build    examples/go/build.sh: every Go example app (timed; GOCACHE reused)
-#   hello    the README's app in Go offscreen, 30 frames, exit 0
-#   proto    gates/go-proto.sh, the protocol tests in Go
-#   misuse   gates/go-misuse.sh, the misuse cases (run time and compile time)
-#   pixels   counter, panels, paint, writerule and files, Rust against Go, byte for byte
-#            (gates/pixels.sh; notes is gates/go-apps.sh's)
-#   fps      frame cost, panels 60 64 2 and the counter's click on every frame: Rust, Go, Rust
-#            again (gates/fps.sh, DESIGN.md 18: 1.03 x Rust; GK_BAR overrides)
-#   rebuild  go build after a one-line edit of an app (the edit loop)
-# Default: build hello proto misuse pixels. Each phase prints lines starting with GATE.
+# Phased Go verification runner (`gates/go.sh [build|hello|proto|misuse|pixels|fps|rebuild]...`).
+#
+# What it gates (default phases when no args are given: `build hello proto misuse pixels`):
+#   - `build`:   compiles all 21 Go example, test, and app binaries against `lib/ship`.
+#   - `hello`:   runs `hello-go` for 30 offscreen frames on `lib/diag` and verifies every non-empty
+#                line of `README.md`'s first Go block appears in `examples/go/hello/main.go`.
+#   - `proto`:   runs `gates/go-proto.sh` (tape/runtime protocol suite).
+#   - `misuse`:  runs `gates/go-misuse.sh` (runtime safety and compile-fail suite).
+#   - `pixels`:  runs `gates/pixels.sh` for `counter`, `panels`, `paint`, `writerule`, and `files`
+#                (emits `PENDING` if a binary is not built).
+#   - `fps`:     runs `gates/fps.sh` (default 6 rounds) on `panels 60 64 2` and clicking `counter`.
+#   - `rebuild`: runs `gates/go-rebuild.sh` (incremental one-line edit rebuild latency).
+#
+# What PASS means (exit 0):
+#   Every requested phase completes with exit status 0 and reports PASS.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 . "$repo/go/env.sh"
 out=$here/out/go; mkdir -p "$out"
@@ -29,7 +34,7 @@ for phase in "$@"; do
     s=$out/hello.script; { echo "size 480 320"; for _ in $(seq 30); do echo frame; done; echo "shot hello.png"; echo stat; } > "$s"
     (cd "$out" && LD_LIBRARY_PATH=$lib/diag GK_SCRIPT=$s timeout 60 "$repo/bin/hello-go" > hello.log 2>&1)
     r=$?
-    # README.md's Go block is cut from examples/go/hello/main.go: every line of it is a line there.
+    # Verify every non-blank line in README.md's first Go block appears in examples/go/hello/main.go.
     awk '/^```go$/{f=1;next} /^```$/{if(f)exit} f' "$repo/README.md" | while IFS= read -r l; do
       [ -z "$l" ] || grep -Fxq -- "$l" "$repo/examples/go/hello/main.go" || echo "$l"; done > "$out/readme-missing.txt"
     [ -s "$out/readme-missing.txt" ] && { echo "GATE readme go FAIL README.md's Go lines not in examples/go/hello/main.go:"; cat "$out/readme-missing.txt"; rc=1; } \

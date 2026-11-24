@@ -1,7 +1,3 @@
-// Round 6's modes host, decorate, lsp and diagnostic (round6.go lists them): the editor host
-// (gk.BlockHost) over the app's blocks and parsed ones (gk.BaseParseMarkdown's held values), a number
-// input's decorated buttons (gk.Decorate), the editor's Lsp edited in place (LspMut) with a
-// completion highlighter (an ask), and a diagnostic presented on the editor.
 package main
 
 import (
@@ -16,7 +12,8 @@ import (
 
 const parsedMD = "## Parsed\n\n- one\n- two\n\n| a | b |\n|---|---|\n| 1 | 2 |\n"
 
-// The state of these modes.
+// r6 stores retained markdown blocks and Ask handles for editor_host, decorate,
+// LSP completion highlighting, and diagnostic presentation modes.
 var r6 struct {
 	ext  editor.MarkdownExtensionsArc
 	held []editor.BlockNodeHeld
@@ -24,7 +21,11 @@ var r6 struct {
 }
 
 func init() {
+	// host proves BlockHost parses Markdown (3 blocks), delivers leaf geometry
+	// and hit-test round-trips for keys 1..4, and reads back BaseTable2 cells/aligns.
 	modes["host"] = &mode{init: hostInit, view: hostView, step: hostStep, script: "frame\nframe\nframe\nframe\n" + stepScript}
+	// decorate proves gk.Decorate attaches styled plus/minus button row sources
+	// to BaseNumberInput and invokes their describe callbacks.
 	modes["decorate"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.r6.plus = gk.NewRowSource(cx, 0, a.plusRow, gk.Initial(1))
 		a.r6.minus = gk.NewRowSource(cx, 0, a.minusRow, gk.Initial(1))
@@ -37,6 +38,8 @@ func init() {
 		_, _, _, decorated, _ := gk.TestEditorHostCounts(cx)
 		fmt.Printf("editor2 decorate decorated=%d described=%d\n", decorated, a.r6.described)
 	}, script: "frame\nframe\nframe\n" + stepScript}
+	// lsp proves LspMut lends the editor's LSP config once (lent=1) to attach a
+	// completion highlighter Ask handle.
 	modes["lsp"] = &mode{init: func(a *App, cx *gk.Cx) {
 		r6.hl = gk.NewAsk(cx, a.highlight)
 		a.ed = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
@@ -45,6 +48,7 @@ func init() {
 		_, _, _, _, lent := gk.TestEditorHostCounts(cx)
 		fmt.Printf("editor2 lsp lent=%d\n", lent)
 	}, script: "frame\n" + stepScript}
+	// diagnostic proves PresentDiagnostic accepts a warning diagnostic with code "W1" cleanly.
 	modes["diagnostic"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.ed = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
 		a.ed.PresentDiagnostic(cx, gk.Range{Lo: 0, Hi: 3}, editor.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 0}, {Line: 0, Character: 3}}, "unused").
@@ -58,7 +62,7 @@ func hostInit(a *App, cx *gk.Cx) {
 	blocks, ok := parsed.Value.Get()
 	fmt.Printf("editor2 host parsed ok=%v n=%d\n", ok, len(blocks))
 	for _, b := range blocks {
-		gk.Retain(cx, b) // temporary until retained (13.2)
+		gk.Retain(cx, b)
 		r6.held = append(r6.held, b)
 	}
 }
@@ -77,8 +81,6 @@ func (a *App) highlight(cx *gk.Cx, key gk.TupleStringCompletionItem) []gk.Range 
 	return []gk.Range{{Lo: 0, Hi: len(key.V0)}}
 }
 
-// The host's blocks: a heading, a paragraph of two inline nodes (the first marked bold), a list of two
-// items (variants holding blocks), a code block, then the parsed ones.
 func hostBlocks() []editor.BlockNode {
 	bs := []editor.BlockNode{
 		editor.BlockNodeHeading{Level: 2, Children: editor.NewParagraphDefault().Push(editor.NewInlineNode("Host")).WithLeafKey(1)},
@@ -123,7 +125,6 @@ func (a *App) onLeaves(cx *gk.Cx, e editor.LeafGeometryEvent) {
 	}
 }
 
-// alignNames prints column alignments in the form the checks expect: ["Left", "Right"].
 func alignNames(as []editor.ColumnumnAlign) string {
 	names := [...]string{"None", "Left", "Center", "Right"}
 	parts := make([]string, len(as))

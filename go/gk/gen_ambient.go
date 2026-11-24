@@ -12,7 +12,7 @@ import (
 //
 // If the scale number is not found, it will return black color.
 //
-// Amber is gpui_kit::component::amber.
+// Amber calls gpui_kit::component::amber.
 func Amber(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(744)
@@ -33,14 +33,14 @@ func Amber(cx *Cx, scale int) Hsla {
 // Where the platform cannot say (wasm, an unsupported desktop, a Linux session without the portal)
 // the flag is left as it is, and under GPUI's test scheduler the platform is not asked at all.
 //
-// BaseApplySystemReduceMotion is gpui_kit::base::apply_system_reduce_motion.
+// BaseApplySystemReduceMotion calls gpui_kit::base::apply_system_reduce_motion.
 func BaseApplySystemReduceMotion(cx *Cx) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(726)
 	rt.AmbientCall(cx, o, false)
 }
 
-// BaseBoxShadow is gpui_kit::base::box_shadow.
+// BaseBoxShadow calls gpui_kit::base::box_shadow.
 func BaseBoxShadow(cx *Cx, x float32, y float32, blur float32, spread float32, color Color) BoxShadow {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1446)
@@ -55,7 +55,7 @@ func BaseBoxShadow(cx *Cx, x float32, y float32, blur float32, spread float32, c
 
 // A list of all format extensions currently supported by this img element
 //
-// BaseExtensions is gpui_kit::Img::extensions.
+// BaseExtensions calls gpui_kit::Img::extensions.
 func BaseExtensions(cx *Cx) []string {
 	o := rt.NewReq(1173)
 	r := rt.AmbientCall(cx, o, true)
@@ -66,7 +66,7 @@ func BaseExtensions(cx *Cx) []string {
 //
 // This is a compile-time platform check, not a screen-size or input-device check.
 //
-// BaseIsMobile is gpui_kit::base::is_mobile.
+// BaseIsMobile calls gpui_kit::base::is_mobile.
 func BaseIsMobile(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(727)
@@ -79,7 +79,7 @@ func BaseIsMobile(cx *Cx) bool {
 // Anchors are written for left-to-right layout; in RTL the horizontal side is mirrored, so a
 // `TopLeft` popover that hangs from the trigger's start edge hangs from its right edge instead.
 //
-// BaseLogicalAnchor is gpui_kit::base::logical_anchor.
+// BaseLogicalAnchor calls gpui_kit::base::logical_anchor.
 func BaseLogicalAnchor(cx *Cx, anchor Anchor, direction LayoutDirection) Anchor {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1777)
@@ -103,7 +103,7 @@ func BaseLogicalAnchor(cx *Cx, anchor Anchor, direction LayoutDirection) Anchor 
 // System also releases ownership taken through `set_reduce_motion`. Under the test scheduler,
 // explicit choices and cached readings still apply, but the platform is never queried.
 //
-// BaseSetReduceMotionPreference is gpui_kit::base::set_reduce_motion_preference.
+// BaseSetReduceMotionPreference calls gpui_kit::base::set_reduce_motion_preference.
 func BaseSetReduceMotionPreference(cx *Cx, preference ReduceMotionPreference) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1778)
@@ -117,7 +117,7 @@ func BaseSetReduceMotionPreference(cx *Cx, preference ReduceMotionPreference) {
 //
 // If the scale number is not found, it will return black color.
 //
-// Blue is gpui_kit::component::blue.
+// Blue calls gpui_kit::component::blue.
 func Blue(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(745)
@@ -132,7 +132,7 @@ func Blue(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Cyan is gpui_kit::component::cyan.
+// Cyan calls gpui_kit::component::cyan.
 func Cyan(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(746)
@@ -143,7 +143,7 @@ func Cyan(cx *Cx, scale int) Hsla {
 
 // Get the default dark theme colors.
 //
-// Dark is gpui_kit::component::ThemeColor::dark.
+// Dark calls gpui_kit::component::ThemeColor::dark.
 func Dark(cx *Cx) ThemeColorArc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1176)
@@ -157,7 +157,7 @@ func Dark(cx *Cx) ThemeColorArc {
 //
 // If the scale number is not found, it will return black color.
 //
-// Emerald is gpui_kit::component::emerald.
+// Emerald calls gpui_kit::component::emerald.
 func Emerald(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(747)
@@ -172,7 +172,7 @@ func Emerald(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Fuchsia is gpui_kit::component::fuchsia.
+// Fuchsia calls gpui_kit::component::fuchsia.
 func Fuchsia(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(748)
@@ -187,7 +187,7 @@ func Fuchsia(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Gray is gpui_kit::component::gray.
+// Gray calls gpui_kit::component::gray.
 func Gray(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(749)
@@ -202,7 +202,7 @@ func Gray(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Green is gpui_kit::component::green.
+// Green calls gpui_kit::component::green.
 func Green(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(750)
@@ -217,7 +217,7 @@ func Green(cx *Cx, scale int) Hsla {
 // - s: 0.0..100.0
 // - l: 0.0..100.0
 //
-// Hsl is gpui_kit::component::hsl.
+// Hsl calls gpui_kit::component::hsl.
 func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(751)
@@ -234,7 +234,7 @@ func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Indigo is gpui_kit::component::indigo.
+// Indigo calls gpui_kit::component::indigo.
 func Indigo(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(752)
@@ -243,7 +243,7 @@ func Indigo(cx *Cx, scale int) Hsla {
 	return rt.RdHsla(r)
 }
 
-// KitTheme is <gpui_kit::App as gpui_kit::component::ActiveTheme>::theme.
+// KitTheme calls <gpui_kit::App as gpui_kit::component::ActiveTheme>::theme.
 func KitTheme(cx *Cx) Theme {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1447)
@@ -253,7 +253,7 @@ func KitTheme(cx *Cx) Theme {
 
 // Get the default light theme colors.
 //
-// Light is gpui_kit::component::ThemeColor::light.
+// Light calls gpui_kit::component::ThemeColor::light.
 func Light(cx *Cx) ThemeColorArc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1177)
@@ -267,7 +267,7 @@ func Light(cx *Cx) ThemeColorArc {
 //
 // If the scale number is not found, it will return black color.
 //
-// Lime is gpui_kit::component::lime.
+// Lime calls gpui_kit::component::lime.
 func Lime(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(754)
@@ -276,7 +276,7 @@ func Lime(cx *Cx, scale int) Hsla {
 	return rt.RdHsla(r)
 }
 
-// Locale is gpui_kit::component::locale.
+// Locale calls gpui_kit::component::locale.
 func Locale(cx *Cx) string {
 	rt.UseComponentRoot()
 	o := rt.NewReq(1448)
@@ -290,7 +290,7 @@ func Locale(cx *Cx) string {
 //
 // If the scale number is not found, it will return black color.
 //
-// Neutral is gpui_kit::component::neutral.
+// Neutral calls gpui_kit::component::neutral.
 func Neutral(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(755)
@@ -309,7 +309,7 @@ func Neutral(cx *Cx, scale int) Hsla {
 // `hue` is in degrees. A request outside the sRGB gamut is clipped per channel, which costs a
 // little chroma but not the hue.
 //
-// Oklch is gpui_kit::component::oklch.
+// Oklch calls gpui_kit::component::oklch.
 func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(756)
@@ -326,7 +326,7 @@ func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Orange is gpui_kit::component::orange.
+// Orange calls gpui_kit::component::orange.
 func Orange(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(757)
@@ -341,7 +341,7 @@ func Orange(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Pink is gpui_kit::component::pink.
+// Pink calls gpui_kit::component::pink.
 func Pink(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(758)
@@ -356,7 +356,7 @@ func Pink(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Purple is gpui_kit::component::purple.
+// Purple calls gpui_kit::component::purple.
 func Purple(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(759)
@@ -371,7 +371,7 @@ func Purple(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Red is gpui_kit::component::red.
+// Red calls gpui_kit::component::red.
 func Red(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(760)
@@ -383,7 +383,7 @@ func Red(cx *Cx, scale int) Hsla {
 // Return the path to draw for the icon at `path`: the answer of the resolver set with
 // `SetIconResolver`, or `path` itself.
 //
-// ResolveIconPath is gpui_kit::component::resolve_icon_path.
+// ResolveIconPath calls gpui_kit::component::resolve_icon_path.
 func ResolveIconPath(cx *Cx, path string) string {
 	rt.UseComponentRoot()
 	o := rt.NewReq(761)
@@ -392,7 +392,7 @@ func ResolveIconPath(cx *Cx, path string) string {
 	return r.Str()
 }
 
-// RootRead is crate::values::window_root::<gpui_kit::base::Root>.
+// RootRead calls crate::values::window_root::<gpui_kit::base::Root>.
 func RootRead(cx *Cx) Option[Root] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1807)
@@ -406,7 +406,7 @@ func RootRead(cx *Cx) Option[Root] {
 //
 // If the scale number is not found, it will return black color.
 //
-// Rose is gpui_kit::component::rose.
+// Rose calls gpui_kit::component::rose.
 func Rose(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(762)
@@ -426,7 +426,7 @@ func Rose(cx *Cx, scale int) Hsla {
 // The resolver runs every time an icon is drawn and should be cheap. Call `refresh_windows` after
 // changing what it returns.
 //
-// SetIconResolver is gpui_kit::component::set_icon_resolver.
+// SetIconResolver calls gpui_kit::component::set_icon_resolver.
 func SetIconResolver(cx *Cx, resolver Ask[string, Option[string]]) {
 	rt.UseComponentRoot()
 	o := rt.NewReq(1515)
@@ -434,7 +434,7 @@ func SetIconResolver(cx *Cx, resolver Ask[string, Option[string]]) {
 	rt.AmbientCall(cx, o, false)
 }
 
-// SetLocale is gpui_kit::component::set_locale.
+// SetLocale calls gpui_kit::component::set_locale.
 func SetLocale(cx *Cx, locale string) {
 	rt.UseComponentRoot()
 	o := rt.NewReq(763)
@@ -448,7 +448,7 @@ func SetLocale(cx *Cx, locale string) {
 //
 // If the scale number is not found, it will return black color.
 //
-// Sky is gpui_kit::component::sky.
+// Sky calls gpui_kit::component::sky.
 func Sky(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(764)
@@ -463,7 +463,7 @@ func Sky(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Slate is gpui_kit::component::slate.
+// Slate calls gpui_kit::component::slate.
 func Slate(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(765)
@@ -478,7 +478,7 @@ func Slate(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Stone is gpui_kit::component::stone.
+// Stone calls gpui_kit::component::stone.
 func Stone(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(766)
@@ -493,7 +493,7 @@ func Stone(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Teal is gpui_kit::component::teal.
+// Teal calls gpui_kit::component::teal.
 func Teal(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(767)
@@ -507,7 +507,7 @@ func Teal(cx *Cx, scale int) Hsla {
 // Supports all values accepted by `TryParseColor` and CSS-style two-stop `linear-gradient(...)`
 // values.
 //
-// TryParseBackground is gpui_kit::component::try_parse_background.
+// TryParseBackground calls gpui_kit::component::try_parse_background.
 func TryParseBackground(cx *Cx, background string) Fallible[BackgroundValue] {
 	rt.UseComponentRoot()
 	o := rt.NewReq(1765)
@@ -528,7 +528,7 @@ func TryParseBackground(cx *Cx, background string) Fallible[BackgroundValue] {
 //     100.
 //   - `name-scale/opacity` - The color name with scale and opacity.
 //
-// TryParseColor is gpui_kit::component::try_parse_color.
+// TryParseColor calls gpui_kit::component::try_parse_color.
 func TryParseColor(cx *Cx, color string) Fallible[Hsla] {
 	rt.UseComponentRoot()
 	o := rt.NewReq(1180)
@@ -543,7 +543,7 @@ func TryParseColor(cx *Cx, color string) Fallible[Hsla] {
 //
 // If the scale number is not found, it will return black color.
 //
-// Violet is gpui_kit::component::violet.
+// Violet calls gpui_kit::component::violet.
 func Violet(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(768)
@@ -560,7 +560,7 @@ func Violet(cx *Cx, scale int) Hsla {
 // `TitleBarEl`, an application's bottom bar) must round that corner too, for example
 // `div().rounded_bl(radii.bottom_left)`. The default stays square.
 //
-// WindowCornerRadii is gpui_kit::component::window_corner_radii.
+// WindowCornerRadii calls gpui_kit::component::window_corner_radii.
 func WindowCornerRadii(cx *Cx) Corners {
 	rt.UseComponentRoot()
 	o := rt.NewReq(769)
@@ -570,7 +570,7 @@ func WindowCornerRadii(cx *Cx) Corners {
 
 // Get the window paddings.
 //
-// WindowPaddings is gpui_kit::component::window_paddings.
+// WindowPaddings calls gpui_kit::component::window_paddings.
 func WindowPaddings(cx *Cx) GpuiEdges {
 	rt.UseComponentRoot()
 	o := rt.NewReq(770)
@@ -584,7 +584,7 @@ func WindowPaddings(cx *Cx) GpuiEdges {
 //
 // If the scale number is not found, it will return black color.
 //
-// Yellow is gpui_kit::component::yellow.
+// Yellow calls gpui_kit::component::yellow.
 func Yellow(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(771)
@@ -599,7 +599,7 @@ func Yellow(cx *Cx, scale int) Hsla {
 //
 // If the scale number is not found, it will return black color.
 //
-// Zinc is gpui_kit::component::zinc.
+// Zinc calls gpui_kit::component::zinc.
 func Zinc(cx *Cx, scale int) Hsla {
 	rt.UseComponentRoot()
 	o := rt.NewReq(772)

@@ -10,22 +10,28 @@ import (
 // ContextMenuDivEl is gpui_kit::component::menu::ContextMenu<gpui_kit::Div>.
 type ContextMenuDivEl struct{ rt.ElAnimatableElement }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ContextMenuDivEl) Style(st ...gk.Style) ContextMenuDivEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ContextMenuDivEl) AspectRatio(ratio float32) ContextMenuDivEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ContextMenuDivEl) Bg(fill gk.Fill) ContextMenuDivEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ContextMenuDivEl) Border(length gk.Length) ContextMenuDivEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -33,12 +39,16 @@ func (e ContextMenuDivEl) Border(length gk.Length) ContextMenuDivEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ContextMenuDivEl) BorderB(length gk.Length) ContextMenuDivEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ContextMenuDivEl) BorderColor(borderColor gk.Color) ContextMenuDivEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -46,6 +56,8 @@ func (e ContextMenuDivEl) BorderColor(borderColor gk.Color) ContextMenuDivEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ContextMenuDivEl) BorderL(length gk.Length) ContextMenuDivEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -53,6 +65,8 @@ func (e ContextMenuDivEl) BorderL(length gk.Length) ContextMenuDivEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ContextMenuDivEl) BorderR(length gk.Length) ContextMenuDivEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -60,6 +74,8 @@ func (e ContextMenuDivEl) BorderR(length gk.Length) ContextMenuDivEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ContextMenuDivEl) BorderT(length gk.Length) ContextMenuDivEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -67,6 +83,8 @@ func (e ContextMenuDivEl) BorderT(length gk.Length) ContextMenuDivEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ContextMenuDivEl) BorderX(length gk.Length) ContextMenuDivEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -74,6 +92,8 @@ func (e ContextMenuDivEl) BorderX(length gk.Length) ContextMenuDivEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ContextMenuDivEl) BorderY(length gk.Length) ContextMenuDivEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -81,30 +101,40 @@ func (e ContextMenuDivEl) BorderY(length gk.Length) ContextMenuDivEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ContextMenuDivEl) Bottom(length gk.Length) ContextMenuDivEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ContextMenuDivEl) ColEnd(end int16) ContextMenuDivEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ContextMenuDivEl) ColSpan(span uint16) ContextMenuDivEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ContextMenuDivEl) ColStart(start int16) ContextMenuDivEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ContextMenuDivEl) Cursor(cursor gk.CursorStyle) ContextMenuDivEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -112,36 +142,48 @@ func (e ContextMenuDivEl) Cursor(cursor gk.CursorStyle) ContextMenuDivEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ContextMenuDivEl) FlexBasis(basis gk.Length) ContextMenuDivEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ContextMenuDivEl) FlexGrow(grow float32) ContextMenuDivEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ContextMenuDivEl) FlexShrink(shrink float32) ContextMenuDivEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ContextMenuDivEl) Font(font gk.Font) ContextMenuDivEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ContextMenuDivEl) FontFamily(familyName string) ContextMenuDivEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ContextMenuDivEl) FontFeatures(features gk.FontFeatures) ContextMenuDivEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -150,12 +192,16 @@ func (e ContextMenuDivEl) FontFeatures(features gk.FontFeatures) ContextMenuDivE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ContextMenuDivEl) FontWeight(weight gk.FontWeight) ContextMenuDivEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ContextMenuDivEl) Gap(length gk.Length) ContextMenuDivEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -163,6 +209,8 @@ func (e ContextMenuDivEl) Gap(length gk.Length) ContextMenuDivEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ContextMenuDivEl) GapX(length gk.Length) ContextMenuDivEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -170,18 +218,24 @@ func (e ContextMenuDivEl) GapX(length gk.Length) ContextMenuDivEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ContextMenuDivEl) GapY(length gk.Length) ContextMenuDivEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ContextMenuDivEl) GridCols(cols uint16) ContextMenuDivEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ContextMenuDivEl) GridColsMaxContent(cols uint16) ContextMenuDivEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -189,18 +243,24 @@ func (e ContextMenuDivEl) GridColsMaxContent(cols uint16) ContextMenuDivEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ContextMenuDivEl) GridColsMinContent(cols uint16) ContextMenuDivEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ContextMenuDivEl) GridRows(rows uint16) ContextMenuDivEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ContextMenuDivEl) GridRowsMaxContent(rows uint16) ContextMenuDivEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -208,12 +268,16 @@ func (e ContextMenuDivEl) GridRowsMaxContent(rows uint16) ContextMenuDivEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ContextMenuDivEl) GridRowsMinContent(rows uint16) ContextMenuDivEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ContextMenuDivEl) H(length gk.Length) ContextMenuDivEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -221,6 +285,8 @@ func (e ContextMenuDivEl) H(length gk.Length) ContextMenuDivEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ContextMenuDivEl) Inset(length gk.Length) ContextMenuDivEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -228,6 +294,8 @@ func (e ContextMenuDivEl) Inset(length gk.Length) ContextMenuDivEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ContextMenuDivEl) Left(length gk.Length) ContextMenuDivEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -235,36 +303,48 @@ func (e ContextMenuDivEl) Left(length gk.Length) ContextMenuDivEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ContextMenuDivEl) LineClamp(lines int) ContextMenuDivEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ContextMenuDivEl) LineHeight(lineHeight gk.Length) ContextMenuDivEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ContextMenuDivEl) M(length gk.Length) ContextMenuDivEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ContextMenuDivEl) MaxH(length gk.Length) ContextMenuDivEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ContextMenuDivEl) MaxSize(length gk.Length) ContextMenuDivEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ContextMenuDivEl) MaxW(length gk.Length) ContextMenuDivEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -272,24 +352,32 @@ func (e ContextMenuDivEl) MaxW(length gk.Length) ContextMenuDivEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ContextMenuDivEl) Mb(length gk.Length) ContextMenuDivEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ContextMenuDivEl) MinH(length gk.Length) ContextMenuDivEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ContextMenuDivEl) MinSize(length gk.Length) ContextMenuDivEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ContextMenuDivEl) MinW(length gk.Length) ContextMenuDivEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -297,6 +385,8 @@ func (e ContextMenuDivEl) MinW(length gk.Length) ContextMenuDivEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ContextMenuDivEl) Ml(length gk.Length) ContextMenuDivEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -304,6 +394,8 @@ func (e ContextMenuDivEl) Ml(length gk.Length) ContextMenuDivEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ContextMenuDivEl) Mr(length gk.Length) ContextMenuDivEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -311,6 +403,8 @@ func (e ContextMenuDivEl) Mr(length gk.Length) ContextMenuDivEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ContextMenuDivEl) Mt(length gk.Length) ContextMenuDivEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -318,6 +412,8 @@ func (e ContextMenuDivEl) Mt(length gk.Length) ContextMenuDivEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ContextMenuDivEl) Mx(length gk.Length) ContextMenuDivEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -325,18 +421,24 @@ func (e ContextMenuDivEl) Mx(length gk.Length) ContextMenuDivEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ContextMenuDivEl) My(length gk.Length) ContextMenuDivEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ContextMenuDivEl) Opacity(opacity float32) ContextMenuDivEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ContextMenuDivEl) P(length gk.Length) ContextMenuDivEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -344,6 +446,8 @@ func (e ContextMenuDivEl) P(length gk.Length) ContextMenuDivEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ContextMenuDivEl) Pb(length gk.Length) ContextMenuDivEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -351,6 +455,8 @@ func (e ContextMenuDivEl) Pb(length gk.Length) ContextMenuDivEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ContextMenuDivEl) Pl(length gk.Length) ContextMenuDivEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -358,6 +464,8 @@ func (e ContextMenuDivEl) Pl(length gk.Length) ContextMenuDivEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ContextMenuDivEl) Pr(length gk.Length) ContextMenuDivEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -365,6 +473,8 @@ func (e ContextMenuDivEl) Pr(length gk.Length) ContextMenuDivEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ContextMenuDivEl) Pt(length gk.Length) ContextMenuDivEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -372,6 +482,8 @@ func (e ContextMenuDivEl) Pt(length gk.Length) ContextMenuDivEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ContextMenuDivEl) Px(length gk.Length) ContextMenuDivEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -379,6 +491,8 @@ func (e ContextMenuDivEl) Px(length gk.Length) ContextMenuDivEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ContextMenuDivEl) Py(length gk.Length) ContextMenuDivEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -386,12 +500,16 @@ func (e ContextMenuDivEl) Py(length gk.Length) ContextMenuDivEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ContextMenuDivEl) Right(length gk.Length) ContextMenuDivEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ContextMenuDivEl) Rounded(length gk.Length) ContextMenuDivEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -399,6 +517,8 @@ func (e ContextMenuDivEl) Rounded(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ContextMenuDivEl) RoundedB(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -406,6 +526,8 @@ func (e ContextMenuDivEl) RoundedB(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ContextMenuDivEl) RoundedBl(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -413,6 +535,8 @@ func (e ContextMenuDivEl) RoundedBl(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ContextMenuDivEl) RoundedBr(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -420,6 +544,8 @@ func (e ContextMenuDivEl) RoundedBr(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ContextMenuDivEl) RoundedL(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -427,6 +553,8 @@ func (e ContextMenuDivEl) RoundedL(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ContextMenuDivEl) RoundedR(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -434,6 +562,8 @@ func (e ContextMenuDivEl) RoundedR(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ContextMenuDivEl) RoundedT(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -441,6 +571,8 @@ func (e ContextMenuDivEl) RoundedT(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ContextMenuDivEl) RoundedTl(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -448,24 +580,32 @@ func (e ContextMenuDivEl) RoundedTl(length gk.Length) ContextMenuDivEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ContextMenuDivEl) RoundedTr(length gk.Length) ContextMenuDivEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ContextMenuDivEl) RowEnd(end int16) ContextMenuDivEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ContextMenuDivEl) RowSpan(span uint16) ContextMenuDivEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ContextMenuDivEl) RowStart(start int16) ContextMenuDivEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -475,24 +615,32 @@ func (e ContextMenuDivEl) RowStart(start int16) ContextMenuDivEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ContextMenuDivEl) ScrollbarWidth(width gk.Length) ContextMenuDivEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ContextMenuDivEl) Shadow(shadows []gk.BoxShadow) ContextMenuDivEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ContextMenuDivEl) Size(length gk.Length) ContextMenuDivEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ContextMenuDivEl) TextAlign(align gk.TextAlign) ContextMenuDivEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -501,6 +649,8 @@ func (e ContextMenuDivEl) TextAlign(align gk.TextAlign) ContextMenuDivEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ContextMenuDivEl) TextBg(bg gk.Color) ContextMenuDivEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -509,18 +659,24 @@ func (e ContextMenuDivEl) TextBg(bg gk.Color) ContextMenuDivEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ContextMenuDivEl) TextColor(color gk.Color) ContextMenuDivEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ContextMenuDivEl) TextDecorationColor(color gk.Color) ContextMenuDivEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ContextMenuDivEl) TextOverflow(overflow gk.TextOverflow) ContextMenuDivEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -529,6 +685,8 @@ func (e ContextMenuDivEl) TextOverflow(overflow gk.TextOverflow) ContextMenuDivE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ContextMenuDivEl) TextSize(size gk.Length) ContextMenuDivEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -536,32 +694,41 @@ func (e ContextMenuDivEl) TextSize(size gk.Length) ContextMenuDivEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ContextMenuDivEl) Top(length gk.Length) ContextMenuDivEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ContextMenuDivEl) W(length gk.Length) ContextMenuDivEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e ContextMenuDivEl) Text(s string) ContextMenuDivEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e ContextMenuDivEl) ChildView(v gk.View) ContextMenuDivEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e ContextMenuDivEl) Child(child gk.Element) ContextMenuDivEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e ContextMenuDivEl) Children(children ...gk.Element) ContextMenuDivEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -570,7 +737,7 @@ func (e ContextMenuDivEl) Children(children ...gk.Element) ContextMenuDivEl {
 // PopupMenu is gpui_kit::component::menu::PopupMenu.
 type PopupMenu struct{ rt.Val }
 
-// NewPopupMenu is crate::overlay::described::<gpui_kit::component::menu::PopupMenu>.
+// NewPopupMenu calls crate::overlay::described::<gpui_kit::component::menu::PopupMenu>.
 func NewPopupMenu() PopupMenu {
 	n := rt.NewValue(832)
 	return PopupMenu{Val: rt.MkVal(n)}
@@ -584,7 +751,7 @@ func NewPopupMenu() PopupMenu {
 // Then the action will be dispatched to this handle. Submenus without their own action context use
 // the nearest parent's explicit context for actions and shortcut hints.
 //
-// ActionContext is <gpui_kit::component::menu::PopupMenu>::action_context.
+// ActionContext calls <gpui_kit::component::menu::PopupMenu>::action_context.
 func (e PopupMenu) ActionContext(handle gk.FocusHandle) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(rt.Held(rt.H(handle.HCore)))
@@ -593,7 +760,7 @@ func (e PopupMenu) ActionContext(handle gk.FocusHandle) PopupMenu {
 
 // Set the side to show check icon, default is `Side::Left`.
 //
-// CheckSide is <gpui_kit::component::menu::PopupMenu>::check_side.
+// CheckSide calls <gpui_kit::component::menu::PopupMenu>::check_side.
 func (e PopupMenu) CheckSide(side gk.Side) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(side))
@@ -602,7 +769,7 @@ func (e PopupMenu) CheckSide(side gk.Side) PopupMenu {
 
 // Set the menu to show external link icon, default is true.
 //
-// ExternalLinkIcon is <gpui_kit::component::menu::PopupMenu>::external_link_icon.
+// ExternalLinkIcon calls <gpui_kit::component::menu::PopupMenu>::external_link_icon.
 func (e PopupMenu) ExternalLinkIcon(visible bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(visible)
@@ -611,7 +778,7 @@ func (e PopupMenu) ExternalLinkIcon(visible bool) PopupMenu {
 
 // Add menu item.
 //
-// Item is <gpui_kit::component::menu::PopupMenu>::item.
+// Item calls <gpui_kit::component::menu::PopupMenu>::item.
 func (e PopupMenu) Item(item PopupMenuItem) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(item.Core)))
@@ -620,7 +787,7 @@ func (e PopupMenu) Item(item PopupMenuItem) PopupMenu {
 
 // Add label
 //
-// Label is <gpui_kit::component::menu::PopupMenu>::label.
+// Label calls <gpui_kit::component::menu::PopupMenu>::label.
 func (e PopupMenu) Label(label string) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Str(label)
@@ -629,7 +796,7 @@ func (e PopupMenu) Label(label string) PopupMenu {
 
 // Add Menu to open link
 //
-// Link is <gpui_kit::component::menu::PopupMenu>::link.
+// Link calls <gpui_kit::component::menu::PopupMenu>::link.
 func (e PopupMenu) Link(label string, href string) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Str(label)
@@ -639,7 +806,7 @@ func (e PopupMenu) Link(label string, href string) PopupMenu {
 
 // Add Menu to open link with disabled state
 //
-// LinkWithDisabled is <gpui_kit::component::menu::PopupMenu>::link_with_disabled.
+// LinkWithDisabled calls <gpui_kit::component::menu::PopupMenu>::link_with_disabled.
 func (e PopupMenu) LinkWithDisabled(label string, href string, disabled bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Str(label)
@@ -650,7 +817,7 @@ func (e PopupMenu) LinkWithDisabled(label string, href string, disabled bool) Po
 
 // Add Menu to open link
 //
-// LinkWithIcon is <gpui_kit::component::menu::PopupMenu>::link_with_icon.
+// LinkWithIcon calls <gpui_kit::component::menu::PopupMenu>::link_with_icon.
 func (e PopupMenu) LinkWithIcon(label string, icon gk.IconName, href string) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 277)
 	o.Str(label)
@@ -662,7 +829,7 @@ func (e PopupMenu) LinkWithIcon(label string, icon gk.IconName, href string) Pop
 // Set max height of the popup menu, default is half of the window height, at most 28.125rem (450px
 // at the default 16px rem)
 //
-// MaxH is <gpui_kit::component::menu::PopupMenu>::max_h.
+// MaxH calls <gpui_kit::component::menu::PopupMenu>::max_h.
 func (e PopupMenu) MaxH(height float32) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.F32(height)
@@ -671,7 +838,7 @@ func (e PopupMenu) MaxH(height float32) PopupMenu {
 
 // Set max width of the popup menu, default is 31.25rem (500px at the default 16px rem)
 //
-// MaxW is <gpui_kit::component::menu::PopupMenu>::max_w.
+// MaxW calls <gpui_kit::component::menu::PopupMenu>::max_w.
 func (e PopupMenu) MaxW(width float32) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.F32(width)
@@ -680,7 +847,7 @@ func (e PopupMenu) MaxW(width float32) PopupMenu {
 
 // Add Menu Item
 //
-// Menu is <gpui_kit::component::menu::PopupMenu>::menu.
+// Menu calls <gpui_kit::component::menu::PopupMenu>::menu.
 func (e PopupMenu) Menu(label string, action gk.Action) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.Str(label)
@@ -690,7 +857,7 @@ func (e PopupMenu) Menu(label string, action gk.Action) PopupMenu {
 
 // Add Menu Item with custom element render.
 //
-// MenuElement is <gpui_kit::component::menu::PopupMenu>::menu_element.
+// MenuElement calls <gpui_kit::component::menu::PopupMenu>::menu_element.
 func (e PopupMenu) MenuElement(action gk.Action, builder gk.Element) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 266)
 	rt.PutAction(o, action)
@@ -700,7 +867,7 @@ func (e PopupMenu) MenuElement(action gk.Action, builder gk.Element) PopupMenu {
 
 // Add Menu Item with custom element render with check state
 //
-// MenuElementWithCheck is <gpui_kit::component::menu::PopupMenu>::menu_element_with_check.
+// MenuElementWithCheck calls <gpui_kit::component::menu::PopupMenu>::menu_element_with_check.
 func (e PopupMenu) MenuElementWithCheck(checked bool, action gk.Action, builder gk.Element) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.Bool(checked)
@@ -711,7 +878,7 @@ func (e PopupMenu) MenuElementWithCheck(checked bool, action gk.Action, builder 
 
 // Add Menu Item with custom element render with disabled state.
 //
-// MenuElementWithDisabled is <gpui_kit::component::menu::PopupMenu>::menu_element_with_disabled.
+// MenuElementWithDisabled calls <gpui_kit::component::menu::PopupMenu>::menu_element_with_disabled.
 func (e PopupMenu) MenuElementWithDisabled(action gk.Action, disabled bool, builder gk.Element) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 268)
 	rt.PutAction(o, action)
@@ -722,7 +889,7 @@ func (e PopupMenu) MenuElementWithDisabled(action gk.Action, disabled bool, buil
 
 // Add Menu Item with custom element render with icon.
 //
-// MenuElementWithIcon is <gpui_kit::component::menu::PopupMenu>::menu_element_with_icon.
+// MenuElementWithIcon calls <gpui_kit::component::menu::PopupMenu>::menu_element_with_icon.
 func (e PopupMenu) MenuElementWithIcon(icon gk.IconName, action gk.Action, builder gk.Element) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 278)
 	o.U16(uint16(icon))
@@ -733,7 +900,7 @@ func (e PopupMenu) MenuElementWithIcon(icon gk.IconName, action gk.Action, build
 
 // Add Menu Item with check icon
 //
-// MenuWithCheck is <gpui_kit::component::menu::PopupMenu>::menu_with_check.
+// MenuWithCheck calls <gpui_kit::component::menu::PopupMenu>::menu_with_check.
 func (e PopupMenu) MenuWithCheck(label string, checked bool, action gk.Action) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.Str(label)
@@ -744,7 +911,7 @@ func (e PopupMenu) MenuWithCheck(label string, checked bool, action gk.Action) P
 
 // Add Menu Item with check icon and disabled state
 //
-// MenuWithCheckAndDisabled is <gpui_kit::component::menu::PopupMenu>::menu_with_check_and_disabled.
+// MenuWithCheckAndDisabled calls <gpui_kit::component::menu::PopupMenu>::menu_with_check_and_disabled.
 func (e PopupMenu) MenuWithCheckAndDisabled(label string, checked bool, action gk.Action, disabled bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.Str(label)
@@ -756,7 +923,7 @@ func (e PopupMenu) MenuWithCheckAndDisabled(label string, checked bool, action g
 
 // Add Menu Item with disabled state
 //
-// MenuWithDisabled is <gpui_kit::component::menu::PopupMenu>::menu_with_disabled.
+// MenuWithDisabled calls <gpui_kit::component::menu::PopupMenu>::menu_with_disabled.
 func (e PopupMenu) MenuWithDisabled(label string, action gk.Action, disabled bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.Str(label)
@@ -767,7 +934,7 @@ func (e PopupMenu) MenuWithDisabled(label string, action gk.Action, disabled boo
 
 // Add Menu Item with enable state
 //
-// MenuWithEnable is <gpui_kit::component::menu::PopupMenu>::menu_with_enable.
+// MenuWithEnable calls <gpui_kit::component::menu::PopupMenu>::menu_with_enable.
 func (e PopupMenu) MenuWithEnable(label string, action gk.Action, enable bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.Str(label)
@@ -778,7 +945,7 @@ func (e PopupMenu) MenuWithEnable(label string, action gk.Action, enable bool) P
 
 // Add Menu Item with Icon.
 //
-// MenuWithIcon is <gpui_kit::component::menu::PopupMenu>::menu_with_icon.
+// MenuWithIcon calls <gpui_kit::component::menu::PopupMenu>::menu_with_icon.
 func (e PopupMenu) MenuWithIcon(label string, icon gk.IconName, action gk.Action) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 279)
 	o.Str(label)
@@ -789,7 +956,7 @@ func (e PopupMenu) MenuWithIcon(label string, icon gk.IconName, action gk.Action
 
 // Add Menu Item with Icon and disabled state
 //
-// MenuWithIconAndDisabled is <gpui_kit::component::menu::PopupMenu>::menu_with_icon_and_disabled.
+// MenuWithIconAndDisabled calls <gpui_kit::component::menu::PopupMenu>::menu_with_icon_and_disabled.
 func (e PopupMenu) MenuWithIconAndDisabled(label string, icon gk.IconName, action gk.Action, disabled bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 280)
 	o.Str(label)
@@ -801,7 +968,7 @@ func (e PopupMenu) MenuWithIconAndDisabled(label string, icon gk.IconName, actio
 
 // Set min width of the popup menu, default is 8rem
 //
-// MinW is <gpui_kit::component::menu::PopupMenu>::min_w.
+// MinW calls <gpui_kit::component::menu::PopupMenu>::min_w.
 func (e PopupMenu) MinW(width float32) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.F32(width)
@@ -810,7 +977,7 @@ func (e PopupMenu) MinW(width float32) PopupMenu {
 
 // Set the menu to be scrollable to show vertical scrollbar.
 //
-// Scrollable is <gpui_kit::component::menu::PopupMenu>::scrollable.
+// Scrollable calls <gpui_kit::component::menu::PopupMenu>::scrollable.
 func (e PopupMenu) Scrollable(scrollable bool) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 274)
 	o.Bool(scrollable)
@@ -819,7 +986,7 @@ func (e PopupMenu) Scrollable(scrollable bool) PopupMenu {
 
 // Add a separator Menu Item
 //
-// Separator is <gpui_kit::component::menu::PopupMenu>::separator.
+// Separator calls <gpui_kit::component::menu::PopupMenu>::separator.
 func (e PopupMenu) Separator() PopupMenu {
 	rt.Op(rt.N(e.Core), 275)
 	return e
@@ -827,7 +994,7 @@ func (e PopupMenu) Separator() PopupMenu {
 
 // Add a Submenu
 //
-// Submenu is crate::overlay::submenu.
+// Submenu calls crate::overlay::submenu.
 func (e PopupMenu) Submenu(label string, f PopupMenu) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 276)
 	o.Str(label)
@@ -837,7 +1004,7 @@ func (e PopupMenu) Submenu(label string, f PopupMenu) PopupMenu {
 
 // Add a Submenu item with icon
 //
-// SubmenuWithIcon is crate::views_menu::submenu_with_icon.
+// SubmenuWithIcon calls crate::views_menu::submenu_with_icon.
 func (e PopupMenu) SubmenuWithIcon(icon gk.Option[gk.IconEl], label string, f PopupMenu) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 281)
 	if x0, ok := icon.Get(); ok {
@@ -856,7 +1023,7 @@ type PopupMenuItem struct{ rt.Val }
 
 // Create a new menu item with the given label.
 //
-// NewPopupMenuItem is <gpui_kit::component::menu::PopupMenuItem>::new.
+// NewPopupMenuItem calls <gpui_kit::component::menu::PopupMenuItem>::new.
 func NewPopupMenuItem(label string) PopupMenuItem {
 	n := rt.NewValue(878)
 	o := rt.NodeArgs(n)
@@ -866,7 +1033,7 @@ func NewPopupMenuItem(label string) PopupMenuItem {
 
 // Create a new menu item with custom element render.
 //
-// NewPopupMenuItemElement is <gpui_kit::component::menu::PopupMenuItem>::element.
+// NewPopupMenuItemElement calls <gpui_kit::component::menu::PopupMenuItem>::element.
 func NewPopupMenuItemElement(builder gk.Element) PopupMenuItem {
 	n := rt.NewValue(875)
 	o := rt.NodeArgs(n)
@@ -876,7 +1043,7 @@ func NewPopupMenuItemElement(builder gk.Element) PopupMenuItem {
 
 // Creates a label menu item.
 //
-// NewPopupMenuItemLabel is <gpui_kit::component::menu::PopupMenuItem>::label.
+// NewPopupMenuItemLabel calls <gpui_kit::component::menu::PopupMenuItem>::label.
 func NewPopupMenuItemLabel(label string) PopupMenuItem {
 	n := rt.NewValue(876)
 	o := rt.NodeArgs(n)
@@ -886,7 +1053,7 @@ func NewPopupMenuItemLabel(label string) PopupMenuItem {
 
 // Create a link menu item.
 //
-// NewPopupMenuItemLink is <gpui_kit::component::menu::PopupMenuItem>::link.
+// NewPopupMenuItemLink calls <gpui_kit::component::menu::PopupMenuItem>::link.
 func NewPopupMenuItemLink(label string, href string) PopupMenuItem {
 	n := rt.NewValue(877)
 	o := rt.NodeArgs(n)
@@ -897,7 +1064,7 @@ func NewPopupMenuItemLink(label string, href string) PopupMenuItem {
 
 // Create a separator menu item.
 //
-// NewPopupMenuItemSeparator is <gpui_kit::component::menu::PopupMenuItem>::separator.
+// NewPopupMenuItemSeparator calls <gpui_kit::component::menu::PopupMenuItem>::separator.
 func NewPopupMenuItemSeparator() PopupMenuItem {
 	n := rt.NewValue(879)
 	return PopupMenuItem{Val: rt.MkVal(n)}
@@ -907,7 +1074,7 @@ func NewPopupMenuItemSeparator() PopupMenuItem {
 //
 // Only works for `Item` and `ElementItem`.
 //
-// Action is <gpui_kit::component::menu::PopupMenuItem>::action.
+// Action calls <gpui_kit::component::menu::PopupMenuItem>::action.
 func (e PopupMenuItem) Action(action gk.Action) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutAction(o, action)
@@ -918,7 +1085,7 @@ func (e PopupMenuItem) Action(action gk.Action) PopupMenuItem {
 //
 // NOTE: If `check_side` is `Left`, the icon will replace with a check icon.
 //
-// Checked is <gpui_kit::component::menu::PopupMenuItem>::checked.
+// Checked calls <gpui_kit::component::menu::PopupMenuItem>::checked.
 func (e PopupMenuItem) Checked(checked bool) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(checked)
@@ -929,7 +1096,7 @@ func (e PopupMenuItem) Checked(checked bool) PopupMenuItem {
 //
 // Only works for `Item`, `ElementItem` and `Submenu`.
 //
-// Disabled is <gpui_kit::component::menu::PopupMenuItem>::disabled.
+// Disabled calls <gpui_kit::component::menu::PopupMenuItem>::disabled.
 func (e PopupMenuItem) Disabled(disabled bool) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(disabled)
@@ -940,7 +1107,7 @@ func (e PopupMenuItem) Disabled(disabled bool) PopupMenuItem {
 //
 // Only works for `Item`, `ElementItem` and `Submenu`.
 //
-// Icon is <gpui_kit::component::menu::PopupMenuItem>::icon.
+// Icon calls <gpui_kit::component::menu::PopupMenuItem>::icon.
 func (e PopupMenuItem) Icon(icon gk.IconName) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U16(uint16(icon))
@@ -951,14 +1118,14 @@ func (e PopupMenuItem) Icon(icon gk.IconName) PopupMenuItem {
 //
 // Only works for `Item` and `ElementItem`.
 //
-// OnClick is <gpui_kit::component::menu::PopupMenuItem>::on_click.
+// OnClick calls <gpui_kit::component::menu::PopupMenuItem>::on_click.
 func (e PopupMenuItem) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 1))
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e PopupMenuItem) OnClickDo(handler func(cx *gk.Cx)) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 1))

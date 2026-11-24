@@ -10,12 +10,12 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// AppMenuBar is a handle to gpui_kit::component::menu::AppMenuBar, kit state that lives in the library.
+// AppMenuBar is a handle to gpui_kit::component::menu::AppMenuBar, a runtime-owned kit state entity.
 type AppMenuBar struct{ rt.HCore }
 
 // Reload the menus from the app.
 //
-// Reload is <gpui_kit::component::menu::AppMenuBar>::reload.
+// Reload calls <gpui_kit::component::menu::AppMenuBar>::reload.
 func (s AppMenuBar) Reload(cx *gk.Cx) {
 	rt.UseComponentMenu()
 	o := rt.NewReq(1589)
@@ -23,12 +23,12 @@ func (s AppMenuBar) Reload(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// AudioFormat is a handle to gpui_kit::component::speech::AudioFormat, a library object (PROTOCOLS.md section 13).
+// AudioFormat is a handle to gpui_kit::component::speech::AudioFormat, a runtime-owned library object.
 type AudioFormat struct{ rt.HCore }
 
 // Number of interleaved channels.
 //
-// Channels is <gpui_kit::component::speech::AudioFormat>::channels.
+// Channels calls <gpui_kit::component::speech::AudioFormat>::channels.
 func (s AudioFormat) Channels(cx *gk.Cx) uint16 {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(1027)
@@ -39,7 +39,7 @@ func (s AudioFormat) Channels(cx *gk.Cx) uint16 {
 
 // Samples per second of each channel.
 //
-// SampleRate is <gpui_kit::component::speech::AudioFormat>::sample_rate.
+// SampleRate calls <gpui_kit::component::speech::AudioFormat>::sample_rate.
 func (s AudioFormat) SampleRate(cx *gk.Cx) uint32 {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(1029)
@@ -50,22 +50,22 @@ func (s AudioFormat) SampleRate(cx *gk.Cx) uint32 {
 
 // A format of `sample_rate` samples per second on each of `channels`.
 //
-// NewAudioFormat is <gpui_kit::component::speech::AudioFormat>::new.
+// NewAudioFormat calls <gpui_kit::component::speech::AudioFormat>::new.
 func NewAudioFormat(cx *gk.Cx, sampleRate uint32, channels uint16) AudioFormat {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(1028)
 	o.U32(uint32(sampleRate))
 	o.U16(uint16(channels))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return AudioFormat{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// CarouselState is a handle to gpui_kit::component::carousel::CarouselState, kit state that lives in the library.
+// CarouselState is a handle to gpui_kit::component::carousel::CarouselState, a runtime-owned kit state entity.
 type CarouselState struct{ rt.HCore }
 
 // Returns the configured orientation.
 //
-// Axis is <gpui_kit::component::carousel::CarouselState>::axis.
+// Axis calls <gpui_kit::component::carousel::CarouselState>::axis.
 func (s CarouselState) Axis(cx *gk.Cx) gk.Axis {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(355)
@@ -76,7 +76,7 @@ func (s CarouselState) Axis(cx *gk.Cx) gk.Axis {
 
 // Returns whether a next item can be selected.
 //
-// HasNext is <gpui_kit::component::carousel::CarouselState>::has_next.
+// HasNext calls <gpui_kit::component::carousel::CarouselState>::has_next.
 func (s CarouselState) HasNext(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(356)
@@ -87,7 +87,7 @@ func (s CarouselState) HasNext(cx *gk.Cx) bool {
 
 // Returns whether a previous item can be selected.
 //
-// HasPrevious is <gpui_kit::component::carousel::CarouselState>::has_previous.
+// HasPrevious calls <gpui_kit::component::carousel::CarouselState>::has_previous.
 func (s CarouselState) HasPrevious(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(357)
@@ -98,7 +98,7 @@ func (s CarouselState) HasPrevious(cx *gk.Cx) bool {
 
 // Returns whether navigation wraps at the carousel edges.
 //
-// IsLooping is <gpui_kit::component::carousel::CarouselState>::is_looping.
+// IsLooping calls <gpui_kit::component::carousel::CarouselState>::is_looping.
 func (s CarouselState) IsLooping(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(358)
@@ -109,7 +109,7 @@ func (s CarouselState) IsLooping(cx *gk.Cx) bool {
 
 // Returns the number of logical items.
 //
-// ItemCount is <gpui_kit::component::carousel::CarouselState>::item_count.
+// ItemCount calls <gpui_kit::component::carousel::CarouselState>::item_count.
 func (s CarouselState) ItemCount(cx *gk.Cx) int {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(359)
@@ -120,7 +120,7 @@ func (s CarouselState) ItemCount(cx *gk.Cx) int {
 
 // Returns the selected logical item, or `None` when the carousel is empty.
 //
-// SelectedIndex is <gpui_kit::component::carousel::CarouselState>::selected_index.
+// SelectedIndex calls <gpui_kit::component::carousel::CarouselState>::selected_index.
 func (s CarouselState) SelectedIndex(cx *gk.Cx) gk.Option[int] {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(361)
@@ -131,7 +131,7 @@ func (s CarouselState) SelectedIndex(cx *gk.Cx) gk.Option[int] {
 
 // Selects the first item through the user-facing path.
 //
-// SelectFirst is <gpui_kit::component::carousel::CarouselState>::select_first.
+// SelectFirst calls <gpui_kit::component::carousel::CarouselState>::select_first.
 func (s CarouselState) SelectFirst(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(647)
@@ -143,7 +143,7 @@ func (s CarouselState) SelectFirst(cx *gk.Cx) bool {
 // Selects an item through a user-facing path and emits one change event when the index is valid
 // and differs from the current selection.
 //
-// SelectIndex is <gpui_kit::component::carousel::CarouselState>::select_index.
+// SelectIndex calls <gpui_kit::component::carousel::CarouselState>::select_index.
 func (s CarouselState) SelectIndex(cx *gk.Cx, index int) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(648)
@@ -155,7 +155,7 @@ func (s CarouselState) SelectIndex(cx *gk.Cx, index int) bool {
 
 // Selects the last item through the user-facing path.
 //
-// SelectLast is <gpui_kit::component::carousel::CarouselState>::select_last.
+// SelectLast calls <gpui_kit::component::carousel::CarouselState>::select_last.
 func (s CarouselState) SelectLast(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(649)
@@ -166,7 +166,7 @@ func (s CarouselState) SelectLast(cx *gk.Cx) bool {
 
 // Selects the next item, wrapping when looping is enabled.
 //
-// SelectNext is <gpui_kit::component::carousel::CarouselState>::select_next.
+// SelectNext calls <gpui_kit::component::carousel::CarouselState>::select_next.
 func (s CarouselState) SelectNext(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(650)
@@ -177,7 +177,7 @@ func (s CarouselState) SelectNext(cx *gk.Cx) bool {
 
 // Selects the previous item, wrapping when looping is enabled.
 //
-// SelectPrevious is <gpui_kit::component::carousel::CarouselState>::select_previous.
+// SelectPrevious calls <gpui_kit::component::carousel::CarouselState>::select_previous.
 func (s CarouselState) SelectPrevious(cx *gk.Cx) bool {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(651)
@@ -188,7 +188,7 @@ func (s CarouselState) SelectPrevious(cx *gk.Cx) bool {
 
 // Silently changes the carousel orientation.
 //
-// SetAxis is <gpui_kit::component::carousel::CarouselState>::set_axis.
+// SetAxis calls <gpui_kit::component::carousel::CarouselState>::set_axis.
 func (s CarouselState) SetAxis(cx *gk.Cx, axis gk.Axis) {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(362)
@@ -199,7 +199,7 @@ func (s CarouselState) SetAxis(cx *gk.Cx, axis gk.Axis) {
 
 // Silently changes the number of logical items and clamps the selection.
 //
-// SetItemCount is <gpui_kit::component::carousel::CarouselState>::set_item_count.
+// SetItemCount calls <gpui_kit::component::carousel::CarouselState>::set_item_count.
 func (s CarouselState) SetItemCount(cx *gk.Cx, itemCount int) {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(363)
@@ -210,7 +210,7 @@ func (s CarouselState) SetItemCount(cx *gk.Cx, itemCount int) {
 
 // Silently changes whether edge navigation wraps.
 //
-// SetLooping is <gpui_kit::component::carousel::CarouselState>::set_looping.
+// SetLooping calls <gpui_kit::component::carousel::CarouselState>::set_looping.
 func (s CarouselState) SetLooping(cx *gk.Cx, looping bool) {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(364)
@@ -223,7 +223,7 @@ func (s CarouselState) SetLooping(cx *gk.Cx, looping bool) {
 //
 // The value is clamped to the available item range. This method does not emit `Change`.
 //
-// SetSelectedIndex is <gpui_kit::component::carousel::CarouselState>::set_selected_index.
+// SetSelectedIndex calls <gpui_kit::component::carousel::CarouselState>::set_selected_index.
 func (s CarouselState) SetSelectedIndex(cx *gk.Cx, index int) {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(365)
@@ -232,7 +232,7 @@ func (s CarouselState) SetSelectedIndex(cx *gk.Cx, index int) {
 	rt.StateSet(cx, o)
 }
 
-// OnCarouselEvent subscribes a handler to the state's CarouselEvent events; gk.Release ends it.
+// OnCarouselEvent registers a listener for CarouselEvent events on this state; release the returned Subscription to unsubscribe.
 func (s CarouselState) OnCarouselEvent(cx *gk.Cx, h func(cx *gk.Cx, e CarouselEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 91)
 	o := rt.NewReq(366)
@@ -243,28 +243,37 @@ func (s CarouselState) OnCarouselEvent(cx *gk.Cx, h func(cx *gk.Cx, e CarouselEv
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// CarouselStateBuilder is the chain of CarouselState's `self -> Self` methods; Build makes it, in one crossing.
+// CarouselStateBuilder accumulates chained CarouselState builder options before creating the handle in Build.
 type CarouselStateBuilder struct{ sb *rt.StateBuilder }
 
+// Sets the carousel orientation.
+//
+// WithAxis calls <gpui_kit::component::carousel::CarouselState>::with_axis.
 func (b CarouselStateBuilder) WithAxis(axis gk.Axis) CarouselStateBuilder {
 	o := b.sb.Op(1)
 	o.U16(uint16(axis))
 	return b
 }
 
+// Enables or disables wrapping at the first and last items.
+//
+// WithLooping calls <gpui_kit::component::carousel::CarouselState>::with_looping.
 func (b CarouselStateBuilder) WithLooping(looping bool) CarouselStateBuilder {
 	o := b.sb.Op(2)
 	o.Bool(looping)
 	return b
 }
 
+// Sets the initially selected item.
+//
+// WithSelectedIndex calls <gpui_kit::component::carousel::CarouselState>::with_selected_index.
 func (b CarouselStateBuilder) WithSelectedIndex(index int) CarouselStateBuilder {
 	o := b.sb.Op(3)
 	rt.PutUsize(o, index)
 	return b
 }
 
-// Build makes the CarouselState.
+// Build commits the queued options and returns the new CarouselState handle.
 func (b CarouselStateBuilder) Build() CarouselState {
 	return CarouselState{HCore: rt.MkH(b.sb.Build())}
 }
@@ -272,7 +281,7 @@ func (b CarouselStateBuilder) Build() CarouselState {
 // Creates state for `item_count` items, initially selecting the first item when at least one item
 // exists.
 //
-// NewCarouselState is <gpui_kit::component::carousel::CarouselState>::new.
+// NewCarouselState calls <gpui_kit::component::carousel::CarouselState>::new.
 func NewCarouselState(cx *gk.Cx, itemCount int) CarouselStateBuilder {
 	rt.UseComponentCarousel()
 	o := rt.NewReq(360)
@@ -280,12 +289,12 @@ func NewCarouselState(cx *gk.Cx, itemCount int) CarouselStateBuilder {
 	return CarouselStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// DatePickerState is a handle to gpui_kit::component::date_picker::DatePickerState, kit state that lives in the library.
+// DatePickerState is a handle to gpui_kit::component::date_picker::DatePickerState, a runtime-owned kit state entity.
 type DatePickerState struct{ rt.HCore }
 
 // Get the date part of the value.
 //
-// Date is <gpui_kit::component::date_picker::DatePickerState>::date.
+// Date calls <gpui_kit::component::date_picker::DatePickerState>::date.
 func (s DatePickerState) Date(cx *gk.Cx) base.Date {
 	rt.UseComponentTime()
 	o := rt.NewReq(374)
@@ -296,7 +305,7 @@ func (s DatePickerState) Date(cx *gk.Cx) base.Date {
 
 // Get the value, combining the date with its time of day.
 //
-// DateTime is <gpui_kit::component::date_picker::DatePickerState>::date_time.
+// DateTime calls <gpui_kit::component::date_picker::DatePickerState>::date_time.
 func (s DatePickerState) DateTime(cx *gk.Cx) DateTime {
 	rt.UseComponentTime()
 	o := rt.NewReq(375)
@@ -307,7 +316,7 @@ func (s DatePickerState) DateTime(cx *gk.Cx) DateTime {
 
 // Set the date, keeping the current time of day.
 //
-// SetDate is <gpui_kit::component::date_picker::DatePickerState>::set_date.
+// SetDate calls <gpui_kit::component::date_picker::DatePickerState>::set_date.
 func (s DatePickerState) SetDate(cx *gk.Cx, date base.DateInto) {
 	rt.UseComponentTime()
 	o := rt.NewReq(1331)
@@ -318,7 +327,7 @@ func (s DatePickerState) SetDate(cx *gk.Cx, date base.DateInto) {
 
 // Set the date and the time of day.
 //
-// SetDateTime is <gpui_kit::component::date_picker::DatePickerState>::set_date_time.
+// SetDateTime calls <gpui_kit::component::date_picker::DatePickerState>::set_date_time.
 func (s DatePickerState) SetDateTime(cx *gk.Cx, value DateTime) {
 	rt.UseComponentTime()
 	o := rt.NewReq(1332)
@@ -332,7 +341,7 @@ func (s DatePickerState) SetDateTime(cx *gk.Cx, value DateTime) {
 // Default is 50 years before and after the current year. `range` uses a half-open interval
 // `(start, end)` where `end` is exclusive.
 //
-// SetYearRange is <gpui_kit::component::date_picker::DatePickerState>::set_year_range.
+// SetYearRange calls <gpui_kit::component::date_picker::DatePickerState>::set_year_range.
 func (s DatePickerState) SetYearRange(cx *gk.Cx, range_ gk.TupleInt32Int32) {
 	rt.UseComponentTime()
 	o := rt.NewReq(378)
@@ -342,7 +351,7 @@ func (s DatePickerState) SetYearRange(cx *gk.Cx, range_ gk.TupleInt32Int32) {
 	rt.StateSet(cx, o)
 }
 
-// OnDatePickerEvent subscribes a handler to the state's DatePickerEvent events; gk.Release ends it.
+// OnDatePickerEvent registers a listener for DatePickerEvent events on this state; release the returned Subscription to unsubscribe.
 func (s DatePickerState) OnDatePickerEvent(cx *gk.Cx, h func(cx *gk.Cx, e DatePickerEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 112)
 	o := rt.NewReq(379)
@@ -353,59 +362,88 @@ func (s DatePickerState) OnDatePickerEvent(cx *gk.Cx, h func(cx *gk.Cx, e DatePi
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// DatePickerStateBuilder is the chain of DatePickerState's `self -> Self` methods; Build makes it, in one crossing.
+// DatePickerStateBuilder accumulates chained DatePickerState builder options before creating the handle in Build.
 type DatePickerStateBuilder struct{ sb *rt.StateBuilder }
 
+// Set the format of the value displayed in the picker.
+//
+// Default: `%Y/%m/%d`, followed by the time in the configured precision and hour cycle when the
+// picker edits times, e.g. `%H:%M` or `%I:%M %p`.
+//
+// DateFormat calls <gpui_kit::component::date_picker::DatePickerState>::date_format.
 func (b DatePickerStateBuilder) DateFormat(format string) DatePickerStateBuilder {
 	o := b.sb.Op(1)
 	o.Str(format)
 	return b
 }
 
+// Set the time given to a date before the user edits it, default: `00:00`.
+//
+// DefaultTime calls <gpui_kit::component::date_picker::DatePickerState>::default_time.
 func (b DatePickerStateBuilder) DefaultTime(time gk.CivilTime) DatePickerStateBuilder {
 	o := b.sb.Op(6)
 	rt.PutCivilTime(o, time)
 	return b
 }
 
+// Set the disabled match for the calendar.
+//
+// DisabledMatcher calls <gpui_kit::component::date_picker::DatePickerState>::disabled_matcher.
 func (b DatePickerStateBuilder) DisabledMatcher(disabled base.MatcherInto) DatePickerStateBuilder {
 	o := b.sb.Op(5)
 	putMatcherInto(o, disabled)
 	return b
 }
 
+// Set the first day of the week.
+//
+// FirstDayOfWeek calls <gpui_kit::component::date_picker::DatePickerState>::first_day_of_week.
 func (b DatePickerStateBuilder) FirstDayOfWeek(day gk.Weekday) DatePickerStateBuilder {
 	o := b.sb.Op(7)
 	rt.PutWeekday(o, day)
 	return b
 }
 
+// Set how the time field counts hours, default: `H23`.
+//
+// HourCycle calls <gpui_kit::component::date_picker::DatePickerState>::hour_cycle.
 func (b DatePickerStateBuilder) HourCycle(hourCycle base.HourCycle) DatePickerStateBuilder {
 	o := b.sb.Op(2)
 	o.U16(uint16(hourCycle))
 	return b
 }
 
+// Set the number of months calendar view to display, default is 1.
+//
+// NumberOfMonths calls <gpui_kit::component::date_picker::DatePickerState>::number_of_months.
 func (b DatePickerStateBuilder) NumberOfMonths(numberOfMonths int) DatePickerStateBuilder {
 	o := b.sb.Op(3)
 	rt.PutUsize(o, numberOfMonths)
 	return b
 }
 
+// Edit the time of day as well as the date, down to `precision`.
+//
+// Selecting a date then keeps the popup open, and every change to the date or time is reported as
+// it happens. Clicking the selected date again closes the popup.
+//
+// A range picker edits dates only; for a range with times, place two single pickers side by side.
+//
+// TimePrecision calls <gpui_kit::component::date_picker::DatePickerState>::time_precision.
 func (b DatePickerStateBuilder) TimePrecision(precision base.TimePrecision) DatePickerStateBuilder {
 	o := b.sb.Op(4)
 	o.U16(uint16(precision))
 	return b
 }
 
-// Build makes the DatePickerState.
+// Build commits the queued options and returns the new DatePickerState handle.
 func (b DatePickerStateBuilder) Build() DatePickerState {
 	return DatePickerState{HCore: rt.MkH(b.sb.Build())}
 }
 
 // Create a date state.
 //
-// NewDatePickerState is <gpui_kit::component::date_picker::DatePickerState>::new.
+// NewDatePickerState calls <gpui_kit::component::date_picker::DatePickerState>::new.
 func NewDatePickerState(cx *gk.Cx) DatePickerStateBuilder {
 	rt.UseComponentTime()
 	o := rt.NewReq(376)
@@ -414,19 +452,19 @@ func NewDatePickerState(cx *gk.Cx) DatePickerStateBuilder {
 
 // Create a date state with range mode.
 //
-// NewDatePickerStateRange is <gpui_kit::component::date_picker::DatePickerState>::range.
+// NewDatePickerStateRange calls <gpui_kit::component::date_picker::DatePickerState>::range.
 func NewDatePickerStateRange(cx *gk.Cx) DatePickerStateBuilder {
 	rt.UseComponentTime()
 	o := rt.NewReq(377)
 	return DatePickerStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// MessageScrollerState is a handle to gpui_kit::component::message_scroller::MessageScrollerState, kit state that lives in the library.
+// MessageScrollerState is a handle to gpui_kit::component::message_scroller::MessageScrollerState, a runtime-owned kit state entity.
 type MessageScrollerState struct{ rt.HCore }
 
 // Return whether the list is actively following its tail.
 //
-// IsFollowingTail is <gpui_kit::component::message_scroller::MessageScrollerState>::is_following_tail.
+// IsFollowingTail calls <gpui_kit::component::message_scroller::MessageScrollerState>::is_following_tail.
 func (s MessageScrollerState) IsFollowingTail(cx *gk.Cx) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(380)
@@ -437,7 +475,7 @@ func (s MessageScrollerState) IsFollowingTail(cx *gk.Cx) bool {
 
 // Return whether the user has scrolled away from the latest content.
 //
-// IsScrolledUp is <gpui_kit::component::message_scroller::MessageScrollerState>::is_scrolled_up.
+// IsScrolledUp calls <gpui_kit::component::message_scroller::MessageScrollerState>::is_scrolled_up.
 func (s MessageScrollerState) IsScrolledUp(cx *gk.Cx) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(381)
@@ -448,7 +486,7 @@ func (s MessageScrollerState) IsScrolledUp(cx *gk.Cx) bool {
 
 // Return the current number of rows known by the virtual list.
 //
-// ItemCount is <gpui_kit::component::message_scroller::MessageScrollerState>::item_count.
+// ItemCount calls <gpui_kit::component::message_scroller::MessageScrollerState>::item_count.
 func (s MessageScrollerState) ItemCount(cx *gk.Cx) int {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(382)
@@ -463,7 +501,7 @@ func (s MessageScrollerState) ItemCount(cx *gk.Cx) int {
 // `ScrollToEnd` and tail following settle it when the list next lays out; right after
 // `scroll_to_end`, `item_ix` is `ItemCount` until then.
 //
-// LogicalScrollTop is <gpui_kit::component::message_scroller::MessageScrollerState>::logical_scroll_top.
+// LogicalScrollTop calls <gpui_kit::component::message_scroller::MessageScrollerState>::logical_scroll_top.
 func (s MessageScrollerState) LogicalScrollTop(cx *gk.Cx) gk.ListOffset {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(383)
@@ -474,7 +512,7 @@ func (s MessageScrollerState) LogicalScrollTop(cx *gk.Cx) gk.ListOffset {
 
 // Append `count` rows to the end of the list.
 //
-// Append is <gpui_kit::component::message_scroller::MessageScrollerState>::append.
+// Append calls <gpui_kit::component::message_scroller::MessageScrollerState>::append.
 func (s MessageScrollerState) Append(cx *gk.Cx, count int) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(652)
@@ -486,7 +524,7 @@ func (s MessageScrollerState) Append(cx *gk.Cx, count int) bool {
 
 // Prepend `count` rows while preserving the current scroll anchor.
 //
-// Prepend is <gpui_kit::component::message_scroller::MessageScrollerState>::prepend.
+// Prepend calls <gpui_kit::component::message_scroller::MessageScrollerState>::prepend.
 func (s MessageScrollerState) Prepend(cx *gk.Cx, count int) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(653)
@@ -500,7 +538,7 @@ func (s MessageScrollerState) Prepend(cx *gk.Cx, count int) bool {
 //
 // Returns `false` when the range is outside the current list.
 //
-// RemeasureItems is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure_items.
+// RemeasureItems calls <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure_items.
 func (s MessageScrollerState) RemeasureItems(cx *gk.Cx, range_ gk.Range) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(654)
@@ -512,7 +550,7 @@ func (s MessageScrollerState) RemeasureItems(cx *gk.Cx, range_ gk.Range) bool {
 
 // Scroll to the row at `index`, if it exists.
 //
-// ScrollToItem is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_item.
+// ScrollToItem calls <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_item.
 func (s MessageScrollerState) ScrollToItem(cx *gk.Cx, index int) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(655)
@@ -528,7 +566,7 @@ func (s MessageScrollerState) ScrollToItem(cx *gk.Cx, index int) bool {
 // Restores a saved reading position to the pixel, where `ScrollToItem` puts the top of the row at
 // the top of the viewport.
 //
-// ScrollToOffset is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_offset.
+// ScrollToOffset calls <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_offset.
 func (s MessageScrollerState) ScrollToOffset(cx *gk.Cx, offset gk.ListOffset) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(1776)
@@ -542,7 +580,7 @@ func (s MessageScrollerState) ScrollToOffset(cx *gk.Cx, offset gk.ListOffset) bo
 //
 // Returns `false` when the range is outside the current list and leaves the state unchanged.
 //
-// Splice is <gpui_kit::component::message_scroller::MessageScrollerState>::splice.
+// Splice calls <gpui_kit::component::message_scroller::MessageScrollerState>::splice.
 func (s MessageScrollerState) Splice(cx *gk.Cx, oldRange gk.Range, count int) bool {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(656)
@@ -555,7 +593,7 @@ func (s MessageScrollerState) Splice(cx *gk.Cx, oldRange gk.Range, count int) bo
 
 // Mark all rows for remeasurement while preserving a proportional anchor.
 //
-// Remeasure is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure.
+// Remeasure calls <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure.
 func (s MessageScrollerState) Remeasure(cx *gk.Cx) {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(385)
@@ -565,7 +603,7 @@ func (s MessageScrollerState) Remeasure(cx *gk.Cx) {
 
 // Reset the list to `item_count` rows.
 //
-// Reset is <gpui_kit::component::message_scroller::MessageScrollerState>::reset.
+// Reset calls <gpui_kit::component::message_scroller::MessageScrollerState>::reset.
 func (s MessageScrollerState) Reset(cx *gk.Cx, itemCount int) {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(386)
@@ -576,7 +614,7 @@ func (s MessageScrollerState) Reset(cx *gk.Cx, itemCount int) {
 
 // Resume tail following and scroll to the latest row.
 //
-// ScrollToEnd is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_end.
+// ScrollToEnd calls <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_end.
 func (s MessageScrollerState) ScrollToEnd(cx *gk.Cx) {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(387)
@@ -586,22 +624,22 @@ func (s MessageScrollerState) ScrollToEnd(cx *gk.Cx) {
 
 // Create a state for `item_count` rows and enable tail following.
 //
-// NewMessageScrollerState is <gpui_kit::component::message_scroller::MessageScrollerState>::new.
+// NewMessageScrollerState calls <gpui_kit::component::message_scroller::MessageScrollerState>::new.
 func NewMessageScrollerState(cx *gk.Cx, itemCount int) MessageScrollerState {
 	rt.UseComponentMessageScroller()
 	o := rt.NewReq(384)
 	rt.PutUsize(o, itemCount)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return MessageScrollerState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// SpeechState is a handle to gpui_kit::component::speech::SpeechState, kit state that lives in the library.
+// SpeechState is a handle to gpui_kit::component::speech::SpeechState, a runtime-owned kit state entity.
 type SpeechState struct{ rt.HCore }
 
 // Whether a recognizer and an input are configured, so that speech input can work on this platform
 // at all.
 //
-// HasRecognizer is <gpui_kit::component::speech::SpeechState>::has_recognizer.
+// HasRecognizer calls <gpui_kit::component::speech::SpeechState>::has_recognizer.
 func (s SpeechState) HasRecognizer(cx *gk.Cx) bool {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(397)
@@ -612,7 +650,7 @@ func (s SpeechState) HasRecognizer(cx *gk.Cx) bool {
 
 // Whether a session can start now: `HasRecognizer` and the recognizer reports itself available.
 //
-// IsAvailable is <gpui_kit::component::speech::SpeechState>::is_available.
+// IsAvailable calls <gpui_kit::component::speech::SpeechState>::is_available.
 func (s SpeechState) IsAvailable(cx *gk.Cx) bool {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(398)
@@ -624,7 +662,7 @@ func (s SpeechState) IsAvailable(cx *gk.Cx) bool {
 // Recent input levels in `0.0..=1.0`, oldest first, one per 80 ms of audio. Peaks rise at once and
 // fall back smoothly; background noise reads as `0.0`.
 //
-// Levels is <gpui_kit::component::speech::SpeechState>::levels.
+// Levels calls <gpui_kit::component::speech::SpeechState>::levels.
 func (s SpeechState) Levels(cx *gk.Cx) []float32 {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(1316)
@@ -635,7 +673,7 @@ func (s SpeechState) Levels(cx *gk.Cx) []float32 {
 
 // Where the state is in its session.
 //
-// Status is <gpui_kit::component::speech::SpeechState>::status.
+// Status calls <gpui_kit::component::speech::SpeechState>::status.
 func (s SpeechState) Status(cx *gk.Cx) SpeechStatus {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(401)
@@ -647,7 +685,7 @@ func (s SpeechState) Status(cx *gk.Cx) SpeechStatus {
 // The transcript of the current or last session: every committed phrase followed by the current
 // hypothesis.
 //
-// Transcript is <gpui_kit::component::speech::SpeechState>::transcript.
+// Transcript calls <gpui_kit::component::speech::SpeechState>::transcript.
 func (s SpeechState) Transcript(cx *gk.Cx) string {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(405)
@@ -658,7 +696,7 @@ func (s SpeechState) Transcript(cx *gk.Cx) string {
 
 // End the session at once and discard its transcript.
 //
-// Cancel is <gpui_kit::component::speech::SpeechState>::cancel.
+// Cancel calls <gpui_kit::component::speech::SpeechState>::cancel.
 func (s SpeechState) Cancel(cx *gk.Cx) {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(396)
@@ -670,7 +708,7 @@ func (s SpeechState) Cancel(cx *gk.Cx) {
 //
 // When the recognizer or the input fails to start, emits `Error` and stays idle.
 //
-// Start is <gpui_kit::component::speech::SpeechState>::start.
+// Start calls <gpui_kit::component::speech::SpeechState>::start.
 func (s SpeechState) Start(cx *gk.Cx) {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(400)
@@ -680,7 +718,7 @@ func (s SpeechState) Start(cx *gk.Cx) {
 
 // Stop capturing and wait for the final result, which arrives as `Final`.
 //
-// Stop is <gpui_kit::component::speech::SpeechState>::stop.
+// Stop calls <gpui_kit::component::speech::SpeechState>::stop.
 func (s SpeechState) Stop(cx *gk.Cx) {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(402)
@@ -690,7 +728,7 @@ func (s SpeechState) Stop(cx *gk.Cx) {
 
 // Start a session when idle, otherwise stop the running one.
 //
-// Toggle is <gpui_kit::component::speech::SpeechState>::toggle.
+// Toggle calls <gpui_kit::component::speech::SpeechState>::toggle.
 func (s SpeechState) Toggle(cx *gk.Cx) {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(404)
@@ -698,7 +736,7 @@ func (s SpeechState) Toggle(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// OnSpeechEvent subscribes a handler to the state's SpeechEvent events; gk.Release ends it.
+// OnSpeechEvent registers a listener for SpeechEvent events on this state; release the returned Subscription to unsubscribe.
 func (s SpeechState) OnSpeechEvent(cx *gk.Cx, h func(cx *gk.Cx, e SpeechEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 93)
 	o := rt.NewReq(403)
@@ -709,27 +747,37 @@ func (s SpeechState) OnSpeechEvent(cx *gk.Cx, h func(cx *gk.Cx, e SpeechEvent)) 
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// SpeechStateBuilder is the chain of SpeechState's `self -> Self` methods; Build makes it, in one crossing.
+// SpeechStateBuilder accumulates chained SpeechState builder options before creating the handle in Build.
 type SpeechStateBuilder struct{ sb *rt.StateBuilder }
 
+// Set how long `Stop` waits for the recognizer's final result before ending the session with the
+// transcript so far, default 3 seconds.
+//
+// StopTimeout calls <gpui_kit::component::speech::SpeechState>::stop_timeout.
 func (b SpeechStateBuilder) StopTimeout(timeout time.Duration) SpeechStateBuilder {
 	o := b.sb.Op(1)
 	rt.PutMs(o, timeout)
 	return b
 }
 
+// Whether to fall back to the platform's recognizer when no `recognizer` is set, default `true`.
+//
+// On Windows the system recognizer dictates through Microsoft's online service; turn this off when
+// audio must not leave the application.
+//
+// SystemFallback calls <gpui_kit::component::speech::SpeechState>::system_fallback.
 func (b SpeechStateBuilder) SystemFallback(systemFallback bool) SpeechStateBuilder {
 	o := b.sb.Op(2)
 	o.Bool(systemFallback)
 	return b
 }
 
-// Build makes the SpeechState.
+// Build commits the queued options and returns the new SpeechState handle.
 func (b SpeechStateBuilder) Build() SpeechState { return SpeechState{HCore: rt.MkH(b.sb.Build())} }
 
 // Create a speech state with the default recognizer and input.
 //
-// NewSpeechState is <gpui_kit::component::speech::SpeechState>::new.
+// NewSpeechState calls <gpui_kit::component::speech::SpeechState>::new.
 func NewSpeechState(cx *gk.Cx) SpeechStateBuilder {
 	rt.UseComponentSpeech()
 	o := rt.NewReq(399)

@@ -1,7 +1,8 @@
-"""Reader for rustdoc JSON (format 61, rustdoc 1.99): public-API walk and type printer.
+"""Rustdoc JSON loader, type printer, cfg parser, and public-API walker.
 
-Reads the raw JSON rustdoc writes or the stripped, gzipped extract under api/rustdoc/.
-No third-party imports.
+Used by gk_model.py to load compressed rustdoc JSON archives (format v61),
+format Rust signatures and type expressions, extract target cfg predicates from
+CfgTrace attributes, and walk public modules and re-exports.
 """
 import gzip
 import json
@@ -9,6 +10,8 @@ import re
 
 
 class Crate:
+    """Loaded rustdoc JSON archive for a single crate."""
+
     def __init__(self, path, label):
         with (gzip.open(path, "rt") if path.endswith(".gz") else open(path)) as f:
             d = json.load(f)
@@ -22,9 +25,11 @@ class Crate:
         self.rootname = self.idx[self.root]["name"]
 
     def item(self, i):
+        """Look up an item dictionary by integer or string ID in the crate index."""
         return self.idx.get(str(i))
 
     def is_local(self, i):
+        """Return True if item ID `i` is defined in this crate (`crate_id == 0`)."""
         it = self.idx.get(str(i))
         if it is not None:
             return it["crate_id"] == 0
@@ -32,16 +37,17 @@ class Crate:
         return bool(p) and p["crate_id"] == 0
 
     def ext_path(self, i):
+        """Return the `::`-joined path string for item ID `i` from `paths`, or None."""
         p = self.paths.get(str(i))
         return "::".join(p["path"]) if p else None
 
     def kind(self, it):
+        """Return the single rustdoc item kind tag (e.g. `struct`, `enum`, `function`, `use`)."""
         return next(iter(it["inner"]))
 
 
-# ---------------------------------------------------------------- type printer
-
 def args_str(a):
+    """Format angle-bracketed or parenthesized generic arguments as Rust syntax."""
     if not a:
         return ""
     if "angle_bracketed" in a:
@@ -92,6 +98,7 @@ def bounds_str(bs):
 
 
 def ty(t):
+    """Render a rustdoc JSON type node back into a readable Rust type string."""
     if t is None:
         return "()"
     if "resolved_path" in t:
@@ -178,6 +185,7 @@ def where_str(g):
 
 
 def fn_sig(name, f):
+    """Format a rustdoc JSON function item as a Rust fn signature string."""
     sig = f["sig"]
     ps = []
     for pname, pt in sig["inputs"]:
@@ -194,19 +202,16 @@ def fn_sig(name, f):
                                   where_str(f["generics"]))
 
 
-# ---------------------------------------------------------------- platform cfg
-
 _SPAN = r"\S+:\d+:\d+: \d+:\d+ \(#\d+\)"
 _TOKENS = re.compile(r'"(?:[^"\\]|\\.)*"|[A-Za-z_][A-Za-z0-9_]*|[\[\](){},:]')
 
 
 def target_cfg(attrs):
-    """The platform part of an item's #[cfg]: a Rust cfg predicate over target_* and unix/windows
-    only (`target_os = "linux"`), or None when the item is on every platform. The extract is made
-    on Linux with the library's features, so every other part of a cfg (a feature, a test flag)
-    held there and is dropped: what remains is what keeps the item off macOS or Windows
-    (gpui-fast's Wayland layer shell is Linux only). rustdoc 1.99 writes a cfg
-    as `#[attr = CfgTrace([All([NameValue { name: "target_os", value: Some("linux"), span: .. }, ..])])]`."""
+    """Extract target platform cfg(...) predicates from rustdoc CfgTrace attributes.
+
+    Non-target predicates (feature flags, debug_assertions) are ignored so only
+    OS/arch/family gates (target_*, unix, windows) remain.
+    """
     preds = []
     for a in attrs or ():
         text = a.get("other", "") if isinstance(a, dict) else str(a)
@@ -277,27 +282,24 @@ def target_cfg(attrs):
 
 
 def all_cfg(*preds):
-    """Both platform predicates (either may be None, for every platform)."""
     ps = [p for p in preds if p]
     if not ps:
         return None
     return ps[0] if len(ps) == 1 else f"all({', '.join(ps)})"
 
 
-# ---------------------------------------------------------------- public walk
-
 class Walk:
-    """Collects every item reachable through public paths from the crate root."""
+    """Walk a Crate from its root module, recording the shortest public path per item ID."""
 
     def __init__(self, crate):
         self.c = crate
-        self.types = {}      # id -> (path, item)   structs, enums, unions
-        self.traits = {}     # id -> (path, item)
-        self.fns = {}        # id -> (path, item)   free functions
-        self.macros = {}     # id -> (path, item)
-        self.other = {}      # id -> (path, kind)   consts, statics, aliases
-        self.ext_reexports = []  # (path, source, is_glob)
-        self.cfg = {}        # id -> the platform cfg of a type and its modules (target_cfg), if any
+        self.types = {}
+        self.traits = {}
+        self.fns = {}
+        self.macros = {}
+        self.other = {}
+        self.ext_reexports = []
+        self.cfg = {}
         self._mods = set()
         self._module(crate.root, [crate.rootname])
 
@@ -361,7 +363,6 @@ class Walk:
 
     @staticmethod
     def _keep(table, iid, full, value):
-        """An item re-exported under several paths is listed once, under its shortest path."""
         old = table.get(iid)
         if old is None or (full.count("::"), full) < (old[0].count("::"), old[0]):
             table[iid] = (full, value)

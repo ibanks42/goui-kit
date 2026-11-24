@@ -1,22 +1,31 @@
-# overrides.toml: the only hand-edited input of the generator (DESIGN.md section 13).
-# Every key must match something in the extracted API, or generation fails.
-
-# The parts of gpui the kit's elements are made of. Everything else in gpui is reached through
-# the runtime's own protocols (contexts, windows, handles) and is not generated from here.
+# Generator configuration read by gen/gk_model.py, gen/gk_go.py, gen/gk_lists.py,
+# gen/gk_values.py, gen/gk_editor.py, gen/gk_overlay.py, and gen/gk_tests_go.py.
+#
+# Strict usage invariant: every entry in [skip], [shims], [rows], [traits.role],
+# [instantiate].states, [values].objects, [values].event_closures, [lists].*,
+# [shorthand], and [editor].variants is recorded in Model.ov_used during `make gen`.
+# Unused entries fail the build so stale overrides are removed when upstream changes.
+#
+# Upstream gpui items pulled into the model alongside the gpui-base and gpui-component
+# crates. Only these types, traits, and free constructors are exposed from gpui itself.
 [gpui]
 types = ["Div", "Img", "Svg", "StyleRefinement"]
 traits = ["Styled", "InteractiveElement", "StatefulInteractiveElement", "ParentElement"]
 functions = ["div", "img", "svg"]
 
-# Generic wrappers a type-changing method returns, instantiated per argument (DESIGN.md 6).
+# Concrete monomorphizations of generic upstream types.
+# Because Go cannot instantiate Rust generics at runtime, each generic component,
+# plot shape, value, or entity state is bound at fixed type arguments here.
+# Syntax: "Generic<Arg1, Arg2> as BoundName" (or "Generic<Arg>" to keep the base name).
 [instantiate]
+# Generic elements and value builders instantiated as concrete tape nodes.
+# Virtualized list/table/select/combobox types bind to the runtime's delegate shims;
+# chart and plot shape types bind to crate::data::Datum row payloads;
+# SettingField is split into three concrete field types (bool, text, number).
 types = [
     "Stateful<Div>",
-    # Elements generic over a delegate, instantiated for the rows family's shims (PROTOCOLS.md 9.5).
     "List<crate::shim_rows::GkListDelegate> as List",
     "DataTable<crate::shim_rows::GkTableDelegate> as DataTable",
-    # Charts over the data protocol (docs/PROTOCOLS.md section 12): T a row of the app's data
-    # table, labels SharedString, values f64.
     "LineChart<crate::data::Datum, SharedString, f64> as LineChart",
     "AreaChart<crate::data::Datum, SharedString, f64> as AreaChart",
     "BarChart<crate::data::Datum, SharedString, f64> as BarChart",
@@ -24,41 +33,27 @@ types = [
     "PieChart<crate::data::Datum> as PieChart",
     "RadarChart<crate::data::Datum, f64> as RadarChart",
     "SankeyChart<crate::data::Datum> as SankeyChart",
-    # The plot shapes, parts of a described plot (gk.plot): x and y name columns of pixels.
     "Line<crate::data::Datum> as LineShape",
     "Area<crate::data::Datum> as AreaShape",
     "Bar<crate::data::Datum> as BarShape",
     "RadialLine<crate::data::Datum> as RadialLineShape",
-    # Elements generic over their children's type, instantiated for the kit's own child type.
     "Sidebar<SidebarMenu> as Sidebar",
-    # Elements generic over a searchable-list delegate, instantiated for the library's shim of it
-    # (docs/PROTOCOLS.md section 9.9).
     "Select<crate::shim_select::GkSearchDelegate> as Select",
     "Combobox<crate::shim_select::GkSearchDelegate> as Combobox",
-    # The scroll mask over gpui's ScrollHandle, the scroll handle the binding holds (PROTOCOLS.md
-    # 13.14).
     "ScrollableMask<ScrollHandle> as ScrollableMask",
-    # A settings field over each type a field holds (docs/PROTOCOLS.md 13.19): a switch or checkbox
-    # (bool), an input or dropdown (SharedString), a number input (f64).
     "SettingField<bool> as SettingFieldBool",
     "SettingField<SharedString> as SettingFieldText",
     "SettingField<f64> as SettingFieldNumber",
-    # The kit's resize handle over the library's drag value, its preview the app's view (13.20).
     "ResizeHandle<crate::values::Drag, crate::rt::GkView> as ResizeHandle",
-    # The views family: a sidebar group of the kit's menus, and a sidebar of such groups.
     "SidebarGroup<SidebarMenu> as SidebarGroup",
     "Sidebar<SidebarGroup<SidebarMenu>> as GroupedSidebar",
-    # The unstyled editor, generic over a line-number renderer since gpui-kit 0.11 (its default, ()):
-    # the kit's own Editor takes a GutterStyle instead.
     "Editor<()> as Editor",
 ]
-# Library types a type parameter can be given that are rows of a data table the app passes
-# (docs/PROTOCOLS.md section 12): `data` arguments, `field` and `format` closures.
+# Datum types whose row-accessor closures (Fn(&Datum) -> T) decode into field/format descriptors.
 data = ["crate::data::Datum"]
-# Generic entity states, one state type per line: "Generic<Arg> as Name" (docs/PROTOCOLS.md
-# section 9.6). Arg is an upstream type or a shim type of the library (crate::...). Every
-# method of an impl that holds for Arg is bound on the state type Name. Each family owns its
-# own lines: the input family the three below, the rows family its ListState and TableState.
+# Generic GPUI entity state types instantiated as concrete handle types.
+# InputBaseState is split by mode marker into InputState, EditorState, and TextareaState;
+# ListState, TableState, SelectState, and ComboboxState bind to their runtime delegate shims.
 states = [
     "InputBaseState<InputMode> as InputState",
     "InputBaseState<EditorMode> as EditorState",
@@ -69,12 +64,16 @@ states = [
     "ComboboxState<crate::shim_select::GkSearchDelegate> as ComboboxState",
 ]
 
+# Builder traits whose methods operate purely on gpui::StyleRefinement.
+# Rather than emitting per-node match arms for every styled widget, gk_rust.py routes
+# all ops in these traits through a shared style dispatcher applied via Styled::style().
 [traits]
-# Traits whose methods only write the element's StyleRefinement: decoded once, by one
-# non-generic function, instead of once per styled type.
 via_style = ["Styled", "StyledExt", "StyleSized", "ThemeStyled"]
 
-# Traits whose methods are not builders of a tape: the reason every method gets.
+# Explicit role classifications for upstream traits that are not element builder traits.
+# Values starting with "skip:" mark every method on the trait as intentionally skipped;
+# values starting with "todo:" record a default reason unless individual methods are
+# marked bridged under [shims] or handled as ambient calls (WindowExt, ActiveTheme).
 [traits.role]
 TableDelegate = "todo:protocol: delegates (a trait the app implements: one bridge per trait)"
 ListDelegate = "todo:protocol: delegates (a trait the app implements: one bridge per trait)"
@@ -118,29 +117,33 @@ OngoingScrollExt = "skip:value-helper"
 WindowExt = "todo:protocol: calls (ambient context: methods on Window and App)"
 ActiveTheme = "todo:protocol: calls (ambient context: methods on Window and App)"
 
-# Types that are entity state although nothing in their impls says so.
+# Overrides for state vs library-object classification.
+# - types: extra struct names forced into GPUI Entity<T> state tracking.
+# - objects: struct names forced into plain library-owned object handles (not Entity<T>).
+# - try_reads: state read method names that also get a non-blocking Try* Go helper.
 [state]
 types = []
-# Types upstream makes a gpui Render (so the generator would hold them as entities) that are
-# values the app passes by value and gets back by value: held as library objects instead
-# (PROTOCOLS.md 13.31). DragPanel: the dock's drag value (Clone; base renders it as Empty, the
-# component crate's skin draws the preview), taken by TabGroupContext::drop_panel and handed
-# out by drag_panel.
 objects = ["DragPanel"]
-# Reads that also get a Try form in Go (ok is false while the state is on lease: a handler
-# the component calls from inside its own update). Every state type that has the read gets it.
 try_reads = ["value"]
 
-# "Type::method" or a full item id = "reason: note". The reason is one of the fixed list.
+# Upstream API items intentionally excluded from code generation.
+# Keys match either the full canonical item path or "Type::method".
+# Value format: "<reason>: <detail>", where <reason> must be listed in
+# gk_model.SKIP_REASONS (feature-off, rust-only-extension, builder-getter,
+# value-helper, test-only, third-party-type, etc.).
+#
+# Grouped roughly by cause:
+# 1. Debug-only inspector and layout-debugging items (cfg(debug_assertions)).
+# 2. Internal Rust extension points (SearchableListState, TextSelectionHandle,
+#    RootPlugin, MarkdownParseContext/MarkdownNode/InlineElement).
+# 3. Disabled optional crate features (tree-sitter SyntaxHighlighter/LanguageRegistry).
+# 4. Write-only builder getters and upstream-constructed context-menu models.
+# 5. Rust-only type-erasure / TypeId / closure-update / theme-JSON-schema helpers.
 [skip]
 "gpui_kit::component::DivInspector::new" = "feature-off: exists only in a debug build of the kit (cfg(debug_assertions)); the library is a release build"
 "gpui_kit::component::ToggleInspector::Default::default" = "feature-off: exists only in a debug build of the kit (cfg(debug_assertions)); the library is a release build"
 "gpui_kit::Styled::debug" = "feature-off: exists only in a debug build of gpui (cfg(debug_assertions)); the library is a release build"
 "gpui_kit::Styled::debug_below" = "feature-off: exists only in a debug build of gpui (cfg(debug_assertions)); the library is a release build"
-# Rust extension points of the searchable lists (docs/PROTOCOLS.md section 9.9): SearchableListState is
-# the shared core a new searchable component is written on in Rust (its constructor needs the
-# parent entity's Context<P>; SelectState and ComboboxState embed it), SearchableVec a delegate a
-# Rust app gives Select. The binding's delegate is GkSearchDelegate, which filters the same way.
 "SearchableListState::new" = "rust-only-extension: the core a new searchable component is built on in Rust, in the parent entity's Context; SelectState and ComboboxState are bound"
 "SearchableListState::selection" = "rust-only-extension: SearchableListState is reachable only by a Rust component that embeds it; SelectState and ComboboxState are bound"
 "SearchableListState::selected_values" = "rust-only-extension: SearchableListState is reachable only by a Rust component that embeds it; SelectState and ComboboxState are bound"
@@ -151,9 +154,6 @@ try_reads = ["value"]
 "SearchableListState::set_selected_indices" = "rust-only-extension: SearchableListState is reachable only by a Rust component that embeds it; SelectState and ComboboxState are bound"
 "SearchableVec::new" = "rust-only-extension: a delegate implementation for Rust apps; the binding's delegate (core/src/shim_select.rs GkSearchDelegate) filters the app's items the same way"
 "SearchableVec::push" = "rust-only-extension: a delegate implementation for Rust apps; the binding's delegate (core/src/shim_select.rs GkSearchDelegate) filters the app's items the same way"
-# Text selection across custom elements (docs/PROTOCOLS.md 9.11): a Rust element registers its
-# laid-out text runs (a Hitbox and a TextLayout from its own prepaint) with a TextSelectionHandle;
-# the kit's own text elements are bound and selectable without it.
 "TextSelectionHandle::entity_id" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
 "TextSelectionHandle::register" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
 "TextSelectionHandle::update_runs" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
@@ -170,7 +170,6 @@ try_reads = ["value"]
 "TextSelectionProjection::is_active" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
 "TextSelectionRegistration::new" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
 "TextSelectionRun::new" = "rust-only-extension: a custom Rust element's text runs (Hitbox, TextLayout from its prepaint) joining the kit's selection; the kit's text elements select without it"
-# The editor family, docs/PROTOCOLS.md 9.20 to 9.26.
 "RootPlugin::decorate" = "rust-only-extension: a method of a Rust view type registered in every window's Root (Root::register_plugin and Root::plugin are skipped the same way)"
 "RootPlugin::prepare" = "rust-only-extension: a method of a Rust view type registered in every window's Root (Root::register_plugin and Root::plugin are skipped the same way)"
 "RootPlugin::style" = "rust-only-extension: a method of a Rust view type registered in every window's Root (Root::register_plugin and Root::plugin are skipped the same way)"
@@ -199,9 +198,6 @@ try_reads = ["value"]
 "TextSelectionRegistration::with_text_bounds" = "rust-only-extension: a custom Rust element's registration for TextSelectionHandle::register, which is skipped the same way"
 "TextSelectionRegistration::with_selection_edges" = "rust-only-extension: a custom Rust element's registration for TextSelectionHandle::register, which is skipped the same way"
 "TextSelectionRun::with_document_order" = "rust-only-extension: a custom Rust element's text run for TextSelectionHandle::update_runs, which is skipped the same way"
-# Reads of a motion policy (the platform family, PROTOCOLS.md 13.31): Transition and Spring
-# have no public reads (their getters are pub(crate)), so a policy read back gives the app nothing
-# to look at; the value is the one the app gave (SequenceStep::new, PlotMotion::with_*).
 "gpui_kit::base::SequenceStep<f32>::transition" = "builder-getter: returns the Transition the app gave SequenceStep::new; a Transition has no public reads (upstream's are pub(crate))"
 "PlotMotion::pointer" = "builder-getter: returns the Spring the app gave with_pointer; a Spring has no public reads (also the read of a PlotMotion read back)"
 "PlotMotion::enter" = "builder-getter: returns the Transition the app gave with_enter; a Transition has no public reads (also the read of a PlotMotion read back)"
@@ -225,8 +221,6 @@ try_reads = ["value"]
 "gpui_kit::base::input::NativeMenu::separator" = "value-helper: the editor's context-menu model, which upstream makes and hands to on_context_menu's handler (its items read back); no public function takes one"
 "gpui_kit::base::input::DiagnosticSummary::Default::default" = "value-helper: the summary upstream's diagnostics sum tree keeps per subtree (sum_tree::Summary); no public function takes one"
 "gpui_kit::base::input::EditorExtras::Default::default" = "rust-only-extension: the editor mode's own state (InputModeKind::Extras), which the kit makes inside every EditorState; no public function takes one"
-# (end of the lists and editor families' skips)
-# The values family's skips: Rust's own reflection, profiling and plugin points.
 "gpui_kit::base::measure" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Go and times itself"
 "gpui_kit::base::measure_if" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Go and times itself"
 "gpui_kit::base::styled_ext_reflection_methods" = "rust-only-extension: gpui's inspector reflection over Rust method tables (debug tooling of a Rust build)"
@@ -239,16 +233,11 @@ try_reads = ["value"]
 "Root::register_plugin" = "rust-only-extension: registers a Rust view type (V: RootPlugin) built by a Rust fn pointer in every window's Root"
 "Root::plugin" = "rust-only-extension: looks up a Rust view type (V: RootPlugin) a Rust app registered"
 "Root::new" = "rust-only-extension: the library makes each window's Root itself (gk.open_window) around the app's view"
-# The values family, docs/PROTOCOLS.md 13.21: closures handed the kit's own state by
-# `&mut`, and debug-build hooks.
 "Root::update" = "rust-only-extension: a closure given the window's Root by &mut; the app reads it through gk.root_read's handle and changes it through that state's calls"
 "Theme::update" = "rust-only-extension: a closure given the theme by &mut; the app edits the theme through its fields (th->set_font_size, 13.11) and Theme::change"
 "DivInspector::update_inspected_element" = "feature-off: the inspector exists only in a debug build of the kit (DivInspector::new is skipped the same way); the library is a release build"
 "InteractiveElement::debug_selector" = "feature-off: gpui's selector for its own tests (test-support); it does nothing in the release build"
 "GlobalState::register_deferred_popover" = "rust-only-extension: a Rust component's render registers its own deferred popover with it; the kit's popovers do it themselves"
-# (end of the values family's skips)
-# The platform and motion families: values upstream itself never takes (gates/accept.py named the reason):
-# theme tokens and theme-file configs are built by upstream from a theme file and read by Rust code only.
 "gpui_kit::base::ColorTokens::light" = "rust-only-extension: theme tokens: upstream builds them from a theme file into SemanticThemeTokens, whose token fields no public function writes and no public function takes one; an app themes through the theme's colours and fields and ThemeRegistry (bound)"
 "gpui_kit::base::ColorTokens::dark" = "rust-only-extension: theme tokens: upstream builds them from a theme file into SemanticThemeTokens, whose token fields no public function writes and no public function takes one; an app themes through the theme's colours and fields and ThemeRegistry (bound)"
 "gpui_kit::base::ColorTokens::Default::default" = "rust-only-extension: theme tokens: upstream builds them from a theme file into SemanticThemeTokens, whose token fields no public function writes and no public function takes one; an app themes through the theme's colours and fields and ThemeRegistry (bound)"
@@ -271,20 +260,25 @@ try_reads = ["value"]
 "gpui_kit::component::ThemeSet::Default::default" = "rust-only-extension: theme file: upstream deserializes it from JSON inside ThemeRegistry::load_themes_from_str (bound) and no public function takes one; an app gives the registry the theme file's text"
 "gpui_kit::component::highlighter::HighlightThemeStyle::Default::default" = "rust-only-extension: theme file: upstream deserializes it from JSON inside ThemeRegistry::load_themes_from_str (bound) and no public function takes one; an app gives the registry the theme file's text"
 "gpui_kit::base::Measure::new" = "rust-only-extension: upstream's own layout probe (a Rust component times its own layout with it; Measure::end is Rust-only too) and no public function takes one"
-# Not-attempted functions of these families that only a Rust component can use:
 "gpui_kit::component::IconNameExt::view" = "rust-only-extension: makes an Entity<Icon> for a Rust view to hold and update in place; an app draws the same icon as an element (gk.icon, Icon::new, bound) in its view"
 "gpui_kit::component::sidebar::SidebarItem::render" = "rust-only-extension: the kit's Sidebar renders its items itself while it draws (SidebarMenu, SidebarGroup, given to Sidebar::child, bound); called by the app it would draw an item outside its sidebar"
 "gpui_kit::base::transition_with_status" = "rust-only-extension: its MotionStatus is for a Rust render to branch on while it draws; app code never runs while drawing (DESIGN.md decision 3), and the value is gk.motion's To_Transition (transition, bridged, PROTOCOLS.md 13.30)"
-# (end of the platform and motion families' skips)
 
-# Trait methods a hand-written shim of the delegate protocol implements (docs/PROTOCOLS.md
-# section 9): "Trait::method" = "where". Counted as bridged; the trait's other methods keep
-# upstream's defaults and their [traits.role] reason. Each family owns its own lines.
+# Upstream trait methods implemented by hand-written Rust runtime shims in core/src/.
+# When gk_model.py audits delegate traits, matching entries are marked "bridged" with
+# the given description pointing to the runtime shim type and protocol behavior.
+# Covers:
+# - Editor LSP providers (core/src/shim_input.rs): completion, hover, definition,
+#   document colors, code actions, semantic tokens.
+# - Editor highlighting and syntax context (core/src/shim_editor.rs).
+# - Virtualized list and table delegates (core/src/shim_rows.rs).
+# - Searchable select/combobox delegates (core/src/shim_select.rs).
+# - Markdown plugin and highlight style resolver shims (core/src/editor_text.rs).
+# - Plot painting shim (core/src/plot.rs) and settings field shims (core/src/values.rs).
 [shims]
 "CompletionProvider::completions" = "core/src/shim_input.rs GkCompletionProvider: a request answered with gk.answer"
 "CompletionProvider::is_completion_trigger" = "core/src/shim_input.rs GkCompletionProvider: the trigger characters the app set"
 "HoverProvider::hover" = "core/src/shim_input.rs GkHoverProvider: a request answered with gk.answer"
-# docs/PROTOCOLS.md 9.18: delegates answered between frames, over asks (9.14).
 "InputHighlighter::language" = "core/src/shim_editor.rs GkHighlighter: the language the editor asked the factory for"
 "InputHighlighter::update" = "core/src/shim_editor.rs GkHighlighter: keeps the editor's text; the answers about the old text are dropped"
 "InputHighlighter::update_batch" = "core/src/shim_editor.rs GkHighlighter: upstream's default, each edit through update"
@@ -295,9 +289,6 @@ try_reads = ["value"]
 "LanguageProvider::config" = "core/src/shim_editor.rs GkLanguages: upstream's default; an app's own configs go through set_language_config, which takes precedence"
 "LanguageProvider::syntax_context_provider" = "core/src/shim_editor.rs GkLanguages: a GkSyntax when the app gave a syntax procedure"
 "SyntaxContextProvider::context_at" = "core/src/shim_editor.rs GkSyntax: the app's answer for (language, text, offset), asked between frames (gk.Syntax_Query); Code until answered"
-# The rows family's delegates (docs/PROTOCOLS.md section 9.5). The table's other methods
-# (fit_column, render_header, group_headers, render_group_th, cell_label, row_label,
-# render_tr, context_menu, render_last_empty_col, cell_text) keep upstream's defaults.
 "ListDelegate::perform_search" = "core/src/shim_rows.rs GkListDelegate: a request (List_Event .Search) answered with gk.answer"
 "ListDelegate::sections_count" = "core/src/shim_rows.rs GkListDelegate: the sections of the row source (gk.set_count with a section)"
 "ListDelegate::items_count" = "core/src/shim_rows.rs GkListDelegate: the row source's count of the section"
@@ -330,8 +321,6 @@ try_reads = ["value"]
 "TableDelegate::load_more" = "core/src/shim_rows.rs GkTableDelegate: Table_Event .Load_More, queued"
 "TableDelegate::visible_rows_changed" = "core/src/shim_rows.rs GkTableDelegate: binds the rows beside the visible ones; Table_Event .Visible_Rows when asked"
 "TableDelegate::visible_columns_changed" = "core/src/shim_rows.rs GkTableDelegate: Table_Event .Visible_Columns when asked"
-# The searchable-list family's delegate and item (docs/PROTOCOLS.md section 9.9): the states and
-# elements generic over them (Select, Combobox) are instantiated for these shims.
 "SearchableListDelegate::sections_count" = "core/src/shim_select.rs GkSearchDelegate: the groups the app pushed (gk.search_items), the ones the filter keeps"
 "SearchableListDelegate::items_count" = "core/src/shim_select.rs GkSearchDelegate: the group's items the filter keeps"
 "SearchableListDelegate::item" = "core/src/shim_select.rs GkSearchDelegate: the visible item, a gk.Search_Item"
@@ -347,7 +336,6 @@ try_reads = ["value"]
 "SearchableListItem::value" = "core/src/shim_select.rs GkItem: gk.Search_Item.value"
 "SearchableListItem::matches" = "core/src/shim_select.rs GkItem: the title or the keywords contain the query, ignoring case"
 "SearchableListItem::disabled" = "core/src/shim_select.rs GkItem: gk.Search_Item.disabled"
-# The table delegate's texts and looks (docs/PROTOCOLS.md section 9.10): data the app pushes.
 "TableDelegate::cell_text" = "core/src/shim_rows.rs GkTableDelegate: the cell's text the app pushed (gk.table_texts)"
 "TableDelegate::cell_label" = "core/src/shim_rows.rs GkTableDelegate: the cell's text the app pushed (gk.table_texts), none when empty"
 "TableDelegate::row_label" = "core/src/shim_rows.rs GkTableDelegate: the row's label the app pushed (gk.table_row_labels), else upstream's join of its cells' labels"
@@ -359,7 +347,6 @@ try_reads = ["value"]
 "TableDelegate::render_last_empty_col" = "core/src/shim_rows.rs GkTableDelegate: the app's view (gk.Table_Look.last_column), else upstream's filler"
 "TableDelegate::context_menu" = "core/src/shim_rows.rs GkTableDelegate: the menu a cell of the row describes (gk.row_menu, PROTOCOLS.md 11.24)"
 "SearchableListDelegate::on_will_change" = "core/src/shim_select.rs GkSearchDelegate: upstream's default, then the rules the app gave in advance (gk.search_will_change, PROTOCOLS.md 11.25)"
-# The editor's other providers (docs/PROTOCOLS.md 9.11): requests over the input shims' channel.
 "CompletionProvider::inline_completion" = "core/src/shim_input.rs GkCompletionProvider: a request (Provider_Inline) answered with the text to insert"
 "CompletionProvider::inline_completion_debounce" = "core/src/shim_input.rs GkCompletionProvider: the debounce the app set (gk.editor_providers)"
 "DefinitionProvider::definitions" = "core/src/shim_input.rs GkDefinitionProvider: a request (Provider_Definitions) answered with []gk.Definition"
@@ -369,7 +356,6 @@ try_reads = ["value"]
 "CodeActionProvider::perform_code_action" = "core/src/shim_input.rs GkCodeActionProvider: a request (Provider_Perform) the app answers when it has edited"
 "DocumentRangeSemanticTokensProvider::legend" = "core/src/shim_input.rs GkSemanticTokensProvider: the token types and modifiers the app set"
 "DocumentRangeSemanticTokensProvider::semantic_tokens" = "core/src/shim_input.rs GkSemanticTokensProvider: a request (Provider_Tokens) answered with LSP's encoded []u32"
-# docs/PROTOCOLS.md 9.23: the library's one Markdown plugin, a kit plugin or a data plugin.
 "MarkdownPlugin::is_block" = "core/src/editor_text.rs GkPlugin: the kit plugin's, or whether the data plugin's gk.Markdown_Match is a block kind"
 "MarkdownPlugin::name" = "core/src/editor_text.rs GkPlugin: the kit plugin's, or gk.Markdown_Plugin.name"
 "MarkdownPlugin::parse" = "core/src/editor_text.rs GkPlugin: the kit plugin's, or the nodes of the app's rule (a kind, a code block's language or a JSX element's name) made without calling the app: the plugin's name, the node's text and Markdown"
@@ -377,47 +363,39 @@ try_reads = ["value"]
 "MarkdownPlugin::render_inline" = "core/src/editor_text.rs GkPlugin: the kit plugin's, or the node's row in an InlineElement with gk.Markdown_Plugin.baseline (gk.row_context: the node and the InlineRenderContext)"
 "CompletionProvider::resolve_completions" = "core/src/shim_input.rs GkCompletionProvider: upstream's default (nothing to resolve): the app answers every gk.Completion_Item whole, with its detail"
 "HighlightStyleResolver::style" = "core/src/editor_text.rs GkStyles: the app's answer for a highlight name (an ask, PROTOCOLS.md 9.26); unstyled until it is in"
-# (end of the lists and editor families' shims)
 
-# A described plot (docs/PROTOCOLS.md section 12): the library's one Plot impl paints the parts
-# the app gave gk.plot. The trait's other methods keep upstream's defaults (no id: no hover).
 "Plot::paint" = "core/src/plot.rs GkPlot: the parts the app described with gk.plot, painted in order"
 "Plot::id" = "core/src/plot.rs GkPlot: the id given to gk.plot_with (PROTOCOLS.md 12.14)"
 "Plot::interactive" = "core/src/plot.rs GkPlot: false when gk.plot_with was given not_interactive"
 "Plot::appear_generation" = "core/src/plot.rs GkPlot: the appear generation given to gk.plot_with (0: none)"
-# The settings fields (docs/PROTOCOLS.md 13.19, the values family): upstream calls these on the
-# library's AnyField, which hands each to the field the app built.
 "AnySettingField::field_type" = "core/src/values.rs AnyField: the field's own type (switch, input, dropdown, number, element)"
 "AnySettingField::style" = "core/src/values.rs AnyField: the field's style (its Styled builders)"
 "AnySettingField::is_resettable" = "core/src/values.rs AnyField: the field's dirty test, its value cell against its default"
 "AnySettingField::reset" = "core/src/values.rs AnyField: the field's reset (its set_value handler with the default, or on_reset's)"
 "SettingFieldElement::render_field" = "the fragment the app gives SettingField::element (gen/gk_values.py, a fragment closure)"
 
-# Closures a delegate shim serves over a row source (docs/PROTOCOLS.md section 9.5), by their
-# signature in public paths: the shim function that makes one from the source. The app passes a
-# gk.Row_Source where upstream takes the closure.
+# Exact closure signatures routed to hand-written row-source constructors in core/src/.
+# Keys match the normalized Rust Fn(...) signature built by gk_model.closure().
 [rows]
 "Fn(usize, &gpui_kit::base::TreeEntry, bool, &mut gpui_kit::Window, &mut gpui_kit::App) -> gpui_kit::component::list::ListItem" = "crate::shim_rows::tree_item"
-"Fn(usize, &gpui_kit::base::TreeEntry, gpui_kit::component::menu::PopupMenu, &mut gpui_kit::Window, &mut gpui_kit::Context<gpui_kit::base::TreeState>) -> gpui_kit::component::menu::PopupMenu" = "crate::shim_rows::tree_menu"  # the menu row ix's view describes (PROTOCOLS.md 11.24)
+"Fn(usize, &gpui_kit::base::TreeEntry, gpui_kit::component::menu::PopupMenu, &mut gpui_kit::Window, &mut gpui_kit::Context<gpui_kit::base::TreeState>) -> gpui_kit::component::menu::PopupMenu" = "crate::shim_rows::tree_menu"
 
-# Types that are value nodes although their impls make them entity state (docs/PROTOCOLS.md
-# 11.6): the kit's Sheet, which open_sheet's closure builds, and PopupMenu, described as the
-# value a dropdown, context or submenu's closure builds.
+# Non-element value types forced into the tape node table even though they do not
+# implement IntoElement. Used for described values built through ViewBuild closures
+# (Sheet, PopupMenu, ResizablePanelGroup), tooltip builders, and icons.
 [node]
-types = ["Sheet", "PopupMenu", "ResizablePanelGroup", "Tooltip", "Icon"]  # Icon: an element (Icon::new(name), RenderOnce) although it is also a Render; ResizablePanelGroup: an element that implements EventEmitter (the values family, PROTOCOLS.md 13.20); Tooltip: the kit's tooltip view as a value a view closure builds (PROTOCOLS.md 11.17)
+types = ["Sheet", "PopupMenu", "ResizablePanelGroup", "Tooltip", "Icon"]
 
-# An `impl Into<X>` whose X the extract cannot name (a type in a private module of the kit) is
-# bound as `impl Into<Y>` for the public type Y named here, which converts into X upstream:
-# Button::icon takes `impl Into<ButtonIcon>`, and ButtonIcon is made from
-# anything that is Into<Icon>, so a button takes the icon a tab or a menu item takes.
+# Concrete stand-in types substituted for opaque Into<T> target types that have no
+# enumerable From<X> set in rustdoc (for example ButtonIcon -> Icon).
 [into]
 stand_in = { ButtonIcon = "gpui_kit::component::Icon" }
 
-# The values family (docs/PROTOCOLS.md sections 13.8 to 13.12; gen/gk_values.py).
+# Value-layer overrides consumed by gen/gk_values.py.
 [values]
-# Generic library objects instantiated for an argument list: "Generic<Args> as Name". Each is a
-# library object behind handles (section 13): calculators an app calls between frames. Plot
-# scales over text bands and numbers, motion values over f32.
+# Generic non-entity library objects instantiated at fixed concrete type arguments.
+# Covers plot scales (ScaleBand/Point/Linear/Ordinal), motion curves and state
+# (Sequence/Keyframes/Discrete/TransitionState), history/toast helpers, and Pie/Stack.
 objects = [
     "ScaleBand<SharedString> as ScaleBand",
     "ScalePoint<SharedString> as ScalePoint",
@@ -428,70 +406,48 @@ objects = [
     "SequenceSample<f32> as SequenceSample",
     "Keyframes<f32> as Keyframes",
     "Discrete<f32> as Discrete",
-    # The platform and motion families (PROTOCOLS.md 13.30): a transition's state the app keeps with its
-    # data (a row's highlight), sampled while drawing by gk.motion's to_state.
     "TransitionState<f32> as TransitionState",
-    # The editor family's generic histories, for entries the app keeps as strings (the lists and
-    # editor family, docs/PROTOCOLS.md 9.11).
     "History<SharedString> as History",
     "UndoHistory<SharedString> as UndoHistory",
-    # The overlays and charts families, docs/PROTOCOLS.md 11.10, 12.15: the toast stack's
-    # bookkeeping over the app's u64 ids and u64 values, and the pie and stack layouts over rows
-    # of the app's data.
     "ToastManager<u64, u64> as ToastManager",
     "Pie<crate::data::Datum> as Pie",
     "Stack<crate::data::Datum> as Stack",
 ]
-# Closures upstream calls from an event, never while it draws, that return text: a handler whose
-# procedure returns a string (PROTOCOLS.md 13.12). By signature in public paths.
+# Value-returning event closure signatures bound as synchronous request handlers.
 event_closures = ["Fn(&mut gpui_kit::Window, &mut gpui_kit::App) -> gpui_kit::SharedString"]
-# Enums that are value nodes, built by their constructors and builders like a builder struct
-# (PROTOCOLS.md 13.19): a settings item (`SettingItem::new(title, field)`, `render`).
-enum_nodes = ["SettingItem", "PopupMenuItem"]  # PopupMenuItem: the views family (a menu item PopupMenu::item takes)
-# The lists and editor families (docs/PROTOCOLS.md sections 9.9 to 9.12; gen/gk_lists.py).
-[lists]
-# Associated types of the library's delegate shims: "Shim::Name" = a library type (crate::...),
-# a primitive, or an upstream or gpui type by name. `D::Item` of a state instantiated for the shim
-# is the shim's item type.
-assoc = { "crate::shim_select::GkSearchDelegate::Item" = "crate::shim_select::GkItem", "crate::shim_select::GkItem::Value" = "SharedString" }
-# Library types that travel both ways as plain values: the stem of the struct the runtime
-# declares (Go: gen/gk_go_kinds.py LIBVALS; Rust: the type's Wire and Unwire impls).
-values = { "crate::shim_select::GkItem" = "Search_Item", "crate::values::Drag" = "Drag_Value" }
-# Traits whose implementors are node types, taken as one of them (`Table::child(impl
-# ChildElement)`): the stem of the union of them (Go: an interface).
-unions = { "ChildElement" = "Table_Child", "Sizable" = "Sizable_Element", "Selectable" = "Selectable_Element" }
-# Delegates the library implements over procedures of the app (docs/PROTOCOLS.md 9.18): a type
-# alias, or "dyn Trait" for Rc, Arc or Box of it, = the library function that makes the upstream
-# value from the handle the app passes (a gk.Row_Source: gk.highlighter(..).src, gk.language_provider).
-delegates = { "InputHighlighterFactory" = "crate::shim_editor::highlighter_factory", "dyn LanguageProvider" = "crate::shim_editor::language_provider" }
-# (end of the lists and editor families' table)
+# Upstream enums that carry builder methods and are bound as value nodes instead of flat enums.
+enum_nodes = ["SettingItem", "PopupMenuItem"]
 
-# The generated states test (gen/gk_tests.py, core/tests/gen): calls it must not make with its fixed
-# sample arguments, each with the reason. Shared: append a line.
+# List, table, and delegate overrides consumed by gen/gk_lists.py.
+# - assoc: associated-type resolutions on runtime shim types (Shim::Assoc -> Concrete).
+# - values: runtime structs serialized directly via hand-written Wire/Unwire impls.
+# - unions: element traits expanded into tagged Go union types over implementing nodes.
+# - delegates: type aliases or dyn-trait objects decoded by runtime factory shims.
+[lists]
+assoc = { "crate::shim_select::GkSearchDelegate::Item" = "crate::shim_select::GkItem", "crate::shim_select::GkItem::Value" = "SharedString" }
+values = { "crate::shim_select::GkItem" = "Search_Item", "crate::values::Drag" = "Drag_Value" }
+unions = { "ChildElement" = "Table_Child", "Sizable" = "Sizable_Element", "Selectable" = "Selectable_Element" }
+delegates = { "InputHighlighterFactory" = "crate::shim_editor::highlighter_factory", "dyn LanguageProvider" = "crate::shim_editor::language_provider" }
+
+# State call methods excluded from generated Go smoke tests (gen/gk_tests_go.py)
+# because calling them with synthetic sample indices violates panel-tree invariants.
 [tests]
 calls = [
-  # upstream inserts at the sample index (3) into an empty state and panics past the end (Vec::insert)
   "Resizable_State.insert_panel",
-  # the same for an index past the end: Vec::remove and an index into the sizes panic upstream
   "Resizable_State.remove_panel",
   "Resizable_State.reset_panel",
 ]
 
-# Records a parameter may also take as one of their integer fields alone, the other fields zero
-# (docs/PROTOCOLS.md 11.36): "record" = "field". Every emitter offers it
-# wherever a parameter is the record, an option of it or a list of it; the full record is still
-# taken and the wire is the record's. IndexPath as a row: `list->set_selected_index(cx, 4)`,
-# `gk.select_state(cx, src, 0)`.
+# Input record types that receive an ergonomic single-field integer shorthand constructor
+# in Go (for example IndexPath keyed by its row index).
 [shorthand]
 "gpui_kit::base::IndexPath" = "row"
 
-# The editor family (docs/PROTOCOLS.md 9.29; gen/gk_editor.py): a variant the binding cannot build
-# field by field (its other fields are private types) made by the enum's constructor, whose
-# parameters are named as some of its fields: "Enum::Variant" = "constructor".
+# Enum variants with private fields that are constructed through a public associated
+# constructor function instead of a struct/tuple literal (Enum::Variant = "ctor_fn").
 [editor]
 variants = { "MaskPattern::Pattern" = "new" }
 
-# The Go front end (docs/GO.md section 2): an enum's values are its Go type name followed by the
-# variant's (gk.ButtonVariantPrimary); these enums use a shorter prefix.
+# Shorter constant prefixes for generated Go unit enums whose type name would be verbose.
 [go.enum_prefix]
 IconName = "Icon"

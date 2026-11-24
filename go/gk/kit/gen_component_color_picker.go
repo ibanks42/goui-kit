@@ -15,7 +15,7 @@ type ColorPickerEl struct {
 
 // Create a new color picker element with the given `ColorPickerState`.
 //
-// ColorPicker is <gpui_kit::component::color_picker::ColorPicker>::new.
+// ColorPicker calls <gpui_kit::component::color_picker::ColorPicker>::new.
 func ColorPicker(state base.ColorPickerState, st ...gk.Style) ColorPickerEl {
 	rt.UseComponentColorPicker()
 	n := rt.NewNode(623)
@@ -30,7 +30,7 @@ func ColorPicker(state base.ColorPickerState, st ...gk.Style) ColorPickerEl {
 // A color picker's name comes from its `Label` by default. Setting this replaces the announced
 // name without changing the visible label.
 //
-// AccessibilityLabel is <gpui_kit::component::color_picker::ColorPicker>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::color_picker::ColorPicker>::accessibility_label.
 func (e ColorPickerEl) AccessibilityLabel(label string) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -41,7 +41,7 @@ func (e ColorPickerEl) AccessibilityLabel(label string) ColorPickerEl {
 //
 // Default is `Anchor::TopLeft`.
 //
-// Anchor is <gpui_kit::component::color_picker::ColorPicker>::anchor.
+// Anchor calls <gpui_kit::component::color_picker::ColorPicker>::anchor.
 func (e ColorPickerEl) Anchor(anchor gk.Anchor) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(anchor))
@@ -53,7 +53,7 @@ func (e ColorPickerEl) Anchor(anchor gk.Anchor) ColorPickerEl {
 // This is used to display a set of colors that the user can quickly select from, for example
 // provided user's last used colors.
 //
-// FeaturedColors is <gpui_kit::component::color_picker::ColorPicker>::featured_colors.
+// FeaturedColors calls <gpui_kit::component::color_picker::ColorPicker>::featured_colors.
 func (e ColorPickerEl) FeaturedColors(colors []gk.Color) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(colors)))
@@ -68,7 +68,7 @@ func (e ColorPickerEl) FeaturedColors(colors []gk.Color) ColorPickerEl {
 // If this is set the color picker button will display the icon. Else it will display the square
 // color of the current value.
 //
-// Icon is <gpui_kit::component::color_picker::ColorPicker>::icon.
+// Icon calls <gpui_kit::component::color_picker::ColorPicker>::icon.
 func (e ColorPickerEl) Icon(icon gk.IconName) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U16(uint16(icon))
@@ -79,7 +79,7 @@ func (e ColorPickerEl) Icon(icon gk.IconName) ColorPickerEl {
 //
 // Default is `None`.
 //
-// Label is <gpui_kit::component::color_picker::ColorPicker>::label.
+// Label calls <gpui_kit::component::color_picker::ColorPicker>::label.
 func (e ColorPickerEl) Label(label string) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Str(label)
@@ -88,29 +88,37 @@ func (e ColorPickerEl) Label(label string) ColorPickerEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ColorPickerEl) PopoverStyle() ColorPickerEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ColorPickerEl) RoundedFullStyle() ColorPickerEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ColorPickerEl) BorderE(width gk.Length) ColorPickerEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ColorPickerEl) BorderS(width gk.Length) ColorPickerEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -118,127 +126,169 @@ func (e ColorPickerEl) BorderS(width gk.Length) ColorPickerEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ColorPickerEl) FlexRowDir() ColorPickerEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ColorPickerEl) InsetE(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ColorPickerEl) InsetS(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ColorPickerEl) JustifyFlexEnd() ColorPickerEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ColorPickerEl) JustifyFlexStart() ColorPickerEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ColorPickerEl) Me(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ColorPickerEl) Ms(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ColorPickerEl) Pe(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ColorPickerEl) Ps(length gk.Length) ColorPickerEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ColorPickerEl) RoundedE(radius gk.Length) ColorPickerEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ColorPickerEl) RoundedS(radius gk.Length) ColorPickerEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ColorPickerEl) TextEnd() ColorPickerEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ColorPickerEl) TextStart() ColorPickerEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ColorPickerEl) CornerRadii(radius gk.Corners) ColorPickerEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ColorPickerEl) DebugBlue() ColorPickerEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ColorPickerEl) DebugFocused(focusHandle gk.FocusHandle) ColorPickerEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ColorPickerEl) DebugGreen() ColorPickerEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ColorPickerEl) DebugPink() ColorPickerEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ColorPickerEl) DebugRed() ColorPickerEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ColorPickerEl) DebugYellow() ColorPickerEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ColorPickerEl) FontBlack() ColorPickerEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ColorPickerEl) FontBold() ColorPickerEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ColorPickerEl) FontExtrabold() ColorPickerEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ColorPickerEl) FontExtralight() ColorPickerEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ColorPickerEl) FontLight() ColorPickerEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ColorPickerEl) FontMedium() ColorPickerEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ColorPickerEl) FontNormal() ColorPickerEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ColorPickerEl) FontSemibold() ColorPickerEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ColorPickerEl) FontThin() ColorPickerEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -247,18 +297,23 @@ func (e ColorPickerEl) FontThin() ColorPickerEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ColorPickerEl) HFlex() ColorPickerEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ColorPickerEl) Margins(margins gk.EdgesInto) ColorPickerEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ColorPickerEl) Paddings(paddings gk.EdgesInto) ColorPickerEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ColorPickerEl) RefineStyle(style gk.StyleRefinement) ColorPickerEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -268,39 +323,55 @@ func (e ColorPickerEl) RefineStyle(style gk.StyleRefinement) ColorPickerEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ColorPickerEl) VFlex() ColorPickerEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ColorPickerEl) Large() ColorPickerEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ColorPickerEl) Small() ColorPickerEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ColorPickerEl) WithSize(size gk.SizeInto) ColorPickerEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ColorPickerEl) Xsmall() ColorPickerEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ColorPickerEl) Style(st ...gk.Style) ColorPickerEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ColorPickerEl) AspectRatio(ratio float32) ColorPickerEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ColorPickerEl) Bg(fill gk.Fill) ColorPickerEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ColorPickerEl) Border(length gk.Length) ColorPickerEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -308,12 +379,16 @@ func (e ColorPickerEl) Border(length gk.Length) ColorPickerEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ColorPickerEl) BorderB(length gk.Length) ColorPickerEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ColorPickerEl) BorderColor(borderColor gk.Color) ColorPickerEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -321,6 +396,8 @@ func (e ColorPickerEl) BorderColor(borderColor gk.Color) ColorPickerEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ColorPickerEl) BorderL(length gk.Length) ColorPickerEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -328,6 +405,8 @@ func (e ColorPickerEl) BorderL(length gk.Length) ColorPickerEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ColorPickerEl) BorderR(length gk.Length) ColorPickerEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -335,6 +414,8 @@ func (e ColorPickerEl) BorderR(length gk.Length) ColorPickerEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ColorPickerEl) BorderT(length gk.Length) ColorPickerEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -342,6 +423,8 @@ func (e ColorPickerEl) BorderT(length gk.Length) ColorPickerEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ColorPickerEl) BorderX(length gk.Length) ColorPickerEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -349,6 +432,8 @@ func (e ColorPickerEl) BorderX(length gk.Length) ColorPickerEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ColorPickerEl) BorderY(length gk.Length) ColorPickerEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -356,27 +441,37 @@ func (e ColorPickerEl) BorderY(length gk.Length) ColorPickerEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ColorPickerEl) Bottom(length gk.Length) ColorPickerEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ColorPickerEl) ColEnd(end int16) ColorPickerEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ColorPickerEl) ColSpan(span uint16) ColorPickerEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ColorPickerEl) ColStart(start int16) ColorPickerEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ColorPickerEl) Cursor(cursor gk.CursorStyle) ColorPickerEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -384,33 +479,45 @@ func (e ColorPickerEl) Cursor(cursor gk.CursorStyle) ColorPickerEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ColorPickerEl) FlexBasis(basis gk.Length) ColorPickerEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ColorPickerEl) FlexGrow(grow float32) ColorPickerEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ColorPickerEl) FlexShrink(shrink float32) ColorPickerEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ColorPickerEl) Font(font gk.Font) ColorPickerEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ColorPickerEl) FontFamily(familyName string) ColorPickerEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ColorPickerEl) FontFeatures(features gk.FontFeatures) ColorPickerEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -419,12 +526,16 @@ func (e ColorPickerEl) FontFeatures(features gk.FontFeatures) ColorPickerEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ColorPickerEl) FontWeight(weight gk.FontWeight) ColorPickerEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ColorPickerEl) Gap(length gk.Length) ColorPickerEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -432,6 +543,8 @@ func (e ColorPickerEl) Gap(length gk.Length) ColorPickerEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ColorPickerEl) GapX(length gk.Length) ColorPickerEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -439,18 +552,24 @@ func (e ColorPickerEl) GapX(length gk.Length) ColorPickerEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ColorPickerEl) GapY(length gk.Length) ColorPickerEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ColorPickerEl) GridCols(cols uint16) ColorPickerEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ColorPickerEl) GridColsMaxContent(cols uint16) ColorPickerEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -458,18 +577,24 @@ func (e ColorPickerEl) GridColsMaxContent(cols uint16) ColorPickerEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ColorPickerEl) GridColsMinContent(cols uint16) ColorPickerEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ColorPickerEl) GridRows(rows uint16) ColorPickerEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ColorPickerEl) GridRowsMaxContent(rows uint16) ColorPickerEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -477,16 +602,22 @@ func (e ColorPickerEl) GridRowsMaxContent(rows uint16) ColorPickerEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ColorPickerEl) GridRowsMinContent(rows uint16) ColorPickerEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ColorPickerEl) H(length gk.Length) ColorPickerEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ColorPickerEl) Inset(length gk.Length) ColorPickerEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -494,6 +625,8 @@ func (e ColorPickerEl) Inset(length gk.Length) ColorPickerEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ColorPickerEl) Left(length gk.Length) ColorPickerEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -501,33 +634,45 @@ func (e ColorPickerEl) Left(length gk.Length) ColorPickerEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ColorPickerEl) LineClamp(lines int) ColorPickerEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ColorPickerEl) LineHeight(lineHeight gk.Length) ColorPickerEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ColorPickerEl) M(length gk.Length) ColorPickerEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ColorPickerEl) MaxH(length gk.Length) ColorPickerEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ColorPickerEl) MaxSize(length gk.Length) ColorPickerEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ColorPickerEl) MaxW(length gk.Length) ColorPickerEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -535,21 +680,29 @@ func (e ColorPickerEl) MaxW(length gk.Length) ColorPickerEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ColorPickerEl) Mb(length gk.Length) ColorPickerEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ColorPickerEl) MinH(length gk.Length) ColorPickerEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ColorPickerEl) MinSize(length gk.Length) ColorPickerEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ColorPickerEl) MinW(length gk.Length) ColorPickerEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -557,65 +710,95 @@ func (e ColorPickerEl) MinW(length gk.Length) ColorPickerEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ColorPickerEl) Ml(length gk.Length) ColorPickerEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ColorPickerEl) Mr(length gk.Length) ColorPickerEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ColorPickerEl) Mt(length gk.Length) ColorPickerEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ColorPickerEl) Mx(length gk.Length) ColorPickerEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ColorPickerEl) My(length gk.Length) ColorPickerEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ColorPickerEl) Opacity(opacity float32) ColorPickerEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ColorPickerEl) P(length gk.Length) ColorPickerEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ColorPickerEl) Pb(length gk.Length) ColorPickerEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ColorPickerEl) Pl(length gk.Length) ColorPickerEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ColorPickerEl) Pr(length gk.Length) ColorPickerEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ColorPickerEl) Pt(length gk.Length) ColorPickerEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ColorPickerEl) Px(length gk.Length) ColorPickerEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ColorPickerEl) Py(length gk.Length) ColorPickerEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ColorPickerEl) Right(length gk.Length) ColorPickerEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ColorPickerEl) Rounded(length gk.Length) ColorPickerEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -623,6 +806,8 @@ func (e ColorPickerEl) Rounded(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ColorPickerEl) RoundedB(length gk.Length) ColorPickerEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -630,6 +815,8 @@ func (e ColorPickerEl) RoundedB(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ColorPickerEl) RoundedBl(length gk.Length) ColorPickerEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -637,6 +824,8 @@ func (e ColorPickerEl) RoundedBl(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ColorPickerEl) RoundedBr(length gk.Length) ColorPickerEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -644,6 +833,8 @@ func (e ColorPickerEl) RoundedBr(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ColorPickerEl) RoundedL(length gk.Length) ColorPickerEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -651,6 +842,8 @@ func (e ColorPickerEl) RoundedL(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ColorPickerEl) RoundedR(length gk.Length) ColorPickerEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -658,6 +851,8 @@ func (e ColorPickerEl) RoundedR(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ColorPickerEl) RoundedT(length gk.Length) ColorPickerEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -665,6 +860,8 @@ func (e ColorPickerEl) RoundedT(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ColorPickerEl) RoundedTl(length gk.Length) ColorPickerEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -672,21 +869,29 @@ func (e ColorPickerEl) RoundedTl(length gk.Length) ColorPickerEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ColorPickerEl) RoundedTr(length gk.Length) ColorPickerEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ColorPickerEl) RowEnd(end int16) ColorPickerEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ColorPickerEl) RowSpan(span uint16) ColorPickerEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ColorPickerEl) RowStart(start int16) ColorPickerEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -696,24 +901,32 @@ func (e ColorPickerEl) RowStart(start int16) ColorPickerEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ColorPickerEl) ScrollbarWidth(width gk.Length) ColorPickerEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ColorPickerEl) Shadow(shadows []gk.BoxShadow) ColorPickerEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ColorPickerEl) Size(length gk.Length) ColorPickerEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ColorPickerEl) TextAlign(align gk.TextAlign) ColorPickerEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -722,23 +935,31 @@ func (e ColorPickerEl) TextAlign(align gk.TextAlign) ColorPickerEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ColorPickerEl) TextBg(bg gk.Color) ColorPickerEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ColorPickerEl) TextColor(color gk.Color) ColorPickerEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ColorPickerEl) TextDecorationColor(color gk.Color) ColorPickerEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ColorPickerEl) TextOverflow(overflow gk.TextOverflow) ColorPickerEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -747,6 +968,8 @@ func (e ColorPickerEl) TextOverflow(overflow gk.TextOverflow) ColorPickerEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ColorPickerEl) TextSize(size gk.Length) ColorPickerEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -754,12 +977,16 @@ func (e ColorPickerEl) TextSize(size gk.Length) ColorPickerEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ColorPickerEl) Top(length gk.Length) ColorPickerEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ColorPickerEl) W(length gk.Length) ColorPickerEl { tStyledW(rt.N(e.Core), length); return e }
 
 // ColorSelectEl is gpui_kit::component::color_picker::ColorSelect.
@@ -769,7 +996,7 @@ type ColorSelectEl struct {
 
 // Create a new color select with the given `ColorPickerState`.
 //
-// ColorSelect is <gpui_kit::component::color_picker::ColorSelect>::new.
+// ColorSelect calls <gpui_kit::component::color_picker::ColorSelect>::new.
 func ColorSelect(state base.ColorPickerState, st ...gk.Style) ColorSelectEl {
 	rt.UseComponentColorPicker()
 	n := rt.NewNode(624)
@@ -781,7 +1008,7 @@ func ColorSelect(state base.ColorPickerState, st ...gk.Style) ColorSelectEl {
 
 // Set the name a screen reader announces.
 //
-// AccessibilityLabel is <gpui_kit::component::color_picker::ColorSelect>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::color_picker::ColorSelect>::accessibility_label.
 func (e ColorSelectEl) AccessibilityLabel(label string) ColorSelectEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -790,7 +1017,7 @@ func (e ColorSelectEl) AccessibilityLabel(label string) ColorSelectEl {
 
 // Set the featured colors shown at the top of the palette.
 //
-// FeaturedColors is <gpui_kit::component::color_picker::ColorSelect>::featured_colors.
+// FeaturedColors calls <gpui_kit::component::color_picker::ColorSelect>::featured_colors.
 func (e ColorSelectEl) FeaturedColors(colors []gk.Color) ColorSelectEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(colors)))
@@ -804,7 +1031,7 @@ func (e ColorSelectEl) FeaturedColors(colors []gk.Color) ColorSelectEl {
 //
 // Default is the same placeholder as `SelectEl`.
 //
-// Placeholder is <gpui_kit::component::color_picker::ColorSelect>::placeholder.
+// Placeholder calls <gpui_kit::component::color_picker::ColorSelect>::placeholder.
 func (e ColorSelectEl) Placeholder(placeholder string) ColorSelectEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(placeholder)
@@ -813,29 +1040,37 @@ func (e ColorSelectEl) Placeholder(placeholder string) ColorSelectEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ColorSelectEl) PopoverStyle() ColorSelectEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ColorSelectEl) RoundedFullStyle() ColorSelectEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ColorSelectEl) BorderE(width gk.Length) ColorSelectEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ColorSelectEl) BorderS(width gk.Length) ColorSelectEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -843,127 +1078,169 @@ func (e ColorSelectEl) BorderS(width gk.Length) ColorSelectEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ColorSelectEl) FlexRowDir() ColorSelectEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ColorSelectEl) InsetE(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ColorSelectEl) InsetS(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ColorSelectEl) JustifyFlexEnd() ColorSelectEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ColorSelectEl) JustifyFlexStart() ColorSelectEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ColorSelectEl) Me(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ColorSelectEl) Ms(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ColorSelectEl) Pe(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ColorSelectEl) Ps(length gk.Length) ColorSelectEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ColorSelectEl) RoundedE(radius gk.Length) ColorSelectEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ColorSelectEl) RoundedS(radius gk.Length) ColorSelectEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ColorSelectEl) TextEnd() ColorSelectEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ColorSelectEl) TextStart() ColorSelectEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ColorSelectEl) CornerRadii(radius gk.Corners) ColorSelectEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ColorSelectEl) DebugBlue() ColorSelectEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ColorSelectEl) DebugFocused(focusHandle gk.FocusHandle) ColorSelectEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ColorSelectEl) DebugGreen() ColorSelectEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ColorSelectEl) DebugPink() ColorSelectEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ColorSelectEl) DebugRed() ColorSelectEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ColorSelectEl) DebugYellow() ColorSelectEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ColorSelectEl) FontBlack() ColorSelectEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ColorSelectEl) FontBold() ColorSelectEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ColorSelectEl) FontExtrabold() ColorSelectEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ColorSelectEl) FontExtralight() ColorSelectEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ColorSelectEl) FontLight() ColorSelectEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ColorSelectEl) FontMedium() ColorSelectEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ColorSelectEl) FontNormal() ColorSelectEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ColorSelectEl) FontSemibold() ColorSelectEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ColorSelectEl) FontThin() ColorSelectEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -972,18 +1249,23 @@ func (e ColorSelectEl) FontThin() ColorSelectEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ColorSelectEl) HFlex() ColorSelectEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ColorSelectEl) Margins(margins gk.EdgesInto) ColorSelectEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ColorSelectEl) Paddings(paddings gk.EdgesInto) ColorSelectEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ColorSelectEl) RefineStyle(style gk.StyleRefinement) ColorSelectEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -993,39 +1275,55 @@ func (e ColorSelectEl) RefineStyle(style gk.StyleRefinement) ColorSelectEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ColorSelectEl) VFlex() ColorSelectEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ColorSelectEl) Large() ColorSelectEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ColorSelectEl) Small() ColorSelectEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ColorSelectEl) WithSize(size gk.SizeInto) ColorSelectEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ColorSelectEl) Xsmall() ColorSelectEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ColorSelectEl) Style(st ...gk.Style) ColorSelectEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ColorSelectEl) AspectRatio(ratio float32) ColorSelectEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ColorSelectEl) Bg(fill gk.Fill) ColorSelectEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ColorSelectEl) Border(length gk.Length) ColorSelectEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1033,12 +1331,16 @@ func (e ColorSelectEl) Border(length gk.Length) ColorSelectEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ColorSelectEl) BorderB(length gk.Length) ColorSelectEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ColorSelectEl) BorderColor(borderColor gk.Color) ColorSelectEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1046,6 +1348,8 @@ func (e ColorSelectEl) BorderColor(borderColor gk.Color) ColorSelectEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ColorSelectEl) BorderL(length gk.Length) ColorSelectEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1053,6 +1357,8 @@ func (e ColorSelectEl) BorderL(length gk.Length) ColorSelectEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ColorSelectEl) BorderR(length gk.Length) ColorSelectEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1060,6 +1366,8 @@ func (e ColorSelectEl) BorderR(length gk.Length) ColorSelectEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ColorSelectEl) BorderT(length gk.Length) ColorSelectEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1067,6 +1375,8 @@ func (e ColorSelectEl) BorderT(length gk.Length) ColorSelectEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ColorSelectEl) BorderX(length gk.Length) ColorSelectEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1074,6 +1384,8 @@ func (e ColorSelectEl) BorderX(length gk.Length) ColorSelectEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ColorSelectEl) BorderY(length gk.Length) ColorSelectEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1081,27 +1393,37 @@ func (e ColorSelectEl) BorderY(length gk.Length) ColorSelectEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ColorSelectEl) Bottom(length gk.Length) ColorSelectEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ColorSelectEl) ColEnd(end int16) ColorSelectEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ColorSelectEl) ColSpan(span uint16) ColorSelectEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ColorSelectEl) ColStart(start int16) ColorSelectEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ColorSelectEl) Cursor(cursor gk.CursorStyle) ColorSelectEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1109,33 +1431,45 @@ func (e ColorSelectEl) Cursor(cursor gk.CursorStyle) ColorSelectEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ColorSelectEl) FlexBasis(basis gk.Length) ColorSelectEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ColorSelectEl) FlexGrow(grow float32) ColorSelectEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ColorSelectEl) FlexShrink(shrink float32) ColorSelectEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ColorSelectEl) Font(font gk.Font) ColorSelectEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ColorSelectEl) FontFamily(familyName string) ColorSelectEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ColorSelectEl) FontFeatures(features gk.FontFeatures) ColorSelectEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1144,12 +1478,16 @@ func (e ColorSelectEl) FontFeatures(features gk.FontFeatures) ColorSelectEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ColorSelectEl) FontWeight(weight gk.FontWeight) ColorSelectEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ColorSelectEl) Gap(length gk.Length) ColorSelectEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1157,6 +1495,8 @@ func (e ColorSelectEl) Gap(length gk.Length) ColorSelectEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ColorSelectEl) GapX(length gk.Length) ColorSelectEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1164,18 +1504,24 @@ func (e ColorSelectEl) GapX(length gk.Length) ColorSelectEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ColorSelectEl) GapY(length gk.Length) ColorSelectEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ColorSelectEl) GridCols(cols uint16) ColorSelectEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ColorSelectEl) GridColsMaxContent(cols uint16) ColorSelectEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1183,18 +1529,24 @@ func (e ColorSelectEl) GridColsMaxContent(cols uint16) ColorSelectEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ColorSelectEl) GridColsMinContent(cols uint16) ColorSelectEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ColorSelectEl) GridRows(rows uint16) ColorSelectEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ColorSelectEl) GridRowsMaxContent(rows uint16) ColorSelectEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1202,16 +1554,22 @@ func (e ColorSelectEl) GridRowsMaxContent(rows uint16) ColorSelectEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ColorSelectEl) GridRowsMinContent(rows uint16) ColorSelectEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ColorSelectEl) H(length gk.Length) ColorSelectEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ColorSelectEl) Inset(length gk.Length) ColorSelectEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1219,6 +1577,8 @@ func (e ColorSelectEl) Inset(length gk.Length) ColorSelectEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ColorSelectEl) Left(length gk.Length) ColorSelectEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1226,33 +1586,45 @@ func (e ColorSelectEl) Left(length gk.Length) ColorSelectEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ColorSelectEl) LineClamp(lines int) ColorSelectEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ColorSelectEl) LineHeight(lineHeight gk.Length) ColorSelectEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ColorSelectEl) M(length gk.Length) ColorSelectEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ColorSelectEl) MaxH(length gk.Length) ColorSelectEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ColorSelectEl) MaxSize(length gk.Length) ColorSelectEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ColorSelectEl) MaxW(length gk.Length) ColorSelectEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1260,21 +1632,29 @@ func (e ColorSelectEl) MaxW(length gk.Length) ColorSelectEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ColorSelectEl) Mb(length gk.Length) ColorSelectEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ColorSelectEl) MinH(length gk.Length) ColorSelectEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ColorSelectEl) MinSize(length gk.Length) ColorSelectEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ColorSelectEl) MinW(length gk.Length) ColorSelectEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1282,65 +1662,95 @@ func (e ColorSelectEl) MinW(length gk.Length) ColorSelectEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ColorSelectEl) Ml(length gk.Length) ColorSelectEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ColorSelectEl) Mr(length gk.Length) ColorSelectEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ColorSelectEl) Mt(length gk.Length) ColorSelectEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ColorSelectEl) Mx(length gk.Length) ColorSelectEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ColorSelectEl) My(length gk.Length) ColorSelectEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ColorSelectEl) Opacity(opacity float32) ColorSelectEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ColorSelectEl) P(length gk.Length) ColorSelectEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ColorSelectEl) Pb(length gk.Length) ColorSelectEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ColorSelectEl) Pl(length gk.Length) ColorSelectEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ColorSelectEl) Pr(length gk.Length) ColorSelectEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ColorSelectEl) Pt(length gk.Length) ColorSelectEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ColorSelectEl) Px(length gk.Length) ColorSelectEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ColorSelectEl) Py(length gk.Length) ColorSelectEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ColorSelectEl) Right(length gk.Length) ColorSelectEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ColorSelectEl) Rounded(length gk.Length) ColorSelectEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1348,6 +1758,8 @@ func (e ColorSelectEl) Rounded(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ColorSelectEl) RoundedB(length gk.Length) ColorSelectEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1355,6 +1767,8 @@ func (e ColorSelectEl) RoundedB(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ColorSelectEl) RoundedBl(length gk.Length) ColorSelectEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1362,6 +1776,8 @@ func (e ColorSelectEl) RoundedBl(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ColorSelectEl) RoundedBr(length gk.Length) ColorSelectEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1369,6 +1785,8 @@ func (e ColorSelectEl) RoundedBr(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ColorSelectEl) RoundedL(length gk.Length) ColorSelectEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1376,6 +1794,8 @@ func (e ColorSelectEl) RoundedL(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ColorSelectEl) RoundedR(length gk.Length) ColorSelectEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1383,6 +1803,8 @@ func (e ColorSelectEl) RoundedR(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ColorSelectEl) RoundedT(length gk.Length) ColorSelectEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1390,6 +1812,8 @@ func (e ColorSelectEl) RoundedT(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ColorSelectEl) RoundedTl(length gk.Length) ColorSelectEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1397,21 +1821,29 @@ func (e ColorSelectEl) RoundedTl(length gk.Length) ColorSelectEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ColorSelectEl) RoundedTr(length gk.Length) ColorSelectEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ColorSelectEl) RowEnd(end int16) ColorSelectEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ColorSelectEl) RowSpan(span uint16) ColorSelectEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ColorSelectEl) RowStart(start int16) ColorSelectEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1421,24 +1853,32 @@ func (e ColorSelectEl) RowStart(start int16) ColorSelectEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ColorSelectEl) ScrollbarWidth(width gk.Length) ColorSelectEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ColorSelectEl) Shadow(shadows []gk.BoxShadow) ColorSelectEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ColorSelectEl) Size(length gk.Length) ColorSelectEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ColorSelectEl) TextAlign(align gk.TextAlign) ColorSelectEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1447,23 +1887,31 @@ func (e ColorSelectEl) TextAlign(align gk.TextAlign) ColorSelectEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ColorSelectEl) TextBg(bg gk.Color) ColorSelectEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ColorSelectEl) TextColor(color gk.Color) ColorSelectEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ColorSelectEl) TextDecorationColor(color gk.Color) ColorSelectEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ColorSelectEl) TextOverflow(overflow gk.TextOverflow) ColorSelectEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1472,6 +1920,8 @@ func (e ColorSelectEl) TextOverflow(overflow gk.TextOverflow) ColorSelectEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ColorSelectEl) TextSize(size gk.Length) ColorSelectEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1479,10 +1929,14 @@ func (e ColorSelectEl) TextSize(size gk.Length) ColorSelectEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ColorSelectEl) Top(length gk.Length) ColorSelectEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ColorSelectEl) W(length gk.Length) ColorSelectEl { tStyledW(rt.N(e.Core), length); return e }

@@ -1,9 +1,11 @@
 #!/bin/bash
-# readme-go.sh: the Go example in README.md is the example that builds. Every line of
-# README.md's ```go block must be a line of examples/go/hello/main.go (the block is cut from it); that app is built against the ship
-# library and run for a few frames in a private compositor (gates/display.sh).
-# Prints one line "GATE readme example-go ...".
-#   gates/readme-go.sh
+# README Go snippet freshness and runtime gate (`gates/readme-go.sh`).
+# Gates: keeping README.md's first fenced Go block in sync with examples/go/hello/main.go and
+# verifying that the example builds against lib/ship and renders live frames.
+# Method: checks every non-empty line of the README Go block against examples/go/hello/main.go,
+# compiles hello-go-readme, and runs it for 5 warmup + 30 measured frames inside gates/display.sh.
+# PASS: all README lines match, the binary builds, exits 0, and emits a `gk-meter` summary line.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 out=$here/out/readme-go; rm -rf "$out"; mkdir -p "$out"
 src=$repo/examples/go/hello/main.go

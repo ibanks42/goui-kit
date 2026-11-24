@@ -1,10 +1,12 @@
 #!/bin/bash
-# todo.sh [SCRIPT]: runs the todo example (examples/go/todo, bin/todo-go) offscreen under a gk-meter script
-# (default gates/todo.script, then gates/todo-reload.script on what it saved) with a fresh state
-# file, keeps the images in gates/out/todo/, and checks what the session must have left behind in
-# the saved state (gates/todo-check.py). No Rust twin: the images are looked at by eye. Builds the
-# app first. Prints one line "GATE todo session-go ...". Another SCRIPT: that script alone, no
-# checks.
+# Standalone two-start persistence gate for the Go todo app (`gates/todo.sh [script]`).
+# Gates: building todo-go, running the full interactive session offscreen, reloading its saved
+# todo.json in a second process, and verifying the persisted state.
+# Method: builds examples/go/todo, runs gates/todo.script (or a custom script arg) on lib/diag with
+# TODO_FILE=todo.json; when using the default script, also runs gates/todo-reload.script and validates
+# todo.json with gates/todo-check.py.
+# PASS: build, both offscreen starts, and todo-check.py exit 0 (`GATE todo session-go PASS`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 front=go; gate="todo session-$front"
 script=$(realpath "${1:-$here/todo.script}")
@@ -18,7 +20,6 @@ rc=$?
 echo "todo: exit $rc, $(ls *.png 2>/dev/null | wc -l) images"
 [ $rc -eq 0 ] || { tail -20 log.txt; echo "GATE $gate FAIL exit $rc"; exit 1; }
 if [ -z "${1:-}" ]; then
-  # a second start, which loads the state the first one saved
   TODO_FILE=$out/todo.json GK_SCRIPT=$here/todo-reload.script timeout 120 "${GK_BIN:-$repo/bin}/todo-$front" > log2.txt 2>&1
   rc=$?
   echo "todo (reload): exit $rc, $(ls *.png 2>/dev/null | wc -l) images"

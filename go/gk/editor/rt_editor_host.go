@@ -5,22 +5,22 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// LeafDecoration is byte ranges of one keyed leaf's text painted behind it (a selection, find
-// matches), as upstream's collect_leaf_geometry takes them.
+// LeafDecoration associates colored byte-range highlights with a specific
+// block leaf key rendered inside BlockHost.
 type LeafDecoration struct {
 	Key    uint64
 	Ranges []gk.TupleRangeColor
 }
 
-// LeafEntry is one keyed text leaf the host laid out, and its geometry (a temporary library object:
-// gk.Retain keeps it).
+// LeafEntry pairs a leaf key with its frame-temporary LeafGeometry handle.
 type LeafEntry struct {
 	Key      uint64
 	Geometry LeafGeometry
 }
 
-// LeafGeometryEvent is the payload of BlockHost's onGeometry, after the frame the leaves were laid
-// out in.
+// LeafGeometryEvent delivers layout geometry handles for leaves laid out by
+// BlockHost during the current frame. Geometry handles are frame-temporary
+// unless retained via gk.Retain.
 type LeafGeometryEvent struct {
 	Leaves []LeafEntry
 }
@@ -40,11 +40,9 @@ func init() {
 	}})
 }
 
-// BlockHost is the editor host: the app's blocks drawn as TextView draws them (each with its flow,
-// or its place among the blocks: flows may be shorter than blocks, or nil; the render context, or
-// TextView's), the decorations painted behind the keyed leaves, and onGeometry (nil: none) given
-// each keyed leaf's geometry after the frame, when the leaves changed. A parsed document's blocks
-// are gk.BaseParseMarkdown's held values.
+// BlockHost renders a sequence of structured document BlockNodes with optional
+// per-block FlowPositions, RenderContext, LeafDecorations, and a geometry
+// callback invoked after layout.
 func BlockHost(id string, blocks []BlockNode, flows []gk.Option[FlowPosition], renderContext gk.Option[RenderContext],
 	decorations []LeafDecoration, onGeometry func(cx *gk.Cx, e LeafGeometryEvent)) gk.Element {
 	n := rt.NewNode(rt.NEditorHost)

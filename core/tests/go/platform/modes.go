@@ -1,6 +1,3 @@
-// The modes of the scripted platform's log (dialogs, cancel, race, view-released, menus, real-dialogs,
-// real-url), gpui's element leftovers of PROTOCOLS.md 13.31 (elements, cache-in-view, scope-zero), a
-// drag's move handler (drag), the source's virtual lists (vlist) and the kit's menu bar (real-menus).
 package main
 
 import (
@@ -16,7 +13,8 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
-// What these modes keep.
+// ov stores retained image cache, scroll anchor, selection scope, and menu bar
+// handles used by the platform element and real-menu test modes.
 var ov struct {
 	cache   gk.ImageCache
 	anchor  gk.ScrollAnchor
@@ -25,6 +23,8 @@ var ov struct {
 }
 
 func init() {
+	// Register scripted dialog, cancellation/race, menu, element/image, drag,
+	// virtual-list, misuse, and real-display (`real-*`) protocol modes.
 	inits["dialogs"] = func(a *App, cx *gk.Cx) {
 		gk.After(cx, 10*ms, a.askOpen)
 		gk.After(cx, 30*ms, a.answerAll)
@@ -64,14 +64,14 @@ func init() {
 		gk.After(cx, 60*ms, a.vlistCheck)
 	}
 	views["vlist"] = (*App).vlistView
-	inits["cache-in-view"] = func(a *App, cx *gk.Cx) {} // misuse checked in the view
+	inits["cache-in-view"] = func(a *App, cx *gk.Cx) {}
 	views["cache-in-view"] = func(a *App, cx *gk.Cx) gk.Element {
-		gk.NewImageCache(cx) // stops: a view function may not make an image cache
+		gk.NewImageCache(cx)
 		return gk.VFlex(s.SizeFull)
 	}
 	inits["scope-zero"] = func(a *App, cx *gk.Cx) {}
 	views["scope-zero"] = func(a *App, cx *gk.Cx) gk.Element {
-		return motion.TextSelectionScopeOf(gk.Div(), motion.TextSelectionScope{}) // stops: no scope
+		return motion.TextSelectionScopeOf(gk.Div(), motion.TextSelectionScope{})
 	}
 	inits["real-dialogs"] = func(a *App, cx *gk.Cx) {
 		gk.After(cx, 100*ms, a.realAsk)
@@ -91,8 +91,6 @@ func init() {
 	}
 }
 
-// --- dialogs: answered later, answered before, a prompt, a cancel --------------------------------
-
 func (a *App) opened(cx *gk.Cx, d gk.PathsDone) {
 	a.done++
 	a.last = strings.Join(d.Paths, ",")
@@ -102,7 +100,7 @@ func (a *App) opened(cx *gk.Cx, d gk.PathsDone) {
 func (a *App) savedTo(cx *gk.Cx, d gk.PathsDone) {
 	a.done++
 	fmt.Printf("platform saved n=%d status=%s paths=%s\n", a.done, doneName(d.Status), strings.Join(d.Paths, ","))
-	gk.Release(cx, a.c2) // answered: releasing it does nothing
+	gk.Release(cx, a.c2)
 }
 
 func (a *App) answered(cx *gk.Cx, d gk.PromptDone) {
@@ -115,9 +113,13 @@ func (a *App) dismissed(cx *gk.Cx, d gk.PathsDone) {
 	fmt.Printf("platform dismissed n=%d status=%s paths=%d\n", a.done, doneName(d.Status), len(d.Paths))
 }
 
+// askOpen proves scripted platform dialogs queue 4 requests (open, save, prompt,
+// directory), deliver a pre-queued answer immediately to save (`taken=false` on
+// the early-queue call because no save prompt was waiting yet), and settle all 4
+// with waiting=0 when answerAll responds to the remaining 3.
 func (a *App) askOpen(cx *gk.Cx) {
 	a.c1 = gk.PromptForPaths(cx, gk.PathPrompt{Files: true, Multiple: true, Prompt: "Open"}, a.opened)
-	// the save dialog's answer was given before it was asked: it is taken at once
+
 	took := gk.PlatformAnswerPaths(cx, gk.DoneAnswered, []string{"/tmp/new.txt"}, true, "")
 	fmt.Printf("platform early answer taken=%v\n", took)
 	a.c2 = gk.PromptForNewPath(cx, "/tmp", "new.txt", a.savedTo)
@@ -140,12 +142,10 @@ func (a *App) printLog(cx *gk.Cx) {
 
 func (a *App) checkLog(cx *gk.Cx) {
 	a.printLog(cx)
-	gk.Release(cx, a.c1) // answered already: nothing
+	gk.Release(cx, a.c1)
 }
 
 func (a *App) checkLogCancel(cx *gk.Cx) { a.printLog(cx) }
-
-// --- cancel: released before its answer ----------------------------------------------------------
 
 func (a *App) askThenRelease(cx *gk.Cx) {
 	a.c1 = gk.PromptForPaths(cx, gk.PathPrompt{Files: true}, a.never)
@@ -160,15 +160,14 @@ func (a *App) answerLate(cx *gk.Cx) {
 	fmt.Printf("platform late answer taken=%v\n", took)
 }
 
-// --- race: released and answered in the same turn (the answer arrives before the release lands) ----
-
+// race proves that releasing a Completion in the same turn right after an
+// answer is queued still suppresses the callback (done=0) even though the
+// scripted queue marked the answer delivered (taken=true, delivered=1).
 func (a *App) race(cx *gk.Cx) {
-	took := gk.PlatformAnswerPaths(cx, gk.DoneAnswered, []string{"/tmp/race.txt"}, false, "") // taken: delivered after this turn
-	gk.Release(cx, a.c1)                                                                      // buffered: lands after this turn, after the answer was delivered
+	took := gk.PlatformAnswerPaths(cx, gk.DoneAnswered, []string{"/tmp/race.txt"}, false, "")
+	gk.Release(cx, a.c1)
 	fmt.Printf("platform race answer taken=%v\n", took)
 }
-
-// --- view-released: a request of a child view goes with the view ---------------------------------
 
 func (a *App) childAsked(cx *gk.Cx, d gk.PathsDone) {
 	a.done++
@@ -185,7 +184,7 @@ func (a *App) childView(cx *gk.Cx) gk.Element {
 }
 
 func (a *App) openChild(cx *gk.Cx) {
-	// a window's root view runs its init when the window opens
+
 	a.childV = gk.NewView(a.childInit, a.childView)
 	a.childW = gk.OpenWindow(cx, "child", 200, 100, a.childV)
 }
@@ -197,9 +196,6 @@ func (a *App) releaseChild(cx *gk.Cx) {
 	fmt.Println("platform child released")
 }
 
-// --- menus and URLs -----------------------------------------------------------------------------
-
-// osName prints an OsAction as the checks expect (the variant's name).
 func osName(o gk.OsAction) string {
 	names := []string{"None", "Cut", "Copy", "Paste", "Select_All", "Undo", "Redo"}
 	if int(o) < len(names) {
@@ -208,6 +204,9 @@ func osName(o gk.OsAction) string {
 	return fmt.Sprint(uint8(o))
 }
 
+// setBar proves SetMenus preserves nested submenus, separators, services, OS
+// action roles, and checked/disabled flags across readback in readBar, and
+// proves OpenURL records the URL in the scripted platform log.
 func (a *App) setBar(cx *gk.Cx) {
 	recent := []gk.MenuItem{gk.MenuAction{Name: "notes.txt", Action: a.open}}
 	file := []gk.MenuItem{
@@ -248,9 +247,6 @@ func (a *App) readBar(cx *gk.Cx) {
 	fmt.Printf("platform urls n=%d first=%q\n", len(l.URLs), first)
 }
 
-// --- gpui's element leftovers (PROTOCOLS.md 13.31) ---------------------------------------
-
-// joinText prints a slice in the form the checks expect: [2, 0, 1].
 func joinText[T any](xs []T) string {
 	parts := make([]string, len(xs))
 	for i, x := range xs {
@@ -259,8 +255,10 @@ func joinText[T any](xs []T) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// elements: the decoders generated code uses, run by the library on the bytes the package wrote;
-// the objects the library makes for the elements, made and released.
+// elements proves drop-accept predicates (7 accepted, 8 rejected), external
+// file drag payloads, dynamic prepaint order [2, 0, 1], RGBA->BGRA pixel image
+// conversion (first=ffff0000), image-cache reuse across redraws (new images=0),
+// and GPU texture drop (dropped=1) when the RenderImage is released.
 func (a *App) elements(cx *gk.Cx) {
 	v1, f1 := gk.TestDropAccept(cx, gk.DropAccept{IDs: []uint64{7, 9}}, 7)
 	v2, _ := gk.TestDropAccept(cx, gk.DropAccept{IDs: []uint64{7, 9}}, 8)
@@ -278,15 +276,15 @@ func (a *App) elements(cx *gk.Cx) {
 	cw, ch, cfirst, cid := gk.TestRenderImage(cx, red, true)
 	fmt.Printf("platform pixel image %dx%d first=%08x custom %dx%d first=%08x same=%v\n", w, h, first, cw, ch, cfirst, id == cid)
 	gk.Release(cx, red)
-	// the image elementsView shows on every frame: one gpui image, its id kept (PROTOCOLS.md 13.31)
+
 	a.pic = gk.NewRenderImage(cx, gk.PixelImage{Width: 2, Height: 2, RGBA: []byte{255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255}})
 	_, _, _, a.picID = gk.TestRenderImage(cx, a.pic, false)
 	a.shown0, a.images0, a.dropped0 = gk.TestImagesShown(cx)
-	a.ticks = gk.Every(cx, 5*ms, a.elementsTick) // the view draws again on every tick
+	a.ticks = gk.Every(cx, 5*ms, a.elementsTick)
 	if e, ok := gk.TestFileDropEntered(cx).(gk.FileDropEventEntered); ok {
 		fmt.Printf("platform file drop entered at=%.0f,%.0f paths=%s\n", e.Position.X, e.Position.Y, strings.Join(e.Paths, ","))
 	}
-	// Sequence.WithStep: a Transition node in a call op's builder chain (the rule of 9.31)
+
 	seq := motion.NewSequence(cx, "seq", 10).WithStep(40, motion.NewTransition(200*time.Millisecond)).WithStep(80, motion.NewTransition(100*time.Millisecond)).Build()
 	steps := seq.Steps(cx)
 	fmt.Printf("platform sequence steps=%d from=%.0f targets=%.0f,%.0f\n", len(steps), seq.From(cx), steps[0].Target(cx), steps[1].Target(cx))
@@ -300,7 +298,7 @@ func (a *App) elements(cx *gk.Cx) {
 }
 
 func (a *App) elementsDrawn(cx *gk.Cx) {
-	// drawn again and again since elements: gpui was handed the one image each time (one texture)
+
 	times, images, _ := gk.TestImagesShown(cx)
 	_, _, _, id := gk.TestRenderImage(cx, a.pic, false)
 	fmt.Printf("platform image kept redrawn=%v same=%v new images=%d\n", times-a.shown0 >= 2, id == a.picID, images-a.images0)
@@ -311,11 +309,10 @@ func (a *App) elementsDrawn(cx *gk.Cx) {
 	gk.Release(cx, ov.anchor)
 	gk.Release(cx, ov.cache)
 	gk.Release(cx, ov.scope)
-	ov.cache = gk.ImageCache{} // the view shows none of them from now on
+	ov.cache = gk.ImageCache{}
 	fmt.Printf("platform elements released described=%d\n", a.described)
 }
 
-// After the release: its texture dropped from the window's atlas (Window::drop_image, one window).
 func (a *App) elementsGone(cx *gk.Cx) {
 	_, _, dropped := gk.TestImagesShown(cx)
 	fmt.Printf("platform image released dropped=%d\n", dropped-a.dropped0)
@@ -325,13 +322,11 @@ func (a *App) elementsTick(cx *gk.Cx) {
 	a.fired++
 }
 
-// The elements of 13.31 drawn (a mode's view): a scope, a cache on a div and an img, an anchored
-// scrolled child, synthetic accessibility nodes, a prepaint order, a drag's files.
 func (a *App) elementsView(cx *gk.Cx) gk.Element {
 	if ov.cache == (gk.ImageCache{}) {
 		return kit.Label("waiting")
 	}
-	pic := gk.Div().W(gk.Px(20)).H(gk.Px(20)) // the image, until it is released
+	pic := gk.Div().W(gk.Px(20)).H(gk.Px(20))
 	if a.pic != (gk.RenderImage{}) {
 		pic = pic.Child(gk.Img(gk.ImageSourceRender{Value: a.pic}).W(gk.Px(20)).H(gk.Px(20)).ImageCache(ov.cache))
 	}
@@ -344,8 +339,6 @@ func (a *App) elementsView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull).Child(motion.TextSelectionScopeOf(box, ov.scope)).Child(files)
 }
 
-// drag: a drag of value 7 onto a target that takes 7 (its drop runs, its drag-move handler sees the
-// value), then onto one that takes only 8 (no drop); a group's drag-over style.
 func (a *App) dropped7(cx *gk.Cx, d gk.DragValue) {
 	a.drops++
 	fmt.Printf("platform drop on seven id=%d text=%s drops=%d\n", d.ID, d.Text, a.drops)
@@ -364,6 +357,7 @@ func (a *App) moved(cx *gk.Cx, e gk.DragMoveEvent) {
 	}
 }
 
+// dragView lays out a draggable source (`id=7`) beside one matching target (`t7`) and one rejecting target (`t8`).
 func (a *App) dragView(cx *gk.Cx) gk.Element {
 	src := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("src").OnDrag(gk.DragValue{ID: 7, Text: "seven"}, gk.View{}).Child(kit.Label("seven"))
 	t7 := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("t7").Group("targets").CanDrop(gk.DropAccept{IDs: []uint64{7}}).OnDrop(a.dropped7).
@@ -376,8 +370,6 @@ func (a *App) dragDone(cx *gk.Cx) {
 	fmt.Printf("platform drag done drops=%d moved=%v\n", a.drops, a.moves > 0)
 }
 
-// vlist: a vertical and a horizontal virtual list over a row source: rows drawn as placeholders for
-// one frame, then described (only those in view).
 func (a *App) vlistRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.rowViews++
 	return kit.Label(fmt.Sprintf("row %d", at.Row))
@@ -387,6 +379,7 @@ func (a *App) vlistInit(cx *gk.Cx) {
 	a.rows = gk.NewRowSource(cx, 1000, a.vlistRow, gk.Initial(0))
 }
 
+// vlistView renders both vertical and horizontal virtual lists over a 1000-row source to confirm lazy paging.
 func (a *App) vlistView(cx *gk.Cx) gk.Element {
 	sizes := make([][2]float32, 1000)
 	for i := range sizes {
@@ -401,18 +394,13 @@ func (a *App) vlistCheck(cx *gk.Cx) {
 	fmt.Printf("platform vlist rows described=%v of 1000 some=%v\n", a.rowViews < 1000, a.rowViews > 0)
 }
 
-// --- the real platform, not the script (PROTOCOLS.md 11.32) -------------------------------
-//
-// Run on a real window (gk.Run) under gates/display.sh: a private X server or compositor with its own
-// D-Bus session bus that has no service files, so no xdg-desktop-portal answers; bin/platform-real-go
-// puts a fake xdg-open first on PATH that writes its arguments to $GK_URL_LOG. A guard timer quits
-// after 15 s, so a request that never answers fails the check instead of hanging the run.
-
 func (a *App) realGuard(cx *gk.Cx) {
 	fmt.Printf("platform real guard: still waiting after 15 s (done=%d)\n", a.done)
 	gk.Quit(cx)
 }
 
+// realAsk proves unscripted OS file dialogs under headless Xvfb (no portal)
+// report DoneFailed promptly (<10s) with an error message rather than hanging.
 func (a *App) realAsk(cx *gk.Cx) {
 	a.askedAt = time.Now()
 	a.c1 = gk.PromptForPaths(cx, gk.PathPrompt{Files: true, Prompt: "Open"}, a.realAnswered)
@@ -430,12 +418,13 @@ func (a *App) realAnswered(cx *gk.Cx, d gk.PathsDone) {
 	}
 }
 
+// realURL proves unscripted OpenURL spawns the PATH xdg-open wrapper with the
+// exact URL instead of recording it in the scripted log (recorded=0, scripted=false).
 func (a *App) realURL(cx *gk.Cx) {
 	gk.OpenURL(cx, "https://example.com/gk-real?q=1")
 	gk.After(cx, 100*ms, a.realURLPoll)
 }
 
-// The system opener runs on gpui's background executor: the app looks for what it wrote.
 func (a *App) realURLPoll(cx *gk.Cx) {
 	a.polls++
 	path := os.Getenv("GK_URL_LOG")
@@ -455,6 +444,8 @@ func (a *App) realURLPoll(cx *gk.Cx) {
 	}
 }
 
+// realMenusInit proves SetMenus + AppMenuBarView lays out a real menu bar on
+// Xvfb with positive bounds (w>100, h>10) and exposes both registered menus.
 func (a *App) realMenusInit(cx *gk.Cx) {
 	file := []gk.MenuItem{gk.MenuAction{Name: "Open", Action: a.open}, gk.MenuSeparator{}, gk.MenuAction{Name: "Save", Action: a.save}}
 	help := []gk.MenuItem{gk.MenuAction{Name: "About", Action: a.open}}
@@ -462,8 +453,6 @@ func (a *App) realMenusInit(cx *gk.Cx) {
 	ov.menubar = kit.NewAppMenuBar(cx)
 }
 
-// The menu bar's bounds when it is laid out in a real window's frame (OnChildrenPrepainted of the
-// div that holds it): it is drawn though the platform has no menu bar of its own.
 func (a *App) realBarBounds(cx *gk.Cx, bs []gk.Bounds) {
 	if a.barSeen || len(bs) == 0 {
 		return

@@ -1,11 +1,6 @@
-// rows: the protocol tests of the rows family (docs/PROTOCOLS.md section 9.5), the port of
-// core/tests/rows: the kit's list, table and tree over row sources, offscreen under a gk-meter
-// script (the diag library). Each mode prints lines core/tests/go/run-rows.sh checks, with the
-// exit code.
-//
-//	GK_PROTO=list | list-search | list-sections | list-states | table | table-scroll | tree | released
-//
-// The table and tree modes are in tables.go.
+// Command rows runs headless protocol tests for virtualized List, DataTable,
+// and Tree row sources: row paging, search requests, section headers/footers,
+// empty/loading/load-more states, sorting, column moves, and released sources.
 package main
 
 import (
@@ -27,11 +22,12 @@ const (
 	tableCount = 100_000
 )
 
+// App holds list, table, and tree handles plus render/event counters for GK_PROTO.
 type App struct {
 	mode      string
 	root      gk.View
 	list      gktable.ListState
-	src       gk.RowSource // the list's or table's row source
+	src       gk.RowSource
 	table     gktable.State
 	sub       gk.Subscription
 	tree      gktable.TreeState
@@ -41,10 +37,10 @@ type App struct {
 	clicks    int
 	events    int
 	query     string
-	matches   []int          // list-search: the rows the query matches
-	sorted    bool           // table: rows in descending order
-	described map[uint64]int // descriptions per row or cell key
-	empties   int            // descriptions of the empty view
+	matches   []int
+	sorted    bool
+	described map[uint64]int
+	empties   int
 	loadings  int
 }
 
@@ -52,16 +48,13 @@ func key(section, row int) uint64 {
 	return uint64(section)<<32 | uint64(uint32(row))
 }
 
-// variant names an event's variant as the checks expect (Go: the type's name and its fields).
-// pkgQual is the package a value's type is printed with (gk., table., rt.): dropped.
 var pkgQual = regexp.MustCompile(`\b(gk|rt|table|kit|editor|base|chart|overlay|dock|motion)\.`)
 
 func variant(e any) string {
 	return pkgQual.ReplaceAllString(fmt.Sprintf("%#v", e), "")
 }
 
-// --- lists ----------------------------------------------------------------------------------
-
+// listRow builds list items as well as section header/footer sentinel rows.
 func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	a.described[key(at.Section, at.Row)]++
 	var text string
@@ -80,6 +73,7 @@ func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	return gktable.ListItem(gk.Key("item", at.Row)).Child(kit.Label(text))
 }
 
+// listEvent logs list delegate callbacks and answers asynchronous ListSearch requests.
 func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 	a.events++
 	ix, has := e.Index.Get()
@@ -89,7 +83,7 @@ func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 		fmt.Printf("rows list-state read selected_index ok=%v row=%d\n", ok, sel.Row)
 	}
 	if e.Kind == gktable.ListSearch {
-		// Filter, set the count, then answer: the list's search task completes after it.
+
 		a.query = e.Query
 		a.matches = a.matches[:0]
 		for i := range rowCount {
@@ -104,16 +98,15 @@ func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 	}
 }
 
-// The list state's own events (the generated subscription).
 func (a *App) listStateEvent(cx *gk.Cx, e gktable.ListEvent) {
 	fmt.Printf("rows list-state %s\n", variant(e))
 }
 
-// list-states: a button walks the states: empty (count 0), loading, more rows with has_more.
+// listStep advances the empty -> loading -> load-more sequence (or scrolls the table in `table` mode).
 func (a *App) listStep(cx *gk.Cx, _ gk.ClickEvent) {
 	a.clicks++
 	if a.mode == "table" {
-		a.table.ScrollToRow(cx, 50_000) // a far jump through the generated write
+		a.table.ScrollToRow(cx, 50_000)
 		fmt.Printf("rows table-state scroll_to_row 50000\n")
 		return
 	}
@@ -153,15 +146,18 @@ func (a *App) loadingView(cx *gk.Cx) gk.Element {
 	return kit.Label("loading")
 }
 
-// --- released ---------------------------------------------------------------------------------
-
 func (a *App) releaseSource(cx *gk.Cx, _ gk.ClickEvent) {
 	gk.Release(cx, a.src)
 	fmt.Printf("rows released source\n")
 }
 
-// --- the views --------------------------------------------------------------------------------
-
+// init builds the row source and state for the active GK_PROTO mode:
+//   - list / list-sections / released: 10k-row List verifying selection/confirm/
+//     right-click/cancel events, multi-section headers/footers, or released-source guard.
+//   - list-search: Searchable List proving async search filters 10k rows to 280 "77" matches.
+//   - list-states: List stepping through empty (count=0), loading, and LoadMore states.
+//   - table / table-scroll: 100k-row DataTable verifying sorting, jumps, column moves, and prefetch.
+//   - tree: Hierarchical Tree verifying folder expansion and selection events.
 func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
 	case "list", "list-sections", "released":
@@ -182,7 +178,7 @@ func (a *App) init(cx *gk.Cx) {
 		}
 		a.src = gktable.NewListSource(cx, func() int { return rowCount }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
 		a.list = gktable.NewListState(cx, a.src).Searchable(true).Build()
-		// The view a searchable list shows while its query is empty.
+
 		a.empty = gk.NewView(nil, a.initialView)
 		gktable.SetDelegateData(cx, a.list, gktable.DelegateData{Threshold: 20, Initial: a.empty})
 	case "list-states":
@@ -219,8 +215,6 @@ func (a *App) start(cx *gk.Cx) {
 	gk.OpenWindow(cx, "rows", 480, 320, a.root)
 }
 
-// Positions: the step button at (36, 30), the release button at (100, 30); the list, table or
-// tree from (16, 56), 240 high.
 const (
 	stepClick    = "click 36 30\n"
 	releaseClick = "click 100 30\n"
@@ -239,12 +233,11 @@ func main() {
 	sb.WriteString("size 480 320\nframe\nstat\n")
 	switch a.mode {
 	case "list":
-		// a click on row 0 (select, confirm), down, a right click, escape, a far scroll (one
-		// placeholder frame), back to the top (rows kept, nothing described again).
+
 		sb.WriteString(row0)
 		sb.WriteString("key down\nrclick 60 140\nkey escape\nscroll 160 200 -200000\nframe\nstat\nscroll 160 200 400000\nframe\n")
 	case "list-search":
-		// The search input is the list's first row: click it, type, the request is answered.
+
 		sb.WriteString("click 120 72\ntype 77\nsleep 200\nframe\nsleep 200\nframe\nframe\n")
 	case "list-sections":
 		sb.WriteString("scroll 160 200 -400\nframe\n")
@@ -256,14 +249,12 @@ func main() {
 		sb.WriteString(stepClick)
 		sb.WriteString("frame\nscroll 160 200 -2000\nframe\nframe\n")
 	case "table":
-		// a click on row 0, down, End (a far jump: one placeholder frame), a sort, a double
-		// click, a column moved and one resized, Home.
+
 		sb.WriteString("click 120 110\nkey down\nkey end\nframe\nstat\n")
 		sb.WriteString(stepClick)
 		sb.WriteString("frame\nclick 80 74\nframe\ndblclick 120 110\ndrag 160 74 330 74\ndrag 336 74 376 74\nkey home\nframe\n")
 	case "table-scroll":
-		// A steady scroll of 24 px before every frame, as the frame-cost scene does: rows are
-		// bound ahead in batches, so no frame draws a placeholder.
+
 		for range 120 {
 			sb.WriteString("scroll 220 200 -24\n")
 		}

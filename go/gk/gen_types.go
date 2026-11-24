@@ -11,6 +11,7 @@ import (
 // AlignContent is gpui_kit::AlignContent.
 type AlignContent uint16
 
+// AlignContent enum values.
 const (
 	AlignContentStart        AlignContent = 0
 	AlignContentEnd          AlignContent = 1
@@ -26,6 +27,7 @@ const (
 // AlignItems is gpui_kit::AlignItems.
 type AlignItems uint16
 
+// AlignItems enum values.
 const (
 	AlignItemsStart     AlignItems = 0
 	AlignItemsEnd       AlignItems = 1
@@ -39,6 +41,7 @@ const (
 // Anchor is gpui_kit::Anchor.
 type Anchor uint16
 
+// Anchor enum values.
 const (
 	AnchorTopLeft      Anchor = 0
 	AnchorTopRight     Anchor = 1
@@ -53,6 +56,7 @@ const (
 // Autocapitalize is gpui_kit::Autocapitalize.
 type Autocapitalize uint16
 
+// Autocapitalize enum values.
 const (
 	AutocapitalizeNone       Autocapitalize = 0
 	AutocapitalizeWords      Autocapitalize = 1
@@ -63,6 +67,7 @@ const (
 // Axis is gpui_kit::Axis.
 type Axis uint16
 
+// Axis enum values.
 const (
 	AxisVertical   Axis = 0
 	AxisHorizontal Axis = 1
@@ -71,6 +76,7 @@ const (
 // BackGesturePhase is gpui_kit::BackGesturePhase.
 type BackGesturePhase uint16
 
+// BackGesturePhase enum values.
 const (
 	BackGesturePhaseStarted    BackGesturePhase = 0
 	BackGesturePhaseProgressed BackGesturePhase = 1
@@ -81,6 +87,7 @@ const (
 // BorderStyle is gpui_kit::BorderStyle.
 type BorderStyle uint16
 
+// BorderStyle enum values.
 const (
 	BorderStyleSolid  BorderStyle = 0
 	BorderStyleDashed BorderStyle = 1
@@ -89,6 +96,7 @@ const (
 // ColorName is gpui_kit::component::ColorName.
 type ColorName uint16
 
+// ColorName enum values.
 const (
 	ColorNameWhite   ColorName = 0
 	ColorNameBlack   ColorName = 1
@@ -116,6 +124,7 @@ const (
 // CursorStyle is gpui_kit::CursorStyle.
 type CursorStyle uint16
 
+// CursorStyle enum values.
 const (
 	CursorStyleArrow                        CursorStyle = 0
 	CursorStyleIBeam                        CursorStyle = 1
@@ -143,6 +152,7 @@ const (
 // Display is gpui_kit::Display.
 type Display uint16
 
+// Display enum values.
 const (
 	DisplayBlock Display = 0
 	DisplayFlex  Display = 1
@@ -153,6 +163,7 @@ const (
 // FlexDirection is gpui_kit::FlexDirection.
 type FlexDirection uint16
 
+// FlexDirection enum values.
 const (
 	FlexDirectionRow           FlexDirection = 0
 	FlexDirectionColumn        FlexDirection = 1
@@ -163,6 +174,7 @@ const (
 // FlexWrap is gpui_kit::FlexWrap.
 type FlexWrap uint16
 
+// FlexWrap enum values.
 const (
 	FlexWrapNoWrap      FlexWrap = 0
 	FlexWrapWrap        FlexWrap = 1
@@ -172,6 +184,7 @@ const (
 // GpuiOsAction is gpui_kit::OsAction.
 type GpuiOsAction uint16
 
+// GpuiOsAction enum values.
 const (
 	GpuiOsActionCut       GpuiOsAction = 0
 	GpuiOsActionCopy      GpuiOsAction = 1
@@ -184,6 +197,7 @@ const (
 // GridTemplateMinSize is gpui_kit::GridTemplateMinSize.
 type GridTemplateMinSize uint16
 
+// GridTemplateMinSize enum values.
 const (
 	GridTemplateMinSizeZero       GridTemplateMinSize = 0
 	GridTemplateMinSizeMinContent GridTemplateMinSize = 1
@@ -193,6 +207,7 @@ const (
 // HoverListenerMode is gpui_kit::HoverListenerMode.
 type HoverListenerMode uint16
 
+// HoverListenerMode enum values.
 const (
 	HoverListenerModeInputModalityAware       HoverListenerMode = 0
 	HoverListenerModeInputModalityIndependent HoverListenerMode = 1
@@ -201,6 +216,7 @@ const (
 // IconName is gpui_kit::component::IconName.
 type IconName uint16
 
+// IconName enum values.
 const (
 	IconALargeSmall        IconName = 0
 	IconArrowDown          IconName = 1
@@ -313,6 +329,7 @@ const (
 // Layer is gpui_kit::layer_shell::Layer.
 type Layer uint16
 
+// Layer enum values.
 const (
 	LayerBackground Layer = 0
 	LayerBottom     Layer = 1
@@ -323,6 +340,7 @@ const (
 // LayoutDirection is gpui_kit::base::LayoutDirection.
 type LayoutDirection uint16
 
+// LayoutDirection enum values.
 const (
 	LayoutDirectionLtr LayoutDirection = 0
 	LayoutDirectionRtl LayoutDirection = 1
@@ -331,6 +349,7 @@ const (
 // ListSizingBehavior is gpui_kit::ListSizingBehavior.
 type ListSizingBehavior uint16
 
+// ListSizingBehavior enum values.
 const (
 	ListSizingBehaviorInfer ListSizingBehavior = 0
 	ListSizingBehaviorAuto  ListSizingBehavior = 1
@@ -339,6 +358,7 @@ const (
 // MotionStatus is gpui_kit::base::MotionStatus.
 type MotionStatus uint16
 
+// MotionStatus enum values.
 const (
 	MotionStatusIdle     MotionStatus = 0
 	MotionStatusDelayed  MotionStatus = 1
@@ -349,6 +369,7 @@ const (
 // NavigationDirection is gpui_kit::NavigationDirection.
 type NavigationDirection uint16
 
+// NavigationDirection enum values.
 const (
 	NavigationDirectionBack    NavigationDirection = 0
 	NavigationDirectionForward NavigationDirection = 1
@@ -357,6 +378,7 @@ const (
 // NotificationDelivery is gpui_kit::component::notification::NotificationDelivery.
 type NotificationDelivery uint16
 
+// NotificationDelivery enum values.
 const (
 	NotificationDeliveryInApp          NotificationDelivery = 0
 	NotificationDeliverySystem         NotificationDelivery = 1
@@ -366,6 +388,7 @@ const (
 // Overflow is gpui_kit::Overflow.
 type Overflow uint16
 
+// Overflow enum values.
 const (
 	OverflowVisible Overflow = 0
 	OverflowClip    Overflow = 1
@@ -376,6 +399,7 @@ const (
 // Placement is gpui_kit::base::Placement.
 type Placement uint16
 
+// Placement enum values.
 const (
 	PlacementTop    Placement = 0
 	PlacementBottom Placement = 1
@@ -386,6 +410,7 @@ const (
 // Position is gpui_kit::Position.
 type Position uint16
 
+// Position enum values.
 const (
 	PositionRelative Position = 0
 	PositionAbsolute Position = 1
@@ -394,6 +419,7 @@ const (
 // PressureStage is gpui_kit::PressureStage.
 type PressureStage uint16
 
+// PressureStage enum values.
 const (
 	PressureStageZero   PressureStage = 0
 	PressureStageNormal PressureStage = 1
@@ -403,6 +429,7 @@ const (
 // ReduceMotionPreference is gpui_kit::base::ReduceMotionPreference.
 type ReduceMotionPreference uint16
 
+// ReduceMotionPreference enum values.
 const (
 	ReduceMotionPreferenceSystem ReduceMotionPreference = 0
 	ReduceMotionPreferenceReduce ReduceMotionPreference = 1
@@ -412,6 +439,7 @@ const (
 // ReducedMotion is gpui_kit::base::ReducedMotion.
 type ReducedMotion uint16
 
+// ReducedMotion enum values.
 const (
 	ReducedMotionFinish   ReducedMotion = 0
 	ReducedMotionContinue ReducedMotion = 1
@@ -420,6 +448,7 @@ const (
 // ScrollSource is gpui_kit::ScrollSource.
 type ScrollSource uint16
 
+// ScrollSource enum values.
 const (
 	ScrollSourcePointer ScrollSource = 0
 	ScrollSourceTouch   ScrollSource = 1
@@ -428,6 +457,7 @@ const (
 // ScrollStrategy is gpui_kit::ScrollStrategy.
 type ScrollStrategy uint16
 
+// ScrollStrategy enum values.
 const (
 	ScrollStrategyTop     ScrollStrategy = 0
 	ScrollStrategyCenter  ScrollStrategy = 1
@@ -438,6 +468,7 @@ const (
 // ScrollbarAxis is gpui_kit::base::ScrollbarAxis.
 type ScrollbarAxis uint16
 
+// ScrollbarAxis enum values.
 const (
 	ScrollbarAxisVertical   ScrollbarAxis = 0
 	ScrollbarAxisHorizontal ScrollbarAxis = 1
@@ -447,6 +478,7 @@ const (
 // ScrollbarEntrance is gpui_kit::base::ScrollbarEntrance.
 type ScrollbarEntrance uint16
 
+// ScrollbarEntrance enum values.
 const (
 	ScrollbarEntranceFade         ScrollbarEntrance = 0
 	ScrollbarEntranceSlideAndFade ScrollbarEntrance = 1
@@ -455,6 +487,7 @@ const (
 // ScrollbarMode is gpui_kit::base::ScrollbarMode.
 type ScrollbarMode uint16
 
+// ScrollbarMode enum values.
 const (
 	ScrollbarModeScrolling ScrollbarMode = 0
 	ScrollbarModeHover     ScrollbarMode = 1
@@ -464,6 +497,7 @@ const (
 // ScrollbarPlacement is gpui_kit::base::ScrollbarPlacement.
 type ScrollbarPlacement uint16
 
+// ScrollbarPlacement enum values.
 const (
 	ScrollbarPlacementBottomRight ScrollbarPlacement = 0
 	ScrollbarPlacementBottomLeft  ScrollbarPlacement = 1
@@ -474,6 +508,7 @@ const (
 // Side is gpui_kit::base::Side.
 type Side uint16
 
+// Side enum values.
 const (
 	SideLeft  Side = 0
 	SideRight Side = 1
@@ -482,6 +517,7 @@ const (
 // StepPosition is gpui_kit::base::StepPosition.
 type StepPosition uint16
 
+// StepPosition enum values.
 const (
 	StepPositionJumpStart StepPosition = 0
 	StepPositionJumpEnd   StepPosition = 1
@@ -492,6 +528,7 @@ const (
 // SystemMenuType is gpui_kit::SystemMenuType.
 type SystemMenuType uint16
 
+// SystemMenuType enum values.
 const (
 	SystemMenuTypeServices SystemMenuType = 0
 )
@@ -499,6 +536,7 @@ const (
 // TextAlign is gpui_kit::TextAlign.
 type TextAlign uint16
 
+// TextAlign enum values.
 const (
 	TextAlignLeft   TextAlign = 0
 	TextAlignCenter TextAlign = 1
@@ -508,6 +546,7 @@ const (
 // TextInputAction is gpui_kit::TextInputAction.
 type TextInputAction uint16
 
+// TextInputAction enum values.
 const (
 	TextInputActionUnspecified TextInputAction = 0
 	TextInputActionEnter       TextInputAction = 1
@@ -522,6 +561,7 @@ const (
 // ThemeAppearance is gpui_kit::base::ThemeAppearance.
 type ThemeAppearance uint16
 
+// ThemeAppearance enum values.
 const (
 	ThemeAppearanceLight ThemeAppearance = 0
 	ThemeAppearanceDark  ThemeAppearance = 1
@@ -530,6 +570,7 @@ const (
 // ThemeMode is gpui_kit::component::ThemeMode.
 type ThemeMode uint16
 
+// ThemeMode enum values.
 const (
 	ThemeModeLight ThemeMode = 0
 	ThemeModeDark  ThemeMode = 1
@@ -538,6 +579,7 @@ const (
 // TouchPhase is gpui_kit::TouchPhase.
 type TouchPhase uint16
 
+// TouchPhase enum values.
 const (
 	TouchPhaseStarted   TouchPhase = 0
 	TouchPhaseMoved     TouchPhase = 1
@@ -548,6 +590,7 @@ const (
 // Visibility is gpui_kit::Visibility.
 type Visibility uint16
 
+// Visibility enum values.
 const (
 	VisibilityVisible Visibility = 0
 	VisibilityHidden  Visibility = 1
@@ -556,6 +599,7 @@ const (
 // WhiteSpace is gpui_kit::WhiteSpace.
 type WhiteSpace uint16
 
+// WhiteSpace enum values.
 const (
 	WhiteSpaceNormal WhiteSpace = 0
 	WhiteSpaceNowrap WhiteSpace = 1
@@ -564,6 +608,7 @@ const (
 // WindowAppearance is gpui_kit::WindowAppearance.
 type WindowAppearance uint16
 
+// WindowAppearance enum values.
 const (
 	WindowAppearanceLight        WindowAppearance = 0
 	WindowAppearanceVibrantLight WindowAppearance = 1
@@ -574,6 +619,7 @@ const (
 // WindowBackgroundAppearance is gpui_kit::WindowBackgroundAppearance.
 type WindowBackgroundAppearance uint16
 
+// WindowBackgroundAppearance enum values.
 const (
 	WindowBackgroundAppearanceOpaque          WindowBackgroundAppearance = 0
 	WindowBackgroundAppearanceTransparent     WindowBackgroundAppearance = 1
@@ -585,6 +631,7 @@ const (
 // WindowControlArea is gpui_kit::WindowControlArea.
 type WindowControlArea uint16
 
+// WindowControlArea enum values.
 const (
 	WindowControlAreaDrag  WindowControlArea = 0
 	WindowControlAreaClose WindowControlArea = 1
@@ -595,19 +642,20 @@ const (
 // WindowDecorations is gpui_kit::WindowDecorations.
 type WindowDecorations uint16
 
+// WindowDecorations enum values.
 const (
 	WindowDecorationsServer WindowDecorations = 0
 	WindowDecorationsClient WindowDecorations = 1
 )
 
-// BackGestureEvent is gpui_kit::BackGestureEvent.
+// BackGestureEvent mirrors gpui_kit::BackGestureEvent.
 type BackGestureEvent struct {
 	Phase         BackGesturePhase
 	StartPosition GpuiPoint
 	Progress      float32
 }
 
-// BaseColorTokens is gpui_kit::base::ColorTokens. Only the fields the binding can carry.
+// BaseColorTokens mirrors gpui_kit::base::ColorTokens. Includes only wire-supported fields.
 type BaseColorTokens struct {
 	Background            Hsla
 	Foreground            Hsla
@@ -629,12 +677,12 @@ type BaseColorTokens struct {
 	Selection             Hsla
 }
 
-// BaseListSettings is gpui_kit::base::ListSettings. Only the fields the binding can carry.
+// BaseListSettings mirrors gpui_kit::base::ListSettings. Includes only wire-supported fields.
 type BaseListSettings struct {
 	ActiveHighlight bool
 }
 
-// BaseRadiusTokens is gpui_kit::base::RadiusTokens. Only the fields the binding can carry.
+// BaseRadiusTokens mirrors gpui_kit::base::RadiusTokens. Includes only wire-supported fields.
 type BaseRadiusTokens struct {
 	None float32
 	Sm   float32
@@ -644,13 +692,13 @@ type BaseRadiusTokens struct {
 	Full float32
 }
 
-// BaseResizableTheme is gpui_kit::base::ResizableTheme. Only the fields the binding can carry.
+// BaseResizableTheme mirrors gpui_kit::base::ResizableTheme. Includes only wire-supported fields.
 type BaseResizableTheme struct {
 	Handle       Option[Hsla]
 	ActiveHandle Option[Hsla]
 }
 
-// BaseSemanticThemeTokens is gpui_kit::base::SemanticThemeTokens. Only the fields the binding can carry.
+// BaseSemanticThemeTokens mirrors gpui_kit::base::SemanticThemeTokens. Includes only wire-supported fields.
 type BaseSemanticThemeTokens struct {
 	Colors     BaseColorTokens
 	Radius     BaseRadiusTokens
@@ -659,14 +707,14 @@ type BaseSemanticThemeTokens struct {
 	Shadow     BaseShadowTokens
 }
 
-// BaseShadowTokens is gpui_kit::base::ShadowTokens. Only the fields the binding can carry.
+// BaseShadowTokens mirrors gpui_kit::base::ShadowTokens. Includes only wire-supported fields.
 type BaseShadowTokens struct {
 	Sm []BoxShadow
 	Md []BoxShadow
 	Lg []BoxShadow
 }
 
-// BaseSpacingTokens is gpui_kit::base::SpacingTokens. Only the fields the binding can carry.
+// BaseSpacingTokens mirrors gpui_kit::base::SpacingTokens. Includes only wire-supported fields.
 type BaseSpacingTokens struct {
 	Xxs float32
 	Xs  float32
@@ -677,14 +725,14 @@ type BaseSpacingTokens struct {
 	Xxl float32
 }
 
-// BaseTextStyleToken is gpui_kit::base::TextStyleToken. Only the fields the binding can carry.
+// BaseTextStyleToken mirrors gpui_kit::base::TextStyleToken. Includes only wire-supported fields.
 type BaseTextStyleToken struct {
 	Size       float32
 	LineHeight float32
 	Weight     FontWeight
 }
 
-// BaseTypographyTokens is gpui_kit::base::TypographyTokens. Only the fields the binding can carry.
+// BaseTypographyTokens mirrors gpui_kit::base::TypographyTokens. Includes only wire-supported fields.
 type BaseTypographyTokens struct {
 	Sans   string
 	Mono   string
@@ -701,13 +749,13 @@ func putBounds(o *rt.Tape, v Bounds) {
 	putGpuiSize(o, v.Size)
 }
 
-// BoundsF32 is gpui_kit::Bounds<f32>.
+// BoundsF32 mirrors gpui_kit::Bounds<f32>.
 type BoundsF32 struct {
 	Origin PointF32
 	Size   SizeF32
 }
 
-// BoxShadow is gpui_kit::BoxShadow.
+// BoxShadow mirrors gpui_kit::BoxShadow.
 type BoxShadow struct {
 	Color        Color
 	Offset       GpuiPoint
@@ -724,23 +772,23 @@ func putBoxShadow(o *rt.Tape, v BoxShadow) {
 	o.Bool(v.Inset)
 }
 
-// Capslock is gpui_kit::Capslock.
+// Capslock mirrors gpui_kit::Capslock.
 type Capslock struct {
 	On bool
 }
 
-// ClipboardItem is gpui_kit::ClipboardItem.
+// ClipboardItem mirrors gpui_kit::ClipboardItem.
 type ClipboardItem struct {
 	Entries []ClipboardEntry
 }
 
-// ClipboardString is gpui_kit::ClipboardString.
+// ClipboardString mirrors gpui_kit::ClipboardString.
 type ClipboardString struct {
 	Text     string
 	Metadata Option[string]
 }
 
-// Corners is gpui_kit::Corners<gpui_kit::Pixels>.
+// Corners mirrors gpui_kit::Corners<gpui_kit::Pixels>.
 type Corners struct {
 	TopLeft     float32
 	TopRight    float32
@@ -755,7 +803,7 @@ func putCorners(o *rt.Tape, v Corners) {
 	o.F32(v.BottomLeft)
 }
 
-// Edges is gpui_kit::base::Edges<gpui_kit::Pixels>.
+// Edges mirrors gpui_kit::base::Edges<gpui_kit::Pixels>.
 type Edges struct {
 	Top    float32
 	Right  float32
@@ -763,12 +811,12 @@ type Edges struct {
 	Left   float32
 }
 
-// FontFallbacks is gpui_kit::FontFallbacks.
+// FontFallbacks mirrors gpui_kit::FontFallbacks.
 type FontFallbacks struct {
 	V0 []string
 }
 
-// FontFeatures is gpui_kit::FontFeatures.
+// FontFeatures mirrors gpui_kit::FontFeatures.
 type FontFeatures struct {
 	V0 []TupleStringUint32
 }
@@ -781,7 +829,7 @@ func putFontFeatures(o *rt.Tape, v FontFeatures) {
 	}
 }
 
-// FontWeight is gpui_kit::FontWeight.
+// FontWeight mirrors gpui_kit::FontWeight.
 type FontWeight struct {
 	V0 float32
 }
@@ -790,7 +838,7 @@ func putFontWeight(o *rt.Tape, v FontWeight) {
 	o.F32(v.V0)
 }
 
-// GpuiEdges is gpui_kit::Edges<gpui_kit::Pixels>.
+// GpuiEdges mirrors gpui_kit::Edges<gpui_kit::Pixels>.
 type GpuiEdges struct {
 	Top    float32
 	Right  float32
@@ -815,7 +863,7 @@ func putGpuiSize(o *rt.Tape, v GpuiSize) {
 	o.F32(v.Height)
 }
 
-// GpuiStyleRefinement is gpui_kit::StyleRefinement. Only the fields the binding can carry.
+// GpuiStyleRefinement mirrors gpui_kit::StyleRefinement. Includes only wire-supported fields.
 type GpuiStyleRefinement struct {
 	Display               Option[Display]
 	Visibility            Option[Visibility]
@@ -842,7 +890,7 @@ type GpuiStyleRefinement struct {
 	DebugBelow            Option[bool]
 }
 
-// GpuiWindowOptions is gpui_kit::WindowOptions. Only the fields the binding can carry.
+// GpuiWindowOptions mirrors gpui_kit::WindowOptions. Includes only wire-supported fields.
 type GpuiWindowOptions struct {
 	WindowBounds          Option[WindowBounds]
 	Titlebar              Option[TitlebarOptions]
@@ -864,13 +912,13 @@ type GpuiWindowOptions struct {
 	UseDisplayP3          bool
 }
 
-// GridTemplate is gpui_kit::GridTemplate.
+// GridTemplate mirrors gpui_kit::GridTemplate.
 type GridTemplate struct {
 	Repeat  uint16
 	MinSize GridTemplateMinSize
 }
 
-// HighlightStyle is gpui_kit::HighlightStyle.
+// HighlightStyle mirrors gpui_kit::HighlightStyle.
 type HighlightStyle struct {
 	Color           Option[Color]
 	FontWeight      Option[FontWeight]
@@ -881,35 +929,35 @@ type HighlightStyle struct {
 	FadeOut         Option[float32]
 }
 
-// Image is gpui_kit::Image.
+// Image mirrors gpui_kit::Image.
 type Image struct {
 	Format ImageFormat
 	Bytes  []uint8
 	ID     uint64
 }
 
-// KeyDownEvent is gpui_kit::KeyDownEvent.
+// KeyDownEvent mirrors gpui_kit::KeyDownEvent.
 type KeyDownEvent struct {
 	Keystroke            Keystroke
 	IsHeld               bool
 	PreferCharacterInput bool
 }
 
-// KeyframeF32 is gpui_kit::base::Keyframe<f32>.
+// KeyframeF32 mirrors gpui_kit::base::Keyframe<f32>.
 type KeyframeF32 struct {
 	Offset float32
 	Value  float32
 	Easing Easing
 }
 
-// Keystroke is gpui_kit::Keystroke.
+// Keystroke mirrors gpui_kit::Keystroke.
 type Keystroke struct {
 	Modifiers Modifiers
 	Key       string
 	KeyChar   Option[string]
 }
 
-// KitMotionTokens is gpui_kit::component::MotionTokens. Only the fields the binding can carry.
+// KitMotionTokens mirrors gpui_kit::component::MotionTokens. Includes only wire-supported fields.
 type KitMotionTokens struct {
 	DurationInstant time.Duration
 	DurationFast    time.Duration
@@ -922,7 +970,7 @@ type KitMotionTokens struct {
 	DistanceMedium  float32
 }
 
-// KitNotificationSettings is gpui_kit::component::notification::NotificationSettings. Only the fields the binding can carry.
+// KitNotificationSettings mirrors gpui_kit::component::notification::NotificationSettings. Includes only wire-supported fields.
 type KitNotificationSettings struct {
 	Placement Anchor
 	Margins   Edges
@@ -931,12 +979,12 @@ type KitNotificationSettings struct {
 	Delivery  NotificationDelivery
 }
 
-// KitSheetSettings is gpui_kit::component::sheet::SheetSettings. Only the fields the binding can carry.
+// KitSheetSettings mirrors gpui_kit::component::sheet::SheetSettings. Includes only wire-supported fields.
 type KitSheetSettings struct {
 	MarginTop float32
 }
 
-// KitThemeColor2 is gpui_kit::component::ThemeColor. Only the fields the binding can carry.
+// KitThemeColor2 mirrors gpui_kit::component::ThemeColor. Includes only wire-supported fields.
 type KitThemeColor2 struct {
 	Accent                         Hsla
 	AccentForeground               Hsla
@@ -1080,19 +1128,19 @@ type KitThemeColor2 struct {
 	CyanLight                      Hsla
 }
 
-// KitThemeToken is gpui_kit::component::ThemeToken. Only the fields the binding can carry.
+// KitThemeToken mirrors gpui_kit::component::ThemeToken. Includes only wire-supported fields.
 type KitThemeToken struct {
 	Color      Hsla
 	Background BackgroundValue
 }
 
-// ListOffset is gpui_kit::ListOffset.
+// ListOffset mirrors gpui_kit::ListOffset.
 type ListOffset struct {
 	ItemIx       int
 	OffsetInItem float32
 }
 
-// Modifiers is gpui_kit::Modifiers.
+// Modifiers mirrors gpui_kit::Modifiers.
 type Modifiers struct {
 	Control  bool
 	Alt      bool
@@ -1101,26 +1149,26 @@ type Modifiers struct {
 	Function bool
 }
 
-// ModifiersChangedEvent is gpui_kit::ModifiersChangedEvent.
+// ModifiersChangedEvent mirrors gpui_kit::ModifiersChangedEvent.
 type ModifiersChangedEvent struct {
 	Modifiers Modifiers
 	Capslock  Capslock
 }
 
-// MotionValueF32 is gpui_kit::base::MotionValue<f32>.
+// MotionValueF32 mirrors gpui_kit::base::MotionValue<f32>.
 type MotionValueF32 struct {
 	Value  float32
 	Status MotionStatus
 }
 
-// MouseExitEvent is gpui_kit::MouseExitEvent.
+// MouseExitEvent mirrors gpui_kit::MouseExitEvent.
 type MouseExitEvent struct {
 	Position      GpuiPoint
 	PressedButton Option[MouseButton]
 	Modifiers     Modifiers
 }
 
-// MousePressureEvent is gpui_kit::MousePressureEvent.
+// MousePressureEvent mirrors gpui_kit::MousePressureEvent.
 type MousePressureEvent struct {
 	Pressure  float32
 	Stage     PressureStage
@@ -1128,20 +1176,20 @@ type MousePressureEvent struct {
 	Modifiers Modifiers
 }
 
-// OwnedMenu is gpui_kit::OwnedMenu.
+// OwnedMenu mirrors gpui_kit::OwnedMenu.
 type OwnedMenu struct {
 	Name     string
 	Items    []OwnedMenuItem
 	Disabled bool
 }
 
-// OwnedOsMenu is gpui_kit::OwnedOsMenu.
+// OwnedOsMenu mirrors gpui_kit::OwnedOsMenu.
 type OwnedOsMenu struct {
 	Name     string
 	MenuType SystemMenuType
 }
 
-// Percentage is gpui_kit::Percentage.
+// Percentage mirrors gpui_kit::Percentage.
 type Percentage struct {
 	V0 float32
 }
@@ -1150,7 +1198,7 @@ func putPercentage(o *rt.Tape, v Percentage) {
 	o.F32(v.V0)
 }
 
-// PinchEvent is gpui_kit::PinchEvent.
+// PinchEvent mirrors gpui_kit::PinchEvent.
 type PinchEvent struct {
 	Position  GpuiPoint
 	Delta     float32
@@ -1158,19 +1206,19 @@ type PinchEvent struct {
 	Phase     TouchPhase
 }
 
-// PointF32 is gpui_kit::Point<f32>.
+// PointF32 mirrors gpui_kit::Point<f32>.
 type PointF32 struct {
 	X float32
 	Y float32
 }
 
-// PointRefinementOverflow is gpui_kit::PointRefinement<gpui_kit::Overflow>.
+// PointRefinementOverflow mirrors gpui_kit::PointRefinement<gpui_kit::Overflow>.
 type PointRefinementOverflow struct {
 	X Option[Overflow]
 	Y Option[Overflow]
 }
 
-// Radians is gpui_kit::Radians.
+// Radians mirrors gpui_kit::Radians.
 type Radians struct {
 	V0 float32
 }
@@ -1179,7 +1227,7 @@ func putRadians(o *rt.Tape, v Radians) {
 	o.F32(v.V0)
 }
 
-// ScrollEvent is gpui_kit::ScrollEvent.
+// ScrollEvent mirrors gpui_kit::ScrollEvent.
 type ScrollEvent struct {
 	Position   GpuiPoint
 	Delta      ScrollDelta
@@ -1188,19 +1236,19 @@ type ScrollEvent struct {
 	Source     ScrollSource
 }
 
-// SizeF32 is gpui_kit::Size<f32>.
+// SizeF32 mirrors gpui_kit::Size<f32>.
 type SizeF32 struct {
 	Width  float32
 	Height float32
 }
 
-// StrikethroughStyle is gpui_kit::StrikethroughStyle.
+// StrikethroughStyle mirrors gpui_kit::StrikethroughStyle.
 type StrikethroughStyle struct {
 	Thickness float32
 	Color     Option[Color]
 }
 
-// TextInputConfiguration is gpui_kit::TextInputConfiguration.
+// TextInputConfiguration mirrors gpui_kit::TextInputConfiguration.
 type TextInputConfiguration struct {
 	Autocorrect    bool
 	Autocapitalize Autocapitalize
@@ -1208,7 +1256,7 @@ type TextInputConfiguration struct {
 	InputAction    TextInputAction
 }
 
-// TextStyle is gpui_kit::TextStyle. Only the fields the binding can carry.
+// TextStyle mirrors gpui_kit::TextStyle. Includes only wire-supported fields.
 type TextStyle struct {
 	Color           Hsla
 	FontFamily      string
@@ -1225,7 +1273,7 @@ type TextStyle struct {
 	LineClamp       Option[int]
 }
 
-// TextStyleRefinement is gpui_kit::TextStyleRefinement.
+// TextStyleRefinement mirrors gpui_kit::TextStyleRefinement.
 type TextStyleRefinement struct {
 	Color           Option[Color]
 	FontFamily      Option[string]
@@ -1244,7 +1292,7 @@ type TextStyleRefinement struct {
 	LineClamp       Option[int]
 }
 
-// ThemeTokens is gpui_kit::component::ThemeTokens.
+// ThemeTokens mirrors gpui_kit::component::ThemeTokens.
 type ThemeTokens struct {
 	Accent                         KitThemeToken
 	AccentForeground               KitThemeToken
@@ -1388,14 +1436,14 @@ type ThemeTokens struct {
 	CyanLight                      KitThemeToken
 }
 
-// TitlebarOptions is gpui_kit::TitlebarOptions.
+// TitlebarOptions mirrors gpui_kit::TitlebarOptions.
 type TitlebarOptions struct {
 	Title                Option[string]
 	AppearsTransparent   bool
 	TrafficLightPosition Option[GpuiPoint]
 }
 
-// ToastAdvanceU64U64 is gpui_kit::base::ToastAdvance<u64, u64>.
+// ToastAdvanceU64U64 mirrors gpui_kit::base::ToastAdvance<u64, u64>.
 type ToastAdvanceU64U64 struct {
 	Changed   bool
 	Presented []uint64
@@ -1403,21 +1451,22 @@ type ToastAdvanceU64U64 struct {
 	Removed   []TupleUint64Uint64
 }
 
-// UnderlineStyle is gpui_kit::UnderlineStyle.
+// UnderlineStyle mirrors gpui_kit::UnderlineStyle.
 type UnderlineStyle struct {
 	Thickness float32
 	Color     Option[Color]
 	Wavy      bool
 }
 
-// ButtonVariant is gpui_kit::component::button::ButtonVariant: a constant of ButtonVariantKind for each variant without data, a struct type for each other one.
+// ButtonVariant represents gpui_kit::component::button::ButtonVariant: unit variants use ButtonVariantKind constants and payload variants use distinct struct types.
 type ButtonVariant interface{ isButtonVariant() }
 
-// ButtonVariantKind is a variant of gpui_kit::component::button::ButtonVariant without data: gk.ButtonVariantDefault.
+// ButtonVariantKind represents unit variants of gpui_kit::component::button::ButtonVariant (for example ButtonVariantDefault).
 type ButtonVariantKind uint16
 
 func (ButtonVariantKind) isButtonVariant() {}
 
+// ButtonVariantKind unit variant values.
 const (
 	ButtonVariantDefault   ButtonVariantKind = 0 // gpui_kit::component::button::ButtonVariant::Default
 	ButtonVariantPrimary   ButtonVariantKind = 1 // gpui_kit::component::button::ButtonVariant::Primary
@@ -1431,45 +1480,46 @@ const (
 	ButtonVariantText      ButtonVariantKind = 9 // gpui_kit::component::button::ButtonVariant::Text
 )
 
-// ButtonVariantCustom is gpui_kit::component::button::ButtonVariant::Custom.
+// ButtonVariantCustom represents gpui_kit::component::button::ButtonVariant::Custom.
 type ButtonVariantCustom struct {
 	Value ButtonCustomVariant
 }
 
 func (ButtonVariantCustom) isButtonVariant() {}
 
-// ClipboardEntry is gpui_kit::ClipboardEntry: one struct type per variant.
+// ClipboardEntry represents gpui_kit::ClipboardEntry with one struct type per variant.
 type ClipboardEntry interface{ isClipboardEntry() }
 
-// ClipboardEntryString is gpui_kit::ClipboardEntry::String.
+// ClipboardEntryString represents gpui_kit::ClipboardEntry::String.
 type ClipboardEntryString struct {
 	ClipboardString
 }
 
 func (ClipboardEntryString) isClipboardEntry() {}
 
-// ClipboardEntryImage is gpui_kit::ClipboardEntry::Image.
+// ClipboardEntryImage represents gpui_kit::ClipboardEntry::Image.
 type ClipboardEntryImage struct {
 	Image
 }
 
 func (ClipboardEntryImage) isClipboardEntry() {}
 
-// ClipboardEntryExternalPaths is gpui_kit::ClipboardEntry::ExternalPaths.
+// ClipboardEntryExternalPaths represents gpui_kit::ClipboardEntry::ExternalPaths.
 type ClipboardEntryExternalPaths struct {
 	Value []string
 }
 
 func (ClipboardEntryExternalPaths) isClipboardEntry() {}
 
-// Easing is gpui_kit::base::Easing: a constant of EasingKind for each variant without data, a struct type for each other one.
+// Easing represents gpui_kit::base::Easing: unit variants use EasingKind constants and payload variants use distinct struct types.
 type Easing interface{ isEasing() }
 
-// EasingKind is a variant of gpui_kit::base::Easing without data: gk.EasingLinear.
+// EasingKind represents unit variants of gpui_kit::base::Easing (for example EasingLinear).
 type EasingKind uint16
 
 func (EasingKind) isEasing() {}
 
+// EasingKind unit variant values.
 const (
 	EasingLinear    EasingKind = 0 // gpui_kit::base::Easing::Linear
 	EasingEase      EasingKind = 1 // gpui_kit::base::Easing::Ease
@@ -1478,7 +1528,7 @@ const (
 	EasingEaseInOut EasingKind = 4 // gpui_kit::base::Easing::EaseInOut
 )
 
-// EasingCubicBezier is gpui_kit::base::Easing::CubicBezier.
+// EasingCubicBezier represents gpui_kit::base::Easing::CubicBezier.
 type EasingCubicBezier struct {
 	X1 float32
 	Y1 float32
@@ -1488,7 +1538,7 @@ type EasingCubicBezier struct {
 
 func (EasingCubicBezier) isEasing() {}
 
-// EasingSteps is gpui_kit::base::Easing::Steps.
+// EasingSteps represents gpui_kit::base::Easing::Steps.
 type EasingSteps struct {
 	Count    uint32
 	Position StepPosition
@@ -1496,14 +1546,14 @@ type EasingSteps struct {
 
 func (EasingSteps) isEasing() {}
 
-// EasingLinearStops is gpui_kit::base::Easing::LinearStops.
+// EasingLinearStops represents gpui_kit::base::Easing::LinearStops.
 type EasingLinearStops struct {
 	Value []TupleFloat32Float32
 }
 
 func (EasingLinearStops) isEasing() {}
 
-// EasingCustom is gpui_kit::base::Easing::Custom.
+// EasingCustom represents gpui_kit::base::Easing::Custom.
 type EasingCustom struct {
 	Value string
 }
@@ -1544,10 +1594,10 @@ func putEasing(o *rt.Tape, v Easing) {
 	}
 }
 
-// FileDropEvent is gpui_kit::FileDropEvent: one struct type per variant.
+// FileDropEvent represents gpui_kit::FileDropEvent with one struct type per variant.
 type FileDropEvent interface{ isFileDropEvent() }
 
-// FileDropEventEntered is gpui_kit::FileDropEvent::Entered.
+// FileDropEventEntered represents gpui_kit::FileDropEvent::Entered.
 type FileDropEventEntered struct {
 	Position GpuiPoint
 	Paths    []string
@@ -1555,90 +1605,91 @@ type FileDropEventEntered struct {
 
 func (FileDropEventEntered) isFileDropEvent() {}
 
-// FileDropEventPending is gpui_kit::FileDropEvent::Pending.
+// FileDropEventPending represents gpui_kit::FileDropEvent::Pending.
 type FileDropEventPending struct {
 	Position GpuiPoint
 }
 
 func (FileDropEventPending) isFileDropEvent() {}
 
-// FileDropEventSubmit is gpui_kit::FileDropEvent::Submit.
+// FileDropEventSubmit represents gpui_kit::FileDropEvent::Submit.
 type FileDropEventSubmit struct {
 	Position GpuiPoint
 }
 
 func (FileDropEventSubmit) isFileDropEvent() {}
 
-// FileDropEventExited is gpui_kit::FileDropEvent::Exited.
+// FileDropEventExited represents gpui_kit::FileDropEvent::Exited.
 type FileDropEventExited struct {
 }
 
 func (FileDropEventExited) isFileDropEvent() {}
 
-// FileDropEventEnded is gpui_kit::FileDropEvent::Ended.
+// FileDropEventEnded represents gpui_kit::FileDropEvent::Ended.
 type FileDropEventEnded struct {
 }
 
 func (FileDropEventEnded) isFileDropEvent() {}
 
-// GridPlacement is gpui_kit::GridPlacement: a constant of GridPlacementKind for each variant without data, a struct type for each other one.
+// GridPlacement represents gpui_kit::GridPlacement: unit variants use GridPlacementKind constants and payload variants use distinct struct types.
 type GridPlacement interface{ isGridPlacement() }
 
-// GridPlacementKind is a variant of gpui_kit::GridPlacement without data: gk.GridPlacementAuto.
+// GridPlacementKind represents unit variants of gpui_kit::GridPlacement (for example GridPlacementAuto).
 type GridPlacementKind uint16
 
 func (GridPlacementKind) isGridPlacement() {}
 
+// GridPlacementKind unit variant values.
 const (
 	GridPlacementAuto GridPlacementKind = 2 // gpui_kit::GridPlacement::Auto
 )
 
-// GridPlacementLine is gpui_kit::GridPlacement::Line.
+// GridPlacementLine represents gpui_kit::GridPlacement::Line.
 type GridPlacementLine struct {
 	Value int16
 }
 
 func (GridPlacementLine) isGridPlacement() {}
 
-// GridPlacementSpan is gpui_kit::GridPlacement::Span.
+// GridPlacementSpan represents gpui_kit::GridPlacement::Span.
 type GridPlacementSpan struct {
 	Value uint16
 }
 
 func (GridPlacementSpan) isGridPlacement() {}
 
-// ImageSource is gpui_kit::ImageSource: one struct type per variant.
+// ImageSource represents gpui_kit::ImageSource with one struct type per variant.
 type ImageSource interface{ isImageSource() }
 
-// ImageSourceResource is gpui_kit::ImageSource::Resource.
+// ImageSourceResource represents gpui_kit::ImageSource::Resource.
 type ImageSourceResource struct {
 	Value Resource
 }
 
 func (ImageSourceResource) isImageSource() {}
 
-// Shows an image the library made from pixels. Make the gk.RenderImage once, with
-// gk.NewRenderImage, keep it while a view shows it and gk.Release it when no view does:
-// gpui keeps its texture on the graphics card until then.
+// Displays a pixel image created in the runtime. Construct the gk.RenderImage once
+// with gk.NewRenderImage, hold it while any view displays it, and call gk.Release
+// when finished so GPUI can free the GPU texture.
 //
-// ImageSourceRender is gpui_kit::ImageSource::Render.
+// ImageSourceRender represents gpui_kit::ImageSource::Render.
 type ImageSourceRender struct {
 	Value RenderImage
 }
 
 func (ImageSourceRender) isImageSource() {}
 
-// ImageSourceImage is gpui_kit::ImageSource::Image.
+// ImageSourceImage represents gpui_kit::ImageSource::Image.
 type ImageSourceImage struct {
 	Value ImageBytes
 }
 
 func (ImageSourceImage) isImageSource() {}
 
-// Upstream's loader, called while gpui draws, is the image itself here: a gk.RenderImage
-// made once with gk.NewRenderImage, as for gk.ImageSourceRender.
+// In Go, upstream's draw-time loader is represented directly by a gk.RenderImage
+// created once with gk.NewRenderImage, matching gk.ImageSourceRender.
 //
-// ImageSourceCustom is gpui_kit::ImageSource::Custom.
+// ImageSourceCustom represents gpui_kit::ImageSource::Custom.
 type ImageSourceCustom struct {
 	Value RenderImage
 }
@@ -1669,21 +1720,22 @@ func putImageSource(o *rt.Tape, v ImageSource) {
 	}
 }
 
-// MouseButton is gpui_kit::MouseButton: a constant of MouseButtonKind for each variant without data, a struct type for each other one.
+// MouseButton represents gpui_kit::MouseButton: unit variants use MouseButtonKind constants and payload variants use distinct struct types.
 type MouseButton interface{ isMouseButton() }
 
-// MouseButtonKind is a variant of gpui_kit::MouseButton without data: gk.MouseButtonLeft.
+// MouseButtonKind represents unit variants of gpui_kit::MouseButton (for example MouseButtonLeft).
 type MouseButtonKind uint16
 
 func (MouseButtonKind) isMouseButton() {}
 
+// MouseButtonKind unit variant values.
 const (
 	MouseButtonLeft   MouseButtonKind = 0 // gpui_kit::MouseButton::Left
 	MouseButtonRight  MouseButtonKind = 1 // gpui_kit::MouseButton::Right
 	MouseButtonMiddle MouseButtonKind = 2 // gpui_kit::MouseButton::Middle
 )
 
-// MouseButtonNavigate is gpui_kit::MouseButton::Navigate.
+// MouseButtonNavigate represents gpui_kit::MouseButton::Navigate.
 type MouseButtonNavigate struct {
 	Value NavigationDirection
 }
@@ -1704,26 +1756,27 @@ func putMouseButton(o *rt.Tape, v MouseButton) {
 	}
 }
 
-// OwnedMenuItem is gpui_kit::OwnedMenuItem: a constant of OwnedMenuItemKind for each variant without data, a struct type for each other one.
+// OwnedMenuItem represents gpui_kit::OwnedMenuItem: unit variants use OwnedMenuItemKind constants and payload variants use distinct struct types.
 type OwnedMenuItem interface{ isOwnedMenuItem() }
 
-// OwnedMenuItemKind is a variant of gpui_kit::OwnedMenuItem without data: gk.OwnedMenuItemSeparator.
+// OwnedMenuItemKind represents unit variants of gpui_kit::OwnedMenuItem (for example OwnedMenuItemSeparator).
 type OwnedMenuItemKind uint16
 
 func (OwnedMenuItemKind) isOwnedMenuItem() {}
 
+// OwnedMenuItemKind unit variant values.
 const (
 	OwnedMenuItemSeparator OwnedMenuItemKind = 0 // gpui_kit::OwnedMenuItem::Separator
 )
 
-// OwnedMenuItemSystemMenu is gpui_kit::OwnedMenuItem::SystemMenu.
+// OwnedMenuItemSystemMenu represents gpui_kit::OwnedMenuItem::SystemMenu.
 type OwnedMenuItemSystemMenu struct {
 	OwnedOsMenu
 }
 
 func (OwnedMenuItemSystemMenu) isOwnedMenuItem() {}
 
-// OwnedMenuItemAction is gpui_kit::OwnedMenuItem::Action.
+// OwnedMenuItemAction represents gpui_kit::OwnedMenuItem::Action.
 type OwnedMenuItemAction struct {
 	Name     string
 	Action   Action
@@ -1734,24 +1787,24 @@ type OwnedMenuItemAction struct {
 
 func (OwnedMenuItemAction) isOwnedMenuItem() {}
 
-// Resource is gpui_kit::Resource: one struct type per variant.
+// Resource represents gpui_kit::Resource with one struct type per variant.
 type Resource interface{ isResource() }
 
-// ResourceURI is gpui_kit::Resource::Uri.
+// ResourceURI represents gpui_kit::Resource::Uri.
 type ResourceURI struct {
 	Value string
 }
 
 func (ResourceURI) isResource() {}
 
-// ResourcePath is gpui_kit::Resource::Path.
+// ResourcePath represents gpui_kit::Resource::Path.
 type ResourcePath struct {
 	Value string
 }
 
 func (ResourcePath) isResource() {}
 
-// ResourceEmbedded is gpui_kit::Resource::Embedded.
+// ResourceEmbedded represents gpui_kit::Resource::Embedded.
 type ResourceEmbedded struct {
 	Value string
 }
@@ -1777,54 +1830,55 @@ func putResource(o *rt.Tape, v Resource) {
 	}
 }
 
-// RoleOverride is gpui_kit::base::RoleOverride: a constant of RoleOverrideKind for each variant without data, a struct type for each other one.
+// RoleOverride represents gpui_kit::base::RoleOverride: unit variants use RoleOverrideKind constants and payload variants use distinct struct types.
 type RoleOverride interface{ isRoleOverride() }
 
-// RoleOverrideKind is a variant of gpui_kit::base::RoleOverride without data: gk.RoleOverrideImplicit.
+// RoleOverrideKind represents unit variants of gpui_kit::base::RoleOverride (for example RoleOverrideImplicit).
 type RoleOverrideKind uint16
 
 func (RoleOverrideKind) isRoleOverride() {}
 
+// RoleOverrideKind unit variant values.
 const (
 	RoleOverrideImplicit       RoleOverrideKind = 0 // gpui_kit::base::RoleOverride::Implicit
 	RoleOverridePresentational RoleOverrideKind = 1 // gpui_kit::base::RoleOverride::Presentational
 )
 
-// RoleOverrideRole is gpui_kit::base::RoleOverride::Role.
+// RoleOverrideRole represents gpui_kit::base::RoleOverride::Role.
 type RoleOverrideRole struct {
 	Value Role
 }
 
 func (RoleOverrideRole) isRoleOverride() {}
 
-// ScrollDelta is gpui_kit::ScrollDelta: one struct type per variant.
+// ScrollDelta represents gpui_kit::ScrollDelta with one struct type per variant.
 type ScrollDelta interface{ isScrollDelta() }
 
-// ScrollDeltaPixels is gpui_kit::ScrollDelta::Pixels.
+// ScrollDeltaPixels represents gpui_kit::ScrollDelta::Pixels.
 type ScrollDeltaPixels struct {
 	GpuiPoint
 }
 
 func (ScrollDeltaPixels) isScrollDelta() {}
 
-// ScrollDeltaLines is gpui_kit::ScrollDelta::Lines.
+// ScrollDeltaLines represents gpui_kit::ScrollDelta::Lines.
 type ScrollDeltaLines struct {
 	PointF32
 }
 
 func (ScrollDeltaLines) isScrollDelta() {}
 
-// SignedDuration is gpui_kit::base::SignedDuration: one struct type per variant.
+// SignedDuration represents gpui_kit::base::SignedDuration with one struct type per variant.
 type SignedDuration interface{ isSignedDuration() }
 
-// SignedDurationPositive is gpui_kit::base::SignedDuration::Positive.
+// SignedDurationPositive represents gpui_kit::base::SignedDuration::Positive.
 type SignedDurationPositive struct {
 	Value time.Duration
 }
 
 func (SignedDurationPositive) isSignedDuration() {}
 
-// SignedDurationNegative is gpui_kit::base::SignedDuration::Negative.
+// SignedDurationNegative represents gpui_kit::base::SignedDuration::Negative.
 type SignedDurationNegative struct {
 	Value time.Duration
 }
@@ -1846,14 +1900,15 @@ func putSignedDuration(o *rt.Tape, v SignedDuration) {
 	}
 }
 
-// Size is gpui_kit::component::Size: a constant of SizeKind for each variant without data, a struct type for each other one.
+// Size represents gpui_kit::component::Size: unit variants use SizeKind constants and payload variants use distinct struct types.
 type Size interface{ isSize() }
 
-// SizeKind is a variant of gpui_kit::component::Size without data: gk.SizeXSmall.
+// SizeKind represents unit variants of gpui_kit::component::Size (for example SizeXSmall).
 type SizeKind uint16
 
 func (SizeKind) isSize() {}
 
+// SizeKind unit variant values.
 const (
 	SizeXSmall SizeKind = 1 // gpui_kit::component::Size::XSmall
 	SizeSmall  SizeKind = 2 // gpui_kit::component::Size::Small
@@ -1861,7 +1916,7 @@ const (
 	SizeLarge  SizeKind = 4 // gpui_kit::component::Size::Large
 )
 
-// SizeSize is gpui_kit::component::Size::Size.
+// SizeSize represents gpui_kit::component::Size::Size.
 type SizeSize struct {
 	Value float32
 }
@@ -1882,24 +1937,24 @@ func putSize(o *rt.Tape, v Size) {
 	}
 }
 
-// TextOverflow is gpui_kit::TextOverflow: one struct type per variant.
+// TextOverflow represents gpui_kit::TextOverflow with one struct type per variant.
 type TextOverflow interface{ isTextOverflow() }
 
-// TextOverflowTruncate is gpui_kit::TextOverflow::Truncate.
+// TextOverflowTruncate represents gpui_kit::TextOverflow::Truncate.
 type TextOverflowTruncate struct {
 	Value string
 }
 
 func (TextOverflowTruncate) isTextOverflow() {}
 
-// TextOverflowTruncateStart is gpui_kit::TextOverflow::TruncateStart.
+// TextOverflowTruncateStart represents gpui_kit::TextOverflow::TruncateStart.
 type TextOverflowTruncateStart struct {
 	Value string
 }
 
 func (TextOverflowTruncateStart) isTextOverflow() {}
 
-// TextOverflowTruncateMiddle is gpui_kit::TextOverflow::TruncateMiddle.
+// TextOverflowTruncateMiddle represents gpui_kit::TextOverflow::TruncateMiddle.
 type TextOverflowTruncateMiddle struct {
 	Value string
 }
@@ -1925,38 +1980,39 @@ func putTextOverflow(o *rt.Tape, v TextOverflow) {
 	}
 }
 
-// WindowBounds is gpui_kit::WindowBounds: one struct type per variant.
+// WindowBounds represents gpui_kit::WindowBounds with one struct type per variant.
 type WindowBounds interface{ isWindowBounds() }
 
-// WindowBoundsWindowed is gpui_kit::WindowBounds::Windowed.
+// WindowBoundsWindowed represents gpui_kit::WindowBounds::Windowed.
 type WindowBoundsWindowed struct {
 	Bounds
 }
 
 func (WindowBoundsWindowed) isWindowBounds() {}
 
-// WindowBoundsMaximized is gpui_kit::WindowBounds::Maximized.
+// WindowBoundsMaximized represents gpui_kit::WindowBounds::Maximized.
 type WindowBoundsMaximized struct {
 	Bounds
 }
 
 func (WindowBoundsMaximized) isWindowBounds() {}
 
-// WindowBoundsFullscreen is gpui_kit::WindowBounds::Fullscreen.
+// WindowBoundsFullscreen represents gpui_kit::WindowBounds::Fullscreen.
 type WindowBoundsFullscreen struct {
 	Bounds
 }
 
 func (WindowBoundsFullscreen) isWindowBounds() {}
 
-// WindowKind is gpui_kit::WindowKind: a constant of WindowKindKind for each variant without data, a struct type for each other one.
+// WindowKind represents gpui_kit::WindowKind: unit variants use WindowKindKind constants and payload variants use distinct struct types.
 type WindowKind interface{ isWindowKind() }
 
-// WindowKindKind is a variant of gpui_kit::WindowKind without data: gk.WindowKindNormal.
+// WindowKindKind represents unit variants of gpui_kit::WindowKind (for example WindowKindNormal).
 type WindowKindKind uint16
 
 func (WindowKindKind) isWindowKind() {}
 
+// WindowKindKind unit variant values.
 const (
 	WindowKindNormal   WindowKindKind = 0 // gpui_kit::WindowKind::Normal
 	WindowKindPopUp    WindowKindKind = 1 // gpui_kit::WindowKind::PopUp
@@ -1964,10 +2020,10 @@ const (
 	WindowKindDialog   WindowKindKind = 5 // gpui_kit::WindowKind::Dialog
 )
 
-// CornersInto is what `impl Into<gpui_kit::Corners<gpui_kit::Pixels>>` accepts: one of Corners, float32.
+// CornersInto accepts any Go type accepted by `impl Into<gpui_kit::Corners<gpui_kit::Pixels>>`: Corners, float32.
 type CornersInto interface{}
 
-// EdgesInto is what `impl Into<gpui_kit::Edges<gpui_kit::Pixels>>` accepts: one of GpuiEdges, float32.
+// EdgesInto accepts any Go type accepted by `impl Into<gpui_kit::Edges<gpui_kit::Pixels>>`: GpuiEdges, float32.
 type EdgesInto interface{}
 
 func putEdgesInto(o *rt.Tape, v EdgesInto) {
@@ -1985,7 +2041,7 @@ func putEdgesInto(o *rt.Tape, v EdgesInto) {
 	}
 }
 
-// ImageSourceInto is what `impl Into<gpui_kit::ImageSource>` accepts: one of ImageSource, string, RenderImage, ImageBytes.
+// ImageSourceInto accepts any Go type accepted by `impl Into<gpui_kit::ImageSource>`: ImageSource, string, RenderImage, ImageBytes.
 type ImageSourceInto interface{}
 
 func putImageSourceInto(o *rt.Tape, v ImageSourceInto) {
@@ -2012,7 +2068,7 @@ func putImageSourceInto(o *rt.Tape, v ImageSourceInto) {
 	}
 }
 
-// RadiansInto is what `impl Into<gpui_kit::Radians>` accepts: one of Radians, Percentage.
+// RadiansInto accepts any Go type accepted by `impl Into<gpui_kit::Radians>`: Radians, Percentage.
 type RadiansInto interface{}
 
 func putRadiansInto(o *rt.Tape, v RadiansInto) {
@@ -2030,7 +2086,7 @@ func putRadiansInto(o *rt.Tape, v RadiansInto) {
 	}
 }
 
-// ScrollbarAxisInto is what `impl Into<gpui_kit::base::ScrollbarAxis>` accepts: one of ScrollbarAxis, Axis.
+// ScrollbarAxisInto accepts any Go type accepted by `impl Into<gpui_kit::base::ScrollbarAxis>`: ScrollbarAxis, Axis.
 type ScrollbarAxisInto interface{}
 
 func putScrollbarAxisInto(o *rt.Tape, v ScrollbarAxisInto) {
@@ -2048,7 +2104,7 @@ func putScrollbarAxisInto(o *rt.Tape, v ScrollbarAxisInto) {
 	}
 }
 
-// SignedDurationInto is what `impl Into<gpui_kit::base::SignedDuration>` accepts: one of SignedDuration, time.Duration.
+// SignedDurationInto accepts any Go type accepted by `impl Into<gpui_kit::base::SignedDuration>`: SignedDuration, time.Duration.
 type SignedDurationInto interface{}
 
 func putSignedDurationInto(o *rt.Tape, v SignedDurationInto) {
@@ -2066,7 +2122,7 @@ func putSignedDurationInto(o *rt.Tape, v SignedDurationInto) {
 	}
 }
 
-// SizeInto is what `impl Into<gpui_kit::component::Size>` accepts: one of Size, float32.
+// SizeInto accepts any Go type accepted by `impl Into<gpui_kit::component::Size>`: Size, float32.
 type SizeInto interface{}
 
 func putSizeInto(o *rt.Tape, v SizeInto) {
@@ -2084,7 +2140,7 @@ func putSizeInto(o *rt.Tape, v SizeInto) {
 	}
 }
 
-// ThemeModeInto is what `impl Into<gpui_kit::component::ThemeMode>` accepts: one of ThemeMode, WindowAppearance.
+// ThemeModeInto accepts any Go type accepted by `impl Into<gpui_kit::component::ThemeMode>`: ThemeMode, WindowAppearance.
 type ThemeModeInto interface{}
 
 func putThemeModeInto(o *rt.Tape, v ThemeModeInto) {
@@ -2102,28 +2158,28 @@ func putThemeModeInto(o *rt.Tape, v ThemeModeInto) {
 	}
 }
 
-// TransitionIDInto is what `impl Into<gpui_kit::base::TransitionId>` accepts: one of ID, string, int, int32.
+// TransitionIDInto accepts any Go type accepted by `impl Into<gpui_kit::base::TransitionId>`: ID, string, int, int32.
 type TransitionIDInto interface{}
 
-// Event65 is the payload of handlers of shape 65: (bool, &ClickEvent).
+// Event65 holds the multi-argument payload for handler shape 65 (bool, &ClickEvent).
 type Event65 struct {
 	A0 bool
 	A1 ClickEvent
 }
 
-// Event69 is the payload of handlers of shape 69: (Hsla, bool).
+// Event69 holds the multi-argument payload for handler shape 69 (Hsla, bool).
 type Event69 struct {
 	A0 Hsla
 	A1 bool
 }
 
-// Event70 is the payload of handlers of shape 70: (Hsla, &ClickEvent).
+// Event70 holds the multi-argument payload for handler shape 70 (Hsla, &ClickEvent).
 type Event70 struct {
 	A0 Hsla
 	A1 ClickEvent
 }
 
-// Event83 is the payload of handlers of shape 83: (&SharedString, &ClickEvent).
+// Event83 holds the multi-argument payload for handler shape 83 (&SharedString, &ClickEvent).
 type Event83 struct {
 	A0 string
 	A1 ClickEvent
@@ -2437,76 +2493,91 @@ func init() {
 	}})
 }
 
+// TupleCivilDateCivilDate holds a 2-element tuple (CivilDate, CivilDate).
 type TupleCivilDateCivilDate struct {
 	V0 CivilDate
 	V1 CivilDate
 }
 
+// TupleFloat32Float32 holds a 2-element tuple (float32, float32).
 type TupleFloat32Float32 struct {
 	V0 float32
 	V1 float32
 }
 
+// TupleInt32Int32 holds a 2-element tuple (int32, int32).
 type TupleInt32Int32 struct {
 	V0 int32
 	V1 int32
 }
 
+// TupleInt32Uint32 holds a 2-element tuple (int32, uint32).
 type TupleInt32Uint32 struct {
 	V0 int32
 	V1 uint32
 }
 
+// TupleIntInt holds a 2-element tuple (int, int).
 type TupleIntInt struct {
 	V0 int
 	V1 int
 }
 
+// TupleIntString holds a 2-element tuple (int, string).
 type TupleIntString struct {
 	V0 int
 	V1 string
 }
 
+// TupleListStringListListString holds a 2-element tuple ([]string, [][]string).
 type TupleListStringListListString struct {
 	V0 []string
 	V1 [][]string
 }
 
+// TupleRangeColor holds a 2-element tuple (Range, Color).
 type TupleRangeColor struct {
 	V0 Range
 	V1 Color
 }
 
+// TupleRangeHighlightStyle holds a 2-element tuple (Range, HighlightStyle).
 type TupleRangeHighlightStyle struct {
 	V0 Range
 	V1 HighlightStyle
 }
 
+// TupleStringCompletionItem holds a 2-element tuple (string, CompletionItem).
 type TupleStringCompletionItem struct {
 	V0 string
 	V1 CompletionItem
 }
 
+// TupleStringString holds a 2-element tuple (string, string).
 type TupleStringString struct {
 	V0 string
 	V1 string
 }
 
+// TupleStringThemeConfigRc holds a 2-element tuple (string, ThemeConfigRc).
 type TupleStringThemeConfigRc struct {
 	V0 string
 	V1 ThemeConfigRc
 }
 
+// TupleStringUint32 holds a 2-element tuple (string, uint32).
 type TupleStringUint32 struct {
 	V0 string
 	V1 uint32
 }
 
+// TupleThemeModeThemeConfigRc holds a 2-element tuple (ThemeMode, ThemeConfigRc).
 type TupleThemeModeThemeConfigRc struct {
 	V0 ThemeMode
 	V1 ThemeConfigRc
 }
 
+// TupleUint64Uint64 holds a 2-element tuple (uint64, uint64).
 type TupleUint64Uint64 struct {
 	V0 uint64
 	V1 uint64

@@ -12,7 +12,7 @@ type GroupedSidebarEl struct{ rt.ElAnimatableElement }
 
 // Create a new Sidebar with the given ID.
 //
-// GroupedSidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::new.
+// GroupedSidebar calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::new.
 func GroupedSidebar(id gk.ID, st ...gk.Style) GroupedSidebarEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(872)
@@ -24,7 +24,7 @@ func GroupedSidebar(id gk.ID, st ...gk.Style) GroupedSidebarEl {
 
 // Add a child element to the sidebar, the child must implement `Collapsible`
 //
-// Child is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::child.
+// Child calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::child.
 func (e GroupedSidebarEl) Child(child SidebarGroup) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
@@ -33,7 +33,7 @@ func (e GroupedSidebarEl) Child(child SidebarGroup) GroupedSidebarEl {
 
 // Add multiple children to the sidebar, the children must implement `Collapsible`
 //
-// Children is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::children.
+// Children calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::children.
 func (e GroupedSidebarEl) Children(children []SidebarGroup) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(children)))
@@ -45,7 +45,7 @@ func (e GroupedSidebarEl) Children(children []SidebarGroup) GroupedSidebarEl {
 
 // Set the sidebar to be collapsed
 //
-// Collapsed is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsed.
+// Collapsed calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsed.
 func (e GroupedSidebarEl) Collapsed(collapsed bool) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(collapsed)
@@ -56,7 +56,7 @@ func (e GroupedSidebarEl) Collapsed(collapsed bool) GroupedSidebarEl {
 //
 // Passing `true` keeps the previous behavior and maps to `Icon`. Passing `false` maps to `None`.
 //
-// Collapsible is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsible.
+// Collapsible calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsible.
 func (e GroupedSidebarEl) Collapsible(collapsible SidebarCollapsibleInto) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	putSidebarCollapsibleInto(o, collapsible)
@@ -65,7 +65,7 @@ func (e GroupedSidebarEl) Collapsible(collapsible SidebarCollapsibleInto) Groupe
 
 // Set the footer of the sidebar.
 //
-// Footer is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::footer.
+// Footer calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::footer.
 func (e GroupedSidebarEl) Footer(footer gk.Element) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Take(footer))
@@ -74,7 +74,7 @@ func (e GroupedSidebarEl) Footer(footer gk.Element) GroupedSidebarEl {
 
 // Set the header of the sidebar.
 //
-// Header is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::header.
+// Header calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::header.
 func (e GroupedSidebarEl) Header(header gk.Element) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Take(header))
@@ -85,7 +85,7 @@ func (e GroupedSidebarEl) Header(header gk.Element) GroupedSidebarEl {
 //
 // Default is `Side::Left`.
 //
-// Side is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::side.
+// Side calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::side.
 func (e GroupedSidebarEl) Side(side gk.Side) GroupedSidebarEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U16(uint16(side))
@@ -94,32 +94,40 @@ func (e GroupedSidebarEl) Side(side gk.Side) GroupedSidebarEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e GroupedSidebarEl) PopoverStyle() GroupedSidebarEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e GroupedSidebarEl) RoundedFullStyle() GroupedSidebarEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e GroupedSidebarEl) BorderE(width gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e GroupedSidebarEl) BorderS(width gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -127,142 +135,184 @@ func (e GroupedSidebarEl) BorderS(width gk.Length) GroupedSidebarEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e GroupedSidebarEl) FlexRowDir() GroupedSidebarEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e GroupedSidebarEl) InsetE(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e GroupedSidebarEl) InsetS(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e GroupedSidebarEl) JustifyFlexEnd() GroupedSidebarEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e GroupedSidebarEl) JustifyFlexStart() GroupedSidebarEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e GroupedSidebarEl) Me(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e GroupedSidebarEl) Ms(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e GroupedSidebarEl) Pe(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e GroupedSidebarEl) Ps(length gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e GroupedSidebarEl) RoundedE(radius gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e GroupedSidebarEl) RoundedS(radius gk.Length) GroupedSidebarEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e GroupedSidebarEl) TextEnd() GroupedSidebarEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e GroupedSidebarEl) TextStart() GroupedSidebarEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e GroupedSidebarEl) CornerRadii(radius gk.Corners) GroupedSidebarEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e GroupedSidebarEl) DebugBlue() GroupedSidebarEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e GroupedSidebarEl) DebugFocused(focusHandle gk.FocusHandle) GroupedSidebarEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e GroupedSidebarEl) DebugGreen() GroupedSidebarEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e GroupedSidebarEl) DebugPink() GroupedSidebarEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e GroupedSidebarEl) DebugRed() GroupedSidebarEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e GroupedSidebarEl) DebugYellow() GroupedSidebarEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e GroupedSidebarEl) FontBlack() GroupedSidebarEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e GroupedSidebarEl) FontBold() GroupedSidebarEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e GroupedSidebarEl) FontExtrabold() GroupedSidebarEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e GroupedSidebarEl) FontExtralight() GroupedSidebarEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e GroupedSidebarEl) FontLight() GroupedSidebarEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e GroupedSidebarEl) FontMedium() GroupedSidebarEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e GroupedSidebarEl) FontNormal() GroupedSidebarEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e GroupedSidebarEl) FontSemibold() GroupedSidebarEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e GroupedSidebarEl) FontThin() GroupedSidebarEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -271,18 +321,23 @@ func (e GroupedSidebarEl) FontThin() GroupedSidebarEl { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e GroupedSidebarEl) HFlex() GroupedSidebarEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e GroupedSidebarEl) Margins(margins gk.EdgesInto) GroupedSidebarEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e GroupedSidebarEl) Paddings(paddings gk.EdgesInto) GroupedSidebarEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e GroupedSidebarEl) RefineStyle(style gk.StyleRefinement) GroupedSidebarEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -292,24 +347,32 @@ func (e GroupedSidebarEl) RefineStyle(style gk.StyleRefinement) GroupedSidebarEl
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e GroupedSidebarEl) VFlex() GroupedSidebarEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e GroupedSidebarEl) Style(st ...gk.Style) GroupedSidebarEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e GroupedSidebarEl) AspectRatio(ratio float32) GroupedSidebarEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e GroupedSidebarEl) Bg(fill gk.Fill) GroupedSidebarEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e GroupedSidebarEl) Border(length gk.Length) GroupedSidebarEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -317,12 +380,16 @@ func (e GroupedSidebarEl) Border(length gk.Length) GroupedSidebarEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e GroupedSidebarEl) BorderB(length gk.Length) GroupedSidebarEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e GroupedSidebarEl) BorderColor(borderColor gk.Color) GroupedSidebarEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -330,6 +397,8 @@ func (e GroupedSidebarEl) BorderColor(borderColor gk.Color) GroupedSidebarEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e GroupedSidebarEl) BorderL(length gk.Length) GroupedSidebarEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -337,6 +406,8 @@ func (e GroupedSidebarEl) BorderL(length gk.Length) GroupedSidebarEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e GroupedSidebarEl) BorderR(length gk.Length) GroupedSidebarEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -344,6 +415,8 @@ func (e GroupedSidebarEl) BorderR(length gk.Length) GroupedSidebarEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e GroupedSidebarEl) BorderT(length gk.Length) GroupedSidebarEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -351,6 +424,8 @@ func (e GroupedSidebarEl) BorderT(length gk.Length) GroupedSidebarEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e GroupedSidebarEl) BorderX(length gk.Length) GroupedSidebarEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -358,6 +433,8 @@ func (e GroupedSidebarEl) BorderX(length gk.Length) GroupedSidebarEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e GroupedSidebarEl) BorderY(length gk.Length) GroupedSidebarEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -365,30 +442,40 @@ func (e GroupedSidebarEl) BorderY(length gk.Length) GroupedSidebarEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e GroupedSidebarEl) Bottom(length gk.Length) GroupedSidebarEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e GroupedSidebarEl) ColEnd(end int16) GroupedSidebarEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e GroupedSidebarEl) ColSpan(span uint16) GroupedSidebarEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e GroupedSidebarEl) ColStart(start int16) GroupedSidebarEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e GroupedSidebarEl) Cursor(cursor gk.CursorStyle) GroupedSidebarEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -396,36 +483,48 @@ func (e GroupedSidebarEl) Cursor(cursor gk.CursorStyle) GroupedSidebarEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e GroupedSidebarEl) FlexBasis(basis gk.Length) GroupedSidebarEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e GroupedSidebarEl) FlexGrow(grow float32) GroupedSidebarEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e GroupedSidebarEl) FlexShrink(shrink float32) GroupedSidebarEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e GroupedSidebarEl) Font(font gk.Font) GroupedSidebarEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e GroupedSidebarEl) FontFamily(familyName string) GroupedSidebarEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e GroupedSidebarEl) FontFeatures(features gk.FontFeatures) GroupedSidebarEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -434,12 +533,16 @@ func (e GroupedSidebarEl) FontFeatures(features gk.FontFeatures) GroupedSidebarE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e GroupedSidebarEl) FontWeight(weight gk.FontWeight) GroupedSidebarEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e GroupedSidebarEl) Gap(length gk.Length) GroupedSidebarEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -447,6 +550,8 @@ func (e GroupedSidebarEl) Gap(length gk.Length) GroupedSidebarEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e GroupedSidebarEl) GapX(length gk.Length) GroupedSidebarEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -454,18 +559,24 @@ func (e GroupedSidebarEl) GapX(length gk.Length) GroupedSidebarEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e GroupedSidebarEl) GapY(length gk.Length) GroupedSidebarEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e GroupedSidebarEl) GridCols(cols uint16) GroupedSidebarEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e GroupedSidebarEl) GridColsMaxContent(cols uint16) GroupedSidebarEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -473,18 +584,24 @@ func (e GroupedSidebarEl) GridColsMaxContent(cols uint16) GroupedSidebarEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e GroupedSidebarEl) GridColsMinContent(cols uint16) GroupedSidebarEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e GroupedSidebarEl) GridRows(rows uint16) GroupedSidebarEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e GroupedSidebarEl) GridRowsMaxContent(rows uint16) GroupedSidebarEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -492,12 +609,16 @@ func (e GroupedSidebarEl) GridRowsMaxContent(rows uint16) GroupedSidebarEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e GroupedSidebarEl) GridRowsMinContent(rows uint16) GroupedSidebarEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e GroupedSidebarEl) H(length gk.Length) GroupedSidebarEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -505,6 +626,8 @@ func (e GroupedSidebarEl) H(length gk.Length) GroupedSidebarEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e GroupedSidebarEl) Inset(length gk.Length) GroupedSidebarEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -512,6 +635,8 @@ func (e GroupedSidebarEl) Inset(length gk.Length) GroupedSidebarEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e GroupedSidebarEl) Left(length gk.Length) GroupedSidebarEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -519,36 +644,48 @@ func (e GroupedSidebarEl) Left(length gk.Length) GroupedSidebarEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e GroupedSidebarEl) LineClamp(lines int) GroupedSidebarEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e GroupedSidebarEl) LineHeight(lineHeight gk.Length) GroupedSidebarEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e GroupedSidebarEl) M(length gk.Length) GroupedSidebarEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e GroupedSidebarEl) MaxH(length gk.Length) GroupedSidebarEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e GroupedSidebarEl) MaxSize(length gk.Length) GroupedSidebarEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e GroupedSidebarEl) MaxW(length gk.Length) GroupedSidebarEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -556,24 +693,32 @@ func (e GroupedSidebarEl) MaxW(length gk.Length) GroupedSidebarEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e GroupedSidebarEl) Mb(length gk.Length) GroupedSidebarEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e GroupedSidebarEl) MinH(length gk.Length) GroupedSidebarEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e GroupedSidebarEl) MinSize(length gk.Length) GroupedSidebarEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e GroupedSidebarEl) MinW(length gk.Length) GroupedSidebarEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -581,6 +726,8 @@ func (e GroupedSidebarEl) MinW(length gk.Length) GroupedSidebarEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e GroupedSidebarEl) Ml(length gk.Length) GroupedSidebarEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -588,6 +735,8 @@ func (e GroupedSidebarEl) Ml(length gk.Length) GroupedSidebarEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e GroupedSidebarEl) Mr(length gk.Length) GroupedSidebarEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -595,6 +744,8 @@ func (e GroupedSidebarEl) Mr(length gk.Length) GroupedSidebarEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e GroupedSidebarEl) Mt(length gk.Length) GroupedSidebarEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -602,6 +753,8 @@ func (e GroupedSidebarEl) Mt(length gk.Length) GroupedSidebarEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e GroupedSidebarEl) Mx(length gk.Length) GroupedSidebarEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -609,18 +762,24 @@ func (e GroupedSidebarEl) Mx(length gk.Length) GroupedSidebarEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e GroupedSidebarEl) My(length gk.Length) GroupedSidebarEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e GroupedSidebarEl) Opacity(opacity float32) GroupedSidebarEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e GroupedSidebarEl) P(length gk.Length) GroupedSidebarEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -628,6 +787,8 @@ func (e GroupedSidebarEl) P(length gk.Length) GroupedSidebarEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e GroupedSidebarEl) Pb(length gk.Length) GroupedSidebarEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -635,6 +796,8 @@ func (e GroupedSidebarEl) Pb(length gk.Length) GroupedSidebarEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e GroupedSidebarEl) Pl(length gk.Length) GroupedSidebarEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -642,6 +805,8 @@ func (e GroupedSidebarEl) Pl(length gk.Length) GroupedSidebarEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e GroupedSidebarEl) Pr(length gk.Length) GroupedSidebarEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -649,6 +814,8 @@ func (e GroupedSidebarEl) Pr(length gk.Length) GroupedSidebarEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e GroupedSidebarEl) Pt(length gk.Length) GroupedSidebarEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -656,6 +823,8 @@ func (e GroupedSidebarEl) Pt(length gk.Length) GroupedSidebarEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e GroupedSidebarEl) Px(length gk.Length) GroupedSidebarEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -663,6 +832,8 @@ func (e GroupedSidebarEl) Px(length gk.Length) GroupedSidebarEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e GroupedSidebarEl) Py(length gk.Length) GroupedSidebarEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -670,12 +841,16 @@ func (e GroupedSidebarEl) Py(length gk.Length) GroupedSidebarEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e GroupedSidebarEl) Right(length gk.Length) GroupedSidebarEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e GroupedSidebarEl) Rounded(length gk.Length) GroupedSidebarEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -683,6 +858,8 @@ func (e GroupedSidebarEl) Rounded(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e GroupedSidebarEl) RoundedB(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -690,6 +867,8 @@ func (e GroupedSidebarEl) RoundedB(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e GroupedSidebarEl) RoundedBl(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -697,6 +876,8 @@ func (e GroupedSidebarEl) RoundedBl(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e GroupedSidebarEl) RoundedBr(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -704,6 +885,8 @@ func (e GroupedSidebarEl) RoundedBr(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e GroupedSidebarEl) RoundedL(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -711,6 +894,8 @@ func (e GroupedSidebarEl) RoundedL(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e GroupedSidebarEl) RoundedR(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -718,6 +903,8 @@ func (e GroupedSidebarEl) RoundedR(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e GroupedSidebarEl) RoundedT(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -725,6 +912,8 @@ func (e GroupedSidebarEl) RoundedT(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e GroupedSidebarEl) RoundedTl(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -732,24 +921,32 @@ func (e GroupedSidebarEl) RoundedTl(length gk.Length) GroupedSidebarEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e GroupedSidebarEl) RoundedTr(length gk.Length) GroupedSidebarEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e GroupedSidebarEl) RowEnd(end int16) GroupedSidebarEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e GroupedSidebarEl) RowSpan(span uint16) GroupedSidebarEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e GroupedSidebarEl) RowStart(start int16) GroupedSidebarEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -759,24 +956,32 @@ func (e GroupedSidebarEl) RowStart(start int16) GroupedSidebarEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e GroupedSidebarEl) ScrollbarWidth(width gk.Length) GroupedSidebarEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e GroupedSidebarEl) Shadow(shadows []gk.BoxShadow) GroupedSidebarEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e GroupedSidebarEl) Size(length gk.Length) GroupedSidebarEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e GroupedSidebarEl) TextAlign(align gk.TextAlign) GroupedSidebarEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -785,6 +990,8 @@ func (e GroupedSidebarEl) TextAlign(align gk.TextAlign) GroupedSidebarEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e GroupedSidebarEl) TextBg(bg gk.Color) GroupedSidebarEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -793,18 +1000,24 @@ func (e GroupedSidebarEl) TextBg(bg gk.Color) GroupedSidebarEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e GroupedSidebarEl) TextColor(color gk.Color) GroupedSidebarEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e GroupedSidebarEl) TextDecorationColor(color gk.Color) GroupedSidebarEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e GroupedSidebarEl) TextOverflow(overflow gk.TextOverflow) GroupedSidebarEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -813,6 +1026,8 @@ func (e GroupedSidebarEl) TextOverflow(overflow gk.TextOverflow) GroupedSidebarE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e GroupedSidebarEl) TextSize(size gk.Length) GroupedSidebarEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -820,12 +1035,16 @@ func (e GroupedSidebarEl) TextSize(size gk.Length) GroupedSidebarEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e GroupedSidebarEl) Top(length gk.Length) GroupedSidebarEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e GroupedSidebarEl) W(length gk.Length) GroupedSidebarEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -836,7 +1055,7 @@ type SidebarEl struct{ rt.ElAnimatableElement }
 
 // Create a new Sidebar with the given ID.
 //
-// Sidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::new.
+// Sidebar calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::new.
 func Sidebar(id gk.ID, st ...gk.Style) SidebarEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(873)
@@ -848,7 +1067,7 @@ func Sidebar(id gk.ID, st ...gk.Style) SidebarEl {
 
 // Add a child element to the sidebar, the child must implement `Collapsible`
 //
-// Child is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::child.
+// Child calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::child.
 func (e SidebarEl) Child(child SidebarMenu) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
@@ -857,7 +1076,7 @@ func (e SidebarEl) Child(child SidebarMenu) SidebarEl {
 
 // Add multiple children to the sidebar, the children must implement `Collapsible`
 //
-// Children is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::children.
+// Children calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::children.
 func (e SidebarEl) Children(children []SidebarMenu) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(children)))
@@ -869,7 +1088,7 @@ func (e SidebarEl) Children(children []SidebarMenu) SidebarEl {
 
 // Set the sidebar to be collapsed
 //
-// Collapsed is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsed.
+// Collapsed calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsed.
 func (e SidebarEl) Collapsed(collapsed bool) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(collapsed)
@@ -880,7 +1099,7 @@ func (e SidebarEl) Collapsed(collapsed bool) SidebarEl {
 //
 // Passing `true` keeps the previous behavior and maps to `Icon`. Passing `false` maps to `None`.
 //
-// Collapsible is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsible.
+// Collapsible calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsible.
 func (e SidebarEl) Collapsible(collapsible SidebarCollapsibleInto) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	putSidebarCollapsibleInto(o, collapsible)
@@ -889,7 +1108,7 @@ func (e SidebarEl) Collapsible(collapsible SidebarCollapsibleInto) SidebarEl {
 
 // Set the footer of the sidebar.
 //
-// Footer is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::footer.
+// Footer calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::footer.
 func (e SidebarEl) Footer(footer gk.Element) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Take(footer))
@@ -898,7 +1117,7 @@ func (e SidebarEl) Footer(footer gk.Element) SidebarEl {
 
 // Set the header of the sidebar.
 //
-// Header is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::header.
+// Header calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::header.
 func (e SidebarEl) Header(header gk.Element) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Take(header))
@@ -909,7 +1128,7 @@ func (e SidebarEl) Header(header gk.Element) SidebarEl {
 //
 // Default is `Side::Left`.
 //
-// Side is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::side.
+// Side calls <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::side.
 func (e SidebarEl) Side(side gk.Side) SidebarEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U16(uint16(side))
@@ -918,26 +1137,34 @@ func (e SidebarEl) Side(side gk.Side) SidebarEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SidebarEl) PopoverStyle() SidebarEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SidebarEl) RoundedFullStyle() SidebarEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SidebarEl) BorderE(width gk.Length) SidebarEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SidebarEl) BorderS(width gk.Length) SidebarEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -945,121 +1172,163 @@ func (e SidebarEl) BorderS(width gk.Length) SidebarEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SidebarEl) FlexRowDir() SidebarEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SidebarEl) InsetE(length gk.Length) SidebarEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SidebarEl) InsetS(length gk.Length) SidebarEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SidebarEl) JustifyFlexEnd() SidebarEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SidebarEl) JustifyFlexStart() SidebarEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SidebarEl) Me(length gk.Length) SidebarEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SidebarEl) Ms(length gk.Length) SidebarEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SidebarEl) Pe(length gk.Length) SidebarEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SidebarEl) Ps(length gk.Length) SidebarEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SidebarEl) RoundedE(radius gk.Length) SidebarEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SidebarEl) RoundedS(radius gk.Length) SidebarEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SidebarEl) TextEnd() SidebarEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SidebarEl) TextStart() SidebarEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SidebarEl) CornerRadii(radius gk.Corners) SidebarEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SidebarEl) DebugBlue() SidebarEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SidebarEl) DebugFocused(focusHandle gk.FocusHandle) SidebarEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SidebarEl) DebugGreen() SidebarEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SidebarEl) DebugPink() SidebarEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SidebarEl) DebugRed() SidebarEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SidebarEl) DebugYellow() SidebarEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SidebarEl) FontBlack() SidebarEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SidebarEl) FontBold() SidebarEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SidebarEl) FontExtrabold() SidebarEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SidebarEl) FontExtralight() SidebarEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SidebarEl) FontLight() SidebarEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SidebarEl) FontMedium() SidebarEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SidebarEl) FontNormal() SidebarEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SidebarEl) FontSemibold() SidebarEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SidebarEl) FontThin() SidebarEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1068,18 +1337,23 @@ func (e SidebarEl) FontThin() SidebarEl { tStyledExtFontThin(rt.N(e.Core)); retu
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SidebarEl) HFlex() SidebarEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SidebarEl) Margins(margins gk.EdgesInto) SidebarEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SidebarEl) Paddings(paddings gk.EdgesInto) SidebarEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SidebarEl) RefineStyle(style gk.StyleRefinement) SidebarEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1089,31 +1363,43 @@ func (e SidebarEl) RefineStyle(style gk.StyleRefinement) SidebarEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SidebarEl) VFlex() SidebarEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SidebarEl) Style(st ...gk.Style) SidebarEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SidebarEl) AspectRatio(ratio float32) SidebarEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SidebarEl) Bg(fill gk.Fill) SidebarEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SidebarEl) Border(length gk.Length) SidebarEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SidebarEl) BorderB(length gk.Length) SidebarEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SidebarEl) BorderColor(borderColor gk.Color) SidebarEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1121,6 +1407,8 @@ func (e SidebarEl) BorderColor(borderColor gk.Color) SidebarEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SidebarEl) BorderL(length gk.Length) SidebarEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1128,6 +1416,8 @@ func (e SidebarEl) BorderL(length gk.Length) SidebarEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SidebarEl) BorderR(length gk.Length) SidebarEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1135,6 +1425,8 @@ func (e SidebarEl) BorderR(length gk.Length) SidebarEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SidebarEl) BorderT(length gk.Length) SidebarEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1142,6 +1434,8 @@ func (e SidebarEl) BorderT(length gk.Length) SidebarEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SidebarEl) BorderX(length gk.Length) SidebarEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1149,6 +1443,8 @@ func (e SidebarEl) BorderX(length gk.Length) SidebarEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SidebarEl) BorderY(length gk.Length) SidebarEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1156,18 +1452,28 @@ func (e SidebarEl) BorderY(length gk.Length) SidebarEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SidebarEl) Bottom(length gk.Length) SidebarEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SidebarEl) ColEnd(end int16) SidebarEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SidebarEl) ColSpan(span uint16) SidebarEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SidebarEl) ColStart(start int16) SidebarEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SidebarEl) Cursor(cursor gk.CursorStyle) SidebarEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1175,30 +1481,42 @@ func (e SidebarEl) Cursor(cursor gk.CursorStyle) SidebarEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SidebarEl) FlexBasis(basis gk.Length) SidebarEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SidebarEl) FlexGrow(grow float32) SidebarEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SidebarEl) FlexShrink(shrink float32) SidebarEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SidebarEl) Font(font gk.Font) SidebarEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SidebarEl) FontFamily(familyName string) SidebarEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SidebarEl) FontFeatures(features gk.FontFeatures) SidebarEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1207,26 +1525,38 @@ func (e SidebarEl) FontFeatures(features gk.FontFeatures) SidebarEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SidebarEl) FontWeight(weight gk.FontWeight) SidebarEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SidebarEl) Gap(length gk.Length) SidebarEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SidebarEl) GapX(length gk.Length) SidebarEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SidebarEl) GapY(length gk.Length) SidebarEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SidebarEl) GridCols(cols uint16) SidebarEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SidebarEl) GridColsMaxContent(cols uint16) SidebarEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1234,15 +1564,21 @@ func (e SidebarEl) GridColsMaxContent(cols uint16) SidebarEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SidebarEl) GridColsMinContent(cols uint16) SidebarEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SidebarEl) GridRows(rows uint16) SidebarEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SidebarEl) GridRowsMaxContent(rows uint16) SidebarEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1250,121 +1586,179 @@ func (e SidebarEl) GridRowsMaxContent(rows uint16) SidebarEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SidebarEl) GridRowsMinContent(rows uint16) SidebarEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SidebarEl) H(length gk.Length) SidebarEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SidebarEl) Inset(length gk.Length) SidebarEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SidebarEl) Left(length gk.Length) SidebarEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SidebarEl) LineClamp(lines int) SidebarEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SidebarEl) LineHeight(lineHeight gk.Length) SidebarEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SidebarEl) M(length gk.Length) SidebarEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SidebarEl) MaxH(length gk.Length) SidebarEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SidebarEl) MaxSize(length gk.Length) SidebarEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SidebarEl) MaxW(length gk.Length) SidebarEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SidebarEl) Mb(length gk.Length) SidebarEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SidebarEl) MinH(length gk.Length) SidebarEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SidebarEl) MinSize(length gk.Length) SidebarEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SidebarEl) MinW(length gk.Length) SidebarEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SidebarEl) Ml(length gk.Length) SidebarEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SidebarEl) Mr(length gk.Length) SidebarEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SidebarEl) Mt(length gk.Length) SidebarEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SidebarEl) Mx(length gk.Length) SidebarEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SidebarEl) My(length gk.Length) SidebarEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SidebarEl) Opacity(opacity float32) SidebarEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SidebarEl) P(length gk.Length) SidebarEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SidebarEl) Pb(length gk.Length) SidebarEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SidebarEl) Pl(length gk.Length) SidebarEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SidebarEl) Pr(length gk.Length) SidebarEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SidebarEl) Pt(length gk.Length) SidebarEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SidebarEl) Px(length gk.Length) SidebarEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SidebarEl) Py(length gk.Length) SidebarEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SidebarEl) Right(length gk.Length) SidebarEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SidebarEl) Rounded(length gk.Length) SidebarEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1372,6 +1766,8 @@ func (e SidebarEl) Rounded(length gk.Length) SidebarEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SidebarEl) RoundedB(length gk.Length) SidebarEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1379,6 +1775,8 @@ func (e SidebarEl) RoundedB(length gk.Length) SidebarEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SidebarEl) RoundedBl(length gk.Length) SidebarEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1386,6 +1784,8 @@ func (e SidebarEl) RoundedBl(length gk.Length) SidebarEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SidebarEl) RoundedBr(length gk.Length) SidebarEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1393,6 +1793,8 @@ func (e SidebarEl) RoundedBr(length gk.Length) SidebarEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SidebarEl) RoundedL(length gk.Length) SidebarEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1400,6 +1802,8 @@ func (e SidebarEl) RoundedL(length gk.Length) SidebarEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SidebarEl) RoundedR(length gk.Length) SidebarEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1407,6 +1811,8 @@ func (e SidebarEl) RoundedR(length gk.Length) SidebarEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SidebarEl) RoundedT(length gk.Length) SidebarEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1414,6 +1820,8 @@ func (e SidebarEl) RoundedT(length gk.Length) SidebarEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SidebarEl) RoundedTl(length gk.Length) SidebarEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1421,39 +1829,55 @@ func (e SidebarEl) RoundedTl(length gk.Length) SidebarEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SidebarEl) RoundedTr(length gk.Length) SidebarEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SidebarEl) RowEnd(end int16) SidebarEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SidebarEl) RowSpan(span uint16) SidebarEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SidebarEl) RowStart(start int16) SidebarEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SidebarEl) ScrollbarWidth(width gk.Length) SidebarEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SidebarEl) Shadow(shadows []gk.BoxShadow) SidebarEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SidebarEl) Size(length gk.Length) SidebarEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SidebarEl) TextAlign(align gk.TextAlign) SidebarEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1462,23 +1886,31 @@ func (e SidebarEl) TextAlign(align gk.TextAlign) SidebarEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SidebarEl) TextBg(bg gk.Color) SidebarEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SidebarEl) TextColor(color gk.Color) SidebarEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SidebarEl) TextDecorationColor(color gk.Color) SidebarEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SidebarEl) TextOverflow(overflow gk.TextOverflow) SidebarEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1487,13 +1919,19 @@ func (e SidebarEl) TextOverflow(overflow gk.TextOverflow) SidebarEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SidebarEl) TextSize(size gk.Length) SidebarEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SidebarEl) Top(length gk.Length) SidebarEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SidebarEl) W(length gk.Length) SidebarEl { tStyledW(rt.N(e.Core), length); return e }
 
 // SidebarFooterEl is gpui_kit::component::sidebar::SidebarFooter.
@@ -1503,7 +1941,7 @@ type SidebarFooterEl struct {
 
 // Create a new `SidebarFooterEl`.
 //
-// SidebarFooter is <gpui_kit::component::sidebar::SidebarFooter>::new.
+// SidebarFooter calls <gpui_kit::component::sidebar::SidebarFooter>::new.
 func SidebarFooter(st ...gk.Style) SidebarFooterEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(753)
@@ -1513,20 +1951,24 @@ func SidebarFooter(st ...gk.Style) SidebarFooterEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SidebarFooterEl) PopoverStyle() SidebarFooterEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SidebarFooterEl) RoundedFullStyle() SidebarFooterEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1535,16 +1977,18 @@ func (e SidebarFooterEl) RoundedFullStyle() SidebarFooterEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e SidebarFooterEl) FocusRingStyle() SidebarFooterEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1557,24 +2001,32 @@ func (e SidebarFooterEl) FocusRingStyle() SidebarFooterEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e SidebarFooterEl) KeepTextSelection(id gk.ID) SidebarFooterEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e SidebarFooterEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) SidebarFooterEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SidebarFooterEl) BorderE(width gk.Length) SidebarFooterEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SidebarFooterEl) BorderS(width gk.Length) SidebarFooterEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1582,136 +2034,178 @@ func (e SidebarFooterEl) BorderS(width gk.Length) SidebarFooterEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SidebarFooterEl) FlexRowDir() SidebarFooterEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SidebarFooterEl) InsetE(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SidebarFooterEl) InsetS(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SidebarFooterEl) JustifyFlexEnd() SidebarFooterEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SidebarFooterEl) JustifyFlexStart() SidebarFooterEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SidebarFooterEl) Me(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SidebarFooterEl) Ms(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SidebarFooterEl) Pe(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SidebarFooterEl) Ps(length gk.Length) SidebarFooterEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SidebarFooterEl) RoundedE(radius gk.Length) SidebarFooterEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SidebarFooterEl) RoundedS(radius gk.Length) SidebarFooterEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SidebarFooterEl) TextEnd() SidebarFooterEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SidebarFooterEl) TextStart() SidebarFooterEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SidebarFooterEl) CornerRadii(radius gk.Corners) SidebarFooterEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SidebarFooterEl) DebugBlue() SidebarFooterEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SidebarFooterEl) DebugFocused(focusHandle gk.FocusHandle) SidebarFooterEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SidebarFooterEl) DebugGreen() SidebarFooterEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SidebarFooterEl) DebugPink() SidebarFooterEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SidebarFooterEl) DebugRed() SidebarFooterEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SidebarFooterEl) DebugYellow() SidebarFooterEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SidebarFooterEl) FontBlack() SidebarFooterEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SidebarFooterEl) FontBold() SidebarFooterEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SidebarFooterEl) FontExtrabold() SidebarFooterEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SidebarFooterEl) FontExtralight() SidebarFooterEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SidebarFooterEl) FontLight() SidebarFooterEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SidebarFooterEl) FontMedium() SidebarFooterEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SidebarFooterEl) FontNormal() SidebarFooterEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SidebarFooterEl) FontSemibold() SidebarFooterEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SidebarFooterEl) FontThin() SidebarFooterEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1720,18 +2214,23 @@ func (e SidebarFooterEl) FontThin() SidebarFooterEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SidebarFooterEl) HFlex() SidebarFooterEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SidebarFooterEl) Margins(margins gk.EdgesInto) SidebarFooterEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SidebarFooterEl) Paddings(paddings gk.EdgesInto) SidebarFooterEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SidebarFooterEl) RefineStyle(style gk.StyleRefinement) SidebarFooterEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1741,62 +2240,80 @@ func (e SidebarFooterEl) RefineStyle(style gk.StyleRefinement) SidebarFooterEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SidebarFooterEl) VFlex() SidebarFooterEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
 //
 // Defaults to `selected`, so a trigger only overrides this when its selected state means something
 // other than "my popup is open".
+//
+// Open calls <E as gpui_kit::base::Selectable>::open.
 func (e SidebarFooterEl) Open(open bool) SidebarFooterEl {
 	tSelectableOpen(rt.N(e.Core), open)
 	return e
 }
 
+// SecondarySelected calls <E as gpui_kit::base::Selectable>::secondary_selected.
 func (e SidebarFooterEl) SecondarySelected(arg0 bool) SidebarFooterEl {
 	tSelectableSecondarySelected(rt.N(e.Core), arg0)
 	return e
 }
 
+// Selected calls <E as gpui_kit::base::Selectable>::selected.
 func (e SidebarFooterEl) Selected(selected bool) SidebarFooterEl {
 	tSelectableSelected(rt.N(e.Core), selected)
 	return e
 }
 
+// Collapsed calls <E as gpui_kit::base::component_traits::Collapsible>::collapsed.
 func (e SidebarFooterEl) Collapsed(collapsed bool) SidebarFooterEl {
 	tCollapsibleCollapsed(rt.N(e.Core), collapsed)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e SidebarFooterEl) Text(s string) SidebarFooterEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e SidebarFooterEl) ChildView(v gk.View) SidebarFooterEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e SidebarFooterEl) Child(child gk.Element) SidebarFooterEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e SidebarFooterEl) Children(children ...gk.Element) SidebarFooterEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SidebarFooterEl) Style(st ...gk.Style) SidebarFooterEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SidebarFooterEl) AspectRatio(ratio float32) SidebarFooterEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SidebarFooterEl) Bg(fill gk.Fill) SidebarFooterEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SidebarFooterEl) Border(length gk.Length) SidebarFooterEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1804,12 +2321,16 @@ func (e SidebarFooterEl) Border(length gk.Length) SidebarFooterEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SidebarFooterEl) BorderB(length gk.Length) SidebarFooterEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SidebarFooterEl) BorderColor(borderColor gk.Color) SidebarFooterEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1817,6 +2338,8 @@ func (e SidebarFooterEl) BorderColor(borderColor gk.Color) SidebarFooterEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SidebarFooterEl) BorderL(length gk.Length) SidebarFooterEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1824,6 +2347,8 @@ func (e SidebarFooterEl) BorderL(length gk.Length) SidebarFooterEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SidebarFooterEl) BorderR(length gk.Length) SidebarFooterEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1831,6 +2356,8 @@ func (e SidebarFooterEl) BorderR(length gk.Length) SidebarFooterEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SidebarFooterEl) BorderT(length gk.Length) SidebarFooterEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1838,6 +2365,8 @@ func (e SidebarFooterEl) BorderT(length gk.Length) SidebarFooterEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SidebarFooterEl) BorderX(length gk.Length) SidebarFooterEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1845,6 +2374,8 @@ func (e SidebarFooterEl) BorderX(length gk.Length) SidebarFooterEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SidebarFooterEl) BorderY(length gk.Length) SidebarFooterEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1852,30 +2383,40 @@ func (e SidebarFooterEl) BorderY(length gk.Length) SidebarFooterEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SidebarFooterEl) Bottom(length gk.Length) SidebarFooterEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SidebarFooterEl) ColEnd(end int16) SidebarFooterEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SidebarFooterEl) ColSpan(span uint16) SidebarFooterEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SidebarFooterEl) ColStart(start int16) SidebarFooterEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SidebarFooterEl) Cursor(cursor gk.CursorStyle) SidebarFooterEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1883,36 +2424,48 @@ func (e SidebarFooterEl) Cursor(cursor gk.CursorStyle) SidebarFooterEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SidebarFooterEl) FlexBasis(basis gk.Length) SidebarFooterEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SidebarFooterEl) FlexGrow(grow float32) SidebarFooterEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SidebarFooterEl) FlexShrink(shrink float32) SidebarFooterEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SidebarFooterEl) Font(font gk.Font) SidebarFooterEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SidebarFooterEl) FontFamily(familyName string) SidebarFooterEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SidebarFooterEl) FontFeatures(features gk.FontFeatures) SidebarFooterEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1921,12 +2474,16 @@ func (e SidebarFooterEl) FontFeatures(features gk.FontFeatures) SidebarFooterEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SidebarFooterEl) FontWeight(weight gk.FontWeight) SidebarFooterEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SidebarFooterEl) Gap(length gk.Length) SidebarFooterEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1934,6 +2491,8 @@ func (e SidebarFooterEl) Gap(length gk.Length) SidebarFooterEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SidebarFooterEl) GapX(length gk.Length) SidebarFooterEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1941,18 +2500,24 @@ func (e SidebarFooterEl) GapX(length gk.Length) SidebarFooterEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SidebarFooterEl) GapY(length gk.Length) SidebarFooterEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SidebarFooterEl) GridCols(cols uint16) SidebarFooterEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SidebarFooterEl) GridColsMaxContent(cols uint16) SidebarFooterEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1960,18 +2525,24 @@ func (e SidebarFooterEl) GridColsMaxContent(cols uint16) SidebarFooterEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SidebarFooterEl) GridColsMinContent(cols uint16) SidebarFooterEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SidebarFooterEl) GridRows(rows uint16) SidebarFooterEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SidebarFooterEl) GridRowsMaxContent(rows uint16) SidebarFooterEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1979,12 +2550,16 @@ func (e SidebarFooterEl) GridRowsMaxContent(rows uint16) SidebarFooterEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SidebarFooterEl) GridRowsMinContent(rows uint16) SidebarFooterEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SidebarFooterEl) H(length gk.Length) SidebarFooterEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1992,6 +2567,8 @@ func (e SidebarFooterEl) H(length gk.Length) SidebarFooterEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SidebarFooterEl) Inset(length gk.Length) SidebarFooterEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1999,6 +2576,8 @@ func (e SidebarFooterEl) Inset(length gk.Length) SidebarFooterEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SidebarFooterEl) Left(length gk.Length) SidebarFooterEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2006,36 +2585,48 @@ func (e SidebarFooterEl) Left(length gk.Length) SidebarFooterEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SidebarFooterEl) LineClamp(lines int) SidebarFooterEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SidebarFooterEl) LineHeight(lineHeight gk.Length) SidebarFooterEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SidebarFooterEl) M(length gk.Length) SidebarFooterEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SidebarFooterEl) MaxH(length gk.Length) SidebarFooterEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SidebarFooterEl) MaxSize(length gk.Length) SidebarFooterEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SidebarFooterEl) MaxW(length gk.Length) SidebarFooterEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2043,24 +2634,32 @@ func (e SidebarFooterEl) MaxW(length gk.Length) SidebarFooterEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SidebarFooterEl) Mb(length gk.Length) SidebarFooterEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SidebarFooterEl) MinH(length gk.Length) SidebarFooterEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SidebarFooterEl) MinSize(length gk.Length) SidebarFooterEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SidebarFooterEl) MinW(length gk.Length) SidebarFooterEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2068,6 +2667,8 @@ func (e SidebarFooterEl) MinW(length gk.Length) SidebarFooterEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SidebarFooterEl) Ml(length gk.Length) SidebarFooterEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2075,6 +2676,8 @@ func (e SidebarFooterEl) Ml(length gk.Length) SidebarFooterEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SidebarFooterEl) Mr(length gk.Length) SidebarFooterEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2082,6 +2685,8 @@ func (e SidebarFooterEl) Mr(length gk.Length) SidebarFooterEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SidebarFooterEl) Mt(length gk.Length) SidebarFooterEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2089,6 +2694,8 @@ func (e SidebarFooterEl) Mt(length gk.Length) SidebarFooterEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SidebarFooterEl) Mx(length gk.Length) SidebarFooterEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2096,18 +2703,24 @@ func (e SidebarFooterEl) Mx(length gk.Length) SidebarFooterEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SidebarFooterEl) My(length gk.Length) SidebarFooterEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SidebarFooterEl) Opacity(opacity float32) SidebarFooterEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SidebarFooterEl) P(length gk.Length) SidebarFooterEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2115,6 +2728,8 @@ func (e SidebarFooterEl) P(length gk.Length) SidebarFooterEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SidebarFooterEl) Pb(length gk.Length) SidebarFooterEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2122,6 +2737,8 @@ func (e SidebarFooterEl) Pb(length gk.Length) SidebarFooterEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SidebarFooterEl) Pl(length gk.Length) SidebarFooterEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2129,6 +2746,8 @@ func (e SidebarFooterEl) Pl(length gk.Length) SidebarFooterEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SidebarFooterEl) Pr(length gk.Length) SidebarFooterEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2136,6 +2755,8 @@ func (e SidebarFooterEl) Pr(length gk.Length) SidebarFooterEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SidebarFooterEl) Pt(length gk.Length) SidebarFooterEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2143,6 +2764,8 @@ func (e SidebarFooterEl) Pt(length gk.Length) SidebarFooterEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SidebarFooterEl) Px(length gk.Length) SidebarFooterEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2150,6 +2773,8 @@ func (e SidebarFooterEl) Px(length gk.Length) SidebarFooterEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SidebarFooterEl) Py(length gk.Length) SidebarFooterEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2157,12 +2782,16 @@ func (e SidebarFooterEl) Py(length gk.Length) SidebarFooterEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SidebarFooterEl) Right(length gk.Length) SidebarFooterEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SidebarFooterEl) Rounded(length gk.Length) SidebarFooterEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2170,6 +2799,8 @@ func (e SidebarFooterEl) Rounded(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SidebarFooterEl) RoundedB(length gk.Length) SidebarFooterEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2177,6 +2808,8 @@ func (e SidebarFooterEl) RoundedB(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SidebarFooterEl) RoundedBl(length gk.Length) SidebarFooterEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2184,6 +2817,8 @@ func (e SidebarFooterEl) RoundedBl(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SidebarFooterEl) RoundedBr(length gk.Length) SidebarFooterEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2191,6 +2826,8 @@ func (e SidebarFooterEl) RoundedBr(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SidebarFooterEl) RoundedL(length gk.Length) SidebarFooterEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2198,6 +2835,8 @@ func (e SidebarFooterEl) RoundedL(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SidebarFooterEl) RoundedR(length gk.Length) SidebarFooterEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2205,6 +2844,8 @@ func (e SidebarFooterEl) RoundedR(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SidebarFooterEl) RoundedT(length gk.Length) SidebarFooterEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2212,6 +2853,8 @@ func (e SidebarFooterEl) RoundedT(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SidebarFooterEl) RoundedTl(length gk.Length) SidebarFooterEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2219,24 +2862,32 @@ func (e SidebarFooterEl) RoundedTl(length gk.Length) SidebarFooterEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SidebarFooterEl) RoundedTr(length gk.Length) SidebarFooterEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SidebarFooterEl) RowEnd(end int16) SidebarFooterEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SidebarFooterEl) RowSpan(span uint16) SidebarFooterEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SidebarFooterEl) RowStart(start int16) SidebarFooterEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2246,24 +2897,32 @@ func (e SidebarFooterEl) RowStart(start int16) SidebarFooterEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SidebarFooterEl) ScrollbarWidth(width gk.Length) SidebarFooterEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SidebarFooterEl) Shadow(shadows []gk.BoxShadow) SidebarFooterEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SidebarFooterEl) Size(length gk.Length) SidebarFooterEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SidebarFooterEl) TextAlign(align gk.TextAlign) SidebarFooterEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2272,6 +2931,8 @@ func (e SidebarFooterEl) TextAlign(align gk.TextAlign) SidebarFooterEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SidebarFooterEl) TextBg(bg gk.Color) SidebarFooterEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2280,18 +2941,24 @@ func (e SidebarFooterEl) TextBg(bg gk.Color) SidebarFooterEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SidebarFooterEl) TextColor(color gk.Color) SidebarFooterEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SidebarFooterEl) TextDecorationColor(color gk.Color) SidebarFooterEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SidebarFooterEl) TextOverflow(overflow gk.TextOverflow) SidebarFooterEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2300,6 +2967,8 @@ func (e SidebarFooterEl) TextOverflow(overflow gk.TextOverflow) SidebarFooterEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SidebarFooterEl) TextSize(size gk.Length) SidebarFooterEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2307,12 +2976,16 @@ func (e SidebarFooterEl) TextSize(size gk.Length) SidebarFooterEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SidebarFooterEl) Top(length gk.Length) SidebarFooterEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SidebarFooterEl) W(length gk.Length) SidebarFooterEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -2322,6 +2995,8 @@ func (e SidebarFooterEl) W(length gk.Length) SidebarFooterEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e SidebarFooterEl) BlockMouseExceptScroll() SidebarFooterEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -2329,6 +3004,8 @@ func (e SidebarFooterEl) BlockMouseExceptScroll() SidebarFooterEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e SidebarFooterEl) CanDrop(predicate gk.DropAccept) SidebarFooterEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -2338,6 +3015,8 @@ func (e SidebarFooterEl) CanDrop(predicate gk.DropAccept) SidebarFooterEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e SidebarFooterEl) CaptureAction(listener gk.ActionHandler) SidebarFooterEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -2347,12 +3026,14 @@ func (e SidebarFooterEl) CaptureAction(listener gk.ActionHandler) SidebarFooterE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e SidebarFooterEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e SidebarFooterEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2362,12 +3043,14 @@ func (e SidebarFooterEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) Sidebar
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e SidebarFooterEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e SidebarFooterEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -2377,6 +3060,8 @@ func (e SidebarFooterEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarFo
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e SidebarFooterEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2386,6 +3071,8 @@ func (e SidebarFooterEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e SidebarFooterEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2395,6 +3082,8 @@ func (e SidebarFooterEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) S
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e SidebarFooterEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2404,12 +3093,16 @@ func (e SidebarFooterEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e SidebarFooterEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) SidebarFooterEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e SidebarFooterEl) DragOver(f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -2417,6 +3110,8 @@ func (e SidebarFooterEl) DragOver(f gk.StyleRefinement) SidebarFooterEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e SidebarFooterEl) Focus(f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -2426,30 +3121,40 @@ func (e SidebarFooterEl) Focus(f gk.StyleRefinement) SidebarFooterEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e SidebarFooterEl) FocusVisible(f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e SidebarFooterEl) Group(group string) SidebarFooterEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e SidebarFooterEl) GroupDragOver(groupName string, f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e SidebarFooterEl) GroupHover(groupName string, f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e SidebarFooterEl) Hover(f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -2457,6 +3162,8 @@ func (e SidebarFooterEl) Hover(f gk.StyleRefinement) SidebarFooterEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e SidebarFooterEl) InFocus(f gk.StyleRefinement) SidebarFooterEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -2464,6 +3171,8 @@ func (e SidebarFooterEl) InFocus(f gk.StyleRefinement) SidebarFooterEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e SidebarFooterEl) KeyContext(keyContext string) SidebarFooterEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -2471,6 +3180,8 @@ func (e SidebarFooterEl) KeyContext(keyContext string) SidebarFooterEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e SidebarFooterEl) Occlude() SidebarFooterEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -2480,6 +3191,8 @@ func (e SidebarFooterEl) Occlude() SidebarFooterEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e SidebarFooterEl) OnAction(listener gk.ActionHandler) SidebarFooterEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -2489,12 +3202,14 @@ func (e SidebarFooterEl) OnAction(listener gk.ActionHandler) SidebarFooterEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e SidebarFooterEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e SidebarFooterEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2505,6 +3220,8 @@ func (e SidebarFooterEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarFoote
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e SidebarFooterEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) SidebarFooterEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -2515,6 +3232,8 @@ func (e SidebarFooterEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e SidebarFooterEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) SidebarFooterEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -2526,6 +3245,8 @@ func (e SidebarFooterEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e SidebarFooterEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) SidebarFooterEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -2535,6 +3256,8 @@ func (e SidebarFooterEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e SidebarFooterEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) SidebarFooterEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -2547,6 +3270,8 @@ func (e SidebarFooterEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) Sideba
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e SidebarFooterEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) SidebarFooterEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -2556,6 +3281,8 @@ func (e SidebarFooterEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e SidebarFooterEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarFooterEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2565,6 +3292,8 @@ func (e SidebarFooterEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Side
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e SidebarFooterEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarFooterEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2574,6 +3303,8 @@ func (e SidebarFooterEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Sideba
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e SidebarFooterEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) SidebarFooterEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -2583,12 +3314,14 @@ func (e SidebarFooterEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e SidebarFooterEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e SidebarFooterEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -2599,12 +3332,14 @@ func (e SidebarFooterEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e SidebarFooterEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e SidebarFooterEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -2614,12 +3349,14 @@ func (e SidebarFooterEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarFoote
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e SidebarFooterEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e SidebarFooterEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -2629,12 +3366,14 @@ func (e SidebarFooterEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarFooterEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e SidebarFooterEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e SidebarFooterEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -2644,6 +3383,8 @@ func (e SidebarFooterEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarFooterEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e SidebarFooterEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) SidebarFooterEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2653,12 +3394,14 @@ func (e SidebarFooterEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e SidebarFooterEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e SidebarFooterEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -2669,12 +3412,14 @@ func (e SidebarFooterEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e SidebarFooterEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e SidebarFooterEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -2684,6 +3429,8 @@ func (e SidebarFooterEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e SidebarFooterEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) SidebarFooterEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -2693,6 +3440,8 @@ func (e SidebarFooterEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Side
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e SidebarFooterEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) SidebarFooterEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -2702,6 +3451,8 @@ func (e SidebarFooterEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Si
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e SidebarFooterEl) TabGroup() SidebarFooterEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -2710,6 +3461,8 @@ func (e SidebarFooterEl) TabGroup() SidebarFooterEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e SidebarFooterEl) TabIndex(index int) SidebarFooterEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -2719,6 +3472,8 @@ func (e SidebarFooterEl) TabIndex(index int) SidebarFooterEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e SidebarFooterEl) TabStop(tabStop bool) SidebarFooterEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -2726,6 +3481,8 @@ func (e SidebarFooterEl) TabStop(tabStop bool) SidebarFooterEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e SidebarFooterEl) TrackFocus(focusHandle gk.FocusHandle) SidebarFooterEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -2733,6 +3490,8 @@ func (e SidebarFooterEl) TrackFocus(focusHandle gk.FocusHandle) SidebarFooterEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e SidebarFooterEl) WindowControlArea(area gk.WindowControlArea) SidebarFooterEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
@@ -2743,7 +3502,7 @@ type SidebarGroup struct{ rt.Val }
 
 // Create a new `SidebarGroup` with the given label.
 //
-// NewSidebarGroup is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::new.
+// NewSidebarGroup calls <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::new.
 func NewSidebarGroup(label string) SidebarGroup {
 	n := rt.NewValue(874)
 	o := rt.NodeArgs(n)
@@ -2753,7 +3512,7 @@ func NewSidebarGroup(label string) SidebarGroup {
 
 // Add a child to the sidebar group, the child should implement `SidebarItem`.
 //
-// Child is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::child.
+// Child calls <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::child.
 func (e SidebarGroup) Child(child SidebarMenu) SidebarGroup {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
@@ -2764,7 +3523,7 @@ func (e SidebarGroup) Child(child SidebarMenu) SidebarGroup {
 //
 // See also `Child`.
 //
-// Children is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::children.
+// Children calls <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::children.
 func (e SidebarGroup) Children(children []SidebarMenu) SidebarGroup {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(children)))
@@ -2780,13 +3539,14 @@ func (e SidebarGroup) Children(children []SidebarMenu) SidebarGroup {
 // The label shortens to make room for it. Like the label, it is hidden while the sidebar is
 // collapsed.
 //
-// Suffix is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::suffix.
+// Suffix calls <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::suffix.
 func (e SidebarGroup) Suffix(builder gk.Element) SidebarGroup {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.Take(builder))
 	return e
 }
 
+// Collapsed calls <E as gpui_kit::base::component_traits::Collapsible>::collapsed.
 func (e SidebarGroup) Collapsed(collapsed bool) SidebarGroup {
 	tCollapsibleCollapsed(rt.N(e.Core), collapsed)
 	return e
@@ -2799,7 +3559,7 @@ type SidebarHeaderEl struct {
 
 // Create a new `SidebarHeaderEl`.
 //
-// SidebarHeader is <gpui_kit::component::sidebar::SidebarHeader>::new.
+// SidebarHeader calls <gpui_kit::component::sidebar::SidebarHeader>::new.
 func SidebarHeader(st ...gk.Style) SidebarHeaderEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(755)
@@ -2807,7 +3567,7 @@ func SidebarHeader(st ...gk.Style) SidebarHeaderEl {
 	return SidebarHeaderEl{ElAnimatableElementSelectableNode: rt.MkElAnimatableElementSelectableNode(n)}
 }
 
-// SidebarHeaderDefault is <gpui_kit::component::sidebar::SidebarHeader as Default>::default.
+// SidebarHeaderDefault calls <gpui_kit::component::sidebar::SidebarHeader as Default>::default.
 func SidebarHeaderDefault(st ...gk.Style) SidebarHeaderEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(754)
@@ -2817,20 +3577,24 @@ func SidebarHeaderDefault(st ...gk.Style) SidebarHeaderEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SidebarHeaderEl) PopoverStyle() SidebarHeaderEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SidebarHeaderEl) RoundedFullStyle() SidebarHeaderEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2839,16 +3603,18 @@ func (e SidebarHeaderEl) RoundedFullStyle() SidebarHeaderEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e SidebarHeaderEl) FocusRingStyle() SidebarHeaderEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2861,24 +3627,32 @@ func (e SidebarHeaderEl) FocusRingStyle() SidebarHeaderEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e SidebarHeaderEl) KeepTextSelection(id gk.ID) SidebarHeaderEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e SidebarHeaderEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) SidebarHeaderEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SidebarHeaderEl) BorderE(width gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SidebarHeaderEl) BorderS(width gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2886,136 +3660,178 @@ func (e SidebarHeaderEl) BorderS(width gk.Length) SidebarHeaderEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SidebarHeaderEl) FlexRowDir() SidebarHeaderEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SidebarHeaderEl) InsetE(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SidebarHeaderEl) InsetS(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SidebarHeaderEl) JustifyFlexEnd() SidebarHeaderEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SidebarHeaderEl) JustifyFlexStart() SidebarHeaderEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SidebarHeaderEl) Me(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SidebarHeaderEl) Ms(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SidebarHeaderEl) Pe(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SidebarHeaderEl) Ps(length gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SidebarHeaderEl) RoundedE(radius gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SidebarHeaderEl) RoundedS(radius gk.Length) SidebarHeaderEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SidebarHeaderEl) TextEnd() SidebarHeaderEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SidebarHeaderEl) TextStart() SidebarHeaderEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SidebarHeaderEl) CornerRadii(radius gk.Corners) SidebarHeaderEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SidebarHeaderEl) DebugBlue() SidebarHeaderEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SidebarHeaderEl) DebugFocused(focusHandle gk.FocusHandle) SidebarHeaderEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SidebarHeaderEl) DebugGreen() SidebarHeaderEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SidebarHeaderEl) DebugPink() SidebarHeaderEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SidebarHeaderEl) DebugRed() SidebarHeaderEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SidebarHeaderEl) DebugYellow() SidebarHeaderEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SidebarHeaderEl) FontBlack() SidebarHeaderEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SidebarHeaderEl) FontBold() SidebarHeaderEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SidebarHeaderEl) FontExtrabold() SidebarHeaderEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SidebarHeaderEl) FontExtralight() SidebarHeaderEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SidebarHeaderEl) FontLight() SidebarHeaderEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SidebarHeaderEl) FontMedium() SidebarHeaderEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SidebarHeaderEl) FontNormal() SidebarHeaderEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SidebarHeaderEl) FontSemibold() SidebarHeaderEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SidebarHeaderEl) FontThin() SidebarHeaderEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3024,18 +3840,23 @@ func (e SidebarHeaderEl) FontThin() SidebarHeaderEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SidebarHeaderEl) HFlex() SidebarHeaderEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SidebarHeaderEl) Margins(margins gk.EdgesInto) SidebarHeaderEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SidebarHeaderEl) Paddings(paddings gk.EdgesInto) SidebarHeaderEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SidebarHeaderEl) RefineStyle(style gk.StyleRefinement) SidebarHeaderEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3045,62 +3866,80 @@ func (e SidebarHeaderEl) RefineStyle(style gk.StyleRefinement) SidebarHeaderEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SidebarHeaderEl) VFlex() SidebarHeaderEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
 //
 // Defaults to `selected`, so a trigger only overrides this when its selected state means something
 // other than "my popup is open".
+//
+// Open calls <E as gpui_kit::base::Selectable>::open.
 func (e SidebarHeaderEl) Open(open bool) SidebarHeaderEl {
 	tSelectableOpen(rt.N(e.Core), open)
 	return e
 }
 
+// SecondarySelected calls <E as gpui_kit::base::Selectable>::secondary_selected.
 func (e SidebarHeaderEl) SecondarySelected(arg0 bool) SidebarHeaderEl {
 	tSelectableSecondarySelected(rt.N(e.Core), arg0)
 	return e
 }
 
+// Selected calls <E as gpui_kit::base::Selectable>::selected.
 func (e SidebarHeaderEl) Selected(selected bool) SidebarHeaderEl {
 	tSelectableSelected(rt.N(e.Core), selected)
 	return e
 }
 
+// Collapsed calls <E as gpui_kit::base::component_traits::Collapsible>::collapsed.
 func (e SidebarHeaderEl) Collapsed(collapsed bool) SidebarHeaderEl {
 	tCollapsibleCollapsed(rt.N(e.Core), collapsed)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e SidebarHeaderEl) Text(s string) SidebarHeaderEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e SidebarHeaderEl) ChildView(v gk.View) SidebarHeaderEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e SidebarHeaderEl) Child(child gk.Element) SidebarHeaderEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e SidebarHeaderEl) Children(children ...gk.Element) SidebarHeaderEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SidebarHeaderEl) Style(st ...gk.Style) SidebarHeaderEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SidebarHeaderEl) AspectRatio(ratio float32) SidebarHeaderEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SidebarHeaderEl) Bg(fill gk.Fill) SidebarHeaderEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SidebarHeaderEl) Border(length gk.Length) SidebarHeaderEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3108,12 +3947,16 @@ func (e SidebarHeaderEl) Border(length gk.Length) SidebarHeaderEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SidebarHeaderEl) BorderB(length gk.Length) SidebarHeaderEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SidebarHeaderEl) BorderColor(borderColor gk.Color) SidebarHeaderEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3121,6 +3964,8 @@ func (e SidebarHeaderEl) BorderColor(borderColor gk.Color) SidebarHeaderEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SidebarHeaderEl) BorderL(length gk.Length) SidebarHeaderEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3128,6 +3973,8 @@ func (e SidebarHeaderEl) BorderL(length gk.Length) SidebarHeaderEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SidebarHeaderEl) BorderR(length gk.Length) SidebarHeaderEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3135,6 +3982,8 @@ func (e SidebarHeaderEl) BorderR(length gk.Length) SidebarHeaderEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SidebarHeaderEl) BorderT(length gk.Length) SidebarHeaderEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3142,6 +3991,8 @@ func (e SidebarHeaderEl) BorderT(length gk.Length) SidebarHeaderEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SidebarHeaderEl) BorderX(length gk.Length) SidebarHeaderEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3149,6 +4000,8 @@ func (e SidebarHeaderEl) BorderX(length gk.Length) SidebarHeaderEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SidebarHeaderEl) BorderY(length gk.Length) SidebarHeaderEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3156,30 +4009,40 @@ func (e SidebarHeaderEl) BorderY(length gk.Length) SidebarHeaderEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SidebarHeaderEl) Bottom(length gk.Length) SidebarHeaderEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SidebarHeaderEl) ColEnd(end int16) SidebarHeaderEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SidebarHeaderEl) ColSpan(span uint16) SidebarHeaderEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SidebarHeaderEl) ColStart(start int16) SidebarHeaderEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SidebarHeaderEl) Cursor(cursor gk.CursorStyle) SidebarHeaderEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3187,36 +4050,48 @@ func (e SidebarHeaderEl) Cursor(cursor gk.CursorStyle) SidebarHeaderEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SidebarHeaderEl) FlexBasis(basis gk.Length) SidebarHeaderEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SidebarHeaderEl) FlexGrow(grow float32) SidebarHeaderEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SidebarHeaderEl) FlexShrink(shrink float32) SidebarHeaderEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SidebarHeaderEl) Font(font gk.Font) SidebarHeaderEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SidebarHeaderEl) FontFamily(familyName string) SidebarHeaderEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SidebarHeaderEl) FontFeatures(features gk.FontFeatures) SidebarHeaderEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3225,12 +4100,16 @@ func (e SidebarHeaderEl) FontFeatures(features gk.FontFeatures) SidebarHeaderEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SidebarHeaderEl) FontWeight(weight gk.FontWeight) SidebarHeaderEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SidebarHeaderEl) Gap(length gk.Length) SidebarHeaderEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3238,6 +4117,8 @@ func (e SidebarHeaderEl) Gap(length gk.Length) SidebarHeaderEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SidebarHeaderEl) GapX(length gk.Length) SidebarHeaderEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3245,18 +4126,24 @@ func (e SidebarHeaderEl) GapX(length gk.Length) SidebarHeaderEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SidebarHeaderEl) GapY(length gk.Length) SidebarHeaderEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SidebarHeaderEl) GridCols(cols uint16) SidebarHeaderEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SidebarHeaderEl) GridColsMaxContent(cols uint16) SidebarHeaderEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3264,18 +4151,24 @@ func (e SidebarHeaderEl) GridColsMaxContent(cols uint16) SidebarHeaderEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SidebarHeaderEl) GridColsMinContent(cols uint16) SidebarHeaderEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SidebarHeaderEl) GridRows(rows uint16) SidebarHeaderEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SidebarHeaderEl) GridRowsMaxContent(rows uint16) SidebarHeaderEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3283,12 +4176,16 @@ func (e SidebarHeaderEl) GridRowsMaxContent(rows uint16) SidebarHeaderEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SidebarHeaderEl) GridRowsMinContent(rows uint16) SidebarHeaderEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SidebarHeaderEl) H(length gk.Length) SidebarHeaderEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3296,6 +4193,8 @@ func (e SidebarHeaderEl) H(length gk.Length) SidebarHeaderEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SidebarHeaderEl) Inset(length gk.Length) SidebarHeaderEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3303,6 +4202,8 @@ func (e SidebarHeaderEl) Inset(length gk.Length) SidebarHeaderEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SidebarHeaderEl) Left(length gk.Length) SidebarHeaderEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3310,36 +4211,48 @@ func (e SidebarHeaderEl) Left(length gk.Length) SidebarHeaderEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SidebarHeaderEl) LineClamp(lines int) SidebarHeaderEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SidebarHeaderEl) LineHeight(lineHeight gk.Length) SidebarHeaderEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SidebarHeaderEl) M(length gk.Length) SidebarHeaderEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SidebarHeaderEl) MaxH(length gk.Length) SidebarHeaderEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SidebarHeaderEl) MaxSize(length gk.Length) SidebarHeaderEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SidebarHeaderEl) MaxW(length gk.Length) SidebarHeaderEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3347,24 +4260,32 @@ func (e SidebarHeaderEl) MaxW(length gk.Length) SidebarHeaderEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SidebarHeaderEl) Mb(length gk.Length) SidebarHeaderEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SidebarHeaderEl) MinH(length gk.Length) SidebarHeaderEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SidebarHeaderEl) MinSize(length gk.Length) SidebarHeaderEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SidebarHeaderEl) MinW(length gk.Length) SidebarHeaderEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3372,6 +4293,8 @@ func (e SidebarHeaderEl) MinW(length gk.Length) SidebarHeaderEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SidebarHeaderEl) Ml(length gk.Length) SidebarHeaderEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3379,6 +4302,8 @@ func (e SidebarHeaderEl) Ml(length gk.Length) SidebarHeaderEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SidebarHeaderEl) Mr(length gk.Length) SidebarHeaderEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3386,6 +4311,8 @@ func (e SidebarHeaderEl) Mr(length gk.Length) SidebarHeaderEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SidebarHeaderEl) Mt(length gk.Length) SidebarHeaderEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3393,6 +4320,8 @@ func (e SidebarHeaderEl) Mt(length gk.Length) SidebarHeaderEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SidebarHeaderEl) Mx(length gk.Length) SidebarHeaderEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3400,18 +4329,24 @@ func (e SidebarHeaderEl) Mx(length gk.Length) SidebarHeaderEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SidebarHeaderEl) My(length gk.Length) SidebarHeaderEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SidebarHeaderEl) Opacity(opacity float32) SidebarHeaderEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SidebarHeaderEl) P(length gk.Length) SidebarHeaderEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3419,6 +4354,8 @@ func (e SidebarHeaderEl) P(length gk.Length) SidebarHeaderEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SidebarHeaderEl) Pb(length gk.Length) SidebarHeaderEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3426,6 +4363,8 @@ func (e SidebarHeaderEl) Pb(length gk.Length) SidebarHeaderEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SidebarHeaderEl) Pl(length gk.Length) SidebarHeaderEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3433,6 +4372,8 @@ func (e SidebarHeaderEl) Pl(length gk.Length) SidebarHeaderEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SidebarHeaderEl) Pr(length gk.Length) SidebarHeaderEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3440,6 +4381,8 @@ func (e SidebarHeaderEl) Pr(length gk.Length) SidebarHeaderEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SidebarHeaderEl) Pt(length gk.Length) SidebarHeaderEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3447,6 +4390,8 @@ func (e SidebarHeaderEl) Pt(length gk.Length) SidebarHeaderEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SidebarHeaderEl) Px(length gk.Length) SidebarHeaderEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3454,6 +4399,8 @@ func (e SidebarHeaderEl) Px(length gk.Length) SidebarHeaderEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SidebarHeaderEl) Py(length gk.Length) SidebarHeaderEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3461,12 +4408,16 @@ func (e SidebarHeaderEl) Py(length gk.Length) SidebarHeaderEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SidebarHeaderEl) Right(length gk.Length) SidebarHeaderEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SidebarHeaderEl) Rounded(length gk.Length) SidebarHeaderEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3474,6 +4425,8 @@ func (e SidebarHeaderEl) Rounded(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SidebarHeaderEl) RoundedB(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3481,6 +4434,8 @@ func (e SidebarHeaderEl) RoundedB(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SidebarHeaderEl) RoundedBl(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3488,6 +4443,8 @@ func (e SidebarHeaderEl) RoundedBl(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SidebarHeaderEl) RoundedBr(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3495,6 +4452,8 @@ func (e SidebarHeaderEl) RoundedBr(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SidebarHeaderEl) RoundedL(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3502,6 +4461,8 @@ func (e SidebarHeaderEl) RoundedL(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SidebarHeaderEl) RoundedR(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3509,6 +4470,8 @@ func (e SidebarHeaderEl) RoundedR(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SidebarHeaderEl) RoundedT(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3516,6 +4479,8 @@ func (e SidebarHeaderEl) RoundedT(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SidebarHeaderEl) RoundedTl(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3523,24 +4488,32 @@ func (e SidebarHeaderEl) RoundedTl(length gk.Length) SidebarHeaderEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SidebarHeaderEl) RoundedTr(length gk.Length) SidebarHeaderEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SidebarHeaderEl) RowEnd(end int16) SidebarHeaderEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SidebarHeaderEl) RowSpan(span uint16) SidebarHeaderEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SidebarHeaderEl) RowStart(start int16) SidebarHeaderEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3550,24 +4523,32 @@ func (e SidebarHeaderEl) RowStart(start int16) SidebarHeaderEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SidebarHeaderEl) ScrollbarWidth(width gk.Length) SidebarHeaderEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SidebarHeaderEl) Shadow(shadows []gk.BoxShadow) SidebarHeaderEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SidebarHeaderEl) Size(length gk.Length) SidebarHeaderEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SidebarHeaderEl) TextAlign(align gk.TextAlign) SidebarHeaderEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3576,6 +4557,8 @@ func (e SidebarHeaderEl) TextAlign(align gk.TextAlign) SidebarHeaderEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SidebarHeaderEl) TextBg(bg gk.Color) SidebarHeaderEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3584,18 +4567,24 @@ func (e SidebarHeaderEl) TextBg(bg gk.Color) SidebarHeaderEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SidebarHeaderEl) TextColor(color gk.Color) SidebarHeaderEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SidebarHeaderEl) TextDecorationColor(color gk.Color) SidebarHeaderEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SidebarHeaderEl) TextOverflow(overflow gk.TextOverflow) SidebarHeaderEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3604,6 +4593,8 @@ func (e SidebarHeaderEl) TextOverflow(overflow gk.TextOverflow) SidebarHeaderEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SidebarHeaderEl) TextSize(size gk.Length) SidebarHeaderEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3611,12 +4602,16 @@ func (e SidebarHeaderEl) TextSize(size gk.Length) SidebarHeaderEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SidebarHeaderEl) Top(length gk.Length) SidebarHeaderEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SidebarHeaderEl) W(length gk.Length) SidebarHeaderEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -3626,6 +4621,8 @@ func (e SidebarHeaderEl) W(length gk.Length) SidebarHeaderEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e SidebarHeaderEl) BlockMouseExceptScroll() SidebarHeaderEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -3633,6 +4630,8 @@ func (e SidebarHeaderEl) BlockMouseExceptScroll() SidebarHeaderEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e SidebarHeaderEl) CanDrop(predicate gk.DropAccept) SidebarHeaderEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -3642,6 +4641,8 @@ func (e SidebarHeaderEl) CanDrop(predicate gk.DropAccept) SidebarHeaderEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e SidebarHeaderEl) CaptureAction(listener gk.ActionHandler) SidebarHeaderEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -3651,12 +4652,14 @@ func (e SidebarHeaderEl) CaptureAction(listener gk.ActionHandler) SidebarHeaderE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e SidebarHeaderEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e SidebarHeaderEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -3666,12 +4669,14 @@ func (e SidebarHeaderEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) Sidebar
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e SidebarHeaderEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e SidebarHeaderEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -3681,6 +4686,8 @@ func (e SidebarHeaderEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarHe
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e SidebarHeaderEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -3690,6 +4697,8 @@ func (e SidebarHeaderEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e SidebarHeaderEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -3699,6 +4708,8 @@ func (e SidebarHeaderEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) S
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e SidebarHeaderEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -3708,12 +4719,16 @@ func (e SidebarHeaderEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e SidebarHeaderEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) SidebarHeaderEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e SidebarHeaderEl) DragOver(f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -3721,6 +4736,8 @@ func (e SidebarHeaderEl) DragOver(f gk.StyleRefinement) SidebarHeaderEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e SidebarHeaderEl) Focus(f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -3730,30 +4747,40 @@ func (e SidebarHeaderEl) Focus(f gk.StyleRefinement) SidebarHeaderEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e SidebarHeaderEl) FocusVisible(f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e SidebarHeaderEl) Group(group string) SidebarHeaderEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e SidebarHeaderEl) GroupDragOver(groupName string, f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e SidebarHeaderEl) GroupHover(groupName string, f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e SidebarHeaderEl) Hover(f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -3761,6 +4788,8 @@ func (e SidebarHeaderEl) Hover(f gk.StyleRefinement) SidebarHeaderEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e SidebarHeaderEl) InFocus(f gk.StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -3768,6 +4797,8 @@ func (e SidebarHeaderEl) InFocus(f gk.StyleRefinement) SidebarHeaderEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e SidebarHeaderEl) KeyContext(keyContext string) SidebarHeaderEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -3775,6 +4806,8 @@ func (e SidebarHeaderEl) KeyContext(keyContext string) SidebarHeaderEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e SidebarHeaderEl) Occlude() SidebarHeaderEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -3784,6 +4817,8 @@ func (e SidebarHeaderEl) Occlude() SidebarHeaderEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e SidebarHeaderEl) OnAction(listener gk.ActionHandler) SidebarHeaderEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -3793,12 +4828,14 @@ func (e SidebarHeaderEl) OnAction(listener gk.ActionHandler) SidebarHeaderEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e SidebarHeaderEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e SidebarHeaderEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -3809,6 +4846,8 @@ func (e SidebarHeaderEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarHeade
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e SidebarHeaderEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) SidebarHeaderEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -3819,6 +4858,8 @@ func (e SidebarHeaderEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e SidebarHeaderEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) SidebarHeaderEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -3830,6 +4871,8 @@ func (e SidebarHeaderEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e SidebarHeaderEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) SidebarHeaderEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -3839,6 +4882,8 @@ func (e SidebarHeaderEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e SidebarHeaderEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) SidebarHeaderEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -3851,6 +4896,8 @@ func (e SidebarHeaderEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) Sideba
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e SidebarHeaderEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) SidebarHeaderEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -3860,6 +4907,8 @@ func (e SidebarHeaderEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e SidebarHeaderEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -3869,6 +4918,8 @@ func (e SidebarHeaderEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Side
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e SidebarHeaderEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -3878,6 +4929,8 @@ func (e SidebarHeaderEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Sideba
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e SidebarHeaderEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) SidebarHeaderEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -3887,12 +4940,14 @@ func (e SidebarHeaderEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e SidebarHeaderEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e SidebarHeaderEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -3903,12 +4958,14 @@ func (e SidebarHeaderEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e SidebarHeaderEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e SidebarHeaderEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -3918,12 +4975,14 @@ func (e SidebarHeaderEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarHeade
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e SidebarHeaderEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e SidebarHeaderEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -3933,12 +4992,14 @@ func (e SidebarHeaderEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarHeaderEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e SidebarHeaderEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e SidebarHeaderEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -3948,6 +5009,8 @@ func (e SidebarHeaderEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarHeaderEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e SidebarHeaderEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -3957,12 +5020,14 @@ func (e SidebarHeaderEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e SidebarHeaderEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e SidebarHeaderEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -3973,12 +5038,14 @@ func (e SidebarHeaderEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e SidebarHeaderEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e SidebarHeaderEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -3988,6 +5055,8 @@ func (e SidebarHeaderEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e SidebarHeaderEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) SidebarHeaderEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -3997,6 +5066,8 @@ func (e SidebarHeaderEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Side
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e SidebarHeaderEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) SidebarHeaderEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -4006,6 +5077,8 @@ func (e SidebarHeaderEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Si
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e SidebarHeaderEl) TabGroup() SidebarHeaderEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -4014,6 +5087,8 @@ func (e SidebarHeaderEl) TabGroup() SidebarHeaderEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e SidebarHeaderEl) TabIndex(index int) SidebarHeaderEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -4023,6 +5098,8 @@ func (e SidebarHeaderEl) TabIndex(index int) SidebarHeaderEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e SidebarHeaderEl) TabStop(tabStop bool) SidebarHeaderEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -4030,6 +5107,8 @@ func (e SidebarHeaderEl) TabStop(tabStop bool) SidebarHeaderEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e SidebarHeaderEl) TrackFocus(focusHandle gk.FocusHandle) SidebarHeaderEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -4037,6 +5116,8 @@ func (e SidebarHeaderEl) TrackFocus(focusHandle gk.FocusHandle) SidebarHeaderEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e SidebarHeaderEl) WindowControlArea(area gk.WindowControlArea) SidebarHeaderEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
@@ -4047,7 +5128,7 @@ type SidebarMenu struct{ rt.Val }
 
 // Create a new SidebarMenu
 //
-// NewSidebarMenu is <gpui_kit::component::sidebar::SidebarMenu>::new.
+// NewSidebarMenu calls <gpui_kit::component::sidebar::SidebarMenu>::new.
 func NewSidebarMenu(st ...gk.Style) SidebarMenu {
 	n := rt.NewValue(756)
 	rt.Tokens(n, st)
@@ -4058,7 +5139,7 @@ func NewSidebarMenu(st ...gk.Style) SidebarMenu {
 //
 // See also `Children`.
 //
-// Child is <gpui_kit::component::sidebar::SidebarMenu>::child.
+// Child calls <gpui_kit::component::sidebar::SidebarMenu>::child.
 func (e SidebarMenu) Child(child SidebarMenuItem) SidebarMenu {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(child.Core)))
@@ -4067,7 +5148,7 @@ func (e SidebarMenu) Child(child SidebarMenuItem) SidebarMenu {
 
 // Add multiple `SidebarMenuItem` child menu items to the sidebar menu.
 //
-// Children is <gpui_kit::component::sidebar::SidebarMenu>::children.
+// Children calls <gpui_kit::component::sidebar::SidebarMenu>::children.
 func (e SidebarMenu) Children(children []SidebarMenuItem) SidebarMenu {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(children)))
@@ -4079,29 +5160,37 @@ func (e SidebarMenu) Children(children []SidebarMenuItem) SidebarMenu {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SidebarMenu) PopoverStyle() SidebarMenu { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SidebarMenu) RoundedFullStyle() SidebarMenu {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SidebarMenu) BorderE(width gk.Length) SidebarMenu {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SidebarMenu) BorderS(width gk.Length) SidebarMenu {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4109,121 +5198,163 @@ func (e SidebarMenu) BorderS(width gk.Length) SidebarMenu {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SidebarMenu) FlexRowDir() SidebarMenu { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SidebarMenu) InsetE(length gk.Length) SidebarMenu {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SidebarMenu) InsetS(length gk.Length) SidebarMenu {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SidebarMenu) JustifyFlexEnd() SidebarMenu {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SidebarMenu) JustifyFlexStart() SidebarMenu {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SidebarMenu) Me(length gk.Length) SidebarMenu {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SidebarMenu) Ms(length gk.Length) SidebarMenu {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SidebarMenu) Pe(length gk.Length) SidebarMenu {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SidebarMenu) Ps(length gk.Length) SidebarMenu {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SidebarMenu) RoundedE(radius gk.Length) SidebarMenu {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SidebarMenu) RoundedS(radius gk.Length) SidebarMenu {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SidebarMenu) TextEnd() SidebarMenu { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SidebarMenu) TextStart() SidebarMenu { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SidebarMenu) CornerRadii(radius gk.Corners) SidebarMenu {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SidebarMenu) DebugBlue() SidebarMenu { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SidebarMenu) DebugFocused(focusHandle gk.FocusHandle) SidebarMenu {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SidebarMenu) DebugGreen() SidebarMenu { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SidebarMenu) DebugPink() SidebarMenu { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SidebarMenu) DebugRed() SidebarMenu { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SidebarMenu) DebugYellow() SidebarMenu { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SidebarMenu) FontBlack() SidebarMenu { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SidebarMenu) FontBold() SidebarMenu { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SidebarMenu) FontExtrabold() SidebarMenu { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SidebarMenu) FontExtralight() SidebarMenu { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SidebarMenu) FontLight() SidebarMenu { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SidebarMenu) FontMedium() SidebarMenu { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SidebarMenu) FontNormal() SidebarMenu { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SidebarMenu) FontSemibold() SidebarMenu { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SidebarMenu) FontThin() SidebarMenu { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4232,18 +5363,23 @@ func (e SidebarMenu) FontThin() SidebarMenu { tStyledExtFontThin(rt.N(e.Core)); 
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SidebarMenu) HFlex() SidebarMenu { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SidebarMenu) Margins(margins gk.EdgesInto) SidebarMenu {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SidebarMenu) Paddings(paddings gk.EdgesInto) SidebarMenu {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SidebarMenu) RefineStyle(style gk.StyleRefinement) SidebarMenu {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4253,26 +5389,35 @@ func (e SidebarMenu) RefineStyle(style gk.StyleRefinement) SidebarMenu {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SidebarMenu) VFlex() SidebarMenu { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Collapsed calls <E as gpui_kit::base::component_traits::Collapsible>::collapsed.
 func (e SidebarMenu) Collapsed(collapsed bool) SidebarMenu {
 	tCollapsibleCollapsed(rt.N(e.Core), collapsed)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SidebarMenu) Style(st ...gk.Style) SidebarMenu { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SidebarMenu) AspectRatio(ratio float32) SidebarMenu {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SidebarMenu) Bg(fill gk.Fill) SidebarMenu { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SidebarMenu) Border(length gk.Length) SidebarMenu {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4280,12 +5425,16 @@ func (e SidebarMenu) Border(length gk.Length) SidebarMenu {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SidebarMenu) BorderB(length gk.Length) SidebarMenu {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SidebarMenu) BorderColor(borderColor gk.Color) SidebarMenu {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4293,6 +5442,8 @@ func (e SidebarMenu) BorderColor(borderColor gk.Color) SidebarMenu {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SidebarMenu) BorderL(length gk.Length) SidebarMenu {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4300,6 +5451,8 @@ func (e SidebarMenu) BorderL(length gk.Length) SidebarMenu {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SidebarMenu) BorderR(length gk.Length) SidebarMenu {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4307,6 +5460,8 @@ func (e SidebarMenu) BorderR(length gk.Length) SidebarMenu {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SidebarMenu) BorderT(length gk.Length) SidebarMenu {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4314,6 +5469,8 @@ func (e SidebarMenu) BorderT(length gk.Length) SidebarMenu {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SidebarMenu) BorderX(length gk.Length) SidebarMenu {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4321,6 +5478,8 @@ func (e SidebarMenu) BorderX(length gk.Length) SidebarMenu {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SidebarMenu) BorderY(length gk.Length) SidebarMenu {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4328,24 +5487,34 @@ func (e SidebarMenu) BorderY(length gk.Length) SidebarMenu {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SidebarMenu) Bottom(length gk.Length) SidebarMenu {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SidebarMenu) ColEnd(end int16) SidebarMenu { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SidebarMenu) ColSpan(span uint16) SidebarMenu { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SidebarMenu) ColStart(start int16) SidebarMenu {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SidebarMenu) Cursor(cursor gk.CursorStyle) SidebarMenu {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4353,33 +5522,45 @@ func (e SidebarMenu) Cursor(cursor gk.CursorStyle) SidebarMenu {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SidebarMenu) FlexBasis(basis gk.Length) SidebarMenu {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SidebarMenu) FlexGrow(grow float32) SidebarMenu {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SidebarMenu) FlexShrink(shrink float32) SidebarMenu {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SidebarMenu) Font(font gk.Font) SidebarMenu { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SidebarMenu) FontFamily(familyName string) SidebarMenu {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SidebarMenu) FontFeatures(features gk.FontFeatures) SidebarMenu {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4388,26 +5569,38 @@ func (e SidebarMenu) FontFeatures(features gk.FontFeatures) SidebarMenu {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SidebarMenu) FontWeight(weight gk.FontWeight) SidebarMenu {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SidebarMenu) Gap(length gk.Length) SidebarMenu { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SidebarMenu) GapX(length gk.Length) SidebarMenu { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SidebarMenu) GapY(length gk.Length) SidebarMenu { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SidebarMenu) GridCols(cols uint16) SidebarMenu { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SidebarMenu) GridColsMaxContent(cols uint16) SidebarMenu {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4415,15 +5608,21 @@ func (e SidebarMenu) GridColsMaxContent(cols uint16) SidebarMenu {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SidebarMenu) GridColsMinContent(cols uint16) SidebarMenu {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SidebarMenu) GridRows(rows uint16) SidebarMenu { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SidebarMenu) GridRowsMaxContent(rows uint16) SidebarMenu {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4431,16 +5630,22 @@ func (e SidebarMenu) GridRowsMaxContent(rows uint16) SidebarMenu {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SidebarMenu) GridRowsMinContent(rows uint16) SidebarMenu {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SidebarMenu) H(length gk.Length) SidebarMenu { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SidebarMenu) Inset(length gk.Length) SidebarMenu {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4448,113 +5653,165 @@ func (e SidebarMenu) Inset(length gk.Length) SidebarMenu {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SidebarMenu) Left(length gk.Length) SidebarMenu { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SidebarMenu) LineClamp(lines int) SidebarMenu {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SidebarMenu) LineHeight(lineHeight gk.Length) SidebarMenu {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SidebarMenu) M(length gk.Length) SidebarMenu { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SidebarMenu) MaxH(length gk.Length) SidebarMenu { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SidebarMenu) MaxSize(length gk.Length) SidebarMenu {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SidebarMenu) MaxW(length gk.Length) SidebarMenu { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SidebarMenu) Mb(length gk.Length) SidebarMenu { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SidebarMenu) MinH(length gk.Length) SidebarMenu { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SidebarMenu) MinSize(length gk.Length) SidebarMenu {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SidebarMenu) MinW(length gk.Length) SidebarMenu { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SidebarMenu) Ml(length gk.Length) SidebarMenu { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SidebarMenu) Mr(length gk.Length) SidebarMenu { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SidebarMenu) Mt(length gk.Length) SidebarMenu { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SidebarMenu) Mx(length gk.Length) SidebarMenu { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SidebarMenu) My(length gk.Length) SidebarMenu { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SidebarMenu) Opacity(opacity float32) SidebarMenu {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SidebarMenu) P(length gk.Length) SidebarMenu { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SidebarMenu) Pb(length gk.Length) SidebarMenu { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SidebarMenu) Pl(length gk.Length) SidebarMenu { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SidebarMenu) Pr(length gk.Length) SidebarMenu { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SidebarMenu) Pt(length gk.Length) SidebarMenu { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SidebarMenu) Px(length gk.Length) SidebarMenu { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SidebarMenu) Py(length gk.Length) SidebarMenu { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SidebarMenu) Right(length gk.Length) SidebarMenu {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SidebarMenu) Rounded(length gk.Length) SidebarMenu {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4562,6 +5819,8 @@ func (e SidebarMenu) Rounded(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SidebarMenu) RoundedB(length gk.Length) SidebarMenu {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4569,6 +5828,8 @@ func (e SidebarMenu) RoundedB(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SidebarMenu) RoundedBl(length gk.Length) SidebarMenu {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4576,6 +5837,8 @@ func (e SidebarMenu) RoundedBl(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SidebarMenu) RoundedBr(length gk.Length) SidebarMenu {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4583,6 +5846,8 @@ func (e SidebarMenu) RoundedBr(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SidebarMenu) RoundedL(length gk.Length) SidebarMenu {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4590,6 +5855,8 @@ func (e SidebarMenu) RoundedL(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SidebarMenu) RoundedR(length gk.Length) SidebarMenu {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4597,6 +5864,8 @@ func (e SidebarMenu) RoundedR(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SidebarMenu) RoundedT(length gk.Length) SidebarMenu {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4604,6 +5873,8 @@ func (e SidebarMenu) RoundedT(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SidebarMenu) RoundedTl(length gk.Length) SidebarMenu {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4611,18 +5882,26 @@ func (e SidebarMenu) RoundedTl(length gk.Length) SidebarMenu {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SidebarMenu) RoundedTr(length gk.Length) SidebarMenu {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SidebarMenu) RowEnd(end int16) SidebarMenu { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SidebarMenu) RowSpan(span uint16) SidebarMenu { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SidebarMenu) RowStart(start int16) SidebarMenu {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4632,21 +5911,29 @@ func (e SidebarMenu) RowStart(start int16) SidebarMenu {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SidebarMenu) ScrollbarWidth(width gk.Length) SidebarMenu {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SidebarMenu) Shadow(shadows []gk.BoxShadow) SidebarMenu {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SidebarMenu) Size(length gk.Length) SidebarMenu { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SidebarMenu) TextAlign(align gk.TextAlign) SidebarMenu {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4655,23 +5942,31 @@ func (e SidebarMenu) TextAlign(align gk.TextAlign) SidebarMenu {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SidebarMenu) TextBg(bg gk.Color) SidebarMenu { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SidebarMenu) TextColor(color gk.Color) SidebarMenu {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SidebarMenu) TextDecorationColor(color gk.Color) SidebarMenu {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SidebarMenu) TextOverflow(overflow gk.TextOverflow) SidebarMenu {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4680,6 +5975,8 @@ func (e SidebarMenu) TextOverflow(overflow gk.TextOverflow) SidebarMenu {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SidebarMenu) TextSize(size gk.Length) SidebarMenu {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4687,9 +5984,13 @@ func (e SidebarMenu) TextSize(size gk.Length) SidebarMenu {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SidebarMenu) Top(length gk.Length) SidebarMenu { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SidebarMenu) W(length gk.Length) SidebarMenu { tStyledW(rt.N(e.Core), length); return e }
 
 // SidebarMenuItem is gpui_kit::component::sidebar::SidebarMenuItem.
@@ -4697,7 +5998,7 @@ type SidebarMenuItem struct{ rt.Val }
 
 // Create a new `SidebarMenuItem` with a label.
 //
-// NewSidebarMenuItem is <gpui_kit::component::sidebar::SidebarMenuItem>::new.
+// NewSidebarMenuItem calls <gpui_kit::component::sidebar::SidebarMenuItem>::new.
 func NewSidebarMenuItem(label string, st ...gk.Style) SidebarMenuItem {
 	n := rt.NewValue(757)
 	o := rt.NodeArgs(n)
@@ -4710,7 +6011,7 @@ func NewSidebarMenuItem(label string, st ...gk.Style) SidebarMenuItem {
 //
 // Defaults to the visible label text.
 //
-// AccessibilityLabel is <gpui_kit::component::sidebar::SidebarMenuItem>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::sidebar::SidebarMenuItem>::accessibility_label.
 func (e SidebarMenuItem) AccessibilityLabel(label string) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -4719,14 +6020,14 @@ func (e SidebarMenuItem) AccessibilityLabel(label string) SidebarMenuItem {
 
 // Set the active state of the menu item
 //
-// Active is <gpui_kit::component::sidebar::SidebarMenuItem>::active.
+// Active calls <gpui_kit::component::sidebar::SidebarMenuItem>::active.
 func (e SidebarMenuItem) Active(active bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(active)
 	return e
 }
 
-// Children is <gpui_kit::component::sidebar::SidebarMenuItem>::children.
+// Children calls <gpui_kit::component::sidebar::SidebarMenuItem>::children.
 func (e SidebarMenuItem) Children(children []SidebarMenuItem) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(children)))
@@ -4742,7 +6043,7 @@ func (e SidebarMenuItem) Children(children []SidebarMenuItem) SidebarMenuItem {
 //
 // If `false` we only handle open/close via the caret button.
 //
-// ClickToOpen is <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_open.
+// ClickToOpen calls <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_open.
 func (e SidebarMenuItem) ClickToOpen(clickToOpen bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(clickToOpen)
@@ -4755,7 +6056,7 @@ func (e SidebarMenuItem) ClickToOpen(clickToOpen bool) SidebarMenuItem {
 //
 // Default is `false`.
 //
-// ClickToToggle is <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_toggle.
+// ClickToToggle calls <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_toggle.
 func (e SidebarMenuItem) ClickToToggle(clickToToggle bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(clickToToggle)
@@ -4764,7 +6065,7 @@ func (e SidebarMenuItem) ClickToToggle(clickToToggle bool) SidebarMenuItem {
 
 // Set the collapsed state of the menu item
 //
-// Collapsed is <gpui_kit::component::sidebar::SidebarMenuItem>::collapsed.
+// Collapsed calls <gpui_kit::component::sidebar::SidebarMenuItem>::collapsed.
 func (e SidebarMenuItem) Collapsed(collapsed bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Bool(collapsed)
@@ -4773,7 +6074,7 @@ func (e SidebarMenuItem) Collapsed(collapsed bool) SidebarMenuItem {
 
 // Set the context menu for the menu item.
 //
-// ContextMenu is <gpui_kit::component::sidebar::SidebarMenuItem>::context_menu.
+// ContextMenu calls <gpui_kit::component::sidebar::SidebarMenuItem>::context_menu.
 func (e SidebarMenuItem) ContextMenu(f PopupMenu) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U32(rt.TakeValue(rt.N(f.Core)))
@@ -4784,7 +6085,7 @@ func (e SidebarMenuItem) ContextMenu(f PopupMenu) SidebarMenuItem {
 //
 // This only used on initial render, the internal state will be used afterwards.
 //
-// DefaultOpen is <gpui_kit::component::sidebar::SidebarMenuItem>::default_open.
+// DefaultOpen calls <gpui_kit::component::sidebar::SidebarMenuItem>::default_open.
 func (e SidebarMenuItem) DefaultOpen(open bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(open)
@@ -4793,7 +6094,7 @@ func (e SidebarMenuItem) DefaultOpen(open bool) SidebarMenuItem {
 
 // Set disabled flat for menu item.
 //
-// Disable is <gpui_kit::component::sidebar::SidebarMenuItem>::disable.
+// Disable calls <gpui_kit::component::sidebar::SidebarMenuItem>::disable.
 func (e SidebarMenuItem) Disable(disable bool) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Bool(disable)
@@ -4802,7 +6103,7 @@ func (e SidebarMenuItem) Disable(disable bool) SidebarMenuItem {
 
 // Set the icon for the menu item
 //
-// Icon is <gpui_kit::component::sidebar::SidebarMenuItem>::icon.
+// Icon calls <gpui_kit::component::sidebar::SidebarMenuItem>::icon.
 func (e SidebarMenuItem) Icon(icon gk.IconName) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.U16(uint16(icon))
@@ -4811,7 +6112,7 @@ func (e SidebarMenuItem) Icon(icon gk.IconName) SidebarMenuItem {
 
 // Set the style for the label
 //
-// LabelStyle is <gpui_kit::component::sidebar::SidebarMenuItem>::label_style.
+// LabelStyle calls <gpui_kit::component::sidebar::SidebarMenuItem>::label_style.
 func (e SidebarMenuItem) LabelStyle(style gk.StyleRefinement) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -4820,14 +6121,14 @@ func (e SidebarMenuItem) LabelStyle(style gk.StyleRefinement) SidebarMenuItem {
 
 // Add a click handler to the menu item
 //
-// OnClick is <gpui_kit::component::sidebar::SidebarMenuItem>::on_click.
+// OnClick calls <gpui_kit::component::sidebar::SidebarMenuItem>::on_click.
 func (e SidebarMenuItem) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U32(rt.Register(handler, 1))
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e SidebarMenuItem) OnClickDo(handler func(cx *gk.Cx)) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U32(rt.Register(handler, 1))
@@ -4836,7 +6137,7 @@ func (e SidebarMenuItem) OnClickDo(handler func(cx *gk.Cx)) SidebarMenuItem {
 
 // Set the suffix for the menu item.
 //
-// Suffix is <gpui_kit::component::sidebar::SidebarMenuItem>::suffix.
+// Suffix calls <gpui_kit::component::sidebar::SidebarMenuItem>::suffix.
 func (e SidebarMenuItem) Suffix(builder gk.Element) SidebarMenuItem {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.Take(builder))
@@ -4845,32 +6146,40 @@ func (e SidebarMenuItem) Suffix(builder gk.Element) SidebarMenuItem {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SidebarMenuItem) PopoverStyle() SidebarMenuItem {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SidebarMenuItem) RoundedFullStyle() SidebarMenuItem {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SidebarMenuItem) BorderE(width gk.Length) SidebarMenuItem {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SidebarMenuItem) BorderS(width gk.Length) SidebarMenuItem {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4878,136 +6187,178 @@ func (e SidebarMenuItem) BorderS(width gk.Length) SidebarMenuItem {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SidebarMenuItem) FlexRowDir() SidebarMenuItem {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SidebarMenuItem) InsetE(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SidebarMenuItem) InsetS(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SidebarMenuItem) JustifyFlexEnd() SidebarMenuItem {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SidebarMenuItem) JustifyFlexStart() SidebarMenuItem {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SidebarMenuItem) Me(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SidebarMenuItem) Ms(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SidebarMenuItem) Pe(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SidebarMenuItem) Ps(length gk.Length) SidebarMenuItem {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SidebarMenuItem) RoundedE(radius gk.Length) SidebarMenuItem {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SidebarMenuItem) RoundedS(radius gk.Length) SidebarMenuItem {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SidebarMenuItem) TextEnd() SidebarMenuItem { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SidebarMenuItem) TextStart() SidebarMenuItem {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SidebarMenuItem) CornerRadii(radius gk.Corners) SidebarMenuItem {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SidebarMenuItem) DebugBlue() SidebarMenuItem { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SidebarMenuItem) DebugFocused(focusHandle gk.FocusHandle) SidebarMenuItem {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SidebarMenuItem) DebugGreen() SidebarMenuItem { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SidebarMenuItem) DebugPink() SidebarMenuItem { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SidebarMenuItem) DebugRed() SidebarMenuItem { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SidebarMenuItem) DebugYellow() SidebarMenuItem { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SidebarMenuItem) FontBlack() SidebarMenuItem { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SidebarMenuItem) FontBold() SidebarMenuItem { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SidebarMenuItem) FontExtrabold() SidebarMenuItem {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SidebarMenuItem) FontExtralight() SidebarMenuItem {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SidebarMenuItem) FontLight() SidebarMenuItem { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SidebarMenuItem) FontMedium() SidebarMenuItem { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SidebarMenuItem) FontNormal() SidebarMenuItem { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SidebarMenuItem) FontSemibold() SidebarMenuItem {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SidebarMenuItem) FontThin() SidebarMenuItem { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -5016,18 +6367,23 @@ func (e SidebarMenuItem) FontThin() SidebarMenuItem { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SidebarMenuItem) HFlex() SidebarMenuItem { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SidebarMenuItem) Margins(margins gk.EdgesInto) SidebarMenuItem {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SidebarMenuItem) Paddings(paddings gk.EdgesInto) SidebarMenuItem {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SidebarMenuItem) RefineStyle(style gk.StyleRefinement) SidebarMenuItem {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -5037,21 +6393,29 @@ func (e SidebarMenuItem) RefineStyle(style gk.StyleRefinement) SidebarMenuItem {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SidebarMenuItem) VFlex() SidebarMenuItem { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SidebarMenuItem) Style(st ...gk.Style) SidebarMenuItem { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SidebarMenuItem) AspectRatio(ratio float32) SidebarMenuItem {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SidebarMenuItem) Bg(fill gk.Fill) SidebarMenuItem { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SidebarMenuItem) Border(length gk.Length) SidebarMenuItem {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -5059,12 +6423,16 @@ func (e SidebarMenuItem) Border(length gk.Length) SidebarMenuItem {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SidebarMenuItem) BorderB(length gk.Length) SidebarMenuItem {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SidebarMenuItem) BorderColor(borderColor gk.Color) SidebarMenuItem {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -5072,6 +6440,8 @@ func (e SidebarMenuItem) BorderColor(borderColor gk.Color) SidebarMenuItem {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SidebarMenuItem) BorderL(length gk.Length) SidebarMenuItem {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -5079,6 +6449,8 @@ func (e SidebarMenuItem) BorderL(length gk.Length) SidebarMenuItem {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SidebarMenuItem) BorderR(length gk.Length) SidebarMenuItem {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -5086,6 +6458,8 @@ func (e SidebarMenuItem) BorderR(length gk.Length) SidebarMenuItem {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SidebarMenuItem) BorderT(length gk.Length) SidebarMenuItem {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -5093,6 +6467,8 @@ func (e SidebarMenuItem) BorderT(length gk.Length) SidebarMenuItem {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SidebarMenuItem) BorderX(length gk.Length) SidebarMenuItem {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -5100,6 +6476,8 @@ func (e SidebarMenuItem) BorderX(length gk.Length) SidebarMenuItem {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SidebarMenuItem) BorderY(length gk.Length) SidebarMenuItem {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -5107,30 +6485,40 @@ func (e SidebarMenuItem) BorderY(length gk.Length) SidebarMenuItem {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SidebarMenuItem) Bottom(length gk.Length) SidebarMenuItem {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SidebarMenuItem) ColEnd(end int16) SidebarMenuItem {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SidebarMenuItem) ColSpan(span uint16) SidebarMenuItem {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SidebarMenuItem) ColStart(start int16) SidebarMenuItem {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SidebarMenuItem) Cursor(cursor gk.CursorStyle) SidebarMenuItem {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -5138,36 +6526,48 @@ func (e SidebarMenuItem) Cursor(cursor gk.CursorStyle) SidebarMenuItem {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SidebarMenuItem) FlexBasis(basis gk.Length) SidebarMenuItem {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SidebarMenuItem) FlexGrow(grow float32) SidebarMenuItem {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SidebarMenuItem) FlexShrink(shrink float32) SidebarMenuItem {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SidebarMenuItem) Font(font gk.Font) SidebarMenuItem {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SidebarMenuItem) FontFamily(familyName string) SidebarMenuItem {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SidebarMenuItem) FontFeatures(features gk.FontFeatures) SidebarMenuItem {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -5176,12 +6576,16 @@ func (e SidebarMenuItem) FontFeatures(features gk.FontFeatures) SidebarMenuItem 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SidebarMenuItem) FontWeight(weight gk.FontWeight) SidebarMenuItem {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SidebarMenuItem) Gap(length gk.Length) SidebarMenuItem {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -5189,6 +6593,8 @@ func (e SidebarMenuItem) Gap(length gk.Length) SidebarMenuItem {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SidebarMenuItem) GapX(length gk.Length) SidebarMenuItem {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -5196,18 +6602,24 @@ func (e SidebarMenuItem) GapX(length gk.Length) SidebarMenuItem {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SidebarMenuItem) GapY(length gk.Length) SidebarMenuItem {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SidebarMenuItem) GridCols(cols uint16) SidebarMenuItem {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SidebarMenuItem) GridColsMaxContent(cols uint16) SidebarMenuItem {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -5215,18 +6627,24 @@ func (e SidebarMenuItem) GridColsMaxContent(cols uint16) SidebarMenuItem {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SidebarMenuItem) GridColsMinContent(cols uint16) SidebarMenuItem {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SidebarMenuItem) GridRows(rows uint16) SidebarMenuItem {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SidebarMenuItem) GridRowsMaxContent(rows uint16) SidebarMenuItem {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -5234,12 +6652,16 @@ func (e SidebarMenuItem) GridRowsMaxContent(rows uint16) SidebarMenuItem {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SidebarMenuItem) GridRowsMinContent(rows uint16) SidebarMenuItem {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SidebarMenuItem) H(length gk.Length) SidebarMenuItem {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -5247,6 +6669,8 @@ func (e SidebarMenuItem) H(length gk.Length) SidebarMenuItem {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SidebarMenuItem) Inset(length gk.Length) SidebarMenuItem {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -5254,6 +6678,8 @@ func (e SidebarMenuItem) Inset(length gk.Length) SidebarMenuItem {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SidebarMenuItem) Left(length gk.Length) SidebarMenuItem {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -5261,36 +6687,48 @@ func (e SidebarMenuItem) Left(length gk.Length) SidebarMenuItem {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SidebarMenuItem) LineClamp(lines int) SidebarMenuItem {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SidebarMenuItem) LineHeight(lineHeight gk.Length) SidebarMenuItem {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SidebarMenuItem) M(length gk.Length) SidebarMenuItem {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SidebarMenuItem) MaxH(length gk.Length) SidebarMenuItem {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SidebarMenuItem) MaxSize(length gk.Length) SidebarMenuItem {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SidebarMenuItem) MaxW(length gk.Length) SidebarMenuItem {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -5298,24 +6736,32 @@ func (e SidebarMenuItem) MaxW(length gk.Length) SidebarMenuItem {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SidebarMenuItem) Mb(length gk.Length) SidebarMenuItem {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SidebarMenuItem) MinH(length gk.Length) SidebarMenuItem {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SidebarMenuItem) MinSize(length gk.Length) SidebarMenuItem {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SidebarMenuItem) MinW(length gk.Length) SidebarMenuItem {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -5323,6 +6769,8 @@ func (e SidebarMenuItem) MinW(length gk.Length) SidebarMenuItem {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SidebarMenuItem) Ml(length gk.Length) SidebarMenuItem {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -5330,6 +6778,8 @@ func (e SidebarMenuItem) Ml(length gk.Length) SidebarMenuItem {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SidebarMenuItem) Mr(length gk.Length) SidebarMenuItem {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -5337,6 +6787,8 @@ func (e SidebarMenuItem) Mr(length gk.Length) SidebarMenuItem {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SidebarMenuItem) Mt(length gk.Length) SidebarMenuItem {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -5344,6 +6796,8 @@ func (e SidebarMenuItem) Mt(length gk.Length) SidebarMenuItem {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SidebarMenuItem) Mx(length gk.Length) SidebarMenuItem {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -5351,18 +6805,24 @@ func (e SidebarMenuItem) Mx(length gk.Length) SidebarMenuItem {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SidebarMenuItem) My(length gk.Length) SidebarMenuItem {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SidebarMenuItem) Opacity(opacity float32) SidebarMenuItem {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SidebarMenuItem) P(length gk.Length) SidebarMenuItem {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5370,6 +6830,8 @@ func (e SidebarMenuItem) P(length gk.Length) SidebarMenuItem {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SidebarMenuItem) Pb(length gk.Length) SidebarMenuItem {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5377,6 +6839,8 @@ func (e SidebarMenuItem) Pb(length gk.Length) SidebarMenuItem {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SidebarMenuItem) Pl(length gk.Length) SidebarMenuItem {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5384,6 +6848,8 @@ func (e SidebarMenuItem) Pl(length gk.Length) SidebarMenuItem {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SidebarMenuItem) Pr(length gk.Length) SidebarMenuItem {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5391,6 +6857,8 @@ func (e SidebarMenuItem) Pr(length gk.Length) SidebarMenuItem {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SidebarMenuItem) Pt(length gk.Length) SidebarMenuItem {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5398,6 +6866,8 @@ func (e SidebarMenuItem) Pt(length gk.Length) SidebarMenuItem {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SidebarMenuItem) Px(length gk.Length) SidebarMenuItem {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5405,6 +6875,8 @@ func (e SidebarMenuItem) Px(length gk.Length) SidebarMenuItem {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SidebarMenuItem) Py(length gk.Length) SidebarMenuItem {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5412,12 +6884,16 @@ func (e SidebarMenuItem) Py(length gk.Length) SidebarMenuItem {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SidebarMenuItem) Right(length gk.Length) SidebarMenuItem {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SidebarMenuItem) Rounded(length gk.Length) SidebarMenuItem {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5425,6 +6901,8 @@ func (e SidebarMenuItem) Rounded(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SidebarMenuItem) RoundedB(length gk.Length) SidebarMenuItem {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5432,6 +6910,8 @@ func (e SidebarMenuItem) RoundedB(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SidebarMenuItem) RoundedBl(length gk.Length) SidebarMenuItem {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5439,6 +6919,8 @@ func (e SidebarMenuItem) RoundedBl(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SidebarMenuItem) RoundedBr(length gk.Length) SidebarMenuItem {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5446,6 +6928,8 @@ func (e SidebarMenuItem) RoundedBr(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SidebarMenuItem) RoundedL(length gk.Length) SidebarMenuItem {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5453,6 +6937,8 @@ func (e SidebarMenuItem) RoundedL(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SidebarMenuItem) RoundedR(length gk.Length) SidebarMenuItem {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5460,6 +6946,8 @@ func (e SidebarMenuItem) RoundedR(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SidebarMenuItem) RoundedT(length gk.Length) SidebarMenuItem {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5467,6 +6955,8 @@ func (e SidebarMenuItem) RoundedT(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SidebarMenuItem) RoundedTl(length gk.Length) SidebarMenuItem {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5474,24 +6964,32 @@ func (e SidebarMenuItem) RoundedTl(length gk.Length) SidebarMenuItem {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SidebarMenuItem) RoundedTr(length gk.Length) SidebarMenuItem {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SidebarMenuItem) RowEnd(end int16) SidebarMenuItem {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SidebarMenuItem) RowSpan(span uint16) SidebarMenuItem {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SidebarMenuItem) RowStart(start int16) SidebarMenuItem {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5501,24 +6999,32 @@ func (e SidebarMenuItem) RowStart(start int16) SidebarMenuItem {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SidebarMenuItem) ScrollbarWidth(width gk.Length) SidebarMenuItem {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SidebarMenuItem) Shadow(shadows []gk.BoxShadow) SidebarMenuItem {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SidebarMenuItem) Size(length gk.Length) SidebarMenuItem {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SidebarMenuItem) TextAlign(align gk.TextAlign) SidebarMenuItem {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5527,6 +7033,8 @@ func (e SidebarMenuItem) TextAlign(align gk.TextAlign) SidebarMenuItem {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SidebarMenuItem) TextBg(bg gk.Color) SidebarMenuItem {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5535,18 +7043,24 @@ func (e SidebarMenuItem) TextBg(bg gk.Color) SidebarMenuItem {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SidebarMenuItem) TextColor(color gk.Color) SidebarMenuItem {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SidebarMenuItem) TextDecorationColor(color gk.Color) SidebarMenuItem {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SidebarMenuItem) TextOverflow(overflow gk.TextOverflow) SidebarMenuItem {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5555,6 +7069,8 @@ func (e SidebarMenuItem) TextOverflow(overflow gk.TextOverflow) SidebarMenuItem 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SidebarMenuItem) TextSize(size gk.Length) SidebarMenuItem {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5562,12 +7078,16 @@ func (e SidebarMenuItem) TextSize(size gk.Length) SidebarMenuItem {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SidebarMenuItem) Top(length gk.Length) SidebarMenuItem {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SidebarMenuItem) W(length gk.Length) SidebarMenuItem {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -5578,7 +7098,7 @@ type SidebarToggleButtonEl struct{ rt.El }
 
 // Create a new SidebarToggleButton.
 //
-// SidebarToggleButton is <gpui_kit::component::sidebar::SidebarToggleButton>::new.
+// SidebarToggleButton calls <gpui_kit::component::sidebar::SidebarToggleButton>::new.
 func SidebarToggleButton() SidebarToggleButtonEl {
 	rt.UseComponentSidebar()
 	n := rt.NewNode(758)
@@ -5589,7 +7109,7 @@ func SidebarToggleButton() SidebarToggleButtonEl {
 //
 // The default toggle is icon-only; without an explicit label it has no accessible name.
 //
-// AccessibilityLabel is <gpui_kit::component::sidebar::SidebarToggleButton>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::sidebar::SidebarToggleButton>::accessibility_label.
 func (e SidebarToggleButtonEl) AccessibilityLabel(label string) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -5598,7 +7118,7 @@ func (e SidebarToggleButtonEl) AccessibilityLabel(label string) SidebarToggleBut
 
 // Set the collapsed state of the toggle button.
 //
-// Collapsed is <gpui_kit::component::sidebar::SidebarToggleButton>::collapsed.
+// Collapsed calls <gpui_kit::component::sidebar::SidebarToggleButton>::collapsed.
 func (e SidebarToggleButtonEl) Collapsed(collapsed bool) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(collapsed)
@@ -5607,14 +7127,14 @@ func (e SidebarToggleButtonEl) Collapsed(collapsed bool) SidebarToggleButtonEl {
 
 // Add a click handler to the toggle button.
 //
-// OnClick is <gpui_kit::component::sidebar::SidebarToggleButton>::on_click.
+// OnClick calls <gpui_kit::component::sidebar::SidebarToggleButton>::on_click.
 func (e SidebarToggleButtonEl) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.Register(onClick, 1))
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e SidebarToggleButtonEl) OnClickDo(onClick func(cx *gk.Cx)) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.Register(onClick, 1))
@@ -5625,7 +7145,7 @@ func (e SidebarToggleButtonEl) OnClickDo(onClick func(cx *gk.Cx)) SidebarToggleB
 //
 // Default is `Side::Left`.
 //
-// Side is <gpui_kit::component::sidebar::SidebarToggleButton>::side.
+// Side calls <gpui_kit::component::sidebar::SidebarToggleButton>::side.
 func (e SidebarToggleButtonEl) Side(side gk.Side) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U16(uint16(side))

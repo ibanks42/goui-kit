@@ -1,18 +1,25 @@
 #!/bin/bash
-# gallery.sh [go] [--record]: the gallery pixel gate. Runs the Rust reference gallery twice and the
-# Go gallery (examples/go/gallery, bin/gallery-go) once, offscreen (gpui's HeadlessAppContext with
-# the real wgpu renderer; no display), under one generated script that walks every page of
-# ref/gallery/pages.txt and every step of each page, and compares the PNGs byte for byte, page by
-# page. Reference and candidate are rendered in the same run on the same machine and driver; the
-# second reference run shows which pages are comparable at all. Prints one line per page and
-# "GATE gallery-go pixels ...". A page that gates/verified.json lists as identical must still be
-# identical (the ratchet); --record rewrites its entry from a passing run, after a page was added
-# to the app. The pages of gates/gallery-go-pending.txt (waiting for a Go binding) are reported as
-# pending, not failed. The argument go (the only candidate) may be given.
-#   gates/gallery.sh           make gallery
-# Needs GK_REF/ref-gallery (default: lib root/diag), the diag library and bin/gallery-go (built here
-# when missing or older than its sources; GK_GALLERY_BUILD=0 never builds).
-# Results: gates/out/gallery-go/{rust,rust2,go}/*.png, result.json.
+# Gallery pixel-identity gate (`gates/gallery.sh [go] [--record]`).
+#
+# What it gates:
+#   Pixel-for-pixel equivalence of every hand-written gallery page (`ref/gallery/pages.txt`) and
+#   generated one-function conformance page (`ref/gallery/conf.txt`) rendered by `gallery-go`
+#   against the pure-Rust reference `ref-gallery`.
+#
+# How it measures and why the comparison is fair:
+#   - Automatically rebuilds `bin/gallery-go` when missing or older than Go sources (disable with
+#     `GK_GALLERY_BUILD=0`).
+#   - Generates a single deterministic offscreen script (`gallery.script`) via `gates/gallery.py`
+#     and runs `ref-gallery` twice (`rust` and `rust2`) plus `gallery-go` once on `lib/diag`
+#     (display vars cleared, 180 s timeout per run).
+#   - Comparing `rust` against `rust2` catches non-deterministic upstream pages before judging Go.
+#   - Delegates comparison, `gates/gallery-go-pending.txt` handling, regression checks against
+#     `gates/verified.json`, and optional `--record` updates to `gates/gallery.py compare`.
+#
+# What PASS means (exit 0):
+#   All three runs exit 0 and `gallery.py compare` exits 0 (zero differing pages, zero unstable
+#   Rust pages, at least one identical page, and zero regressions vs `gates/verified.json`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 cand=go
 [ "${1:-}" = go ] && shift
@@ -21,12 +28,15 @@ out=$here/out/gallery-go; pending=(--pending "$here/gallery-go-pending.txt")
 lib=${GK_LIB_ROOT:-$repo/lib}/diag
 ref=${GK_REF:-$lib}/ref-gallery; [ -x "$ref" ] || ref=$lib/ref-gallery
 exe=${GK_BIN:-$repo/bin}/gallery-$cand
+
+# Rebuild gallery-go automatically if missing or stale against Go sources.
 if [ "${GK_GALLERY_BUILD:-1}" = 1 ] &&
    { [ ! -x "$exe" ] || [ -n "$(find "$repo/examples/go/gallery" "$repo/go/gk" -newer "$exe" -name '*.go' -print -quit)" ]; }; then
   echo "gallery: building $exe"
   GK_LIB=${GK_LIB_ROOT:-$repo/lib}/ship OUT=$(dirname "$exe") "$repo/examples/go/build.sh" gallery ||
     { echo "GATE gallery-go pixels FAIL the Go gallery does not build"; exit 1; }
 fi
+
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY GALLERY_START
 rm -rf "$out"; mkdir -p "$out"
@@ -34,7 +44,7 @@ python3 "$here/gallery.py" script "$pages" > "$out/gallery.script"
 for x in "$ref" "$exe"; do [ -x "$x" ] || { echo "GATE gallery pixels FAIL $x is missing"; exit 1; }; done
 "$exe" --list > "$out/$cand-pages.txt"
 fail=0
-run() { # name command...
+run() {
   local name=$1; shift
   mkdir -p "$out/$name"
   local start=$(date +%s.%N)
@@ -42,6 +52,8 @@ run() { # name command...
   echo "$name: exit $rc, $(ls "$out/$name" | grep -c '\.png$') images, $(echo "$(date +%s.%N) - $start" | bc | cut -c1-5) s"
   [ $rc -eq 0 ] || { tail -5 "$out/$name/log.txt"; fail=1; }
 }
+
+# Run Rust twice to detect non-deterministic pages before comparing against the Go candidate.
 run rust "$ref" --script "$out/gallery.script"
 run rust2 "$ref" --script "$out/gallery.script"
 run $cand env GK_SCRIPT="$out/gallery.script" "$exe"

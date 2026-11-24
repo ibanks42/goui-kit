@@ -1,13 +1,13 @@
 package rt
 
-// RowAt is the row a row view describes: its section (0 without sections) and its row.
+// RowAt identifies a single item inside a sectioned RowSource.
 type RowAt struct{ Section, Row int }
 
-// RowSource is a handle to a row source, which lives in the library. The kit's list, table,
-// tree and select states take one.
+// RowSource is a handle to a virtualized row/item provider whose visible rows
+// are materialized on demand as child views.
 type RowSource struct{ HCore }
 
-// SourceTest is the event of the row sources' own test request.
+// SourceTest is a diagnostic request payload used to test RowSource event delivery.
 type SourceTest struct {
 	ID   uint64
 	Text string
@@ -16,8 +16,8 @@ type SourceTest struct {
 type sourceRec struct {
 	h       uint64
 	row     func(*Cx, RowAt) Element
-	rows    map[uint64]uint64 // row key to row view
-	events  uint32            // kept handler slot + 1; 0 for none
+	rows    map[uint64]uint64
+	events  uint32 // slot + 1 when an event handler is attached, 0 otherwise
 	count   int
 	countFn func() int
 }
@@ -27,7 +27,7 @@ var (
 	deadRows []*viewRec
 )
 
-// MaxRows is the most rows a section of a row source holds.
+// MaxRows is the maximum number of rows supported in a single section.
 const MaxRows = 0xffff_fffe
 
 func checkCount(count int, what string) {
@@ -41,9 +41,10 @@ func checkCount(count int, what string) {
 
 func rowKey(at RowAt) uint64 { return uint64(at.Section)<<32 | uint64(uint32(at.Row)) }
 
-// SourceOption changes a row source made by NewRowSource.
+// SourceOption configures optional behavior on NewRowSource.
 type SourceOption func(*SourceOpts)
 
+// SourceOpts holds configuration values for NewRowSource.
 type SourceOpts struct {
 	Initial, Capacity int
 	events            any
@@ -51,29 +52,28 @@ type SourceOpts struct {
 	countFn           func() int
 }
 
-// Initial is how many rows get their views at once, so the first frame that draws the source is
-// complete (default 64).
+// Initial sets the number of row views pre-allocated when the source is created.
 func Initial(n int) SourceOption { return func(o *SourceOpts) { o.Initial = n } }
 
-// Capacity is how many row views are kept; far ones are evicted (default 512).
+// Capacity sets the maximum number of cached row views retained by the source.
 func Capacity(n int) SourceOption { return func(o *SourceOpts) { o.Capacity = n } }
 
-// CountFunc gives the source a count function: gk.Refresh takes the number of rows from it.
+// CountFunc registers a function consulted by Refresh to sync section 0's row count.
 func CountFunc(f func() int) SourceOption { return func(o *SourceOpts) { o.countFn = f } }
 
-// sourceEvents gives the source an events handler of a family's event shape (the delegate
-// families and the runtime's tests).
+// SourceEvents attaches a long-lived event callback of the given wire shape to
+// a RowSource.
 func SourceEvents(h any, shape uint16) SourceOption {
 	return func(o *SourceOpts) { o.events, o.shape = h, shape }
 }
 
-// TestSourceEvents is sourceEvents for the runtime's tests: the source's test requests.
+// TestSourceEvents attaches a diagnostic SourceTest event handler to a RowSource.
 func TestSourceEvents(h func(cx *Cx, e SourceTest)) SourceOption {
 	return SourceEvents(h, ShapeSourceTest)
 }
 
-// NewRowSource makes a source of count rows (one section) whose rows row describes. Needs a
-// window: call it in a view's init function or in a handler.
+// NewRowSource creates a virtualized RowSource with count rows in section 0 and
+// row callback invoked on demand for each visible row.
 func NewRowSource(cx *Cx, count int, row func(cx *Cx, at RowAt) Element, opts ...SourceOption) RowSource {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -126,11 +126,11 @@ func sourceRecOf(src RowSource) *sourceRec {
 	return rec
 }
 
-// SetCount changes the number of rows of section 0. Rows at and past the new count are dropped;
-// rows below it keep their views (invalidate them if their content moved).
+// SetCount updates the row count of section 0 in src.
 func SetCount(cx *Cx, src RowSource, count int) { SetSectionCount(cx, src, 0, count) }
 
-// SetSectionCount is SetCount for one section.
+// SetSectionCount updates the row count of section in src and unbinds any
+// cached row views at or beyond count.
 func SetSectionCount(cx *Cx, src RowSource, section, count int) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -159,7 +159,8 @@ func SetSectionCount(cx *Cx, src RowSource, section, count int) {
 	t.DeferOp(*o)
 }
 
-// Invalidate has rows lo to hi (not included) of section 0 described again before the next frame.
+// Invalidate marks cached row views in section 0 with indices in [lo, hi) dirty
+// so they are re-described on the next frame.
 func Invalidate(cx *Cx, src RowSource, lo, hi int) {
 	t := CheckCx(cx)
 	rec := sourceRecOf(src)
@@ -174,9 +175,8 @@ func Invalidate(cx *Cx, src RowSource, lo, hi int) {
 	}
 }
 
-// Refresh is for after the app's data changed: every view is described again before the next
-// frame, and so is every row a list, table or tree shows; a source made with CountFunc first
-// takes its number of rows from it. A description that did not change costs a compare.
+// Refresh syncs every RowSource that has a CountFunc and marks every live view
+// dirty in the current turn.
 func Refresh(cx *Cx) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -196,7 +196,7 @@ func Refresh(cx *Cx) {
 	}
 }
 
-// Answer answers a request a row source made (SourceTest's id) with a string.
+// Answer sends a string reply for diagnostic request id on src.
 func Answer(cx *Cx, src RowSource, id uint64, text string) {
 	t := CheckCx(cx)
 	var body Tape
@@ -208,7 +208,7 @@ func Answer(cx *Cx, src RowSource, id uint64, text string) {
 	t.DeferOp(*o)
 }
 
-// ScrollTo scrolls the core list of a source so that row is at the top. A buffered write.
+// ScrollTo scrolls a list backed by src to row.
 func ScrollTo(cx *Cx, src RowSource, row int) {
 	o := NewReq(CSourceScrollTo)
 	o.U64(src.h)
@@ -216,7 +216,6 @@ func ScrollTo(cx *Cx, src RowSource, row int) {
 	CheckCx(cx).DeferOp(*o)
 }
 
-// rowRecs is the block row views are taken from: a ROWS turn binds a few hundred at a time.
 var (
 	rowRecs   []viewRec
 	rowsFresh []uint64
@@ -232,6 +231,9 @@ func bindRow(rec *sourceRec, key, view, window uint64) {
 	rec.rows[key] = view
 }
 
+// unbindRow removes a materialized row view from the view table and defers
+// clearing its handler slices until endTurn via deadRows so an in-progress
+// event turn does not lose references prematurely.
 func unbindRow(view uint64) {
 	v := views.get(view)
 	if v == nil {
@@ -245,8 +247,8 @@ func unbindRow(view uint64) {
 	deadRows = append(deadRows, v)
 }
 
-// rowsTurn is the bind/evict step of the ROWS turn: bind the rows the library asks for, forget
-// the ones it evicted, and return the newly bound views for description in the same turn.
+// rowsTurn processes a KRows batch from the Rust core, binding newly visible
+// row views, unbinding evicted rows, and returning the newly bound handles.
 func rowsTurn(r *Reader, window uint64) []uint64 {
 	var fresh []uint64
 	if depth == 1 {
@@ -254,7 +256,7 @@ func rowsTurn(r *Reader, window uint64) []uint64 {
 	}
 	nSources := r.U32()
 	for range nSources {
-		rec := sources[r.U64()] // nil if released meanwhile: its rows are dropped
+		rec := sources[r.U64()]
 		nNew := r.U32()
 		for range nNew {
 			key := r.U64()
@@ -298,7 +300,7 @@ func sweepRows() {
 	deadRows = deadRows[:0]
 }
 
-// TestSourceRequest has the library ask the source's events handler a question (SourceTest).
+// TestSourceRequest sends a synthetic request string to src in diagnostic tests.
 func TestSourceRequest(cx *Cx, src RowSource, text string) {
 	CheckCx(cx).Flush()
 	o := NewReq(CTestSourceRequest)
@@ -307,7 +309,7 @@ func TestSourceRequest(cx *Cx, src RowSource, text string) {
 	MustCall(*o)
 }
 
-// TestSourceTake returns the answer to TestSourceRequest once it has arrived.
+// TestSourceTake reads and consumes the last answer recorded for src in tests.
 func TestSourceTake(cx *Cx, src RowSource) (string, bool) {
 	CheckCx(cx).Flush()
 	o := NewReq(CTestSourceTake)
@@ -319,7 +321,7 @@ func TestSourceTake(cx *Cx, src RowSource) (string, bool) {
 	return r.Str(), true
 }
 
-// TestSourceRows is the number of rows of a source that have a view now.
+// TestSourceRows returns the number of currently bound row views on src.
 func TestSourceRows(src RowSource) int {
 	if rec := sources[src.h]; rec != nil {
 		return len(rec.rows)
@@ -327,13 +329,14 @@ func TestSourceRows(src RowSource) int {
 	return 0
 }
 
-// Rows is a handle to the rows of a list kept in the library (strings only), for UniformList.
+// Rows is a handle to a plain string list backing UniformList.
 type Rows struct{ HCore }
 
-// NewRows makes an empty list of rows in the library.
+// NewRows allocates an empty Rows store on the Rust side.
 func NewRows(cx *Cx) Rows { return Rows{MkH(StateMake(cx, NewReq(CRowsNew)))} }
 
-// Push appends rows: one buffered op however many rows.
+// Push appends one or more strings to r. When not in debug mode, it encodes
+// the op directly into t.deferred to avoid an intermediate allocation.
 func (r Rows) Push(cx *Cx, rows ...string) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -361,20 +364,19 @@ func (r Rows) Push(cx *Cx, rows ...string) {
 	t.nDefer++
 }
 
-// UniformListEl is a list of equal-height rows (GPUI's uniform_list over Rows, or the runtime's
-// list over a RowSource).
+// UniformListEl is the element handle returned by UniformList and SourceList.
 type UniformListEl struct{ ElCore }
 
-// Style adds style tokens.
+// Style applies nullary style tokens to e.
 func (e UniformListEl) Style(st ...Style) UniformListEl { Tokens(e.n, st); return e }
 
-// W sets the width.
+// W sets the width of e.
 func (e UniformListEl) W(l Length) UniformListEl { tStyledW(e.n, l); return e }
 
-// H sets the height.
+// H sets the height of e.
 func (e UniformListEl) H(l Length) UniformListEl { tStyledH(e.n, l); return e }
 
-// UniformList is GPUI's uniform_list over rows kept in the library.
+// UniformList creates a fixed-height scrollable list backed by string store rows.
 func UniformList(id string, rows Rows, st ...Style) UniformListEl {
 	n := NewNode(NUniformList)
 	o := NodeArgs(n)
@@ -384,8 +386,7 @@ func UniformList(id string, rows Rows, st ...Style) UniformListEl {
 	return UniformListEl{MkElCore(n)}
 }
 
-// SourceList is the shared core's own list: a uniform list over a row source whose rows are
-// rowHeight high (the kit's lists, tables and trees draw sources too).
+// SourceList creates a fixed-row-height virtualized list backed by RowSource src.
 func SourceList(id string, src RowSource, rowHeight float32, st ...Style) UniformListEl {
 	n := NewNode(NSourceList)
 	o := NodeArgs(n)
@@ -396,8 +397,7 @@ func SourceList(id string, src RowSource, rowHeight float32, st ...Style) Unifor
 	return UniformListEl{MkElCore(n)}
 }
 
-// Text is a string as an element, for a builder that takes any element where a Rust app would
-// pass a string. For a child, the parent's own Text method is shorter.
+// Text creates a leaf text element displaying s.
 func Text(s string) Element {
 	n := NewNode(NText)
 	NodeArgs(n).Str(s)
@@ -406,8 +406,7 @@ func Text(s string) Element {
 
 type textEl struct{ ElCore }
 
-// TableCells builds all cols cells of a table row into one NTableCells node so the entire row
-// travels as a single tape fragment rather than one view per cell.
+// TableCells builds a row node containing cols cell elements produced by cell.
 func TableCells(cols int, cell func(col int) Element) Element {
 	var stack [16]uint32
 	var ids []uint32
@@ -437,29 +436,26 @@ func TableCells(cols int, cell func(col int) Element) Element {
 	return textEl{MkElCore(n)}
 }
 
-// VirtualListEl is gpui-kit's virtual list over a row source (docs/PROTOCOLS.md 13.31): rows of
-// different sizes, each a view described by the source's row function, only those in view drawn.
+// VirtualListEl is the element handle returned by VVirtualList and HVirtualList.
 type VirtualListEl struct{ ElCore }
 
-// Style adds style tokens (s.SizeFull, s.H64).
+// Style applies nullary style tokens to e.
 func (e VirtualListEl) Style(st ...Style) VirtualListEl { Tokens(e.n, st); return e }
 
-// W sets the width.
+// W sets the width of e.
 func (e VirtualListEl) W(l Length) VirtualListEl { tStyledW(e.n, l); return e }
 
-// H sets the height.
+// H sets the height of e.
 func (e VirtualListEl) H(l Length) VirtualListEl { tStyledH(e.n, l); return e }
 
-// VVirtualList lays a source's rows out top to bottom, row i sizes[i][1] high (the width is the
-// list's). One size per row: rows beyond the sizes are not drawn, sizes beyond the rows neither. A
-// row without a view yet is a gap of its size for one frame (the rows protocol).
-//
-//	gk.VVirtualList("log", a.rows, a.heights, s.SizeFull)
+// VVirtualList creates a vertically scrolling variable-size virtual list backed
+// by src with per-item [width, height] sizes.
 func VVirtualList(id string, src RowSource, sizes [][2]float32, st ...Style) VirtualListEl {
 	return virtualList(id, src, 0, sizes, st)
 }
 
-// HVirtualList lays a source's rows out left to right, row i sizes[i][0] wide.
+// HVirtualList creates a horizontally scrolling variable-size virtual list
+// backed by src with per-item [width, height] sizes.
 func HVirtualList(id string, src RowSource, sizes [][2]float32, st ...Style) VirtualListEl {
 	return virtualList(id, src, 1, sizes, st)
 }

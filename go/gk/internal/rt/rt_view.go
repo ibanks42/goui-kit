@@ -1,46 +1,51 @@
+// View table, tape deduplication, and generational handler retirement.
+//
+// Each Go view keeps its last encoded byte tape (v.last) and its active event
+// handler slice (v.cur) under an incrementing generation number (v.gen). When a
+// redraw produces bytes identical to v.last, the tape is not re-sent across the
+// C ABI and v.cur is updated in place. When the tape changes, v.gen increments
+// and the previous generation's handler slice moves into v.old until the Rust
+// core reports that generation retired via retireTable, ensuring in-flight UI
+// events targeting the previous frame still find their handlers.
+
 package rt
 
 import (
 	"bytes"
 )
 
-// View is an app view: a function that describes its elements, retained by gpui-fast as a view
-// of its own. Embed one in another with .ChildView(v): the parent stays retained when the child
-// is described again, which is the main tool for a fast app.
+// View is a handle to a GPUI view backed by a Go render function and optional
+// init callback.
 type View struct{ HCore }
 
+// viewRec stores the Go-side metadata, cached description tape, per-generation
+// event handler tables, and optional RowSource binding for a live view.
 type viewRec struct {
-	h      uint64
-	init   func(*Cx)
-	render func(*Cx) Element
-	last   Tape         // the accepted tape
-	gen    uint32       // generation of last
-	cur    []handlerRec // the handler table of gen
-	// The handler tables of older generations the library still holds (an open menu made from
-	// one, a closure upstream keeps): each goes when the library reports its description dropped
-	// (retireTable, from a VIEWS turn).
+	h          uint64
+	init       func(*Cx)
+	render     func(*Cx) Element
+	last       Tape
+	gen        uint32
+	cur        []handlerRec
 	old        []oldTable
-	curRetired bool   // the library dropped gen's description: its table is not kept when gen moves on
-	buildNo    uint32 // counts runs of the view function (what a Model's reader list refers to)
-	window     uint64 // the window this view is mounted in (0: unmounted)
+	curRetired bool
+	buildNo    uint32
+	window     uint64
 	described  bool
-	readsLib   bool // last build called into the library (state read, object pin, ...)
+	readsLib   bool // true if the last render read Rust state; disables pure inline event redraws
 	dead       bool
-	// a row view (rt_source.go): the source's row function for one row
-	row   func(*Cx, RowAt) Element
-	rowAt RowAt
-	src   uint64
-	file  string // where gk.NewView made it (for messages)
-	line  int
+	row        func(*Cx, RowAt) Element
+	rowAt      RowAt
+	src        uint64
+	file       string
+	line       int
 }
 
-// views holds every live view by handle (viewTable).
 var views viewTable
 
-// viewTable is the live views by handle: a slice indexed by the handle's slot number (its low 32
-// bits; the library reuses slot numbers, so the table stays as small as the handles alive), each
-// entry checked against the whole handle. A ROWS turn binds a few hundred row views at once:
-// a map paid a hash and, now and then, a regrowth for each.
+// viewTable maps 64-bit generational view handles to *viewRec in O(1) without a
+// Go map lookup by indexing on the low 32 bits (slot number) and verifying the
+// full 64-bit handle equality.
 type viewTable struct{ slots []*viewRec }
 
 func (t *viewTable) get(h uint64) *viewRec {
@@ -66,11 +71,8 @@ func (t *viewTable) del(h uint64) {
 	}
 }
 
-// NewView makes a view: render describes it whenever it is dirty, and init, if not nil, runs
-// once when a window builds this view as its root (kit state that needs a window is made there).
-// Call it in the start function, in an init function or in a handler, never in a view function.
-//
-//	a.root = gk.NewView(a.init, a.view)
+// NewView creates a view backed by optional init and required render callbacks
+// and registers it under the current turn's owning view.
 func NewView(init func(cx *Cx), render func(cx *Cx) Element) View {
 	if cur == nil {
 		Stop("gk.NewView was called before the app started: make views in the function given to gk.Run, in init or in a handler")
@@ -90,8 +92,7 @@ func NewView(init func(cx *Cx), render func(cx *Cx) Element) View {
 	return View{MkH(rec.h)}
 }
 
-// Notify marks a view dirty: it is described again before the next frame. An unchanged
-// description costs no redraw.
+// Notify marks view v dirty in the current turn so it will be re-described.
 func Notify(cx *Cx, v View) {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -100,10 +101,12 @@ func Notify(cx *Cx, v View) {
 	t.markDirty(v.h)
 }
 
-// Quiet, called in a handler, keeps the handler's view from being marked for redraw when it
-// returns (a hover that changes nothing on screen).
+// Quiet suppresses the automatic dirty mark on the event handler's owning view
+// for the current turn.
 func Quiet(cx *Cx) { CheckCx(cx).quiet = true }
 
+// releaseView tears down view v along with every child handle, built-view site,
+// and kept handler owned by it, then releases the Rust handle.
 func releaseView(t *turn, v View) {
 	rec := views.get(v.h)
 	if rec == nil {
@@ -111,7 +114,7 @@ func releaseView(t *turn, v View) {
 	}
 	views.del(v.h)
 	disown(v.h)
-	releaseOwned(t, v.h) // what the view made: its states, views, sources, overlays (rt_life.go)
+	releaseOwned(t, v.h)
 	forgetBuiltSites(v.h)
 	dropKeptOf(t, v.h)
 	rec.cur, rec.old, rec.last = nil, nil, nil
@@ -119,6 +122,10 @@ func releaseView(t *turn, v View) {
 	releaseHandle(t, v.h)
 }
 
+// describe executes v's render or row callback into Vb, finishes the byte tape,
+// and appends it to the current turn's reply tapes if the tape changed.
+// When the tape matches v.last byte-for-byte, only the handler table is updated
+// in place and no tape is sent across the C ABI.
 func describe(cx *Cx, v *viewRec) {
 	t := cx.t
 	if t.window != 0 {
@@ -139,8 +146,6 @@ func describe(cx *Cx, v *viewRec) {
 	v.described = true
 	v.readsLib = Vb.calledLib || len(Vb.deps) > 0
 	if v.gen != 0 && bytes.Equal(tapeBuf, v.last) {
-		// An identical tape is dropped: nothing is notified and the generation stays. The handler
-		// table is still replaced in place: same ids, but the closures may have captured new values.
 		if len(Vb.handlers) > 0 || len(v.cur) > 0 {
 			v.cur = append(v.cur[:0], Vb.handlers...)
 		}
@@ -150,6 +155,8 @@ func describe(cx *Cx, v *viewRec) {
 		v.last = tapeMem(len(tapeBuf))
 	}
 	v.last = append(v.last[:0], tapeBuf...)
+	// Keep the previous generation's handler table alive until Rust retires it,
+	// because in-flight events may still reference the old generation number.
 	if v.gen != 0 && !v.curRetired && len(v.cur) > 0 {
 		v.old = append(v.old, oldTable{v.gen, v.cur})
 	}
@@ -167,12 +174,10 @@ func describe(cx *Cx, v *viewRec) {
 	t.nTapes++
 }
 
-// tapeBlock is where small accepted tapes are kept: a row view's first tape (a ROWS turn binds a
-// few hundred rows) is a piece of it rather than an allocation of its own.
+// Arena block for small cached tapes (<= 512 bytes) to reduce per-view heap
+// allocations.
 var tapeBlock []byte
 
-// tapeMem is an empty slice of capacity n for a view's accepted tape: a piece of tapeBlock when
-// small (capped, so an append past it never runs into the next piece).
 func tapeMem(n int) Tape {
 	if n > 512 {
 		return make(Tape, 0, n)
@@ -185,7 +190,7 @@ func tapeMem(n int) Tape {
 	return tapeBlock[at : at : at+n]
 }
 
-// Handler tables no description uses any more, for reuse.
+// Pool of cleared handler slices reused across view generations.
 var tablePool [][]handlerRec
 
 func newTable() []handlerRec {
@@ -197,8 +202,8 @@ func newTable() []handlerRec {
 	return nil
 }
 
-// retireTable forgets the handler table of a view's description the library has dropped (no
-// element, open menu or closure upstream keeps holds it): none of its handlers can fire again.
+// retireTable releases the handler table for a generation that the Rust core
+// has finished displaying and will no longer deliver events for.
 func retireTable(view uint64, gen uint32) {
 	v := views.get(view)
 	if v == nil {
@@ -225,14 +230,11 @@ func retireTable(view uint64, gen uint32) {
 	}
 }
 
-// oldTable is the handler table of an older description of a view that the library still holds
-// (viewRec.old: usually none or one, so a slice rather than a map).
 type oldTable struct {
 	gen uint32
 	t   []handlerRec
 }
 
-// oldTableOf is the handler table of description gen of v, if the library still holds it.
 func (v *viewRec) oldTableOf(gen uint32) ([]handlerRec, bool) {
 	for _, o := range v.old {
 		if o.gen == gen {
@@ -242,8 +244,8 @@ func (v *viewRec) oldTableOf(gen uint32) ([]handlerRec, bool) {
 	return nil, false
 }
 
-// dep records that the view being built read this state: the library observes it and has the
-// view described again when it changes.
+// dep records that the active view description read state handle h so the Rust
+// core can subscribe the view to changes in that state.
 func dep(h uint64) {
 	if !Vb.Active {
 		return

@@ -12,7 +12,7 @@ type BadgeEl struct{ rt.ElSizableNode }
 
 // Create a new badge.
 //
-// Badge is <gpui_kit::component::badge::Badge>::new.
+// Badge calls <gpui_kit::component::badge::Badge>::new.
 func Badge() BadgeEl {
 	rt.UseComponentBadge()
 	n := rt.NewNode(594)
@@ -21,7 +21,7 @@ func Badge() BadgeEl {
 
 // Set the color (background) of the badge.
 //
-// Color is <gpui_kit::component::badge::Badge>::color.
+// Color calls <gpui_kit::component::badge::Badge>::color.
 func (e BadgeEl) Color(color gk.Color) BadgeEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -32,7 +32,7 @@ func (e BadgeEl) Color(color gk.Color) BadgeEl {
 //
 // If count is 0, the badge will be hidden.
 //
-// Count is <gpui_kit::component::badge::Badge>::count.
+// Count calls <gpui_kit::component::badge::Badge>::count.
 func (e BadgeEl) Count(count int) BadgeEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutUsize(o, count)
@@ -41,7 +41,7 @@ func (e BadgeEl) Count(count int) BadgeEl {
 
 // Set to use `Dot` to show a dot.
 //
-// Dot is <gpui_kit::component::badge::Badge>::dot.
+// Dot calls <gpui_kit::component::badge::Badge>::dot.
 func (e BadgeEl) Dot() BadgeEl {
 	rt.Op(rt.N(e.Core), 258)
 	return e
@@ -49,7 +49,7 @@ func (e BadgeEl) Dot() BadgeEl {
 
 // Set to use `Icon` to show an icon.
 //
-// Icon is <gpui_kit::component::badge::Badge>::icon.
+// Icon calls <gpui_kit::component::badge::Badge>::icon.
 func (e BadgeEl) Icon(icon gk.IconName) BadgeEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U16(uint16(icon))
@@ -58,7 +58,7 @@ func (e BadgeEl) Icon(icon gk.IconName) BadgeEl {
 
 // Set the maximum count to show (Only if `Number` is used).
 //
-// Max is <gpui_kit::component::badge::Badge>::max.
+// Max calls <gpui_kit::component::badge::Badge>::max.
 func (e BadgeEl) Max(max_ int) BadgeEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutUsize(o, max_)
@@ -72,42 +72,59 @@ func (e BadgeEl) Max(max_ int) BadgeEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BadgeEl) KeepTextSelection(id gk.ID) BadgeEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BadgeEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BadgeEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e BadgeEl) Text(s string) BadgeEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BadgeEl) ChildView(v gk.View) BadgeEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BadgeEl) Child(child gk.Element) BadgeEl { tParentElementChild(rt.N(e.Core), child); return e }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BadgeEl) Children(children ...gk.Element) BadgeEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e BadgeEl) Large() BadgeEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e BadgeEl) Small() BadgeEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e BadgeEl) WithSize(size gk.SizeInto) BadgeEl { tSizableWithSize(rt.N(e.Core), size); return e }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e BadgeEl) Xsmall() BadgeEl { tSizableXsmall(rt.N(e.Core)); return e }

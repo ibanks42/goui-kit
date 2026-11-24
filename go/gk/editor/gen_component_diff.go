@@ -10,7 +10,7 @@ import (
 // DiffEl is gpui_kit::component::diff::Diff.
 type DiffEl struct{ rt.ElAnimatableElement }
 
-// Diff is <gpui_kit::component::diff::Diff>::new.
+// Diff calls <gpui_kit::component::diff::Diff>::new.
 func Diff(state DiffState, st ...gk.Style) DiffEl {
 	rt.UseComponentDiff()
 	n := rt.NewNode(644)
@@ -22,7 +22,7 @@ func Diff(state DiffState, st ...gk.Style) DiffEl {
 
 // Compatibility alias for `RenderAnnotation`.
 //
-// AnnotationContent is <gpui_kit::component::diff::Diff>::annotation_content.
+// AnnotationContent calls <gpui_kit::component::diff::Diff>::annotation_content.
 func (e DiffEl) AnnotationContent(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.U64(rt.ItemsCheck(render, 15))
@@ -34,7 +34,7 @@ func (e DiffEl) AnnotationContent(render gk.RowSource) DiffEl {
 // Rows re-measure when annotations are added, removed or replaced, and whenever they are visible,
 // so annotation content may change height freely.
 //
-// Annotations is <gpui_kit::component::diff::Diff>::annotations.
+// Annotations calls <gpui_kit::component::diff::Diff>::annotations.
 func (e DiffEl) Annotations(annotations []DiffAnnotation) DiffEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(uint32(len(annotations)))
@@ -46,7 +46,7 @@ func (e DiffEl) Annotations(annotations []DiffAnnotation) DiffEl {
 
 // Tints changed lines. Default is true. Inline changes stay emphasized.
 //
-// ChangeBackground is <gpui_kit::component::diff::Diff>::change_background.
+// ChangeBackground calls <gpui_kit::component::diff::Diff>::change_background.
 func (e DiffEl) ChangeBackground(value bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(value)
@@ -55,7 +55,7 @@ func (e DiffEl) ChangeBackground(value bool) DiffEl {
 
 // Marks changed lines beside the code. Default is `Signs`.
 //
-// ChangeIndicator is <gpui_kit::component::diff::Diff>::change_indicator.
+// ChangeIndicator calls <gpui_kit::component::diff::Diff>::change_indicator.
 func (e DiffEl) ChangeIndicator(indicator DiffChangeIndicator) DiffEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(indicator))
@@ -65,7 +65,7 @@ func (e DiffEl) ChangeIndicator(indicator DiffChangeIndicator) DiffEl {
 // Supplies line backgrounds that mark source ranges, such as diagnostics or references, without
 // changing the selection.
 //
-// Decorations is <gpui_kit::component::diff::Diff>::decorations.
+// Decorations calls <gpui_kit::component::diff::Diff>::decorations.
 func (e DiffEl) Decorations(decorations []DiffDecoration) DiffEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(decorations)))
@@ -80,7 +80,7 @@ func (e DiffEl) Decorations(decorations []DiffDecoration) DiffEl {
 // The lane holds one marker per line; when several target the same line, the first supplied is
 // shown.
 //
-// GutterMarkers is <gpui_kit::component::diff::Diff>::gutter_markers.
+// GutterMarkers calls <gpui_kit::component::diff::Diff>::gutter_markers.
 func (e DiffEl) GutterMarkers(markers []DiffGutterMarker) DiffEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(uint32(len(markers)))
@@ -92,7 +92,7 @@ func (e DiffEl) GutterMarkers(markers []DiffGutterMarker) DiffEl {
 
 // Compatibility alias for `RenderHeader`.
 //
-// Header is <gpui_kit::component::diff::Diff>::header.
+// Header calls <gpui_kit::component::diff::Diff>::header.
 func (e DiffEl) Header(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -101,7 +101,7 @@ func (e DiffEl) Header(render gk.RowSource) DiffEl {
 
 // Compatibility alias for `RenderHeaderPrefix`.
 //
-// HeaderPrefix is <gpui_kit::component::diff::Diff>::header_prefix.
+// HeaderPrefix calls <gpui_kit::component::diff::Diff>::header_prefix.
 func (e DiffEl) HeaderPrefix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -110,7 +110,7 @@ func (e DiffEl) HeaderPrefix(render gk.RowSource) DiffEl {
 
 // Compatibility alias for `RenderHeaderSuffix`.
 //
-// HeaderSuffix is <gpui_kit::component::diff::Diff>::header_suffix.
+// HeaderSuffix calls <gpui_kit::component::diff::Diff>::header_suffix.
 func (e DiffEl) HeaderSuffix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -119,7 +119,7 @@ func (e DiffEl) HeaderSuffix(render gk.RowSource) DiffEl {
 
 // Compatibility alias for `RenderHeaderTitleSuffix`.
 //
-// HeaderTitleSuffix is <gpui_kit::component::diff::Diff>::header_title_suffix.
+// HeaderTitleSuffix calls <gpui_kit::component::diff::Diff>::header_title_suffix.
 func (e DiffEl) HeaderTitleSuffix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 274)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -128,7 +128,7 @@ func (e DiffEl) HeaderTitleSuffix(render gk.RowSource) DiffEl {
 
 // Shows a header above each file. Default is true.
 //
-// HeaderVisible is <gpui_kit::component::diff::Diff>::header_visible.
+// HeaderVisible calls <gpui_kit::component::diff::Diff>::header_visible.
 func (e DiffEl) HeaderVisible(visible bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(visible)
@@ -137,7 +137,7 @@ func (e DiffEl) HeaderVisible(visible bool) DiffEl {
 
 // Emphasizes the line, its number, or both under the pointer. Default is none.
 //
-// HoverHighlight is <gpui_kit::component::diff::Diff>::hover_highlight.
+// HoverHighlight calls <gpui_kit::component::diff::Diff>::hover_highlight.
 func (e DiffEl) HoverHighlight(highlight DiffHoverHighlight) DiffEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U16(uint16(highlight))
@@ -146,7 +146,7 @@ func (e DiffEl) HoverHighlight(highlight DiffHoverHighlight) DiffEl {
 
 // Marks the start of each hunk. Default is `Metadata`.
 //
-// HunkSeparator is <gpui_kit::component::diff::Diff>::hunk_separator.
+// HunkSeparator calls <gpui_kit::component::diff::Diff>::hunk_separator.
 func (e DiffEl) HunkSeparator(separator DiffHunkSeparator) DiffEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U16(uint16(separator))
@@ -155,7 +155,7 @@ func (e DiffEl) HunkSeparator(separator DiffHunkSeparator) DiffEl {
 
 // Shows the original and modified line-number lanes. Default is true.
 //
-// LineNumber is <gpui_kit::component::diff::Diff>::line_number.
+// LineNumber calls <gpui_kit::component::diff::Diff>::line_number.
 func (e DiffEl) LineNumber(value bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Bool(value)
@@ -165,7 +165,7 @@ func (e DiffEl) LineNumber(value bool) DiffEl {
 // Shows an add button beside the hovered line and at the end of the selected lines. The handler
 // receives the selected range when the line is part of it, or that line alone.
 //
-// OnAddAnnotation is <gpui_kit::component::diff::Diff>::on_add_annotation.
+// OnAddAnnotation calls <gpui_kit::component::diff::Diff>::on_add_annotation.
 func (e DiffEl) OnAddAnnotation(handler func(cx *gk.Cx, e DiffLineRangeRead)) DiffEl {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.U32(rt.Register(handler, 113))
@@ -175,7 +175,7 @@ func (e DiffEl) OnAddAnnotation(handler func(cx *gk.Cx, e DiffLineRangeRead)) Di
 // Handles a click on a line's code, outside a text-selection drag. A click that `OnTextClick`
 // claims does not reach this handler.
 //
-// OnLineClick is <gpui_kit::component::diff::Diff>::on_line_click.
+// OnLineClick calls <gpui_kit::component::diff::Diff>::on_line_click.
 func (e DiffEl) OnLineClick(handler func(cx *gk.Cx, e Event108)) DiffEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U32(rt.Register(handler, 108))
@@ -184,7 +184,7 @@ func (e DiffEl) OnLineClick(handler func(cx *gk.Cx, e Event108)) DiffEl {
 
 // Reports the line under the pointer, or `None` when the pointer leaves it.
 //
-// OnLineHover is <gpui_kit::component::diff::Diff>::on_line_hover.
+// OnLineHover calls <gpui_kit::component::diff::Diff>::on_line_hover.
 func (e DiffEl) OnLineHover(handler func(cx *gk.Cx, e gk.Option[DiffLinePosition])) DiffEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.U32(rt.Register(handler, 109))
@@ -196,7 +196,7 @@ func (e DiffEl) OnLineHover(handler func(cx *gk.Cx, e gk.Option[DiffLinePosition
 // called for it; false lets the click fall through to the line handler. A click that lands on no
 // character goes to the line handler directly.
 //
-// OnTextClick is <gpui_kit::component::diff::Diff>::on_text_click.
+// OnTextClick calls <gpui_kit::component::diff::Diff>::on_text_click.
 func (e DiffEl) OnTextClick(handler func(cx *gk.Cx, e Event121) bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 284)
 	o.U32(rt.Register(handler, 121))
@@ -207,7 +207,7 @@ func (e DiffEl) OnTextClick(handler func(cx *gk.Cx, e Event121) bool) DiffEl {
 // over no source text. Fires as the pointer moves and, while the diff has focus, when a modifier
 // goes down or up with the pointer at rest - so a link can light up on the key alone.
 //
-// OnTextHover is <gpui_kit::component::diff::Diff>::on_text_hover.
+// OnTextHover calls <gpui_kit::component::diff::Diff>::on_text_hover.
 func (e DiffEl) OnTextHover(handler func(cx *gk.Cx, e Event122)) DiffEl {
 	o := rt.Op(rt.N(e.Core), 285)
 	o.U32(rt.Register(handler, 122))
@@ -216,7 +216,7 @@ func (e DiffEl) OnTextHover(handler func(cx *gk.Cx, e Event122)) DiffEl {
 
 // Renders each supplied annotation. Application state and commands stay with the owner.
 //
-// RenderAnnotation is <gpui_kit::component::diff::Diff>::render_annotation.
+// RenderAnnotation calls <gpui_kit::component::diff::Diff>::render_annotation.
 func (e DiffEl) RenderAnnotation(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 275)
 	o.U64(rt.ItemsCheck(render, 15))
@@ -228,7 +228,7 @@ func (e DiffEl) RenderAnnotation(render gk.RowSource) DiffEl {
 // Return a focusable control such as a small ghost button labeled with `Label`, so the marker
 // works with the pointer and keyboard. Presses inside the lane do not start a selection.
 //
-// RenderGutterMarker is <gpui_kit::component::diff::Diff>::render_gutter_marker.
+// RenderGutterMarker calls <gpui_kit::component::diff::Diff>::render_gutter_marker.
 func (e DiffEl) RenderGutterMarker(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 276)
 	o.U64(rt.ItemsCheck(render, 17))
@@ -237,7 +237,7 @@ func (e DiffEl) RenderGutterMarker(render gk.RowSource) DiffEl {
 
 // Replaces the content of each file header, keeping its shell, separator and collapse control.
 //
-// RenderHeader is <gpui_kit::component::diff::Diff>::render_header.
+// RenderHeader calls <gpui_kit::component::diff::Diff>::render_header.
 func (e DiffEl) RenderHeader(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 277)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -246,7 +246,7 @@ func (e DiffEl) RenderHeader(render gk.RowSource) DiffEl {
 
 // Inserts content before the path in the default header.
 //
-// RenderHeaderPrefix is <gpui_kit::component::diff::Diff>::render_header_prefix.
+// RenderHeaderPrefix calls <gpui_kit::component::diff::Diff>::render_header_prefix.
 func (e DiffEl) RenderHeaderPrefix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 278)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -255,7 +255,7 @@ func (e DiffEl) RenderHeaderPrefix(render gk.RowSource) DiffEl {
 
 // Inserts trailing content after the change statistics in the default header.
 //
-// RenderHeaderSuffix is <gpui_kit::component::diff::Diff>::render_header_suffix.
+// RenderHeaderSuffix calls <gpui_kit::component::diff::Diff>::render_header_suffix.
 func (e DiffEl) RenderHeaderSuffix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 279)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -264,7 +264,7 @@ func (e DiffEl) RenderHeaderSuffix(render gk.RowSource) DiffEl {
 
 // Inserts compact content immediately after the path in the default header.
 //
-// RenderHeaderTitleSuffix is <gpui_kit::component::diff::Diff>::render_header_title_suffix.
+// RenderHeaderTitleSuffix calls <gpui_kit::component::diff::Diff>::render_header_title_suffix.
 func (e DiffEl) RenderHeaderTitleSuffix(render gk.RowSource) DiffEl {
 	o := rt.Op(rt.N(e.Core), 280)
 	o.U64(rt.ItemsCheck(render, 16))
@@ -273,7 +273,7 @@ func (e DiffEl) RenderHeaderTitleSuffix(render gk.RowSource) DiffEl {
 
 // Wraps long lines at the column width instead of scrolling horizontally. Default is false.
 //
-// SoftWrap is <gpui_kit::component::diff::Diff>::soft_wrap.
+// SoftWrap calls <gpui_kit::component::diff::Diff>::soft_wrap.
 func (e DiffEl) SoftWrap(value bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Bool(value)
@@ -283,7 +283,7 @@ func (e DiffEl) SoftWrap(value bool) DiffEl {
 // Emphasizes character spans inside lines, such as search matches, over decorations and inline
 // emphasis.
 //
-// SpanHighlights is <gpui_kit::component::diff::Diff>::span_highlights.
+// SpanHighlights calls <gpui_kit::component::diff::Diff>::span_highlights.
 func (e DiffEl) SpanHighlights(highlights []DiffSpanHighlight) DiffEl {
 	o := rt.Op(rt.N(e.Core), 282)
 	o.U32(uint32(len(highlights)))
@@ -297,7 +297,7 @@ func (e DiffEl) SpanHighlights(highlights []DiffSpanHighlight) DiffEl {
 // is 0.5. Without soft wrap, each column keeps its share and clips its long lines, and the code of
 // both columns scrolls horizontally together.
 //
-// SplitRatio is <gpui_kit::component::diff::Diff>::split_ratio.
+// SplitRatio calls <gpui_kit::component::diff::Diff>::split_ratio.
 func (e DiffEl) SplitRatio(ratio float32) DiffEl {
 	o := rt.Op(rt.N(e.Core), 281)
 	o.F32(ratio)
@@ -306,7 +306,7 @@ func (e DiffEl) SplitRatio(ratio float32) DiffEl {
 
 // Emphasizes syntax once the state has prepared it. Default is true.
 //
-// SyntaxHighlight is <gpui_kit::component::diff::Diff>::syntax_highlight.
+// SyntaxHighlight calls <gpui_kit::component::diff::Diff>::syntax_highlight.
 func (e DiffEl) SyntaxHighlight(value bool) DiffEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.Bool(value)
@@ -315,7 +315,7 @@ func (e DiffEl) SyntaxHighlight(value bool) DiffEl {
 
 // The pointer shown over source text, such as a pointing hand while the hovered span is a link.
 //
-// TextCursor is <gpui_kit::component::diff::Diff>::text_cursor.
+// TextCursor calls <gpui_kit::component::diff::Diff>::text_cursor.
 func (e DiffEl) TextCursor(cursor gk.CursorStyle) DiffEl {
 	o := rt.Op(rt.N(e.Core), 283)
 	o.U16(uint16(cursor))
@@ -324,26 +324,34 @@ func (e DiffEl) TextCursor(cursor gk.CursorStyle) DiffEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e DiffEl) PopoverStyle() DiffEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e DiffEl) RoundedFullStyle() DiffEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e DiffEl) BorderE(width gk.Length) DiffEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e DiffEl) BorderS(width gk.Length) DiffEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -351,103 +359,145 @@ func (e DiffEl) BorderS(width gk.Length) DiffEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e DiffEl) FlexRowDir() DiffEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e DiffEl) InsetE(length gk.Length) DiffEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e DiffEl) InsetS(length gk.Length) DiffEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e DiffEl) JustifyFlexEnd() DiffEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e DiffEl) JustifyFlexStart() DiffEl { tLogicalStyledExtJustifyFlexStart(rt.N(e.Core)); return e }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e DiffEl) Me(length gk.Length) DiffEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e DiffEl) Ms(length gk.Length) DiffEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e DiffEl) Pe(length gk.Length) DiffEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e DiffEl) Ps(length gk.Length) DiffEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e DiffEl) RoundedE(radius gk.Length) DiffEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e DiffEl) RoundedS(radius gk.Length) DiffEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e DiffEl) TextEnd() DiffEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e DiffEl) TextStart() DiffEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e DiffEl) CornerRadii(radius gk.Corners) DiffEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e DiffEl) DebugBlue() DiffEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e DiffEl) DebugFocused(focusHandle gk.FocusHandle) DiffEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e DiffEl) DebugGreen() DiffEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e DiffEl) DebugPink() DiffEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e DiffEl) DebugRed() DiffEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e DiffEl) DebugYellow() DiffEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e DiffEl) FontBlack() DiffEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e DiffEl) FontBold() DiffEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e DiffEl) FontExtrabold() DiffEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e DiffEl) FontExtralight() DiffEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e DiffEl) FontLight() DiffEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e DiffEl) FontMedium() DiffEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e DiffEl) FontNormal() DiffEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e DiffEl) FontSemibold() DiffEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e DiffEl) FontThin() DiffEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -456,18 +506,23 @@ func (e DiffEl) FontThin() DiffEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e DiffEl) HFlex() DiffEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e DiffEl) Margins(margins gk.EdgesInto) DiffEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e DiffEl) Paddings(paddings gk.EdgesInto) DiffEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e DiffEl) RefineStyle(style gk.StyleRefinement) DiffEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -477,25 +532,37 @@ func (e DiffEl) RefineStyle(style gk.StyleRefinement) DiffEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e DiffEl) VFlex() DiffEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DiffEl) Style(st ...gk.Style) DiffEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DiffEl) AspectRatio(ratio float32) DiffEl { tStyledAspectRatio(rt.N(e.Core), ratio); return e }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DiffEl) Bg(fill gk.Fill) DiffEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DiffEl) Border(length gk.Length) DiffEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DiffEl) BorderB(length gk.Length) DiffEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DiffEl) BorderColor(borderColor gk.Color) DiffEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -503,60 +570,92 @@ func (e DiffEl) BorderColor(borderColor gk.Color) DiffEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DiffEl) BorderL(length gk.Length) DiffEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DiffEl) BorderR(length gk.Length) DiffEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DiffEl) BorderT(length gk.Length) DiffEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DiffEl) BorderX(length gk.Length) DiffEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DiffEl) BorderY(length gk.Length) DiffEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DiffEl) Bottom(length gk.Length) DiffEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DiffEl) ColEnd(end int16) DiffEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DiffEl) ColSpan(span uint16) DiffEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DiffEl) ColStart(start int16) DiffEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DiffEl) Cursor(cursor gk.CursorStyle) DiffEl { tStyledCursor(rt.N(e.Core), cursor); return e }
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DiffEl) FlexBasis(basis gk.Length) DiffEl { tStyledFlexBasis(rt.N(e.Core), basis); return e }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DiffEl) FlexGrow(grow float32) DiffEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DiffEl) FlexShrink(shrink float32) DiffEl { tStyledFlexShrink(rt.N(e.Core), shrink); return e }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DiffEl) Font(font gk.Font) DiffEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DiffEl) FontFamily(familyName string) DiffEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DiffEl) FontFeatures(features gk.FontFeatures) DiffEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -565,26 +664,38 @@ func (e DiffEl) FontFeatures(features gk.FontFeatures) DiffEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DiffEl) FontWeight(weight gk.FontWeight) DiffEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DiffEl) Gap(length gk.Length) DiffEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DiffEl) GapX(length gk.Length) DiffEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DiffEl) GapY(length gk.Length) DiffEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DiffEl) GridCols(cols uint16) DiffEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DiffEl) GridColsMaxContent(cols uint16) DiffEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -592,15 +703,21 @@ func (e DiffEl) GridColsMaxContent(cols uint16) DiffEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DiffEl) GridColsMinContent(cols uint16) DiffEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DiffEl) GridRows(rows uint16) DiffEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DiffEl) GridRowsMaxContent(rows uint16) DiffEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -608,190 +725,286 @@ func (e DiffEl) GridRowsMaxContent(rows uint16) DiffEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DiffEl) GridRowsMinContent(rows uint16) DiffEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DiffEl) H(length gk.Length) DiffEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DiffEl) Inset(length gk.Length) DiffEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DiffEl) Left(length gk.Length) DiffEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DiffEl) LineClamp(lines int) DiffEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DiffEl) LineHeight(lineHeight gk.Length) DiffEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DiffEl) M(length gk.Length) DiffEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DiffEl) MaxH(length gk.Length) DiffEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DiffEl) MaxSize(length gk.Length) DiffEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DiffEl) MaxW(length gk.Length) DiffEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DiffEl) Mb(length gk.Length) DiffEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DiffEl) MinH(length gk.Length) DiffEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DiffEl) MinSize(length gk.Length) DiffEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DiffEl) MinW(length gk.Length) DiffEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DiffEl) Ml(length gk.Length) DiffEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DiffEl) Mr(length gk.Length) DiffEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DiffEl) Mt(length gk.Length) DiffEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DiffEl) Mx(length gk.Length) DiffEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DiffEl) My(length gk.Length) DiffEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DiffEl) Opacity(opacity float32) DiffEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DiffEl) P(length gk.Length) DiffEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DiffEl) Pb(length gk.Length) DiffEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DiffEl) Pl(length gk.Length) DiffEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DiffEl) Pr(length gk.Length) DiffEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DiffEl) Pt(length gk.Length) DiffEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DiffEl) Px(length gk.Length) DiffEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DiffEl) Py(length gk.Length) DiffEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DiffEl) Right(length gk.Length) DiffEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DiffEl) Rounded(length gk.Length) DiffEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DiffEl) RoundedB(length gk.Length) DiffEl { tStyledRoundedB(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DiffEl) RoundedBl(length gk.Length) DiffEl { tStyledRoundedBl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DiffEl) RoundedBr(length gk.Length) DiffEl { tStyledRoundedBr(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DiffEl) RoundedL(length gk.Length) DiffEl { tStyledRoundedL(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DiffEl) RoundedR(length gk.Length) DiffEl { tStyledRoundedR(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DiffEl) RoundedT(length gk.Length) DiffEl { tStyledRoundedT(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DiffEl) RoundedTl(length gk.Length) DiffEl { tStyledRoundedTl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DiffEl) RoundedTr(length gk.Length) DiffEl { tStyledRoundedTr(rt.N(e.Core), length); return e }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DiffEl) RowEnd(end int16) DiffEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DiffEl) RowSpan(span uint16) DiffEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DiffEl) RowStart(start int16) DiffEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DiffEl) ScrollbarWidth(width gk.Length) DiffEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DiffEl) Shadow(shadows []gk.BoxShadow) DiffEl { tStyledShadow(rt.N(e.Core), shadows); return e }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DiffEl) Size(length gk.Length) DiffEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DiffEl) TextAlign(align gk.TextAlign) DiffEl { tStyledTextAlign(rt.N(e.Core), align); return e }
 
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DiffEl) TextBg(bg gk.Color) DiffEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DiffEl) TextColor(color gk.Color) DiffEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DiffEl) TextDecorationColor(color gk.Color) DiffEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DiffEl) TextOverflow(overflow gk.TextOverflow) DiffEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -800,13 +1013,19 @@ func (e DiffEl) TextOverflow(overflow gk.TextOverflow) DiffEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DiffEl) TextSize(size gk.Length) DiffEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DiffEl) Top(length gk.Length) DiffEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DiffEl) W(length gk.Length) DiffEl { tStyledW(rt.N(e.Core), length); return e }
 
 // DiffDecoration is gpui_kit::component::diff::DiffDecoration.
@@ -817,7 +1036,7 @@ type DiffDecoration struct{ rt.Val }
 // A range that ends on the other side covers its start side from `start` onwards and its end side
 // up to `end`.
 //
-// NewDiffDecoration is <gpui_kit::component::diff::DiffDecoration>::new.
+// NewDiffDecoration calls <gpui_kit::component::diff::DiffDecoration>::new.
 func NewDiffDecoration(range_ DiffLineRange) DiffDecoration {
 	n := rt.NewValue(645)
 	o := rt.NodeArgs(n)
@@ -827,7 +1046,7 @@ func NewDiffDecoration(range_ DiffLineRange) DiffDecoration {
 
 // Sets the background, which defaults to a translucent warning color.
 //
-// WithBackground is <gpui_kit::component::diff::DiffDecoration>::with_background.
+// WithBackground calls <gpui_kit::component::diff::DiffDecoration>::with_background.
 func (e DiffDecoration) WithBackground(background gk.Color) DiffDecoration {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, background)
@@ -842,7 +1061,7 @@ type DiffFile struct{ rt.Val }
 // `gk.NewDiffFileUnchanged` it is a single column in every display mode; the lines between the
 // parts are simply not there.
 //
-// NewDiffFileExcerpts is <gpui_kit::component::diff::DiffFile>::excerpts.
+// NewDiffFileExcerpts calls <gpui_kit::component::diff::DiffFile>::excerpts.
 func NewDiffFileExcerpts(path string, parts []gk.TupleIntString) DiffFile {
 	n := rt.NewValue(890)
 	o := rt.NodeArgs(n)
@@ -855,7 +1074,7 @@ func NewDiffFileExcerpts(path string, parts []gk.TupleIntString) DiffFile {
 	return DiffFile{Val: rt.MkVal(n)}
 }
 
-// NewDiffFileParseAt is (|patch, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse(patch), index)).
+// NewDiffFileParseAt calls (|patch, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse(patch), index)).
 func NewDiffFileParseAt(patch string, index int) DiffFile {
 	n := rt.NewValue(847)
 	o := rt.NodeArgs(n)
@@ -864,7 +1083,7 @@ func NewDiffFileParseAt(patch string, index int) DiffFile {
 	return DiffFile{Val: rt.MkVal(n)}
 }
 
-// NewDiffFileParseWithAt is (|patch, options, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse_with(patch, options), index)).
+// NewDiffFileParseWithAt calls (|patch, options, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse_with(patch, options), index)).
 func NewDiffFileParseWithAt(patch string, options DiffParseOptions, index int) DiffFile {
 	n := rt.NewValue(848)
 	o := rt.NodeArgs(n)
@@ -877,7 +1096,7 @@ func NewDiffFileParseWithAt(patch string, options DiffParseOptions, index int) D
 // A file shown in full, for reference, without changes. It appears as a single column in every
 // display mode.
 //
-// NewDiffFileUnchanged is <gpui_kit::component::diff::DiffFile>::unchanged.
+// NewDiffFileUnchanged calls <gpui_kit::component::diff::DiffFile>::unchanged.
 func NewDiffFileUnchanged(path string, text string) DiffFile {
 	n := rt.NewValue(646)
 	o := rt.NodeArgs(n)
@@ -889,7 +1108,7 @@ func NewDiffFileUnchanged(path string, text string) DiffFile {
 // Overrides the syntax language detected from the path, using a highlighter language name such as
 // `rust` or `javascript`.
 //
-// WithLanguage is <gpui_kit::component::diff::DiffFile>::with_language.
+// WithLanguage calls <gpui_kit::component::diff::DiffFile>::with_language.
 func (e DiffFile) WithLanguage(language string) DiffFile {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(language)
@@ -901,7 +1120,7 @@ type DiffGutterMarker struct{ rt.Val }
 
 // Places a marker beside a source line.
 //
-// NewDiffGutterMarker is <gpui_kit::component::diff::DiffGutterMarker>::new.
+// NewDiffGutterMarker calls <gpui_kit::component::diff::DiffGutterMarker>::new.
 func NewDiffGutterMarker(id gk.ID, position DiffLinePosition) DiffGutterMarker {
 	n := rt.NewValue(827)
 	o := rt.NodeArgs(n)
@@ -912,7 +1131,7 @@ func NewDiffGutterMarker(id gk.ID, position DiffLinePosition) DiffGutterMarker {
 
 // Sets the accessible label that the rendered marker should announce.
 //
-// WithLabel is <gpui_kit::component::diff::DiffGutterMarker>::with_label.
+// WithLabel calls <gpui_kit::component::diff::DiffGutterMarker>::with_label.
 func (e DiffGutterMarker) WithLabel(label string) DiffGutterMarker {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -924,7 +1143,7 @@ type DiffLineRange struct{ rt.Val }
 
 // Creates a range on one side, clamping the lines to at least one.
 //
-// NewDiffLineRange is <gpui_kit::component::diff::DiffLineRange>::new.
+// NewDiffLineRange calls <gpui_kit::component::diff::DiffLineRange>::new.
 func NewDiffLineRange(path string, side DiffSide, start int, end int) DiffLineRange {
 	n := rt.NewValue(647)
 	o := rt.NodeArgs(n)
@@ -937,7 +1156,7 @@ func NewDiffLineRange(path string, side DiffSide, start int, end int) DiffLineRa
 
 // Ends the range on `side`, keeping `end` as its line on that side.
 //
-// WithEndSide is <gpui_kit::component::diff::DiffLineRange>::with_end_side.
+// WithEndSide calls <gpui_kit::component::diff::DiffLineRange>::with_end_side.
 func (e DiffLineRange) WithEndSide(side DiffSide) DiffLineRange {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(side))
@@ -947,13 +1166,13 @@ func (e DiffLineRange) WithEndSide(side DiffSide) DiffLineRange {
 // DiffParseOptions is gpui_kit::component::diff::DiffParseOptions.
 type DiffParseOptions struct{ rt.Val }
 
-// NewDiffParseOptions is <gpui_kit::component::diff::DiffParseOptions>::new.
+// NewDiffParseOptions calls <gpui_kit::component::diff::DiffParseOptions>::new.
 func NewDiffParseOptions() DiffParseOptions {
 	n := rt.NewValue(649)
 	return DiffParseOptions{Val: rt.MkVal(n)}
 }
 
-// NewDiffParseOptionsDefault is <gpui_kit::component::diff::DiffParseOptions as Default>::default.
+// NewDiffParseOptionsDefault calls <gpui_kit::component::diff::DiffParseOptions as Default>::default.
 func NewDiffParseOptionsDefault() DiffParseOptions {
 	n := rt.NewValue(648)
 	return DiffParseOptions{Val: rt.MkVal(n)}
@@ -963,7 +1182,7 @@ func NewDiffParseOptionsDefault() DiffParseOptions {
 // count each from the lines present. Declared counts still bound a hunk, so a line beyond them
 // remains an error.
 //
-// TruncatedHunks is <gpui_kit::component::diff::DiffParseOptions>::truncated_hunks.
+// TruncatedHunks calls <gpui_kit::component::diff::DiffParseOptions>::truncated_hunks.
 func (e DiffParseOptions) TruncatedHunks(truncatedHunks bool) DiffParseOptions {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(truncatedHunks)
@@ -975,7 +1194,7 @@ type DiffSpanHighlight struct{ rt.Val }
 
 // Highlights `span` of the line at `position`.
 //
-// NewDiffSpanHighlight is <gpui_kit::component::diff::DiffSpanHighlight>::new.
+// NewDiffSpanHighlight calls <gpui_kit::component::diff::DiffSpanHighlight>::new.
 func NewDiffSpanHighlight(position DiffLinePosition, span gk.Range) DiffSpanHighlight {
 	n := rt.NewValue(891)
 	o := rt.NodeArgs(n)
@@ -988,7 +1207,7 @@ func NewDiffSpanHighlight(position DiffLinePosition, span gk.Range) DiffSpanHigh
 // whatever the line shows beneath the span: for emphasis carried by the text itself, such as a
 // link.
 //
-// WithBackground is <gpui_kit::component::diff::DiffSpanHighlight>::with_background.
+// WithBackground calls <gpui_kit::component::diff::DiffSpanHighlight>::with_background.
 func (e DiffSpanHighlight) WithBackground(background gk.Color) DiffSpanHighlight {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, background)
@@ -997,7 +1216,7 @@ func (e DiffSpanHighlight) WithBackground(background gk.Color) DiffSpanHighlight
 
 // Sets the text color over the fill, keeping it readable on a strong one.
 //
-// WithForeground is <gpui_kit::component::diff::DiffSpanHighlight>::with_foreground.
+// WithForeground calls <gpui_kit::component::diff::DiffSpanHighlight>::with_foreground.
 func (e DiffSpanHighlight) WithForeground(foreground gk.Color) DiffSpanHighlight {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutColor(o, foreground)
@@ -1006,7 +1225,7 @@ func (e DiffSpanHighlight) WithForeground(foreground gk.Color) DiffSpanHighlight
 
 // Underlines the span in its text color, the way a link reads.
 //
-// WithUnderline is <gpui_kit::component::diff::DiffSpanHighlight>::with_underline.
+// WithUnderline calls <gpui_kit::component::diff::DiffSpanHighlight>::with_underline.
 func (e DiffSpanHighlight) WithUnderline() DiffSpanHighlight {
 	rt.Op(rt.N(e.Core), 258)
 	return e

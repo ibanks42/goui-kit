@@ -1,16 +1,5 @@
-// files: a small text viewer that uses the platform's services (docs/PROTOCOLS.md 11.30, 13.30),
-// the same app as ref/src/bin/files.rs: the menu bar (File: Open…,
-// Save as…, Quit; Help: Website), the platform's file dialogs, a prompt before quitting, opening a
-// URL, and a status line that slides and fades in when it changes. The menu bar is the platform's
-// where it has one (macOS) and the kit's AppMenuBar drawn at the top of the window everywhere.
-//
-//	examples/go/build.sh files && bin/files-go
-//
-// Offscreen (the diag library's driver) the dialogs are not shown: the driver's script answers
-// them with `answer ..` (gates/files.script, against its Rust twin: gates/pixels.sh files).
-//
-// Needs gk.NewAppMenuBar and gk.AppMenuBarView;
-// until the Go package has them this program does not build (gates/go-pending.txt).
+// Files viewer example: demonstrates application menus, keyboard bindings,
+// asynchronous file open/save dialogs, native prompts, URL launching, and status transitions.
 package main
 
 import (
@@ -32,7 +21,7 @@ type App struct {
 	menubar                kit.AppMenuBar
 	open, save, quit, site gk.Action
 	path, text, status     string
-	changes                int // a new id for the status line's animation each time it changes
+	changes                int
 	asking                 gk.Completion
 	askingNow              bool
 }
@@ -42,6 +31,7 @@ func (a *App) setStatus(s string) {
 	a.changes++
 }
 
+// opened runs on the UI thread inside a DONE turn when the native file dialog finishes.
 func (a *App) opened(cx *gk.Cx, d gk.PathsDone) {
 	switch d.Status {
 	case gk.DoneAnswered:
@@ -60,6 +50,7 @@ func (a *App) opened(cx *gk.Cx, d gk.PathsDone) {
 	}
 }
 
+// savedTo handles the async save-path completion and writes the current buffer to disk.
 func (a *App) savedTo(cx *gk.Cx, d gk.PathsDone) {
 	if d.Status != gk.DoneAnswered || len(d.Paths) == 0 {
 		a.setStatus("save cancelled")
@@ -72,6 +63,7 @@ func (a *App) savedTo(cx *gk.Cx, d gk.PathsDone) {
 	}
 }
 
+// quitAnswered handles the confirmation prompt result (button 0 is "Quit").
 func (a *App) quitAnswered(cx *gk.Cx, d gk.PromptDone) {
 	a.askingNow = false
 	if d.Status == gk.DoneAnswered && d.Answer == 0 {
@@ -95,7 +87,7 @@ func (a *App) doSave(cx *gk.Cx, _ gk.Action) {
 
 func (a *App) doQuit(cx *gk.Cx, _ gk.Action) {
 	if a.askingNow {
-		return // one question at a time
+		return
 	}
 	a.askingNow = true
 	a.asking = gk.Prompt(cx, gk.PromptWarning, "Quit the viewer?", "",

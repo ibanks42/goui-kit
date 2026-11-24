@@ -1,5 +1,4 @@
-// An action id the library never made (in Go an Action's id is unexported, so it cannot be
-// forged: only gk.NewAction makes one).
+// Compile-time misuse case: gk.Action's id field is unexported so callers cannot forge actions.
 package main
 
 import (

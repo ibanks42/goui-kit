@@ -1,28 +1,30 @@
 #!/bin/bash
-# release-assets.sh VERSION DIR [COMMIT]: check the files a release publishes and write
-# DIR/SHA256SUMS. Run by the release job of .github/workflows/platforms.yml on the three
-# platforms' downloads (tools/dist.sh), before `gh release create`; runs anywhere with bash,
-# GNU tar with zstd, sha256sum and python3 (no Rust).
+# Release pre-flight gate run on the collected release directory before publishing assets.
 #
-# Checks, and exits non-zero on the first failure:
-#   - VERSION is the version tools/dist.sh writes (Cargo.toml's workspace version);
-#   - DIR holds exactly these three files, the names other projects download by:
-#       gpuikit-VERSION-linux-x86_64.tar.zst
-#       gpuikit-VERSION-macos-universal.tar.zst
-#       gpuikit-VERSION-windows-x86_64.zip
-#   - each download's VERSIONS says `gpuikit VERSION for PLATFORM`, states the interface hash of
-#     this checkout (go/gk/gen_ops.go's apiHash: the three agree with each other and with the
-#     source), and the sha256 of the static and of the shared library inside that archive;
-#   - macOS: the static library is a universal archive and the shared one a universal dylib
-#     (install name @rpath/libgpuikit.dylib), each of exactly an arm64 and an x86_64 slice
-#     (tools/macho.py reads them, as there is no lipo here), and VERSIONS's `architectures:` line
-#     names both;
-#   - with COMMIT: every VERSIONS names a source commit COMMIT starts with, without uncommitted
-#     changes (the three were built from the commit being released).
+# Invariants checked across all three platform archives (`linux-x86_64`, `macos-universal`,
+# `windows-x86_64`):
+# 1. Version matches `Cargo.toml` (the same source `tools/dist.sh` reads).
+# 2. Directory contains the exact three expected archive filenames and nothing else
+#    (apart from any pre-existing `SHA256SUMS` which is overwritten at the end).
+# 3. Every archive's `VERSIONS` header matches `gpuikit <VERSION> for <PLATFORM>` and its
+#    `interface hash` matches `const ApiHash` in `go/gk/internal/rt/gen_ops.go` (ensuring
+#    all three platform builds share the exact same wire ABI).
+# 4. Both `library sha256` (static archive) and `shared library sha256` (shared library)
+#    recorded in `VERSIONS` match the actual streamed bytes inside the archive.
+# 5. For `macos-universal`, validates both `libgpuikit_static.a` and `libgpuikit.dylib`
+#    through `tools/macho.py check` (pure Python, so this release check runs on Linux CI
+#    without needing macOS `lipo`/`otool`) to confirm `arm64` + `x86_64` slices and the
+#    `@rpath/libgpuikit.dylib` install name.
+# 6. When optional `COMMIT` is passed, rejects `uncommitted`/`unknown` stamps and confirms
+#    each archive's `source commit` is a prefix of `COMMIT`.
+# 7. Writes `SHA256SUMS` covering all three verified archives.
+#
+# Usage: tools/release-assets.sh VERSION DIR [COMMIT]
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 ver=${1:?usage: release-assets.sh VERSION DIR [COMMIT]}; dir=${2:?DIR}; commit=${3:-}
 fail() { echo "release-assets: FAIL: $*" >&2; exit 1; }
+# Cross-check the requested release tag version against Cargo.toml and read the expected C/Go ApiHash.
 want=$(grep -m1 '^version' "$repo/Cargo.toml" | cut -d'"' -f2)
 [ "$ver" = "$want" ] || fail "version $ver, but tools/dist.sh writes $want (Cargo.toml): tag v$want, or change the version first"
 hash=$(grep -m1 'const ApiHash' "$repo/go/gk/internal/rt/gen_ops.go" | grep -o '0x[0-9a-f]*')
@@ -33,7 +35,7 @@ for p in "${platforms[@]}"; do
   case $p in windows-*) e=zip ;; *) e=tar.zst ;; esac
   expected+=("gpuikit-$ver-$p.$e")
 done
-# Every name in DIR but SHA256SUMS (each pass ends in a true status: set -e and pipefail).
+# Ensure the release folder holds the exact expected archive set (ignoring any existing SHA256SUMS).
 have=$(for f in "$dir"/* "$dir"/.[!.]*; do
   if [ -e "$f" ] && [ "${f##*/}" != SHA256SUMS ]; then echo "${f##*/}"; fi
 done | sort)
@@ -42,7 +44,8 @@ want_list=$(printf '%s\n' "${expected[@]}" | sort)
 $have
 but a release is exactly
 $want_list"
-# One file of an archive to stdout: ARCHIVE PATH.
+# Stream a single member out of a .zip or .tar.zst release archive to stdout without unpacking
+# to disk (uses `python3 -I` for zip so user site-packages cannot interfere).
 member() {
   case $1 in
     *.zip) python3 -I -c 'import sys, zipfile, shutil; shutil.copyfileobj(zipfile.ZipFile(sys.argv[1]).open(sys.argv[2]), sys.stdout.buffer)' "$1" "$2" ;;

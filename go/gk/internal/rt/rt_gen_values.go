@@ -1,14 +1,13 @@
 package rt
 
-// Fallible is a Result<T, E> of the kit read back: Value when OK, the error's text when not.
-// Result gives it as Go's (value, error).
+// Fallible represents a Rust Result<T, E> decoded across the C ABI.
 type Fallible[T any] struct {
 	OK    bool
 	Value Option[T]
 	Err   string
 }
 
-// Result is the value, or a *KitError with the error's text.
+// Result converts f into a standard Go (value, error) pair, wrapping Err as *KitError.
 func (f Fallible[T]) Result() (T, error) {
 	if !f.OK {
 		var zero T
@@ -18,35 +17,37 @@ func (f Fallible[T]) Result() (T, error) {
 	return v, nil
 }
 
+// RdFallible decodes a Fallible[T] from r using f to decode the success value.
 func RdFallible[T any](r *Reader, f func(r *Reader) T) Fallible[T] {
 	ok := r.Bool()
 	v := RdOpt(r, f)
 	return Fallible[T]{OK: ok, Value: v, Err: r.Str()}
 }
 
-// CivilDate is a calendar date (jiff's civil::Date): a date picker's and a calendar's dates. A date
-// that does not exist (February 30), or a year outside -9999 to 9999, stops where it is written.
+// CivilDate represents a calendar date without a time zone (year -9999..9999,
+// month 1..12, day 1..DaysInMonth).
 type CivilDate struct {
 	Year  int32
-	Month uint32 // 1 to 12
-	Day   uint32 // 1 to the month's last day
+	Month uint32
+	Day   uint32
 }
 
-// CivilTime is a time of day (jiff's civil::Time): a time field's time.
+// CivilTime represents a wall-clock time without a time zone.
 type CivilTime struct {
 	Hour, Minute, Second uint32
-	Nanosecond           uint32 // 0 to 999_999_999
+	Nanosecond           uint32
 }
 
-// CivilDateTime is a date and a time of day (jiff's civil::DateTime).
+// CivilDateTime combines a CivilDate and a CivilTime.
 type CivilDateTime struct {
 	Date CivilDate
 	Time CivilTime
 }
 
-// Weekday is a day of the week (jiff's civil::Weekday): a calendar's first day of the week.
+// Weekday identifies a day of the week (Monday = 0 through Sunday = 6).
 type Weekday uint8
 
+// Day-of-week values matching Rust jiff::civil::Weekday ordering.
 const (
 	WeekdayMon Weekday = iota
 	WeekdayTue
@@ -57,8 +58,8 @@ const (
 	WeekdaySun
 )
 
-// DaysInMonth is 28 to 31 for a month 1 to 12 (the proleptic Gregorian calendar, as jiff's), 0 for
-// another month.
+// DaysInMonth returns the number of calendar days in (year, month) using the
+// proleptic Gregorian leap-year rules, or 0 for an invalid month.
 func DaysInMonth(year int32, month uint32) uint32 {
 	switch month {
 	case 1, 3, 5, 7, 8, 10, 12:
@@ -74,6 +75,7 @@ func DaysInMonth(year int32, month uint32) uint32 {
 	return 0
 }
 
+// PutCivilDate validates that d is a real Gregorian date and encodes it onto o.
 func PutCivilDate(o *Tape, d CivilDate) {
 	if d.Year < -9999 || d.Year > 9999 {
 		Stop("the date %d-%d-%d is outside the years -9999 to 9999 a date can hold", d.Year, d.Month, d.Day)
@@ -86,6 +88,7 @@ func PutCivilDate(o *Tape, d CivilDate) {
 	o.U32(d.Day)
 }
 
+// PutCivilTime validates that t is a real wall-clock time and encodes it onto o.
 func PutCivilTime(o *Tape, t CivilTime) {
 	if t.Hour > 23 || t.Minute > 59 || t.Second > 59 || t.Nanosecond > 999_999_999 {
 		Stop("the time %02d:%02d:%02d.%09d does not exist (hour 0 to 23, minute and second 0 to 59)", t.Hour, t.Minute, t.Second, t.Nanosecond)
@@ -96,11 +99,13 @@ func PutCivilTime(o *Tape, t CivilTime) {
 	o.U32(t.Nanosecond)
 }
 
+// PutCivilDateTime validates and encodes v onto o.
 func PutCivilDateTime(o *Tape, v CivilDateTime) {
 	PutCivilDate(o, v.Date)
 	PutCivilTime(o, v.Time)
 }
 
+// PutWeekday validates w (0..6) and encodes it onto o.
 func PutWeekday(o *Tape, w Weekday) {
 	if w > 6 {
 		Stop("gk.Weekday(%d) is not a day of the week", uint8(w))
@@ -108,17 +113,20 @@ func PutWeekday(o *Tape, w Weekday) {
 	o.U8(uint8(w))
 }
 
+// RdCivilDate decodes a CivilDate from r.
 func RdCivilDate(r *Reader) CivilDate {
 	y := int32(r.U32())
 	m := r.U32()
 	return CivilDate{y, m, r.U32()}
 }
 
+// RdCivilTime decodes a CivilTime from r.
 func RdCivilTime(r *Reader) CivilTime {
 	h, mi, s := r.U32(), r.U32(), r.U32()
 	return CivilTime{h, mi, s, r.U32()}
 }
 
+// RdCivilDateTime decodes a CivilDateTime from r.
 func RdCivilDateTime(r *Reader) CivilDateTime {
 	d := RdCivilDate(r)
 	return CivilDateTime{d, RdCivilTime(r)}
@@ -126,18 +134,16 @@ func RdCivilDateTime(r *Reader) CivilDateTime {
 
 func rdWeekday(r *Reader) Weekday { return Weekday(r.U8()) }
 
-// CellValue is a type a value cell holds: what a settings field has.
+// CellValue constrains the scalar types stored in a Rust-side Cell.
 type CellValue interface{ bool | float64 | string }
 
-// Cell is a value the library holds for the kit to read while it draws: a settings field's value
-// (gk.NewSettingFieldBoolSwitch(dark, setDark)), a field's dirty test. The page reads the cell each
-// time it draws; the app writes it between frames with gk.CellSet and every window redraws.
-// A kept handle: gk.Release frees it.
+// Cell is a handle to a Rust-managed mutable scalar cell shared with kit
+// controls that read or write a value directly (such as settings fields).
 type Cell[T CellValue] struct{ HCore }
 
 func (c Cell[T]) handle() uint64 { return c.h }
 
-// NewCell makes a value cell holding value (immediate; not in a view function).
+// NewCell creates a Rust-side Cell initialized to value outside a view function.
 func NewCell[T CellValue](cx *Cx, value T) Cell[T] {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -150,7 +156,7 @@ func NewCell[T CellValue](cx *Cx, value T) Cell[T] {
 	return Cell[T]{MkH(r.U64())}
 }
 
-// CellSet writes the cell (buffered, with the turn's writes; every window redraws then).
+// CellSet updates the value stored in Cell c.
 func CellSet[T CellValue](cx *Cx, c Cell[T], value T) {
 	if c.h == 0 {
 		Stop("gk.CellSet on a zero Cell (make it with gk.NewCell)")
@@ -161,7 +167,7 @@ func CellSet[T CellValue](cx *Cx, c Cell[T], value T) {
 	CheckCx(cx).DeferOp(*o)
 }
 
-// CellGet reads the cell's value now (after the turn's writes so far; allowed in a view function).
+// CellGet reads the current value stored in Cell c.
 func CellGet[T CellValue](cx *Cx, c Cell[T]) T {
 	CheckCx(cx).Flush()
 	o := NewReq(CCellGet)
@@ -196,25 +202,27 @@ func putCellValue[T CellValue](o *Tape, value T) {
 	o.Bytes(body)
 }
 
-// LspPosition is an LSP position: a line and a character (UTF-16 units) in it, from 0
-// (cursor_position, PROTOCOLS.md 9.13).
+// LspPosition identifies a zero-based line and UTF-16 character column in an
+// editor document, matching the Language Server Protocol Position struct.
 type LspPosition struct {
 	Line      uint32
 	Character uint32
 }
 
+// PutLspPosition encodes p onto o.
 func PutLspPosition(o *Tape, p LspPosition) {
 	o.U32(p.Line)
 	o.U32(p.Character)
 }
 
+// RdLspPosition decodes an LspPosition from r.
 func RdLspPosition(r *Reader) LspPosition {
 	l := r.U32()
 	return LspPosition{l, r.U32()}
 }
 
-// CompletionItem is one entry of the completion menu: Kind 0 for none, else LSP's
-// CompletionItemKind (3 function, 6 variable, 14 keyword ...). InsertText defaults to Label.
+// CompletionItem represents one autocomplete suggestion passed to or read from
+// an editor completion provider.
 type CompletionItem struct {
 	Label      string
 	Kind       uint8
@@ -222,6 +230,7 @@ type CompletionItem struct {
 	InsertText Option[string]
 }
 
+// PutCompletionItem encodes c onto o.
 func PutCompletionItem(o *Tape, c CompletionItem) {
 	o.Str(c.Label)
 	o.U8(c.Kind)
@@ -229,6 +238,7 @@ func PutCompletionItem(o *Tape, c CompletionItem) {
 	putOptString(o, c.InsertText)
 }
 
+// RdCompletionItem decodes a CompletionItem from r.
 func RdCompletionItem(r *Reader) CompletionItem {
 	l := r.Str()
 	k := r.U8()
@@ -245,8 +255,8 @@ func putOptString(o *Tape, s Option[string]) {
 	}
 }
 
-// CodeBlock is a fenced code block as a highlighter gets it: its language (the word after the
-// fence), its code, and the rest of the fence's info string.
+// CodeBlock holds a fenced markdown code block's optional language tag, source
+// text, and optional metadata string.
 type CodeBlock struct {
 	Lang Option[string]
 	Code string
@@ -259,6 +269,7 @@ func putCodeBlock(o *Tape, b CodeBlock) {
 	putOptString(o, b.Meta)
 }
 
+// RdCodeBlock decodes a CodeBlock from r.
 func RdCodeBlock(r *Reader) CodeBlock {
 	l := RdOpt(r, (*Reader).Str)
 	c := r.Str()
@@ -273,6 +284,7 @@ func putSearchItem(o *Tape, it SearchItem) {
 	o.Bool(it.Disabled)
 }
 
+// RdSearchItem decodes a SearchItem from r.
 func RdSearchItem(r *Reader) SearchItem {
 	v, t := r.Str(), r.Str()
 	d := RdOpt(r, (*Reader).Str)
@@ -280,35 +292,38 @@ func RdSearchItem(r *Reader) SearchItem {
 	return SearchItem{Value: v, Title: t, Display: d, Keywords: k, Disabled: r.Bool()}
 }
 
-// ArcData is one slice of a pie (upstream's ArcData): the row it stands for and its angles.
+// ArcData holds the computed geometry of one pie or donut chart arc slice.
 type ArcData struct {
 	Row        int
-	Index      int // its place in the pie's order
+	Index      int
 	Value      float32
 	StartAngle float32
 	EndAngle   float32
 	PadAngle   float32
 }
 
+// RdArcData decodes an ArcData from r.
 func RdArcData(r *Reader) ArcData {
 	row, i := int(r.U64()), int(r.U64())
 	v, s, e := r.F32(), r.F32(), r.F32()
 	return ArcData{row, i, v, s, e, r.F32()}
 }
 
-// StackPoint is one row of one series of a stack: its band from Y0 to Y1.
+// StackPoint holds the baseline (Y0), top (Y1), and source row index of one
+// point in a stacked chart series.
 type StackPoint struct {
 	Y0, Y1 float32
 	Row    int
 }
 
-// StackSeries is one key's series of a stack (upstream's StackSeries).
+// StackSeries holds one stacked series key, series index, and its StackPoints.
 type StackSeries struct {
 	Key    string
 	Index  int
 	Points []StackPoint
 }
 
+// RdStackSeries decodes a StackSeries from r.
 func RdStackSeries(r *Reader) StackSeries {
 	k := r.Str()
 	i := int(r.U64())
@@ -318,17 +333,15 @@ func RdStackSeries(r *Reader) StackSeries {
 	})}
 }
 
-// QuestionnaireValidator is QuestionnaireItemDefinition::validator read back: present when the
-// item has one.
+// QuestionnaireValidator is a marker struct returned by questionnaire APIs that
+// expose opaque Rust validator objects.
 type QuestionnaireValidator struct{}
 
+// RdQuestionnaireValidator decodes an empty QuestionnaireValidator marker.
 func RdQuestionnaireValidator(r *Reader) QuestionnaireValidator { return QuestionnaireValidator{} }
 
-// QuestionnaireRules is a questionnaire item's validator as rules (with_validator, PROTOCOLS.md
-// 11.26), checked by the library while the questionnaire updates: a limit of 0 is none; a length
-// counts the free answer's characters; OneOf / NotOneOf (empty: any) the free answer must or must
-// not be; SameAs / DiffersFrom name another item whose answer this one must equal or differ from;
-// Message replaces the error ("{item}" is the item's name).
+// QuestionnaireRules configures declarative answer validation rules for a
+// questionnaire field.
 type QuestionnaireRules struct {
 	MinChoices  uint32
 	MaxChoices  uint32
@@ -341,6 +354,7 @@ type QuestionnaireRules struct {
 	Message     string
 }
 
+// PutQuestionnaireRules encodes q onto o.
 func PutQuestionnaireRules(o *Tape, q QuestionnaireRules) {
 	o.U32(q.MinChoices)
 	o.U32(q.MaxChoices)
@@ -357,9 +371,10 @@ func PutQuestionnaireRules(o *Tape, q QuestionnaireRules) {
 	o.Str(q.Message)
 }
 
-// BackgroundKind is the kind of a gpui Background read back.
+// BackgroundKind identifies which variant a decoded BackgroundValue holds.
 type BackgroundKind uint8
 
+// Variant tags for BackgroundValue.Kind.
 const (
 	BackgroundKindSolid BackgroundKind = iota
 	BackgroundKindLinearGradient
@@ -367,23 +382,22 @@ const (
 	BackgroundKindCheckerboard
 )
 
-// BackgroundColorSpace is the colour space a gradient interpolates in.
+// BackgroundColorSpace identifies the interpolation color space of a gradient background.
 type BackgroundColorSpace uint8
 
+// Color spaces for BackgroundValue.ColorSpace.
 const (
 	BackgroundColorSpaceSrgb BackgroundColorSpace = iota
 	BackgroundColorSpaceOklab
 )
 
-// BackgroundStop is one stop of a linear gradient read back.
+// BackgroundStop holds one decoded color stop of a BackgroundValue gradient.
 type BackgroundStop struct {
 	Color      Hsla
-	Percentage float32 // 0 to 1
+	Percentage float32
 }
 
-// BackgroundValue is gpui's Background read back (try_parse_background, PROTOCOLS.md 11.23): its
-// kind, colour space, solid colour (solid, slash pattern, checkerboard), the gradient's angle in
-// degrees or the pattern's height, and a linear gradient's two stops.
+// BackgroundValue is a decoded GPUI Background returned from style/theme queries.
 type BackgroundValue struct {
 	Kind          BackgroundKind
 	ColorSpace    BackgroundColorSpace
@@ -392,6 +406,7 @@ type BackgroundValue struct {
 	Stops         [2]BackgroundStop
 }
 
+// RdBackgroundValue decodes a BackgroundValue from r.
 func RdBackgroundValue(r *Reader) BackgroundValue {
 	var v BackgroundValue
 	v.Kind = BackgroundKind(r.U8())
@@ -405,16 +420,13 @@ func RdBackgroundValue(r *Reader) BackgroundValue {
 	return v
 }
 
-// IntervalMatcher is a calendar matcher's interval (PROTOCOLS.md 11.21), both ways:
-// gk.MatcherInterval{Value: gk.IntervalMatcher{Before: gk.Some(d)}} disables the days before
-// Before and after After; none is no bound.
+// IntervalMatcher matches calendar dates strictly before Before or after After.
 type IntervalMatcher struct {
 	Before Option[CivilDate]
 	After  Option[CivilDate]
 }
 
-// RangeMatcher is a calendar matcher's range (PROTOCOLS.md 11.21), both ways: the days from From to
-// To, both included; none is no bound.
+// RangeMatcher matches calendar dates inside an optional [From, To] interval.
 type RangeMatcher struct {
 	From Option[CivilDate]
 	To   Option[CivilDate]
@@ -429,21 +441,25 @@ func putOptCivilDate(o *Tape, d Option[CivilDate]) {
 	o.U8(0)
 }
 
+// PutIntervalMatcher encodes m onto o.
 func PutIntervalMatcher(o *Tape, m IntervalMatcher) {
 	putOptCivilDate(o, m.Before)
 	putOptCivilDate(o, m.After)
 }
 
+// RdIntervalMatcher decodes an IntervalMatcher from r.
 func RdIntervalMatcher(r *Reader) IntervalMatcher {
 	a := RdOpt(r, RdCivilDate)
 	return IntervalMatcher{a, RdOpt(r, RdCivilDate)}
 }
 
+// PutRangeMatcher encodes m onto o.
 func PutRangeMatcher(o *Tape, m RangeMatcher) {
 	putOptCivilDate(o, m.From)
 	putOptCivilDate(o, m.To)
 }
 
+// RdRangeMatcher decodes a RangeMatcher from r.
 func RdRangeMatcher(r *Reader) RangeMatcher {
 	a := RdOpt(r, RdCivilDate)
 	return RangeMatcher{a, RdOpt(r, RdCivilDate)}

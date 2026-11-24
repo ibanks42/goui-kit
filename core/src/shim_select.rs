@@ -1,18 +1,11 @@
-//! The searchable-list family of the delegate protocol (docs/PROTOCOLS.md section 9.9): the
-//! kit's `SelectState<D>`, `ComboboxState<D>`, `Select<D>` and `Combobox<D>` are generic over a
-//! `SearchableListDelegate` the app implements upstream. The binding implements it once, here,
-//! over a row source: `GkSearchDelegate`, whose items are data the app pushed
-//! (`C_SEARCH_ITEMS`), filtered in the library as upstream's `SearchableVec` filters them, and
-//! whose rows, when the app asked for them, are the source's row views (one per item, keyed by
-//! the item's section and its index among all the section's items, so a row keeps its view
-//! while the filter changes). Searching is local; a source made with search requests also asks
-//! the app (`SEARCH_EVENT`), which answers with new items. App code never runs from here.
+//! Searchable-list and select-menu delegate shims.
 //!
-//! The states and elements over this delegate are generated (overrides.toml `[instantiate]`,
-//! `SelectState<crate::shim_select::GkSearchDelegate>` and the others): this file holds the
-//! delegate, its item type `GkItem` (`gk.SearchItem` in Go, a value both ways: the
-//! generator's `libval` rule, gen/gk_lists.py) and the family's call op. Its
-//! numbers: call 176-191, shape 44-47.
+//! Host code registers grouped or flat item lists (`C_SEARCH_ITEMS`) and
+//! optional selection rules (`C_SEARCH_RULES`) against a row `Source`.
+//! `GkSearchDelegate` implements `SearchableListDelegate`, supporting local
+//! substring filtering, asynchronous host-side search (`SHAPE_SEARCH_EVENT`),
+//! custom row/header views from `source::row`, and min/max/locked/blocked
+//! selection enforcement.
 
 use crate::genapi::{Call, GkResult, Put, R, Unwire, Wire};
 use crate::ops::*;
@@ -23,18 +16,18 @@ use gpui_kit::{AnyElement, App, IntoElement, SharedString, Task, Window};
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-// --- the item ------------------------------------------------------------------------------
-
-/// One item of a select or combobox: what upstream's `SearchableListItem` asks of an item, as
-/// data. `value` identifies it (`Value = SharedString`), `title` is shown in the menu and the
-/// trigger, `display` (when set) replaces the title in the trigger, `keywords` are searched
-/// besides the title, and a disabled item is shown but cannot be chosen.
+/// Selectable item transferred between host code and `GkSearchDelegate`.
 #[derive(Clone, Debug, PartialEq)]
 pub struct GkItem {
+    /// Stable identifier compared for selection equality.
     pub value: SharedString,
+    /// Primary label displayed in the list and matched during local search.
     pub title: SharedString,
+    /// Optional alternate text shown in the closed trigger when selected.
     pub display: Option<SharedString>,
+    /// Additional search terms matched case-insensitively during local search.
     pub keywords: SharedString,
+    /// Prevents the item from being selected when true.
     pub disabled: bool,
 }
 
@@ -67,7 +60,6 @@ impl SearchableListItem for GkItem {
     }
 }
 
-/// `gk.Search_Item`: str value, str title, opt<str> display, str keywords, bool disabled.
 impl Wire for GkItem {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_str(&self.value);
@@ -107,24 +99,21 @@ impl Default for GkItem {
     }
 }
 
-// --- the items of a source -------------------------------------------------------------------
-
-/// A section of items; `title` set means the items are grouped (`SearchableGroup` upstream).
 #[derive(Clone, Default)]
 struct Section {
     title: Option<SharedString>,
     items: Vec<GkItem>,
 }
 
-/// What the app pushed for a source (`C_SEARCH_ITEMS`).
+/// Staged searchable-list dataset and feature flags for a row source.
 #[derive(Clone, Default)]
 struct Items {
     sections: Vec<Section>,
-    /// The source's rows draw the items (the app gave a row procedure).
+    /// Render items using host row views from `source::row` when true.
     rows: bool,
-    /// perform_search also asks the app (a request on SHAPE_SEARCH_EVENT).
+    /// Delegate search queries asynchronously to the host via `SHAPE_SEARCH_EVENT`.
     requests: bool,
-    /// The source's HEADER row of each group draws the group's header.
+    /// Render section headers using host views (`HEADER_ROW`) when true.
     headers: bool,
 }
 
@@ -132,7 +121,6 @@ const F_ROWS: u8 = 1;
 const F_REQUESTS: u8 = 2;
 const F_HEADERS: u8 = 4;
 
-/// u8 flags, u32 n, (opt<str> title, u32 n, item each) each.
 fn read_items(r: &mut R) -> Items {
     let flags = r.u8();
     Items {
@@ -159,33 +147,32 @@ fn read_sections(r: &mut R) -> Vec<Section> {
 }
 
 thread_local! {
-    /// The items the app pushed for each source; every delegate made from the source takes a
-    /// copy (`from_source`), so a state's `set_items(src)` after a new `gk.search_items` sees them.
+    /// Latest item lists staged by `C_SEARCH_ITEMS`, keyed by source handle.
     static ITEMS: RefCell<HashMap<u64, Items>> = RefCell::new(HashMap::new());
 }
 
-// --- the delegate ------------------------------------------------------------------------------
-
-/// The `SearchableListDelegate` over a row source. Without search requests it filters the items
-/// as upstream's `SearchableVec` does (an item matches by `matches`; a group stays while one of
-/// its items or its title matches). With search requests it shows exactly the items the app
-/// pushed: the app answers a query by pushing new items (`gk.search_items`), setting them on the
-/// state (`set_items`), and answering the request.
+/// `SearchableListDelegate` backed by staged `Items` and row source `src`.
+///
+/// `view`, `keys`, `titles`, and `groups` hold the post-filter projection while
+/// retaining original `(section, row)` coordinates so custom row and header
+/// views resolve against the unfiltered source indices.
 pub struct GkSearchDelegate {
     pub src: u64,
     items: Items,
     query: String,
-    /// The visible items in the order `item` hands them out, and each one's (section, index
-    /// among all the section's items): the key of its row.
+    /// Filtered items organized by visible section.
     view: Vec<Vec<GkItem>>,
+    /// Parallel `(orig_section, orig_row)` coordinates for each entry in `view`.
     keys: Vec<Vec<(usize, usize)>>,
-    /// The visible groups' titles and their sections among all (grouped items only).
+    /// Visible section header titles (populated only in grouped mode).
     titles: Vec<SharedString>,
+    /// Parallel original section indices for each entry in `titles`.
     groups: Vec<usize>,
 }
 
 impl GkSearchDelegate {
-    /// The delegate over `src`, with the items the app pushed for it (`gk.search_items`).
+    /// Constructs a delegate for source `src` using the item list staged by
+    /// `C_SEARCH_ITEMS` (or empty if none was staged yet).
     pub fn from_source(src: u64) -> GkResult<Self> {
         source::count(src, 0)?;
         let items = ITEMS.with(|m| m.borrow().get(&src).cloned()).unwrap_or_default();
@@ -198,7 +185,8 @@ impl GkSearchDelegate {
         self.items.sections.iter().any(|s| s.title.is_some())
     }
 
-    /// Rebuilds the visible items from the items and the query.
+    /// Rebuilds the filtered `view`/`keys`/`titles`/`groups` projection from
+    /// `self.items` and `self.query`.
     fn filter(&mut self) {
         let q = self.query.to_lowercase();
         let local = !self.items.requests;
@@ -233,7 +221,6 @@ impl GkSearchDelegate {
     }
 }
 
-/// The delegate read back: its row source.
 impl Wire for GkSearchDelegate {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u64(self.src);
@@ -249,7 +236,6 @@ impl SearchableListDelegate for GkSearchDelegate {
 
     #[allow(deprecated)]
     fn section(&self, section: usize) -> Option<AnyElement> {
-        // The group's title, which the kit wraps in its section header (SearchableGroup).
         self.titles.get(section).cloned().map(IntoElement::into_any_element)
     }
 
@@ -280,7 +266,8 @@ impl SearchableListDelegate for GkSearchDelegate {
             self.filter();
             return Task::ready(());
         }
-        // A request: the task ends when the app answers (after it set the items it found).
+        // Host-managed search: send the query and wait for the host to reply
+        // after updating items.
         match source::request(self.src, SHAPE_SEARCH_EVENT, query, cx) {
             Ok(rx) => cx.foreground_executor().spawn(async move {
                 let _ = rx.await;
@@ -290,8 +277,6 @@ impl SearchableListDelegate for GkSearchDelegate {
     }
 
     fn render_item(&self, ix: IndexPath, _item: &GkItem, _checked: bool, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
-        // The app's row view when it gave a row procedure; upstream's row (the title and the
-        // check mark) otherwise, and for the one frame a row has no view yet.
         if !self.items.rows {
             return None;
         }
@@ -304,8 +289,6 @@ impl SearchableListDelegate for GkSearchDelegate {
     }
 
     fn render_section_header(&self, section: usize, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
-        // The group's HEADER row view when the app asked for header rows; otherwise none, and the
-        // kit draws the group's title (`section`) in its own header.
         if !self.items.headers {
             return None;
         }
@@ -325,9 +308,6 @@ impl SearchableListDelegate for GkSearchDelegate {
         current.iter().any(|(_, i)| i.value == item.value)
     }
 
-    /// Upstream's default (each change applied in order), then the rules the app gave the source
-    /// in advance (`gk.search_will_change`, PROTOCOLS.md 11.25): upstream calls this synchronously
-    /// while the list is borrowed, with no context, so it answers from data.
     fn on_will_change(&mut self, selection: &mut Vec<(IndexPath, GkItem)>, changes: &[SearchableListChange]) {
         let before = selection.clone();
         for change in changes {
@@ -358,21 +338,20 @@ impl SearchableListDelegate for GkSearchDelegate {
     }
 }
 
-// --- rules for a selection change (docs/PROTOCOLS.md 11.25) --------------------------------------
-
-/// What a selection may become, given by the app in advance (`gk.search_will_change`):
-/// `blocked` values are never added, `locked` values are never taken out once selected, and a
-/// change that would leave fewer than `min` or more than `max` items selected (0: no limit) is
-/// refused whole (the selection stays as it was, upstream's veto).
+/// Selection constraints enforced in `on_will_change`.
 #[derive(Clone, Default)]
 struct Rules {
     min: usize,
     max: usize,
+    /// Values that cannot be removed once present in `before`.
     locked: Vec<SharedString>,
+    /// Values that can never enter `selection`.
     blocked: Vec<SharedString>,
 }
 
 impl Rules {
+    /// Applies blocked/locked value rules and rolls back to `before` if `min`
+    /// or `max` bounds (when non-zero) are violated.
     fn apply(&self, before: &[(IndexPath, GkItem)], selection: &mut Vec<(IndexPath, GkItem)>) {
         selection.retain(|(_, s)| !self.blocked.contains(&s.value));
         for (ix, item) in before {
@@ -388,11 +367,10 @@ impl Rules {
 }
 
 thread_local! {
+    /// Active selection rules keyed by source handle.
     static RULES: RefCell<HashMap<u64, Rules>> = RefCell::new(HashMap::new());
 }
 
-/// C_SEARCH_RULES: u64 source, u32 min, u32 max, u32 n, str locked each, u32 n, str blocked each
-/// (buffered; replaces the source's rules).
 fn search_rules(r: &mut R) -> GkResult<()> {
     let src = r.u64();
     let (min, max) = (r.u32() as usize, r.u32() as usize);
@@ -405,39 +383,34 @@ fn search_rules(r: &mut R) -> GkResult<()> {
     source::count(src, 0)?;
     RULES.with(|m| {
         let mut m = m.borrow_mut();
+        // Prune rules belonging to sources that have been released.
         m.retain(|s, _| source::count(*s, 0).is_ok());
         m.insert(src, Rules { min, max, locked, blocked });
     });
     Ok(())
 }
 
-// --- the call op -----------------------------------------------------------------------------
-
-/// The family's call ops; None: not one of them.
+/// Dispatches `C_SEARCH_ITEMS` and `C_SEARCH_RULES`, falling through to `shim_text::call`.
 pub fn call(op: u16, r: &mut R, _c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_SEARCH_ITEMS => (|| {
-            // u64 source, the items (read_items). Immediate when no state uses the source yet
-            // (it is read by the state's constructor), and also when buffered: the state's
-            // set_items(src) after it reads them.
             let src = r.u64();
             let items = read_items(r);
             source::count(src, 0)?;
             ITEMS.with(|m| {
                 let mut m = m.borrow_mut();
-                // The items of released sources go when new ones arrive.
+                // Drop staged item sets for released sources.
                 m.retain(|s, _| source::count(*s, 0).is_ok());
                 m.insert(src, items);
             });
             Ok(())
         })(),
-        C_SEARCH_RULES => search_rules(r), // rules for a selection change (PROTOCOLS.md 11.25)
-        _ => return crate::shim_text::call(op, r, _c), // data closures (PROTOCOLS.md 9.14)
+        C_SEARCH_RULES => search_rules(r),
+        _ => return crate::shim_text::call(op, r, _c),
     })
 }
 
-/// An app view drawn by an element closure that gets no `&mut App` (`Select::empty`, the
-/// generator's `viewfn` rule): the view, or nothing when none was given.
+/// Converts an optional `AnyView` into an `AnyElement`, defaulting to an empty `div`.
 pub fn view_element(v: &Option<gpui_kit::AnyView>) -> AnyElement {
     match v {
         Some(v) => v.clone().into_any_element(),

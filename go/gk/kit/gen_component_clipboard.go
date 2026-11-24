@@ -14,7 +14,7 @@ type ClipboardEl struct{ rt.ElSizableNode }
 
 // Create a new Clipboard element with the given ID.
 //
-// Clipboard is <gpui_kit::component::clipboard::Clipboard>::new.
+// Clipboard calls <gpui_kit::component::clipboard::Clipboard>::new.
 func Clipboard(id gk.ID) ClipboardEl {
 	rt.UseComponentClipboard()
 	n := rt.NewNode(621)
@@ -28,7 +28,7 @@ func Clipboard(id gk.ID) ClipboardEl {
 // The clipboard button shows only an icon, so it has no visible label to read, and its tooltip is
 // a hint rather than a name.
 //
-// AccessibilityLabel is <gpui_kit::component::clipboard::Clipboard>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::clipboard::Clipboard>::accessibility_label.
 func (e ClipboardEl) AccessibilityLabel(label string) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -37,7 +37,7 @@ func (e ClipboardEl) AccessibilityLabel(label string) ClipboardEl {
 
 // Set visible text for the clipboard button.
 //
-// Label is <gpui_kit::component::clipboard::Clipboard>::label.
+// Label calls <gpui_kit::component::clipboard::Clipboard>::label.
 func (e ClipboardEl) Label(label string) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Str(label)
@@ -46,7 +46,7 @@ func (e ClipboardEl) Label(label string) ClipboardEl {
 
 // Set a callback to be invoked when the content is copied to the clipboard.
 //
-// OnCopied is <gpui_kit::component::clipboard::Clipboard>::on_copied.
+// OnCopied calls <gpui_kit::component::clipboard::Clipboard>::on_copied.
 func (e ClipboardEl) OnCopied(handler func(cx *gk.Cx, e string)) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 6))
@@ -55,7 +55,7 @@ func (e ClipboardEl) OnCopied(handler func(cx *gk.Cx, e string)) ClipboardEl {
 
 // Set tooltip text for the clipboard button.
 //
-// Tooltip is <gpui_kit::component::clipboard::Clipboard>::tooltip.
+// Tooltip calls <gpui_kit::component::clipboard::Clipboard>::tooltip.
 func (e ClipboardEl) Tooltip(tooltip string) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(tooltip)
@@ -66,7 +66,7 @@ func (e ClipboardEl) Tooltip(tooltip string) ClipboardEl {
 //
 // Defaults to `show_delay`.
 //
-// TooltipShowDelay is <gpui_kit::component::clipboard::Clipboard>::tooltip_show_delay.
+// TooltipShowDelay calls <gpui_kit::component::clipboard::Clipboard>::tooltip_show_delay.
 func (e ClipboardEl) TooltipShowDelay(delay time.Duration) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutMs(o, delay)
@@ -75,7 +75,7 @@ func (e ClipboardEl) TooltipShowDelay(delay time.Duration) ClipboardEl {
 
 // Set the value for copying to the clipboard. Default is an empty string.
 //
-// Value is <gpui_kit::component::clipboard::Clipboard>::value.
+// Value calls <gpui_kit::component::clipboard::Clipboard>::value.
 func (e ClipboardEl) Value(value string) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Str(value)
@@ -86,7 +86,7 @@ func (e ClipboardEl) Value(value string) ClipboardEl {
 //
 // When used this, the copy value will use the result of the function.
 //
-// ValueFn is <gpui_kit::component::clipboard::Clipboard>::value_fn.
+// ValueFn calls <gpui_kit::component::clipboard::Clipboard>::value_fn.
 func (e ClipboardEl) ValueFn(value func(cx *gk.Cx) string) ClipboardEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(value, 104))
@@ -94,19 +94,27 @@ func (e ClipboardEl) ValueFn(value func(cx *gk.Cx) string) ClipboardEl {
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e ClipboardEl) Large() ClipboardEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e ClipboardEl) Small() ClipboardEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e ClipboardEl) WithSize(size gk.SizeInto) ClipboardEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e ClipboardEl) Xsmall() ClipboardEl { tSizableXsmall(rt.N(e.Core)); return e }

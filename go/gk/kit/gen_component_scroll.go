@@ -15,7 +15,7 @@ type ScrollableDivEl struct{ rt.ElAnimatableElement }
 // Only needed when one call site creates several scrollables, which would otherwise share a single
 // scroll position.
 //
-// ID is <gpui_kit::component::scroll::Scrollable<gpui_kit::Div>>::id.
+// ID calls <gpui_kit::component::scroll::Scrollable<gpui_kit::Div>>::id.
 func (e ScrollableDivEl) ID(id gk.ID) ScrollableDivEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutID(o, id)
@@ -25,7 +25,7 @@ func (e ScrollableDivEl) ID(id gk.ID) ScrollableDivEl {
 // Bounce at the vertical boundaries. On by default on iOS, Android and macOS, off elsewhere;
 // horizontal-only areas do not bounce.
 //
-// ScrollBounce is <gpui_kit::component::scroll::Scrollable<gpui_kit::Div>>::scroll_bounce.
+// ScrollBounce calls <gpui_kit::component::scroll::Scrollable<gpui_kit::Div>>::scroll_bounce.
 func (e ScrollableDivEl) ScrollBounce(enabled bool) ScrollableDivEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(enabled)
@@ -34,20 +34,24 @@ func (e ScrollableDivEl) ScrollBounce(enabled bool) ScrollableDivEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e ScrollableDivEl) PopoverStyle() ScrollableDivEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e ScrollableDivEl) RoundedFullStyle() ScrollableDivEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -56,16 +60,18 @@ func (e ScrollableDivEl) RoundedFullStyle() ScrollableDivEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e ScrollableDivEl) FocusRingStyle() ScrollableDivEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -78,24 +84,32 @@ func (e ScrollableDivEl) FocusRingStyle() ScrollableDivEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e ScrollableDivEl) KeepTextSelection(id gk.ID) ScrollableDivEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e ScrollableDivEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) ScrollableDivEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e ScrollableDivEl) BorderE(width gk.Length) ScrollableDivEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e ScrollableDivEl) BorderS(width gk.Length) ScrollableDivEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -103,136 +117,178 @@ func (e ScrollableDivEl) BorderS(width gk.Length) ScrollableDivEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e ScrollableDivEl) FlexRowDir() ScrollableDivEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e ScrollableDivEl) InsetE(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e ScrollableDivEl) InsetS(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e ScrollableDivEl) JustifyFlexEnd() ScrollableDivEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e ScrollableDivEl) JustifyFlexStart() ScrollableDivEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e ScrollableDivEl) Me(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e ScrollableDivEl) Ms(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e ScrollableDivEl) Pe(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e ScrollableDivEl) Ps(length gk.Length) ScrollableDivEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e ScrollableDivEl) RoundedE(radius gk.Length) ScrollableDivEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e ScrollableDivEl) RoundedS(radius gk.Length) ScrollableDivEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e ScrollableDivEl) TextEnd() ScrollableDivEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e ScrollableDivEl) TextStart() ScrollableDivEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e ScrollableDivEl) CornerRadii(radius gk.Corners) ScrollableDivEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e ScrollableDivEl) DebugBlue() ScrollableDivEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e ScrollableDivEl) DebugFocused(focusHandle gk.FocusHandle) ScrollableDivEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e ScrollableDivEl) DebugGreen() ScrollableDivEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e ScrollableDivEl) DebugPink() ScrollableDivEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e ScrollableDivEl) DebugRed() ScrollableDivEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e ScrollableDivEl) DebugYellow() ScrollableDivEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e ScrollableDivEl) FontBlack() ScrollableDivEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e ScrollableDivEl) FontBold() ScrollableDivEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e ScrollableDivEl) FontExtrabold() ScrollableDivEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e ScrollableDivEl) FontExtralight() ScrollableDivEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e ScrollableDivEl) FontLight() ScrollableDivEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e ScrollableDivEl) FontMedium() ScrollableDivEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e ScrollableDivEl) FontNormal() ScrollableDivEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e ScrollableDivEl) FontSemibold() ScrollableDivEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e ScrollableDivEl) FontThin() ScrollableDivEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -241,18 +297,23 @@ func (e ScrollableDivEl) FontThin() ScrollableDivEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e ScrollableDivEl) HFlex() ScrollableDivEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e ScrollableDivEl) Margins(margins gk.EdgesInto) ScrollableDivEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e ScrollableDivEl) Paddings(paddings gk.EdgesInto) ScrollableDivEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e ScrollableDivEl) RefineStyle(style gk.StyleRefinement) ScrollableDivEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -262,21 +323,29 @@ func (e ScrollableDivEl) RefineStyle(style gk.StyleRefinement) ScrollableDivEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e ScrollableDivEl) VFlex() ScrollableDivEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ScrollableDivEl) Style(st ...gk.Style) ScrollableDivEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ScrollableDivEl) AspectRatio(ratio float32) ScrollableDivEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ScrollableDivEl) Bg(fill gk.Fill) ScrollableDivEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ScrollableDivEl) Border(length gk.Length) ScrollableDivEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -284,12 +353,16 @@ func (e ScrollableDivEl) Border(length gk.Length) ScrollableDivEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ScrollableDivEl) BorderB(length gk.Length) ScrollableDivEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ScrollableDivEl) BorderColor(borderColor gk.Color) ScrollableDivEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -297,6 +370,8 @@ func (e ScrollableDivEl) BorderColor(borderColor gk.Color) ScrollableDivEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ScrollableDivEl) BorderL(length gk.Length) ScrollableDivEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -304,6 +379,8 @@ func (e ScrollableDivEl) BorderL(length gk.Length) ScrollableDivEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ScrollableDivEl) BorderR(length gk.Length) ScrollableDivEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -311,6 +388,8 @@ func (e ScrollableDivEl) BorderR(length gk.Length) ScrollableDivEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ScrollableDivEl) BorderT(length gk.Length) ScrollableDivEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -318,6 +397,8 @@ func (e ScrollableDivEl) BorderT(length gk.Length) ScrollableDivEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ScrollableDivEl) BorderX(length gk.Length) ScrollableDivEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -325,6 +406,8 @@ func (e ScrollableDivEl) BorderX(length gk.Length) ScrollableDivEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ScrollableDivEl) BorderY(length gk.Length) ScrollableDivEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -332,30 +415,40 @@ func (e ScrollableDivEl) BorderY(length gk.Length) ScrollableDivEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ScrollableDivEl) Bottom(length gk.Length) ScrollableDivEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ScrollableDivEl) ColEnd(end int16) ScrollableDivEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ScrollableDivEl) ColSpan(span uint16) ScrollableDivEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ScrollableDivEl) ColStart(start int16) ScrollableDivEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ScrollableDivEl) Cursor(cursor gk.CursorStyle) ScrollableDivEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -363,36 +456,48 @@ func (e ScrollableDivEl) Cursor(cursor gk.CursorStyle) ScrollableDivEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ScrollableDivEl) FlexBasis(basis gk.Length) ScrollableDivEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ScrollableDivEl) FlexGrow(grow float32) ScrollableDivEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ScrollableDivEl) FlexShrink(shrink float32) ScrollableDivEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ScrollableDivEl) Font(font gk.Font) ScrollableDivEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ScrollableDivEl) FontFamily(familyName string) ScrollableDivEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ScrollableDivEl) FontFeatures(features gk.FontFeatures) ScrollableDivEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -401,12 +506,16 @@ func (e ScrollableDivEl) FontFeatures(features gk.FontFeatures) ScrollableDivEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ScrollableDivEl) FontWeight(weight gk.FontWeight) ScrollableDivEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ScrollableDivEl) Gap(length gk.Length) ScrollableDivEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -414,6 +523,8 @@ func (e ScrollableDivEl) Gap(length gk.Length) ScrollableDivEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ScrollableDivEl) GapX(length gk.Length) ScrollableDivEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -421,18 +532,24 @@ func (e ScrollableDivEl) GapX(length gk.Length) ScrollableDivEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ScrollableDivEl) GapY(length gk.Length) ScrollableDivEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ScrollableDivEl) GridCols(cols uint16) ScrollableDivEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ScrollableDivEl) GridColsMaxContent(cols uint16) ScrollableDivEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -440,18 +557,24 @@ func (e ScrollableDivEl) GridColsMaxContent(cols uint16) ScrollableDivEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ScrollableDivEl) GridColsMinContent(cols uint16) ScrollableDivEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ScrollableDivEl) GridRows(rows uint16) ScrollableDivEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ScrollableDivEl) GridRowsMaxContent(rows uint16) ScrollableDivEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -459,12 +582,16 @@ func (e ScrollableDivEl) GridRowsMaxContent(rows uint16) ScrollableDivEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ScrollableDivEl) GridRowsMinContent(rows uint16) ScrollableDivEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ScrollableDivEl) H(length gk.Length) ScrollableDivEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -472,6 +599,8 @@ func (e ScrollableDivEl) H(length gk.Length) ScrollableDivEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ScrollableDivEl) Inset(length gk.Length) ScrollableDivEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -479,6 +608,8 @@ func (e ScrollableDivEl) Inset(length gk.Length) ScrollableDivEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ScrollableDivEl) Left(length gk.Length) ScrollableDivEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -486,36 +617,48 @@ func (e ScrollableDivEl) Left(length gk.Length) ScrollableDivEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ScrollableDivEl) LineClamp(lines int) ScrollableDivEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ScrollableDivEl) LineHeight(lineHeight gk.Length) ScrollableDivEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ScrollableDivEl) M(length gk.Length) ScrollableDivEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ScrollableDivEl) MaxH(length gk.Length) ScrollableDivEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ScrollableDivEl) MaxSize(length gk.Length) ScrollableDivEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ScrollableDivEl) MaxW(length gk.Length) ScrollableDivEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -523,24 +666,32 @@ func (e ScrollableDivEl) MaxW(length gk.Length) ScrollableDivEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ScrollableDivEl) Mb(length gk.Length) ScrollableDivEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ScrollableDivEl) MinH(length gk.Length) ScrollableDivEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ScrollableDivEl) MinSize(length gk.Length) ScrollableDivEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ScrollableDivEl) MinW(length gk.Length) ScrollableDivEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -548,6 +699,8 @@ func (e ScrollableDivEl) MinW(length gk.Length) ScrollableDivEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ScrollableDivEl) Ml(length gk.Length) ScrollableDivEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -555,6 +708,8 @@ func (e ScrollableDivEl) Ml(length gk.Length) ScrollableDivEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ScrollableDivEl) Mr(length gk.Length) ScrollableDivEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -562,6 +717,8 @@ func (e ScrollableDivEl) Mr(length gk.Length) ScrollableDivEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ScrollableDivEl) Mt(length gk.Length) ScrollableDivEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -569,6 +726,8 @@ func (e ScrollableDivEl) Mt(length gk.Length) ScrollableDivEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ScrollableDivEl) Mx(length gk.Length) ScrollableDivEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -576,18 +735,24 @@ func (e ScrollableDivEl) Mx(length gk.Length) ScrollableDivEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ScrollableDivEl) My(length gk.Length) ScrollableDivEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ScrollableDivEl) Opacity(opacity float32) ScrollableDivEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ScrollableDivEl) P(length gk.Length) ScrollableDivEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -595,6 +760,8 @@ func (e ScrollableDivEl) P(length gk.Length) ScrollableDivEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ScrollableDivEl) Pb(length gk.Length) ScrollableDivEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -602,6 +769,8 @@ func (e ScrollableDivEl) Pb(length gk.Length) ScrollableDivEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ScrollableDivEl) Pl(length gk.Length) ScrollableDivEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -609,6 +778,8 @@ func (e ScrollableDivEl) Pl(length gk.Length) ScrollableDivEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ScrollableDivEl) Pr(length gk.Length) ScrollableDivEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -616,6 +787,8 @@ func (e ScrollableDivEl) Pr(length gk.Length) ScrollableDivEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ScrollableDivEl) Pt(length gk.Length) ScrollableDivEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -623,6 +796,8 @@ func (e ScrollableDivEl) Pt(length gk.Length) ScrollableDivEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ScrollableDivEl) Px(length gk.Length) ScrollableDivEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -630,6 +805,8 @@ func (e ScrollableDivEl) Px(length gk.Length) ScrollableDivEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ScrollableDivEl) Py(length gk.Length) ScrollableDivEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -637,12 +814,16 @@ func (e ScrollableDivEl) Py(length gk.Length) ScrollableDivEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ScrollableDivEl) Right(length gk.Length) ScrollableDivEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ScrollableDivEl) Rounded(length gk.Length) ScrollableDivEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -650,6 +831,8 @@ func (e ScrollableDivEl) Rounded(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ScrollableDivEl) RoundedB(length gk.Length) ScrollableDivEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -657,6 +840,8 @@ func (e ScrollableDivEl) RoundedB(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ScrollableDivEl) RoundedBl(length gk.Length) ScrollableDivEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -664,6 +849,8 @@ func (e ScrollableDivEl) RoundedBl(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ScrollableDivEl) RoundedBr(length gk.Length) ScrollableDivEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -671,6 +858,8 @@ func (e ScrollableDivEl) RoundedBr(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ScrollableDivEl) RoundedL(length gk.Length) ScrollableDivEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -678,6 +867,8 @@ func (e ScrollableDivEl) RoundedL(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ScrollableDivEl) RoundedR(length gk.Length) ScrollableDivEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -685,6 +876,8 @@ func (e ScrollableDivEl) RoundedR(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ScrollableDivEl) RoundedT(length gk.Length) ScrollableDivEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -692,6 +885,8 @@ func (e ScrollableDivEl) RoundedT(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ScrollableDivEl) RoundedTl(length gk.Length) ScrollableDivEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -699,24 +894,32 @@ func (e ScrollableDivEl) RoundedTl(length gk.Length) ScrollableDivEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ScrollableDivEl) RoundedTr(length gk.Length) ScrollableDivEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ScrollableDivEl) RowEnd(end int16) ScrollableDivEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ScrollableDivEl) RowSpan(span uint16) ScrollableDivEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ScrollableDivEl) RowStart(start int16) ScrollableDivEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -726,24 +929,32 @@ func (e ScrollableDivEl) RowStart(start int16) ScrollableDivEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ScrollableDivEl) ScrollbarWidth(width gk.Length) ScrollableDivEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ScrollableDivEl) Shadow(shadows []gk.BoxShadow) ScrollableDivEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ScrollableDivEl) Size(length gk.Length) ScrollableDivEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ScrollableDivEl) TextAlign(align gk.TextAlign) ScrollableDivEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -752,6 +963,8 @@ func (e ScrollableDivEl) TextAlign(align gk.TextAlign) ScrollableDivEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ScrollableDivEl) TextBg(bg gk.Color) ScrollableDivEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -760,18 +973,24 @@ func (e ScrollableDivEl) TextBg(bg gk.Color) ScrollableDivEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ScrollableDivEl) TextColor(color gk.Color) ScrollableDivEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ScrollableDivEl) TextDecorationColor(color gk.Color) ScrollableDivEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ScrollableDivEl) TextOverflow(overflow gk.TextOverflow) ScrollableDivEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -780,6 +999,8 @@ func (e ScrollableDivEl) TextOverflow(overflow gk.TextOverflow) ScrollableDivEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ScrollableDivEl) TextSize(size gk.Length) ScrollableDivEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -787,29 +1008,38 @@ func (e ScrollableDivEl) TextSize(size gk.Length) ScrollableDivEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ScrollableDivEl) Top(length gk.Length) ScrollableDivEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ScrollableDivEl) W(length gk.Length) ScrollableDivEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e ScrollableDivEl) Text(s string) ScrollableDivEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e ScrollableDivEl) ChildView(v gk.View) ScrollableDivEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e ScrollableDivEl) Child(child gk.Element) ScrollableDivEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e ScrollableDivEl) Children(children ...gk.Element) ScrollableDivEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -819,6 +1049,8 @@ func (e ScrollableDivEl) Children(children ...gk.Element) ScrollableDivEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e ScrollableDivEl) BlockMouseExceptScroll() ScrollableDivEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -826,6 +1058,8 @@ func (e ScrollableDivEl) BlockMouseExceptScroll() ScrollableDivEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e ScrollableDivEl) CanDrop(predicate gk.DropAccept) ScrollableDivEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -835,6 +1069,8 @@ func (e ScrollableDivEl) CanDrop(predicate gk.DropAccept) ScrollableDivEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e ScrollableDivEl) CaptureAction(listener gk.ActionHandler) ScrollableDivEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -844,12 +1080,14 @@ func (e ScrollableDivEl) CaptureAction(listener gk.ActionHandler) ScrollableDivE
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e ScrollableDivEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e ScrollableDivEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -859,12 +1097,14 @@ func (e ScrollableDivEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) Scrolla
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e ScrollableDivEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e ScrollableDivEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -874,6 +1114,8 @@ func (e ScrollableDivEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) Scrollabl
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e ScrollableDivEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -883,6 +1125,8 @@ func (e ScrollableDivEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent))
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e ScrollableDivEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -892,6 +1136,8 @@ func (e ScrollableDivEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) S
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e ScrollableDivEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -901,12 +1147,16 @@ func (e ScrollableDivEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.Mous
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e ScrollableDivEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) ScrollableDivEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e ScrollableDivEl) DragOver(f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -914,6 +1164,8 @@ func (e ScrollableDivEl) DragOver(f gk.StyleRefinement) ScrollableDivEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e ScrollableDivEl) Focus(f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -923,30 +1175,40 @@ func (e ScrollableDivEl) Focus(f gk.StyleRefinement) ScrollableDivEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e ScrollableDivEl) FocusVisible(f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e ScrollableDivEl) Group(group string) ScrollableDivEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e ScrollableDivEl) GroupDragOver(groupName string, f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e ScrollableDivEl) GroupHover(groupName string, f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e ScrollableDivEl) Hover(f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -954,6 +1216,8 @@ func (e ScrollableDivEl) Hover(f gk.StyleRefinement) ScrollableDivEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e ScrollableDivEl) InFocus(f gk.StyleRefinement) ScrollableDivEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -961,6 +1225,8 @@ func (e ScrollableDivEl) InFocus(f gk.StyleRefinement) ScrollableDivEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e ScrollableDivEl) KeyContext(keyContext string) ScrollableDivEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -968,6 +1234,8 @@ func (e ScrollableDivEl) KeyContext(keyContext string) ScrollableDivEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e ScrollableDivEl) Occlude() ScrollableDivEl {
 	tInteractiveElementOcclude(rt.N(e.Core))
 	return e
@@ -977,6 +1245,8 @@ func (e ScrollableDivEl) Occlude() ScrollableDivEl {
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e ScrollableDivEl) OnAction(listener gk.ActionHandler) ScrollableDivEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -986,12 +1256,14 @@ func (e ScrollableDivEl) OnAction(listener gk.ActionHandler) ScrollableDivEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e ScrollableDivEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e ScrollableDivEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -1002,6 +1274,8 @@ func (e ScrollableDivEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ScrollableDi
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e ScrollableDivEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) ScrollableDivEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -1012,6 +1286,8 @@ func (e ScrollableDivEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGesture
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e ScrollableDivEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) ScrollableDivEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -1023,6 +1299,8 @@ func (e ScrollableDivEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e ScrollableDivEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) ScrollableDivEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -1032,6 +1310,8 @@ func (e ScrollableDivEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e ScrollableDivEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) ScrollableDivEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -1044,6 +1324,8 @@ func (e ScrollableDivEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) Scroll
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e ScrollableDivEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) ScrollableDivEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -1053,6 +1335,8 @@ func (e ScrollableDivEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEv
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e ScrollableDivEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) ScrollableDivEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1062,6 +1346,8 @@ func (e ScrollableDivEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Scro
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e ScrollableDivEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) ScrollableDivEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1071,6 +1357,8 @@ func (e ScrollableDivEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Scroll
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e ScrollableDivEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) ScrollableDivEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -1080,12 +1368,14 @@ func (e ScrollableDivEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifi
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e ScrollableDivEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e ScrollableDivEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -1096,12 +1386,14 @@ func (e ScrollableDivEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e ScrollableDivEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e ScrollableDivEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -1111,12 +1403,14 @@ func (e ScrollableDivEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ScrollableDi
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e ScrollableDivEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e ScrollableDivEl) OnMouseExitDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -1126,12 +1420,14 @@ func (e ScrollableDivEl) OnMouseExitDo(listener func(cx *gk.Cx)) ScrollableDivEl
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e ScrollableDivEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e ScrollableDivEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -1141,6 +1437,8 @@ func (e ScrollableDivEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ScrollableDivEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e ScrollableDivEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) ScrollableDivEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -1150,12 +1448,14 @@ func (e ScrollableDivEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePres
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e ScrollableDivEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e ScrollableDivEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -1166,12 +1466,14 @@ func (e ScrollableDivEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e ScrollableDivEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e ScrollableDivEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -1181,6 +1483,8 @@ func (e ScrollableDivEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx 
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e ScrollableDivEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) ScrollableDivEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -1190,6 +1494,8 @@ func (e ScrollableDivEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Scro
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e ScrollableDivEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) ScrollableDivEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -1199,6 +1505,8 @@ func (e ScrollableDivEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Sc
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e ScrollableDivEl) TabGroup() ScrollableDivEl {
 	tInteractiveElementTabGroup(rt.N(e.Core))
 	return e
@@ -1207,6 +1515,8 @@ func (e ScrollableDivEl) TabGroup() ScrollableDivEl {
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e ScrollableDivEl) TabIndex(index int) ScrollableDivEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -1216,6 +1526,8 @@ func (e ScrollableDivEl) TabIndex(index int) ScrollableDivEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e ScrollableDivEl) TabStop(tabStop bool) ScrollableDivEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -1223,6 +1535,8 @@ func (e ScrollableDivEl) TabStop(tabStop bool) ScrollableDivEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e ScrollableDivEl) TrackFocus(focusHandle gk.FocusHandle) ScrollableDivEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -1230,6 +1544,8 @@ func (e ScrollableDivEl) TrackFocus(focusHandle gk.FocusHandle) ScrollableDivEl 
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e ScrollableDivEl) WindowControlArea(area gk.WindowControlArea) ScrollableDivEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e

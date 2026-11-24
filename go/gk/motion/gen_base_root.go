@@ -12,7 +12,7 @@ import (
 // MotionRevealEl is gpui_kit::base::MotionReveal.
 type RevealEl struct{ rt.El }
 
-// MotionReveal is <gpui_kit::base::MotionReveal>::new.
+// MotionReveal calls <gpui_kit::base::MotionReveal>::new.
 func Reveal(id gk.ID, progress float32, child gk.Element) RevealEl {
 	rt.UseBaseMotion()
 	n := rt.NewNode(338)
@@ -26,7 +26,7 @@ func Reveal(id gk.ID, progress float32, child gk.Element) RevealEl {
 // Presence is gpui_kit::base::Presence.
 type Presence struct{ rt.Val }
 
-// NewPresence is <gpui_kit::base::Presence>::new.
+// NewPresence calls <gpui_kit::base::Presence>::new.
 func NewPresence(id gk.TransitionIDInto, present bool) Presence {
 	n := rt.NewValue(353)
 	o := rt.NodeArgs(n)
@@ -35,7 +35,7 @@ func NewPresence(id gk.TransitionIDInto, present bool) Presence {
 	return Presence{Val: rt.MkVal(n)}
 }
 
-// Transition is <gpui_kit::base::Presence>::transition.
+// Transition calls <gpui_kit::base::Presence>::transition.
 func (e Presence) Transition(transition gk.Transition) Presence {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(transition.Core)))
@@ -45,7 +45,7 @@ func (e Presence) Transition(transition gk.Transition) Presence {
 // ScrollBounceEl is gpui_kit::base::ScrollBounce.
 type ScrollBounceEl struct{ rt.El }
 
-// ScrollBounce is <gpui_kit::base::ScrollBounce>::new.
+// ScrollBounce calls <gpui_kit::base::ScrollBounce>::new.
 func ScrollBounce(id gk.ID, handle gk.ScrollHandle, child gk.Element) ScrollBounceEl {
 	rt.UseBaseScrollBounce()
 	n := rt.NewNode(839)
@@ -58,7 +58,7 @@ func ScrollBounce(id gk.ID, handle gk.ScrollHandle, child gk.Element) ScrollBoun
 
 // Turn the bounce on or off. Defaults to `EnabledByDefault`.
 //
-// Enabled is <gpui_kit::base::ScrollBounce>::enabled.
+// Enabled calls <gpui_kit::base::ScrollBounce>::enabled.
 func (e ScrollBounceEl) Enabled(enabled bool) ScrollBounceEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(enabled)
@@ -67,7 +67,7 @@ func (e ScrollBounceEl) Enabled(enabled bool) ScrollBounceEl {
 
 // Set how far a drag stretches past an edge and how the edge returns.
 //
-// Motion is <gpui_kit::base::ScrollBounce>::motion.
+// Motion calls <gpui_kit::base::ScrollBounce>::motion.
 func (e ScrollBounceEl) Motion(motion ScrollBounceMotion) ScrollBounceEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(motion.Core)))
@@ -77,7 +77,7 @@ func (e ScrollBounceEl) Motion(motion ScrollBounceMotion) ScrollBounceEl {
 // Observe a logical scroll performed when a reverse drag leaves the stretched region. Ordinary
 // child scrolling continues to use the child's own notifications.
 //
-// OnScroll is <gpui_kit::base::ScrollBounce>::on_scroll.
+// OnScroll calls <gpui_kit::base::ScrollBounce>::on_scroll.
 func (e ScrollBounceEl) OnScroll(handler func(cx *gk.Cx)) ScrollBounceEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.Register(handler, 3))
@@ -91,7 +91,7 @@ func (e ScrollBounceEl) OnScroll(handler func(cx *gk.Cx)) ScrollBounceEl {
 // On by default. Turned off, the child scrolls itself and only its unused deltas stretch the edge;
 // that needs input that emits `Ended` at finger release, before momentum, as touch does.
 //
-// ScrollWheel is <gpui_kit::base::ScrollBounce>::scroll_wheel.
+// ScrollWheel calls <gpui_kit::base::ScrollBounce>::scroll_wheel.
 func (e ScrollBounceEl) ScrollWheel(enabled bool) ScrollBounceEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(enabled)
@@ -101,7 +101,7 @@ func (e ScrollBounceEl) ScrollWheel(enabled bool) ScrollBounceEl {
 // ScrollBounceMotion is gpui_kit::base::ScrollBounceMotion.
 type ScrollBounceMotion struct{ rt.Val }
 
-// NewScrollBounceMotionDefault is <gpui_kit::base::ScrollBounceMotion as Default>::default.
+// NewScrollBounceMotionDefault calls <gpui_kit::base::ScrollBounceMotion as Default>::default.
 func NewScrollBounceMotionDefault() ScrollBounceMotion {
 	n := rt.NewValue(364)
 	return ScrollBounceMotion{Val: rt.MkVal(n)}
@@ -113,7 +113,7 @@ func NewScrollBounceMotionDefault() ScrollBounceMotion {
 // Panics:
 // Panics when `max_stretch` is not finite or not positive.
 //
-// WithMaxStretch is <gpui_kit::base::ScrollBounceMotion>::with_max_stretch.
+// WithMaxStretch calls <gpui_kit::base::ScrollBounceMotion>::with_max_stretch.
 func (e ScrollBounceMotion) WithMaxStretch(maxStretch float32) ScrollBounceMotion {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F32(maxStretch)
@@ -127,7 +127,7 @@ func (e ScrollBounceMotion) WithMaxStretch(maxStretch float32) ScrollBounceMotio
 // return is critically damped, so it never crosses the edge. A zero response snaps the edge back
 // on the spot.
 //
-// WithResponse is <gpui_kit::base::ScrollBounceMotion>::with_response.
+// WithResponse calls <gpui_kit::base::ScrollBounceMotion>::with_response.
 func (e ScrollBounceMotion) WithResponse(response time.Duration) ScrollBounceMotion {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutMs(o, response)
@@ -143,17 +143,17 @@ func (e ScrollBounceMotion) WithResponse(response time.Duration) ScrollBounceMot
 // Panics:
 // Panics when `tracking` is not finite or not positive.
 //
-// WithTracking is <gpui_kit::base::ScrollBounceMotion>::with_tracking.
+// WithTracking calls <gpui_kit::base::ScrollBounceMotion>::with_tracking.
 func (e ScrollBounceMotion) WithTracking(tracking float32) ScrollBounceMotion {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(tracking)
 	return e
 }
 
-// The spring a hover pointer — the crosshair, highlight band or hover dot — follows the hovered
+// The spring a hover pointer - the crosshair, highlight band or hover dot - follows the hovered
 // datum with: the active `PlotMotion`'s pointer, which snaps unless a styled layer projects one.
 //
-// NewPointerSpring is gpui_kit::base::plot::pointer_spring.
+// NewPointerSpring calls gpui_kit::base::plot::pointer_spring.
 func NewPointerSpring() gk.Spring {
 	n := rt.NewValue(383)
 	return gk.Spring{Val: rt.MkVal(n)}
@@ -170,7 +170,7 @@ func NewPointerSpring() gk.Spring {
 // that with `WithTravel` where it is what you mean; a zero here is the degenerate case, defined so
 // an infinitely stiff spring resolves rather than dividing by its own period.
 //
-// NewSpring is <gpui_kit::base::Spring>::new.
+// NewSpring calls <gpui_kit::base::Spring>::new.
 func NewSpring(response time.Duration) gk.Spring {
 	n := rt.NewValue(382)
 	o := rt.NodeArgs(n)
@@ -181,7 +181,7 @@ func NewSpring(response time.Duration) gk.Spring {
 // Timing is gpui_kit::base::Timing.
 type Timing struct{ rt.Val }
 
-// NewTiming is <gpui_kit::base::Timing>::new.
+// NewTiming calls <gpui_kit::base::Timing>::new.
 func NewTiming(duration time.Duration) Timing {
 	n := rt.NewValue(415)
 	o := rt.NodeArgs(n)
@@ -189,35 +189,35 @@ func NewTiming(duration time.Duration) Timing {
 	return Timing{Val: rt.MkVal(n)}
 }
 
-// Delay is <gpui_kit::base::Timing>::delay.
+// Delay calls <gpui_kit::base::Timing>::delay.
 func (e Timing) Delay(delay gk.SignedDuration) Timing {
 	o := rt.Op(rt.N(e.Core), 256)
 	putSignedDuration(o, delay)
 	return e
 }
 
-// Direction is <gpui_kit::base::Timing>::direction.
+// Direction calls <gpui_kit::base::Timing>::direction.
 func (e Timing) Direction(direction PlaybackDirection) Timing {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(direction))
 	return e
 }
 
-// Ease is <gpui_kit::base::Timing>::ease.
+// Ease calls <gpui_kit::base::Timing>::ease.
 func (e Timing) Ease(easing gk.Easing) Timing {
 	o := rt.Op(rt.N(e.Core), 258)
 	putEasing(o, easing)
 	return e
 }
 
-// Iterations is <gpui_kit::base::Timing>::iterations.
+// Iterations calls <gpui_kit::base::Timing>::iterations.
 func (e Timing) Iterations(iterations IterationCount) Timing {
 	o := rt.Op(rt.N(e.Core), 259)
 	putIterationCount(o, iterations)
 	return e
 }
 
-// NewTransition is <gpui_kit::base::Transition>::new.
+// NewTransition calls <gpui_kit::base::Transition>::new.
 func NewTransition(duration time.Duration) gk.Transition {
 	n := rt.NewValue(425)
 	o := rt.NodeArgs(n)

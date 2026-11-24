@@ -1,12 +1,30 @@
-//! The one module generated Rust may use (docs/PROTOCOLS.md section 7): the tape reader and
-//! decode context, the handler trampolines (`fire`), the payload codecs, the style applier
-//! and the state accessors. Everything here is thin and non-generic where it can be, so a
-//! generated decoder of any size adds no copies of the runtime.
+//! Support surface imported by generated decoders and call handlers in `core/src/gen/`.
+//!
+//! # Responsibilities
+//!
+//! - **Tape decoding ([`Dx`], [`Frag`], [`with_tape`], [`with_root`])**: walks a parsed
+//!   [`crate::tape::Tape`]'s node table and singly linked op arena (`[op: u16][next: u32][args...]`),
+//!   dispatching opcodes `< 256` to hand-written decoders, `256..=258` directly to the div/flex
+//!   fast path, and `>= 256` to generated builders. Lazy subtrees (menus, popovers, tooltips)
+//!   capture a cloneable [`Frag`] holding an `Rc<Tape>` + node index so upstream closures can
+//!   decode them on demand later.
+//! - **Wire serialization ([`Wire`], [`Unwire`])**: little-endian encoders/decoders for primitives,
+//!   length-prefixed strings/slices, option tags, tuples, colors/gradients, and GPUI mouse/key
+//!   events.
+//! - **Event dispatch ([`HandlerRef`], [`TapePin`], [`fire`], [`fire_app`], [`fire_raw`],
+//!   [`fire_queued`])**: encodes `(view, generation, handler, shape, payload)` onto `K_EVENT`
+//!   turns while [`TapePin`] prevents the tape's handler generation from retiring while GPUI
+//!   closures still reference it.
+//! - **Typed GPUI entity access ([`Call`], [`state_new`], [`state_read`], [`state_update`],
+//!   [`state_call`], [`state_update_cx`], [`state_subscribe`])**: guards against GPUI's re-entrant
+//!   entity-borrow panic via `rt::probe`. Void mutations (`state_update`, `state_update_cx`)
+//!   automatically re-queue the raw wire op via `rt::defer_op` when the target entity is already
+//!   borrowed on the call stack, whereas reads and value-returning calls fail with `ERR_BUSY`.
 
 pub use crate::ops::*;
 pub use crate::rt::{GkErr, GkResult, err};
 pub use crate::wire::{Put, R};
-// Library objects behind handles (docs/PROTOCOLS.md section 13).
+
 pub use crate::objects::{
     Owned, obj_by_value, obj_clone, obj_global, obj_new, obj_rc, obj_read, obj_read_global, obj_shown, obj_take,
     obj_temp, obj_update, obj_update_global, obj_update_w, obj_update_w_global, value_arg, with_window,
@@ -23,10 +41,7 @@ use gpui_kit::{
 use std::marker::PhantomData;
 use std::rc::Rc;
 
-// --- decoding a tape ----------------------------------------------------------------------
-
-/// The context of one tape decode: the tape, the view it belongs to, and GPUI's window and
-/// app as `Render::render` received them.
+/// Borrowed decode context threaded through element decoders while walking a [`Tape`].
 pub struct Dx<'a> {
     t: &'a Rc<Tape>,
     ops: &'a [u8],
@@ -35,7 +50,7 @@ pub struct Dx<'a> {
     pub cx: &'a mut App,
 }
 
-/// Decodes a view's tape into its root element. Called from `GkView::render` only.
+/// Decodes the root node of `tape` into a GPUI `AnyElement`.
 pub(crate) fn root(tape: &Rc<Tape>, view: u64, window: &mut Window, cx: &mut App) -> AnyElement {
     let mut dx = Dx {
         t: tape,
@@ -47,12 +62,8 @@ pub(crate) fn root(tape: &Rc<Tape>, view: u64, window: &mut Window, cx: &mut App
     dx.child(tape.root)
 }
 
-/// A node of a tape kept by a closure and decoded each time upstream calls the closure: the
-/// `fragment` resolution (tooltip, popover and dialog bodies) and the `build` resolution
-/// (the node's ops applied to a value upstream hands in). It keeps the tape alive. A handler
-/// inside it fires with that tape's generation, and the app keeps a view's handler tables
-/// for its current tape and the one before: a closure that outlives two re-descriptions of
-/// its view (a dialog left open) loses its handlers, and their events are dropped.
+/// Owned handle to a subtree inside a [`Tape`], used by lazy builder closures (such as menus
+/// or popovers) that decode their content on demand.
 #[derive(Clone)]
 pub struct Frag {
     tape: Rc<Tape>,
@@ -61,7 +72,7 @@ pub struct Frag {
 }
 
 impl Frag {
-    /// Runs `f` with a decode context over the kept tape and the kept node.
+    /// Opens a fresh [`Dx`] against this fragment's tape and invokes `f` on its root node index.
     pub fn with<T>(
         &self,
         window: &mut Window,
@@ -80,7 +91,8 @@ impl Frag {
 }
 
 impl<'a> Dx<'a> {
-    /// Decodes node `n` (the argument of a `CHILD` op) into its element.
+    /// Decodes node index `n`, routing opcodes `< 256` to hand-written decoders and `>= 256`
+    /// to generated decoders (with a fast path for div/h_flex/v_flex opcodes 256..=258).
     pub fn child(&mut self, n: u32) -> AnyElement {
         let (ty, args, first) = self.t.node(n);
         if ty < 256 {
@@ -92,7 +104,7 @@ impl<'a> Dx<'a> {
                 }
             };
         }
-        // Fast-path Div / HFlex / VFlex (core family, always linked): skips KEYS_NODE + FAM_REG.
+
         if (256..=258).contains(&ty) {
             return crate::generated::make_gpui_div(self, ty, args, first)
                 .map(|e| e.into_any_element())
@@ -110,8 +122,7 @@ impl<'a> Dx<'a> {
         }
     }
 
-    /// The view behind a `CHILD_VIEW` op, as a child element. None (and a message) if the
-    /// handle is stale.
+    /// Resolves a view handle into an `AnyView` for embedding a child view element.
     pub fn child_view(&mut self, handle: u64) -> Option<AnyView> {
         match rt::with(|s| s.view(handle)) {
             Ok(view) => Some(view.into()),
@@ -122,13 +133,12 @@ impl<'a> Dx<'a> {
         }
     }
 
-    /// (type, args offset, first op offset) of any node: for an argument that is a node of
-    /// a known type (an icon, a column, a menu item, a style).
+    /// Reads the raw `(node_type, args_offset, first_op_offset)` tuple for node `n`.
     pub fn node(&self, n: u32) -> (u16, u32, u32) {
         self.t.node(n)
     }
 
-    /// Keeps a node for a closure that decodes it later.
+    /// Captures a cloneable [`Frag`] pointing at `node` inside the current tape.
     pub fn frag(&self, node: u32) -> Frag {
         Frag {
             tape: self.t.clone(),
@@ -137,13 +147,12 @@ impl<'a> Dx<'a> {
         }
     }
 
-    /// A reader at a node's constructor arguments.
+    /// Returns a reader positioned at `at` in the tape's ops section for constructor arguments.
     pub fn args(&self, at: u32) -> R<'a> {
         R::at(self.ops, at as usize)
     }
 
-    /// The next op of a node: its opcode and a reader at its arguments. `at` starts as the
-    /// node's first op offset and is advanced; None at the end.
+    /// Advances an element's singly linked op list (`at == 0` terminates) and returns `(op, payload_reader)`.
     #[inline]
     pub fn op(&self, at: &mut u32) -> Option<(u16, R<'a>)> {
         if *at == 0 {
@@ -155,20 +164,17 @@ impl<'a> Dx<'a> {
         Some((op, r))
     }
 
-    /// The view whose tape is being decoded.
+    /// Returns the handle of the view currently being decoded.
     pub fn view_handle(&self) -> u64 {
         self.view
     }
 
-    /// Keeps this description's handler table in the binding for as long as the value holding the
-    /// pin (`tape::GenPin`): every handler closure made from the tape holds one, so a handler can
-    /// fire for as long as upstream keeps its closure (an open menu's items, made from the
-    /// description that drew the button, after the view has been described again many times).
+    /// Clones the tape's [`TapePin`] so closures keep this tape's handler generation alive.
     pub fn pin(&self) -> TapePin {
         TapePin(self.t.pin.clone())
     }
 
-    /// Reads a handler argument (u32 id) of an op.
+    /// Reads a handler slot ID from `r` and binds it to the current view and tape generation.
     pub fn handler(&self, r: &mut R) -> HandlerRef {
         HandlerRef {
             view: self.view,
@@ -178,9 +184,7 @@ impl<'a> Dx<'a> {
     }
 }
 
-// --- styles: one non-generic table for every styled type ----------------------------------
-
-/// Lets the by-value `Styled` methods write into a borrowed `StyleRefinement`.
+/// Adapter letting `Styled` trait methods operate directly on a `&mut StyleRefinement`.
 pub struct StyleOf<'a>(pub &'a mut StyleRefinement);
 
 impl Styled for StyleOf<'_> {
@@ -189,10 +193,14 @@ impl Styled for StyleOf<'_> {
     }
 }
 
-/// A colour: u8 kind, then four f32 (kind 0, an HSLA literal) or a u16 colour number
-/// (kind 1): a number of the generator's table (theme colours, palette colours with bit 15
-/// set), resolved against the current theme when the tape is decoded, so a theme switch
-/// needs no new tape.
+/// Decodes a wire color into `Hsla`.
+///
+/// Wire formats by leading tag byte:
+/// - `COLOR_THEME`: `[tag: u8][token: u16]` -> looks up `cx.theme().colors` via generated table
+/// - `COLOR_HSLA`: `[tag: u8][h: f32][s: f32][l: f32][a: f32]`
+/// - `COLOR_GRADIENT`: `[tag: u8][angle: f32][oklab: u8][from_color][from_pct: f32][to_color][to_pct: f32]`
+///   (invalid where a single color is required; consumes the full gradient payload so subsequent
+///   fields stay aligned and falls back to the first stop's color).
 pub fn color(r: &mut R, cx: &App) -> Hsla {
     let kind = r.u8();
     color_of(kind, r, cx)
@@ -212,8 +220,7 @@ fn color_of(kind: u8, r: &mut R, cx: &App) -> Hsla {
             }
         }
         COLOR_GRADIENT => {
-            // Only a Fill takes a gradient; the front ends' types keep one from anywhere else
-            // (Go's gk.Fill). Read past it all the same, and draw its first stop.
+            // Still consume the full gradient payload so subsequent wire fields stay aligned.
             let (_, _, from, _) = gradient_parts(r, cx);
             eprintln!("gk: a gradient was given where the kit takes one colour: its first stop is drawn");
             from.color
@@ -222,10 +229,7 @@ fn color_of(kind: u8, r: &mut R, cx: &App) -> Hsla {
     }
 }
 
-/// A Fill (docs/PROTOCOLS.md 11.38): a colour as `color` reads it, or a linear gradient (kind
-/// COLOR_GRADIENT: f32 angle in degrees, u8 colour space (0 sRGB, 1 Oklab), two stops of a colour
-/// and an f32 percentage), as gpui's `linear_gradient(angle, linear_color_stop(..), ..)`. What
-/// `Styled::bg` and the binding's plot paths and quads take.
+/// Decodes a wire background (solid color or two-stop linear gradient).
 pub fn background(r: &mut R, cx: &App) -> gpui_kit::Background {
     match r.u8() {
         COLOR_GRADIENT => gradient(r, cx),
@@ -249,21 +253,25 @@ fn gradient_parts(r: &mut R, cx: &App) -> (f32, bool, gpui_kit::LinearColorStop,
     (angle, oklab, from, to)
 }
 
-/// Applies one style token (a nullary `Styled` method).
+/// Applies a nullary style-token opcode to `style`.
 pub fn style_token(style: &mut StyleRefinement, token: u16) {
     if !crate::generated::style_token(style, token) {
         eprintln!("gk: unknown style token {token}");
     }
 }
 
-// --- payloads -----------------------------------------------------------------------------
-
-/// A value that travels to the app as an event payload (docs/PROTOCOLS.md section 2).
+/// Encodes a Rust value onto the little-endian wire format.
+///
+/// Container conventions shared across all codecs:
+/// - `Option<T>`: `0u8` for `None`; `1u8` followed by `T` for `Some`
+/// - `[T]` / `Vec<T>`: `u32` element count followed by each element in order
+/// - `str` / `String` / `SharedString`: `u32` byte length followed by UTF-8 bytes
+/// - `usize` / `isize`: widened to `u64` / `i64` for platform-independent ABI framing
 pub trait Wire {
     fn put(&self, out: &mut Vec<u8>);
 }
 
-/// A value the app returns from a handler.
+/// Decodes a Rust value from the little-endian wire format matching [`Wire`].
 pub trait Unwire: Sized {
     fn get(r: &mut R) -> Self;
 }
@@ -406,24 +414,20 @@ impl Wire for Pixels {
         out.put_f32(f32::from(*self))
     }
 }
-/// A byte range (a selection, the visible rows): two u64, as `gk.Range{lo, hi}` reads it.
+
 impl Wire for std::ops::Range<usize> {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u64(self.start as u64);
         out.put_u64(self.end as u64);
     }
 }
-// The runtime implements `Wire` for scalars, strings, `Pixels`, `Hsla`, references, options,
-// lists, tuples and the six built-in event types, and for nothing else: every other record
-// and enum is the generator's to implement, and an impl on both sides would not compile.
-// So the parts of the built-in events are written by plain functions.
 
 fn put_point(p: Point<Pixels>, out: &mut Vec<u8>) {
     out.put_f32(f32::from(p.x));
     out.put_f32(f32::from(p.y));
 }
 
-/// Bits: 1 control, 2 alt, 4 shift, 8 platform, 16 function.
+/// Encodes `Modifiers` as a 5-bit mask: bit 0=control, 1=alt, 2=shift, 3=platform, 4=function.
 fn put_mods(m: Modifiers, out: &mut Vec<u8>) {
     out.put_u8(
         m.control as u8
@@ -434,7 +438,7 @@ fn put_mods(m: Modifiers, out: &mut Vec<u8>) {
     )
 }
 
-/// 0 left, 1 right, 2 middle, 3 back, 4 forward.
+/// Encodes `MouseButton` as `0=Left, 1=Right, 2=Middle, 3=Back, 4=Forward`.
 fn put_button(b: MouseButton, out: &mut Vec<u8>) {
     out.put_u8(match b {
         MouseButton::Left => 0,
@@ -445,7 +449,7 @@ fn put_button(b: MouseButton, out: &mut Vec<u8>) {
     })
 }
 
-/// Click_Event: position, button, modifiers, click count, kind (0 mouse, 1 keyboard, 2 touch).
+/// Wire layout: `[x: f32][y: f32][button: u8][mods: u8][click_count: u32][source: u8 (0=Mouse, 1=Keyboard, 2=Touch)]`.
 impl Wire for ClickEvent {
     fn put(&self, out: &mut Vec<u8>) {
         put_point(self.position(), out);
@@ -466,7 +470,8 @@ impl Wire for ClickEvent {
         });
     }
 }
-/// Key_Event: key, key_char, modifiers, is_held.
+
+/// Wire layout: `[key: str][key_char: Option<str>][mods: u8][is_held: bool]`.
 impl Wire for KeyDownEvent {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_str(&self.keystroke.key);
@@ -475,6 +480,7 @@ impl Wire for KeyDownEvent {
         out.put_bool(self.is_held);
     }
 }
+/// Shares the [`KeyDownEvent`] wire layout with `is_held` always encoded as `false`.
 impl Wire for KeyUpEvent {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_str(&self.keystroke.key);
@@ -483,7 +489,8 @@ impl Wire for KeyUpEvent {
         out.put_bool(false);
     }
 }
-/// Mouse_Event: position, button (255 none), modifiers, click count.
+
+/// Wire layout: `[x: f32][y: f32][button: u8][mods: u8][click_count: u32]`.
 impl Wire for MouseDownEvent {
     fn put(&self, out: &mut Vec<u8>) {
         put_point(self.position, out);
@@ -492,6 +499,7 @@ impl Wire for MouseDownEvent {
         out.put_u32(self.click_count as u32);
     }
 }
+/// Shares the [`MouseDownEvent`] wire layout.
 impl Wire for MouseUpEvent {
     fn put(&self, out: &mut Vec<u8>) {
         put_point(self.position, out);
@@ -500,6 +508,7 @@ impl Wire for MouseUpEvent {
         out.put_u32(self.click_count as u32);
     }
 }
+/// Shares the mouse event wire layout with `button == 255` when no button is pressed and `click_count == 0`.
 impl Wire for MouseMoveEvent {
     fn put(&self, out: &mut Vec<u8>) {
         put_point(self.position, out);
@@ -512,14 +521,11 @@ impl Wire for MouseMoveEvent {
     }
 }
 
-// --- handlers -----------------------------------------------------------------------------
-
-/// A view description's handlers kept by a closure made from it (`Dx::pin`, `tape::GenPin`).
+/// Cloneable RAII guard captured by GPUI event closures to defer retiring their tape generation.
 #[derive(Clone)]
 pub struct TapePin(#[allow(dead_code)] Option<std::sync::Arc<crate::tape::GenPin>>);
 
-/// A handler of the app as a tape names it: the view, the tape generation it was registered
-/// in, and its id in that generation's table. View 0 is a kept handler (slot, generation).
+/// Identifies a host event handler by owning view handle, tape generation, and slot index.
 #[derive(Clone, Copy, Debug)]
 pub struct HandlerRef {
     pub view: u64,
@@ -545,9 +551,7 @@ fn returned<T: Unwire + Default>(ret: Vec<u8>) -> T {
     }
 }
 
-/// An event from an element listener: one synchronous EVENT turn inside GPUI's dispatch,
-/// with the real window and app in scope. Returns the handler's return value, or the
-/// default when the handler returned none.
+/// Dispatches a synchronous event with window context to the host and decodes its return value.
 pub fn fire<P: Wire + ?Sized, T: Unwire + Default>(
     h: HandlerRef,
     shape: u16,
@@ -566,7 +570,7 @@ pub fn fire<P: Wire + ?Sized, T: Unwire + Default>(
     ))
 }
 
-/// `fire` for a closure that receives no window.
+/// Dispatches a synchronous event without window context to the host and decodes its return value.
 pub fn fire_app<P: Wire + ?Sized, T: Unwire + Default>(
     h: HandlerRef,
     shape: u16,
@@ -584,9 +588,7 @@ pub fn fire_app<P: Wire + ?Sized, T: Unwire + Default>(
     ))
 }
 
-/// `fire` with a payload that is already on the wire, and the handler's return value as it
-/// came back (empty when it returned none). The generated handler-shape test's fallback for a
-/// payload that no codec can build in Rust (call op TEST_FIRE_SHAPE).
+/// Dispatches a pre-encoded raw payload to handler `h` and returns the raw reply bytes.
 pub fn fire_raw(h: HandlerRef, shape: u16, payload: &[u8], window: &mut Window, cx: &mut App) -> Vec<u8> {
     struct Raw<'a>(&'a [u8]);
     impl Wire for Raw<'_> {
@@ -597,25 +599,21 @@ pub fn fire_raw(h: HandlerRef, shape: u16, payload: &[u8], window: &mut Window, 
     rt::fire_req(&event_req(h, shape, &Raw(payload)), Some(window), cx)
 }
 
-/// An event raised inside an entity's own update (delegate methods): queued, and delivered
-/// when the outermost update has ended and before the next draw, never synchronously. The
-/// handler gets its view's window in scope (for a kept handler, the app's first window).
+/// Enqueues an event for deferred delivery after the current entity update finishes.
 pub fn fire_queued<P: Wire + ?Sized>(h: HandlerRef, shape: u16, payload: &P, cx: &mut App) {
     rt::queue_event(event_req(h, shape, payload), h.view, cx);
 }
 
-/// A focus handle behind a handle of kind FOCUS.
+/// Resolves a focus handle ID into its GPUI `FocusHandle`.
 pub fn focus(handle: u64) -> GkResult<FocusHandle> {
     rt::with(|s| s.focus(handle)).map(|f| f.0)
 }
 
-/// An action argument: the u32 id of the app's action table (core/src/app.rs).
+/// Decodes an action ID from `r` into a boxed `dyn Action`.
 pub fn action(r: &mut R) -> GkResult<Box<dyn Action>> {
     crate::app::boxed(r.u32())
 }
 
-// Actions (core/src/app.rs, docs/PROTOCOLS.md section 11): the app's actions are one type, and
-// an action travels to the app as its u32 id.
 pub use crate::app::{GkAction, action_listener};
 
 impl Wire for dyn Action {
@@ -630,17 +628,19 @@ impl Wire for GkAction {
     }
 }
 
-// --- call ops and state behind handles ------------------------------------------------------
-
-/// The context of one call op: GPUI's app, the window if the turn has one, the result
-/// buffer, and the op's own bytes (so a write that meets a leased state can be put back).
+/// Context passed to every wire call handler during `gk_call` or deferred-op replay.
+///
+/// `window` is stored as a raw pointer (with `PhantomData<&'a mut Window>`) so callers can
+/// simultaneously borrow `&mut self.cx`, `&mut self.out`, and obtain `&mut Window` via
+/// [`Call::window`] without splitting borrows across struct fields. `req` holds the full wire
+/// request slice so re-entrant writes can defer themselves verbatim via `rt::defer_op`.
 pub struct Call<'a> {
     pub cx: &'a mut App,
     pub out: &'a mut Vec<u8>,
-    /// True when the op comes from a reply and runs outside the turn that wrote it.
     #[allow(dead_code)]
     pub deferred: bool,
     pub req: &'a [u8],
+    // Stored as a raw pointer so `Call` can hand out `&mut Window` alongside `&mut App`.
     window: Option<*mut Window>,
     _window: PhantomData<&'a mut Window>,
 }
@@ -663,9 +663,7 @@ impl<'a> Call<'a> {
         }
     }
 
-    /// The turn's window. GK_ERR_NO_CONTEXT if the turn has none. The reference is not a
-    /// borrow of the `Call`, so `let window = c.window()?; c.cx.new(|cx| T::new(window, cx))`
-    /// compiles; use one window reference at a time.
+    /// Returns the active mutable window, or `ERR_NO_CONTEXT` if the call ran outside a window.
     pub fn window(&mut self) -> GkResult<&'a mut Window> {
         match self.window_opt() {
             Some(window) => Ok(window),
@@ -677,19 +675,19 @@ impl<'a> Call<'a> {
     }
 
     pub(crate) fn window_opt(&mut self) -> Option<&'a mut Window> {
-        // SAFETY: the pointer was made from a `&'a mut Window` that the caller of the call
-        // op does not touch while the `Call` lives, and the op uses one reference at a time.
+        // SAFETY: `window` came from `Option<&'a mut Window>` in `Call::new`, is valid for `'a`,
+        // and `&mut self` prevents creating aliasing `&mut Window` references concurrently.
         self.window.map(|w| unsafe { &mut *w })
     }
 
+    /// Returns the `AnyWindowHandle` of the active window, if one is in scope.
     pub fn window_handle(&self) -> Option<AnyWindowHandle> {
-        // SAFETY: as above; a shared read.
+        // SAFETY: `window` is valid for `'a` and we only take a shared borrow to read its handle.
         self.window.map(|w| unsafe { (*w).window_handle() })
     }
 }
 
-/// Puts a kit entity behind a new state handle. The window in scope, if any, is remembered:
-/// the state's mutators run with it.
+/// Registers a newly created GPUI entity in the handle table and wires its dirty-view observer.
 pub fn state_new<T: 'static>(entity: Entity<T>, c: &mut Call) -> u64 {
     let window = c.window_handle();
     let observed = entity.clone();
@@ -728,15 +726,12 @@ fn state_parts<T: 'static>(handle: u64) -> GkResult<(Entity<T>, Option<AnyWindow
     })
 }
 
-/// The entity behind a state handle, with its generation and type checked.
+/// Looks up a typed GPUI `Entity<T>` from its `HK_STATE` handle.
 pub fn state<T: 'static>(handle: u64) -> GkResult<Entity<T>> {
     state_parts::<T>(handle).map(|p| p.0)
 }
 
-/// The entity behind a state handle that a tape names, for an element being drawn. A
-/// released or wrong handle there is a mistake in app code, and the element cannot be drawn:
-/// the program stops with the message (exit 2), as a buffered write to a released handle
-/// does. (Until 11 Nov 2026 the decoder drew nothing in the element's place, with exit 0.)
+/// Resolves a state handle referenced by an element on a tape, stopping the app cleanly if invalid.
 pub fn shown<T: 'static>(handle: u64) -> Entity<T> {
     match state::<T>(handle) {
         Ok(entity) => entity,
@@ -744,7 +739,7 @@ pub fn shown<T: 'static>(handle: u64) -> Entity<T> {
     }
 }
 
-/// `shown` for a focus handle a tape names (`track_focus`).
+/// Resolves a focus handle referenced by an element on a tape, stopping the app cleanly if invalid.
 pub fn shown_focus(handle: u64) -> FocusHandle {
     match focus(handle) {
         Ok(f) => f,
@@ -752,8 +747,8 @@ pub fn shown_focus(handle: u64) -> FocusHandle {
     }
 }
 
-/// Stops the app because a view's tape names a handle that cannot be used: a mistake in app
-/// code (rt::app_stop).
+/// Aborts the current turn with an explanatory misuse message when a view references a zero or
+/// released handle.
 pub fn released_shown(msg: &str, what: &str) -> ! {
     let what = app_type_name(what);
     let hint = if msg.contains("never made") {
@@ -768,9 +763,7 @@ pub fn released_shown(msg: &str, what: &str) -> ! {
     crate::rt::app_stop(format!("a view shows a {what} through a handle that cannot be used: {msg}\n    {hint}"))
 }
 
-/// A Rust type name as an app developer reads it: the module paths left out
-/// (`gpui_base::input::state::InputBaseState<gpui_base::input::kind::InputMode>` is
-/// `InputBaseState<InputMode>`), the upstream name the API guide maps to the Go one.
+/// Strips module prefixes from a Rust `type_name` string while keeping generic punctuation.
 pub fn app_type_name(t: &str) -> String {
     let mut out = String::with_capacity(t.len());
     let mut seg = String::new();
@@ -787,7 +780,7 @@ pub fn app_type_name(t: &str) -> String {
     out
 }
 
-/// A read (`&self` method). GK_ERR_BUSY if the state is on lease.
+/// Reads an `Entity<T>` after verifying it is not currently borrowed on the stack.
 pub fn state_read<T: 'static, V>(
     handle: u64,
     c: &mut Call,
@@ -798,8 +791,12 @@ pub fn state_read<T: 'static, V>(
     rt::probe(&entity, cx, |s| f(s, cx))
 }
 
-/// A write (`&mut self, .., window, cx: &mut Context<Self>` method), with the state's own
-/// window. If the state is on lease the op is put back and runs when that update has ended.
+/// Updates an `Entity<T>` with window access, deferring the raw wire op if `entity` is already borrowed.
+///
+/// Calls `rt::probe` first; if GPUI currently holds a mutable borrow of `entity` up the stack
+/// (for example inside an event emitted by that entity), the raw wire bytes in `c.req` are pushed
+/// onto `rt::defer_op` to run after the handler returns instead of panicking. After a live update,
+/// calls `rt::written` so views depending on `handle` re-describe in the same frame if inside a hook.
 pub fn state_update<T: 'static>(
     handle: u64,
     c: &mut Call,
@@ -820,10 +817,7 @@ pub fn state_update<T: 'static>(
     })
 }
 
-/// An update that returns a value (`&mut self, .., cx: &mut Context<Self>) -> V`): run at
-/// once, not buffered, with the state's own window; the app's buffered writes were sent
-/// before it (the binding flushes them), so it sees them. GK_ERR_BUSY if the state is on
-/// lease: the value cannot wait for the update to end.
+/// Updates an `Entity<T>` with window access and returns serialized bytes; fails immediately if re-entrant.
 pub fn state_call<T: 'static>(
     handle: u64,
     c: &mut Call,
@@ -842,8 +836,7 @@ pub fn state_call<T: 'static>(
     })
 }
 
-/// The value a call op's `_c` codec decoded, or GK_ERR_BAD_ENUM for a variant this library
-/// does not know (the package and the library disagree; the version check makes it rare).
+/// Converts an `Option<T>` from an enum decoder into a `GkResult`, returning `ERR_BAD_ENUM` on `None`.
 pub fn decoded<T>(v: Option<T>) -> GkResult<T> {
     match v {
         Some(v) => Ok(v),
@@ -851,7 +844,7 @@ pub fn decoded<T>(v: Option<T>) -> GkResult<T> {
     }
 }
 
-/// A write that needs no window (`&mut self, .., cx: &mut Context<Self>`).
+/// Updates an `Entity<T>` without window access, deferring the wire op if `entity` is already borrowed.
 pub fn state_update_cx<T: 'static>(
     handle: u64,
     c: &mut Call,
@@ -868,8 +861,7 @@ pub fn state_update_cx<T: 'static>(
     Ok(())
 }
 
-/// Subscribes a kept handler (slot, generation) to the events `E` of a state. Returns the
-/// subscription's handle; releasing it, or the state, ends the subscription.
+/// Subscribes the host handler `slot` to GPUI events of type `E: Wire` emitted by state `handle`.
 pub fn state_subscribe<T, E>(
     handle: u64,
     slot: u32,
@@ -884,8 +876,7 @@ where
     state_subscribe_with::<T, E>(handle, slot, generation, shape, c, |e, out| e.put(out))
 }
 
-/// `state_subscribe` with the event's encoder given as a function (for an event type that
-/// has no `Wire` impl of its own).
+/// Subscribes the host handler `slot` to GPUI events of type `E` using a custom encoder function.
 pub fn state_subscribe_with<T, E>(
     handle: u64,
     slot: u32,
@@ -900,8 +891,7 @@ where
 {
     let (entity, window) = state_parts::<T>(handle)?;
     let sub = c.cx.subscribe(&entity, move |_, event: &E, cx| {
-        // Subscription events arrive when the emitter's update has ended. The handler gets
-        // the state's window in scope when that window is free.
+        // Subscription handlers are global to the host slot table (`view == 0`).
         let mut req = event_req(
             HandlerRef {
                 view: 0,
@@ -927,14 +917,7 @@ where
     Ok(rt::with(|s| s.insert(HK_SUB, Item::Sub(sub))))
 }
 
-// --- a view's tape decoded outside the view (delegate shims) ---------------------------------
-
-/// Runs `f` over `tape`, the current tape of the view `view`, and its root node, outside that
-/// view's own render: a delegate shim (core/src/shim_rows.rs) decodes a row's or cell's tape
-/// (from `source::row_tape`) into the value the kit asks for, inside the kit element's render,
-/// as a Rust delegate builds it. Handlers in it fire as the row view's, with the tape's
-/// generation. The caller arranges to be redrawn when the tape changes (`source::watch`): the
-/// row view itself is never drawn.
+/// Opens a timed [`Dx`] at `tape.root` and runs `f`.
 pub fn with_tape<T>(
     tape: &Rc<Tape>,
     view: u64,
@@ -945,7 +928,7 @@ pub fn with_tape<T>(
     with_tape_node(tape, view, tape.root, window, cx, f)
 }
 
-/// Runs `f` over a specific `node` of `tape` (a cell inside a table row's tape).
+/// Opens a timed [`Dx`] at `node` inside `tape` and runs `f`.
 #[inline]
 pub fn with_tape_node<T>(
     tape: &Rc<Tape>,
@@ -965,11 +948,12 @@ pub fn with_tape_node<T>(
     timed_decode(|| f(&mut dx, node))
 }
 
-/// Runs a decode and counts it for gk-meter (`decodes`, `decode_ns`). The ship library times one
-/// decode in eight, picked at random, and counts it eight times: reading the clock twice for
-/// every table cell drawn cost about 4 us a frame of the 100,000-row table at 1,000 Hz (two
-/// `clock_gettime` per cell, about 100 cells a frame), main-thread time the Rust reference does
-/// not spend. The diag library times every decode.
+/// Measures decode duration for `gk-meter`, sampling 1 in 8 calls in non-`diag` builds to keep
+/// clock overhead negligible.
+///
+/// In release builds, `rt::next_pick() & 7 == 0` samples ~12.5% of decodes and multiplies the
+/// measured elapsed nanoseconds by 8 to estimate cumulative decode time while still incrementing
+/// the decode count on every call; `diag` builds time every decode accurately for deterministic gates.
 #[inline]
 pub(crate) fn timed_decode<T>(f: impl FnOnce() -> T) -> T {
     #[cfg(not(feature = "diag"))]
@@ -995,11 +979,7 @@ pub(crate) fn timed_decode<T>(f: impl FnOnce() -> T) -> T {
     }
 }
 
-// --- view-built closures (docs/PROTOCOLS.md section 11.6) ---------------------------------
-
-/// Runs `f` with a decode context over a view's tape and its root node's type and first op:
-/// a view-built closure applies the root's ops to the value upstream hands in
-/// (core/src/overlay.rs).
+/// Opens a [`Dx`] on `tape` and passes the root node's `(node_type, first_op_offset)` to `f`.
 pub(crate) fn with_root<T>(
     tape: &Rc<Tape>,
     view: u64,

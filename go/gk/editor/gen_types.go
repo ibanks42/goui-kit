@@ -10,6 +10,7 @@ import (
 // CaretAffinity is gpui_kit::base::text::editor_host::CaretAffinity.
 type CaretAffinity uint16
 
+// CaretAffinity enum values.
 const (
 	CaretAffinityUpstream   CaretAffinity = 0
 	CaretAffinityDownstream CaretAffinity = 1
@@ -18,6 +19,7 @@ const (
 // ColumnumnAlign is gpui_kit::base::text::editor_host::ColumnAlign.
 type ColumnumnAlign uint16
 
+// ColumnumnAlign enum values.
 const (
 	ColumnumnAlignNone   ColumnumnAlign = 0
 	ColumnumnAlignLeft   ColumnumnAlign = 1
@@ -28,6 +30,7 @@ const (
 // DiagnosticSeverity is gpui_kit::base::input::DiagnosticSeverity.
 type DiagnosticSeverity uint16
 
+// DiagnosticSeverity enum values.
 const (
 	DiagnosticSeverityHint    DiagnosticSeverity = 0
 	DiagnosticSeverityError   DiagnosticSeverity = 1
@@ -38,6 +41,7 @@ const (
 // DiffChangeIndicator is gpui_kit::component::diff::DiffChangeIndicator.
 type DiffChangeIndicator uint16
 
+// DiffChangeIndicator enum values.
 const (
 	DiffChangeIndicatorSigns DiffChangeIndicator = 0
 	DiffChangeIndicatorBars  DiffChangeIndicator = 1
@@ -47,6 +51,7 @@ const (
 // DiffConflictResolution is gpui_kit::component::diff::DiffConflictResolution.
 type DiffConflictResolution uint16
 
+// DiffConflictResolution enum values.
 const (
 	DiffConflictResolutionCurrent  DiffConflictResolution = 0
 	DiffConflictResolutionIncoming DiffConflictResolution = 1
@@ -56,6 +61,7 @@ const (
 // DiffFileStatus is gpui_kit::component::diff::DiffFileStatus.
 type DiffFileStatus uint16
 
+// DiffFileStatus enum values.
 const (
 	DiffFileStatusAdded      DiffFileStatus = 0
 	DiffFileStatusDeleted    DiffFileStatus = 1
@@ -69,6 +75,7 @@ const (
 // DiffHoverHighlight is gpui_kit::component::diff::DiffHoverHighlight.
 type DiffHoverHighlight uint16
 
+// DiffHoverHighlight enum values.
 const (
 	DiffHoverHighlightNone       DiffHoverHighlight = 0
 	DiffHoverHighlightLine       DiffHoverHighlight = 1
@@ -79,6 +86,7 @@ const (
 // DiffHunkSeparator is gpui_kit::component::diff::DiffHunkSeparator.
 type DiffHunkSeparator uint16
 
+// DiffHunkSeparator enum values.
 const (
 	DiffHunkSeparatorMetadata DiffHunkSeparator = 0
 	DiffHunkSeparatorLineInfo DiffHunkSeparator = 1
@@ -88,6 +96,7 @@ const (
 // DiffInlineUnit is gpui_kit::component::diff::DiffInlineUnit.
 type DiffInlineUnit uint16
 
+// DiffInlineUnit enum values.
 const (
 	DiffInlineUnitWord      DiffInlineUnit = 0
 	DiffInlineUnitCharacter DiffInlineUnit = 1
@@ -96,6 +105,7 @@ const (
 // DiffMode is gpui_kit::component::diff::DiffMode.
 type DiffMode uint16
 
+// DiffMode enum values.
 const (
 	DiffModeSplit   DiffMode = 0
 	DiffModeUnified DiffMode = 1
@@ -104,6 +114,7 @@ const (
 // DiffSide is gpui_kit::component::diff::DiffSide.
 type DiffSide uint16
 
+// DiffSide enum values.
 const (
 	DiffSideOriginal DiffSide = 0
 	DiffSideModified DiffSide = 1
@@ -112,6 +123,7 @@ const (
 // InputContentType is gpui_kit::component::input::InputContentType.
 type InputContentType uint16
 
+// InputContentType enum values.
 const (
 	InputContentTypeName                      InputContentType = 0
 	InputContentTypeNamePrefix                InputContentType = 1
@@ -163,6 +175,7 @@ const (
 // InputGroupAddonAlignment is gpui_kit::component::input::InputGroupAddonAlignment.
 type InputGroupAddonAlignment uint16
 
+// InputGroupAddonAlignment enum values.
 const (
 	InputGroupAddonAlignmentInlineStart InputGroupAddonAlignment = 0
 	InputGroupAddonAlignmentInlineEnd   InputGroupAddonAlignment = 1
@@ -173,6 +186,7 @@ const (
 // InputOverlayKind is gpui_kit::base::input::InputOverlayKind.
 type InputOverlayKind uint16
 
+// InputOverlayKind enum values.
 const (
 	InputOverlayKindCompletion InputOverlayKind = 0
 	InputOverlayKindCodeAction InputOverlayKind = 1
@@ -181,6 +195,7 @@ const (
 // OtpEvent is gpui_kit::base::OtpEvent.
 type OtpEvent uint16
 
+// OtpEvent enum values.
 const (
 	OtpEventChange   OtpEvent = 0
 	OtpEventComplete OtpEvent = 1
@@ -191,6 +206,7 @@ const (
 // OverviewRulerLane is gpui_kit::base::input::OverviewRulerLane.
 type OverviewRulerLane uint16
 
+// OverviewRulerLane enum values.
 const (
 	OverviewRulerLaneLeft   OverviewRulerLane = 0
 	OverviewRulerLaneCenter OverviewRulerLane = 1
@@ -201,6 +217,7 @@ const (
 // RangeDecorationStyle is gpui_kit::base::input::RangeDecorationStyle.
 type RangeDecorationStyle uint16
 
+// RangeDecorationStyle enum values.
 const (
 	RangeDecorationStyleFill  RangeDecorationStyle = 0
 	RangeDecorationStyleFrame RangeDecorationStyle = 1
@@ -209,6 +226,7 @@ const (
 // SelectionEdge is gpui_kit::base::SelectionEdge.
 type SelectionEdge uint16
 
+// SelectionEdge enum values.
 const (
 	SelectionEdgeStart SelectionEdge = 0
 	SelectionEdgeEnd   SelectionEdge = 1
@@ -217,6 +235,7 @@ const (
 // SelectionFormat is gpui_kit::base::SelectionFormat.
 type SelectionFormat uint16
 
+// SelectionFormat enum values.
 const (
 	SelectionFormatPlain              SelectionFormat = 0
 	SelectionFormatSource             SelectionFormat = 1
@@ -226,6 +245,7 @@ const (
 // StepAction is gpui_kit::base::StepAction.
 type StepAction uint16
 
+// StepAction enum values.
 const (
 	StepActionDecrement StepAction = 0
 	StepActionIncrement StepAction = 1
@@ -234,6 +254,7 @@ const (
 // TextSelectionCoverage is gpui_kit::base::TextSelectionCoverage.
 type TextSelectionCoverage uint16
 
+// TextSelectionCoverage enum values.
 const (
 	TextSelectionCoverageBounded   TextSelectionCoverage = 0
 	TextSelectionCoverageFromStart TextSelectionCoverage = 1
@@ -244,12 +265,13 @@ const (
 // WrappingIndent is gpui_kit::base::input::WrappingIndent.
 type WrappingIndent uint16
 
+// WrappingIndent enum values.
 const (
 	WrappingIndentNone WrappingIndent = 0
 	WrappingIndentSame WrappingIndent = 1
 )
 
-// BaseCaret is gpui_kit::base::text::editor_host::Caret.
+// BaseCaret mirrors gpui_kit::base::text::editor_host::Caret.
 type BaseCaret struct {
 	Index    int
 	Affinity CaretAffinity
@@ -260,7 +282,7 @@ func putBaseCaret(o *rt.Tape, v BaseCaret) {
 	o.U16(uint16(v.Affinity))
 }
 
-// BaseDiagnostic is gpui_kit::base::input::Diagnostic. Only the fields the binding can carry.
+// BaseDiagnostic mirrors gpui_kit::base::input::Diagnostic. Includes only wire-supported fields.
 type BaseDiagnostic struct {
 	Severity DiagnosticSeverity
 	Code     gk.Option[string]
@@ -268,23 +290,23 @@ type BaseDiagnostic struct {
 	Message  string
 }
 
-// BaseLink3 is gpui_kit::base::text::Link. Only the fields the binding can carry.
+// BaseLink3 mirrors gpui_kit::base::text::Link. Includes only wire-supported fields.
 type BaseLink3 struct {
 	URL   string
 	Title gk.Option[string]
 }
 
-// BaseLsp is gpui_kit::base::input::Lsp. Only the fields the binding can carry.
+// BaseLsp mirrors gpui_kit::base::input::Lsp. Includes only wire-supported fields.
 type BaseLsp struct {
 	CompletionMenu CompletionMenuOptions
 }
 
-// BaseNativeMenu2 is gpui_kit::base::input::NativeMenu.
+// BaseNativeMenu2 mirrors gpui_kit::base::input::NativeMenu.
 type BaseNativeMenu2 struct {
 	Items []NativeMenuItem
 }
 
-// BaseTextMark is gpui_kit::base::text::editor_host::TextMark.
+// BaseTextMark mirrors gpui_kit::base::text::editor_host::TextMark.
 type BaseTextMark struct {
 	Bold          bool
 	Italic        bool
@@ -303,7 +325,7 @@ func putBoxShadow(o *rt.Tape, v gk.BoxShadow) {
 	o.Bool(v.Inset)
 }
 
-// BufferPoint is gpui_kit::base::input::BufferPoint.
+// BufferPoint mirrors gpui_kit::base::input::BufferPoint.
 type BufferPoint struct {
 	Line int
 	Col  int
@@ -314,7 +336,7 @@ func putBufferPoint(o *rt.Tape, v BufferPoint) {
 	rt.PutUsize(o, v.Col)
 }
 
-// CompletionMenuOptions is gpui_kit::base::input::CompletionMenuOptions.
+// CompletionMenuOptions mirrors gpui_kit::base::input::CompletionMenuOptions.
 type CompletionMenuOptions struct {
 	MaxWidth float32
 }
@@ -326,7 +348,7 @@ func putCorners(o *rt.Tape, v gk.Corners) {
 	o.F32(v.BottomLeft)
 }
 
-// DiagnosticColors is gpui_kit::base::input::DiagnosticColors.
+// DiagnosticColors mirrors gpui_kit::base::input::DiagnosticColors.
 type DiagnosticColors struct {
 	Error   gk.Color
 	Warning gk.Color
@@ -341,13 +363,13 @@ func putDiagnosticColors(o *rt.Tape, v DiagnosticColors) {
 	rt.PutColor(o, v.Hint)
 }
 
-// DiagnosticEntry is gpui_kit::base::input::DiagnosticEntry.
+// DiagnosticEntry mirrors gpui_kit::base::input::DiagnosticEntry.
 type DiagnosticEntry struct {
 	Range      gk.Range
 	Diagnostic BaseDiagnostic
 }
 
-// DisplayPoint is gpui_kit::base::input::DisplayPoint.
+// DisplayPoint mirrors gpui_kit::base::input::DisplayPoint.
 type DisplayPoint struct {
 	Row int
 	Col int
@@ -439,12 +461,12 @@ func putHighlightStyle(o *rt.Tape, v gk.HighlightStyle) {
 	}
 }
 
-// HoverPopoverState is gpui_kit::base::input::HoverPopoverState. Only the fields the binding can carry.
+// HoverPopoverState mirrors gpui_kit::base::input::HoverPopoverState. Includes only wire-supported fields.
 type HoverPopoverState struct {
 	SymbolRange gk.Range
 }
 
-// InputEdit is gpui_kit::base::input::InputEdit.
+// InputEdit mirrors gpui_kit::base::input::InputEdit.
 type InputEdit struct {
 	StartByte      int
 	OldEndByte     int
@@ -454,7 +476,7 @@ type InputEdit struct {
 	NewEndPosition Point
 }
 
-// InputEditorStyle is gpui_kit::base::input::InputEditorStyle.
+// InputEditorStyle mirrors gpui_kit::base::input::InputEditorStyle.
 type InputEditorStyle struct {
 	Foreground             gk.Color
 	MutedForeground        gk.Color
@@ -505,12 +527,12 @@ func putInputEditorStyle(o *rt.Tape, v InputEditorStyle) {
 	}
 }
 
-// InputEditsEvent is gpui_kit::base::input::InputEditsEvent. Only the fields the binding can carry.
+// InputEditsEvent mirrors gpui_kit::base::input::InputEditsEvent. Includes only wire-supported fields.
 type InputEditsEvent struct {
 	Edits []TupleInputEditString
 }
 
-// LinkMark is gpui_kit::base::text::editor_host::LinkMark.
+// LinkMark mirrors gpui_kit::base::text::editor_host::LinkMark.
 type LinkMark struct {
 	URL        string
 	Identifier gk.Option[string]
@@ -533,13 +555,13 @@ func putLinkMark(o *rt.Tape, v LinkMark) {
 	}
 }
 
-// Point is gpui_kit::base::input::Point.
+// Point mirrors gpui_kit::base::input::Point.
 type Point struct {
 	Row    int
 	Column int
 }
 
-// Span is gpui_kit::base::text::editor_host::Span.
+// Span mirrors gpui_kit::base::text::editor_host::Span.
 type Span struct {
 	Start int
 	End   int
@@ -560,7 +582,7 @@ func putStrikethroughStyle(o *rt.Tape, v gk.StrikethroughStyle) {
 	}
 }
 
-// TabSize is gpui_kit::base::input::TabSize.
+// TabSize mirrors gpui_kit::base::input::TabSize.
 type TabSize struct {
 	TabSize  int
 	HardTabs bool
@@ -571,7 +593,7 @@ func putTabSize(o *rt.Tape, v TabSize) {
 	o.Bool(v.HardTabs)
 }
 
-// TableData is gpui_kit::base::TableData.
+// TableData mirrors gpui_kit::base::TableData.
 type TableData struct {
 	Headers  []string
 	Rows     [][]string
@@ -579,7 +601,7 @@ type TableData struct {
 	Span     gk.Option[gk.Range]
 }
 
-// TextDecoration is gpui_kit::base::input::TextDecoration.
+// TextDecoration mirrors gpui_kit::base::input::TextDecoration.
 type TextDecoration struct {
 	Range gk.Range
 	Style gk.HighlightStyle
@@ -694,50 +716,51 @@ func putUnderlineStyle(o *rt.Tape, v gk.UnderlineStyle) {
 	o.Bool(v.Wavy)
 }
 
-// AnyInputState is gpui_kit::component::input::AnyInputState: one struct type per variant.
+// AnyInputState represents gpui_kit::component::input::AnyInputState with one struct type per variant.
 type AnyInputState interface{ isAnyInputState() }
 
-// AnyInputStateInput is gpui_kit::component::input::AnyInputState::Input.
+// AnyInputStateInput represents gpui_kit::component::input::AnyInputState::Input.
 type AnyInputStateInput struct {
 	Value InputState
 }
 
 func (AnyInputStateInput) isAnyInputState() {}
 
-// AnyInputStateTextarea is gpui_kit::component::input::AnyInputState::Textarea.
+// AnyInputStateTextarea represents gpui_kit::component::input::AnyInputState::Textarea.
 type AnyInputStateTextarea struct {
 	Value TextareaState
 }
 
 func (AnyInputStateTextarea) isAnyInputState() {}
 
-// AnyInputStateEditor is gpui_kit::component::input::AnyInputState::Editor.
+// AnyInputStateEditor represents gpui_kit::component::input::AnyInputState::Editor.
 type AnyInputStateEditor struct {
 	Value State
 }
 
 func (AnyInputStateEditor) isAnyInputState() {}
 
-// AnyInputStateOtp is gpui_kit::component::input::AnyInputState::Otp.
+// AnyInputStateOtp represents gpui_kit::component::input::AnyInputState::Otp.
 type AnyInputStateOtp struct {
 	Value OtpState
 }
 
 func (AnyInputStateOtp) isAnyInputState() {}
 
-// BlockNode is gpui_kit::base::text::editor_host::BlockNode: a constant of BlockNodeKind for each variant without data, a struct type for each other one.
+// BlockNode represents gpui_kit::base::text::editor_host::BlockNode: unit variants use BlockNodeKind constants and payload variants use distinct struct types.
 type BlockNode interface{ isBlockNode() }
 
-// BlockNodeKind is a variant of gpui_kit::base::text::editor_host::BlockNode without data: gk.BlockNodeUnknown.
+// BlockNodeKind represents unit variants of gpui_kit::base::text::editor_host::BlockNode (for example BlockNodeUnknown).
 type BlockNodeKind uint16
 
 func (BlockNodeKind) isBlockNode() {}
 
+// BlockNodeKind unit variant values.
 const (
 	BlockNodeUnknown BlockNodeKind = 13 // gpui_kit::base::text::editor_host::BlockNode::Unknown
 )
 
-// BlockNodeRoot is gpui_kit::base::text::editor_host::BlockNode::Root.
+// BlockNodeRoot represents gpui_kit::base::text::editor_host::BlockNode::Root.
 type BlockNodeRoot struct {
 	Children []BlockNode
 	Span     gk.Option[Span]
@@ -745,14 +768,14 @@ type BlockNodeRoot struct {
 
 func (BlockNodeRoot) isBlockNode() {}
 
-// BlockNodeParagraph is gpui_kit::base::text::editor_host::BlockNode::Paragraph.
+// BlockNodeParagraph represents gpui_kit::base::text::editor_host::BlockNode::Paragraph.
 type BlockNodeParagraph struct {
 	Value Paragraph
 }
 
 func (BlockNodeParagraph) isBlockNode() {}
 
-// BlockNodeHeading is gpui_kit::base::text::editor_host::BlockNode::Heading.
+// BlockNodeHeading represents gpui_kit::base::text::editor_host::BlockNode::Heading.
 type BlockNodeHeading struct {
 	Level    uint8
 	Children Paragraph
@@ -761,7 +784,7 @@ type BlockNodeHeading struct {
 
 func (BlockNodeHeading) isBlockNode() {}
 
-// BlockNodeBlockquote is gpui_kit::base::text::editor_host::BlockNode::Blockquote.
+// BlockNodeBlockquote represents gpui_kit::base::text::editor_host::BlockNode::Blockquote.
 type BlockNodeBlockquote struct {
 	Children []BlockNode
 	Span     gk.Option[Span]
@@ -769,7 +792,7 @@ type BlockNodeBlockquote struct {
 
 func (BlockNodeBlockquote) isBlockNode() {}
 
-// BlockNodeSurface is gpui_kit::base::text::editor_host::BlockNode::Surface.
+// BlockNodeSurface represents gpui_kit::base::text::editor_host::BlockNode::Surface.
 type BlockNodeSurface struct {
 	Name     string
 	Children []BlockNode
@@ -778,7 +801,7 @@ type BlockNodeSurface struct {
 
 func (BlockNodeSurface) isBlockNode() {}
 
-// BlockNodeList is gpui_kit::base::text::editor_host::BlockNode::List.
+// BlockNodeList represents gpui_kit::base::text::editor_host::BlockNode::List.
 type BlockNodeList struct {
 	Children []BlockNode
 	Ordered  bool
@@ -788,7 +811,7 @@ type BlockNodeList struct {
 
 func (BlockNodeList) isBlockNode() {}
 
-// BlockNodeListItem is gpui_kit::base::text::editor_host::BlockNode::ListItem.
+// BlockNodeListItem represents gpui_kit::base::text::editor_host::BlockNode::ListItem.
 type BlockNodeListItem struct {
 	Children   []BlockNode
 	Spread     bool
@@ -799,21 +822,21 @@ type BlockNodeListItem struct {
 
 func (BlockNodeListItem) isBlockNode() {}
 
-// BlockNodeCodeBlock is gpui_kit::base::text::editor_host::BlockNode::CodeBlock.
+// BlockNodeCodeBlock represents gpui_kit::base::text::editor_host::BlockNode::CodeBlock.
 type BlockNodeCodeBlock struct {
 	Value BaseCodeBlock
 }
 
 func (BlockNodeCodeBlock) isBlockNode() {}
 
-// BlockNodeTable is gpui_kit::base::text::editor_host::BlockNode::Table.
+// BlockNodeTable represents gpui_kit::base::text::editor_host::BlockNode::Table.
 type BlockNodeTable struct {
 	Value BaseTable2
 }
 
 func (BlockNodeTable) isBlockNode() {}
 
-// BlockNodeBreak is gpui_kit::base::text::editor_host::BlockNode::Break.
+// BlockNodeBreak represents gpui_kit::base::text::editor_host::BlockNode::Break.
 type BlockNodeBreak struct {
 	HTML bool
 	Span gk.Option[Span]
@@ -821,14 +844,14 @@ type BlockNodeBreak struct {
 
 func (BlockNodeBreak) isBlockNode() {}
 
-// BlockNodeHorizontalRule is gpui_kit::base::text::editor_host::BlockNode::HorizontalRule.
+// BlockNodeHorizontalRule represents gpui_kit::base::text::editor_host::BlockNode::HorizontalRule.
 type BlockNodeHorizontalRule struct {
 	Span gk.Option[Span]
 }
 
 func (BlockNodeHorizontalRule) isBlockNode() {}
 
-// BlockNodeDefinition is gpui_kit::base::text::editor_host::BlockNode::Definition.
+// BlockNodeDefinition represents gpui_kit::base::text::editor_host::BlockNode::Definition.
 type BlockNodeDefinition struct {
 	Identifier string
 	URL        string
@@ -838,8 +861,7 @@ type BlockNodeDefinition struct {
 
 func (BlockNodeDefinition) isBlockNode() {}
 
-// BlockNodeHeld is a BlockNode the library holds (a function's result, PROTOCOLS.md 9.30): temporary until
-// gk.Retain, as any object a call hands out.
+// BlockNodeHeld wraps a runtime-held BlockNode returned by a call; call Retain to keep it across turns.
 type BlockNodeHeld struct{ rt.HCore }
 
 func (BlockNodeHeld) isBlockNode() {}
@@ -1017,45 +1039,45 @@ func putButtonVariant(o *rt.Tape, v gk.ButtonVariant) {
 	}
 }
 
-// DiffEvent is gpui_kit::component::diff::DiffEvent: one struct type per variant.
+// DiffEvent represents gpui_kit::component::diff::DiffEvent with one struct type per variant.
 type DiffEvent interface{ isDiffEvent() }
 
-// DiffEventSelectionStarted is gpui_kit::component::diff::DiffEvent::SelectionStarted.
+// DiffEventSelectionStarted represents gpui_kit::component::diff::DiffEvent::SelectionStarted.
 type DiffEventSelectionStarted struct {
 	Value DiffLineRangeRead
 }
 
 func (DiffEventSelectionStarted) isDiffEvent() {}
 
-// DiffEventSelectionChanged is gpui_kit::component::diff::DiffEvent::SelectionChanged.
+// DiffEventSelectionChanged represents gpui_kit::component::diff::DiffEvent::SelectionChanged.
 type DiffEventSelectionChanged struct {
 	Value gk.Option[DiffLineRangeRead]
 }
 
 func (DiffEventSelectionChanged) isDiffEvent() {}
 
-// DiffEventSelectionEnded is gpui_kit::component::diff::DiffEvent::SelectionEnded.
+// DiffEventSelectionEnded represents gpui_kit::component::diff::DiffEvent::SelectionEnded.
 type DiffEventSelectionEnded struct {
 	Value DiffLineRangeRead
 }
 
 func (DiffEventSelectionEnded) isDiffEvent() {}
 
-// DiffEventFileExpanded is gpui_kit::component::diff::DiffEvent::FileExpanded.
+// DiffEventFileExpanded represents gpui_kit::component::diff::DiffEvent::FileExpanded.
 type DiffEventFileExpanded struct {
 	Value string
 }
 
 func (DiffEventFileExpanded) isDiffEvent() {}
 
-// DiffEventFileCollapsed is gpui_kit::component::diff::DiffEvent::FileCollapsed.
+// DiffEventFileCollapsed represents gpui_kit::component::diff::DiffEvent::FileCollapsed.
 type DiffEventFileCollapsed struct {
 	Value string
 }
 
 func (DiffEventFileCollapsed) isDiffEvent() {}
 
-// DiffEventConflictResolved is gpui_kit::component::diff::DiffEvent::ConflictResolved.
+// DiffEventConflictResolved represents gpui_kit::component::diff::DiffEvent::ConflictResolved.
 type DiffEventConflictResolved struct {
 	V0 string
 	V1 int
@@ -1097,16 +1119,16 @@ func putEasing(o *rt.Tape, v gk.Easing) {
 	}
 }
 
-// InputEvent is gpui_kit::base::input::InputEvent: one struct type per variant.
+// InputEvent represents gpui_kit::base::input::InputEvent with one struct type per variant.
 type InputEvent interface{ isInputEvent() }
 
-// InputEventChange is gpui_kit::base::input::InputEvent::Change.
+// InputEventChange represents gpui_kit::base::input::InputEvent::Change.
 type InputEventChange struct {
 }
 
 func (InputEventChange) isInputEvent() {}
 
-// InputEventPressEnter is gpui_kit::base::input::InputEvent::PressEnter.
+// InputEventPressEnter represents gpui_kit::base::input::InputEvent::PressEnter.
 type InputEventPressEnter struct {
 	Secondary bool
 	Shift     bool
@@ -1114,53 +1136,54 @@ type InputEventPressEnter struct {
 
 func (InputEventPressEnter) isInputEvent() {}
 
-// InputEventFocus is gpui_kit::base::input::InputEvent::Focus.
+// InputEventFocus represents gpui_kit::base::input::InputEvent::Focus.
 type InputEventFocus struct {
 }
 
 func (InputEventFocus) isInputEvent() {}
 
-// InputEventBlur is gpui_kit::base::input::InputEvent::Blur.
+// InputEventBlur represents gpui_kit::base::input::InputEvent::Blur.
 type InputEventBlur struct {
 }
 
 func (InputEventBlur) isInputEvent() {}
 
-// KitText is gpui_kit::component::text::Text: one struct type per variant.
+// KitText represents gpui_kit::component::text::Text with one struct type per variant.
 type KitText interface{ isKitText() }
 
-// KitTextString is gpui_kit::component::text::Text::String.
+// KitTextString represents gpui_kit::component::text::Text::String.
 type KitTextString struct {
 	Value string
 }
 
 func (KitTextString) isKitText() {}
 
-// KitTextTextView is gpui_kit::component::text::Text::TextView: not carried in Go yet (boxed).
+// KitTextTextView represents gpui_kit::component::text::Text::TextView (placeholder; not yet wired in Go: boxed).
 type KitTextTextView struct{}
 
 func (KitTextTextView) isKitText() {}
 
-// MaskPattern is gpui_kit::base::input::MaskPattern: a constant of MaskPatternKind for each variant without data, a struct type for each other one.
+// MaskPattern represents gpui_kit::base::input::MaskPattern: unit variants use MaskPatternKind constants and payload variants use distinct struct types.
 type MaskPattern interface{ isMaskPattern() }
 
-// MaskPatternKind is a variant of gpui_kit::base::input::MaskPattern without data: gk.MaskPatternNone.
+// MaskPatternKind represents unit variants of gpui_kit::base::input::MaskPattern (for example MaskPatternNone).
 type MaskPatternKind uint16
 
 func (MaskPatternKind) isMaskPattern() {}
 
+// MaskPatternKind unit variant values.
 const (
 	MaskPatternNone MaskPatternKind = 0 // gpui_kit::base::input::MaskPattern::None
 )
 
-// MaskPatternPattern is gpui_kit::base::input::MaskPattern::Pattern.
+// MaskPatternPattern represents gpui_kit::base::input::MaskPattern::Pattern.
 type MaskPatternPattern struct {
 	Pattern string
 }
 
 func (MaskPatternPattern) isMaskPattern() {}
 
-// MaskPatternNumber is gpui_kit::base::input::MaskPattern::Number.
+// MaskPatternNumber represents gpui_kit::base::input::MaskPattern::Number.
 type MaskPatternNumber struct {
 	Separator gk.Option[rune]
 	Fraction  gk.Option[int]
@@ -1211,16 +1234,16 @@ func putMouseButton(o *rt.Tape, v gk.MouseButton) {
 	}
 }
 
-// NativeMenuItem is gpui_kit::base::input::NativeMenuItem: one struct type per variant.
+// NativeMenuItem represents gpui_kit::base::input::NativeMenuItem with one struct type per variant.
 type NativeMenuItem interface{ isNativeMenuItem() }
 
-// NativeMenuItemSeparator is gpui_kit::base::input::NativeMenuItem::Separator.
+// NativeMenuItemSeparator represents gpui_kit::base::input::NativeMenuItem::Separator.
 type NativeMenuItemSeparator struct {
 }
 
 func (NativeMenuItemSeparator) isNativeMenuItem() {}
 
-// NativeMenuItemAction is gpui_kit::base::input::NativeMenuItem::Action.
+// NativeMenuItemAction represents gpui_kit::base::input::NativeMenuItem::Action.
 type NativeMenuItemAction struct {
 	Label    string
 	Disabled bool
@@ -1229,17 +1252,17 @@ type NativeMenuItemAction struct {
 
 func (NativeMenuItemAction) isNativeMenuItem() {}
 
-// NumberStep is gpui_kit::base::NumberStep: one struct type per variant.
+// NumberStep represents gpui_kit::base::NumberStep with one struct type per variant.
 type NumberStep interface{ isNumberStep() }
 
-// NumberStepFixed is gpui_kit::base::NumberStep::Fixed.
+// NumberStepFixed represents gpui_kit::base::NumberStep::Fixed.
 type NumberStepFixed struct {
 	Value float64
 }
 
 func (NumberStepFixed) isNumberStep() {}
 
-// NumberStepByValue is gpui_kit::base::NumberStep::ByValue.
+// NumberStepByValue represents gpui_kit::base::NumberStep::ByValue.
 type NumberStepByValue struct {
 	Value string
 }
@@ -1323,7 +1346,7 @@ func putEdgesInto(o *rt.Tape, v gk.EdgesInto) {
 	}
 }
 
-// InputContentInto is what `impl Into<gpui_kit::base::input::InputContent>` accepts: one of InputContent, string, rune.
+// InputContentInto accepts any Go type accepted by `impl Into<gpui_kit::base::input::InputContent>`: InputContent, string, rune.
 type InputContentInto interface{}
 
 func putInputContentInto(o *rt.Tape, v InputContentInto) {
@@ -1345,7 +1368,7 @@ func putInputContentInto(o *rt.Tape, v InputContentInto) {
 	}
 }
 
-// InputGroupControlInto is what `impl Into<gpui_kit::component::input::InputGroupControl>` accepts: one of InputEl, TextareaEl.
+// InputGroupControlInto accepts any Go type accepted by `impl Into<gpui_kit::component::input::InputGroupControl>`: InputEl, TextareaEl.
 type InputGroupControlInto interface{}
 
 func putInputGroupControlInto(o *rt.Tape, v InputGroupControlInto) {
@@ -1363,7 +1386,7 @@ func putInputGroupControlInto(o *rt.Tape, v InputGroupControlInto) {
 	}
 }
 
-// MaskPatternInto is what `impl Into<gpui_kit::base::input::MaskPattern>` accepts: one of MaskPattern, string.
+// MaskPatternInto accepts any Go type accepted by `impl Into<gpui_kit::base::input::MaskPattern>`: MaskPattern, string.
 type MaskPatternInto interface{}
 
 func putMaskPatternInto(o *rt.Tape, v MaskPatternInto) {
@@ -1381,7 +1404,7 @@ func putMaskPatternInto(o *rt.Tape, v MaskPatternInto) {
 	}
 }
 
-// NumberStepInto is what `impl Into<gpui_kit::base::NumberStep>` accepts: one of NumberStep, float64.
+// NumberStepInto accepts any Go type accepted by `impl Into<gpui_kit::base::NumberStep>`: NumberStep, float64.
 type NumberStepInto interface{}
 
 func putNumberStepInto(o *rt.Tape, v NumberStepInto) {
@@ -1414,29 +1437,29 @@ func putSizeInto(o *rt.Tape, v gk.SizeInto) {
 	}
 }
 
-// TextInto is what `impl Into<gpui_kit::component::text::Text>` accepts: one of KitText, string, TextViewEl.
+// TextInto accepts any Go type accepted by `impl Into<gpui_kit::component::text::Text>`: KitText, string, TextViewEl.
 type TextInto interface{}
 
-// Event108 is the payload of handlers of shape 108: (&DiffLinePosition, &ClickEvent).
+// Event108 holds the multi-argument payload for handler shape 108 (&DiffLinePosition, &ClickEvent).
 type Event108 struct {
 	A0 DiffLinePosition
 	A1 gk.ClickEvent
 }
 
-// Event114 is the payload of handlers of shape 114: (NativeMenu, InputContextMenuCapabilities, Point<Pixels>).
+// Event114 holds the multi-argument payload for handler shape 114 (NativeMenu, InputContextMenuCapabilities, Point<Pixels>).
 type Event114 struct {
 	A0 BaseNativeMenu2
 	A1 InputContextMenuCapabilitiesRead
 	A2 gk.GpuiPoint
 }
 
-// Event121 is the payload of handlers of shape 121: (&DiffTextPosition, &ClickEvent).
+// Event121 holds the multi-argument payload for handler shape 121 (&DiffTextPosition, &ClickEvent).
 type Event121 struct {
 	A0 DiffTextPosition
 	A1 gk.ClickEvent
 }
 
-// Event122 is the payload of handlers of shape 122: (Option<&DiffTextPosition>, gpui::Modifiers).
+// Event122 holds the multi-argument payload for handler shape 122 (Option<&DiffTextPosition>, gpui::Modifiers).
 type Event122 struct {
 	A0 gk.Option[DiffTextPosition]
 	A1 gk.Modifiers
@@ -1596,21 +1619,25 @@ func init() {
 	}})
 }
 
+// TupleInputEditString holds a 2-element tuple (InputEdit, string).
 type TupleInputEditString struct {
 	V0 InputEdit
 	V1 string
 }
 
+// TupleInputOverlayKindString holds a 2-element tuple (InputOverlayKind, string).
 type TupleInputOverlayKindString struct {
 	V0 InputOverlayKind
 	V1 string
 }
 
+// TupleRangeBaseTextMark holds a 2-element tuple (Range, BaseTextMark).
 type TupleRangeBaseTextMark struct {
 	V0 gk.Range
 	V1 BaseTextMark
 }
 
+// TupleRangeTextMark holds a 2-element tuple (Range, TextMark).
 type TupleRangeTextMark struct {
 	V0 gk.Range
 	V1 TextMark

@@ -1,32 +1,29 @@
-//! Animations and motion values (docs/PROTOCOLS.md 13.30). Runtime of the platform and motion
-//! families; the per-element wrappers are generated (`generated::motion_wrap`, `motion_trap`:
-//! gen/gk_values.py `motion_wrappers`, one arm per element type, the rule of a type-changing
-//! wrapper instantiated per element type).
+//! Decoders for `N_ANIMATED` wrapper nodes (animations, effects, motion values, focus traps,
+//! and text-selection scopes) as well as SVG transform animations.
 //!
-//! App code never runs while a frame is drawn, so nothing here calls the app: an animation is
-//! described as data and the library evaluates it while it draws.
+//! # Wrapper Dispatch Protocol
 //!
-//! - **gpui's `with_animation` / `with_animations`** over any styled element: the animator is a
-//!   list of *tracks* (a style property, its value at delta 0 and at delta 1, the animation it
-//!   follows); the library lerps each with the eased delta gpui hands the animator and sets it
-//!   with `Styled`. The easing is one of gpui's and the kit's curves, by number.
-//! - **The kit's `EffectTransition::apply`**, with the effect value the app built.
-//! - **Motion values sampled while drawing**: the kit's `transition`, `spring`,
-//!   `animate_keyframes`, `Presence::sample` and `TransitionState::sample`, each giving one
-//!   style property its value this frame; they ask for the next frame themselves while moving,
-//!   which re-renders the view that drew them (only its tape is decoded again).
-//! - **`FocusTrapElement::focus_trap`** with a focus handle of the app (kind FOCUS).
+//! GPUI's `AnimationExt::with_animations`, `EffectTransition::apply`, `FocusTrapElement::focus_trap`,
+//! and `ElementExt::text_selection_scope` all require concrete element types implementing `Styled`
+//! or `ParentElement` rather than type-erased `AnyElement`. To bridge this over the tape, an
+//! `N_ANIMATED` node wraps a `child` node ID with a `kind` tag (`1..=5`), decodes its parameters
+//! into a [`Wrap`] (or trap/scope parameters), and hands the child node ID to generated
+//! `motion_wrap` / `motion_trap` / `motion_scope` helpers that instantiate the concrete child
+//! element and apply the wrapper before erasing to `AnyElement`.
 //!
-//! Node `ANIMATED` (args): u32 child node, u8 kind, then by kind
-//!   1 animations: str id, u32 n, n x (u32 ms, u8 flags (1 repeat, 2 repeat synced), easing,
-//!     f32 max fps (0: none)), u32 n, n x track (u16 animation index (0xffff: every one), u8
-//!     property, value from, value to)
-//!   2 effect: str id, u32 value node of the kit's EffectTransition
-//!   3 motion values: u32 n, n x (u8 property, u8 source, the source's fields)
-//!   4 focus trap: str id, u64 focus handle
-//!   5 text selection scope (PROTOCOLS.md 13.31): u64 scope (`gk.text_selection_scope_id`)
-//! A value is an f32 for a numeric property and a colour (genapi::color) for a colour property.
-//! An easing is u8 kind and its parameters (see `easing`).
+//! # Track and Motion-Source Wire Layouts
+//!
+//! - **Properties (`Prop`, `0..=10`)**: `0..=6` and `10` are `f32` pixel/opacity scalars;
+//!   `7..=9` (`Bg`, `TextColor`, `BorderColor`) are wire colors decoded via `genapi::color`.
+//! - **Easings (`easing`, `0..=9`)**: `0` linear, `1` quadratic, `2` ease-in-out, `3` ease-out-quint,
+//!   `4` ease-out-cubic, `5` ease-in-cubic, `6` ease-in-out-cubic, `7` cubic-bezier (4 `f32`s),
+//!   `8` bounce wrapping one inner easing (`depth == 0` only, preventing unbounded recursion), and
+//!   `9` pulsating-between (`lo: f32, hi: f32`).
+//! - **Motion sources (`sample`, `1..=5`)**: `1` `base::transition` (scalar or color), `2`
+//!   `base::spring` (numeric only), `3` `Keyframes<f32>` (numeric only), `4` `Presence` progress
+//!   interpolation between `(from, to)`, and `5` `TransitionState<f32>` (numeric only).
+//! - **SVG transforms**: [`transformation`] reads `(scale_x, scale_y, tx, ty, rot_rad, alpha)` as
+//!   six `f32`s; [`timed_transformation`] reads `[period_ns: i64][from][to][4 easing tags][alternate: u8][max_fps: f32]`.
 
 use crate::genapi::{self, Dx};
 use crate::ops::*;
@@ -38,6 +35,7 @@ use gpui_kit::{
 use std::rc::Rc;
 use std::time::Duration;
 
+/// Styled properties that can be interpolated by an `N_ANIMATED` track or motion value.
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Prop {
     Opacity,
@@ -75,6 +73,7 @@ fn is_color(p: Prop) -> bool {
     matches!(p, Prop::Bg | Prop::TextColor | Prop::BorderColor)
 }
 
+/// Scalar or HSLA value driven by an animation track or sampled motion source.
 #[derive(Clone, Copy, Debug)]
 pub enum Val {
     F(f32),
@@ -85,6 +84,8 @@ fn val(p: Prop, r: &mut R, cx: &gpui_kit::App) -> Val {
     if is_color(p) { Val::C(genapi::color(r, cx)) } else { Val::F(r.f32()) }
 }
 
+/// Linearly interpolates between `a` and `b` at progress `t`: arithmetic lerp for scalar `Val::F`,
+/// upstream `Lerp::lerp` for `Val::C` colors (mismatched variants return `a` unchanged).
 fn lerp(a: Val, b: Val, t: f32) -> Val {
     match (a, b) {
         (Val::F(a), Val::F(b)) => Val::F(a + (b - a) * t),
@@ -93,7 +94,7 @@ fn lerp(a: Val, b: Val, t: f32) -> Val {
     }
 }
 
-/// Sets one property on a styled element.
+/// Applies one animated property value to a `Styled` element.
 pub fn set<E: Styled>(el: E, p: Prop, v: Val) -> E {
     match (p, v) {
         (Prop::Opacity, Val::F(f)) => el.opacity(f),
@@ -111,10 +112,7 @@ pub fn set<E: Styled>(el: E, p: Prop, v: Val) -> E {
     }
 }
 
-/// An easing curve by number: 0 linear, 1 quadratic, 2 ease in-out, 3 ease-out quint (gpui's);
-/// 4 ease-out cubic, 5 ease-in cubic, 6 ease in-out cubic, 7 cubic Bézier (f32 x1, y1, x2, y2)
-/// (the kit's `base::animation`); 8 bounce of another curve (gpui's `bounce`), 9 pulsating
-/// between (f32 min, max) (gpui's).
+/// Decodes an easing curve opcode (`0..=9`). Nested `bounce` (`depth > 0`) is rejected.
 pub fn easing(r: &mut R, depth: u32) -> Result<Rc<dyn Fn(f32) -> f32>, String> {
     use gpui_kit::base::animation as kit;
     Ok(match r.u8() {
@@ -141,6 +139,7 @@ pub fn easing(r: &mut R, depth: u32) -> Result<Rc<dyn Fn(f32) -> f32>, String> {
     })
 }
 
+/// Property interpolation track bound to animation index `anim` (`0xffff` matches every animation).
 pub struct Track {
     anim: u16,
     prop: Prop,
@@ -148,14 +147,14 @@ pub struct Track {
     to: Val,
 }
 
-/// What a wrapper does, decoded from the node's arguments.
+/// Wrapper payload passed to generated `motion_wrap` helpers to wrap concrete `Styled` elements.
 pub enum Wrap {
     Anim { id: SharedString, anims: Vec<Animation>, tracks: Rc<Vec<Track>> },
     Effect { id: SharedString, effect: gpui_kit::base::animation::EffectTransition },
     Values(Vec<(Prop, Val)>),
 }
 
-/// The generated arms call this for every styled element type.
+/// Applies `w` to concrete styled element `el` and erases it to `AnyElement`.
 pub fn styled<E: IntoElement + Styled + 'static>(el: E, w: Wrap) -> AnyElement {
     match w {
         Wrap::Anim { id, anims, tracks } => el
@@ -180,9 +179,6 @@ pub fn styled<E: IntoElement + Styled + 'static>(el: E, w: Wrap) -> AnyElement {
 }
 
 fn bad(msg: String) -> AnyElement {
-    // A described animation the library cannot draw is the app's mistake (the Go package
-    // refuses what it can see at the app's line), found while drawing: it stops, as a released
-    // handle shown by a view does (genapi::released_shown), never draws something else.
     crate::rt::app_stop(format!("an animation cannot be drawn: {msg}"))
 }
 
@@ -193,12 +189,9 @@ fn obj_rc<T: 'static>(h: u64, what: &str) -> std::rc::Rc<std::cell::RefCell<T>> 
     }
 }
 
-/// One motion value this frame: u8 source, then
-///   1 transition: str id, target value, u32 Transition node (the kit's `transition`)
-///   2 spring: str id, f32 target, u32 Spring node (the kit's `spring`; numbers only)
-///   3 keyframes: str id, u64 Keyframes<f32> object, u32 Timing node (`animate_keyframes`)
-///   4 presence: u32 Presence node, value at progress 0, value at 1 (`Presence::sample`)
-///   5 state: u64 TransitionState<f32> object, f32 target, u32 Transition node (`sample`)
+/// Samples one animated property value from wire motion source `1..=5`:
+/// 1 = `base::transition`, 2 = `base::spring` (numeric only), 3 = `Keyframes<f32>` (numeric only),
+/// 4 = `Presence` progress lerp, 5 = `TransitionState<f32>` (numeric only).
 fn sample(p: Prop, r: &mut R, dx: &mut Dx) -> Result<Val, String> {
     use gpui_kit::base;
     let src = r.u8();
@@ -251,7 +244,14 @@ fn sample(p: Prop, r: &mut R, dx: &mut Dx) -> Result<Val, String> {
     })
 }
 
-/// The ANIMATED node.
+/// Decodes `N_ANIMATED` wrapper nodes (`[child_node: u32][kind: u8][payload...]`).
+///
+/// Kinds:
+/// - `1`: GPUI `Animation` list + [`Track`] bindings (`flags`: bit 0 = repeat, bit 1 = repeat_synced)
+/// - `2`: `base::animation::EffectTransition` wrapper
+/// - `3`: sampled motion values ([`sample`])
+/// - `4`: `FocusTrap` around a parent styled element
+/// - `5`: `TextSelectionScopeOf` around a parent element
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
     if ty != N_ANIMATED {
         return None;
@@ -328,7 +328,6 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
             });
         }
         5 => {
-            // ElementExt::text_selection_scope (PROTOCOLS.md 13.31): a scope id the app made.
             let scope = crate::platform::scope_shown(r.u64());
             return Some(match crate::generated::motion_scope(dx, child, scope) {
                 Some(el) => el,
@@ -343,10 +342,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
     })
 }
 
-// ------------------------------------------------------------------ svg transformations (13.30)
-
-/// gpui's Transformation of an svg: f32 scale x, y, translation x, y (pixels), rotation (radians),
-/// alpha (1 opaque; Go writes 1 for a gk.Transformation without one).
+/// Decodes a GPUI 2D `Transformation` (scale, pixel translation, rotation in radians, and alpha).
 pub fn transformation(r: &mut R) -> gpui_kit::Transformation {
     let scale = gpui_kit::size(r.f32(), r.f32());
     let translate = gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32()));
@@ -357,7 +353,6 @@ pub fn transformation(r: &mut R) -> gpui_kit::Transformation {
         .with_alpha(r.f32())
 }
 
-/// gpui's easing of a timed transformation (Svg_Easing, Linear = 0); an unknown one is Linear.
 fn svg_easing(n: u8) -> gpui_kit::Easing {
     use gpui_kit::Easing as E;
     match n {
@@ -369,10 +364,7 @@ fn svg_easing(n: u8) -> gpui_kit::Easing {
     }
 }
 
-/// gpui's TimedTransformation (Svg::with_timed_transformation): i64 period in nanoseconds (a
-/// negative one is zero: nothing moves), the transformations at the start and the end of each
-/// period, u8 easings of the scale, translation, rotation and alpha, u8 alternate, f32 the most
-/// frames a second it asks for (0: no limit; upstream ignores a value that is not positive).
+/// Decodes a `TimedTransformation` for animated SVG elements.
 pub fn timed_transformation(r: &mut R) -> gpui_kit::TimedTransformation {
     let period = Duration::from_nanos(r.i64().max(0) as u64);
     let from = transformation(r);

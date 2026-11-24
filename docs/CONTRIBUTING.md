@@ -1,179 +1,195 @@
-# Working on the bindings
+# Contributing
 
-This guide is for people who want to change the bindings themselves: build the library from
-source, regenerate the Go package, and run the tests. If you only want to write an app,
-you don't need any of this. Grab a prebuilt download and follow
-[GETTING-STARTED-GO.md](GETTING-STARTED-GO.md).
+This guide explains how to build `libgpuikit`, regenerate the Rust and Go bindings, run every verification gate, add a new wire op or generator rule, bump upstream `gpui-kit` / `gpui-fast` pins, and assemble release archives.
 
-## How the pieces fit
+App developers who only consume a prebuilt release archive do not need Rust, Python, or any of the commands below; see [docs/GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) instead.
 
-- **The library** (`core/`) is Rust. It wraps GPUI-kit and exposes a small C interface
-  (`core/include/gpuikit.h`). It compiles to `libgpuikit.so`, `libgpuikit.dylib` or `gpuikit.dll`.
-- **The generator** (`gen/`) is Python. It reads GPUI-kit's API (extracted from rustdoc, committed
-  in `api/rustdoc/`) and writes the Rust decoders in `core/src/gen/` and the Go package's
-  `go/gk/**/gen_*.go` (one package per area, docs/GO.md section 1: gen/gk_split.py places each
-  declaration and gen/gosplit, a small Go program, rewrites the names). The `rt_*` files next to
-  them are written by hand; the runtime itself is `go/gk/internal/rt`.
-- **The reference apps** (`ref/`) are the example apps written in plain Rust. The tests draw the
-  Go apps and these Rust apps and compare the pixels.
-- **The tests** (`gates/` and `core/tests/`) are shell and Python scripts.
+---
 
-Most changes touch only the generator, the hand-written runtime files or the examples, and don't
-need a Rust build at all, as long as you have a library in `lib/`.
+## 1. Repository Layout and Prerequisites
 
-## What you need
-
-| for | you need |
+| Directory | Role |
 |---|---|
-| regenerating the bindings | Python 3 (standard library only); `gofmt` if you want the Go output formatted |
-| building the library | Rust (`rustup` picks up the version in `rust-toolchain.toml`), a C compiler, and your platform's GUI development packages (below) |
-| the Go side | Go 1.27 or newer (the bindings load the library through purego; a C compiler only for `make go-static`, the `-tags gkstatic` build) |
-| the tests | Linux, plus `gamescope` or `kwin_wayland` (or `Xvfb`) for the private display the tests draw in, and `bc` |
+| `core/` | Rust C ABI library (`gk-capi`), runtime (`rt.rs`), tape decoder (`tape.rs`), protocol shims, `core/wire/ops.txt`, `core/wire/gen.py`, and `core/meter/`. |
+| `go/` | The `gpuikit.dev` Go module (`gk` + sub-packages + `internal/rt` + `internal/goid`). |
+| `gen/` | Pure Python 3 code generator (`gkgen.py`, `gk_model.py`, `gk_rust.py`, `gk_go.py`, `gk_split.py`, `gk_apidoc.py`, `extract.sh`, `round.sh`). |
+| `api/` | Committed rustdoc JSON extract (`api/rustdoc/`), `overrides.toml`, append-only `opcodes.lock`, `clone.json`, `quarantine.json`, and `coverage.json`. |
+| `examples/go/` | Complete Go apps, component gallery (`gallery/`), protocol tests (`proto/`, `port/`), and misuse tests (`misuse*`). |
+| `ref/` | Pure-Rust reference apps (`ref-counter`, `ref-gallery`, `ref-notes`, `ref-panels`, `ref-table`) used as ground truth by pixel, memory, and frame-cost gates. |
+| `gates/` | Automated test and benchmark scripts, compositor launcher (`display.sh`), and baseline files. |
+| `tools/` | Build (`build-lib.sh`, `zigbuild.sh`), packaging (`dist.sh`, `dist-test.sh`), license collection, and status update (`status.py`) scripts. |
+| `docs/` | Guides, runnable tutorial programs (`docs/tutorial-go/`), snippet programs (`docs/snippets-go/`), specification (`PROTOCOLS.md`), architecture (`DESIGN.md`), and `STATUS.md`. |
 
-On Debian or Ubuntu, the development packages for the library are:
+### Toolchain Requirements
 
-```sh
-sudo apt install pkg-config libfreetype-dev libfontconfig-dev libxkbcommon-dev \
-  libxkbcommon-x11-dev libxcb1-dev libxcb-xkb-dev libx11-dev libwayland-dev clang
-```
+- **Go 1.27 or newer** (`go/go.mod`).
+- **Rust 1.99.1** (`rust-toolchain.toml`, 2024 edition). Nightly Rust is only needed when re-extracting upstream rustdoc JSON (`gen/extract.sh`).
+- **Python 3** (standard library only; no `pip` dependencies).
+- **Linux x86-64** for the full gate suite (offscreen `diag` rendering, private headless compositor via `gates/display.sh`, and `bc`).
+- **Optional cross and release tools**:
+  - `cargo-zigbuild` and `zig` (downloaded automatically by `tools/zigbuild.sh`) for `make lib-release` linking against glibc 2.28.
+  - `cargo-xwin` for `make check-windows` (type-checking the Windows library from Linux).
+  - **macOS**: Xcode Command Line Tools plus `rustup target add aarch64-apple-darwin x86_64-apple-darwin` for universal archives.
+  - **Windows**: MSVC toolchain (with Windows SDK `fxc.exe` for release shaders) plus MinGW-w64 `gcc`, `dlltool`, `windres`, and `ld.lld` for `-tags gkstatic` builds.
 
-On macOS you need Xcode (for the Metal compiler) and both Rust targets:
-`rustup target add aarch64-apple-darwin x86_64-apple-darwin`. On Windows you need Visual Studio's
-C++ tools and the Windows SDK; run the scripts from Git Bash.
+---
 
-## Building the library
+## 2. Building the Library and Go Examples
+
+### 2.1 Building `libgpuikit` (`make lib`)
 
 ```sh
 make lib
 ```
 
-This runs `cargo build --release` in the normal `target/` folder and copies the results to `lib/`:
+`tools/build-lib.sh ship diag` compiles release builds into `target/` and copies the artifacts into:
 
-- `lib/ship/` is the library apps load. It also holds `libgpuikit_static.a`, the same
-  library as a static archive (Go apps built with `-tags gkstatic` link it and keep only the
-  component families they use;
-  [GO.md](GO.md) section 8), with, on Linux, `libgpuikit_sys.so`, a linker script naming the system
-  libraries the archive needs, and on Windows `libgpuikit_sys.a`, the import library of the Windows
-  API it links. On Windows the archive is built for Rust's MinGW target (Go's cgo links with
-  MinGW-w64), with one section per function (`-Zfunction-sections`, so a Go app's linker can drop
-  what it doesn't use): that needs the Rust toolchain hosted on MinGW (`rustup toolchain install
-  1.99.1-x86_64-pc-windows-gnu`) and MinGW-w64's gcc, dlltool and windres on `PATH`. Go apps embed
-  the Windows manifest through `go/gk/gpuikit_windows_amd64.syso`; after editing
-  `core/windows/gpuikit.manifest`, regenerate it with
-  `windres -O coff -i core/windows/gpuikit.rc -o go/gk/gpuikit_windows_amd64.syso`.
-- `lib/diag/` is a diagnostic build with offscreen rendering and scripted input. The tests use it.
-- `lib/licences/` holds the licence text of every crate linked into the library.
-- On Linux, the Rust reference apps (`ref-counter`, `ref-gallery` and so on) go next to each library.
+- `lib/ship/`: shared library (`libgpuikit.so` / `libgpuikit.dylib` / `gpuikit.dll`), static library (`libgpuikit_static.a` + platform support libraries), and pure-Rust reference binaries (`ref-*`).
+- `lib/diag/`: diagnostic library with `GK_FEAT_DIAG` enabled (`gk_headless_run`, offscreen rendering, `Window::layout_stats()`, and scripted platform dialogs).
+- `lib/licences/`: collected third-party license texts.
 
-Expect 5 to 15 minutes for the first build, about 4 GB of disk in `target/`, and up to 12 GB of
-memory while cargo is busiest. If your machine has less memory, limit the parallel jobs:
-`GK_JOBS=4 make lib`. Rebuilds after a small change take a minute or two.
+Useful build variables:
 
-A few options:
-
-- `make lib ENGINE=gpui` builds the shipped library on upstream GPUI instead of gpui-fast (the
-  default). The diagnostic library always uses gpui-fast, because the counters the tests read
-  exist only there.
-- `make lib-release` (Linux) links the library against glibc 2.28 using zig, so it also runs on
-  older distributions. This is how the published downloads are built. It downloads a pinned zig
-  into `target/toolchain/` the first time and needs `cargo-zigbuild` on your PATH
-  (`tools/zigbuild.sh fetch-cargo-zigbuild DIR` fetches the pinned version).
-- `make check-windows` type-checks the library for Windows from Linux. It needs `cargo-xwin`.
-
-`tools/build-lib.sh` does the actual work and documents the environment variables it reads at
-the top of the file.
-
-## Regenerating the bindings
-
-```sh
-make gen
-```
-
-This takes a few seconds and needs only Python. It rewrites everything generated from
-`api/rustdoc/`: the Rust decoders, the Go package, the opcode tables, the coverage
-numbers in `api/coverage.json` and the table in `docs/STATUS.md`. It fails if an upstream function
-has a signature none of the generator's rules handle.
-
-The Rust compiler is the final judge of the generated Rust. `gen/round.sh` runs `cargo check` and,
-for each compile error, sets the offending API item aside and regenerates, until the library
-compiles. You only need it after changing the generator's rules or the upstream version.
-
-When the pinned GPUI-kit version changes, extract its API again first:
-
-```sh
-gen/extract.sh                          # rustdoc JSON into gen-json/, a few minutes
-python3 gen/gkgen.py strip gen-json/public   # also writes api/rustdoc/docs.json.gz, the doc comments
-make gen
-```
-
-`make gen` copies GPUI-kit's doc comments into the Go package (`gen/gk_doc.py`). Read
-`gen/out/doc-rust-only.md` after an upgrade: it lists the sentences left out because they
-describe Rust-only mechanics. A new one there that has a plain equivalent belongs in
-`gk_doc.REWRITES`.
-
-## Running the tests
-
-The tests run on Linux. They draw every frame in a private, headless display, so nothing appears
-on your screen, and they need `lib/ship` and `lib/diag` from `make lib`.
-
-```sh
-make gates-quick     # the set to run after a change: a few minutes
-make gates           # everything, about 25 minutes
-```
-
-Both print one summary table at the end (also written to `gates/out/summary.md`), with the full
-log in `gates/out/logs/gates.log`. A few known failures are listed in `gates/expected.txt` with the
-reason; they show as XFAIL and don't fail the run. The Go gates are named `NAME-go`; a Go gate that waits for a binding the Go package
-does not have yet shows as PENDING, and is allowed only while `gates/go-pending.txt` lists it.
-
-The tests are also available one at a time:
-
-| command | what it checks | time |
+| Variable | Default | Effect |
 |---|---|---|
-| `make proto` | the runtime's protocol tests, one per behaviour described in `docs/PROTOCOLS.md` (the same as `make go-proto-all`) | a few minutes |
-| `make pixels` | the Go apps draw exactly the same pixels as their Rust twins | a minute |
-| `make gallery` | every page of the component gallery, Go against Rust (also `make gallery-go`) | a few minutes |
-| `make misuse` | mistakes in app code are caught, with a clear message, at compile or run time | a minute |
-| `make docs` | every code snippet in the guides is part of a program that builds, and the tutorial runs | a few minutes |
-| `make counter` | a click on every frame costs no more than in Rust | a minute |
-| `make fps` | frame cost against Rust for one scene (`HZ=240 SCENE='panels 60 64 2'`) | a few minutes |
-| `make memory` | memory stays flat over long runs | a few minutes |
-| `make rebuild` | an app rebuilds quickly after a one-line edit | under a minute |
-| `make go-test` | the Go examples, protocol tests, misuse cases and pixels | about a minute |
-| `make go-proto-all` | every protocol test in Go: the core ones, each family's (core/tests/go, the twins of `make proto`'s families) and the sample by generation | a few minutes |
-| `make go-apps` | the Go notes, todo, reader and expenses apps and the tutorial's scripted last step draw the same images as their Rust twins; the other tutorial steps draw the same images in two runs | a few minutes |
-| `make go-static` | the Go apps built the way an app is (static, only the families each one uses) | a few minutes |
-| `make go-fps` | frame cost of Go against Rust | about ten minutes |
-| `make cross` | the Go front end compiles for macOS and Windows (checked from Linux) | under a minute |
+| `ENGINE=gpui` | `gpui-fast` | Build `lib/ship/` against upstream GPUI (`gpui-pre`) instead of `gpui-fast`. |
+| `GK_JOBS=N` | CPU count | Limit Cargo parallelism on machines with less RAM. Peak memory during a cold `make lib` can reach 8 to 12 GB (and ~4 GB disk in `target/`). |
+| `make lib-release` | host glibc | Links Linux binaries against `x86_64-unknown-linux-gnu.2.28` via `tools/zigbuild.sh` for portable release archives. |
+| `make check-windows` | - | Runs `cargo xwin check --locked` on `gk-capi` (both normal and `--features diag`) from Linux. |
 
-The tests use the default build, which loads the shared library at start-up (`go/env.sh` turns
-cgo off), so one program can run against either `lib/ship` or `lib/diag` (`LD_LIBRARY_PATH`;
-`GK_LIB` overrides it, so leave it unset). `make go-static` builds the Go apps the static way
-(`-tags gkstatic`, cgo) against `lib/diag`, and runs their scripted sessions: if a generated function forgot to link its
-component family, the app stops and the check fails.
-
-Each test needs about 3 GB of memory at most. They run one after another, never in parallel.
-
-The private display uses `gamescope` (or `kwin_wayland` at 60 Hz). On a machine where neither can
-reach the GPU, or that has no GPU, set `GK_DISPLAY=xvfb` to use Xvfb instead; it only paces at
-60 Hz, so also set `GK_RATES=60`. Scratch files go to `$TMPDIR/gk-gates` (set `GK_SCRATCH` to move
-them) and are deleted when each test ends.
-
-## Making a download
+### 2.2 Building Go Examples (Dynamic vs. Static)
 
 ```sh
-make dist
+# Default dynamic build (CGO_ENABLED=0, purego):
+examples/go/build.sh hello
+LD_LIBRARY_PATH=lib/ship bin/hello-go   # or GK_LIB=lib/ship bin/hello-go
+
+# Static build (-tags gkstatic, cgo + per-family dead-stripping):
+GK_STATIC=1 examples/go/build.sh hello
+bin/hello-go
 ```
 
-This assembles what an app developer downloads (the library, the Go module, the
-examples, the guides and the licences) into `dist/`, for the platform you're on, from the
-library in `lib/`. The published releases are built by CI (`.github/workflows/platforms.yml`) on
-Linux, macOS and Windows, which runs for pull requests and for releases only (a push to `main` builds
-nothing). To release, bump `version` in `Cargo.toml`, push it to `main`, then run
-`gh workflow run platforms -f release=VERSION` on `main`: the run builds and tests the three
-platforms, tags that commit `vVERSION` and publishes the release.
+`examples/go/build.sh` builds any program under `examples/go/<name>` into `bin/<name>-go` (and in a release archive, into `examples/go/<name>.bin`).
 
-## Cleaning up
+---
 
-`make clean` deletes `bin/` and `gates/out/`. `lib/` stays, and so does `target/`; delete
-`target/` yourself (or run `cargo clean`) when you want the disk space back.
+## 3. Regenerating Bindings (`make gen`)
+
+Whenever you edit `core/wire/ops.txt`, `api/overrides.toml`, or anything in `gen/`:
+
+```sh
+make gen
+```
+
+This runs five fast Python/Go steps (a few seconds total):
+
+1. `python3 core/wire/gen.py`: regenerates `core/src/ops.rs`, `core/include/gk_ops.h`, `go/gk/internal/rt/include/gk_ops.h`, and `go/gk/internal/rt/gen_ops.go`, and recomputes `API_HASH` from `core/wire/ops.txt` + `api/opcodes.lock`.
+2. `python3 gen/gkgen.py gen`: builds the semantic model from `api/rustdoc/`, appends any new opcodes to `api/opcodes.lock`, emits Rust decoders (`core/src/gen/`) and Go packages (`go/gk/**/gen_*.go`, `go/gk/internal/rt/gen_use.go`), updates the generated index in `docs/API-GO.md`, and writes `api/coverage.json`. Fails immediately with `gen/out/no-rule.md` if any upstream signature matches no rule.
+3. `gofmt -w go/gk examples/go`: formats generated Go files.
+4. `python3 gates/conformance.py`: regenerates `examples/go/gallery/conf.go`.
+5. `python3 gates/accept.py --check`: verifies accepted coverage/status invariants.
+
+After `make gen`, run `gen/round.sh` to type-check the generated Rust quickly (`cargo check --release -p gk-capi`) without a full link, attributing any compiler error via `gen/out/lines.json` and writing `gen/out/report.md`. Run `python3 tools/status.py` (`make status`) to refresh the coverage block in `docs/STATUS.md`, or `python3 tools/status.py --check` (`make coverage`) to verify it is up to date.
+
+---
+
+## 4. Verification Gates
+
+Run `make gates-quick` after everyday changes (a few minutes) and `make gates` before releasing or merging large changes (~20 to 25 minutes). Results are written to `gates/out/summary.md`.
+
+### Complete Gate Catalog
+
+| Gate / Target | Script | What It Verifies | Machine / Display Requirements |
+|---|---|---|---|
+| `make docs` | `gates/docs-go.sh` | Verifies every ` ```go ` snippet in `GETTING-STARTED-GO.md`, `GO.md`, and `API-GO.md` matches its `<!-- from: ... -->` program, builds & runs every tutorial/snippet/cited app offscreen, runs `docs-tutorial.script`, and checks `API-GO.md`'s index. | Offscreen `diag` library; safe in parallel with other work. |
+| README check | `gates/readme-go.sh` | Verifies `README.md`'s Go block is byte-identical to `examples/go/hello/main.go`. | Instant, no display. |
+| `make coverage` | `gates/coverage.sh` | Checks `tools/status.py --check` and `gates/coverage-ratchet.py` against `gates/coverage-baseline.json`. | Instant, no display. |
+| `make cross` | `gates/cross.sh` | Cross-compiles `examples/go/hello` (`CGO_ENABLED=0`) for macOS (`arm64`, `amd64`) and Windows (`amd64`) from Linux. | Instant, no display. |
+| `make misuse` | `gates/go-misuse.sh` | Runs all 92 misuse cases (runtime `*gk.Error` checks and compile-time type rejections across `examples/go/misuse*`). | Offscreen `diag` library. |
+| `make proto` | `gates/go-proto.sh`, `core/tests/go/run.sh`, `gates/go-gensample.sh` | Exercises every turn kind, wire shape, handle lifetime tier, and domain protocol family in `docs/PROTOCOLS.md`. | Offscreen `diag` library. |
+| `make go-apps` | `gates/go-apps.sh` | Builds and runs `notes`, `todo`, `reader`, `expenses`, `files`, `paint`, `panels`, `writerule`, and the 9 tutorial steps offscreen; compares `notes` pixels against Rust `ref-notes`. | Offscreen `diag` library. |
+| `make go-static` | `GK_STATIC=1 gates/go-apps.sh ...` | Builds and runs the Go apps and tutorial statically (`-tags gkstatic`) to verify per-family `gk_use_*` registration and dead-stripping. | Offscreen `diag` library + C toolchain. |
+| `make pixels` | `gates/go.sh pixels` / `gates/pixels.sh` | Renders matched Go and Rust scenes offscreen and asserts pixel identity. | Offscreen `diag` library. |
+| `make gallery` | `gates/gallery.sh` | Renders every component gallery page in Go and Rust and diffs screenshots. | Offscreen `diag` library. |
+| `make rebuild` | `gates/go-rebuild.sh` | Verifies incremental rebuild counts and view retention (`views_built` vs `views_reused`). | Offscreen `diag` library. |
+| `make counter` | `gates/counter.sh` | Measures click-every-frame responsiveness and rebuild counts against `ref-counter` under `gates/display.sh`. | **Needs the machine to itself** (private compositor via `gates/display.sh`). |
+| `make fps` / `make go-fps` | `gates/fps.sh` | Runs interleaved `rust`, `go`, `rust2` frame-cost rounds at 60/240/1,000 Hz under `gates/display.sh` (`kwin_wayland`, `gamescope`, or `xvfb`), enforcing `GK_BAR=1.03` + Rust noise floor. | **Needs the machine to itself** (timing-sensitive; no competing CPU/GPU load). |
+| `make memory` | `gates/memory.sh` | Runs sustained allocation/release/scroll cycles (plus a leak-detector self-test in full `make gates`) and asserts RSS & handle count stability. | **Needs the machine to itself** (memory & timing sensitive; uses `gates/display.sh`). |
+
+### Private Headless Compositor (`gates/display.sh`)
+
+Live-window gates (`fps`, `counter`, `memory`) launch their own headless display server through `gates/display.sh` so they never disturb your desktop session:
+
+- `kwin_wayland` for 60 Hz runs
+- `gamescope` for high-refresh runs (240 Hz, 1,000 Hz)
+- `GK_DISPLAY=xvfb` as a 60 Hz X11 fallback when Wayland compositors are unavailable
+
+Never run `fps`, `counter`, or `memory` concurrently with heavy builds or other benchmarks, or Rust-vs-Rust baseline jitter (`> 5%`) will discard rounds and fail the gate.
+
+---
+
+## 5. Adding a New Binding or Protocol Feature
+
+### 5.1 Adding a Hand-Written Wire Op
+
+1. Append the new `call`, `node`, `shape`, or `hkind` entry to the appropriate reserved block in `core/wire/ops.txt`. **Never renumber or reuse retired opcodes.**
+2. Document the exact byte layout and semantics in `docs/PROTOCOLS.md`.
+3. Run `python3 core/wire/gen.py` (or `make gen`) to regenerate `ops.rs`, `gk_ops.h`, `gen_ops.go`, and recompute `API_HASH`.
+4. Implement the Rust decoder/handler in `core/src/` and the Go wrapper in `go/gk/internal/rt/` + the appropriate public Go package.
+5. Add protocol tests in `examples/go/proto/`, `examples/go/port/`, or `core/tests/go/` (and misuse tests in `examples/go/misuse*` if new misuse cases exist).
+6. Run `make lib && make proto && make misuse`.
+
+### 5.2 Adding a New Generator Rule
+
+1. Inspect the unmatched signature in `gen/out/no-rule.md` (produced by `make gen`).
+2. Add the type/pattern descriptor in `gen/gk_model.py` (or the relevant family module: `gk_app.py`, `gk_lists.py`, `gk_values.py`, `gk_overlay.py`, `gk_editor.py`, `gk_items.py`, `gk_comp6.py`) or declare an instantiation/override in `api/overrides.toml`.
+3. Add matching codegen support in `gen/gk_rust.py` and `gen/gk_go.py` (and `gen/gk_go_kinds.py` / `gk_go_bridges.py` as needed).
+4. Run `make gen` (which appends new opcodes to `api/opcodes.lock`), then `gen/round.sh` to verify generated Rust compiles with zero new quarantine entries.
+5. Rebuild with `make lib` and run `make gates-quick`.
+
+---
+
+## 6. Bumping Upstream Versions (`gpui-kit` / `gpui-fast`)
+
+When upgrading the pinned upstream crates:
+
+1. Update versions in `Cargo.toml`, `core/Cargo.toml`, and `rust-toolchain.toml` (if the Rust toolchain version changed), plus version strings in `core/src/lib.rs` and `README.md`.
+2. Run `gen/extract.sh` (requires nightly rustdoc producing format 61 JSON), then strip and commit the snapshot:
+   ```sh
+   python3 gen/gkgen.py strip <extract-dir>
+   ```
+   This refreshes `api/rustdoc/*.json.gz` and `api/rustdoc/docs.json.gz`.
+3. Refresh `api/clone.json` (which records which upstream library objects implement `Clone`):
+   ```sh
+   python3 tools/clone_scan.py
+   ```
+4. Run `make gen`. Resolve any newly unmatched upstream signatures listed in `gen/out/no-rule.md`.
+5. Run `gen/round.sh` to check generated Rust against the new upstream APIs and inspect `gen/out/report.md` for any newly quarantined items.
+6. Build `make lib`, run `make gates` (including `pixels` and `gallery` to catch upstream visual changes), and verify all examples.
+7. If API coverage increased cleanly, accept the new baseline with `gates/coverage.sh --accept` (updating `gates/coverage-baseline.json`), then refresh `docs/STATUS.md` with `make status` and `python3 gates/status.py`.
+
+---
+
+## 7. Documentation Sync Rules and Release Packaging
+
+### 7.1 Generated and Synced Documentation Regions
+
+- **Never hand-edit generated regions**:
+  - The component index in `docs/API-GO.md` (written by `gen/gk_apidoc.py`).
+  - `examples/go/gallery/conf.go` (written by `gates/conformance.py`).
+  - `<!-- coverage:begin -->..<!-- coverage:end -->` and `<!-- gates:begin -->..<!-- gates:end -->` in `docs/STATUS.md` (written by `tools/status.py` and `gates/status.py`).
+- **Keep guide snippets synced**:
+  - Every ` ```go ` block in `docs/GETTING-STARTED-GO.md`, `docs/GO.md`, and `docs/API-GO.md` must immediately follow `<!-- from: PATH -->` and match exact lines (tabs included, with `// ...` eliding omitted lines) from that program.
+  - `README.md`'s Go block must stay byte-identical to `examples/go/hello/main.go`.
+  - Verify with `gates/docs-go.sh` and `gates/readme-go.sh`.
+
+### 7.2 Assembling and Testing Release Archives
+
+```sh
+# On Linux:
+make lib-release
+make dist
+tools/dist-test.sh dist/gpuikit-<ver>-linux-x86_64.tar.zst
+```
+
+`tools/dist.sh` creates `dist/gpuikit-<ver>-<platform>/` (`.tar.zst` on Linux and macOS, `.zip` on Windows) containing `lib/`, `go/`, `include/`, `examples/go/`, `docs/`, `VERSIONS`, `THIRD_PARTY.md`, and `licences/`. `tools/dist-test.sh` unpacks the archive in isolation and verifies both default purego and `-tags gkstatic` builds plus a live window run. Cross-platform release CI lives in `.github/workflows/platforms.yml`.

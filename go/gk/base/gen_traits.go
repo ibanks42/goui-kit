@@ -44,7 +44,7 @@ func tInteractiveElementCaptureAnyMouseDown(n *rt.Node, listener func(cx *gk.Cx,
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementCaptureAnyMouseDownDo: gpui_kit::InteractiveElement::capture_any_mouse_down, a handler that takes no event.
+// tInteractiveElementCaptureAnyMouseDownDo: event-free helper for gpui_kit::InteractiveElement::capture_any_mouse_down.
 func tInteractiveElementCaptureAnyMouseDownDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16513)
 	o.U32(rt.Register(listener, 9))
@@ -56,7 +56,7 @@ func tInteractiveElementCaptureAnyMouseUp(n *rt.Node, listener func(cx *gk.Cx, e
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementCaptureAnyMouseUpDo: gpui_kit::InteractiveElement::capture_any_mouse_up, a handler that takes no event.
+// tInteractiveElementCaptureAnyMouseUpDo: event-free helper for gpui_kit::InteractiveElement::capture_any_mouse_up.
 func tInteractiveElementCaptureAnyMouseUpDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16514)
 	o.U32(rt.Register(listener, 9))
@@ -98,7 +98,7 @@ func tInteractiveElementExtOnDoubleClick(n *rt.Node, listener func(cx *gk.Cx, e 
 	o.U32(rt.Register(listener, 1))
 }
 
-// tInteractiveElementExtOnDoubleClickDo: gpui_kit::base::InteractiveElementExt::on_double_click, a handler that takes no event.
+// tInteractiveElementExtOnDoubleClickDo: event-free helper for gpui_kit::base::InteractiveElementExt::on_double_click.
 func tInteractiveElementExtOnDoubleClickDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 17408)
 	o.U32(rt.Register(listener, 1))
@@ -176,7 +176,7 @@ func tInteractiveElementOnAnyMouseDown(n *rt.Node, listener func(cx *gk.Cx, e gk
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnAnyMouseDownDo: gpui_kit::InteractiveElement::on_any_mouse_down, a handler that takes no event.
+// tInteractiveElementOnAnyMouseDownDo: event-free helper for gpui_kit::InteractiveElement::on_any_mouse_down.
 func tInteractiveElementOnAnyMouseDownDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16526)
 	o.U32(rt.Register(listener, 9))
@@ -238,7 +238,7 @@ func tInteractiveElementOnMouseDown(n *rt.Node, button gk.MouseButton, listener 
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnMouseDownDo: gpui_kit::InteractiveElement::on_mouse_down, a handler that takes no event.
+// tInteractiveElementOnMouseDownDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_down.
 func tInteractiveElementOnMouseDownDo(n *rt.Node, button gk.MouseButton, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16532)
 	putMouseButton(o, button)
@@ -251,7 +251,7 @@ func tInteractiveElementOnMouseDownOut(n *rt.Node, listener func(cx *gk.Cx, e gk
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnMouseDownOutDo: gpui_kit::InteractiveElement::on_mouse_down_out, a handler that takes no event.
+// tInteractiveElementOnMouseDownOutDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_down_out.
 func tInteractiveElementOnMouseDownOutDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16533)
 	o.U32(rt.Register(listener, 9))
@@ -263,7 +263,7 @@ func tInteractiveElementOnMouseExit(n *rt.Node, listener func(cx *gk.Cx, e gk.Mo
 	o.U32(rt.Register(listener, 78))
 }
 
-// tInteractiveElementOnMouseExitDo: gpui_kit::InteractiveElement::on_mouse_exit, a handler that takes no event.
+// tInteractiveElementOnMouseExitDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_exit.
 func tInteractiveElementOnMouseExitDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16534)
 	o.U32(rt.Register(listener, 78))
@@ -275,7 +275,7 @@ func tInteractiveElementOnMouseMove(n *rt.Node, listener func(cx *gk.Cx, e gk.Mo
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnMouseMoveDo: gpui_kit::InteractiveElement::on_mouse_move, a handler that takes no event.
+// tInteractiveElementOnMouseMoveDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_move.
 func tInteractiveElementOnMouseMoveDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16535)
 	o.U32(rt.Register(listener, 9))
@@ -294,7 +294,7 @@ func tInteractiveElementOnMouseUp(n *rt.Node, button gk.MouseButton, listener fu
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnMouseUpDo: gpui_kit::InteractiveElement::on_mouse_up, a handler that takes no event.
+// tInteractiveElementOnMouseUpDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_up.
 func tInteractiveElementOnMouseUpDo(n *rt.Node, button gk.MouseButton, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16537)
 	putMouseButton(o, button)
@@ -308,7 +308,7 @@ func tInteractiveElementOnMouseUpOut(n *rt.Node, button gk.MouseButton, listener
 	o.U32(rt.Register(listener, 9))
 }
 
-// tInteractiveElementOnMouseUpOutDo: gpui_kit::InteractiveElement::on_mouse_up_out, a handler that takes no event.
+// tInteractiveElementOnMouseUpOutDo: event-free helper for gpui_kit::InteractiveElement::on_mouse_up_out.
 func tInteractiveElementOnMouseUpOutDo(n *rt.Node, button gk.MouseButton, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16538)
 	putMouseButton(o, button)
@@ -646,7 +646,7 @@ func tStatefulInteractiveElementOnAuxClick(n *rt.Node, listener func(cx *gk.Cx, 
 	o.U32(rt.Register(listener, 1))
 }
 
-// tStatefulInteractiveElementOnAuxClickDo: gpui_kit::StatefulInteractiveElement::on_aux_click, a handler that takes no event.
+// tStatefulInteractiveElementOnAuxClickDo: event-free helper for gpui_kit::StatefulInteractiveElement::on_aux_click.
 func tStatefulInteractiveElementOnAuxClickDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16792)
 	o.U32(rt.Register(listener, 1))
@@ -658,7 +658,7 @@ func tStatefulInteractiveElementOnClick(n *rt.Node, listener func(cx *gk.Cx, e g
 	o.U32(rt.Register(listener, 1))
 }
 
-// tStatefulInteractiveElementOnClickDo: gpui_kit::StatefulInteractiveElement::on_click, a handler that takes no event.
+// tStatefulInteractiveElementOnClickDo: event-free helper for gpui_kit::StatefulInteractiveElement::on_click.
 func tStatefulInteractiveElementOnClickDo(n *rt.Node, listener func(cx *gk.Cx)) {
 	o := rt.Op(n, 16793)
 	o.U32(rt.Register(listener, 1))

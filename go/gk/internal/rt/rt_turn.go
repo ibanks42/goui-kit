@@ -5,6 +5,9 @@ import (
 	"os"
 )
 
+// turn holds the per-callback state for one active call from the Rust core into
+// Go. Turns can nest (for example, when a gk_call triggers a re-entrant callback),
+// forming a stack linked by parent.
 type turn struct {
 	kind          uint32
 	parent        *turn
@@ -17,27 +20,30 @@ type turn struct {
 	tapes         Tape
 	nTapes        uint32
 	pending       []*viewRec
-	owner         *viewRec // the view whose init or handler runs: handlers kept now belong to it
-	quiet         bool     // gk.Quiet was called in the handler running
-	skipInline    bool     // do not describe dirty views inline (Quit, CloseWindow, Release, TestPanic)
-	inInlineEvent bool     // describing pure-Go views inline at the end of an EVENT turn
+	owner         *viewRec
+	quiet         bool
+	skipInline    bool
+	inInlineEvent bool
 	cx            *Cx
 }
 
-// abortInline unwinds an inline EVENT-turn view description if the view calls into the library
-// (so buffered writes are never flushed early and leased kit state is never read inside EVENT).
+// abortInline is a sentinel panic raised by call/Flush when a view being
+// re-described inline after an event attempts a library read; tryDescribe
+// catches it, marks the view readsLib, and leaves the view dirty for a full turn.
 type abortInline struct{}
 
-// Cx is the context of one turn, given to every init function, handler, view function and
-// posted function. It is valid until that call returns; one kept longer stops the program on use.
+// Cx is the UI-thread execution context passed to init, view, frame, and event
+// callbacks. Its serial is invalidated as soon as the callback returns so stale
+// contexts stored by user code are rejected by CheckCx.
 type Cx struct {
 	t      *turn
 	serial uint64
 }
 
+// UI-thread turn stack, reusable buffers, and global run state.
 var (
 	cur        *turn
-	turnPool   []*turn // by nesting depth, reused
+	turnPool   []*turn
 	depth      int
 	turnSerial uint64
 	uiG        uintptr
@@ -45,19 +51,20 @@ var (
 	dropped    uint64
 	appStart   func(*Cx)
 	tapeBuf    Tape
-	cxSlab     []Cx     // the Cx of each turn, from blocks of 64 (one allocation per 64 turns)
-	viewList   []uint64 // the VIEWS turn's list, reused
+	cxSlab     []Cx
+	viewList   []uint64
 )
 
+// runtimeInit records the UI goroutine/thread identity before entering gk_run.
 func runtimeInit() {
 	uiG = curG()
 }
 
-// checkCx checks that cx is the current turn's, on the UI thread, and returns the turn.
+// CheckCx verifies that the caller is executing on the locked UI thread and
+// that cx belongs to the currently active turn. Calls from another goroutine
+// latch an error and exit that goroutine cleanly via failOffThread.
 func CheckCx(cx *Cx) *turn {
 	if curG() != uiG {
-		// No callback boundary is below another goroutine to recover a panic: the stop is
-		// recorded, the UI thread asks the library to quit, and this goroutine ends (rt_fail.go).
 		e := &Error{Msg: "the gk package was called from a goroutine that is not on the UI thread: only gk.Post may be called there. Post what the goroutine computed, as in gk.Post(func(cx *gk.Cx) { a.items = items }); the posted function runs on the UI thread with a cx"}
 		e.File, e.Line, e.Func = appFrame(2)
 		failOffThread(e)
@@ -77,15 +84,15 @@ func (t *turn) markDirty(view uint64) {
 	t.dirty = append(t.dirty, view)
 }
 
-// deferOp buffers a call op that returns nothing; it travels in the turn's reply and the library
-// applies it when the callback has returned (after the outermost update, for an EVENT turn),
-// before the next draw. A view function may not write.
+// DeferOp queues a write-only call tape to be sent in the turn reply instead of
+// making an immediate FFI call. Under GK_DEBUG=1 it calls immediately so errors
+// point directly at the offending call site.
 func (t *turn) DeferOp(op []byte) {
 	if Vb.Active {
 		Stop("a view function may not write: it only describes what the view shows. Change kit state in a handler, in init or in a frame handler")
 	}
 	if debug {
-		MustCall(op) // GK_DEBUG: every op at once, so an error points at its own line
+		MustCall(op)
 		return
 	}
 	t.deferred.U32(uint32(len(op)))
@@ -93,7 +100,8 @@ func (t *turn) DeferOp(op []byte) {
 	t.nDefer++
 }
 
-// flush sends buffered writes now, before a call that returns a value, so order is kept.
+// Flush immediately executes every deferred write op queued on t so subsequent
+// synchronous reads observe prior writes in order.
 func (t *turn) Flush() {
 	if Vb.Active && t.inInlineEvent {
 		panic(abortInline{})
@@ -110,6 +118,9 @@ func (t *turn) Flush() {
 	t.deferred, t.nDefer = t.deferred[:0], 0
 }
 
+// dispatch pushes a turn frame, handles one callback kind from the Rust core,
+// and encodes any return value, dirty views, deferred writes, and view tapes
+// into the turn reply buffer.
 func dispatch(kind uint32, in []byte) []byte {
 	if depth == len(turnPool) {
 		turnPool = append(turnPool, &turn{})
@@ -132,7 +143,6 @@ func dispatch(kind uint32, in []byte) []byte {
 	t.quiet = false
 	t.skipInline = false
 	t.inInlineEvent = false
-	// A new one per turn, so a kept *Cx keeps its old serial; taken from a block, never reused.
 	if len(cxSlab) == cap(cxSlab) {
 		cxSlab = make([]Cx, 0, 64)
 	}
@@ -143,8 +153,8 @@ func dispatch(kind uint32, in []byte) []byte {
 	r := Reader{B: in}
 	switch kind {
 	case KInit:
-		// Posts made before the library's loop existed had no wake to ask for: they run here,
-		// after the start function.
+		// Capture the count of posts queued before start ran so posts queued
+		// during start wait for a normal KWake turn.
 		early := postsQueued()
 		appStart(cx)
 		drainPosts(cx, early)
@@ -159,7 +169,7 @@ func dispatch(kind uint32, in []byte) []byte {
 		}
 	case KFrame:
 		t.window = r.U64()
-		_ = r.U64() // frame number
+		_ = r.U64()
 		for range r.U32() {
 			h := r.U64()
 			if v := views.get(h); v != nil {
@@ -172,6 +182,8 @@ func dispatch(kind uint32, in []byte) []byte {
 			t.owner = frameOwners[t.window]
 			f(cx)
 		}
+		// Piggyback view descriptions onto the KFrame reply to avoid a second
+		// round trip when no deferred writes need to run first.
 		if !failed.Load() && !t.skipInline && depth == 1 && t.nDefer == 0 && len(t.dirty) > 0 {
 			describeInline(t, false)
 		}
@@ -179,7 +191,7 @@ func dispatch(kind uint32, in []byte) []byte {
 		t.window = r.U64()
 		var list []uint64
 		if depth == 1 {
-			list = viewList[:0] // reused by the outermost turn only: a nested one keeps its own
+			list = viewList[:0]
 		}
 		for range r.U32() {
 			list = append(list, r.U64())
@@ -227,11 +239,13 @@ func dispatch(kind uint32, in []byte) []byte {
 		flags := r.U8()
 		retireAll(&r)
 		event(cx, &r)
+		// When the library allows inline replies (flags bit 0), re-describe pure
+		// views immediately in the event reply rather than waiting for KViews.
 		if !failed.Load() && flags&1 != 0 && depth == 1 && t.window != 0 && !t.skipInline && len(t.dirty) > 0 {
 			describeInline(t, true)
 		}
 	case KWake:
-		releaseCollected(t) // what the collector found unreachable (rt_life.go)
+		releaseCollected(t)
 		drainPosts(cx, -1)
 	case KDone:
 		doneTurn(cx, &r)
@@ -241,7 +255,6 @@ func dispatch(kind uint32, in []byte) []byte {
 	if len(t.ret) == 0 && len(t.dirty) == 0 && t.nDefer == 0 && t.nTapes == 0 {
 		return nil
 	}
-	// Written straight into C memory, which the C side hands to gk_reply (rt_capi.go).
 	o := replyBuf(16 + len(t.ret) + 8*len(t.dirty) + len(t.deferred) + len(t.tapes))
 	o.U32(uint32(len(t.ret)))
 	o = append(o, t.ret...)
@@ -256,7 +269,6 @@ func dispatch(kind uint32, in []byte) []byte {
 	return o
 }
 
-// retireAll forgets the handler tables of descriptions the library dropped since the last turn.
 func retireAll(r *Reader) {
 	for range r.U32() {
 		view := r.U64()
@@ -264,8 +276,8 @@ func retireAll(r *Reader) {
 	}
 }
 
-// rotateCx ends the handler's Cx (so a kept *Cx becomes stale before view functions run) and
-// hands the inline describe phase a fresh Cx.
+// rotateCx invalidates the previous Cx issued on t and allocates a fresh one
+// before transitioning from a frame/event handler into inline view building.
 func rotateCx(t *turn) *Cx {
 	t.cx.serial = 0
 	t.owner = nil
@@ -279,6 +291,8 @@ func rotateCx(t *turn) *Cx {
 	return t.cx
 }
 
+// describePending describes child views discovered via SlotView/PutViewArg
+// during the current turn, or marks them dirty when inline describing is off.
 func describePending(cx *Cx, t *turn, allowInline bool) {
 	if !allowInline {
 		for _, v := range t.pending {
@@ -295,8 +309,8 @@ func describePending(cx *Cx, t *turn, allowInline bool) {
 	}
 }
 
-// tryDescribe describes v during an inline EVENT pass, aborting cleanly if v calls into the
-// library (so v falls back to the pre-frame VIEWS turn after deferred writes and updates land).
+// tryDescribe runs describe under inline-event restrictions, recovering
+// abortInline if the view attempts a library call so it can be retried in KViews.
 func tryDescribe(cx *Cx, v *viewRec) (ok bool) {
 	t := cx.t
 	pendingLen := len(t.pending)
@@ -317,10 +331,9 @@ func tryDescribe(cx *Cx, v *viewRec) (ok bool) {
 	return true
 }
 
-// describeInline describes eligible dirty mounted views of t.window at the end of an outermost
-// FRAME or EVENT turn, leaving ineligible views in t.dirty for the library's pre-frame VIEWS turn.
-// When pureOnly is true (EVENT), only previously described views that made no library calls (and
-// therefore cannot flush deferred writes or hit leased state) are described inline.
+// describeInline re-describes dirty views belonging to t.window during a KFrame
+// or KEvent turn. When pureOnly is true, only already-described views that do
+// not read from the library are attempted inline.
 func describeInline(t *turn, pureOnly bool) {
 	if len(t.dirty) == 1 {
 		h := t.dirty[0]
@@ -378,10 +391,11 @@ func describeInline(t *turn, pureOnly bool) {
 	describePending(cx, t, !pureOnly && t.nDefer == 0)
 }
 
-// endTurn ends the turn; the reply has been copied by gk_reply.
+// endTurn pops the current turn, invalidates its Cx, and runs top-level cleanup
+// hooks (row-source sweeps and fresh-handle unpinning) when depth reaches zero.
 func endTurn() {
 	t := cur
-	t.cx.serial = 0 // a kept *Cx is stale from here on, even if the turn record is reused
+	t.cx.serial = 0
 	cur = t.parent
 	depth--
 	if cur == nil {
@@ -396,5 +410,6 @@ func report() {
 	}
 }
 
-// Window is the turn's window (zero in the first turn and in posted functions without one).
+// Window returns the handle of the window associated with the current turn, or
+// a zero Window in windowless turns such as KInit or KWake.
 func (cx *Cx) Window() Window { return Window{MkH(CheckCx(cx).window)} }

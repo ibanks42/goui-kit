@@ -8,10 +8,10 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// BaseTheme is a handle to gpui_kit::base::Theme, a library object (PROTOCOLS.md section 13).
+// BaseTheme is a handle to gpui_kit::base::Theme, a runtime-owned library object.
 type BaseTheme struct{ rt.HCore }
 
-// Appearance is <gpui_kit::base::Theme>::appearance.
+// Appearance calls <gpui_kit::base::Theme>::appearance.
 func (s BaseTheme) Appearance(cx *Cx) ThemeAppearance {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1185)
@@ -20,7 +20,7 @@ func (s BaseTheme) Appearance(cx *Cx) ThemeAppearance {
 	return ThemeAppearance(r.U16())
 }
 
-// CursorBlink is <gpui_kit::base::Theme>::cursor_blink.
+// CursorBlink calls <gpui_kit::base::Theme>::cursor_blink.
 func (s BaseTheme) CursorBlink(cx *Cx) CursorBlinkRead {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1341)
@@ -29,7 +29,7 @@ func (s BaseTheme) CursorBlink(cx *Cx) CursorBlinkRead {
 	return CursorBlinkRead{HCore: rt.MkH(r.U64())}
 }
 
-// Plot is <gpui_kit::base::Theme>::plot.
+// Plot calls <gpui_kit::base::Theme>::plot.
 func (s BaseTheme) Plot(cx *Cx) PlotThemeRead {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1342)
@@ -38,7 +38,7 @@ func (s BaseTheme) Plot(cx *Cx) PlotThemeRead {
 	return PlotThemeRead{HCore: rt.MkH(r.U64())}
 }
 
-// Resizable is <gpui_kit::base::Theme>::resizable.
+// Resizable calls <gpui_kit::base::Theme>::resizable.
 func (s BaseTheme) Resizable(cx *Cx) BaseResizableTheme {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1186)
@@ -47,7 +47,7 @@ func (s BaseTheme) Resizable(cx *Cx) BaseResizableTheme {
 	return rdBaseResizableTheme(r)
 }
 
-// Scrollbar is <gpui_kit::base::Theme>::scrollbar.
+// Scrollbar calls <gpui_kit::base::Theme>::scrollbar.
 func (s BaseTheme) Scrollbar(cx *Cx) ScrollbarThemeRead {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1343)
@@ -56,7 +56,7 @@ func (s BaseTheme) Scrollbar(cx *Cx) ScrollbarThemeRead {
 	return ScrollbarThemeRead{HCore: rt.MkH(r.U64())}
 }
 
-// Tokens is <gpui_kit::base::Theme>::tokens.
+// Tokens calls <gpui_kit::base::Theme>::tokens.
 func (s BaseTheme) Tokens(cx *Cx) BaseSemanticThemeTokens {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1193)
@@ -65,7 +65,7 @@ func (s BaseTheme) Tokens(cx *Cx) BaseSemanticThemeTokens {
 	return rdBaseSemanticThemeTokens(r)
 }
 
-// SetAppearance is <gpui_kit::base::Theme>::set_appearance.
+// SetAppearance calls <gpui_kit::base::Theme>::set_appearance.
 func (s BaseTheme) SetAppearance(cx *Cx, value ThemeAppearance) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1187)
@@ -74,7 +74,7 @@ func (s BaseTheme) SetAppearance(cx *Cx, value ThemeAppearance) {
 	rt.StateSet(cx, o)
 }
 
-// SetCursorBlink is <gpui_kit::base::Theme>::set_cursor_blink.
+// SetCursorBlink calls <gpui_kit::base::Theme>::set_cursor_blink.
 func (s BaseTheme) SetCursorBlink(cx *Cx, value CursorBlink) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1188)
@@ -83,7 +83,7 @@ func (s BaseTheme) SetCursorBlink(cx *Cx, value CursorBlink) {
 	rt.StateSet(cx, o)
 }
 
-// SetPlot is <gpui_kit::base::Theme>::set_plot.
+// SetPlot calls <gpui_kit::base::Theme>::set_plot.
 func (s BaseTheme) SetPlot(cx *Cx, value PlotTheme) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1189)
@@ -92,7 +92,7 @@ func (s BaseTheme) SetPlot(cx *Cx, value PlotTheme) {
 	rt.StateSet(cx, o)
 }
 
-// SetResizable is <gpui_kit::base::Theme>::set_resizable.
+// SetResizable calls <gpui_kit::base::Theme>::set_resizable.
 func (s BaseTheme) SetResizable(cx *Cx, value ResizableTheme) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1190)
@@ -101,7 +101,7 @@ func (s BaseTheme) SetResizable(cx *Cx, value ResizableTheme) {
 	rt.StateSet(cx, o)
 }
 
-// SetScrollbar is <gpui_kit::base::Theme>::set_scrollbar.
+// SetScrollbar calls <gpui_kit::base::Theme>::set_scrollbar.
 func (s BaseTheme) SetScrollbar(cx *Cx, value ScrollbarTheme) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1191)
@@ -110,7 +110,7 @@ func (s BaseTheme) SetScrollbar(cx *Cx, value ScrollbarTheme) {
 	rt.StateSet(cx, o)
 }
 
-// SetTokens is <gpui_kit::base::Theme>::set_tokens.
+// SetTokens calls <gpui_kit::base::Theme>::set_tokens.
 func (s BaseTheme) SetTokens(cx *Cx, value SemanticThemeTokens) {
 	rt.UseBaseTheme()
 	o := rt.NewReq(1192)
@@ -119,15 +119,15 @@ func (s BaseTheme) SetTokens(cx *Cx, value SemanticThemeTokens) {
 	rt.StateSet(cx, o)
 }
 
-// NewBaseThemeGlobal is <gpui_kit::base::Theme>::global.
+// NewBaseThemeGlobal calls <gpui_kit::base::Theme>::global.
 func NewBaseThemeGlobal(cx *Cx) BaseTheme {
 	rt.UseBaseTheme()
 	o := rt.NewReq(820)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return BaseTheme{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// BaseThemeGlobalMut is <gpui_kit::base::Theme>::global_mut.
+// BaseThemeGlobalMut calls <gpui_kit::base::Theme>::global_mut.
 func BaseThemeGlobalMut(cx *Cx) BaseTheme {
 	rt.UseBaseTheme()
 	o := rt.NewReq(821)
@@ -135,12 +135,12 @@ func BaseThemeGlobalMut(cx *Cx) BaseTheme {
 	return BaseTheme{HCore: rt.MkH(r.U64())}
 }
 
-// CursorBlinkRead is a handle to gpui_kit::base::input::CursorBlink, a library object (PROTOCOLS.md section 13).
+// CursorBlinkRead is a handle to gpui_kit::base::input::CursorBlink, a runtime-owned library object.
 type CursorBlinkRead struct{ rt.HCore }
 
 // The time since the last activity after which blinking stops.
 //
-// IdleTimeout is <gpui_kit::base::input::CursorBlink>::idle_timeout.
+// IdleTimeout calls <gpui_kit::base::input::CursorBlink>::idle_timeout.
 func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
 	rt.UseBaseInput()
 	o := rt.NewReq(1444)
@@ -151,7 +151,7 @@ func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
 
 // The duration of each visible or hidden phase, or `None` when steady.
 //
-// Interval is <gpui_kit::base::input::CursorBlink>::interval.
+// Interval calls <gpui_kit::base::input::CursorBlink>::interval.
 func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
 	rt.UseBaseInput()
 	o := rt.NewReq(1445)
@@ -162,7 +162,7 @@ func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
 
 // Whether the focused caret stays visible without blinking.
 //
-// IsSteady is <gpui_kit::base::input::CursorBlink>::is_steady.
+// IsSteady calls <gpui_kit::base::input::CursorBlink>::is_steady.
 func (s CursorBlinkRead) IsSteady(cx *Cx) bool {
 	rt.UseBaseInput()
 	o := rt.NewReq(1372)
@@ -171,10 +171,10 @@ func (s CursorBlinkRead) IsSteady(cx *Cx) bool {
 	return r.Bool()
 }
 
-// GlobalState is a handle to gpui_kit::base::GlobalState, a library object (PROTOCOLS.md section 13).
+// GlobalState is a handle to gpui_kit::base::GlobalState, a runtime-owned library object.
 type GlobalState struct{ rt.HCore }
 
-// GlobalStateGlobal is <gpui_kit::base::GlobalState>::global.
+// GlobalStateGlobal calls <gpui_kit::base::GlobalState>::global.
 func GlobalStateGlobal(cx *Cx) GlobalState {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(779)
@@ -182,7 +182,7 @@ func GlobalStateGlobal(cx *Cx) GlobalState {
 	return GlobalState{HCore: rt.MkH(r.U64())}
 }
 
-// GlobalStateGlobalMut is <gpui_kit::base::GlobalState>::global_mut.
+// GlobalStateGlobalMut calls <gpui_kit::base::GlobalState>::global_mut.
 func GlobalStateGlobalMut(cx *Cx) GlobalState {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(780)
@@ -192,7 +192,7 @@ func GlobalStateGlobalMut(cx *Cx) GlobalState {
 
 // Returns whether any deferred popup currently owns an open interaction context.
 //
-// GlobalStateIsInDeferredContext is <gpui_kit::base::GlobalState>::is_in_deferred_context.
+// GlobalStateIsInDeferredContext calls <gpui_kit::base::GlobalState>::is_in_deferred_context.
 func GlobalStateIsInDeferredContext(cx *Cx) bool {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(781)
@@ -203,7 +203,7 @@ func GlobalStateIsInDeferredContext(cx *Cx) bool {
 // Whether the press being handled came from a finger: a touch went down recently enough that the
 // mouse events of a tap are still arriving. A double tap takes up to twice the tap interval.
 //
-// GlobalStateIsTouchPress is <gpui_kit::base::GlobalState>::is_touch_press.
+// GlobalStateIsTouchPress calls <gpui_kit::base::GlobalState>::is_touch_press.
 func GlobalStateIsTouchPress(cx *Cx) bool {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(782)
@@ -214,7 +214,7 @@ func GlobalStateIsTouchPress(cx *Cx) bool {
 // Records that a finger went down. Called from the touch drag GPUI offers on every touch, before
 // it becomes a tap, a long press or a pan.
 //
-// GlobalStateNoteTouch is <gpui_kit::base::GlobalState>::note_touch.
+// GlobalStateNoteTouch calls <gpui_kit::base::GlobalState>::note_touch.
 func GlobalStateNoteTouch(cx *Cx) {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(783)
@@ -226,22 +226,22 @@ func GlobalStateNoteTouch(cx *Cx) {
 // Controls that own a press or drag interaction use this so the same pointer event does not also
 // start application text selection.
 //
-// GlobalStateSuppressTextSelection is <gpui_kit::base::GlobalState>::suppress_text_selection.
+// GlobalStateSuppressTextSelection calls <gpui_kit::base::GlobalState>::suppress_text_selection.
 func GlobalStateSuppressTextSelection(cx *Cx) {
 	rt.UseBaseGlobalState()
 	o := rt.NewReq(785)
 	rt.StateSet(cx, o)
 }
 
-// HighlightThemeArc is a handle to std::sync::Arc<gpui_kit::component::highlighter::HighlightTheme>, a library object (PROTOCOLS.md section 13).
+// HighlightThemeArc is a handle to std::sync::Arc<gpui_kit::component::highlighter::HighlightTheme>, a runtime-owned library object.
 type HighlightThemeArc struct{ rt.HCore }
 
-// History is a handle to gpui_kit::base::History<gpui_kit::SharedString>, a library object (PROTOCOLS.md section 13).
+// History is a handle to gpui_kit::base::History<gpui_kit::SharedString>, a runtime-owned library object.
 type History struct{ rt.HCore }
 
 // Returns whether moving back would keep a root entry current.
 //
-// CanBack is <gpui_kit::base::History<gpui_kit::SharedString>>::can_back.
+// CanBack calls <gpui_kit::base::History<gpui_kit::SharedString>>::can_back.
 func (s History) CanBack(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1292)
@@ -252,7 +252,7 @@ func (s History) CanBack(cx *Cx) bool {
 
 // Returns whether a forward entry is available.
 //
-// CanForward is <gpui_kit::base::History<gpui_kit::SharedString>>::can_forward.
+// CanForward calls <gpui_kit::base::History<gpui_kit::SharedString>>::can_forward.
 func (s History) CanForward(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1293)
@@ -263,7 +263,7 @@ func (s History) CanForward(cx *Cx) bool {
 
 // Returns the current entry.
 //
-// Current is <gpui_kit::base::History<gpui_kit::SharedString>>::current.
+// Current calls <gpui_kit::base::History<gpui_kit::SharedString>>::current.
 func (s History) Current(cx *Cx) Option[string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1295)
@@ -274,7 +274,7 @@ func (s History) Current(cx *Cx) Option[string] {
 
 // Iterates from the root entry to the current entry.
 //
-// Entries is <gpui_kit::base::History<gpui_kit::SharedString>>::entries.
+// Entries calls <gpui_kit::base::History<gpui_kit::SharedString>>::entries.
 func (s History) Entries(cx *Cx) []string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1296)
@@ -285,7 +285,7 @@ func (s History) Entries(cx *Cx) []string {
 
 // Iterates from the nearest forward entry to the furthest.
 //
-// ForwardEntries is <gpui_kit::base::History<gpui_kit::SharedString>>::forward_entries.
+// ForwardEntries calls <gpui_kit::base::History<gpui_kit::SharedString>>::forward_entries.
 func (s History) ForwardEntries(cx *Cx) []string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1298)
@@ -296,7 +296,7 @@ func (s History) ForwardEntries(cx *Cx) []string {
 
 // Moves back one entry and returns the new current entry.
 //
-// Back is <gpui_kit::base::History<gpui_kit::SharedString>>::back.
+// Back calls <gpui_kit::base::History<gpui_kit::SharedString>>::back.
 func (s History) Back(cx *Cx) Option[string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1291)
@@ -307,7 +307,7 @@ func (s History) Back(cx *Cx) Option[string] {
 
 // Moves forward one entry and returns the restored entry.
 //
-// Forward is <gpui_kit::base::History<gpui_kit::SharedString>>::forward.
+// Forward calls <gpui_kit::base::History<gpui_kit::SharedString>>::forward.
 func (s History) Forward(cx *Cx) Option[string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1297)
@@ -318,7 +318,7 @@ func (s History) Forward(cx *Cx) Option[string] {
 
 // Removes and returns the current entry without changing the forward branch.
 //
-// RemoveCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::remove_current.
+// RemoveCurrent calls <gpui_kit::base::History<gpui_kit::SharedString>>::remove_current.
 func (s History) RemoveCurrent(cx *Cx) Option[string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1301)
@@ -329,7 +329,7 @@ func (s History) RemoveCurrent(cx *Cx) Option[string] {
 
 // Clears current, back, and forward entries.
 //
-// Clear is <gpui_kit::base::History<gpui_kit::SharedString>>::clear.
+// Clear calls <gpui_kit::base::History<gpui_kit::SharedString>>::clear.
 func (s History) Clear(cx *Cx) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1294)
@@ -339,7 +339,7 @@ func (s History) Clear(cx *Cx) {
 
 // Pushes an entry and drops the forward branch.
 //
-// Push is <gpui_kit::base::History<gpui_kit::SharedString>>::push.
+// Push calls <gpui_kit::base::History<gpui_kit::SharedString>>::push.
 func (s History) Push(cx *Cx, entry string) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1300)
@@ -350,7 +350,7 @@ func (s History) Push(cx *Cx, entry string) {
 
 // Replaces the current entry, or pushes when the trail is empty.
 //
-// ReplaceCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::replace_current.
+// ReplaceCurrent calls <gpui_kit::base::History<gpui_kit::SharedString>>::replace_current.
 func (s History) ReplaceCurrent(cx *Cx, entry string) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1302)
@@ -361,7 +361,7 @@ func (s History) ReplaceCurrent(cx *Cx, entry string) {
 
 // Keeps only entries accepted by `keep` on both sides of the current position.
 //
-// Retain is <gpui_kit::base::History<gpui_kit::SharedString>>::retain.
+// Retain calls <gpui_kit::base::History<gpui_kit::SharedString>>::retain.
 func (s History) Retain(cx *Cx, keep []string) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1662)
@@ -373,31 +373,36 @@ func (s History) Retain(cx *Cx, keep []string) {
 	rt.StateSet(cx, o)
 }
 
-// HistoryBuilder is the chain of History's `self -> Self` methods; Build makes it, in one crossing.
+// HistoryBuilder accumulates chained History builder options before creating the handle in Build.
 type HistoryBuilder struct{ sb *rt.StateBuilder }
 
+// Sets the maximum number of root-to-current entries to keep, defaults to 1000.
+//
+// Lowering the limit immediately removes the oldest entries.
+//
+// MaxEntries calls <gpui_kit::base::History<gpui_kit::SharedString>>::max_entries.
 func (b HistoryBuilder) MaxEntries(maxEntries int) HistoryBuilder {
 	o := b.sb.Op(1)
 	rt.PutUsize(o, maxEntries)
 	return b
 }
 
-// Build makes the History.
+// Build commits the queued options and returns the new History handle.
 func (b HistoryBuilder) Build() History { return History{HCore: rt.MkH(b.sb.Build())} }
 
-// NewHistory is <gpui_kit::base::History<gpui_kit::SharedString>>::new.
+// NewHistory calls <gpui_kit::base::History<gpui_kit::SharedString>>::new.
 func NewHistory(cx *Cx) HistoryBuilder {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1299)
 	return HistoryBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// MarkdownNodeRead is a handle to gpui_kit::base::MarkdownNode, a library object (PROTOCOLS.md section 13).
+// MarkdownNodeRead is a handle to gpui_kit::base::MarkdownNode, a runtime-owned library object.
 type MarkdownNodeRead struct{ rt.HCore }
 
 // Name exposed to accessibility clients, defaulting to the plain text.
 //
-// AccessibilityName is <gpui_kit::base::MarkdownNode>::accessibility_name.
+// AccessibilityName calls <gpui_kit::base::MarkdownNode>::accessibility_name.
 func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1362)
@@ -408,7 +413,7 @@ func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
 
 // Markdown representation of this custom node.
 //
-// AsMarkdown is <gpui_kit::base::MarkdownNode>::as_markdown.
+// AsMarkdown calls <gpui_kit::base::MarkdownNode>::as_markdown.
 func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1363)
@@ -419,7 +424,7 @@ func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
 
 // Text representation of this custom node.
 //
-// AsText is <gpui_kit::base::MarkdownNode>::as_text.
+// AsText calls <gpui_kit::base::MarkdownNode>::as_text.
 func (s MarkdownNodeRead) AsText(cx *Cx) string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1364)
@@ -430,7 +435,7 @@ func (s MarkdownNodeRead) AsText(cx *Cx) string {
 
 // Stable name for this custom node.
 //
-// Name is <gpui_kit::base::MarkdownNode>::name.
+// Name calls <gpui_kit::base::MarkdownNode>::name.
 func (s MarkdownNodeRead) Name(cx *Cx) string {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1365)
@@ -441,7 +446,7 @@ func (s MarkdownNodeRead) Name(cx *Cx) string {
 
 // Full-document UTF-8 source byte range, including syntax delimiters.
 //
-// SourceRange is <gpui_kit::base::MarkdownNode>::source_range.
+// SourceRange calls <gpui_kit::base::MarkdownNode>::source_range.
 func (s MarkdownNodeRead) SourceRange(cx *Cx) Option[Range] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1366)
@@ -450,13 +455,13 @@ func (s MarkdownNodeRead) SourceRange(cx *Cx) Option[Range] {
 	return rt.RdOpt(r, func(r *rt.Reader) Range { return rt.RdRange(r) })
 }
 
-// PlotMotionRead is a handle to gpui_kit::base::PlotMotion, a library object (PROTOCOLS.md section 13).
+// PlotMotionRead is a handle to gpui_kit::base::PlotMotion, a runtime-owned library object.
 type PlotMotionRead struct{ rt.HCore }
 
-// PlotThemeRead is a handle to gpui_kit::base::PlotTheme, a library object (PROTOCOLS.md section 13).
+// PlotThemeRead is a handle to gpui_kit::base::PlotTheme, a runtime-owned library object.
 type PlotThemeRead struct{ rt.HCore }
 
-// Motion is <gpui_kit::base::PlotTheme>::motion.
+// Motion calls <gpui_kit::base::PlotTheme>::motion.
 func (s PlotThemeRead) Motion(cx *Cx) PlotMotionRead {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1367)
@@ -465,12 +470,12 @@ func (s PlotThemeRead) Motion(cx *Cx) PlotMotionRead {
 	return PlotMotionRead{HCore: rt.MkH(r.U64())}
 }
 
-// Root is a handle to gpui_kit::base::Root, kit state that lives in the library.
+// Root is a handle to gpui_kit::base::Root, a runtime-owned kit state entity.
 type Root struct{ rt.HCore }
 
 // The original application content entity.
 //
-// View is <gpui_kit::base::Root>::view.
+// View calls <gpui_kit::base::Root>::view.
 func (s Root) View(cx *Cx) View {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1645)
@@ -479,13 +484,13 @@ func (s Root) View(cx *Cx) View {
 	return View{HCore: rt.MkH(r.U64())}
 }
 
-// ScaleBand is a handle to gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>, a library object (PROTOCOLS.md section 13).
+// ScaleBand is a handle to gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>, a runtime-owned library object.
 type ScaleBand struct{ rt.HCore }
 
 // The width of a band: the range divided among the bands, less the inner padding, and no wider
 // than `MaxBandWidth` when set.
 //
-// BandWidth is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::band_width.
+// BandWidth calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::band_width.
 func (s ScaleBand) BandWidth(cx *Cx) float32 {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1146)
@@ -497,7 +502,7 @@ func (s ScaleBand) BandWidth(cx *Cx) float32 {
 // The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
 // scale without discrete positions.
 //
-// NearestIndex is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
+// NearestIndex calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1147)
@@ -510,7 +515,7 @@ func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
 // The distance between the starts of two adjacent bands: the band width plus the inner padding.
 // The whole range for a single band.
 //
-// Step is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::step.
+// Step calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::step.
 func (s ScaleBand) Step(cx *Cx) float32 {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1149)
@@ -521,7 +526,7 @@ func (s ScaleBand) Step(cx *Cx) float32 {
 
 // Get the tick of the scale.
 //
-// Tick is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
+// Tick calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScaleBand) Tick(cx *Cx, value string) Option[float32] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1150)
@@ -531,40 +536,54 @@ func (s ScaleBand) Tick(cx *Cx, value string) Option[float32] {
 	return rt.RdOpt(r, func(r *rt.Reader) float32 { return r.F32() })
 }
 
-// ScaleBandBuilder is the chain of ScaleBand's `self -> Self` methods; Build makes it, in one crossing.
+// ScaleBandBuilder accumulates chained ScaleBand builder options before creating the handle in Build.
 type ScaleBandBuilder struct{ sb *rt.StateBuilder }
 
+// Lay the range out for `count` bands, the domain taking the leading ones in order and the rest
+// staying empty. A `count` below the domain's length has no effect.
+//
+// BandCount calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::band_count.
 func (b ScaleBandBuilder) BandCount(count int) ScaleBandBuilder {
 	o := b.sb.Op(1)
 	rt.PutUsize(o, count)
 	return b
 }
 
+// Cap the band width at `width`, so a few bands in a wide range stay narrow; a band still starts
+// where it would uncapped. Unset by default.
+//
+// MaxBandWidth calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::max_band_width.
 func (b ScaleBandBuilder) MaxBandWidth(width float32) ScaleBandBuilder {
 	o := b.sb.Op(2)
 	o.F32(width)
 	return b
 }
 
+// Set the padding inner of the band.
+//
+// PaddingInner calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::padding_inner.
 func (b ScaleBandBuilder) PaddingInner(paddingInner float32) ScaleBandBuilder {
 	o := b.sb.Op(3)
 	o.F32(paddingInner)
 	return b
 }
 
+// Set the padding outer of the band.
+//
+// PaddingOuter calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::padding_outer.
 func (b ScaleBandBuilder) PaddingOuter(paddingOuter float32) ScaleBandBuilder {
 	o := b.sb.Op(4)
 	o.F32(paddingOuter)
 	return b
 }
 
-// Build makes the ScaleBand.
+// Build commits the queued options and returns the new ScaleBand handle.
 func (b ScaleBandBuilder) Build() ScaleBand { return ScaleBand{HCore: rt.MkH(b.sb.Build())} }
 
 // Lay the distinct values of `domain` out as bands across `range`, from its lower end in domain
 // order.
 //
-// NewScaleBand is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::new.
+// NewScaleBand calls <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::new.
 func NewScaleBand(cx *Cx, domain []string, range_ [2]float32) ScaleBandBuilder {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1148)
@@ -578,12 +597,12 @@ func NewScaleBand(cx *Cx, domain []string, range_ [2]float32) ScaleBandBuilder {
 	return ScaleBandBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// ScaleOrdinal is a handle to gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>, a library object (PROTOCOLS.md section 13).
+// ScaleOrdinal is a handle to gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>, a runtime-owned library object.
 type ScaleOrdinal struct{ rt.HCore }
 
 // Given a value in the input domain, returns the corresponding value in the output range.
 //
-// Map is <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::map.
+// Map calls <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::map.
 func (s ScaleOrdinal) Map(cx *Cx, value string) Option[Hsla] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1154)
@@ -593,9 +612,12 @@ func (s ScaleOrdinal) Map(cx *Cx, value string) Option[Hsla] {
 	return rt.RdOpt(r, func(r *rt.Reader) Hsla { return rt.RdHsla(r) })
 }
 
-// ScaleOrdinalBuilder is the chain of ScaleOrdinal's `self -> Self` methods; Build makes it, in one crossing.
+// ScaleOrdinalBuilder accumulates chained ScaleOrdinal builder options before creating the handle in Build.
 type ScaleOrdinalBuilder struct{ sb *rt.StateBuilder }
 
+// Set the domain to the specified array of values.
+//
+// Domain calls <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::domain.
 func (b ScaleOrdinalBuilder) Domain(domain []string) ScaleOrdinalBuilder {
 	o := b.sb.Op(1)
 	o.U32(uint32(len(domain)))
@@ -605,6 +627,9 @@ func (b ScaleOrdinalBuilder) Domain(domain []string) ScaleOrdinalBuilder {
 	return b
 }
 
+// Set the range of the ordinal scale to the specified array of values.
+//
+// Range calls <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::range.
 func (b ScaleOrdinalBuilder) Range(range_ []Color) ScaleOrdinalBuilder {
 	o := b.sb.Op(2)
 	o.U32(uint32(len(range_)))
@@ -614,16 +639,19 @@ func (b ScaleOrdinalBuilder) Range(range_ []Color) ScaleOrdinalBuilder {
 	return b
 }
 
+// Set the output value of the scale for unknown input values and returns this scale.
+//
+// Unknown calls <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::unknown.
 func (b ScaleOrdinalBuilder) Unknown(unknown Color) ScaleOrdinalBuilder {
 	o := b.sb.Op(3)
 	rt.PutColor(o, unknown)
 	return b
 }
 
-// Build makes the ScaleOrdinal.
+// Build commits the queued options and returns the new ScaleOrdinal handle.
 func (b ScaleOrdinalBuilder) Build() ScaleOrdinal { return ScaleOrdinal{HCore: rt.MkH(b.sb.Build())} }
 
-// NewScaleOrdinal is <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::new.
+// NewScaleOrdinal calls <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::new.
 func NewScaleOrdinal(cx *Cx, domain []string, range_ []Color) ScaleOrdinalBuilder {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1155)
@@ -638,13 +666,13 @@ func NewScaleOrdinal(cx *Cx, domain []string, range_ []Color) ScaleOrdinalBuilde
 	return ScaleOrdinalBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// ScalePoint is a handle to gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>, a library object (PROTOCOLS.md section 13).
+// ScalePoint is a handle to gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>, a runtime-owned library object.
 type ScalePoint struct{ rt.HCore }
 
 // The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
 // scale without discrete positions.
 //
-// NearestIndex is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
+// NearestIndex calls <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1156)
@@ -656,7 +684,7 @@ func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
 
 // Get the tick of the scale.
 //
-// Tick is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
+// Tick calls <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1158)
@@ -672,7 +700,7 @@ func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
 // domain. Charts whose domain is built one entry per datum use this to project a series in linear
 // time.
 //
-// TickAt is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::tick_at.
+// TickAt calls <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::tick_at.
 func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1159)
@@ -685,7 +713,7 @@ func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
 // Place `domain` evenly from `range`0“ to `range`1“; a single value sits in the middle of the
 // range.
 //
-// NewScalePoint is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::new.
+// NewScalePoint calls <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::new.
 func NewScalePoint(cx *Cx, domain []string, range_ [2]float32) ScalePoint {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1157)
@@ -696,21 +724,21 @@ func NewScalePoint(cx *Cx, domain []string, range_ [2]float32) ScalePoint {
 	for _, x0 := range range_ {
 		o.F32(x0)
 	}
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ScalePoint{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// NewScrollHandle is gpui_kit::ScrollHandle::new.
+// NewScrollHandle calls gpui_kit::ScrollHandle::new.
 func NewScrollHandle(cx *Cx) ScrollHandle {
 	o := rt.NewReq(1335)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ScrollHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ScrollbarMotionRead is a handle to gpui_kit::base::ScrollbarMotion, a library object (PROTOCOLS.md section 13).
+// ScrollbarMotionRead is a handle to gpui_kit::base::ScrollbarMotion, a runtime-owned library object.
 type ScrollbarMotionRead struct{ rt.HCore }
 
-// Enter is <gpui_kit::base::ScrollbarMotion>::enter.
+// Enter calls <gpui_kit::base::ScrollbarMotion>::enter.
 func (s ScrollbarMotionRead) Enter(cx *Cx) time.Duration {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1440)
@@ -719,7 +747,7 @@ func (s ScrollbarMotionRead) Enter(cx *Cx) time.Duration {
 	return rt.RdDuration(r)
 }
 
-// Entrance is <gpui_kit::base::ScrollbarMotion>::entrance.
+// Entrance calls <gpui_kit::base::ScrollbarMotion>::entrance.
 func (s ScrollbarMotionRead) Entrance(cx *Cx) ScrollbarEntrance {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1368)
@@ -728,7 +756,7 @@ func (s ScrollbarMotionRead) Entrance(cx *Cx) ScrollbarEntrance {
 	return ScrollbarEntrance(r.U16())
 }
 
-// Exit is <gpui_kit::base::ScrollbarMotion>::exit.
+// Exit calls <gpui_kit::base::ScrollbarMotion>::exit.
 func (s ScrollbarMotionRead) Exit(cx *Cx) time.Duration {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1441)
@@ -737,7 +765,7 @@ func (s ScrollbarMotionRead) Exit(cx *Cx) time.Duration {
 	return rt.RdDuration(r)
 }
 
-// Expand is <gpui_kit::base::ScrollbarMotion>::expand.
+// Expand calls <gpui_kit::base::ScrollbarMotion>::expand.
 func (s ScrollbarMotionRead) Expand(cx *Cx) time.Duration {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1442)
@@ -746,7 +774,7 @@ func (s ScrollbarMotionRead) Expand(cx *Cx) time.Duration {
 	return rt.RdDuration(r)
 }
 
-// Idle is <gpui_kit::base::ScrollbarMotion>::idle.
+// Idle calls <gpui_kit::base::ScrollbarMotion>::idle.
 func (s ScrollbarMotionRead) Idle(cx *Cx) time.Duration {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1443)
@@ -755,7 +783,7 @@ func (s ScrollbarMotionRead) Idle(cx *Cx) time.Duration {
 	return rt.RdDuration(r)
 }
 
-// ThumbHoverEntrance is <gpui_kit::base::ScrollbarMotion>::thumb_hover_entrance.
+// ThumbHoverEntrance calls <gpui_kit::base::ScrollbarMotion>::thumb_hover_entrance.
 func (s ScrollbarMotionRead) ThumbHoverEntrance(cx *Cx) ScrollbarEntrance {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1369)
@@ -764,10 +792,10 @@ func (s ScrollbarMotionRead) ThumbHoverEntrance(cx *Cx) ScrollbarEntrance {
 	return ScrollbarEntrance(r.U16())
 }
 
-// ScrollbarThemeRead is a handle to gpui_kit::base::ScrollbarTheme, a library object (PROTOCOLS.md section 13).
+// ScrollbarThemeRead is a handle to gpui_kit::base::ScrollbarTheme, a runtime-owned library object.
 type ScrollbarThemeRead struct{ rt.HCore }
 
-// Mode is <gpui_kit::base::ScrollbarTheme>::mode.
+// Mode calls <gpui_kit::base::ScrollbarTheme>::mode.
 func (s ScrollbarThemeRead) Mode(cx *Cx) ScrollbarMode {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1370)
@@ -776,7 +804,7 @@ func (s ScrollbarThemeRead) Mode(cx *Cx) ScrollbarMode {
 	return ScrollbarMode(r.U16())
 }
 
-// Motion is <gpui_kit::base::ScrollbarTheme>::motion.
+// Motion calls <gpui_kit::base::ScrollbarTheme>::motion.
 func (s ScrollbarThemeRead) Motion(cx *Cx) ScrollbarMotionRead {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1371)
@@ -785,10 +813,10 @@ func (s ScrollbarThemeRead) Motion(cx *Cx) ScrollbarMotionRead {
 	return ScrollbarMotionRead{HCore: rt.MkH(r.U64())}
 }
 
-// Theme is a handle to gpui_kit::component::Theme, a library object (PROTOCOLS.md section 13).
+// Theme is a handle to gpui_kit::component::Theme, a runtime-owned library object.
 type Theme struct{ rt.HCore }
 
-// ColorTokens is <gpui_kit::component::Theme>::color_tokens.
+// ColorTokens calls <gpui_kit::component::Theme>::color_tokens.
 func (s Theme) ColorTokens(cx *Cx) BaseColorTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(958)
@@ -797,7 +825,7 @@ func (s Theme) ColorTokens(cx *Cx) BaseColorTokens {
 	return rdBaseColorTokens(r)
 }
 
-// Colors is <gpui_kit::component::Theme>::colors.
+// Colors calls <gpui_kit::component::Theme>::colors.
 func (s Theme) Colors(cx *Cx) KitThemeColor2 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1194)
@@ -806,7 +834,7 @@ func (s Theme) Colors(cx *Cx) KitThemeColor2 {
 	return rdKitThemeColor2(r)
 }
 
-// CursorBlink is <gpui_kit::component::Theme>::cursor_blink.
+// CursorBlink calls <gpui_kit::component::Theme>::cursor_blink.
 func (s Theme) CursorBlink(cx *Cx) CursorBlinkRead {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1359)
@@ -815,7 +843,7 @@ func (s Theme) CursorBlink(cx *Cx) CursorBlinkRead {
 	return CursorBlinkRead{HCore: rt.MkH(r.U64())}
 }
 
-// DarkTheme is <gpui_kit::component::Theme>::dark_theme.
+// DarkTheme calls <gpui_kit::component::Theme>::dark_theme.
 func (s Theme) DarkTheme(cx *Cx) ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1195)
@@ -824,7 +852,7 @@ func (s Theme) DarkTheme(cx *Cx) ThemeConfigRc {
 	return ThemeConfigRc{HCore: rt.MkH(r.U64())}
 }
 
-// FocusRing is <gpui_kit::component::Theme>::focus_ring.
+// FocusRing calls <gpui_kit::component::Theme>::focus_ring.
 func (s Theme) FocusRing(cx *Cx) bool {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1196)
@@ -833,7 +861,7 @@ func (s Theme) FocusRing(cx *Cx) bool {
 	return r.Bool()
 }
 
-// FontFamily is <gpui_kit::component::Theme>::font_family.
+// FontFamily calls <gpui_kit::component::Theme>::font_family.
 func (s Theme) FontFamily(cx *Cx) string {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1197)
@@ -842,7 +870,7 @@ func (s Theme) FontFamily(cx *Cx) string {
 	return r.Str()
 }
 
-// FontSize is <gpui_kit::component::Theme>::font_size.
+// FontSize calls <gpui_kit::component::Theme>::font_size.
 func (s Theme) FontSize(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1198)
@@ -851,7 +879,7 @@ func (s Theme) FontSize(cx *Cx) float32 {
 	return r.F32()
 }
 
-// HighlightTheme is <gpui_kit::component::Theme>::highlight_theme.
+// HighlightTheme calls <gpui_kit::component::Theme>::highlight_theme.
 func (s Theme) HighlightTheme(cx *Cx) HighlightThemeArc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1199)
@@ -862,10 +890,10 @@ func (s Theme) HighlightTheme(cx *Cx) HighlightThemeArc {
 
 // Get the input background color.
 //
-// For dark, use a transparent color mixed with the input border: the theme's `input` colour,
-// otherwise use the the theme's `background` colour color.
+// For dark, use a transparent color mixed with the input border: the theme's `input` color,
+// otherwise use the the theme's `background` color color.
 //
-// InputBackground is <gpui_kit::component::Theme>::input_background.
+// InputBackground calls <gpui_kit::component::Theme>::input_background.
 func (s Theme) InputBackground(cx *Cx) Hsla {
 	rt.UseComponentTheme()
 	o := rt.NewReq(961)
@@ -876,7 +904,7 @@ func (s Theme) InputBackground(cx *Cx) Hsla {
 
 // Returns true if the theme is dark.
 //
-// IsDark is <gpui_kit::component::Theme>::is_dark.
+// IsDark calls <gpui_kit::component::Theme>::is_dark.
 func (s Theme) IsDark(cx *Cx) bool {
 	rt.UseComponentTheme()
 	o := rt.NewReq(962)
@@ -885,7 +913,7 @@ func (s Theme) IsDark(cx *Cx) bool {
 	return r.Bool()
 }
 
-// LightTheme is <gpui_kit::component::Theme>::light_theme.
+// LightTheme calls <gpui_kit::component::Theme>::light_theme.
 func (s Theme) LightTheme(cx *Cx) ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1200)
@@ -894,7 +922,7 @@ func (s Theme) LightTheme(cx *Cx) ThemeConfigRc {
 	return ThemeConfigRc{HCore: rt.MkH(r.U64())}
 }
 
-// List is <gpui_kit::component::Theme>::list.
+// List calls <gpui_kit::component::Theme>::list.
 func (s Theme) List(cx *Cx) BaseListSettings {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1201)
@@ -903,7 +931,7 @@ func (s Theme) List(cx *Cx) BaseListSettings {
 	return rdBaseListSettings(r)
 }
 
-// Mode is <gpui_kit::component::Theme>::mode.
+// Mode calls <gpui_kit::component::Theme>::mode.
 func (s Theme) Mode(cx *Cx) ThemeMode {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1202)
@@ -912,7 +940,7 @@ func (s Theme) Mode(cx *Cx) ThemeMode {
 	return ThemeMode(r.U16())
 }
 
-// MonoFontFamily is <gpui_kit::component::Theme>::mono_font_family.
+// MonoFontFamily calls <gpui_kit::component::Theme>::mono_font_family.
 func (s Theme) MonoFontFamily(cx *Cx) string {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1203)
@@ -921,7 +949,7 @@ func (s Theme) MonoFontFamily(cx *Cx) string {
 	return r.Str()
 }
 
-// MonoFontSize is <gpui_kit::component::Theme>::mono_font_size.
+// MonoFontSize calls <gpui_kit::component::Theme>::mono_font_size.
 func (s Theme) MonoFontSize(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1204)
@@ -930,7 +958,7 @@ func (s Theme) MonoFontSize(cx *Cx) float32 {
 	return r.F32()
 }
 
-// Motion is <gpui_kit::component::Theme>::motion.
+// Motion calls <gpui_kit::component::Theme>::motion.
 func (s Theme) Motion(cx *Cx) KitMotionTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1205)
@@ -941,7 +969,7 @@ func (s Theme) Motion(cx *Cx) KitMotionTokens {
 
 // Returns the styled layer's semantic motion policy.
 //
-// MotionTokens is <gpui_kit::component::Theme>::motion_tokens.
+// MotionTokens calls <gpui_kit::component::Theme>::motion_tokens.
 func (s Theme) MotionTokens(cx *Cx) KitMotionTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(963)
@@ -950,7 +978,7 @@ func (s Theme) MotionTokens(cx *Cx) KitMotionTokens {
 	return rdKitMotionTokens(r)
 }
 
-// Notification is <gpui_kit::component::Theme>::notification.
+// Notification calls <gpui_kit::component::Theme>::notification.
 func (s Theme) Notification(cx *Cx) KitNotificationSettings {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1206)
@@ -959,7 +987,7 @@ func (s Theme) Notification(cx *Cx) KitNotificationSettings {
 	return rdKitNotificationSettings(r)
 }
 
-// Radius is <gpui_kit::component::Theme>::radius.
+// Radius calls <gpui_kit::component::Theme>::radius.
 func (s Theme) Radius(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1207)
@@ -973,7 +1001,7 @@ func (s Theme) Radius(cx *Cx) float32 {
 // Larger surface tiers derive from the same application-controlled base radius, so adjusting or
 // squaring the theme updates every tier together.
 //
-// Radius2xl is <gpui_kit::component::Theme>::radius_2xl.
+// Radius2xl calls <gpui_kit::component::Theme>::radius_2xl.
 func (s Theme) Radius2xl(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(964)
@@ -984,7 +1012,7 @@ func (s Theme) Radius2xl(cx *Cx) float32 {
 
 // Returns the surface radius above `Radius2xl`.
 //
-// Radius3xl is <gpui_kit::component::Theme>::radius_3xl.
+// Radius3xl calls <gpui_kit::component::Theme>::radius_3xl.
 func (s Theme) Radius3xl(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(965)
@@ -995,7 +1023,7 @@ func (s Theme) Radius3xl(cx *Cx) float32 {
 
 // Returns the surface radius above `Radius3xl`.
 //
-// Radius4xl is <gpui_kit::component::Theme>::radius_4xl.
+// Radius4xl calls <gpui_kit::component::Theme>::radius_4xl.
 func (s Theme) Radius4xl(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(966)
@@ -1004,14 +1032,14 @@ func (s Theme) Radius4xl(cx *Cx) float32 {
 	return r.F32()
 }
 
-// The radius of a shape that reads as a circle or a pill — an avatar, a slider thumb, a badge dot,
+// The radius of a shape that reads as a circle or a pill - an avatar, a slider thumb, a badge dot,
 // a pill tab.
 //
 // A theme whose `radius` is zero squares these off too, so one setting governs the whole UI
 // instead of leaving a handful of permanently round elements behind. Use it in place of
 // `rounded_full`, or reach for `RoundedFullStyle` when styling an element.
 //
-// RadiusFull is <gpui_kit::component::Theme>::radius_full.
+// RadiusFull calls <gpui_kit::component::Theme>::radius_full.
 func (s Theme) RadiusFull(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(967)
@@ -1020,7 +1048,7 @@ func (s Theme) RadiusFull(cx *Cx) float32 {
 	return r.F32()
 }
 
-// RadiusLg is <gpui_kit::component::Theme>::radius_lg.
+// RadiusLg calls <gpui_kit::component::Theme>::radius_lg.
 func (s Theme) RadiusLg(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1208)
@@ -1029,7 +1057,7 @@ func (s Theme) RadiusLg(cx *Cx) float32 {
 	return r.F32()
 }
 
-// RadiusTokens is <gpui_kit::component::Theme>::radius_tokens.
+// RadiusTokens calls <gpui_kit::component::Theme>::radius_tokens.
 func (s Theme) RadiusTokens(cx *Cx) BaseRadiusTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(968)
@@ -1041,7 +1069,7 @@ func (s Theme) RadiusTokens(cx *Cx) BaseRadiusTokens {
 // Resolves a standalone semantic configuration over the current legacy theme without mutating
 // either value.
 //
-// ResolveSemanticConfig is <gpui_kit::component::Theme>::resolve_semantic_config.
+// ResolveSemanticConfig calls <gpui_kit::component::Theme>::resolve_semantic_config.
 func (s Theme) ResolveSemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(969)
@@ -1051,7 +1079,7 @@ func (s Theme) ResolveSemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSem
 	return rdBaseSemanticThemeTokens(r)
 }
 
-// ScrollbarMode is <gpui_kit::component::Theme>::scrollbar_mode.
+// ScrollbarMode calls <gpui_kit::component::Theme>::scrollbar_mode.
 func (s Theme) ScrollbarMode(cx *Cx) ScrollbarMode {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1209)
@@ -1064,7 +1092,7 @@ func (s Theme) ScrollbarMode(cx *Cx) ScrollbarMode {
 // computed from the legacy public fields so direct mutations of those fields are reflected
 // immediately.
 //
-// SemanticTokens is <gpui_kit::component::Theme>::semantic_tokens.
+// SemanticTokens calls <gpui_kit::component::Theme>::semantic_tokens.
 func (s Theme) SemanticTokens(cx *Cx) BaseSemanticThemeTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(970)
@@ -1073,7 +1101,7 @@ func (s Theme) SemanticTokens(cx *Cx) BaseSemanticThemeTokens {
 	return rdBaseSemanticThemeTokens(r)
 }
 
-// Shadow is <gpui_kit::component::Theme>::shadow.
+// Shadow calls <gpui_kit::component::Theme>::shadow.
 func (s Theme) Shadow(cx *Cx) bool {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1230)
@@ -1082,7 +1110,7 @@ func (s Theme) Shadow(cx *Cx) bool {
 	return r.Bool()
 }
 
-// ShadowTokens is <gpui_kit::component::Theme>::shadow_tokens.
+// ShadowTokens calls <gpui_kit::component::Theme>::shadow_tokens.
 func (s Theme) ShadowTokens(cx *Cx) BaseShadowTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(972)
@@ -1091,7 +1119,7 @@ func (s Theme) ShadowTokens(cx *Cx) BaseShadowTokens {
 	return rdBaseShadowTokens(r)
 }
 
-// Sheet is <gpui_kit::component::Theme>::sheet.
+// Sheet calls <gpui_kit::component::Theme>::sheet.
 func (s Theme) Sheet(cx *Cx) KitSheetSettings {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1231)
@@ -1100,7 +1128,7 @@ func (s Theme) Sheet(cx *Cx) KitSheetSettings {
 	return rdKitSheetSettings(r)
 }
 
-// SpacingTokens is <gpui_kit::component::Theme>::spacing_tokens.
+// SpacingTokens calls <gpui_kit::component::Theme>::spacing_tokens.
 func (s Theme) SpacingTokens(cx *Cx) BaseSpacingTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(973)
@@ -1111,7 +1139,7 @@ func (s Theme) SpacingTokens(cx *Cx) BaseSpacingTokens {
 
 // Returns the current theme name.
 //
-// ThemeName is <gpui_kit::component::Theme>::theme_name.
+// ThemeName calls <gpui_kit::component::Theme>::theme_name.
 func (s Theme) ThemeName(cx *Cx) string {
 	rt.UseComponentTheme()
 	o := rt.NewReq(976)
@@ -1120,7 +1148,7 @@ func (s Theme) ThemeName(cx *Cx) string {
 	return r.Str()
 }
 
-// Tokens is <gpui_kit::component::Theme>::tokens.
+// Tokens calls <gpui_kit::component::Theme>::tokens.
 func (s Theme) Tokens(cx *Cx) ThemeTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1232)
@@ -1129,7 +1157,7 @@ func (s Theme) Tokens(cx *Cx) ThemeTokens {
 	return rdThemeTokens(r)
 }
 
-// Transparent is <gpui_kit::component::Theme>::transparent.
+// Transparent calls <gpui_kit::component::Theme>::transparent.
 func (s Theme) Transparent(cx *Cx) Hsla {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1233)
@@ -1138,7 +1166,7 @@ func (s Theme) Transparent(cx *Cx) Hsla {
 	return rt.RdHsla(r)
 }
 
-// TypographyTokens is <gpui_kit::component::Theme>::typography_tokens.
+// TypographyTokens calls <gpui_kit::component::Theme>::typography_tokens.
 func (s Theme) TypographyTokens(cx *Cx) BaseTypographyTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(977)
@@ -1147,7 +1175,7 @@ func (s Theme) TypographyTokens(cx *Cx) BaseTypographyTokens {
 	return rdBaseTypographyTokens(r)
 }
 
-// WindowRadius is <gpui_kit::component::Theme>::window_radius.
+// WindowRadius calls <gpui_kit::component::Theme>::window_radius.
 func (s Theme) WindowRadius(cx *Cx) float32 {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1234)
@@ -1159,7 +1187,7 @@ func (s Theme) WindowRadius(cx *Cx) float32 {
 // Applies the legacy-representable part of a standalone semantic config and returns the complete
 // resolved snapshot for application-owned UI.
 //
-// ApplySemanticConfig is <gpui_kit::component::Theme>::apply_semantic_config.
+// ApplySemanticConfig calls <gpui_kit::component::Theme>::apply_semantic_config.
 func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
 	rt.UseComponentTheme()
 	o := rt.NewReq(956)
@@ -1171,7 +1199,7 @@ func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSeman
 
 // Parses and applies a standalone `{ "tokens": ... }` semantic theme file.
 //
-// ApplySemanticConfigStr is <gpui_kit::component::Theme>::apply_semantic_config_str.
+// ApplySemanticConfigStr calls <gpui_kit::component::Theme>::apply_semantic_config_str.
 func (s Theme) ApplySemanticConfigStr(cx *Cx, content string) Fallible[BaseSemanticThemeTokens] {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1162)
@@ -1183,7 +1211,7 @@ func (s Theme) ApplySemanticConfigStr(cx *Cx, content string) Fallible[BaseSeman
 
 // Apply the given theme configuration to the current theme.
 //
-// ApplyConfig is <gpui_kit::component::Theme>::apply_config.
+// ApplyConfig calls <gpui_kit::component::Theme>::apply_config.
 func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1161)
@@ -1196,7 +1224,7 @@ func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 // elevation details have no legacy storage; legacy components therefore keep their existing
 // behavior.
 //
-// ApplySemanticTokens is <gpui_kit::component::Theme>::apply_semantic_tokens.
+// ApplySemanticTokens calls <gpui_kit::component::Theme>::apply_semantic_tokens.
 func (s Theme) ApplySemanticTokens(cx *Cx, tokens SemanticThemeTokens) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(957)
@@ -1205,7 +1233,7 @@ func (s Theme) ApplySemanticTokens(cx *Cx, tokens SemanticThemeTokens) {
 	rt.StateSet(cx, o)
 }
 
-// SetColors is <gpui_kit::component::Theme>::set_colors.
+// SetColors calls <gpui_kit::component::Theme>::set_colors.
 func (s Theme) SetColors(cx *Cx, value KitThemeColor) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1210)
@@ -1214,7 +1242,7 @@ func (s Theme) SetColors(cx *Cx, value KitThemeColor) {
 	rt.StateSet(cx, o)
 }
 
-// SetCursorBlink is <gpui_kit::component::Theme>::set_cursor_blink.
+// SetCursorBlink calls <gpui_kit::component::Theme>::set_cursor_blink.
 func (s Theme) SetCursorBlink(cx *Cx, value CursorBlink) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1211)
@@ -1223,7 +1251,7 @@ func (s Theme) SetCursorBlink(cx *Cx, value CursorBlink) {
 	rt.StateSet(cx, o)
 }
 
-// SetDarkTheme is <gpui_kit::component::Theme>::set_dark_theme.
+// SetDarkTheme calls <gpui_kit::component::Theme>::set_dark_theme.
 func (s Theme) SetDarkTheme(cx *Cx, value ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1212)
@@ -1232,7 +1260,7 @@ func (s Theme) SetDarkTheme(cx *Cx, value ThemeConfigRc) {
 	rt.StateSet(cx, o)
 }
 
-// SetFocusRing is <gpui_kit::component::Theme>::set_focus_ring.
+// SetFocusRing calls <gpui_kit::component::Theme>::set_focus_ring.
 func (s Theme) SetFocusRing(cx *Cx, value bool) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1213)
@@ -1241,7 +1269,7 @@ func (s Theme) SetFocusRing(cx *Cx, value bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetFontFamily is <gpui_kit::component::Theme>::set_font_family.
+// SetFontFamily calls <gpui_kit::component::Theme>::set_font_family.
 func (s Theme) SetFontFamily(cx *Cx, value string) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1214)
@@ -1250,7 +1278,7 @@ func (s Theme) SetFontFamily(cx *Cx, value string) {
 	rt.StateSet(cx, o)
 }
 
-// SetFontSize is <gpui_kit::component::Theme>::set_font_size.
+// SetFontSize calls <gpui_kit::component::Theme>::set_font_size.
 func (s Theme) SetFontSize(cx *Cx, value float32) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1215)
@@ -1259,7 +1287,7 @@ func (s Theme) SetFontSize(cx *Cx, value float32) {
 	rt.StateSet(cx, o)
 }
 
-// SetHighlightTheme is <gpui_kit::component::Theme>::set_highlight_theme.
+// SetHighlightTheme calls <gpui_kit::component::Theme>::set_highlight_theme.
 func (s Theme) SetHighlightTheme(cx *Cx, value HighlightThemeArc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1216)
@@ -1268,7 +1296,7 @@ func (s Theme) SetHighlightTheme(cx *Cx, value HighlightThemeArc) {
 	rt.StateSet(cx, o)
 }
 
-// SetLightTheme is <gpui_kit::component::Theme>::set_light_theme.
+// SetLightTheme calls <gpui_kit::component::Theme>::set_light_theme.
 func (s Theme) SetLightTheme(cx *Cx, value ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1217)
@@ -1277,7 +1305,7 @@ func (s Theme) SetLightTheme(cx *Cx, value ThemeConfigRc) {
 	rt.StateSet(cx, o)
 }
 
-// SetList is <gpui_kit::component::Theme>::set_list.
+// SetList calls <gpui_kit::component::Theme>::set_list.
 func (s Theme) SetList(cx *Cx, value ListSettings) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1218)
@@ -1286,7 +1314,7 @@ func (s Theme) SetList(cx *Cx, value ListSettings) {
 	rt.StateSet(cx, o)
 }
 
-// SetMode is <gpui_kit::component::Theme>::set_mode.
+// SetMode calls <gpui_kit::component::Theme>::set_mode.
 func (s Theme) SetMode(cx *Cx, value ThemeMode) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1219)
@@ -1295,7 +1323,7 @@ func (s Theme) SetMode(cx *Cx, value ThemeMode) {
 	rt.StateSet(cx, o)
 }
 
-// SetMonoFontFamily is <gpui_kit::component::Theme>::set_mono_font_family.
+// SetMonoFontFamily calls <gpui_kit::component::Theme>::set_mono_font_family.
 func (s Theme) SetMonoFontFamily(cx *Cx, value string) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1220)
@@ -1304,7 +1332,7 @@ func (s Theme) SetMonoFontFamily(cx *Cx, value string) {
 	rt.StateSet(cx, o)
 }
 
-// SetMonoFontSize is <gpui_kit::component::Theme>::set_mono_font_size.
+// SetMonoFontSize calls <gpui_kit::component::Theme>::set_mono_font_size.
 func (s Theme) SetMonoFontSize(cx *Cx, value float32) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1221)
@@ -1313,7 +1341,7 @@ func (s Theme) SetMonoFontSize(cx *Cx, value float32) {
 	rt.StateSet(cx, o)
 }
 
-// SetMotion is <gpui_kit::component::Theme>::set_motion.
+// SetMotion calls <gpui_kit::component::Theme>::set_motion.
 func (s Theme) SetMotion(cx *Cx, value MotionTokens) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1222)
@@ -1322,7 +1350,7 @@ func (s Theme) SetMotion(cx *Cx, value MotionTokens) {
 	rt.StateSet(cx, o)
 }
 
-// SetNotification is <gpui_kit::component::Theme>::set_notification.
+// SetNotification calls <gpui_kit::component::Theme>::set_notification.
 func (s Theme) SetNotification(cx *Cx, value NotificationSettings) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1223)
@@ -1331,7 +1359,7 @@ func (s Theme) SetNotification(cx *Cx, value NotificationSettings) {
 	rt.StateSet(cx, o)
 }
 
-// SetRadius is <gpui_kit::component::Theme>::set_radius.
+// SetRadius calls <gpui_kit::component::Theme>::set_radius.
 func (s Theme) SetRadius(cx *Cx, value float32) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1224)
@@ -1340,7 +1368,7 @@ func (s Theme) SetRadius(cx *Cx, value float32) {
 	rt.StateSet(cx, o)
 }
 
-// SetRadiusLg is <gpui_kit::component::Theme>::set_radius_lg.
+// SetRadiusLg calls <gpui_kit::component::Theme>::set_radius_lg.
 func (s Theme) SetRadiusLg(cx *Cx, value float32) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1225)
@@ -1349,7 +1377,7 @@ func (s Theme) SetRadiusLg(cx *Cx, value float32) {
 	rt.StateSet(cx, o)
 }
 
-// SetShadow is <gpui_kit::component::Theme>::set_shadow.
+// SetShadow calls <gpui_kit::component::Theme>::set_shadow.
 func (s Theme) SetShadow(cx *Cx, value bool) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1226)
@@ -1358,7 +1386,7 @@ func (s Theme) SetShadow(cx *Cx, value bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetSheet is <gpui_kit::component::Theme>::set_sheet.
+// SetSheet calls <gpui_kit::component::Theme>::set_sheet.
 func (s Theme) SetSheet(cx *Cx, value SheetSettings) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1227)
@@ -1367,7 +1395,7 @@ func (s Theme) SetSheet(cx *Cx, value SheetSettings) {
 	rt.StateSet(cx, o)
 }
 
-// SetTransparent is <gpui_kit::component::Theme>::set_transparent.
+// SetTransparent calls <gpui_kit::component::Theme>::set_transparent.
 func (s Theme) SetTransparent(cx *Cx, value Color) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1228)
@@ -1376,7 +1404,7 @@ func (s Theme) SetTransparent(cx *Cx, value Color) {
 	rt.StateSet(cx, o)
 }
 
-// SetWindowRadius is <gpui_kit::component::Theme>::set_window_radius.
+// SetWindowRadius calls <gpui_kit::component::Theme>::set_window_radius.
 func (s Theme) SetWindowRadius(cx *Cx, value float32) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1229)
@@ -1387,12 +1415,12 @@ func (s Theme) SetWindowRadius(cx *Cx, value float32) {
 
 // Change the theme mode.
 //
-// Loads the registered theme for `mode` — even when `mode` is already current, so a caller that
-// swapped `light_theme` or `dark_theme` sees the new theme — through `update`, which keeps every
+// Loads the registered theme for `mode` - even when `mode` is already current, so a caller that
+// swapped `light_theme` or `dark_theme` sees the new theme - through `update`, which keeps every
 // copy of the theme in step and refreshes every window. `window` is accepted for compatibility;
 // every window is refreshed either way, so it is not read.
 //
-// ThemeChange is <gpui_kit::component::Theme>::change.
+// ThemeChange calls <gpui_kit::component::Theme>::change.
 func ThemeChange(cx *Cx, mode ThemeModeInto) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1163)
@@ -1402,7 +1430,7 @@ func ThemeChange(cx *Cx, mode ThemeModeInto) {
 
 // Returns the global theme reference
 //
-// ThemeGlobal is <gpui_kit::component::Theme>::global.
+// ThemeGlobal calls <gpui_kit::component::Theme>::global.
 func ThemeGlobal(cx *Cx) Theme {
 	rt.UseComponentTheme()
 	o := rt.NewReq(959)
@@ -1417,7 +1445,7 @@ func ThemeGlobal(cx *Cx) Theme {
 // `update`, which does both after the edit and refreshes every window. Keep this for an edit that
 // must not trigger any of that.
 //
-// ThemeGlobalMut is <gpui_kit::component::Theme>::global_mut.
+// ThemeGlobalMut calls <gpui_kit::component::Theme>::global_mut.
 func ThemeGlobalMut(cx *Cx) Theme {
 	rt.UseComponentTheme()
 	o := rt.NewReq(960)
@@ -1428,7 +1456,7 @@ func ThemeGlobalMut(cx *Cx) Theme {
 // Changes the scrollbar display mode through `update`, which projects it onto the Base scrollbar
 // and refreshes every window.
 //
-// ThemeSetScrollbarMode is <gpui_kit::component::Theme>::set_scrollbar_mode.
+// ThemeSetScrollbarMode calls <gpui_kit::component::Theme>::set_scrollbar_mode.
 func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(971)
@@ -1438,8 +1466,8 @@ func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 
 // Push the current theme down to the Base layer.
 //
-// The Base layer holds its own copy of the theme — the semantic tokens plus the scrollbar and
-// resize-handle styles — because it paints those without going through `gpui-component`.
+// The Base layer holds its own copy of the theme - the semantic tokens plus the scrollbar and
+// resize-handle styles - because it paints those without going through `gpui-component`.
 // `gk.ThemeChange` refreshes that copy, but writing to the theme's public fields directly does
 // not, so a scrollbar keeps painting with the radius and colors it was last given.
 //
@@ -1449,7 +1477,7 @@ func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 // It rebuilds the Base theme from scratch, so any style written straight onto the Base global is
 // replaced. It does not touch `tokens`.
 //
-// ThemeSyncBase is <gpui_kit::component::Theme>::sync_base.
+// ThemeSyncBase calls <gpui_kit::component::Theme>::sync_base.
 func ThemeSyncBase(cx *Cx) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(974)
@@ -1458,7 +1486,7 @@ func ThemeSyncBase(cx *Cx) {
 
 // Sync the Scrollbar showing behavior with the system
 //
-// ThemeSyncScrollbarAppearance is <gpui_kit::component::Theme>::sync_scrollbar_appearance.
+// ThemeSyncScrollbarAppearance calls <gpui_kit::component::Theme>::sync_scrollbar_appearance.
 func ThemeSyncScrollbarAppearance(cx *Cx) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(975)
@@ -1467,41 +1495,41 @@ func ThemeSyncScrollbarAppearance(cx *Cx) {
 
 // Sync the theme with the system appearance
 //
-// ThemeSyncSystemAppearance is <gpui_kit::component::Theme>::sync_system_appearance.
+// ThemeSyncSystemAppearance calls <gpui_kit::component::Theme>::sync_system_appearance.
 func ThemeSyncSystemAppearance(cx *Cx) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1164)
 	rt.StateSet(cx, o)
 }
 
-// ThemeColorArc is a handle to std::sync::Arc<gpui_kit::component::ThemeColor>, a library object (PROTOCOLS.md section 13).
+// ThemeColorArc is a handle to std::sync::Arc<gpui_kit::component::ThemeColor>, a runtime-owned library object.
 type ThemeColorArc struct{ rt.HCore }
 
-// NewThemeColorArc is std::sync::Arc::new.
+// NewThemeColorArc calls std::sync::Arc::new.
 func NewThemeColorArc(cx *Cx, value KitThemeColor) ThemeColorArc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1237)
 	rt.PutVtape(o, rt.N(value.Core))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ThemeColorArc{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ThemeConfigRc is a handle to std::rc::Rc<gpui_kit::component::ThemeConfig>, a library object (PROTOCOLS.md section 13).
+// ThemeConfigRc is a handle to std::rc::Rc<gpui_kit::component::ThemeConfig>, a runtime-owned library object.
 type ThemeConfigRc struct{ rt.HCore }
 
-// NewThemeConfigRc is std::rc::Rc::new.
+// NewThemeConfigRc calls std::rc::Rc::new.
 func NewThemeConfigRc(cx *Cx, value ThemeConfig) ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1235)
 	rt.PutVtape(o, rt.N(value.Core))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return ThemeConfigRc{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// ThemeRegistry is a handle to gpui_kit::component::ThemeRegistry, a library object (PROTOCOLS.md section 13).
+// ThemeRegistry is a handle to gpui_kit::component::ThemeRegistry, a runtime-owned library object.
 type ThemeRegistry struct{ rt.HCore }
 
-// DefaultDarkTheme is <gpui_kit::component::ThemeRegistry>::default_dark_theme.
+// DefaultDarkTheme calls <gpui_kit::component::ThemeRegistry>::default_dark_theme.
 func (s ThemeRegistry) DefaultDarkTheme(cx *Cx) ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1165)
@@ -1510,7 +1538,7 @@ func (s ThemeRegistry) DefaultDarkTheme(cx *Cx) ThemeConfigRc {
 	return ThemeConfigRc{HCore: rt.MkH(r.U64())}
 }
 
-// DefaultLightTheme is <gpui_kit::component::ThemeRegistry>::default_light_theme.
+// DefaultLightTheme calls <gpui_kit::component::ThemeRegistry>::default_light_theme.
 func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1166)
@@ -1521,7 +1549,7 @@ func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
 
 // Returns a reference to the map of default themes.
 //
-// DefaultThemes is <gpui_kit::component::ThemeRegistry>::default_themes.
+// DefaultThemes calls <gpui_kit::component::ThemeRegistry>::default_themes.
 func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThemeModeThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1167)
@@ -1534,7 +1562,7 @@ func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThemeModeThemeConfigRc {
 
 // Returns a sorted list of themes.
 //
-// SortedThemes is <gpui_kit::component::ThemeRegistry>::sorted_themes.
+// SortedThemes calls <gpui_kit::component::ThemeRegistry>::sorted_themes.
 func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1169)
@@ -1545,7 +1573,7 @@ func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 
 // Returns a reference to the map of themes (including default themes).
 //
-// Themes is <gpui_kit::component::ThemeRegistry>::themes.
+// Themes calls <gpui_kit::component::ThemeRegistry>::themes.
 func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeConfigRc {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1170)
@@ -1556,7 +1584,7 @@ func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeConfigRc {
 	})
 }
 
-// LoadThemesFromStr is <gpui_kit::component::ThemeRegistry>::load_themes_from_str.
+// LoadThemesFromStr calls <gpui_kit::component::ThemeRegistry>::load_themes_from_str.
 func (s ThemeRegistry) LoadThemesFromStr(cx *Cx, content string) error {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1168)
@@ -1566,7 +1594,7 @@ func (s ThemeRegistry) LoadThemesFromStr(cx *Cx, content string) error {
 	return rt.RdResult(r)
 }
 
-// ThemeRegistryGlobal is <gpui_kit::component::ThemeRegistry>::global.
+// ThemeRegistryGlobal calls <gpui_kit::component::ThemeRegistry>::global.
 func ThemeRegistryGlobal(cx *Cx) ThemeRegistry {
 	rt.UseComponentTheme()
 	o := rt.NewReq(978)
@@ -1574,7 +1602,7 @@ func ThemeRegistryGlobal(cx *Cx) ThemeRegistry {
 	return ThemeRegistry{HCore: rt.MkH(r.U64())}
 }
 
-// ThemeRegistryGlobalMut is <gpui_kit::component::ThemeRegistry>::global_mut.
+// ThemeRegistryGlobalMut calls <gpui_kit::component::ThemeRegistry>::global_mut.
 func ThemeRegistryGlobalMut(cx *Cx) ThemeRegistry {
 	rt.UseComponentTheme()
 	o := rt.NewReq(979)
@@ -1586,7 +1614,7 @@ func ThemeRegistryGlobalMut(cx *Cx) ThemeRegistry {
 //
 // And reload themes to trigger the `on_load` callback.
 //
-// ThemeRegistryWatchDir is <gpui_kit::component::ThemeRegistry>::watch_dir.
+// ThemeRegistryWatchDir calls <gpui_kit::component::ThemeRegistry>::watch_dir.
 func ThemeRegistryWatchDir(cx *Cx, themesDir string, onLoad func(cx *Cx)) error {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1290)
@@ -1596,12 +1624,12 @@ func ThemeRegistryWatchDir(cx *Cx, themesDir string, onLoad func(cx *Cx)) error 
 	return rt.RdResult(r)
 }
 
-// UndoHistory is a handle to gpui_kit::base::UndoHistory<gpui_kit::SharedString>, a library object (PROTOCOLS.md section 13).
+// UndoHistory is a handle to gpui_kit::base::UndoHistory<gpui_kit::SharedString>, a runtime-owned library object.
 type UndoHistory struct{ rt.HCore }
 
 // Returns whether a redo transaction is available.
 //
-// CanRedo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_redo.
+// CanRedo calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_redo.
 func (s UndoHistory) CanRedo(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1303)
@@ -1612,7 +1640,7 @@ func (s UndoHistory) CanRedo(cx *Cx) bool {
 
 // Returns whether an undo transaction is available.
 //
-// CanUndo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_undo.
+// CanUndo calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_undo.
 func (s UndoHistory) CanUndo(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1304)
@@ -1623,7 +1651,7 @@ func (s UndoHistory) CanUndo(cx *Cx) bool {
 
 // Returns whether history recording is currently ignored.
 //
-// IsIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::is_ignoring.
+// IsIgnoring calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::is_ignoring.
 func (s UndoHistory) IsIgnoring(cx *Cx) bool {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1307)
@@ -1634,7 +1662,7 @@ func (s UndoHistory) IsIgnoring(cx *Cx) bool {
 
 // Redoes the latest undone transaction, returning changes oldest first.
 //
-// Redo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::redo.
+// Redo calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::redo.
 func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1310)
@@ -1645,7 +1673,7 @@ func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
 
 // Undoes the latest transaction, returning changes newest first.
 //
-// Undo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::undo.
+// Undo calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::undo.
 func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1313)
@@ -1656,7 +1684,7 @@ func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
 
 // Clears both undo and redo transactions.
 //
-// Clear is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::clear.
+// Clear calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::clear.
 func (s UndoHistory) Clear(cx *Cx) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1305)
@@ -1666,7 +1694,7 @@ func (s UndoHistory) Clear(cx *Cx) {
 
 // End explicit grouping of pushed changes.
 //
-// EndGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::end_grouping.
+// EndGrouping calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::end_grouping.
 func (s UndoHistory) EndGrouping(cx *Cx) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1306)
@@ -1676,7 +1704,7 @@ func (s UndoHistory) EndGrouping(cx *Cx) {
 
 // Pushes a change into the current transaction or starts a new one.
 //
-// Push is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::push.
+// Push calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::push.
 func (s UndoHistory) Push(cx *Cx, item string) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1309)
@@ -1687,7 +1715,7 @@ func (s UndoHistory) Push(cx *Cx, item string) {
 
 // Sets whether history recording is currently ignored.
 //
-// SetIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::set_ignoring.
+// SetIgnoring calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::set_ignoring.
 func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1311)
@@ -1698,7 +1726,7 @@ func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
 
 // Start explicitly grouping pushed changes into one transaction.
 //
-// StartGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::start_grouping.
+// StartGrouping calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::start_grouping.
 func (s UndoHistory) StartGrouping(cx *Cx) {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1312)
@@ -1706,25 +1734,36 @@ func (s UndoHistory) StartGrouping(cx *Cx) {
 	rt.StateSet(cx, o)
 }
 
-// UndoHistoryBuilder is the chain of UndoHistory's `self -> Self` methods; Build makes it, in one crossing.
+// UndoHistoryBuilder accumulates chained UndoHistory builder options before creating the handle in Build.
 type UndoHistoryBuilder struct{ sb *rt.StateBuilder }
 
+// Set the interval in which consecutive changes are grouped.
+//
+// A successful undo or redo ends timed grouping. Explicit grouping is independent and can still
+// append to the current transaction.
+//
+// GroupInterval calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::group_interval.
 func (b UndoHistoryBuilder) GroupInterval(groupInterval time.Duration) UndoHistoryBuilder {
 	o := b.sb.Op(1)
 	rt.PutMs(o, groupInterval)
 	return b
 }
 
+// Set the maximum number of undo transactions to keep, defaults to 1000.
+//
+// Lowering the limit immediately removes the oldest undo transactions.
+//
+// MaxUndos calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::max_undos.
 func (b UndoHistoryBuilder) MaxUndos(maxUndos int) UndoHistoryBuilder {
 	o := b.sb.Op(2)
 	rt.PutUsize(o, maxUndos)
 	return b
 }
 
-// Build makes the UndoHistory.
+// Build commits the queued options and returns the new UndoHistory handle.
 func (b UndoHistoryBuilder) Build() UndoHistory { return UndoHistory{HCore: rt.MkH(b.sb.Build())} }
 
-// NewUndoHistory is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::new.
+// NewUndoHistory calls <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::new.
 func NewUndoHistory(cx *Cx) UndoHistoryBuilder {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1308)

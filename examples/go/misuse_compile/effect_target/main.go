@@ -1,5 +1,4 @@
-// An effect on an element no animation can wrap (gk.Text is a bare string, not a styled
-// element): gk.Effect takes a gk.AnimatableElement, so the call does not compile.
+// Compile-time misuse case: kit.Effect only accepts AnimatableElement values, not bare gk.Text.
 package main
 
 import (

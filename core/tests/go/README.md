@@ -1,34 +1,42 @@
-# The protocol tests in Go
+# Go protocol tests
 
-The runtime's protocol test suites in Go. Each family is a test app `core/tests/go/FAMILY`
-(one `package main` in the module `gpuikit.dev/coretests`, which replaces `gpuikit.dev` with
-`../../../go`), and its runner fragment `core/tests/go/run-FAMILY.sh` holds its modes, exit
-codes and patterns.
+This directory contains the Go-side protocol test suites driven against the diagnostic build of `libgpuikit` (`lib/diag`). Each suite selects individual test scenarios via the `GK_PROTO` environment variable and verifies exit codes and structured stdout assertions.
+
+## Running the suite
+
+Run every family:
 
 ```sh
-make go-proto-all                       # gates/go-proto.sh (examples/go/proto) and this suite
-core/tests/go/run.sh                    # the families only
-core/tests/go/run.sh actions timers     # some modes
-GK_FAMILIES="rows input" core/tests/go/run.sh
+core/tests/go/run.sh
 ```
 
-Needs `lib/diag` from `make lib`; binaries go to `bin/FAMILY-go`, logs to
-`gates/out/go-proto-families/MODE.log`. The last line is
-`GATE proto-families go PASS|FAIL n of m protocol tests`.
+Run a subset of families or specific modes:
 
-## Rules
+```sh
+GK_FAMILIES="app attack" core/tests/go/run.sh
+GK_FAMILIES=values core/tests/go/run.sh val-scales val-dates
+```
 
-- The lines are the patterns: a Go test prints the lines its fragment checks. Where a pattern is
-  specific to the Go package (an enum value `RightClick`, a source line `at .*main.go:N`, Go's
-  misuse messages "a view function"), the fragment says so in a comment beginning `Go:`.
-- Runtime misuse checks that are compile errors in Go (a handler of the wrong shape) are
-  examples/go/misuse_compile's business (gates/go-misuse.sh); the fragment says so in a comment.
-  So is a misuse the Go API cannot express (lists2's bad-ctx: a row's context read for a row no
-  closure drew; an item function made by overlay.Items is handed its values, there is no read of a
-  context).
-- Item functions: Go hands the values to the function overlay.Items made the source of
-  (`func(cx *gk.Cx, ctx gk.ResizeHandleContext) gk.Element`); such a function gets no row number,
-  so a check that prints a row prints the row the test knows (one item: 0) or numbers the rows in
-  the order they are first described.
-- Generated pieces (`gen`, `gensample`, `app/gen_ambient.go`) are written by `make gen`
-  (gen/gk_tests_go.py).
+`run.sh` unsets `DISPLAY` and `WAYLAND_DISPLAY` so most tests run headlessly through `gk.RunHeadless`. Modes that require a real display (`overlay`'s `window-real` and `platform`'s `real-*` modes) launch through `gates/display.sh`.
+
+## Test families
+
+| Family (`run-<name>.sh`) | Package | Coverage |
+| --- | --- | --- |
+| `app` | `./app` | Actions, keybindings, timers, multiple windows, clipboard, ambient calls, close vetoes, quit hooks, reduce-motion, and window icons. |
+| `attack` | `./attack` | Raw cgo C ABI stress tests: truncated frames, unknown/empty/null ops, forged/wrong-kind/double-released handles, off-thread calls, stale callback tokens, and invalid view replies. |
+| `charts` | `./charts` | Pie arc calculation and stacked series geometry helpers. |
+| `editor2` | `./editor2` | Markdown plugins/surfaces/tooltips, history, merge conflicts, folds, `editor_host` leaf geometry, text decorations, display maps, LSP completion highlighting, diagnostics, and overlay key routing. |
+| `gen` | `./gen` | Generated smoke checks exercising generated node shapes and state constructors. |
+| `handles` | `./handles` | Owned objects, next-frame temporary sweeps, `gk.Retain`, globals, transient values, cascading view/panel release, and GC cleanup. |
+| `input` | `./input` | Input, textarea, code editor, number/OTP inputs, clipboard paste, LSP completion providers, link clicks, and view-write-rule checks. |
+| `items` | `./items` | Typed `overlay.Items` callbacks for calendar, time field, tree, popover, command palette, hover card, combobox, navigation stack, and wrong-kind rejection. |
+| `lists2` | `./lists2` | Select/combobox delegates, custom rows/headers, styled tables, input masks/validators, LSP providers, expression VM, `Ask` caches, diff parsing, inline tokens, state lending, and highlighters. |
+| `overlay` | `./overlay` | Dialogs, alert dialogs, sheets, questionnaires, dropdown redraw survival, dock layouts/renderers/persistence, navigation stacks, toasts, popovers, position observers, and real X11 window titles. |
+| `platform` | `./platform` | Scripted and real file/prompt dialogs, menus, URL opening, render images/caches, drag-and-drop, virtual lists, and context menus. |
+| `review3` | `./review3` | Lifetime and reentrancy regressions: timers outliving views, closing own window, freed dock panels, reentrant action dispatch, and retained dock handles. |
+| `rows` | `./rows` | Virtualized list, table, and tree row sources: paging, search, sections, empty/loading/load-more states, sorting, column moves, and scrolling. |
+| `runerr` | `./runerr` | `go test` checks confirming API misuse (`*gk.Error`) and panics (`*gk.PanicError`) unwind cleanly while running defers. |
+| `values` | `./values` | Scales, motion curves, themes, actions, value pins, clipboard, dates/matchers, scroll handles, cells, settings, drag-and-drop, questionnaire rules, CSS backgrounds, and resize handles. |
+
+Generated files in this tree (`app/gen_ambient.go`, `gen/main.go`, `gensample/main.go`, `input/main.go`) are produced by the code generator and should not be edited by hand.

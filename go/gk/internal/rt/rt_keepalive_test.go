@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
+// TestPKeepAliveCadencesAndIdle verifies that fast cadences (<10 ms) never
+// spawn the keep-alive goroutine, 60 Hz cadences start it and trigger refreshes,
+// and stopping turn notifications parks it with no further refreshes.
 func TestPKeepAliveCadencesAndIdle(t *testing.T) {
-	// 1. Fast cadence (< 10 ms, e.g. 120 Hz / 1000 Hz): goroutine never starts.
 	startPKeepAlive()
 	for i := 0; i < 10; i++ {
 		pkaNoteTurn()
@@ -18,8 +20,6 @@ func TestPKeepAliveCadencesAndIdle(t *testing.T) {
 	}
 	stopPKeepAlive()
 
-	// 2. Slow cadence (~16.6 ms = 60 Hz) followed by idle: fires during active frames,
-	// then stops completely and does not wake periodically while idle.
 	startPKeepAlive()
 	for i := 0; i < 6; i++ {
 		pkaNoteTurn()
@@ -29,7 +29,6 @@ func TestPKeepAliveCadencesAndIdle(t *testing.T) {
 		stopPKeepAlive()
 		t.Fatal("expected keep-alive goroutine to start at 60 Hz cadence")
 	}
-	// Let the final one-shot refresh and post-frame window settle into idle park.
 	time.Sleep(60 * time.Millisecond)
 	afterActive := pkaState.refreshes.Load()
 	if afterActive == 0 {
@@ -40,7 +39,6 @@ func TestPKeepAliveCadencesAndIdle(t *testing.T) {
 		stopPKeepAlive()
 		t.Fatal("expected keep-alive goroutine to park when idle")
 	}
-	// Stay idle for 100 ms: zero further refreshes must happen.
 	time.Sleep(100 * time.Millisecond)
 	afterIdle := pkaState.refreshes.Load()
 	if afterIdle != afterActive {

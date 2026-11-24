@@ -10,6 +10,7 @@ import (
 // DockPlacement is gpui_kit::base::dock::DockPlacement.
 type Placement uint16
 
+// DockPlacement enum values.
 const (
 	PlacementCenter Placement = 0
 	PlacementLeft   Placement = 1
@@ -20,6 +21,7 @@ const (
 // PanelStyle is gpui_kit::component::dock::PanelStyle.
 type PanelStyle uint16
 
+// PanelStyle enum values.
 const (
 	PanelStyleAuto   PanelStyle = 0
 	PanelStyleTabBar PanelStyle = 1
@@ -28,6 +30,7 @@ const (
 // RootKind is gpui_kit::base::dock::RootKind.
 type RootKind uint16
 
+// RootKind enum values.
 const (
 	RootKindSplit RootKind = 0
 	RootKindAny   RootKind = 1
@@ -48,16 +51,16 @@ func putGpuiSize(o *rt.Tape, v gk.GpuiSize) {
 	o.F32(v.Height)
 }
 
-// DockEvent is gpui_kit::base::dock::DockEvent: one struct type per variant.
+// DockEvent represents gpui_kit::base::dock::DockEvent with one struct type per variant.
 type Event interface{ isDockEvent() }
 
-// DockEventLayoutChanged is gpui_kit::base::dock::DockEvent::LayoutChanged.
+// DockEventLayoutChanged represents gpui_kit::base::dock::DockEvent::LayoutChanged.
 type EventLayoutChanged struct {
 }
 
 func (EventLayoutChanged) isDockEvent() {}
 
-// DockEventDragDrop is gpui_kit::base::dock::DockEvent::DragDrop.
+// DockEventDragDrop represents gpui_kit::base::dock::DockEvent::DragDrop.
 type EventDragDrop struct {
 	Item   AnyDrag
 	Target DropTarget
@@ -65,10 +68,10 @@ type EventDragDrop struct {
 
 func (EventDragDrop) isDockEvent() {}
 
-// InsertTarget is gpui_kit::base::dock::InsertTarget: one struct type per variant.
+// InsertTarget represents gpui_kit::base::dock::InsertTarget with one struct type per variant.
 type InsertTarget interface{ isInsertTarget() }
 
-// InsertTargetTabs is gpui_kit::base::dock::InsertTarget::Tabs.
+// InsertTargetTabs represents gpui_kit::base::dock::InsertTarget::Tabs.
 type InsertTargetTabs struct {
 	Node     NodeID
 	Ix       gk.Option[int]
@@ -77,7 +80,7 @@ type InsertTargetTabs struct {
 
 func (InsertTargetTabs) isInsertTarget() {}
 
-// InsertTargetSplit is gpui_kit::base::dock::InsertTarget::Split.
+// InsertTargetSplit represents gpui_kit::base::dock::InsertTarget::Split.
 type InsertTargetSplit struct {
 	Node      NodeID
 	Placement gk.Placement
@@ -115,10 +118,10 @@ func putInsertTarget(o *rt.Tape, v InsertTarget) {
 	}
 }
 
-// PaneRef is gpui_kit::base::dock::PaneRef: one struct type per variant.
+// PaneRef represents gpui_kit::base::dock::PaneRef with one struct type per variant.
 type PaneRef interface{ isPaneRef() }
 
-// PaneRefSplit is gpui_kit::base::dock::PaneRef::Split.
+// PaneRefSplit represents gpui_kit::base::dock::PaneRef::Split.
 type PaneRefSplit struct {
 	Axis     gk.Axis
 	Children []PaneNode
@@ -127,7 +130,7 @@ type PaneRefSplit struct {
 
 func (PaneRefSplit) isPaneRef() {}
 
-// PaneRefTabs is gpui_kit::base::dock::PaneRef::Tabs.
+// PaneRefTabs represents gpui_kit::base::dock::PaneRef::Tabs.
 type PaneRefTabs struct {
 	Panels   []DockPanelID
 	ActiveIx int
@@ -135,10 +138,10 @@ type PaneRefTabs struct {
 
 func (PaneRefTabs) isPaneRef() {}
 
-// TabGroupEvent is gpui_kit::base::dock::TabGroupEvent: one struct type per variant.
+// TabGroupEvent represents gpui_kit::base::dock::TabGroupEvent with one struct type per variant.
 type TabGroupEvent interface{ isTabGroupEvent() }
 
-// TabGroupEventDrop is gpui_kit::base::dock::TabGroupEvent::Drop.
+// TabGroupEventDrop represents gpui_kit::base::dock::TabGroupEvent::Drop.
 type TabGroupEventDrop struct {
 	Panel  DockPanelID
 	Source NodeID
@@ -147,7 +150,7 @@ type TabGroupEventDrop struct {
 
 func (TabGroupEventDrop) isTabGroupEvent() {}
 
-// TabGroupEventDragDrop is gpui_kit::base::dock::TabGroupEvent::DragDrop.
+// TabGroupEventDragDrop represents gpui_kit::base::dock::TabGroupEvent::DragDrop.
 type TabGroupEventDragDrop struct {
 	Item   AnyDrag
 	Target DropTarget
@@ -155,27 +158,27 @@ type TabGroupEventDragDrop struct {
 
 func (TabGroupEventDragDrop) isTabGroupEvent() {}
 
-// TabGroupEventClosePanel is gpui_kit::base::dock::TabGroupEvent::ClosePanel.
+// TabGroupEventClosePanel represents gpui_kit::base::dock::TabGroupEvent::ClosePanel.
 type TabGroupEventClosePanel struct {
 	Panel DockPanelID
 }
 
 func (TabGroupEventClosePanel) isTabGroupEvent() {}
 
-// TabGroupEventActiveChanged is gpui_kit::base::dock::TabGroupEvent::ActiveChanged.
+// TabGroupEventActiveChanged represents gpui_kit::base::dock::TabGroupEvent::ActiveChanged.
 type TabGroupEventActiveChanged struct {
 	Ix int
 }
 
 func (TabGroupEventActiveChanged) isTabGroupEvent() {}
 
-// TabGroupEventZoomIn is gpui_kit::base::dock::TabGroupEvent::ZoomIn.
+// TabGroupEventZoomIn represents gpui_kit::base::dock::TabGroupEvent::ZoomIn.
 type TabGroupEventZoomIn struct {
 }
 
 func (TabGroupEventZoomIn) isTabGroupEvent() {}
 
-// TabGroupEventZoomOut is gpui_kit::base::dock::TabGroupEvent::ZoomOut.
+// TabGroupEventZoomOut represents gpui_kit::base::dock::TabGroupEvent::ZoomOut.
 type TabGroupEventZoomOut struct {
 }
 
@@ -203,7 +206,7 @@ func init() {
 	}})
 }
 
-// DockPanel is a handle to crate::dock::GkPanel, kept by the library.
+// DockPanel is an opaque runtime handle to crate::dock::GkPanel.
 type Panel struct{ rt.HCore }
 
 func rdDockEvent(r *rt.Reader) Event {

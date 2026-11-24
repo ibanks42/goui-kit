@@ -1,10 +1,5 @@
-// The values family's gallery pages, the Go twin of
-// ref/src/bin/gallery/values_pages.rs, call for call (docs/PROTOCOLS.md sections 13.8 to 13.12):
-// the theme's mode switched by a static that takes Option<&mut Window> (Theme::change), the
-// theme's fields edited in place (a kit global's public fields, read and written), and bars placed
-// by the plot scales instantiated as library objects (ScaleBand, ScaleLinear), made in init and
-// read in the view. Each theme page toggles with one button, so its script clicks it twice and the
-// theme is as before afterwards.
+// Values and theming gallery pages: theme mode and token edits, chart scales, calendars with
+// matchers, cell-backed Settings panels, scrollbars, drag-and-drop, shadows, tooltips, and row menus.
 package main
 
 import (
@@ -22,26 +17,24 @@ import (
 )
 
 type valuesPages struct {
-	band     gk.ScaleBand
-	linear   chart.ScaleLinear
-	fontSize float32
-	radius   float32
-	cal      base.CalendarState
-	scroll   gk.ScrollHandle
-	dropped  string
-	preview  gk.View
-	// the settings page's values, held by the library for the page to read while it draws
-	dark, compact gk.Cell[bool]
-	name, size    gk.Cell[string]
-	zoom          gk.Cell[float64]
-	// the components family
+	band            gk.ScaleBand
+	linear          chart.ScaleLinear
+	fontSize        float32
+	radius          float32
+	cal             base.CalendarState
+	scroll          gk.ScrollHandle
+	dropped         string
+	preview         gk.View
+	dark, compact   gk.Cell[bool]
+	name, size      gk.Cell[string]
+	zoom            gk.Cell[float64]
 	zoomIn, zoomOut gk.Action
-	handles         gk.RowSource // comp6-resize: the divider the app draws
+	handles         gk.RowSource
 	calRange        base.CalendarState
 	calDays         base.CalendarState
-	cells           gk.RowSource // comp6-table-menu
+	cells           gk.RowSource
 	table           gktable.State
-	tree            gktable.TreeState // comp6-tree-menu
+	tree            gktable.TreeState
 	treeRows        gk.RowSource
 }
 
@@ -51,14 +44,12 @@ var valuesPageTable = []Page{
 	{"values-scales", valuesScalesPage},
 	{"calendar-date", calendarDatePage},
 	{"values-scroll", valuesScrollPage},
-	// docs/PROTOCOLS.md 13.19, 13.20
 	{"values-settings", valuesSettingsPage},
 	{"values-drag", valuesDragPage},
 	{"values-shadow", valuesShadowPage},
 	{"values-resizable", valuesResizablePage},
 	{"values-scrollbar-div", valuesScrollbarDivPage},
 	{"values-toolbar", valuesToolbarPage},
-	// the components family, docs/PROTOCOLS.md 11.17 to 11.24
 	{"comp6-tooltip", comp6Tooltip},
 	{"comp6-tooltip-element", comp6TooltipElement},
 	{"comp6-resize", comp6Resize},
@@ -78,12 +69,10 @@ func valuesPagesInit(a *App, cx *gk.Cx) {
 	vp.linear = chart.NewScaleLinear(cx, []float64{0, 10}, [2]float32{0, 200})
 	th := gk.ThemeGlobal(cx)
 	vp.fontSize, vp.radius = th.FontSize(cx), th.Radius(cx)
-	// PROTOCOLS.md 13.13, 13.14
 	vp.cal = base.NewCalendarState(cx).Build()
 	vp.cal.SetDate(cx, base.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
 	vp.scroll = gk.NewScrollHandle(cx)
 	vp.scroll.SetOffset(cx, gk.GpuiPoint{X: 0, Y: -120})
-	// PROTOCOLS.md 13.19, 13.20
 	vp.dark = gk.NewCell(cx, false)
 	vp.compact = gk.NewCell(cx, true)
 	vp.name = gk.NewCell(cx, "Ada")
@@ -93,8 +82,7 @@ func valuesPagesInit(a *App, cx *gk.Cx) {
 	vp.preview = gk.NewView(nil, func(cx *gk.Cx) gk.Element {
 		return gk.Div().W(gk.Px(80)).H(gk.Px(24)).Bg(theme.Primary)
 	})
-	// the components family
-	vp.zoomIn = gk.NewAction(cx, "gallery_menu::MenuZoomIn") // the Rust twin's actions (overlay_pages.rs)
+	vp.zoomIn = gk.NewAction(cx, "gallery_menu::MenuZoomIn")
 	vp.zoomOut = gk.NewAction(cx, "gallery_menu::MenuZoomOut")
 	vp.handles = overlay.Items(cx, a.comp6HandleRow)
 	vp.calRange = base.NewCalendarState(cx).
@@ -160,14 +148,10 @@ func valuesScalesPage(a *App, cx *gk.Cx) gk.Element {
 	return plot
 }
 
-// calendarDatePage: a calendar whose state was given a date (jiff's civil::Date, PROTOCOLS.md 13.13).
 func calendarDatePage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(320)).Child(kit.Calendar(a.values.cal))
 }
 
-// valuesSettingsPage: the kit's settings page over fields whose values the library holds (value
-// cells): each field reads its cell while the page draws, and its handler writes the cell
-// between frames.
 func valuesSettingsPage(a *App, cx *gk.Cx) gk.Element {
 	p := &a.values
 	look := kit.NewSettingGroup().Title("Look").
@@ -183,8 +167,6 @@ func valuesSettingsPage(a *App, cx *gk.Cx) gk.Element {
 		Child(kit.Settings("settings").SidebarSizeRange([2]float32{100, 300}).Page(kit.NewSettingPage("General").Group(look)))
 }
 
-// valuesScrollPage: a list scrolled from code through gpui's ScrollHandle, a scrollbar over it
-// (PROTOCOLS.md 13.14).
 func valuesScrollPage(a *App, cx *gk.Cx) gk.Element {
 	list := gk.Div(s.SizeFull).ID("list").OverflowYScroll().TrackScroll(a.values.scroll)
 	for i := range 30 {
@@ -193,8 +175,6 @@ func valuesScrollPage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div(s.Relative).W(gk.Px(300)).H(gk.Px(160)).Child(list).Child(gk.ScrollbarVertical(a.values.scroll))
 }
 
-// valuesDragPage: drag and drop over the library's drag value: a source with a preview view, a
-// target that takes the drop and shows a style while the value is over it.
 func valuesDragPage(a *App, cx *gk.Cx) gk.Element {
 	src := gk.Div().ID("src").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).
 		OnDrag(gk.DragValue{ID: 7, Text: "row 7"}, a.values.preview).Child(kit.Label("drag me"))
@@ -205,22 +185,17 @@ func valuesDragPage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div(s.Flex).Gap(gk.Px(80)).Child(src).Child(dst)
 }
 
-// valuesShadowPage: a shadow made by box_shadow, read back as a record and given to shadow().
 func valuesShadowPage(a *App, cx *gk.Cx) gk.Element {
 	bs := gk.BaseBoxShadow(cx, 4, 6, 12, 2, gk.HSLA(0.6, 0.8, 0.3, 0.6))
 	return gk.Div().P(gk.Px(24)).Child(gk.Div().W(gk.Px(160)).H(gk.Px(80)).Bg(theme.Background).Shadow([]gk.BoxShadow{bs}))
 }
 
-// valuesResizablePage: the kit's resizable panels, a horizontal group of two panels and the
-// kit's handle between them.
 func valuesResizablePage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(600)).H(gk.Px(200)).Child(base.KitHResizable("rz").
 		Child(base.ResizablePanel().Size(200).Child(gk.Div(s.SizeFull).Bg(theme.Muted).Child(kit.Label("left")))).
 		Child(base.ResizablePanel().Child(gk.Div(s.SizeFull).Child(kit.Label("right")))))
 }
 
-// valuesScrollbarDivPage: a div that overflows with the kit's own scrollbar
-// (ScrollableElement::overflow_y_scrollbar).
 func valuesScrollbarDivPage(a *App, cx *gk.Cx) gk.Element {
 	list := gk.Div().W(gk.Px(300)).H(gk.Px(160))
 	for i := range 20 {
@@ -229,16 +204,10 @@ func valuesScrollbarDivPage(a *App, cx *gk.Cx) gk.Element {
 	return kit.DivOverflowYScrollbar(list).ID("sd")
 }
 
-// valuesToolbarPage: a toolbar whose children must be Sizable: buttons, one at a time and as a list.
 func valuesToolbarPage(a *App, cx *gk.Cx) gk.Element {
 	return kit.Toolbar("tb").Child(kit.Button("b1").Label("Bold")).Child(kit.Button("b2").Label("Italic")).
 		Children([]gk.SizableNode{kit.Button("b3").Label("Code"), kit.Button("b4").Label("Wrap")})
 }
-
-// --- the components family, docs/PROTOCOLS.md 11.17 to 11.24, the twins of
-// ref/src/bin/gallery/values_pages.rs: a tooltip the kit's Tooltip value describes and labels in
-// Markdown (Text::TextView), a resizable group whose divider the app draws, calendars with
-// disabled dates and a table's and a tree's row menus.
 
 func comp6Tooltip(a *App, cx *gk.Cx) gk.Element {
 	tip := overlay.NewKitTooltip("Save the file").KeyBinding(gk.Some(kit.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true}, Key: "s"})))
@@ -250,17 +219,12 @@ func comp6TooltipElement(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().ID("c6tipe").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(kit.Label("Hover me"))
 }
 
-// comp6TextView: a checkbox's label and an alert's message in Markdown.
-// Go's TextInto takes the TextViewEl itself (the
-// kit's Into<Text> for a TextView, Text::TextView).
 func comp6TextView(a *App, cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.Gap3).W(gk.Px(400)).
 		Child(kit.Checkbox("c6cb").Checked(true).Label(editor.TextViewMarkdown("c6md1", "A **bold** label"))).
 		Child(kit.Alert("c6al", editor.TextViewMarkdown("c6md2", "An alert in *Markdown*")))
 }
 
-// comp6HandleRow is the divider of the first group: a 3-pixel bar, the primary color while the
-// pointer owns it (an item function, gk.Items).
 func (a *App) comp6HandleRow(cx *gk.Cx, ctx base.ResizeHandleContext) gk.Element {
 	color := theme.Border
 	if ctx.IsActive {
@@ -275,7 +239,6 @@ func comp6Resize(a *App, cx *gk.Cx) gk.Element {
 			Child(base.ResizablePanel().Size(200).Child(kit.Label("left"))).
 			Child(base.ResizablePanel().Child(kit.Label("right"))))
 	}
-	// A handle of its own (ResizeHandle::with_appearance) at the left edge of a band.
 	alone := gk.Div(s.Relative).W(gk.Px(600)).H(gk.Px(40)).Bg(theme.Muted).
 		Child(base.ResizeHandle("c6h", gk.AxisHorizontal).WithAppearance(a.values.handles))
 	return gk.VFlex(s.Gap4).Child(group("c6rz", a.values.handles)).
@@ -287,7 +250,6 @@ func comp6CalendarMatcher(a *App, cx *gk.Cx) gk.Element {
 		Child(gk.Div().W(gk.Px(320)).Child(kit.Calendar(a.values.calDays)))
 }
 
-// comp6Cell is a cell of the menu table; the first column's cell carries its row's menu.
 func (a *App) comp6Cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	el := kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 	if at.Col != 0 {

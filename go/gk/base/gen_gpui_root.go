@@ -7,10 +7,10 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// The part of an item the pointer moves it by, for an item built with `DragHandleOnly` — a card's
+// The part of an item the pointer moves it by, for an item built with `DragHandleOnly` - a card's
 // header, say.
 //
-// GridDragHandle is gpui_kit::base::grid_drag_handle.
+// GridDragHandle calls gpui_kit::base::grid_drag_handle.
 func GridDragHandle(state GridLayoutState, item string, st ...gk.Style) gk.StatefulDivEl {
 	n := rt.NewNode(260)
 	o := rt.NodeArgs(n)

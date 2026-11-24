@@ -6,7 +6,7 @@ import (
 	"gpuikit.dev/gk/table"
 )
 
-// RowMenu wraps a row's element (a table's cell) with the menu its row opens on a right-click.
+// RowMenu attaches a context PopupMenu to any row element el.
 func RowMenu(el gk.Element, menu PopupMenu) gk.Element {
 	src := rt.ElemNode(el)
 	n := rt.NewNode(rt.NRowMenu)
@@ -16,8 +16,8 @@ func RowMenu(el gk.Element, menu PopupMenu) gk.Element {
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// RowMenuItem is gk.RowMenu for a list's or a tree's row, which is a gk.ListItem: call it last, on
-// the finished item (later builder calls would go to the wrapper, which ignores them).
+// RowMenuItem attaches a context PopupMenu to item and preserves its
+// table.ListItemEl type so it fits directly into list builders.
 func RowMenuItem(item table.ListItemEl, menu PopupMenu) table.ListItemEl {
 	return table.ListItemEl{ElAnimatableElementSelectableNode: rt.MkElAnimatableElementSelectableNode(rt.ElemNode(RowMenu(item, menu)))}
 }

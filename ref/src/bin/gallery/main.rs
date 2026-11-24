@@ -1,16 +1,10 @@
-//! ref-gallery: the Rust reference of the gallery, a pure Rust GPUI-kit app on gpui-fast that
-//! shows every stateless component in a fixed set of states, one page per component and state
-//! group, and then one generated page per bound function (conf.rs, written by
-//! gates/conformance.py). The Go twin is examples/go/gallery; the pages of both are named
-//! by ref/gallery/pages.txt and conf.txt and compared pixel for pixel by gates/gallery.sh.
+//! Pure-Rust visual parity gallery binary (`ref-gallery`).
 //!
-//!   ref-gallery --script FILE   offscreen, driven by a gk-meter script (diag build)
-//!   ref-gallery --list          the page ids, one per line
-//!   ref-gallery                 a real window (GK_FRAMES and GK_CLICK drive and measure it)
-//!   GALLERY_START=id            the page shown first (default: the first of pages.txt)
-//!
-//! The shell is one view: a bar with a Next button and the page's name, then the page. A click
-//! on Next (window position 40,32) shows the following page and resets the pages' state.
+//! Loads page manifests from `ref/gallery/pages.txt` and generated `conf.txt`,
+//! renders each page in order (or starting at `GALLERY_START`), and supports
+//! `--list` (print all page IDs) and `--script <path>` (headless screenshot
+//! harness under the `diag` feature) for pixel comparison against Go bindings.
+
 use gpui_kit::component::button::Button;
 use gpui_kit::component::input::InputState;
 use gpui_kit::component::label::Label;
@@ -27,19 +21,21 @@ mod lists2_pages;
 mod rows_pages;
 mod overlay_pages;
 mod pages;
-mod editor_pages; // the editor family, docs/PROTOCOLS.md 9.20 to 9.23
-mod values_pages; // the values family (docs/PROTOCOLS.md 13.8 to 13.12)
-mod views_pages; // the views family
-mod motion_pages; // the platform and motion families, docs/PROTOCOLS.md 13.30
+mod editor_pages;
+mod values_pages;
+mod views_pages;
+mod motion_pages;
 
-/// The hand-written pages, then the conformance pages gates/conformance.py generates.
+/// Combined hand-written (`pages.txt`) and generated (`conf.txt`) page manifests.
 const PAGES: &str = concat!(
     include_str!("../../../gallery/pages.txt"),
     include_str!("../../../gallery/conf.txt")
 );
+
+/// Row count used by the `list` uniform-list gallery page.
 pub const ROWS: usize = 10_000;
 
-/// The page ids of pages.txt, in order.
+/// Extracts ordered page identifiers from `PAGES`, skipping blank and `#` comment lines.
 fn ids() -> Vec<&'static str> {
     PAGES
         .lines()
@@ -49,24 +45,27 @@ fn ids() -> Vec<&'static str> {
         .collect()
 }
 
+/// Root gallery view holding navigation state and persistent per-category page state.
 pub struct Gallery {
     ids: Vec<&'static str>,
     page: usize,
-    /// Clicks on the current page's button.
+    /// Shared click counter reset whenever advancing to the next page.
     pub count: usize,
-    /// The current page's checkbox or switch.
+    /// Shared boolean toggle reset whenever advancing to the next page.
     pub flag: bool,
+    /// Shared text input state cleared when advancing pages.
     pub name: Entity<InputState>,
+    /// Pre-built labels for the `uniform_list` page.
     pub rows: Vec<SharedString>,
-    /// The input family's pages' own states (input_pages.rs).
+    /// State for `input_pages` (`Input`, `Textarea`, `Editor`, `NumberInput`, `OtpInput`).
     pub input: input_pages::InputPages,
-    /// The rows family's pages' own states (rows_pages.rs).
+    /// State for `rows_pages` (`List`, `DataTable`, `Tree`).
     pub rows_family: rows_pages::RowsPages,
-    /// The lists and editor families' pages' own states (lists2_pages.rs).
+    /// State for `lists2_pages` (`Select`, `Combobox`, `Diff`, `Editor` diagnostics).
     pub lists2: lists2_pages::Lists2Pages,
-    /// The values family's pages' own states (values_pages.rs).
+    /// State for `values_pages` (calendars, scroll handles, comp6 pages).
     pub values: values_pages::ValuesPages,
-    /// The platform and motion families' pages' own state (motion_pages.rs).
+    /// State for `motion_pages` (animations, keyframes, image caches, scroll anchor).
     pub motion: motion_pages::MotionPages,
 }
 

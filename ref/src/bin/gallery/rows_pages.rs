@@ -1,10 +1,5 @@
-//! The rows family's gallery pages (docs/PROTOCOLS.md section 9.8): a list of 10,000 rows, a
-//! table of 10,000 rows with a sortable column, and a tree, each driven by clicks, keys and the
-//! scroll wheel (a far scroll and a jump to the last row included), written the way a Rust
-//! GPUI-kit app writes them, with Rust delegates. The Go twin is
-//! examples/go/gallery/rows_pages.go, whose rows are views over row sources; the pages'
-//! lines are in ref/gallery/pages.txt. Each page has its own state, made once when the gallery
-//! starts. Scrollbars are hidden: they fade in and out on a clock.
+//! Virtualized `List`, sortable `DataTable`, and `Tree` gallery pages.
+
 use crate::Gallery;
 use gpui_kit::component::IndexPath;
 use gpui_kit::component::label::Label;
@@ -19,6 +14,7 @@ use gpui_kit::{
 pub const LIST_ROWS: usize = 10_000;
 pub const TABLE_ROWS: usize = 10_000;
 
+/// Persistent state entities for `rows-list`, `rows-table`, and `rows-tree`.
 pub struct RowsPages {
     pub list: Entity<ListState<Items>>,
     pub table: Entity<TableState<Cells>>,
@@ -26,6 +22,7 @@ pub struct RowsPages {
 }
 
 impl RowsPages {
+    /// Initializes the 10k-row list, 10k-row sortable table, and sample tree.
     pub fn new(window: &mut Window, cx: &mut App) -> Self {
         let list = cx.new(|cx| ListState::new(Items, window, cx));
         let columns = vec![
@@ -80,7 +77,7 @@ impl ListDelegate for Items {
 
 pub struct Cells {
     columns: Vec<Column>,
-    /// The rows in descending order of their id (the sortable column).
+
     desc: bool,
 }
 
@@ -119,7 +116,7 @@ impl TableDelegate for Cells {
     }
 }
 
-/// The page of `id`, or None when it is not one of the rows family's.
+/// Renders `rows-list`, `rows-table`, or `rows-tree` if `id` matches.
 pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
     let p = &g.rows_family;
     Some(match id {

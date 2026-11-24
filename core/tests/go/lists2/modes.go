@@ -1,15 +1,3 @@
-// The lists2 modes of docs/PROTOCOLS.md 9.9 to 9.15 and 11.25 that need more than main.go's names:
-//
-//	combobox       ComboboxState.Selection
-//	will-change    gk.SearchWillChange, gk.SearchRules
-//	table, drive   the table's and tree's row sources, the table's texts
-//	               and looks (gk.SetTableTexts, gk.SetTableRowLabels, gk.SetTableLook)
-//	expr, bad-expr InputStateBuilder.StepBy, NumberStepByValue's expression
-//	diff           gk.DiffFileParseCount's gk.Fallible[int]
-//	display-map    gk.Font, gk.NewDisplayMap, DisplayMap.SetFont
-//	providers      the editor's providers on gk.CodeEditor
-//	kept           gk.TestKeptCount
-//	ask            gk.Ask, gk.NewAsk, gk.CodeBlock, gk.TestAsks
 package main
 
 import (
@@ -24,6 +12,8 @@ import (
 )
 
 func init() {
+	// Register combobox, table look, expression VM, diff, display-map, LSP
+	// provider, kept-handler, Ask cache, and scroll-driving test modes.
 	for _, m := range []string{"combobox", "will-change", "table", "expr", "bad-expr", "diff", "display-map", "providers", "kept", "ask", "drive"} {
 		modeInit[m] = pInit
 	}
@@ -40,7 +30,6 @@ func init() {
 	}
 }
 
-// ask: data closures answered between frames.
 var askState struct {
 	hl       gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]
 	img      gk.Ask[string, string]
@@ -84,7 +73,6 @@ func treeNodes(n int) []table.TreeNode {
 	return nodes
 }
 
-// ask: the code block's highlights ("proc" in red) and the image's path, each asked once.
 func (a *App) askHighlight(cx *gk.Cx, b gk.CodeBlock) []gk.TupleRangeHighlightStyle {
 	askState.hlCalls++
 	lang, _ := b.Lang.Get()
@@ -98,7 +86,6 @@ func (a *App) askImage(cx *gk.Cx, uri string) string {
 	return "/nonexistent/pic.png"
 }
 
-// providers: every question of the editor's providers, answered at once.
 func (a *App) providerEvent(cx *gk.Cx, e editor.ProviderEvent) {
 	name := ""
 	switch q := e.Request.(type) {
@@ -134,6 +121,14 @@ func (a *App) providerEvent(cx *gk.Cx, e editor.ProviderEvent) {
 	fmt.Printf("lists2 provider %s id=%d\n", name, e.ID)
 }
 
+// pInit configures mode-specific delegates and states:
+//   - combobox / will-change: multi-select Combobox (with locked "banana" / blocked "cherry" rules).
+//   - table: 20-row DataTable with group header view and styled look.
+//   - ask: Markdown view backed by code-highlight and image-URI Ask caches.
+//   - kept: tracks Go-retained validator closure counts before/after InputState release.
+//   - drive: 1000-row List/Table and 300-node Tree for programmatic jump/scroll verification.
+//   - expr / bad-expr: NumberStep expression formulas and malformed ternary rejection.
+//   - providers: Rust CodeEditor wired to all 7 LSP provider capabilities.
 func pInit(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "combobox":
@@ -141,8 +136,7 @@ func pInit(a *App, cx *gk.Cx) {
 		a.combo = table.NewComboboxState(cx, a.src, []table.BaseIndexPath{table.Row(1)}).Multiple(true).Build()
 		a.sub = a.combo.OnComboboxEvent(cx, a.comboEvent)
 	case "will-change":
-		// The combobox mode's start, with rules (PROTOCOLS.md 11.25): Cherry, which Down and Enter add
-		// there, is blocked here; Banana is locked.
+
 		a.src = gk.NewSearchSource(cx, fruit)
 		a.combo = table.NewComboboxState(cx, a.src, []table.BaseIndexPath{table.Row(1)}).Multiple(true).Build()
 		a.sub = a.combo.OnComboboxEvent(cx, a.comboEvent)
@@ -167,11 +161,11 @@ func pInit(a *App, cx *gk.Cx) {
 		table.SetTreeItems(cx, a.tree, treeNodes(300))
 		a.treeRows = table.NewTreeSource(cx, a.driveTreeRow, gk.Initial(8))
 	case "expr":
-		// Steps of 1 below 10 and of 10 from there: an expression the library evaluates.
+
 		a.in1 = editor.NewInputState(cx).DefaultValue("9").StepBy("x < 10 ? 1 : 10").Build()
-		// The same as NumberStep's ByValue variant, which the binding could not give before.
+
 		a.in2 = editor.NewInputState(cx).DefaultValue("3").Build()
-		a.in2.SetStep(cx, gk.Some[editor.NumberStep](editor.NumberStepByValue{Value: "y == 1 ? x : 0.5"})) // Increment doubles, Decrement takes 0.5
+		a.in2.SetStep(cx, gk.Some[editor.NumberStep](editor.NumberStepByValue{Value: "y == 1 ? x : 0.5"}))
 	case "bad-expr":
 		a.in1 = editor.NewInputState(cx).StepBy("x < 10 ? 1").Build()
 	case "providers":
@@ -183,6 +177,11 @@ func pInit(a *App, cx *gk.Cx) {
 	}
 }
 
+// pStep runs the assertion checkpoints for each mode registered in modes.go:
+// combobox selection mutations, table dump/fit/delegate identity, programmatic
+// drive jumps (list 500/900, table 700/0, tree 150), kept-closure cleanup,
+// Ask cache hit ratios (gets > asked), diff parsing (2 files vs bad hunk),
+// expression results ("20", "12"), and DisplayMap font/line queries.
 func pStep(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "will-change":
@@ -239,7 +238,7 @@ func pStep(a *App, cx *gk.Cx) {
 	case "drive":
 		switch a.step {
 		case 1:
-			// Select and scroll each from code (generated state calls).
+
 			fmt.Printf("lists2 drive before list=%v table=%v tree=%v\n", a.drawnRow("list", 500), a.drawnRow("table", 700), a.drawnRow("tree", 150))
 			a.list.SetSelectedIndex(cx, gk.Some(table.Row(500)))
 			a.list.ScrollToItem(cx, table.Row(500), gk.ScrollStrategyTop)
@@ -253,7 +252,7 @@ func pStep(a *App, cx *gk.Cx) {
 			ti, iok := a.tree.SelectedIndex(cx).Get()
 			fmt.Printf("lists2 drive selected list=%d table=%d tree=%d ok=%v\n", li.Row, tr, ti, lok && tok && iok)
 			fmt.Printf("lists2 drive scrolled list=%v table=%v tree=%v\n", a.drawnRow("list", 500), a.drawnRow("table", 700), a.drawnRow("tree", 150))
-			// The list's scroll handle (an object a read hands out, temporary).
+
 			a.list.ScrollHandle(cx).ScrollToItem(cx, 900, gk.ScrollStrategyTop)
 			a.table.ScrollToRow(cx, 0)
 		case 3:
@@ -262,11 +261,11 @@ func pStep(a *App, cx *gk.Cx) {
 	case "kept", "kept-gone":
 		switch a.step {
 		case 1:
-			// Handlers given to calls (a builder's validate, SetValidator) belong to the state.
+
 			a.in2.SetValidator(cx, a.noX)
 			a.in2.SetValidator(cx, a.noX)
 		case 2:
-			a.mode = "kept-gone" // the view stops showing the inputs before they are released
+			a.mode = "kept-gone"
 		case 3:
 			n := gk.TestKeptCount()
 			gk.Release(cx, a.in1)
@@ -277,8 +276,7 @@ func pStep(a *App, cx *gk.Cx) {
 		gets, asked, answered := gk.TestAsks(cx)
 		fmt.Printf("lists2 ask counts asked=%d answered=%d highlight=%d image=%d gets_more=%v\n", asked, answered, askState.hlCalls, askState.imgCalls, gets > asked)
 	case "diff":
-		// A patch parsed by the kit: the count, each file by its index, a diff state over them;
-		// a patch that does not parse gives the kit's error.
+
 		n := editor.DiffFileParseCount(cx, diffPatch)
 		count, _ := n.Value.Get()
 		bad := editor.DiffFileParseCount(cx, "@@ nonsense\n")

@@ -9,10 +9,7 @@ import (
 	"gpuikit.dev/gk/motion"
 )
 
-// DropdownMenu is the kit's Button with a dropdown menu (DropdownMenu::dropdown_menu): the menu
-// is described as a value in the view function and built from it each time it opens.
-//
-//	gk.DropdownMenu(gk.Button("more").Label("More"), kit.NewPopupMenu().Menu("Copy", a.copy))
+// DropdownMenu wraps button so clicking it opens menu with default placement.
 func DropdownMenu(button ButtonEl, menu PopupMenu) gk.Element {
 	b, m := rt.ElemNode(button), rt.N(menu.Core)
 	n := rt.NewNode(rt.NDropdownButton)
@@ -22,8 +19,7 @@ func DropdownMenu(button ButtonEl, menu PopupMenu) gk.Element {
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// DropdownMenuAnchored is gk.DropdownMenu with the corner the menu opens from
-// (DropdownMenu::dropdown_menu_with_anchor).
+// DropdownMenuAnchored wraps button so clicking it opens menu aligned to anchor.
 func DropdownMenuAnchored(button ButtonEl, anchor gk.Anchor, menu PopupMenu) gk.Element {
 	b, m := rt.ElemNode(button), rt.N(menu.Core)
 	n := rt.NewNode(rt.NDropdownAnchor)
@@ -34,10 +30,7 @@ func DropdownMenuAnchored(button ButtonEl, anchor gk.Anchor, menu PopupMenu) gk.
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// Effect is the kit's EffectTransition::apply: the element with the effect's fades, slides and
-// sizes over its duration, restarted whenever id changes.
-//
-//	gk.Effect(page, gk.NewEffectTransition(200*time.Millisecond).Fade(0, 1).SlideY(12, 0), "open-3")
+// Effect wraps el in an animated transition node controlled by t and keyed by id.
 func Effect(el gk.AnimatableElement, t motion.EffectTransition, id string) gk.Element {
 	src := rt.ElemNode(el)
 	n := rt.NewNode(rt.NAnimated)
@@ -49,10 +42,8 @@ func Effect(el gk.AnimatableElement, t motion.EffectTransition, id string) gk.El
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// SliderNumber is the number a slider's event carries: a single slider's value, or a range
-// slider's start (upstream's SliderValue::start).
-//
-//	a.font.OnSliderEvent(cx, func(cx *gk.Cx, e gk.SliderEvent) { a.size = gk.SliderNumber(e) })
+// SliderNumber extracts the primary numeric value from a slider change or
+// release event.
 func SliderNumber(e base.SliderEvent) float32 {
 	switch x := e.(type) {
 	case base.SliderEventChange:
@@ -63,7 +54,8 @@ func SliderNumber(e base.SliderEvent) float32 {
 	return 0
 }
 
-// SliderValueNumber is a slider value's number (a range's start).
+// SliderValueNumber returns the scalar value for a single slider or the lower
+// endpoint (V0) for a range slider.
 func SliderValueNumber(v base.SliderValue) float32 {
 	switch x := v.(type) {
 	case base.SliderValueSingle:
@@ -74,6 +66,8 @@ func SliderValueNumber(v base.SliderValue) float32 {
 	return 0
 }
 
+// kbdNode encodes a Kbd shortcut badge node using lookup mode how:
+// 0 = optional key context, 1 = focused handle context, 2 = global bindings.
 func kbdNode(action gk.Action, how uint8, keyContext string, focus uint64) gk.Element {
 	n := rt.NewNode(rt.NKbdForAction)
 	o := rt.NodeArgs(n)
@@ -89,10 +83,8 @@ func kbdNode(action gk.Action, how uint8, keyContext string, focus uint64) gk.El
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// KbdForAction draws the keystrokes bound to action as the kit's Kbd, or nothing when no binding
-// has it (Kbd::binding_for_action). gk.WhenIn("Editor") looks in that key context.
-//
-//	gk.HFlex(s.Gap2).Child(gk.Label("Save")).Child(gk.KbdForAction(a.save))
+// KbdForAction renders a keycap hint for the keystroke bound to action,
+// optionally scoped with gk.WhenIn.
 func KbdForAction(action gk.Action, opts ...gk.ShortcutOption) gk.Element {
 	var so rt.ShortcutOpts
 	for _, o := range opts {
@@ -101,16 +93,16 @@ func KbdForAction(action gk.Action, opts ...gk.ShortcutOption) gk.Element {
 	return kbdNode(action, 0, so.When, 0)
 }
 
-// KbdForActionIn draws the binding of action that reaches focus (Kbd::binding_for_action_in).
+// KbdForActionIn renders a keycap hint for action resolved in focus's key context.
 func KbdForActionIn(action gk.Action, focus gk.FocusHandle) gk.Element {
 	return kbdNode(action, 1, "", rt.H(focus.HCore))
 }
 
-// KbdGlobalForAction draws a binding of action with no key context (Kbd::global_binding_for_action).
+// KbdGlobalForAction renders a keycap hint for action's global key binding.
 func KbdGlobalForAction(action gk.Action) gk.Element { return kbdNode(action, 2, "", 0) }
 
-// NewAppMenuBar makes the kit's AppMenuBar (AppMenuBar::new), which draws the menus gk.SetMenus
-// gave; gk.AppMenuBarView draws it. In init or a handler.
+// NewAppMenuBar creates an in-window application menu bar state handle outside
+// a view function.
 func NewAppMenuBar(cx *gk.Cx) AppMenuBar {
 	t := rt.CheckCx(cx)
 	if rt.Vb.Active {
@@ -121,17 +113,14 @@ func NewAppMenuBar(cx *gk.Cx) AppMenuBar {
 	return AppMenuBar{HCore: rt.MkH(r.U64())}
 }
 
-// AppMenuBarView draws an app menu bar where the view puts it.
+// AppMenuBarView embeds bar as a renderable element inside a view tree.
 func AppMenuBarView(bar AppMenuBar) gk.Element {
 	n := rt.NewNode(rt.NAppMenuBar)
 	rt.NodeArgs(n).U64(rt.H(bar.HCore))
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// ClockNow reads the library's clock: std::time::Instant travels as the time since it began. A
-// toast stack's bookkeeping takes the app's reading of it:
-//
-//	a.toasts.Push(cx, id, value, gk.ToastOptions{..}, gk.ClockNow(cx))
+// ClockNow returns the monotonic kit clock reading used for animations and timing.
 func ClockNow(cx *gk.Cx) time.Duration {
 	rt.CheckCx(cx)
 	r := rt.Reader{B: rt.MustCall(*rt.NewReq(rt.CClockNow))}

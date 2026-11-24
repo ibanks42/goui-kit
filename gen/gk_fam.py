@@ -1,22 +1,45 @@
-"""gk_fam: component families an app opts into.
+"""Partition generated Rust decoders into link-on-demand component families and emit Go registration hooks.
 
-Every upstream module of the kit (gpui_base::accordion, gpui_component::chart, ...) is one family.
-The generated dispatchers of the library (`node`, `call`, `paint_part`, ...) used to be one `match`
-each over every element type and call op, so every component was reachable from the library's entry
-points and a linker had to keep all of them. Here each dispatcher is split into one function per
-family, and the public dispatcher finds the family of a key in a generated table (data, not code) and
-calls the family's function through a registry the app fills at start-up:
+Why this exists (dead-stripping static binaries):
+If `core/src/gen/mod.rs` dispatched directly to every generated widget decoder inside a
+single giant `match` statement, then linking `libgpuikit_static.a` into a minimal Go
+program would pull in every upstream GPUI-kit component (editor, charts, dock, markdown,
+tables, etc.).
 
-    gk_use_component_chart()      registers the chart family (one exported function per family)
-    gk_use_all()                  registers every family (the shared library's bindings call it)
+Instead, this module breaks the static call graph at the dispatcher boundary:
+1. **Family assignment (`Families.__init__`, `of_type`, `of_node`, `of_item`)**:
+   Maps every node opcode (`NODE_SPACE`) and call opcode (`CALL_SPACE`) to a family
+   key: `"base/<mod>"`, `"component/<mod>"`, or `"core"` (for core GPUI / uncategorized
+   items that are always linked).
+2. **Dispatcher splitting (`_split_file`)**:
+   Rewrites each top-level dispatcher (`node`, `call`, `paint_part`, `value_action`,
+   `motion_wrap`, `motion_trap`, `motion_scope`, and `traitval_*`) into per-family
+   functions (`<disp>__<fam_ident>`) and replaces the top-level dispatcher body with a
+   table lookup `fam_get(&KEYS_<SPACE>, key)`.
+3. **Registry table (`_registry`)**:
+   Emits the `Fam` vtable struct, one `static FAM_<id>: Fam` per family, `KEYS_NODE` /
+   `KEYS_CALL` (`[u8; N]` opcode -> family ID tables), an atomic pointer registry
+   `FAM_REG`, one `#[unsafe(no_mangle)] pub extern "C" fn gk_use_<fam>()` per non-core
+   family, and `gk_use_all()` (which registers every family for dynamic builds or
+   `gk.LinkAll()`).
+4. **Module partitioning (`_move`)**:
+   Moves every non-core decoder (`make_*`, `build_*`, `apply_*`, `c_*`, `sb_*`, `sbp_*`),
+   per-family dispatcher helper, `FAM_<id>`, and `gk_use_<fam>` into its own Rust module
+   `core/src/gen/f_<fam_ident>.rs`, and isolates `gk_use_all` in `f_all.rs`. With
+   `-ffunction-sections` / `--gc-sections` (or `-dead_strip`), any family whose
+   `gk_use_<fam>` symbol is never referenced by the Go binary is dead-stripped wholesale.
+5. **Go registration hooks (`go_link`, `_go_inject`)**:
+   Generates `go/gk/internal/rt/gen_use.go` (`//go:build gkstatic`, calling
+   `C.gk_use_<fam>` once via `atomic.Bool`) and `gen_use_dyn.go` (`!gkstatic`, no-ops),
+   then injects the corresponding `use<Fam>()` call at the top of every generated Go
+   function whose body emits a non-core opcode (`newNode`, `newValue`, `newReq`).
 
-A program linked against the static library keeps only the families whose `gk_use_*` function it
-references; the linker drops the rest. The core families (gpui's own elements and anything that is no
-upstream module's) are registered on first use. A key whose family is not registered stops the app
-with a message that names the family and how to opt in.
-
-Run from gk_rust.Rust.emit on the finished files (`split`), and from gkgen.gen for the Go packages
-(`go_packages`).
+Invariants checked during splitting:
+- Every opcode in `NODE_SPACE` or `CALL_SPACE` must map to a single family across all
+  dispatchers (mismatch raises `SystemExit`).
+- Total family count must fit in `u8` (<= 254, reserving 0 for "not a generated opcode").
+- Source-location maps (`where`) are preserved line-for-line through `_Line` subclasses
+  so `gk_rust.py` diagnostics still point to the exact moved line in `f_<fam>.rs`.
 """
 import os
 import re
@@ -24,20 +47,33 @@ import re
 SHORT = {"gpui_base": "base", "gpui_component": "component"}
 CORE = "core"
 
-# Dispatchers split by family: the generated function's name and its key space.
 NODE_SPACE, CALL_SPACE = "node", "call"
+# Dispatcher functions split into per-family arms and routed through the Fam registry table.
+# Keyed by function name -> opcode space (`NODE_SPACE` for node type IDs, `CALL_SPACE` for call opcodes).
 DISPATCHERS = {"node": NODE_SPACE, "paint_part": NODE_SPACE, "value_action": NODE_SPACE,
                "motion_wrap": NODE_SPACE, "motion_trap": NODE_SPACE, "motion_scope": NODE_SPACE,
                "call": CALL_SPACE}
+# Dynamically generated trait-value dispatchers (e.g. `traitval_any_setting_field`) also key off NODE_SPACE.
 TRAITVAL = re.compile(r"traitval_[a-z0-9_]+$")
 
+# Matches one opcode match arm inside a generated dispatcher (optionally preceded by a `#[cfg(...)]` attribute).
 ARM = re.compile(r"^(\s+)((?:#\[cfg\([^\]]*\)\]\s*)?)(\d+(?:\s*\|\s*\d+)*)\s*=>")
 
 
 class Families:
+    """Maps opcodes to upstream families, splits Rust modules, and emits Go link hooks.
+
+    Key attributes populated across stages:
+    - `byname`: `(crate, type_name) -> set(defining_module)` from rustdoc `paths`.
+    - `node_fam`, `call_fam`: `opcode -> family_key` computed at init.
+    - `keys`: `{NODE_SPACE: {op: fam}, CALL_SPACE: {op: fam}}` verified during `_split_file`.
+    - `order`, `ids`: deterministic sorted list of families (with `"core"` first at ID 1).
+    """
+
     def __init__(self, m, call_items):
+        """Index defining modules from rustdoc JSON and precompute `node_fam` and `call_fam` opcode maps."""
         self.m = m
-        self.byname = {}  # (crate, type name) -> {module of its definition}
+        self.byname = {}
         for crate, c in m.api.crates.items():
             for i, p in c.paths.items():
                 if p.get("crate_id") != 0 or p.get("kind") not in ("struct", "enum", "union", "trait", "type_alias"):
@@ -50,17 +86,24 @@ class Families:
             for it in n["ctors"]:
                 if it.get("op") is not None:
                     self.node_fam[it["op"]] = f
-        for it in call_items:  # the call ops are their own numbering; only the call dispatcher's arms
+        for it in call_items:
             self.call_fam[it["op"]] = self.of_item(it)
 
     @staticmethod
     def name(crate, module):
+        """Format a family key (`base/<mod>` or `component/<mod>`), or `core` for core/gpui items."""
         if crate not in SHORT:
             return CORE
         return f"{SHORT[crate]}/{module or 'root'}"
 
     def of_type(self, crate, name, pubpath):
-        # A kit type behind a shared pointer (Rc<gpui_kit::component::ThemeConfig>): the type's family.
+        """Determine the family of a type from its rustdoc defining module or public path.
+
+        Generic wrappers like `Scrollable<gpui_kit::Div>` or `Rc<gpui_kit::...>` inherit
+        the family of their inner `gpui_kit::` type argument. Otherwise, if a type name
+        is uniquely defined in one module of `crate`, that defining module wins over a
+        re-export path.
+        """
         inner = re.search(r"<(gpui_kit::[A-Za-z0-9_:]+)", f"{pubpath} {name}")
         if inner:
             p = inner.group(1)
@@ -69,10 +112,10 @@ class Families:
         if mods and len(mods) == 1:
             return self.name(crate, next(iter(mods)))
         segs = pubpath.split("::")
-        # gpui_kit::component::chart::LineChart -> chart; gpui_kit::component::Button -> root
         return self.name(crate, segs[2] if len(segs) > 3 else "")
 
     def of_node(self, n):
+        """Determine the family of a node from its rustdoc defining path (falling back to `of_type`)."""
         c = self.m.api.crates.get(n["crate"])
         p = c.paths.get(str(n["id"])) if c else None
         if p and p.get("crate_id") == 0:
@@ -81,6 +124,7 @@ class Families:
         return self.of_type(n["crate"], n["name"], n["path"])
 
     def of_item(self, it):
+        """Determine the family of a call or ambient item from its owning node, state, smart pointer, or path."""
         m = self.m
         if it.get("node") in m.nodes:
             return self.of_node(m.nodes[it["node"]])
@@ -92,7 +136,7 @@ class Families:
             return self.of_type(st["crate"], st["name"], st["path"])
         crate = it.get("crate")
         path = it.get("id", "")
-        # A call on a shared pointer to a kit type (Rc<gpui_kit::component::Theme>::...): the type's family.
+        # Pointer-wrapped object calls (Rc<T>/Arc<T>/Box<T>) follow the pointed-to type's family.
         inner = re.search(r"\b(?:Rc|Arc|Box)<(gpui_kit::[A-Za-z0-9_:]+)", path)
         if inner:
             owner = m.states.get(inner.group(1)) or getattr(m, "objects", {}).get(inner.group(1)) or m.nodes.get(inner.group(1))
@@ -102,7 +146,6 @@ class Families:
         path = re.sub(r"<.*", "", path)
         if crate in SHORT and path.startswith("gpui_kit::"):
             segs = path.split("::")
-            # a free function: gpui_kit::base::input::highlight_prefix
             if len(segs) > 3 and segs[2][:1].islower():
                 return self.name(crate, segs[2])
             if len(segs) > 3:
@@ -110,18 +153,18 @@ class Families:
             return self.name(crate, "")
         return CORE
 
-    # ------------------------------------------------------------------ the Rust side
 
     def split(self, files, where):
-        """Rewrites the dispatchers of mod.rs and calls.rs in `files` (name -> text), appends the family
-        registry to mod.rs and moves each family's code into f_<family>.rs. `where` (file -> {line:
-        item key}, gkgen.py's map from a compiler error to the item it is in) follows every line."""
+        """Split dispatcher match arms by family, append the registry to mod.rs, and move items into f_*.rs.
+
+        Mutates `files` and `where` in place, returning `files`. `where` maps
+        `filename -> {1-based-line-str: item_key}` and is rebuilt after moving functions
+        between files so error-reporting maps remain accurate.
+        """
         lines = {f: [_ln(t, where.get(f, {}).get(str(n + 1))) for n, t in enumerate(text.split("\n"))]
                  for f, text in files.items() if f in ("calls.rs", "mod.rs") or f.startswith("n_")}
         fams = {CORE: set()}
-        sigs = {}  # dispatcher -> (params, ret)
-        # The family of every key a dispatcher has an arm for: some arms come from other parts of the
-        # generator than the model's constructors (the editor host, the lists family, ...).
+        sigs = {}
         self.keys = {NODE_SPACE: {}, CALL_SPACE: {}}
         for fname in ("calls.rs", "mod.rs"):
             lines[fname] = self._split_file(lines[fname], fams, sigs)
@@ -137,13 +180,18 @@ class Families:
             where[f] = {str(n + 1): x.key for n, x in enumerate(ls) if x.key is not None}
         return files
 
-    # Each family's generated code in a module of its own (f_<family>.rs), beside its registration:
-    # what a family links is in one place. (Leaving families out works at the level of functions,
-    # with --gc-sections: rustc puts generic code instantiated for a family into the codegen units
-    # of the shared runtime, so the objects of the static library do not line up with families.)
     ITEM = re.compile(r"^(?:pub(?:\(crate\))? )?(?:extern \"C\" )?(?:fn|static) ([A-Za-z0-9_]+)")
 
     def _family_of_name(self, name):
+        """Map a generated Rust function or static symbol name to its owning component family.
+
+        Matches the exact naming conventions emitted by `gk_rust.py` and `_split_file`:
+        - `c_<op>` -> call op family
+        - `sb_<stem>` / `sbp_<stem>` -> state builder family
+        - `make_<fn>` / `build_<fn>` / `apply_<fn>` -> node decoder family
+        - `<disp>__<fam_ident>` -> split dispatcher arm family
+        - `FAM_<id>` / `gk_use_<fam_ident>` -> family registration static/hook
+        """
         mt = re.match(r"c_(\d+)$", name)
         if mt:
             return self.call_fam.get(int(mt.group(1)), CORE)
@@ -164,7 +212,14 @@ class Families:
             return self.by_ident.get(mt.group(1), CORE)
         return CORE
 
-    def _move(self, files):  # file -> lines (_ln)
+    def _move(self, files):
+        """Partition non-core functions and `FAM_*` statics into per-family `f_<ident>.rs` modules plus `f_all.rs`.
+
+        Scans top-level brace-delimited items (preserving attached `///` doc comments and
+        `#[...]` attributes in `pend`), promotes private moved `fn` items to `pub fn` so
+        sibling family modules can call cross-family helpers via `use super::*;`, and wires
+        `mod f_*; pub use f_*::*;` into `mod.rs` ahead of `mod codecs;`.
+        """
         m = self.m
         self.node_by_fn = {n["fn"]: self.of_node(n) for n in m.nodes.values() if "fn" in n}
         self.state_by_fn = {}
@@ -172,7 +227,7 @@ class Families:
             if "fn" in st:
                 self.state_by_fn[st["fn"]] = self.of_type(st["crate"], st["name"], st["path"])
         self.by_ident = {_ident(f): f for f in self.order}
-        moved = {}  # family -> lines
+        moved = {}
         allfn = []
         for fname in sorted(files):
             if not (fname in ("calls.rs", "mod.rs") or fname.startswith("n_")):
@@ -207,7 +262,7 @@ class Families:
                     moved.setdefault(fam, []).extend(pend + item)
                 else:
                     if fname == "calls.rs" and item[0].startswith("fn "):
-                        item[0] = _ln("pub " + item[0], item[0].key)  # its family's calls reach it from their own module
+                        item[0] = _ln("pub " + item[0], item[0].key)
                     keep += pend + item
                 pend = []
             keep += pend
@@ -218,16 +273,17 @@ class Families:
         mods = []
         for fam in sorted(moved):
             f = f"f_{_ident(fam)}"
-            files[f + ".rs"] = [_ln(t) for t in [f"// Generated by gen/gk_fam.py. Do not edit. The {fam} family: its decoders, calls and registration."]
+            files[f + ".rs"] = [_ln(t) for t in [f"// Code generated by gen/gk_fam.py. DO NOT EDIT. Decoders, calls, and registration for family {fam}."]
                                 + head] + moved[fam] + [_ln("")]
             mods.append(f)
-        files["f_all.rs"] = [_ln(t) for t in ["// Generated by gen/gk_fam.py. Do not edit. gk_use_all, in a module of its own: it reaches every family."]
+        files["f_all.rs"] = [_ln(t) for t in ["// Code generated by gen/gk_fam.py. DO NOT EDIT. Registers every generated component family via gk_use_all."]
                              + head] + allfn + [_ln("")]
         mods.append("f_all")
         at = files["mod.rs"].index("mod codecs;")
         files["mod.rs"][at:at] = [_ln(t) for f in mods for t in (f"mod {f};", f"pub use {f}::*;")]
 
-    def _split_file(self, lines, fams, sigs):  # lines (_ln) -> lines
+    def _split_file(self, lines, fams, sigs):
+        """Split each dispatcher function in `lines` into per-family helpers and a `fam_get` trampoline."""
         out, i = [], 0
         while i < len(lines):
             line = lines[i]
@@ -258,7 +314,6 @@ class Families:
                     if seen.setdefault(x, f) != f:
                         raise SystemExit(f"gk_fam: {space} key {x} is in family {seen[x]} in one dispatcher and {f} in {name}")
                 byfam.setdefault(f, []).append(b)
-            # The family functions: the dispatcher's own body with only that family's arms.
             for f, arms in sorted(byfam.items()):
                 fams.setdefault(f, set()).add(name)
                 out.append(_ln(f"pub fn {name}__{_ident(f)}({params}) -> {ret} {{"))
@@ -281,6 +336,7 @@ class Families:
         return out
 
     def _registry(self, fams, sigs, ids, order):
+        """Generate the Fam vtable, opcode-to-family lookup tables, and extern C registration functions."""
         nk, ck = self.keys[NODE_SPACE], self.keys[CALL_SPACE]
         node_keys = [0] * (max(nk, default=0) + 1)
         for op, f in nk.items():
@@ -288,8 +344,8 @@ class Families:
         call_keys = [0] * (max(ck, default=0) + 1)
         for op, f in ck.items():
             call_keys[op] = ids.get(f, ids[CORE])
-        L = ["", "// ---- Families (gen/gk_fam.py): what an app opts into ----------------------------------", "",
-             "/// One family's dispatchers; None where the family has no key of that dispatcher.",
+        L = ["", "// Component family registry generated by gen/gk_fam.py.", "",
+             "/// Dispatch function table for a single component family; entries are None if unused.",
              "pub struct Fam {", "    pub name: &'static str,"]
         for d in sorted(sigs):
             p, r = sigs[d]
@@ -301,30 +357,29 @@ class Families:
             fields = "".join(f" {d}: {f'Some({d}__{_ident(f)})' if d in have else 'None'}," for d in sorted(sigs))
             L.append(f'pub static FAM_{n}: Fam = Fam {{ name: "{f}",{fields} }};')
             if f != CORE:
-                L.append(f"/// Links and registers the {f} family (the app calls it once, before gk_run).")
+                L.append(f"/// Register the {f} component family (called once before gk_run in static builds).")
                 L.append("#[unsafe(no_mangle)]")
                 L.append(f"pub extern \"C\" fn gk_use_{_ident(f)}() {{ fam_register({n}, &FAM_{n}); }}")
         L += ["",
-              "/// Registers every family: for bindings that load the shared library, which holds all of them.",
+              "/// Register every component family at once (used with the shared library or gk.LinkAll).",
               "#[unsafe(no_mangle)]", "pub extern \"C\" fn gk_use_all() {"]
         for f in order:
             L.append(f"    fam_register({ids[f]}, &FAM_{ids[f]});")
         L += ["}", "",
               f"const NFAM: usize = {len(order) + 1};",
-              "/// Each family's name, by its number (for the message about a family not linked in).",
+              "/// Family display names indexed by family ID for missing-family panic diagnostics.",
               "static FAM_NAMES: [&str; NFAM] = [\"\", " + ", ".join(f'"{f}"' for f in order) + "];",
               "static FAM_REG: [std::sync::atomic::AtomicPtr<Fam>; NFAM] = [const { std::sync::atomic::AtomicPtr::new(std::ptr::null_mut()) }; NFAM];",
-              "/// The family of each element (node) type number; 0: not a generated type.",
+              "/// Maps each node type opcode to its family ID (0 means not a generated node).",
               f"pub(crate) static KEYS_NODE: [u8; {len(node_keys)}] = [{', '.join(map(str, node_keys))}];",
-              "/// The family of each generated call op; 0: not a generated call.",
+              "/// Maps each call opcode to its family ID (0 means not a generated call).",
               f"pub(crate) static KEYS_CALL: [u8; {len(call_keys)}] = [{', '.join(map(str, call_keys))}];",
               "",
               "pub(crate) fn fam_register(n: usize, f: &'static Fam) {",
               "    FAM_REG[n].store(f as *const Fam as *mut Fam, std::sync::atomic::Ordering::Release);",
               "}",
               "",
-              "/// The registered family of key `k`; None when `k` is no generated key. The core family is",
-              "/// registered on first use; any other family must have been registered by the app.",
+              "/// Look up the registered Fam table for opcode `k`, auto-registering the core family on first use.",
               "pub(crate) fn fam_get(keys: &[u8], k: u16) -> Option<&'static Fam> {",
               "    let n = *keys.get(k as usize)? as usize;",
               "    if n == 0 {",
@@ -332,7 +387,7 @@ class Families:
               "    }",
               "    let p = FAM_REG[n].load(std::sync::atomic::Ordering::Acquire);",
               "    if !p.is_null() {",
-              "        // SAFETY: only pointers to the static Fam values are stored.",
+              "        // SAFETY: FAM_REG only ever stores pointers to 'static Fam items.",
               "        return Some(unsafe { &*p });",
               "    }",
               f"    if n == {ids[CORE]} {{",
@@ -346,24 +401,11 @@ class Families:
               "}", ""]
         return "\n".join(L)
 
-    # ------------------------------------------------------------------ the Go side
 
     GO_OP = re.compile(r"\b(newNode|newValue|newReq)\((\d+)\)")
 
     def go_link(self, rt_out, files):
-        """Links each family into a Go program only when the program calls into it.
-
-        UseX() (package internal/rt) takes the address of the family's registration function,
-        gk_use_<family>, and calls it through one shared C helper. Taking a C function's address
-        makes cgo refer to the symbol from Go's own object, not from a C stub, and the Go linker
-        leaves out what no live function reaches: so the reference, and through it the family's code
-        in the static library, is in the program only when a live Go function calls UseX(). The C
-        linker then drops the families nothing refers to (--gc-sections; -dead_strip on macOS). A C
-        stub per family would not do: on Windows a linker keeps every plain section of an object, so
-        every stub, and every family, would stay. Each generated function, whatever package it lands
-        in (gen/gk_split.py), calls the UseX() of every family whose element type (newNode,
-        newValue) or call op (newReq) it writes; `files` (the flat package, name -> text) gets the
-        calls, as useX() (gen/gosplit resolves them to rt.UseX)."""
+        """Emit Go family-registration stubs in internal/rt and inject calls into generated constructors."""
         fn = {f: "use" + "".join(w.capitalize() for w in _ident(f).split("_")) for f in self.order if f != CORE}
         L = ["// Code generated by gen/gk_fam.py. DO NOT EDIT.", "",
              "//go:build gkstatic", "",
@@ -371,12 +413,12 @@ class Families:
         L += [f"extern void gk_use_{_ident(f)}(void);" for f in fn]
         L += ["static void gk_go_use(void *f) { ((void (*)(void))f)(); }", "*/",
               "import \"C\"", "", "import (", "\t\"sync/atomic\"", "\t\"unsafe\"", ")", "",
-              "// The component families a program has linked in (docs/GO.md section 8).", "var ("]
+              "// Tracks which component families have already been registered in this process.", "var ("]
         L += [f"\t{name}Done atomic.Bool" for name in fn.values()]
         L += [")", ""]
         for f, name in fn.items():
             U = "U" + name[1:]
-            L += [f"// {U} links GPUI-kit's {f} family into the program and registers it with the library.",
+            L += [f"// {U} forces linking and registers the {f} component family once.",
                   f"func {U}() {{",
                   f"\tif !{name}Done.Load() {{",
                   f"\t\t{name}Done.Store(true)",
@@ -384,14 +426,12 @@ class Families:
                   "\t}", "}", ""]
         os.makedirs(rt_out, exist_ok=True)
         _write(os.path.join(rt_out, "gen_use.go"), "\n".join(L))
-        # The default build loads the shared library, which holds every family and registers them
-        # all as it loads (rt_lib_dyn.go): there each UseX() is empty, and the compiler drops the call.
         D = ["// Code generated by gen/gk_fam.py. DO NOT EDIT.", "",
              "//go:build !gkstatic", "",
              "package rt", "",
-             "// Without gkstatic the shared library holds every component family (docs/GO.md section 8).", ""]
+             "// In dynamic builds the shared library registers all component families at startup.", ""]
         for f, name in fn.items():
-            D += [f"// U{name[1:]} does nothing: the shared library holds GPUI-kit's {f} family.",
+            D += [f"// U{name[1:]} is a no-op in dynamic builds because the shared library includes {f}.",
                   f"func U{name[1:]}() {{}}", ""]
         _write(os.path.join(rt_out, "gen_use_dyn.go"), "\n".join(D))
         for name in sorted(files):
@@ -400,6 +440,7 @@ class Families:
         return {name: "U" + name[1:] for name in fn.values()}
 
     def _go_inject(self, text, fn):
+        """Insert `use<Family>()` registration calls at the top of generated Go functions that emit non-core opcodes."""
         lines = text.split("\n")
         out, i = [], 0
         while i < len(lines):
@@ -427,7 +468,7 @@ class Families:
 
 
 class _Line(str):
-    """A generated line and the item it was written for (gk_rust.Rust.where), kept as lines move."""
+    pass
 
 
 def _ln(text, key=None):

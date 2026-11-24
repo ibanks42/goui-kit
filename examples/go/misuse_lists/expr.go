@@ -1,9 +1,5 @@
-// The misuse_lists modes of an expression closure given to an input's step
-// (gk.NewInputState(cx).StepBy("x * 2"), upstream's NumberStep::ByValue).
-//
-//	GK_NEG=expr-syntax an expression closure that does not parse: must stop
-//	GK_NEG=expr-arg    an expression that uses an argument the closure is not handed: must stop
-//	GK_NEG=expr-func   an expression that calls a function with the wrong arguments: must stop
+// Expression-parser misuse cases registered into misuse_lists: syntax errors,
+// out-of-range argument names, and wrong function arity.
 package main
 
 import (

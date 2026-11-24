@@ -12,7 +12,7 @@ type CarouselEl struct{ rt.ElAnimatableElement }
 
 // Creates a Carousel bound to `state`.
 //
-// Carousel is <gpui_kit::component::carousel::Carousel>::new.
+// Carousel calls <gpui_kit::component::carousel::Carousel>::new.
 func Carousel(id gk.ID, state CarouselState, st ...gk.Style) CarouselEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(612)
@@ -25,7 +25,7 @@ func Carousel(id gk.ID, state CarouselState, st ...gk.Style) CarouselEl {
 
 // Sets the name announced for the carousel region.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::Carousel>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::Carousel>::accessibility_label.
 func (e CarouselEl) AccessibilityLabel(label string) CarouselEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -34,17 +34,21 @@ func (e CarouselEl) AccessibilityLabel(label string) CarouselEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselEl) PopoverStyle() CarouselEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselEl) RoundedFullStyle() CarouselEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -53,16 +57,18 @@ func (e CarouselEl) RoundedFullStyle() CarouselEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselEl) FocusRingStyle() CarouselEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -75,24 +81,32 @@ func (e CarouselEl) FocusRingStyle() CarouselEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselEl) KeepTextSelection(id gk.ID) CarouselEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselEl) BorderE(width gk.Length) CarouselEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselEl) BorderS(width gk.Length) CarouselEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -100,121 +114,163 @@ func (e CarouselEl) BorderS(width gk.Length) CarouselEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselEl) FlexRowDir() CarouselEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselEl) InsetE(length gk.Length) CarouselEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselEl) InsetS(length gk.Length) CarouselEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselEl) JustifyFlexEnd() CarouselEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselEl) JustifyFlexStart() CarouselEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselEl) Me(length gk.Length) CarouselEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselEl) Ms(length gk.Length) CarouselEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselEl) Pe(length gk.Length) CarouselEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselEl) Ps(length gk.Length) CarouselEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselEl) RoundedE(radius gk.Length) CarouselEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselEl) RoundedS(radius gk.Length) CarouselEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselEl) TextEnd() CarouselEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselEl) TextStart() CarouselEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselEl) CornerRadii(radius gk.Corners) CarouselEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselEl) DebugBlue() CarouselEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselEl) DebugFocused(focusHandle gk.FocusHandle) CarouselEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselEl) DebugGreen() CarouselEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselEl) DebugPink() CarouselEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselEl) DebugRed() CarouselEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselEl) DebugYellow() CarouselEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselEl) FontBlack() CarouselEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselEl) FontBold() CarouselEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselEl) FontExtrabold() CarouselEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselEl) FontExtralight() CarouselEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselEl) FontLight() CarouselEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselEl) FontMedium() CarouselEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselEl) FontNormal() CarouselEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselEl) FontSemibold() CarouselEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselEl) FontThin() CarouselEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -223,18 +279,23 @@ func (e CarouselEl) FontThin() CarouselEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselEl) HFlex() CarouselEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselEl) Margins(margins gk.EdgesInto) CarouselEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselEl) Paddings(paddings gk.EdgesInto) CarouselEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselEl) RefineStyle(style gk.StyleRefinement) CarouselEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -244,38 +305,51 @@ func (e CarouselEl) RefineStyle(style gk.StyleRefinement) CarouselEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselEl) VFlex() CarouselEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e CarouselEl) Text(s string) CarouselEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselEl) ChildView(v gk.View) CarouselEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselEl) Child(child gk.Element) CarouselEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselEl) Children(children ...gk.Element) CarouselEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselEl) Style(st ...gk.Style) CarouselEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselEl) AspectRatio(ratio float32) CarouselEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselEl) Bg(fill gk.Fill) CarouselEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselEl) Border(length gk.Length) CarouselEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -283,12 +357,16 @@ func (e CarouselEl) Border(length gk.Length) CarouselEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselEl) BorderB(length gk.Length) CarouselEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselEl) BorderColor(borderColor gk.Color) CarouselEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -296,6 +374,8 @@ func (e CarouselEl) BorderColor(borderColor gk.Color) CarouselEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselEl) BorderL(length gk.Length) CarouselEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -303,6 +383,8 @@ func (e CarouselEl) BorderL(length gk.Length) CarouselEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselEl) BorderR(length gk.Length) CarouselEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -310,6 +392,8 @@ func (e CarouselEl) BorderR(length gk.Length) CarouselEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselEl) BorderT(length gk.Length) CarouselEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -317,6 +401,8 @@ func (e CarouselEl) BorderT(length gk.Length) CarouselEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselEl) BorderX(length gk.Length) CarouselEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -324,6 +410,8 @@ func (e CarouselEl) BorderX(length gk.Length) CarouselEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselEl) BorderY(length gk.Length) CarouselEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -331,21 +419,31 @@ func (e CarouselEl) BorderY(length gk.Length) CarouselEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselEl) Bottom(length gk.Length) CarouselEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselEl) ColEnd(end int16) CarouselEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselEl) ColSpan(span uint16) CarouselEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselEl) ColStart(start int16) CarouselEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselEl) Cursor(cursor gk.CursorStyle) CarouselEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -353,30 +451,42 @@ func (e CarouselEl) Cursor(cursor gk.CursorStyle) CarouselEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselEl) FlexBasis(basis gk.Length) CarouselEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselEl) FlexGrow(grow float32) CarouselEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselEl) FlexShrink(shrink float32) CarouselEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselEl) Font(font gk.Font) CarouselEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselEl) FontFamily(familyName string) CarouselEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselEl) FontFeatures(features gk.FontFeatures) CarouselEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -385,26 +495,38 @@ func (e CarouselEl) FontFeatures(features gk.FontFeatures) CarouselEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselEl) FontWeight(weight gk.FontWeight) CarouselEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselEl) Gap(length gk.Length) CarouselEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselEl) GapX(length gk.Length) CarouselEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselEl) GapY(length gk.Length) CarouselEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselEl) GridCols(cols uint16) CarouselEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselEl) GridColsMaxContent(cols uint16) CarouselEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -412,15 +534,21 @@ func (e CarouselEl) GridColsMaxContent(cols uint16) CarouselEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselEl) GridColsMinContent(cols uint16) CarouselEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselEl) GridRows(rows uint16) CarouselEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselEl) GridRowsMaxContent(rows uint16) CarouselEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -428,121 +556,179 @@ func (e CarouselEl) GridRowsMaxContent(rows uint16) CarouselEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselEl) GridRowsMinContent(rows uint16) CarouselEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselEl) H(length gk.Length) CarouselEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselEl) Inset(length gk.Length) CarouselEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselEl) Left(length gk.Length) CarouselEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselEl) LineClamp(lines int) CarouselEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselEl) LineHeight(lineHeight gk.Length) CarouselEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselEl) M(length gk.Length) CarouselEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselEl) MaxH(length gk.Length) CarouselEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselEl) MaxSize(length gk.Length) CarouselEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselEl) MaxW(length gk.Length) CarouselEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselEl) Mb(length gk.Length) CarouselEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselEl) MinH(length gk.Length) CarouselEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselEl) MinSize(length gk.Length) CarouselEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselEl) MinW(length gk.Length) CarouselEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselEl) Ml(length gk.Length) CarouselEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselEl) Mr(length gk.Length) CarouselEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselEl) Mt(length gk.Length) CarouselEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselEl) Mx(length gk.Length) CarouselEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselEl) My(length gk.Length) CarouselEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselEl) Opacity(opacity float32) CarouselEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselEl) P(length gk.Length) CarouselEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselEl) Pb(length gk.Length) CarouselEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselEl) Pl(length gk.Length) CarouselEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselEl) Pr(length gk.Length) CarouselEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselEl) Pt(length gk.Length) CarouselEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselEl) Px(length gk.Length) CarouselEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselEl) Py(length gk.Length) CarouselEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselEl) Right(length gk.Length) CarouselEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselEl) Rounded(length gk.Length) CarouselEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -550,6 +736,8 @@ func (e CarouselEl) Rounded(length gk.Length) CarouselEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselEl) RoundedB(length gk.Length) CarouselEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -557,6 +745,8 @@ func (e CarouselEl) RoundedB(length gk.Length) CarouselEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselEl) RoundedBl(length gk.Length) CarouselEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -564,6 +754,8 @@ func (e CarouselEl) RoundedBl(length gk.Length) CarouselEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselEl) RoundedBr(length gk.Length) CarouselEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -571,6 +763,8 @@ func (e CarouselEl) RoundedBr(length gk.Length) CarouselEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselEl) RoundedL(length gk.Length) CarouselEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -578,6 +772,8 @@ func (e CarouselEl) RoundedL(length gk.Length) CarouselEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselEl) RoundedR(length gk.Length) CarouselEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -585,6 +781,8 @@ func (e CarouselEl) RoundedR(length gk.Length) CarouselEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselEl) RoundedT(length gk.Length) CarouselEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -592,6 +790,8 @@ func (e CarouselEl) RoundedT(length gk.Length) CarouselEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselEl) RoundedTl(length gk.Length) CarouselEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -599,39 +799,55 @@ func (e CarouselEl) RoundedTl(length gk.Length) CarouselEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselEl) RoundedTr(length gk.Length) CarouselEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselEl) RowEnd(end int16) CarouselEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselEl) RowSpan(span uint16) CarouselEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselEl) RowStart(start int16) CarouselEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselEl) ScrollbarWidth(width gk.Length) CarouselEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselEl) Shadow(shadows []gk.BoxShadow) CarouselEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselEl) Size(length gk.Length) CarouselEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselEl) TextAlign(align gk.TextAlign) CarouselEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -640,23 +856,31 @@ func (e CarouselEl) TextAlign(align gk.TextAlign) CarouselEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselEl) TextBg(bg gk.Color) CarouselEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselEl) TextColor(color gk.Color) CarouselEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselEl) TextDecorationColor(color gk.Color) CarouselEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselEl) TextOverflow(overflow gk.TextOverflow) CarouselEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -665,6 +889,8 @@ func (e CarouselEl) TextOverflow(overflow gk.TextOverflow) CarouselEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselEl) TextSize(size gk.Length) CarouselEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -672,11 +898,16 @@ func (e CarouselEl) TextSize(size gk.Length) CarouselEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselEl) Top(length gk.Length) CarouselEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselEl) W(length gk.Length) CarouselEl { tStyledW(rt.N(e.Core), length); return e }
 
+// FocusRing calls <E as gpui_kit::base::FocusableExt>::focus_ring.
 func (e CarouselEl) FocusRing(enabled bool) CarouselEl {
 	tFocusableExtFocusRing(rt.N(e.Core), enabled)
 	return e
@@ -687,7 +918,7 @@ type CarouselContentEl struct{ rt.ElAnimatableElement }
 
 // Creates content bound to `state`.
 //
-// CarouselContent is <gpui_kit::component::carousel::CarouselContent>::new.
+// CarouselContent calls <gpui_kit::component::carousel::CarouselContent>::new.
 func CarouselContent(state CarouselState, st ...gk.Style) CarouselContentEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(613)
@@ -702,7 +933,7 @@ func CarouselContent(state CarouselState, st ...gk.Style) CarouselContentEl {
 // Use this for paired Carousel spacing such as a negative leading margin. The `Styled`
 // implementation applies to the clipped viewport itself.
 //
-// TrackStyle is <gpui_kit::component::carousel::CarouselContent>::track_style.
+// TrackStyle calls <gpui_kit::component::carousel::CarouselContent>::track_style.
 func (e CarouselContentEl) TrackStyle(style gk.StyleRefinement) CarouselContentEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -711,20 +942,24 @@ func (e CarouselContentEl) TrackStyle(style gk.StyleRefinement) CarouselContentE
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselContentEl) PopoverStyle() CarouselContentEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselContentEl) RoundedFullStyle() CarouselContentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -733,16 +968,18 @@ func (e CarouselContentEl) RoundedFullStyle() CarouselContentEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselContentEl) FocusRingStyle() CarouselContentEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -755,24 +992,32 @@ func (e CarouselContentEl) FocusRingStyle() CarouselContentEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselContentEl) KeepTextSelection(id gk.ID) CarouselContentEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselContentEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselContentEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselContentEl) BorderE(width gk.Length) CarouselContentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselContentEl) BorderS(width gk.Length) CarouselContentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -780,151 +1025,193 @@ func (e CarouselContentEl) BorderS(width gk.Length) CarouselContentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselContentEl) FlexRowDir() CarouselContentEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselContentEl) InsetE(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselContentEl) InsetS(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselContentEl) JustifyFlexEnd() CarouselContentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselContentEl) JustifyFlexStart() CarouselContentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselContentEl) Me(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselContentEl) Ms(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselContentEl) Pe(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselContentEl) Ps(length gk.Length) CarouselContentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselContentEl) RoundedE(radius gk.Length) CarouselContentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselContentEl) RoundedS(radius gk.Length) CarouselContentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselContentEl) TextEnd() CarouselContentEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselContentEl) TextStart() CarouselContentEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselContentEl) CornerRadii(radius gk.Corners) CarouselContentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselContentEl) DebugBlue() CarouselContentEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselContentEl) DebugFocused(focusHandle gk.FocusHandle) CarouselContentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselContentEl) DebugGreen() CarouselContentEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselContentEl) DebugPink() CarouselContentEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselContentEl) DebugRed() CarouselContentEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselContentEl) DebugYellow() CarouselContentEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselContentEl) FontBlack() CarouselContentEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselContentEl) FontBold() CarouselContentEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselContentEl) FontExtrabold() CarouselContentEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselContentEl) FontExtralight() CarouselContentEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselContentEl) FontLight() CarouselContentEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselContentEl) FontMedium() CarouselContentEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselContentEl) FontNormal() CarouselContentEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselContentEl) FontSemibold() CarouselContentEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselContentEl) FontThin() CarouselContentEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -933,18 +1220,23 @@ func (e CarouselContentEl) FontThin() CarouselContentEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselContentEl) HFlex() CarouselContentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselContentEl) Margins(margins gk.EdgesInto) CarouselContentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselContentEl) Paddings(paddings gk.EdgesInto) CarouselContentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselContentEl) RefineStyle(style gk.StyleRefinement) CarouselContentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -954,47 +1246,60 @@ func (e CarouselContentEl) RefineStyle(style gk.StyleRefinement) CarouselContent
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselContentEl) VFlex() CarouselContentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e CarouselContentEl) Text(s string) CarouselContentEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselContentEl) ChildView(v gk.View) CarouselContentEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselContentEl) Child(child gk.Element) CarouselContentEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselContentEl) Children(children ...gk.Element) CarouselContentEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselContentEl) Style(st ...gk.Style) CarouselContentEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselContentEl) AspectRatio(ratio float32) CarouselContentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselContentEl) Bg(fill gk.Fill) CarouselContentEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselContentEl) Border(length gk.Length) CarouselContentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1002,12 +1307,16 @@ func (e CarouselContentEl) Border(length gk.Length) CarouselContentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselContentEl) BorderB(length gk.Length) CarouselContentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselContentEl) BorderColor(borderColor gk.Color) CarouselContentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1015,6 +1324,8 @@ func (e CarouselContentEl) BorderColor(borderColor gk.Color) CarouselContentEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselContentEl) BorderL(length gk.Length) CarouselContentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1022,6 +1333,8 @@ func (e CarouselContentEl) BorderL(length gk.Length) CarouselContentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselContentEl) BorderR(length gk.Length) CarouselContentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1029,6 +1342,8 @@ func (e CarouselContentEl) BorderR(length gk.Length) CarouselContentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselContentEl) BorderT(length gk.Length) CarouselContentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1036,6 +1351,8 @@ func (e CarouselContentEl) BorderT(length gk.Length) CarouselContentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselContentEl) BorderX(length gk.Length) CarouselContentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1043,6 +1360,8 @@ func (e CarouselContentEl) BorderX(length gk.Length) CarouselContentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselContentEl) BorderY(length gk.Length) CarouselContentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1050,30 +1369,40 @@ func (e CarouselContentEl) BorderY(length gk.Length) CarouselContentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselContentEl) Bottom(length gk.Length) CarouselContentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselContentEl) ColEnd(end int16) CarouselContentEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselContentEl) ColSpan(span uint16) CarouselContentEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselContentEl) ColStart(start int16) CarouselContentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselContentEl) Cursor(cursor gk.CursorStyle) CarouselContentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1081,36 +1410,48 @@ func (e CarouselContentEl) Cursor(cursor gk.CursorStyle) CarouselContentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselContentEl) FlexBasis(basis gk.Length) CarouselContentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselContentEl) FlexGrow(grow float32) CarouselContentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselContentEl) FlexShrink(shrink float32) CarouselContentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselContentEl) Font(font gk.Font) CarouselContentEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselContentEl) FontFamily(familyName string) CarouselContentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselContentEl) FontFeatures(features gk.FontFeatures) CarouselContentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1119,12 +1460,16 @@ func (e CarouselContentEl) FontFeatures(features gk.FontFeatures) CarouselConten
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselContentEl) FontWeight(weight gk.FontWeight) CarouselContentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselContentEl) Gap(length gk.Length) CarouselContentEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1132,6 +1477,8 @@ func (e CarouselContentEl) Gap(length gk.Length) CarouselContentEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselContentEl) GapX(length gk.Length) CarouselContentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1139,18 +1486,24 @@ func (e CarouselContentEl) GapX(length gk.Length) CarouselContentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselContentEl) GapY(length gk.Length) CarouselContentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselContentEl) GridCols(cols uint16) CarouselContentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselContentEl) GridColsMaxContent(cols uint16) CarouselContentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1158,18 +1511,24 @@ func (e CarouselContentEl) GridColsMaxContent(cols uint16) CarouselContentEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselContentEl) GridColsMinContent(cols uint16) CarouselContentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselContentEl) GridRows(rows uint16) CarouselContentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselContentEl) GridRowsMaxContent(rows uint16) CarouselContentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1177,12 +1536,16 @@ func (e CarouselContentEl) GridRowsMaxContent(rows uint16) CarouselContentEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselContentEl) GridRowsMinContent(rows uint16) CarouselContentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselContentEl) H(length gk.Length) CarouselContentEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1190,6 +1553,8 @@ func (e CarouselContentEl) H(length gk.Length) CarouselContentEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselContentEl) Inset(length gk.Length) CarouselContentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1197,6 +1562,8 @@ func (e CarouselContentEl) Inset(length gk.Length) CarouselContentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselContentEl) Left(length gk.Length) CarouselContentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1204,36 +1571,48 @@ func (e CarouselContentEl) Left(length gk.Length) CarouselContentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselContentEl) LineClamp(lines int) CarouselContentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselContentEl) LineHeight(lineHeight gk.Length) CarouselContentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselContentEl) M(length gk.Length) CarouselContentEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselContentEl) MaxH(length gk.Length) CarouselContentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselContentEl) MaxSize(length gk.Length) CarouselContentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselContentEl) MaxW(length gk.Length) CarouselContentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1241,24 +1620,32 @@ func (e CarouselContentEl) MaxW(length gk.Length) CarouselContentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselContentEl) Mb(length gk.Length) CarouselContentEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselContentEl) MinH(length gk.Length) CarouselContentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselContentEl) MinSize(length gk.Length) CarouselContentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselContentEl) MinW(length gk.Length) CarouselContentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1266,6 +1653,8 @@ func (e CarouselContentEl) MinW(length gk.Length) CarouselContentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselContentEl) Ml(length gk.Length) CarouselContentEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1273,6 +1662,8 @@ func (e CarouselContentEl) Ml(length gk.Length) CarouselContentEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselContentEl) Mr(length gk.Length) CarouselContentEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1280,6 +1671,8 @@ func (e CarouselContentEl) Mr(length gk.Length) CarouselContentEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselContentEl) Mt(length gk.Length) CarouselContentEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1287,6 +1680,8 @@ func (e CarouselContentEl) Mt(length gk.Length) CarouselContentEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselContentEl) Mx(length gk.Length) CarouselContentEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1294,18 +1689,24 @@ func (e CarouselContentEl) Mx(length gk.Length) CarouselContentEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselContentEl) My(length gk.Length) CarouselContentEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselContentEl) Opacity(opacity float32) CarouselContentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselContentEl) P(length gk.Length) CarouselContentEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1313,6 +1714,8 @@ func (e CarouselContentEl) P(length gk.Length) CarouselContentEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselContentEl) Pb(length gk.Length) CarouselContentEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1320,6 +1723,8 @@ func (e CarouselContentEl) Pb(length gk.Length) CarouselContentEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselContentEl) Pl(length gk.Length) CarouselContentEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1327,6 +1732,8 @@ func (e CarouselContentEl) Pl(length gk.Length) CarouselContentEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselContentEl) Pr(length gk.Length) CarouselContentEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1334,6 +1741,8 @@ func (e CarouselContentEl) Pr(length gk.Length) CarouselContentEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselContentEl) Pt(length gk.Length) CarouselContentEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1341,6 +1750,8 @@ func (e CarouselContentEl) Pt(length gk.Length) CarouselContentEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselContentEl) Px(length gk.Length) CarouselContentEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1348,6 +1759,8 @@ func (e CarouselContentEl) Px(length gk.Length) CarouselContentEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselContentEl) Py(length gk.Length) CarouselContentEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1355,12 +1768,16 @@ func (e CarouselContentEl) Py(length gk.Length) CarouselContentEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselContentEl) Right(length gk.Length) CarouselContentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselContentEl) Rounded(length gk.Length) CarouselContentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1368,6 +1785,8 @@ func (e CarouselContentEl) Rounded(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselContentEl) RoundedB(length gk.Length) CarouselContentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1375,6 +1794,8 @@ func (e CarouselContentEl) RoundedB(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselContentEl) RoundedBl(length gk.Length) CarouselContentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1382,6 +1803,8 @@ func (e CarouselContentEl) RoundedBl(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselContentEl) RoundedBr(length gk.Length) CarouselContentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1389,6 +1812,8 @@ func (e CarouselContentEl) RoundedBr(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselContentEl) RoundedL(length gk.Length) CarouselContentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1396,6 +1821,8 @@ func (e CarouselContentEl) RoundedL(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselContentEl) RoundedR(length gk.Length) CarouselContentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1403,6 +1830,8 @@ func (e CarouselContentEl) RoundedR(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselContentEl) RoundedT(length gk.Length) CarouselContentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1410,6 +1839,8 @@ func (e CarouselContentEl) RoundedT(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselContentEl) RoundedTl(length gk.Length) CarouselContentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1417,24 +1848,32 @@ func (e CarouselContentEl) RoundedTl(length gk.Length) CarouselContentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselContentEl) RoundedTr(length gk.Length) CarouselContentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselContentEl) RowEnd(end int16) CarouselContentEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselContentEl) RowSpan(span uint16) CarouselContentEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselContentEl) RowStart(start int16) CarouselContentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1444,24 +1883,32 @@ func (e CarouselContentEl) RowStart(start int16) CarouselContentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselContentEl) ScrollbarWidth(width gk.Length) CarouselContentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselContentEl) Shadow(shadows []gk.BoxShadow) CarouselContentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselContentEl) Size(length gk.Length) CarouselContentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselContentEl) TextAlign(align gk.TextAlign) CarouselContentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1470,6 +1917,8 @@ func (e CarouselContentEl) TextAlign(align gk.TextAlign) CarouselContentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselContentEl) TextBg(bg gk.Color) CarouselContentEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1478,18 +1927,24 @@ func (e CarouselContentEl) TextBg(bg gk.Color) CarouselContentEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselContentEl) TextColor(color gk.Color) CarouselContentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselContentEl) TextDecorationColor(color gk.Color) CarouselContentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselContentEl) TextOverflow(overflow gk.TextOverflow) CarouselContentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1498,6 +1953,8 @@ func (e CarouselContentEl) TextOverflow(overflow gk.TextOverflow) CarouselConten
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselContentEl) TextSize(size gk.Length) CarouselContentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1505,12 +1962,16 @@ func (e CarouselContentEl) TextSize(size gk.Length) CarouselContentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselContentEl) Top(length gk.Length) CarouselContentEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselContentEl) W(length gk.Length) CarouselContentEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -1521,7 +1982,7 @@ type CarouselItemEl struct{ rt.ElAnimatableElement }
 
 // Creates the item at the zero-based `index` used by `state`.
 //
-// CarouselItem is <gpui_kit::component::carousel::CarouselItem>::new.
+// CarouselItem calls <gpui_kit::component::carousel::CarouselItem>::new.
 func CarouselItem(id gk.ID, index int, state CarouselState, st ...gk.Style) CarouselItemEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(614)
@@ -1535,7 +1996,7 @@ func CarouselItem(id gk.ID, index int, state CarouselState, st ...gk.Style) Caro
 
 // Replaces the generated "Slide N of M" accessibility label.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::CarouselItem>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::CarouselItem>::accessibility_label.
 func (e CarouselItemEl) AccessibilityLabel(label string) CarouselItemEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -1544,20 +2005,24 @@ func (e CarouselItemEl) AccessibilityLabel(label string) CarouselItemEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselItemEl) PopoverStyle() CarouselItemEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselItemEl) RoundedFullStyle() CarouselItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1566,16 +2031,18 @@ func (e CarouselItemEl) RoundedFullStyle() CarouselItemEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselItemEl) FocusRingStyle() CarouselItemEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1588,24 +2055,32 @@ func (e CarouselItemEl) FocusRingStyle() CarouselItemEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselItemEl) KeepTextSelection(id gk.ID) CarouselItemEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselItemEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselItemEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselItemEl) BorderE(width gk.Length) CarouselItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselItemEl) BorderS(width gk.Length) CarouselItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1613,133 +2088,175 @@ func (e CarouselItemEl) BorderS(width gk.Length) CarouselItemEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselItemEl) FlexRowDir() CarouselItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselItemEl) InsetE(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselItemEl) InsetS(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselItemEl) JustifyFlexEnd() CarouselItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselItemEl) JustifyFlexStart() CarouselItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselItemEl) Me(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselItemEl) Ms(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselItemEl) Pe(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselItemEl) Ps(length gk.Length) CarouselItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselItemEl) RoundedE(radius gk.Length) CarouselItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselItemEl) RoundedS(radius gk.Length) CarouselItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselItemEl) TextEnd() CarouselItemEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselItemEl) TextStart() CarouselItemEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselItemEl) CornerRadii(radius gk.Corners) CarouselItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselItemEl) DebugBlue() CarouselItemEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselItemEl) DebugFocused(focusHandle gk.FocusHandle) CarouselItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselItemEl) DebugGreen() CarouselItemEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselItemEl) DebugPink() CarouselItemEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselItemEl) DebugRed() CarouselItemEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselItemEl) DebugYellow() CarouselItemEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselItemEl) FontBlack() CarouselItemEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselItemEl) FontBold() CarouselItemEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselItemEl) FontExtrabold() CarouselItemEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselItemEl) FontExtralight() CarouselItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselItemEl) FontLight() CarouselItemEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselItemEl) FontMedium() CarouselItemEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselItemEl) FontNormal() CarouselItemEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselItemEl) FontSemibold() CarouselItemEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselItemEl) FontThin() CarouselItemEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1748,18 +2265,23 @@ func (e CarouselItemEl) FontThin() CarouselItemEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselItemEl) HFlex() CarouselItemEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselItemEl) Margins(margins gk.EdgesInto) CarouselItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselItemEl) Paddings(paddings gk.EdgesInto) CarouselItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselItemEl) RefineStyle(style gk.StyleRefinement) CarouselItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1769,38 +2291,51 @@ func (e CarouselItemEl) RefineStyle(style gk.StyleRefinement) CarouselItemEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselItemEl) VFlex() CarouselItemEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e CarouselItemEl) Text(s string) CarouselItemEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselItemEl) ChildView(v gk.View) CarouselItemEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselItemEl) Child(child gk.Element) CarouselItemEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselItemEl) Children(children ...gk.Element) CarouselItemEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselItemEl) Style(st ...gk.Style) CarouselItemEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselItemEl) AspectRatio(ratio float32) CarouselItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselItemEl) Bg(fill gk.Fill) CarouselItemEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselItemEl) Border(length gk.Length) CarouselItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1808,12 +2343,16 @@ func (e CarouselItemEl) Border(length gk.Length) CarouselItemEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselItemEl) BorderB(length gk.Length) CarouselItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselItemEl) BorderColor(borderColor gk.Color) CarouselItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1821,6 +2360,8 @@ func (e CarouselItemEl) BorderColor(borderColor gk.Color) CarouselItemEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselItemEl) BorderL(length gk.Length) CarouselItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1828,6 +2369,8 @@ func (e CarouselItemEl) BorderL(length gk.Length) CarouselItemEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselItemEl) BorderR(length gk.Length) CarouselItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1835,6 +2378,8 @@ func (e CarouselItemEl) BorderR(length gk.Length) CarouselItemEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselItemEl) BorderT(length gk.Length) CarouselItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1842,6 +2387,8 @@ func (e CarouselItemEl) BorderT(length gk.Length) CarouselItemEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselItemEl) BorderX(length gk.Length) CarouselItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1849,6 +2396,8 @@ func (e CarouselItemEl) BorderX(length gk.Length) CarouselItemEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselItemEl) BorderY(length gk.Length) CarouselItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1856,27 +2405,37 @@ func (e CarouselItemEl) BorderY(length gk.Length) CarouselItemEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselItemEl) Bottom(length gk.Length) CarouselItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselItemEl) ColEnd(end int16) CarouselItemEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselItemEl) ColSpan(span uint16) CarouselItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselItemEl) ColStart(start int16) CarouselItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselItemEl) Cursor(cursor gk.CursorStyle) CarouselItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1884,33 +2443,45 @@ func (e CarouselItemEl) Cursor(cursor gk.CursorStyle) CarouselItemEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselItemEl) FlexBasis(basis gk.Length) CarouselItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselItemEl) FlexGrow(grow float32) CarouselItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselItemEl) FlexShrink(shrink float32) CarouselItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselItemEl) Font(font gk.Font) CarouselItemEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselItemEl) FontFamily(familyName string) CarouselItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselItemEl) FontFeatures(features gk.FontFeatures) CarouselItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1919,12 +2490,16 @@ func (e CarouselItemEl) FontFeatures(features gk.FontFeatures) CarouselItemEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselItemEl) FontWeight(weight gk.FontWeight) CarouselItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselItemEl) Gap(length gk.Length) CarouselItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1932,6 +2507,8 @@ func (e CarouselItemEl) Gap(length gk.Length) CarouselItemEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselItemEl) GapX(length gk.Length) CarouselItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1939,18 +2516,24 @@ func (e CarouselItemEl) GapX(length gk.Length) CarouselItemEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselItemEl) GapY(length gk.Length) CarouselItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselItemEl) GridCols(cols uint16) CarouselItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselItemEl) GridColsMaxContent(cols uint16) CarouselItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1958,18 +2541,24 @@ func (e CarouselItemEl) GridColsMaxContent(cols uint16) CarouselItemEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselItemEl) GridColsMinContent(cols uint16) CarouselItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselItemEl) GridRows(rows uint16) CarouselItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselItemEl) GridRowsMaxContent(rows uint16) CarouselItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1977,16 +2566,22 @@ func (e CarouselItemEl) GridRowsMaxContent(rows uint16) CarouselItemEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselItemEl) GridRowsMinContent(rows uint16) CarouselItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselItemEl) H(length gk.Length) CarouselItemEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselItemEl) Inset(length gk.Length) CarouselItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1994,6 +2589,8 @@ func (e CarouselItemEl) Inset(length gk.Length) CarouselItemEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselItemEl) Left(length gk.Length) CarouselItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2001,33 +2598,45 @@ func (e CarouselItemEl) Left(length gk.Length) CarouselItemEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselItemEl) LineClamp(lines int) CarouselItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselItemEl) LineHeight(lineHeight gk.Length) CarouselItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselItemEl) M(length gk.Length) CarouselItemEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselItemEl) MaxH(length gk.Length) CarouselItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselItemEl) MaxSize(length gk.Length) CarouselItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselItemEl) MaxW(length gk.Length) CarouselItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2035,24 +2644,32 @@ func (e CarouselItemEl) MaxW(length gk.Length) CarouselItemEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselItemEl) Mb(length gk.Length) CarouselItemEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselItemEl) MinH(length gk.Length) CarouselItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselItemEl) MinSize(length gk.Length) CarouselItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselItemEl) MinW(length gk.Length) CarouselItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2060,6 +2677,8 @@ func (e CarouselItemEl) MinW(length gk.Length) CarouselItemEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselItemEl) Ml(length gk.Length) CarouselItemEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2067,6 +2686,8 @@ func (e CarouselItemEl) Ml(length gk.Length) CarouselItemEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselItemEl) Mr(length gk.Length) CarouselItemEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2074,6 +2695,8 @@ func (e CarouselItemEl) Mr(length gk.Length) CarouselItemEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselItemEl) Mt(length gk.Length) CarouselItemEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2081,6 +2704,8 @@ func (e CarouselItemEl) Mt(length gk.Length) CarouselItemEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselItemEl) Mx(length gk.Length) CarouselItemEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2088,22 +2713,30 @@ func (e CarouselItemEl) Mx(length gk.Length) CarouselItemEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselItemEl) My(length gk.Length) CarouselItemEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselItemEl) Opacity(opacity float32) CarouselItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselItemEl) P(length gk.Length) CarouselItemEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselItemEl) Pb(length gk.Length) CarouselItemEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2111,6 +2744,8 @@ func (e CarouselItemEl) Pb(length gk.Length) CarouselItemEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselItemEl) Pl(length gk.Length) CarouselItemEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2118,6 +2753,8 @@ func (e CarouselItemEl) Pl(length gk.Length) CarouselItemEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselItemEl) Pr(length gk.Length) CarouselItemEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2125,6 +2762,8 @@ func (e CarouselItemEl) Pr(length gk.Length) CarouselItemEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselItemEl) Pt(length gk.Length) CarouselItemEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2132,6 +2771,8 @@ func (e CarouselItemEl) Pt(length gk.Length) CarouselItemEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselItemEl) Px(length gk.Length) CarouselItemEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2139,6 +2780,8 @@ func (e CarouselItemEl) Px(length gk.Length) CarouselItemEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselItemEl) Py(length gk.Length) CarouselItemEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2146,12 +2789,16 @@ func (e CarouselItemEl) Py(length gk.Length) CarouselItemEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselItemEl) Right(length gk.Length) CarouselItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselItemEl) Rounded(length gk.Length) CarouselItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2159,6 +2806,8 @@ func (e CarouselItemEl) Rounded(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselItemEl) RoundedB(length gk.Length) CarouselItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2166,6 +2815,8 @@ func (e CarouselItemEl) RoundedB(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselItemEl) RoundedBl(length gk.Length) CarouselItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2173,6 +2824,8 @@ func (e CarouselItemEl) RoundedBl(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselItemEl) RoundedBr(length gk.Length) CarouselItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2180,6 +2833,8 @@ func (e CarouselItemEl) RoundedBr(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselItemEl) RoundedL(length gk.Length) CarouselItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2187,6 +2842,8 @@ func (e CarouselItemEl) RoundedL(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselItemEl) RoundedR(length gk.Length) CarouselItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2194,6 +2851,8 @@ func (e CarouselItemEl) RoundedR(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselItemEl) RoundedT(length gk.Length) CarouselItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2201,6 +2860,8 @@ func (e CarouselItemEl) RoundedT(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselItemEl) RoundedTl(length gk.Length) CarouselItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2208,21 +2869,29 @@ func (e CarouselItemEl) RoundedTl(length gk.Length) CarouselItemEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselItemEl) RoundedTr(length gk.Length) CarouselItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselItemEl) RowEnd(end int16) CarouselItemEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselItemEl) RowSpan(span uint16) CarouselItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselItemEl) RowStart(start int16) CarouselItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2232,24 +2901,32 @@ func (e CarouselItemEl) RowStart(start int16) CarouselItemEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselItemEl) ScrollbarWidth(width gk.Length) CarouselItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselItemEl) Shadow(shadows []gk.BoxShadow) CarouselItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselItemEl) Size(length gk.Length) CarouselItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselItemEl) TextAlign(align gk.TextAlign) CarouselItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2258,23 +2935,31 @@ func (e CarouselItemEl) TextAlign(align gk.TextAlign) CarouselItemEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselItemEl) TextBg(bg gk.Color) CarouselItemEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselItemEl) TextColor(color gk.Color) CarouselItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselItemEl) TextDecorationColor(color gk.Color) CarouselItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselItemEl) TextOverflow(overflow gk.TextOverflow) CarouselItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2283,6 +2968,8 @@ func (e CarouselItemEl) TextOverflow(overflow gk.TextOverflow) CarouselItemEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselItemEl) TextSize(size gk.Length) CarouselItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2290,12 +2977,16 @@ func (e CarouselItemEl) TextSize(size gk.Length) CarouselItemEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselItemEl) Top(length gk.Length) CarouselItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselItemEl) W(length gk.Length) CarouselItemEl { tStyledW(rt.N(e.Core), length); return e }
 
 // CarouselNextEl is gpui_kit::component::carousel::CarouselNext.
@@ -2305,7 +2996,7 @@ type CarouselNextEl struct {
 
 // Creates a next-slide control bound to `state`.
 //
-// CarouselNext is <gpui_kit::component::carousel::CarouselNext>::new.
+// CarouselNext calls <gpui_kit::component::carousel::CarouselNext>::new.
 func CarouselNext(state CarouselState, st ...gk.Style) CarouselNextEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(615)
@@ -2317,7 +3008,7 @@ func CarouselNext(state CarouselState, st ...gk.Style) CarouselNextEl {
 
 // Replaces the generated next-slide accessibility label and tooltip.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::CarouselNext>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::CarouselNext>::accessibility_label.
 func (e CarouselNextEl) AccessibilityLabel(label string) CarouselNextEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -2326,20 +3017,24 @@ func (e CarouselNextEl) AccessibilityLabel(label string) CarouselNextEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselNextEl) PopoverStyle() CarouselNextEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselNextEl) RoundedFullStyle() CarouselNextEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2348,16 +3043,18 @@ func (e CarouselNextEl) RoundedFullStyle() CarouselNextEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselNextEl) FocusRingStyle() CarouselNextEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2370,24 +3067,32 @@ func (e CarouselNextEl) FocusRingStyle() CarouselNextEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselNextEl) KeepTextSelection(id gk.ID) CarouselNextEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselNextEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselNextEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselNextEl) BorderE(width gk.Length) CarouselNextEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselNextEl) BorderS(width gk.Length) CarouselNextEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2395,133 +3100,175 @@ func (e CarouselNextEl) BorderS(width gk.Length) CarouselNextEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselNextEl) FlexRowDir() CarouselNextEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselNextEl) InsetE(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselNextEl) InsetS(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselNextEl) JustifyFlexEnd() CarouselNextEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselNextEl) JustifyFlexStart() CarouselNextEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselNextEl) Me(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselNextEl) Ms(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselNextEl) Pe(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselNextEl) Ps(length gk.Length) CarouselNextEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselNextEl) RoundedE(radius gk.Length) CarouselNextEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselNextEl) RoundedS(radius gk.Length) CarouselNextEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselNextEl) TextEnd() CarouselNextEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselNextEl) TextStart() CarouselNextEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselNextEl) CornerRadii(radius gk.Corners) CarouselNextEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselNextEl) DebugBlue() CarouselNextEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselNextEl) DebugFocused(focusHandle gk.FocusHandle) CarouselNextEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselNextEl) DebugGreen() CarouselNextEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselNextEl) DebugPink() CarouselNextEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselNextEl) DebugRed() CarouselNextEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselNextEl) DebugYellow() CarouselNextEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselNextEl) FontBlack() CarouselNextEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselNextEl) FontBold() CarouselNextEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselNextEl) FontExtrabold() CarouselNextEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselNextEl) FontExtralight() CarouselNextEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselNextEl) FontLight() CarouselNextEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselNextEl) FontMedium() CarouselNextEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselNextEl) FontNormal() CarouselNextEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselNextEl) FontSemibold() CarouselNextEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselNextEl) FontThin() CarouselNextEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2530,18 +3277,23 @@ func (e CarouselNextEl) FontThin() CarouselNextEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselNextEl) HFlex() CarouselNextEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselNextEl) Margins(margins gk.EdgesInto) CarouselNextEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselNextEl) Paddings(paddings gk.EdgesInto) CarouselNextEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselNextEl) RefineStyle(style gk.StyleRefinement) CarouselNextEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2551,39 +3303,55 @@ func (e CarouselNextEl) RefineStyle(style gk.StyleRefinement) CarouselNextEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselNextEl) VFlex() CarouselNextEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e CarouselNextEl) Large() CarouselNextEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e CarouselNextEl) Small() CarouselNextEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e CarouselNextEl) WithSize(size gk.SizeInto) CarouselNextEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e CarouselNextEl) Xsmall() CarouselNextEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselNextEl) Style(st ...gk.Style) CarouselNextEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselNextEl) AspectRatio(ratio float32) CarouselNextEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselNextEl) Bg(fill gk.Fill) CarouselNextEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselNextEl) Border(length gk.Length) CarouselNextEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2591,12 +3359,16 @@ func (e CarouselNextEl) Border(length gk.Length) CarouselNextEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselNextEl) BorderB(length gk.Length) CarouselNextEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselNextEl) BorderColor(borderColor gk.Color) CarouselNextEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2604,6 +3376,8 @@ func (e CarouselNextEl) BorderColor(borderColor gk.Color) CarouselNextEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselNextEl) BorderL(length gk.Length) CarouselNextEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2611,6 +3385,8 @@ func (e CarouselNextEl) BorderL(length gk.Length) CarouselNextEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselNextEl) BorderR(length gk.Length) CarouselNextEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2618,6 +3394,8 @@ func (e CarouselNextEl) BorderR(length gk.Length) CarouselNextEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselNextEl) BorderT(length gk.Length) CarouselNextEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2625,6 +3403,8 @@ func (e CarouselNextEl) BorderT(length gk.Length) CarouselNextEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselNextEl) BorderX(length gk.Length) CarouselNextEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2632,6 +3412,8 @@ func (e CarouselNextEl) BorderX(length gk.Length) CarouselNextEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselNextEl) BorderY(length gk.Length) CarouselNextEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2639,27 +3421,37 @@ func (e CarouselNextEl) BorderY(length gk.Length) CarouselNextEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselNextEl) Bottom(length gk.Length) CarouselNextEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselNextEl) ColEnd(end int16) CarouselNextEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselNextEl) ColSpan(span uint16) CarouselNextEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselNextEl) ColStart(start int16) CarouselNextEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselNextEl) Cursor(cursor gk.CursorStyle) CarouselNextEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2667,33 +3459,45 @@ func (e CarouselNextEl) Cursor(cursor gk.CursorStyle) CarouselNextEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselNextEl) FlexBasis(basis gk.Length) CarouselNextEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselNextEl) FlexGrow(grow float32) CarouselNextEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselNextEl) FlexShrink(shrink float32) CarouselNextEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselNextEl) Font(font gk.Font) CarouselNextEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselNextEl) FontFamily(familyName string) CarouselNextEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselNextEl) FontFeatures(features gk.FontFeatures) CarouselNextEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2702,12 +3506,16 @@ func (e CarouselNextEl) FontFeatures(features gk.FontFeatures) CarouselNextEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselNextEl) FontWeight(weight gk.FontWeight) CarouselNextEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselNextEl) Gap(length gk.Length) CarouselNextEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2715,6 +3523,8 @@ func (e CarouselNextEl) Gap(length gk.Length) CarouselNextEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselNextEl) GapX(length gk.Length) CarouselNextEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2722,18 +3532,24 @@ func (e CarouselNextEl) GapX(length gk.Length) CarouselNextEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselNextEl) GapY(length gk.Length) CarouselNextEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselNextEl) GridCols(cols uint16) CarouselNextEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselNextEl) GridColsMaxContent(cols uint16) CarouselNextEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2741,18 +3557,24 @@ func (e CarouselNextEl) GridColsMaxContent(cols uint16) CarouselNextEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselNextEl) GridColsMinContent(cols uint16) CarouselNextEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselNextEl) GridRows(rows uint16) CarouselNextEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselNextEl) GridRowsMaxContent(rows uint16) CarouselNextEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2760,16 +3582,22 @@ func (e CarouselNextEl) GridRowsMaxContent(rows uint16) CarouselNextEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselNextEl) GridRowsMinContent(rows uint16) CarouselNextEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselNextEl) H(length gk.Length) CarouselNextEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselNextEl) Inset(length gk.Length) CarouselNextEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2777,6 +3605,8 @@ func (e CarouselNextEl) Inset(length gk.Length) CarouselNextEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselNextEl) Left(length gk.Length) CarouselNextEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2784,33 +3614,45 @@ func (e CarouselNextEl) Left(length gk.Length) CarouselNextEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselNextEl) LineClamp(lines int) CarouselNextEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselNextEl) LineHeight(lineHeight gk.Length) CarouselNextEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselNextEl) M(length gk.Length) CarouselNextEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselNextEl) MaxH(length gk.Length) CarouselNextEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselNextEl) MaxSize(length gk.Length) CarouselNextEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselNextEl) MaxW(length gk.Length) CarouselNextEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2818,24 +3660,32 @@ func (e CarouselNextEl) MaxW(length gk.Length) CarouselNextEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselNextEl) Mb(length gk.Length) CarouselNextEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselNextEl) MinH(length gk.Length) CarouselNextEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselNextEl) MinSize(length gk.Length) CarouselNextEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselNextEl) MinW(length gk.Length) CarouselNextEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2843,6 +3693,8 @@ func (e CarouselNextEl) MinW(length gk.Length) CarouselNextEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselNextEl) Ml(length gk.Length) CarouselNextEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2850,6 +3702,8 @@ func (e CarouselNextEl) Ml(length gk.Length) CarouselNextEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselNextEl) Mr(length gk.Length) CarouselNextEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2857,6 +3711,8 @@ func (e CarouselNextEl) Mr(length gk.Length) CarouselNextEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselNextEl) Mt(length gk.Length) CarouselNextEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2864,6 +3720,8 @@ func (e CarouselNextEl) Mt(length gk.Length) CarouselNextEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselNextEl) Mx(length gk.Length) CarouselNextEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2871,22 +3729,30 @@ func (e CarouselNextEl) Mx(length gk.Length) CarouselNextEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselNextEl) My(length gk.Length) CarouselNextEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselNextEl) Opacity(opacity float32) CarouselNextEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselNextEl) P(length gk.Length) CarouselNextEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselNextEl) Pb(length gk.Length) CarouselNextEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2894,6 +3760,8 @@ func (e CarouselNextEl) Pb(length gk.Length) CarouselNextEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselNextEl) Pl(length gk.Length) CarouselNextEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2901,6 +3769,8 @@ func (e CarouselNextEl) Pl(length gk.Length) CarouselNextEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselNextEl) Pr(length gk.Length) CarouselNextEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2908,6 +3778,8 @@ func (e CarouselNextEl) Pr(length gk.Length) CarouselNextEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselNextEl) Pt(length gk.Length) CarouselNextEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2915,6 +3787,8 @@ func (e CarouselNextEl) Pt(length gk.Length) CarouselNextEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselNextEl) Px(length gk.Length) CarouselNextEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2922,6 +3796,8 @@ func (e CarouselNextEl) Px(length gk.Length) CarouselNextEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselNextEl) Py(length gk.Length) CarouselNextEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2929,12 +3805,16 @@ func (e CarouselNextEl) Py(length gk.Length) CarouselNextEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselNextEl) Right(length gk.Length) CarouselNextEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselNextEl) Rounded(length gk.Length) CarouselNextEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2942,6 +3822,8 @@ func (e CarouselNextEl) Rounded(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselNextEl) RoundedB(length gk.Length) CarouselNextEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2949,6 +3831,8 @@ func (e CarouselNextEl) RoundedB(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselNextEl) RoundedBl(length gk.Length) CarouselNextEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2956,6 +3840,8 @@ func (e CarouselNextEl) RoundedBl(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselNextEl) RoundedBr(length gk.Length) CarouselNextEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2963,6 +3849,8 @@ func (e CarouselNextEl) RoundedBr(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselNextEl) RoundedL(length gk.Length) CarouselNextEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2970,6 +3858,8 @@ func (e CarouselNextEl) RoundedL(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselNextEl) RoundedR(length gk.Length) CarouselNextEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2977,6 +3867,8 @@ func (e CarouselNextEl) RoundedR(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselNextEl) RoundedT(length gk.Length) CarouselNextEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2984,6 +3876,8 @@ func (e CarouselNextEl) RoundedT(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselNextEl) RoundedTl(length gk.Length) CarouselNextEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2991,21 +3885,29 @@ func (e CarouselNextEl) RoundedTl(length gk.Length) CarouselNextEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselNextEl) RoundedTr(length gk.Length) CarouselNextEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselNextEl) RowEnd(end int16) CarouselNextEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselNextEl) RowSpan(span uint16) CarouselNextEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselNextEl) RowStart(start int16) CarouselNextEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3015,24 +3917,32 @@ func (e CarouselNextEl) RowStart(start int16) CarouselNextEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselNextEl) ScrollbarWidth(width gk.Length) CarouselNextEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselNextEl) Shadow(shadows []gk.BoxShadow) CarouselNextEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselNextEl) Size(length gk.Length) CarouselNextEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselNextEl) TextAlign(align gk.TextAlign) CarouselNextEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3041,23 +3951,31 @@ func (e CarouselNextEl) TextAlign(align gk.TextAlign) CarouselNextEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselNextEl) TextBg(bg gk.Color) CarouselNextEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselNextEl) TextColor(color gk.Color) CarouselNextEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselNextEl) TextDecorationColor(color gk.Color) CarouselNextEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselNextEl) TextOverflow(overflow gk.TextOverflow) CarouselNextEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3066,6 +3984,8 @@ func (e CarouselNextEl) TextOverflow(overflow gk.TextOverflow) CarouselNextEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselNextEl) TextSize(size gk.Length) CarouselNextEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3073,26 +3993,35 @@ func (e CarouselNextEl) TextSize(size gk.Length) CarouselNextEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselNextEl) Top(length gk.Length) CarouselNextEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselNextEl) W(length gk.Length) CarouselNextEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e CarouselNextEl) Text(s string) CarouselNextEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselNextEl) ChildView(v gk.View) CarouselNextEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselNextEl) Child(child gk.Element) CarouselNextEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselNextEl) Children(children ...gk.Element) CarouselNextEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -3103,7 +4032,7 @@ type CarouselPaginationEl struct{ rt.ElAnimatableElement }
 
 // Creates an empty pagination container.
 //
-// CarouselPagination is <gpui_kit::component::carousel::CarouselPagination>::new.
+// CarouselPagination calls <gpui_kit::component::carousel::CarouselPagination>::new.
 func CarouselPagination(st ...gk.Style) CarouselPaginationEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(616)
@@ -3113,7 +4042,7 @@ func CarouselPagination(st ...gk.Style) CarouselPaginationEl {
 
 // Sets the name announced for the pagination group.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::CarouselPagination>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::CarouselPagination>::accessibility_label.
 func (e CarouselPaginationEl) AccessibilityLabel(label string) CarouselPaginationEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -3122,20 +4051,24 @@ func (e CarouselPaginationEl) AccessibilityLabel(label string) CarouselPaginatio
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselPaginationEl) PopoverStyle() CarouselPaginationEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselPaginationEl) RoundedFullStyle() CarouselPaginationEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3144,16 +4077,18 @@ func (e CarouselPaginationEl) RoundedFullStyle() CarouselPaginationEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselPaginationEl) FocusRingStyle() CarouselPaginationEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3166,24 +4101,32 @@ func (e CarouselPaginationEl) FocusRingStyle() CarouselPaginationEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselPaginationEl) KeepTextSelection(id gk.ID) CarouselPaginationEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselPaginationEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselPaginationEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselPaginationEl) BorderE(width gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselPaginationEl) BorderS(width gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3191,163 +4134,205 @@ func (e CarouselPaginationEl) BorderS(width gk.Length) CarouselPaginationEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselPaginationEl) FlexRowDir() CarouselPaginationEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselPaginationEl) InsetE(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselPaginationEl) InsetS(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselPaginationEl) JustifyFlexEnd() CarouselPaginationEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselPaginationEl) JustifyFlexStart() CarouselPaginationEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselPaginationEl) Me(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselPaginationEl) Ms(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselPaginationEl) Pe(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselPaginationEl) Ps(length gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselPaginationEl) RoundedE(radius gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselPaginationEl) RoundedS(radius gk.Length) CarouselPaginationEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselPaginationEl) TextEnd() CarouselPaginationEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselPaginationEl) TextStart() CarouselPaginationEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselPaginationEl) CornerRadii(radius gk.Corners) CarouselPaginationEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselPaginationEl) DebugBlue() CarouselPaginationEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselPaginationEl) DebugFocused(focusHandle gk.FocusHandle) CarouselPaginationEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselPaginationEl) DebugGreen() CarouselPaginationEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselPaginationEl) DebugPink() CarouselPaginationEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselPaginationEl) DebugRed() CarouselPaginationEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselPaginationEl) DebugYellow() CarouselPaginationEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselPaginationEl) FontBlack() CarouselPaginationEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselPaginationEl) FontBold() CarouselPaginationEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselPaginationEl) FontExtrabold() CarouselPaginationEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselPaginationEl) FontExtralight() CarouselPaginationEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselPaginationEl) FontLight() CarouselPaginationEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselPaginationEl) FontMedium() CarouselPaginationEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselPaginationEl) FontNormal() CarouselPaginationEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselPaginationEl) FontSemibold() CarouselPaginationEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselPaginationEl) FontThin() CarouselPaginationEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -3355,8 +4340,8 @@ func (e CarouselPaginationEl) FontThin() CarouselPaginationEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3365,18 +4350,23 @@ func (e CarouselPaginationEl) FontThin() CarouselPaginationEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselPaginationEl) HFlex() CarouselPaginationEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselPaginationEl) Margins(margins gk.EdgesInto) CarouselPaginationEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselPaginationEl) Paddings(paddings gk.EdgesInto) CarouselPaginationEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselPaginationEl) RefineStyle(style gk.StyleRefinement) CarouselPaginationEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3386,50 +4376,63 @@ func (e CarouselPaginationEl) RefineStyle(style gk.StyleRefinement) CarouselPagi
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselPaginationEl) VFlex() CarouselPaginationEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e CarouselPaginationEl) Text(s string) CarouselPaginationEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselPaginationEl) ChildView(v gk.View) CarouselPaginationEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselPaginationEl) Child(child gk.Element) CarouselPaginationEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselPaginationEl) Children(children ...gk.Element) CarouselPaginationEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselPaginationEl) Style(st ...gk.Style) CarouselPaginationEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselPaginationEl) AspectRatio(ratio float32) CarouselPaginationEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselPaginationEl) Bg(fill gk.Fill) CarouselPaginationEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselPaginationEl) Border(length gk.Length) CarouselPaginationEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3437,12 +4440,16 @@ func (e CarouselPaginationEl) Border(length gk.Length) CarouselPaginationEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselPaginationEl) BorderB(length gk.Length) CarouselPaginationEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselPaginationEl) BorderColor(borderColor gk.Color) CarouselPaginationEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3450,6 +4457,8 @@ func (e CarouselPaginationEl) BorderColor(borderColor gk.Color) CarouselPaginati
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselPaginationEl) BorderL(length gk.Length) CarouselPaginationEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3457,6 +4466,8 @@ func (e CarouselPaginationEl) BorderL(length gk.Length) CarouselPaginationEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselPaginationEl) BorderR(length gk.Length) CarouselPaginationEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3464,6 +4475,8 @@ func (e CarouselPaginationEl) BorderR(length gk.Length) CarouselPaginationEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselPaginationEl) BorderT(length gk.Length) CarouselPaginationEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3471,6 +4484,8 @@ func (e CarouselPaginationEl) BorderT(length gk.Length) CarouselPaginationEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselPaginationEl) BorderX(length gk.Length) CarouselPaginationEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3478,6 +4493,8 @@ func (e CarouselPaginationEl) BorderX(length gk.Length) CarouselPaginationEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselPaginationEl) BorderY(length gk.Length) CarouselPaginationEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3485,30 +4502,40 @@ func (e CarouselPaginationEl) BorderY(length gk.Length) CarouselPaginationEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselPaginationEl) Bottom(length gk.Length) CarouselPaginationEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselPaginationEl) ColEnd(end int16) CarouselPaginationEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselPaginationEl) ColSpan(span uint16) CarouselPaginationEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselPaginationEl) ColStart(start int16) CarouselPaginationEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselPaginationEl) Cursor(cursor gk.CursorStyle) CarouselPaginationEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3516,36 +4543,48 @@ func (e CarouselPaginationEl) Cursor(cursor gk.CursorStyle) CarouselPaginationEl
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselPaginationEl) FlexBasis(basis gk.Length) CarouselPaginationEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselPaginationEl) FlexGrow(grow float32) CarouselPaginationEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselPaginationEl) FlexShrink(shrink float32) CarouselPaginationEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselPaginationEl) Font(font gk.Font) CarouselPaginationEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselPaginationEl) FontFamily(familyName string) CarouselPaginationEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselPaginationEl) FontFeatures(features gk.FontFeatures) CarouselPaginationEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3554,12 +4593,16 @@ func (e CarouselPaginationEl) FontFeatures(features gk.FontFeatures) CarouselPag
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselPaginationEl) FontWeight(weight gk.FontWeight) CarouselPaginationEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselPaginationEl) Gap(length gk.Length) CarouselPaginationEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3567,6 +4610,8 @@ func (e CarouselPaginationEl) Gap(length gk.Length) CarouselPaginationEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselPaginationEl) GapX(length gk.Length) CarouselPaginationEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3574,18 +4619,24 @@ func (e CarouselPaginationEl) GapX(length gk.Length) CarouselPaginationEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselPaginationEl) GapY(length gk.Length) CarouselPaginationEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselPaginationEl) GridCols(cols uint16) CarouselPaginationEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselPaginationEl) GridColsMaxContent(cols uint16) CarouselPaginationEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3593,18 +4644,24 @@ func (e CarouselPaginationEl) GridColsMaxContent(cols uint16) CarouselPagination
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselPaginationEl) GridColsMinContent(cols uint16) CarouselPaginationEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselPaginationEl) GridRows(rows uint16) CarouselPaginationEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselPaginationEl) GridRowsMaxContent(rows uint16) CarouselPaginationEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3612,12 +4669,16 @@ func (e CarouselPaginationEl) GridRowsMaxContent(rows uint16) CarouselPagination
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselPaginationEl) GridRowsMinContent(rows uint16) CarouselPaginationEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselPaginationEl) H(length gk.Length) CarouselPaginationEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3625,6 +4686,8 @@ func (e CarouselPaginationEl) H(length gk.Length) CarouselPaginationEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselPaginationEl) Inset(length gk.Length) CarouselPaginationEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3632,6 +4695,8 @@ func (e CarouselPaginationEl) Inset(length gk.Length) CarouselPaginationEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselPaginationEl) Left(length gk.Length) CarouselPaginationEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3639,36 +4704,48 @@ func (e CarouselPaginationEl) Left(length gk.Length) CarouselPaginationEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselPaginationEl) LineClamp(lines int) CarouselPaginationEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselPaginationEl) LineHeight(lineHeight gk.Length) CarouselPaginationEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselPaginationEl) M(length gk.Length) CarouselPaginationEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselPaginationEl) MaxH(length gk.Length) CarouselPaginationEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselPaginationEl) MaxSize(length gk.Length) CarouselPaginationEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselPaginationEl) MaxW(length gk.Length) CarouselPaginationEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3676,24 +4753,32 @@ func (e CarouselPaginationEl) MaxW(length gk.Length) CarouselPaginationEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselPaginationEl) Mb(length gk.Length) CarouselPaginationEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselPaginationEl) MinH(length gk.Length) CarouselPaginationEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselPaginationEl) MinSize(length gk.Length) CarouselPaginationEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselPaginationEl) MinW(length gk.Length) CarouselPaginationEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3701,6 +4786,8 @@ func (e CarouselPaginationEl) MinW(length gk.Length) CarouselPaginationEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselPaginationEl) Ml(length gk.Length) CarouselPaginationEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3708,6 +4795,8 @@ func (e CarouselPaginationEl) Ml(length gk.Length) CarouselPaginationEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselPaginationEl) Mr(length gk.Length) CarouselPaginationEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3715,6 +4804,8 @@ func (e CarouselPaginationEl) Mr(length gk.Length) CarouselPaginationEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselPaginationEl) Mt(length gk.Length) CarouselPaginationEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3722,6 +4813,8 @@ func (e CarouselPaginationEl) Mt(length gk.Length) CarouselPaginationEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselPaginationEl) Mx(length gk.Length) CarouselPaginationEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3729,18 +4822,24 @@ func (e CarouselPaginationEl) Mx(length gk.Length) CarouselPaginationEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselPaginationEl) My(length gk.Length) CarouselPaginationEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselPaginationEl) Opacity(opacity float32) CarouselPaginationEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselPaginationEl) P(length gk.Length) CarouselPaginationEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3748,6 +4847,8 @@ func (e CarouselPaginationEl) P(length gk.Length) CarouselPaginationEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselPaginationEl) Pb(length gk.Length) CarouselPaginationEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3755,6 +4856,8 @@ func (e CarouselPaginationEl) Pb(length gk.Length) CarouselPaginationEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselPaginationEl) Pl(length gk.Length) CarouselPaginationEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3762,6 +4865,8 @@ func (e CarouselPaginationEl) Pl(length gk.Length) CarouselPaginationEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselPaginationEl) Pr(length gk.Length) CarouselPaginationEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3769,6 +4874,8 @@ func (e CarouselPaginationEl) Pr(length gk.Length) CarouselPaginationEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselPaginationEl) Pt(length gk.Length) CarouselPaginationEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3776,6 +4883,8 @@ func (e CarouselPaginationEl) Pt(length gk.Length) CarouselPaginationEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselPaginationEl) Px(length gk.Length) CarouselPaginationEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3783,6 +4892,8 @@ func (e CarouselPaginationEl) Px(length gk.Length) CarouselPaginationEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselPaginationEl) Py(length gk.Length) CarouselPaginationEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3790,12 +4901,16 @@ func (e CarouselPaginationEl) Py(length gk.Length) CarouselPaginationEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselPaginationEl) Right(length gk.Length) CarouselPaginationEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselPaginationEl) Rounded(length gk.Length) CarouselPaginationEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3803,6 +4918,8 @@ func (e CarouselPaginationEl) Rounded(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselPaginationEl) RoundedB(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3810,6 +4927,8 @@ func (e CarouselPaginationEl) RoundedB(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselPaginationEl) RoundedBl(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3817,6 +4936,8 @@ func (e CarouselPaginationEl) RoundedBl(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselPaginationEl) RoundedBr(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3824,6 +4945,8 @@ func (e CarouselPaginationEl) RoundedBr(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselPaginationEl) RoundedL(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3831,6 +4954,8 @@ func (e CarouselPaginationEl) RoundedL(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselPaginationEl) RoundedR(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3838,6 +4963,8 @@ func (e CarouselPaginationEl) RoundedR(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselPaginationEl) RoundedT(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3845,6 +4972,8 @@ func (e CarouselPaginationEl) RoundedT(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselPaginationEl) RoundedTl(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3852,24 +4981,32 @@ func (e CarouselPaginationEl) RoundedTl(length gk.Length) CarouselPaginationEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselPaginationEl) RoundedTr(length gk.Length) CarouselPaginationEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselPaginationEl) RowEnd(end int16) CarouselPaginationEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselPaginationEl) RowSpan(span uint16) CarouselPaginationEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselPaginationEl) RowStart(start int16) CarouselPaginationEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3879,24 +5016,32 @@ func (e CarouselPaginationEl) RowStart(start int16) CarouselPaginationEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselPaginationEl) ScrollbarWidth(width gk.Length) CarouselPaginationEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselPaginationEl) Shadow(shadows []gk.BoxShadow) CarouselPaginationEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselPaginationEl) Size(length gk.Length) CarouselPaginationEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselPaginationEl) TextAlign(align gk.TextAlign) CarouselPaginationEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3905,6 +5050,8 @@ func (e CarouselPaginationEl) TextAlign(align gk.TextAlign) CarouselPaginationEl
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselPaginationEl) TextBg(bg gk.Color) CarouselPaginationEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3913,18 +5060,24 @@ func (e CarouselPaginationEl) TextBg(bg gk.Color) CarouselPaginationEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselPaginationEl) TextColor(color gk.Color) CarouselPaginationEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselPaginationEl) TextDecorationColor(color gk.Color) CarouselPaginationEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselPaginationEl) TextOverflow(overflow gk.TextOverflow) CarouselPaginationEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3933,6 +5086,8 @@ func (e CarouselPaginationEl) TextOverflow(overflow gk.TextOverflow) CarouselPag
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselPaginationEl) TextSize(size gk.Length) CarouselPaginationEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3940,12 +5095,16 @@ func (e CarouselPaginationEl) TextSize(size gk.Length) CarouselPaginationEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselPaginationEl) Top(length gk.Length) CarouselPaginationEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselPaginationEl) W(length gk.Length) CarouselPaginationEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -3958,7 +5117,7 @@ type CarouselPaginationItemEl struct {
 
 // Creates a pagination item for the zero-based `index`.
 //
-// CarouselPaginationItem is <gpui_kit::component::carousel::CarouselPaginationItem>::new.
+// CarouselPaginationItem calls <gpui_kit::component::carousel::CarouselPaginationItem>::new.
 func CarouselPaginationItem(id gk.ID, index int, state CarouselState, st ...gk.Style) CarouselPaginationItemEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(617)
@@ -3972,7 +5131,7 @@ func CarouselPaginationItem(id gk.ID, index int, state CarouselState, st ...gk.S
 
 // Replaces the generated "Go to slide N" accessibility label.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::CarouselPaginationItem>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::CarouselPaginationItem>::accessibility_label.
 func (e CarouselPaginationItemEl) AccessibilityLabel(label string) CarouselPaginationItemEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -3981,20 +5140,24 @@ func (e CarouselPaginationItemEl) AccessibilityLabel(label string) CarouselPagin
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselPaginationItemEl) PopoverStyle() CarouselPaginationItemEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselPaginationItemEl) RoundedFullStyle() CarouselPaginationItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -4003,16 +5166,18 @@ func (e CarouselPaginationItemEl) RoundedFullStyle() CarouselPaginationItemEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselPaginationItemEl) FocusRingStyle() CarouselPaginationItemEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -4025,24 +5190,32 @@ func (e CarouselPaginationItemEl) FocusRingStyle() CarouselPaginationItemEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselPaginationItemEl) KeepTextSelection(id gk.ID) CarouselPaginationItemEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselPaginationItemEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselPaginationItemEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselPaginationItemEl) BorderE(width gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselPaginationItemEl) BorderS(width gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4050,163 +5223,205 @@ func (e CarouselPaginationItemEl) BorderS(width gk.Length) CarouselPaginationIte
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselPaginationItemEl) FlexRowDir() CarouselPaginationItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselPaginationItemEl) InsetE(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselPaginationItemEl) InsetS(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselPaginationItemEl) JustifyFlexEnd() CarouselPaginationItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselPaginationItemEl) JustifyFlexStart() CarouselPaginationItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselPaginationItemEl) Me(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselPaginationItemEl) Ms(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselPaginationItemEl) Pe(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselPaginationItemEl) Ps(length gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselPaginationItemEl) RoundedE(radius gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselPaginationItemEl) RoundedS(radius gk.Length) CarouselPaginationItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselPaginationItemEl) TextEnd() CarouselPaginationItemEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselPaginationItemEl) TextStart() CarouselPaginationItemEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselPaginationItemEl) CornerRadii(radius gk.Corners) CarouselPaginationItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselPaginationItemEl) DebugBlue() CarouselPaginationItemEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselPaginationItemEl) DebugFocused(focusHandle gk.FocusHandle) CarouselPaginationItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselPaginationItemEl) DebugGreen() CarouselPaginationItemEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselPaginationItemEl) DebugPink() CarouselPaginationItemEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselPaginationItemEl) DebugRed() CarouselPaginationItemEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselPaginationItemEl) DebugYellow() CarouselPaginationItemEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselPaginationItemEl) FontBlack() CarouselPaginationItemEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselPaginationItemEl) FontBold() CarouselPaginationItemEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselPaginationItemEl) FontExtrabold() CarouselPaginationItemEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselPaginationItemEl) FontExtralight() CarouselPaginationItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselPaginationItemEl) FontLight() CarouselPaginationItemEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselPaginationItemEl) FontMedium() CarouselPaginationItemEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselPaginationItemEl) FontNormal() CarouselPaginationItemEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselPaginationItemEl) FontSemibold() CarouselPaginationItemEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselPaginationItemEl) FontThin() CarouselPaginationItemEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -4214,8 +5429,8 @@ func (e CarouselPaginationItemEl) FontThin() CarouselPaginationItemEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4224,21 +5439,26 @@ func (e CarouselPaginationItemEl) FontThin() CarouselPaginationItemEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselPaginationItemEl) HFlex() CarouselPaginationItemEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselPaginationItemEl) Margins(margins gk.EdgesInto) CarouselPaginationItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselPaginationItemEl) Paddings(paddings gk.EdgesInto) CarouselPaginationItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselPaginationItemEl) RefineStyle(style gk.StyleRefinement) CarouselPaginationItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4248,18 +5468,24 @@ func (e CarouselPaginationItemEl) RefineStyle(style gk.StyleRefinement) Carousel
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselPaginationItemEl) VFlex() CarouselPaginationItemEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e CarouselPaginationItemEl) Large() CarouselPaginationItemEl {
 	tSizableLarge(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e CarouselPaginationItemEl) Small() CarouselPaginationItemEl {
 	tSizableSmall(rt.N(e.Core))
 	return e
@@ -4269,59 +5495,74 @@ func (e CarouselPaginationItemEl) Small() CarouselPaginationItemEl {
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e CarouselPaginationItemEl) WithSize(size gk.SizeInto) CarouselPaginationItemEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e CarouselPaginationItemEl) Xsmall() CarouselPaginationItemEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e CarouselPaginationItemEl) Text(s string) CarouselPaginationItemEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselPaginationItemEl) ChildView(v gk.View) CarouselPaginationItemEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselPaginationItemEl) Child(child gk.Element) CarouselPaginationItemEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselPaginationItemEl) Children(children ...gk.Element) CarouselPaginationItemEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselPaginationItemEl) Style(st ...gk.Style) CarouselPaginationItemEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselPaginationItemEl) AspectRatio(ratio float32) CarouselPaginationItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselPaginationItemEl) Bg(fill gk.Fill) CarouselPaginationItemEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselPaginationItemEl) Border(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4329,12 +5570,16 @@ func (e CarouselPaginationItemEl) Border(length gk.Length) CarouselPaginationIte
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselPaginationItemEl) BorderB(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselPaginationItemEl) BorderColor(borderColor gk.Color) CarouselPaginationItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4342,6 +5587,8 @@ func (e CarouselPaginationItemEl) BorderColor(borderColor gk.Color) CarouselPagi
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselPaginationItemEl) BorderL(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4349,6 +5596,8 @@ func (e CarouselPaginationItemEl) BorderL(length gk.Length) CarouselPaginationIt
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselPaginationItemEl) BorderR(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4356,6 +5605,8 @@ func (e CarouselPaginationItemEl) BorderR(length gk.Length) CarouselPaginationIt
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselPaginationItemEl) BorderT(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4363,6 +5614,8 @@ func (e CarouselPaginationItemEl) BorderT(length gk.Length) CarouselPaginationIt
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselPaginationItemEl) BorderX(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4370,6 +5623,8 @@ func (e CarouselPaginationItemEl) BorderX(length gk.Length) CarouselPaginationIt
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselPaginationItemEl) BorderY(length gk.Length) CarouselPaginationItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4377,30 +5632,40 @@ func (e CarouselPaginationItemEl) BorderY(length gk.Length) CarouselPaginationIt
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselPaginationItemEl) Bottom(length gk.Length) CarouselPaginationItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselPaginationItemEl) ColEnd(end int16) CarouselPaginationItemEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselPaginationItemEl) ColSpan(span uint16) CarouselPaginationItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselPaginationItemEl) ColStart(start int16) CarouselPaginationItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselPaginationItemEl) Cursor(cursor gk.CursorStyle) CarouselPaginationItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4408,36 +5673,48 @@ func (e CarouselPaginationItemEl) Cursor(cursor gk.CursorStyle) CarouselPaginati
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselPaginationItemEl) FlexBasis(basis gk.Length) CarouselPaginationItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselPaginationItemEl) FlexGrow(grow float32) CarouselPaginationItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselPaginationItemEl) FlexShrink(shrink float32) CarouselPaginationItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselPaginationItemEl) Font(font gk.Font) CarouselPaginationItemEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselPaginationItemEl) FontFamily(familyName string) CarouselPaginationItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselPaginationItemEl) FontFeatures(features gk.FontFeatures) CarouselPaginationItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4446,12 +5723,16 @@ func (e CarouselPaginationItemEl) FontFeatures(features gk.FontFeatures) Carouse
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselPaginationItemEl) FontWeight(weight gk.FontWeight) CarouselPaginationItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselPaginationItemEl) Gap(length gk.Length) CarouselPaginationItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4459,6 +5740,8 @@ func (e CarouselPaginationItemEl) Gap(length gk.Length) CarouselPaginationItemEl
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselPaginationItemEl) GapX(length gk.Length) CarouselPaginationItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4466,18 +5749,24 @@ func (e CarouselPaginationItemEl) GapX(length gk.Length) CarouselPaginationItemE
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselPaginationItemEl) GapY(length gk.Length) CarouselPaginationItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselPaginationItemEl) GridCols(cols uint16) CarouselPaginationItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselPaginationItemEl) GridColsMaxContent(cols uint16) CarouselPaginationItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4485,18 +5774,24 @@ func (e CarouselPaginationItemEl) GridColsMaxContent(cols uint16) CarouselPagina
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselPaginationItemEl) GridColsMinContent(cols uint16) CarouselPaginationItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselPaginationItemEl) GridRows(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselPaginationItemEl) GridRowsMaxContent(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4504,12 +5799,16 @@ func (e CarouselPaginationItemEl) GridRowsMaxContent(rows uint16) CarouselPagina
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselPaginationItemEl) GridRowsMinContent(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselPaginationItemEl) H(length gk.Length) CarouselPaginationItemEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4517,6 +5816,8 @@ func (e CarouselPaginationItemEl) H(length gk.Length) CarouselPaginationItemEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselPaginationItemEl) Inset(length gk.Length) CarouselPaginationItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4524,6 +5825,8 @@ func (e CarouselPaginationItemEl) Inset(length gk.Length) CarouselPaginationItem
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselPaginationItemEl) Left(length gk.Length) CarouselPaginationItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4531,36 +5834,48 @@ func (e CarouselPaginationItemEl) Left(length gk.Length) CarouselPaginationItemE
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselPaginationItemEl) LineClamp(lines int) CarouselPaginationItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselPaginationItemEl) LineHeight(lineHeight gk.Length) CarouselPaginationItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselPaginationItemEl) M(length gk.Length) CarouselPaginationItemEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselPaginationItemEl) MaxH(length gk.Length) CarouselPaginationItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselPaginationItemEl) MaxSize(length gk.Length) CarouselPaginationItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselPaginationItemEl) MaxW(length gk.Length) CarouselPaginationItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4568,24 +5883,32 @@ func (e CarouselPaginationItemEl) MaxW(length gk.Length) CarouselPaginationItemE
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselPaginationItemEl) Mb(length gk.Length) CarouselPaginationItemEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselPaginationItemEl) MinH(length gk.Length) CarouselPaginationItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselPaginationItemEl) MinSize(length gk.Length) CarouselPaginationItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselPaginationItemEl) MinW(length gk.Length) CarouselPaginationItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4593,6 +5916,8 @@ func (e CarouselPaginationItemEl) MinW(length gk.Length) CarouselPaginationItemE
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselPaginationItemEl) Ml(length gk.Length) CarouselPaginationItemEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4600,6 +5925,8 @@ func (e CarouselPaginationItemEl) Ml(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselPaginationItemEl) Mr(length gk.Length) CarouselPaginationItemEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4607,6 +5934,8 @@ func (e CarouselPaginationItemEl) Mr(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselPaginationItemEl) Mt(length gk.Length) CarouselPaginationItemEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4614,6 +5943,8 @@ func (e CarouselPaginationItemEl) Mt(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselPaginationItemEl) Mx(length gk.Length) CarouselPaginationItemEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4621,18 +5952,24 @@ func (e CarouselPaginationItemEl) Mx(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselPaginationItemEl) My(length gk.Length) CarouselPaginationItemEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselPaginationItemEl) Opacity(opacity float32) CarouselPaginationItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselPaginationItemEl) P(length gk.Length) CarouselPaginationItemEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -4640,6 +5977,8 @@ func (e CarouselPaginationItemEl) P(length gk.Length) CarouselPaginationItemEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselPaginationItemEl) Pb(length gk.Length) CarouselPaginationItemEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4647,6 +5986,8 @@ func (e CarouselPaginationItemEl) Pb(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselPaginationItemEl) Pl(length gk.Length) CarouselPaginationItemEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4654,6 +5995,8 @@ func (e CarouselPaginationItemEl) Pl(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselPaginationItemEl) Pr(length gk.Length) CarouselPaginationItemEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4661,6 +6004,8 @@ func (e CarouselPaginationItemEl) Pr(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselPaginationItemEl) Pt(length gk.Length) CarouselPaginationItemEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4668,6 +6013,8 @@ func (e CarouselPaginationItemEl) Pt(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselPaginationItemEl) Px(length gk.Length) CarouselPaginationItemEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4675,6 +6022,8 @@ func (e CarouselPaginationItemEl) Px(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselPaginationItemEl) Py(length gk.Length) CarouselPaginationItemEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4682,12 +6031,16 @@ func (e CarouselPaginationItemEl) Py(length gk.Length) CarouselPaginationItemEl 
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselPaginationItemEl) Right(length gk.Length) CarouselPaginationItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselPaginationItemEl) Rounded(length gk.Length) CarouselPaginationItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4695,6 +6048,8 @@ func (e CarouselPaginationItemEl) Rounded(length gk.Length) CarouselPaginationIt
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselPaginationItemEl) RoundedB(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4702,6 +6057,8 @@ func (e CarouselPaginationItemEl) RoundedB(length gk.Length) CarouselPaginationI
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselPaginationItemEl) RoundedBl(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4709,6 +6066,8 @@ func (e CarouselPaginationItemEl) RoundedBl(length gk.Length) CarouselPagination
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselPaginationItemEl) RoundedBr(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4716,6 +6075,8 @@ func (e CarouselPaginationItemEl) RoundedBr(length gk.Length) CarouselPagination
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselPaginationItemEl) RoundedL(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4723,6 +6084,8 @@ func (e CarouselPaginationItemEl) RoundedL(length gk.Length) CarouselPaginationI
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselPaginationItemEl) RoundedR(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4730,6 +6093,8 @@ func (e CarouselPaginationItemEl) RoundedR(length gk.Length) CarouselPaginationI
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselPaginationItemEl) RoundedT(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4737,6 +6102,8 @@ func (e CarouselPaginationItemEl) RoundedT(length gk.Length) CarouselPaginationI
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselPaginationItemEl) RoundedTl(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4744,24 +6111,32 @@ func (e CarouselPaginationItemEl) RoundedTl(length gk.Length) CarouselPagination
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselPaginationItemEl) RoundedTr(length gk.Length) CarouselPaginationItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselPaginationItemEl) RowEnd(end int16) CarouselPaginationItemEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselPaginationItemEl) RowSpan(span uint16) CarouselPaginationItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselPaginationItemEl) RowStart(start int16) CarouselPaginationItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4771,24 +6146,32 @@ func (e CarouselPaginationItemEl) RowStart(start int16) CarouselPaginationItemEl
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselPaginationItemEl) ScrollbarWidth(width gk.Length) CarouselPaginationItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselPaginationItemEl) Shadow(shadows []gk.BoxShadow) CarouselPaginationItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselPaginationItemEl) Size(length gk.Length) CarouselPaginationItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselPaginationItemEl) TextAlign(align gk.TextAlign) CarouselPaginationItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4797,6 +6180,8 @@ func (e CarouselPaginationItemEl) TextAlign(align gk.TextAlign) CarouselPaginati
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselPaginationItemEl) TextBg(bg gk.Color) CarouselPaginationItemEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -4805,18 +6190,24 @@ func (e CarouselPaginationItemEl) TextBg(bg gk.Color) CarouselPaginationItemEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselPaginationItemEl) TextColor(color gk.Color) CarouselPaginationItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselPaginationItemEl) TextDecorationColor(color gk.Color) CarouselPaginationItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselPaginationItemEl) TextOverflow(overflow gk.TextOverflow) CarouselPaginationItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4825,6 +6216,8 @@ func (e CarouselPaginationItemEl) TextOverflow(overflow gk.TextOverflow) Carouse
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselPaginationItemEl) TextSize(size gk.Length) CarouselPaginationItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4832,12 +6225,16 @@ func (e CarouselPaginationItemEl) TextSize(size gk.Length) CarouselPaginationIte
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselPaginationItemEl) Top(length gk.Length) CarouselPaginationItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselPaginationItemEl) W(length gk.Length) CarouselPaginationItemEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -4850,7 +6247,7 @@ type CarouselPreviousEl struct {
 
 // Creates a previous-slide control bound to `state`.
 //
-// CarouselPrevious is <gpui_kit::component::carousel::CarouselPrevious>::new.
+// CarouselPrevious calls <gpui_kit::component::carousel::CarouselPrevious>::new.
 func CarouselPrevious(state CarouselState, st ...gk.Style) CarouselPreviousEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(618)
@@ -4862,7 +6259,7 @@ func CarouselPrevious(state CarouselState, st ...gk.Style) CarouselPreviousEl {
 
 // Replaces the generated previous-slide accessibility label and tooltip.
 //
-// AccessibilityLabel is <gpui_kit::component::carousel::CarouselPrevious>::accessibility_label.
+// AccessibilityLabel calls <gpui_kit::component::carousel::CarouselPrevious>::accessibility_label.
 func (e CarouselPreviousEl) AccessibilityLabel(label string) CarouselPreviousEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -4871,20 +6268,24 @@ func (e CarouselPreviousEl) AccessibilityLabel(label string) CarouselPreviousEl 
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CarouselPreviousEl) PopoverStyle() CarouselPreviousEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CarouselPreviousEl) RoundedFullStyle() CarouselPreviousEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -4893,16 +6294,18 @@ func (e CarouselPreviousEl) RoundedFullStyle() CarouselPreviousEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CarouselPreviousEl) FocusRingStyle() CarouselPreviousEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -4915,24 +6318,32 @@ func (e CarouselPreviousEl) FocusRingStyle() CarouselPreviousEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CarouselPreviousEl) KeepTextSelection(id gk.ID) CarouselPreviousEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CarouselPreviousEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CarouselPreviousEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CarouselPreviousEl) BorderE(width gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CarouselPreviousEl) BorderS(width gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4940,163 +6351,205 @@ func (e CarouselPreviousEl) BorderS(width gk.Length) CarouselPreviousEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CarouselPreviousEl) FlexRowDir() CarouselPreviousEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CarouselPreviousEl) InsetE(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CarouselPreviousEl) InsetS(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CarouselPreviousEl) JustifyFlexEnd() CarouselPreviousEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CarouselPreviousEl) JustifyFlexStart() CarouselPreviousEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CarouselPreviousEl) Me(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CarouselPreviousEl) Ms(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CarouselPreviousEl) Pe(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CarouselPreviousEl) Ps(length gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CarouselPreviousEl) RoundedE(radius gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CarouselPreviousEl) RoundedS(radius gk.Length) CarouselPreviousEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CarouselPreviousEl) TextEnd() CarouselPreviousEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CarouselPreviousEl) TextStart() CarouselPreviousEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CarouselPreviousEl) CornerRadii(radius gk.Corners) CarouselPreviousEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CarouselPreviousEl) DebugBlue() CarouselPreviousEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CarouselPreviousEl) DebugFocused(focusHandle gk.FocusHandle) CarouselPreviousEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CarouselPreviousEl) DebugGreen() CarouselPreviousEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CarouselPreviousEl) DebugPink() CarouselPreviousEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CarouselPreviousEl) DebugRed() CarouselPreviousEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CarouselPreviousEl) DebugYellow() CarouselPreviousEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CarouselPreviousEl) FontBlack() CarouselPreviousEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CarouselPreviousEl) FontBold() CarouselPreviousEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CarouselPreviousEl) FontExtrabold() CarouselPreviousEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CarouselPreviousEl) FontExtralight() CarouselPreviousEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CarouselPreviousEl) FontLight() CarouselPreviousEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CarouselPreviousEl) FontMedium() CarouselPreviousEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CarouselPreviousEl) FontNormal() CarouselPreviousEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CarouselPreviousEl) FontSemibold() CarouselPreviousEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CarouselPreviousEl) FontThin() CarouselPreviousEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -5105,18 +6558,23 @@ func (e CarouselPreviousEl) FontThin() CarouselPreviousEl { tStyledExtFontThin(r
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CarouselPreviousEl) HFlex() CarouselPreviousEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CarouselPreviousEl) Margins(margins gk.EdgesInto) CarouselPreviousEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CarouselPreviousEl) Paddings(paddings gk.EdgesInto) CarouselPreviousEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CarouselPreviousEl) RefineStyle(style gk.StyleRefinement) CarouselPreviousEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -5126,45 +6584,61 @@ func (e CarouselPreviousEl) RefineStyle(style gk.StyleRefinement) CarouselPrevio
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CarouselPreviousEl) VFlex() CarouselPreviousEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e CarouselPreviousEl) Large() CarouselPreviousEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e CarouselPreviousEl) Small() CarouselPreviousEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e CarouselPreviousEl) WithSize(size gk.SizeInto) CarouselPreviousEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e CarouselPreviousEl) Xsmall() CarouselPreviousEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CarouselPreviousEl) Style(st ...gk.Style) CarouselPreviousEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CarouselPreviousEl) AspectRatio(ratio float32) CarouselPreviousEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CarouselPreviousEl) Bg(fill gk.Fill) CarouselPreviousEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CarouselPreviousEl) Border(length gk.Length) CarouselPreviousEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -5172,12 +6646,16 @@ func (e CarouselPreviousEl) Border(length gk.Length) CarouselPreviousEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CarouselPreviousEl) BorderB(length gk.Length) CarouselPreviousEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CarouselPreviousEl) BorderColor(borderColor gk.Color) CarouselPreviousEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -5185,6 +6663,8 @@ func (e CarouselPreviousEl) BorderColor(borderColor gk.Color) CarouselPreviousEl
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CarouselPreviousEl) BorderL(length gk.Length) CarouselPreviousEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -5192,6 +6672,8 @@ func (e CarouselPreviousEl) BorderL(length gk.Length) CarouselPreviousEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CarouselPreviousEl) BorderR(length gk.Length) CarouselPreviousEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -5199,6 +6681,8 @@ func (e CarouselPreviousEl) BorderR(length gk.Length) CarouselPreviousEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CarouselPreviousEl) BorderT(length gk.Length) CarouselPreviousEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -5206,6 +6690,8 @@ func (e CarouselPreviousEl) BorderT(length gk.Length) CarouselPreviousEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CarouselPreviousEl) BorderX(length gk.Length) CarouselPreviousEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -5213,6 +6699,8 @@ func (e CarouselPreviousEl) BorderX(length gk.Length) CarouselPreviousEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CarouselPreviousEl) BorderY(length gk.Length) CarouselPreviousEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -5220,30 +6708,40 @@ func (e CarouselPreviousEl) BorderY(length gk.Length) CarouselPreviousEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CarouselPreviousEl) Bottom(length gk.Length) CarouselPreviousEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CarouselPreviousEl) ColEnd(end int16) CarouselPreviousEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CarouselPreviousEl) ColSpan(span uint16) CarouselPreviousEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CarouselPreviousEl) ColStart(start int16) CarouselPreviousEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CarouselPreviousEl) Cursor(cursor gk.CursorStyle) CarouselPreviousEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -5251,36 +6749,48 @@ func (e CarouselPreviousEl) Cursor(cursor gk.CursorStyle) CarouselPreviousEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CarouselPreviousEl) FlexBasis(basis gk.Length) CarouselPreviousEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CarouselPreviousEl) FlexGrow(grow float32) CarouselPreviousEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CarouselPreviousEl) FlexShrink(shrink float32) CarouselPreviousEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CarouselPreviousEl) Font(font gk.Font) CarouselPreviousEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CarouselPreviousEl) FontFamily(familyName string) CarouselPreviousEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CarouselPreviousEl) FontFeatures(features gk.FontFeatures) CarouselPreviousEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -5289,12 +6799,16 @@ func (e CarouselPreviousEl) FontFeatures(features gk.FontFeatures) CarouselPrevi
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CarouselPreviousEl) FontWeight(weight gk.FontWeight) CarouselPreviousEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CarouselPreviousEl) Gap(length gk.Length) CarouselPreviousEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -5302,6 +6816,8 @@ func (e CarouselPreviousEl) Gap(length gk.Length) CarouselPreviousEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CarouselPreviousEl) GapX(length gk.Length) CarouselPreviousEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -5309,18 +6825,24 @@ func (e CarouselPreviousEl) GapX(length gk.Length) CarouselPreviousEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CarouselPreviousEl) GapY(length gk.Length) CarouselPreviousEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CarouselPreviousEl) GridCols(cols uint16) CarouselPreviousEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CarouselPreviousEl) GridColsMaxContent(cols uint16) CarouselPreviousEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -5328,18 +6850,24 @@ func (e CarouselPreviousEl) GridColsMaxContent(cols uint16) CarouselPreviousEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CarouselPreviousEl) GridColsMinContent(cols uint16) CarouselPreviousEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CarouselPreviousEl) GridRows(rows uint16) CarouselPreviousEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CarouselPreviousEl) GridRowsMaxContent(rows uint16) CarouselPreviousEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -5347,12 +6875,16 @@ func (e CarouselPreviousEl) GridRowsMaxContent(rows uint16) CarouselPreviousEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CarouselPreviousEl) GridRowsMinContent(rows uint16) CarouselPreviousEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CarouselPreviousEl) H(length gk.Length) CarouselPreviousEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -5360,6 +6892,8 @@ func (e CarouselPreviousEl) H(length gk.Length) CarouselPreviousEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CarouselPreviousEl) Inset(length gk.Length) CarouselPreviousEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -5367,6 +6901,8 @@ func (e CarouselPreviousEl) Inset(length gk.Length) CarouselPreviousEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CarouselPreviousEl) Left(length gk.Length) CarouselPreviousEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -5374,36 +6910,48 @@ func (e CarouselPreviousEl) Left(length gk.Length) CarouselPreviousEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CarouselPreviousEl) LineClamp(lines int) CarouselPreviousEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CarouselPreviousEl) LineHeight(lineHeight gk.Length) CarouselPreviousEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CarouselPreviousEl) M(length gk.Length) CarouselPreviousEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CarouselPreviousEl) MaxH(length gk.Length) CarouselPreviousEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CarouselPreviousEl) MaxSize(length gk.Length) CarouselPreviousEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CarouselPreviousEl) MaxW(length gk.Length) CarouselPreviousEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -5411,24 +6959,32 @@ func (e CarouselPreviousEl) MaxW(length gk.Length) CarouselPreviousEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CarouselPreviousEl) Mb(length gk.Length) CarouselPreviousEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CarouselPreviousEl) MinH(length gk.Length) CarouselPreviousEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CarouselPreviousEl) MinSize(length gk.Length) CarouselPreviousEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CarouselPreviousEl) MinW(length gk.Length) CarouselPreviousEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -5436,6 +6992,8 @@ func (e CarouselPreviousEl) MinW(length gk.Length) CarouselPreviousEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CarouselPreviousEl) Ml(length gk.Length) CarouselPreviousEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -5443,6 +7001,8 @@ func (e CarouselPreviousEl) Ml(length gk.Length) CarouselPreviousEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CarouselPreviousEl) Mr(length gk.Length) CarouselPreviousEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -5450,6 +7010,8 @@ func (e CarouselPreviousEl) Mr(length gk.Length) CarouselPreviousEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CarouselPreviousEl) Mt(length gk.Length) CarouselPreviousEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -5457,6 +7019,8 @@ func (e CarouselPreviousEl) Mt(length gk.Length) CarouselPreviousEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CarouselPreviousEl) Mx(length gk.Length) CarouselPreviousEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -5464,18 +7028,24 @@ func (e CarouselPreviousEl) Mx(length gk.Length) CarouselPreviousEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CarouselPreviousEl) My(length gk.Length) CarouselPreviousEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CarouselPreviousEl) Opacity(opacity float32) CarouselPreviousEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CarouselPreviousEl) P(length gk.Length) CarouselPreviousEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5483,6 +7053,8 @@ func (e CarouselPreviousEl) P(length gk.Length) CarouselPreviousEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CarouselPreviousEl) Pb(length gk.Length) CarouselPreviousEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5490,6 +7062,8 @@ func (e CarouselPreviousEl) Pb(length gk.Length) CarouselPreviousEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CarouselPreviousEl) Pl(length gk.Length) CarouselPreviousEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5497,6 +7071,8 @@ func (e CarouselPreviousEl) Pl(length gk.Length) CarouselPreviousEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CarouselPreviousEl) Pr(length gk.Length) CarouselPreviousEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5504,6 +7080,8 @@ func (e CarouselPreviousEl) Pr(length gk.Length) CarouselPreviousEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CarouselPreviousEl) Pt(length gk.Length) CarouselPreviousEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5511,6 +7089,8 @@ func (e CarouselPreviousEl) Pt(length gk.Length) CarouselPreviousEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CarouselPreviousEl) Px(length gk.Length) CarouselPreviousEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5518,6 +7098,8 @@ func (e CarouselPreviousEl) Px(length gk.Length) CarouselPreviousEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CarouselPreviousEl) Py(length gk.Length) CarouselPreviousEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5525,12 +7107,16 @@ func (e CarouselPreviousEl) Py(length gk.Length) CarouselPreviousEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CarouselPreviousEl) Right(length gk.Length) CarouselPreviousEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CarouselPreviousEl) Rounded(length gk.Length) CarouselPreviousEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5538,6 +7124,8 @@ func (e CarouselPreviousEl) Rounded(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CarouselPreviousEl) RoundedB(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5545,6 +7133,8 @@ func (e CarouselPreviousEl) RoundedB(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CarouselPreviousEl) RoundedBl(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5552,6 +7142,8 @@ func (e CarouselPreviousEl) RoundedBl(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CarouselPreviousEl) RoundedBr(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5559,6 +7151,8 @@ func (e CarouselPreviousEl) RoundedBr(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CarouselPreviousEl) RoundedL(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5566,6 +7160,8 @@ func (e CarouselPreviousEl) RoundedL(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CarouselPreviousEl) RoundedR(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5573,6 +7169,8 @@ func (e CarouselPreviousEl) RoundedR(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CarouselPreviousEl) RoundedT(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5580,6 +7178,8 @@ func (e CarouselPreviousEl) RoundedT(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CarouselPreviousEl) RoundedTl(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5587,24 +7187,32 @@ func (e CarouselPreviousEl) RoundedTl(length gk.Length) CarouselPreviousEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CarouselPreviousEl) RoundedTr(length gk.Length) CarouselPreviousEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CarouselPreviousEl) RowEnd(end int16) CarouselPreviousEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CarouselPreviousEl) RowSpan(span uint16) CarouselPreviousEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CarouselPreviousEl) RowStart(start int16) CarouselPreviousEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5614,24 +7222,32 @@ func (e CarouselPreviousEl) RowStart(start int16) CarouselPreviousEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CarouselPreviousEl) ScrollbarWidth(width gk.Length) CarouselPreviousEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CarouselPreviousEl) Shadow(shadows []gk.BoxShadow) CarouselPreviousEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CarouselPreviousEl) Size(length gk.Length) CarouselPreviousEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CarouselPreviousEl) TextAlign(align gk.TextAlign) CarouselPreviousEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5640,6 +7256,8 @@ func (e CarouselPreviousEl) TextAlign(align gk.TextAlign) CarouselPreviousEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CarouselPreviousEl) TextBg(bg gk.Color) CarouselPreviousEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5648,18 +7266,24 @@ func (e CarouselPreviousEl) TextBg(bg gk.Color) CarouselPreviousEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CarouselPreviousEl) TextColor(color gk.Color) CarouselPreviousEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CarouselPreviousEl) TextDecorationColor(color gk.Color) CarouselPreviousEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CarouselPreviousEl) TextOverflow(overflow gk.TextOverflow) CarouselPreviousEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5668,6 +7292,8 @@ func (e CarouselPreviousEl) TextOverflow(overflow gk.TextOverflow) CarouselPrevi
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CarouselPreviousEl) TextSize(size gk.Length) CarouselPreviousEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5675,32 +7301,41 @@ func (e CarouselPreviousEl) TextSize(size gk.Length) CarouselPreviousEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CarouselPreviousEl) Top(length gk.Length) CarouselPreviousEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CarouselPreviousEl) W(length gk.Length) CarouselPreviousEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e CarouselPreviousEl) Text(s string) CarouselPreviousEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CarouselPreviousEl) ChildView(v gk.View) CarouselPreviousEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CarouselPreviousEl) Child(child gk.Element) CarouselPreviousEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CarouselPreviousEl) Children(children ...gk.Element) CarouselPreviousEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e

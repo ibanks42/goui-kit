@@ -8,7 +8,7 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// BaseResolvedCorner is gpui_kit::base::Popup::resolved_corner.
+// BaseResolvedCorner calls gpui_kit::base::Popup::resolved_corner.
 func BaseResolvedCorner(cx *gk.Cx, anchor gk.Anchor, triggerBounds gk.Bounds) gk.GpuiPoint {
 	rt.UseBasePopup()
 	o := rt.NewReq(1174)
@@ -20,7 +20,7 @@ func BaseResolvedCorner(cx *gk.Cx, anchor gk.Anchor, triggerBounds gk.Bounds) gk
 
 // Clears all notifications.
 //
-// ClearNotifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::clear_notifications.
+// ClearNotifications calls <gpui_kit::Window as gpui_kit::component::WindowExt>::clear_notifications.
 func ClearNotifications(cx *gk.Cx) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(735)
@@ -29,7 +29,7 @@ func ClearNotifications(cx *gk.Cx) {
 
 // Closes all active Dialogs.
 //
-// CloseAllDialogs is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_all_dialogs.
+// CloseAllDialogs calls <gpui_kit::Window as gpui_kit::component::WindowExt>::close_all_dialogs.
 func CloseAllDialogs(cx *gk.Cx) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(736)
@@ -38,7 +38,7 @@ func CloseAllDialogs(cx *gk.Cx) {
 
 // Closes the last active Dialog.
 //
-// CloseDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_dialog.
+// CloseDialog calls <gpui_kit::Window as gpui_kit::component::WindowExt>::close_dialog.
 func CloseDialog(cx *gk.Cx) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(737)
@@ -47,7 +47,7 @@ func CloseDialog(cx *gk.Cx) {
 
 // Closes the active Sheet.
 //
-// CloseSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_sheet.
+// CloseSheet calls <gpui_kit::Window as gpui_kit::component::WindowExt>::close_sheet.
 func CloseSheet(cx *gk.Cx) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(738)
@@ -60,7 +60,7 @@ func CloseSheet(cx *gk.Cx) {
 // concrete state. A registration whose focus handle is no longer focused (e.g. the input was
 // removed from the tree while focused) is treated as `None`.
 //
-// FocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::focused_input.
+// FocusedInput calls <gpui_kit::Window as gpui_kit::component::WindowExt>::focused_input.
 func FocusedInput(cx *gk.Cx) gk.Option[editor.AnyInputState] {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(739)
@@ -73,7 +73,7 @@ func FocusedInput(cx *gk.Cx) gk.Option[editor.AnyInputState] {
 // A dialog that is playing its exit transition is no longer active: it accepts no input and will
 // unmount when the transition finishes.
 //
-// HasActiveDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_dialog.
+// HasActiveDialog calls <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_dialog.
 func HasActiveDialog(cx *gk.Cx) bool {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(740)
@@ -83,7 +83,7 @@ func HasActiveDialog(cx *gk.Cx) bool {
 
 // Return true, if there is an active Sheet.
 //
-// HasActiveSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_sheet.
+// HasActiveSheet calls <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_sheet.
 func HasActiveSheet(cx *gk.Cx) bool {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(741)
@@ -93,7 +93,7 @@ func HasActiveSheet(cx *gk.Cx) bool {
 
 // Returns true if there is a focused Input entity.
 //
-// HasFocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_focused_input.
+// HasFocusedInput calls <gpui_kit::Window as gpui_kit::component::WindowExt>::has_focused_input.
 func HasFocusedInput(cx *gk.Cx) bool {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(742)
@@ -103,7 +103,7 @@ func HasFocusedInput(cx *gk.Cx) bool {
 
 // Returns number of notifications.
 //
-// Notifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::notifications.
+// Notifications calls <gpui_kit::Window as gpui_kit::component::WindowExt>::notifications.
 func Notifications(cx *gk.Cx) []Notification {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1514)
@@ -120,7 +120,7 @@ func Notifications(cx *gk.Cx) []Notification {
 // dialog layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
 // the builder.
 //
-// OpenAlertDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
+// OpenAlertDialog calls <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
 func OpenAlertDialog[B gk.Builder[AlertDialogEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1124)
@@ -142,7 +142,7 @@ func OpenAlertDialog[B gk.Builder[AlertDialogEl]](cx *gk.Cx, build B) {
 // captured separately for each opening. Never focus unconditionally on subsequent rebuilds: that
 // would steal focus from another control or a nested dialog.
 //
-// OpenDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
+// OpenDialog calls <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
 func OpenDialog[B gk.Builder[DialogEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1125)
@@ -156,7 +156,7 @@ func OpenDialog[B gk.Builder[DialogEl]](cx *gk.Cx, build B) {
 // sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
 // the builder.
 //
-// OpenSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
+// OpenSheet calls <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
 func OpenSheet[B gk.Builder[SheetEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1126)
@@ -170,7 +170,7 @@ func OpenSheet[B gk.Builder[SheetEl]](cx *gk.Cx, build B) {
 // sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
 // the builder.
 //
-// OpenSheetAt is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
+// OpenSheetAt calls <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
 func OpenSheetAt[B gk.Builder[SheetEl]](cx *gk.Cx, placement gk.Placement, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1127)
@@ -181,7 +181,7 @@ func OpenSheetAt[B gk.Builder[SheetEl]](cx *gk.Cx, placement gk.Placement, build
 
 // Pushes a notification to the notification list.
 //
-// PushNotification is <gpui_kit::Window as gpui_kit::component::WindowExt>::push_notification.
+// PushNotification calls <gpui_kit::Window as gpui_kit::component::WindowExt>::push_notification.
 func PushNotification(cx *gk.Cx, note string) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(743)

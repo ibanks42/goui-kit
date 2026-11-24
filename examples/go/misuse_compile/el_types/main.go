@@ -1,4 +1,4 @@
-// A button where a label is expected: element types are distinct.
+// Compile-time misuse case: element types are distinct structs; a ButtonEl is not a LabelEl.
 package main
 
 import (

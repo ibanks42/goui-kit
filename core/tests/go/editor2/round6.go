@@ -1,26 +1,3 @@
-// editor2: the protocol tests of docs/PROTOCOLS.md 9.30 to 9.37.
-//
-//	GK_PROTO=host        the editor host: the app's blocks (a heading, a paragraph of inline nodes,
-//	                     a list of list items, a code block: recursive variants) and Markdown parsed
-//	                     by gk.BaseParseMarkdown (held values, kept by gk.Retain) drawn by
-//	                     gk.BlockHost with a flow, a render context with Markdown extensions and a
-//	                     decoration; each keyed leaf's geometry after the frame, read back (bounds,
-//	                     lengths, a position and the index it maps back to, a caret); delivered
-//	                     once while nothing changes; a parsed table's rows read back
-//	                     (host.go)
-//	chain                a text view state whose builder chain holds a value node (motion), and the
-//	                     text view defaults with a style in theirs: decoded with the call's context
-//	decorate             a number input's buttons decorated: a style and a row each, the rows
-//	                     described when the buttons are laid out (no window where upstream calls)
-//	                     (host.go)
-//	lsp                  the editor's Lsp edited in place (LspMut) with a completion highlighter
-//	                     (host.go)
-//	diagnostic           a diagnostic presented on the editor (a record holding a value node)
-//	                     (host.go)
-//	overlay-keys         the overlay actions the app takes, given in advance; routed with none open
-//	edits                an input's InputEditsEvent: the edits and the text after each, typed in
-//	context-menu         an input's context menu read back by its handler: the items' actions as
-//	                     the app's action ids
 package main
 
 import (
@@ -31,7 +8,8 @@ import (
 	"gpuikit.dev/gk/editor"
 )
 
-// Round6 is the state of this file's modes (host.go keeps its own).
+// Round6 holds per-mode state for TextView defaults, overlay key routing,
+// input-edit streams, and editor context-menu tests.
 type Round6 struct {
 	events    int
 	plus      gk.RowSource
@@ -42,9 +20,13 @@ type Round6 struct {
 }
 
 func init() {
+	// chain proves chained TextViewDefaults/TextViewMotion builders preserve
+	// InheritTextColor=true and render Markdown TextViewState cleanly.
 	modes["chain"] = &mode{init: chainInit, view: func(a *App, cx *gk.Cx) gk.Element {
 		return gk.Div().W(gk.Px(300)).Child(editor.TextView(a.r6.tvs))
 	}, step: func(a *App, cx *gk.Cx) { fmt.Printf("editor2 chain drawn\n") }, script: "frame\n" + stepScript}
+	// overlay-keys proves registering overlay action mappings still reports
+	// routed=false when no completion or code-action overlay is currently open.
 	modes["overlay-keys"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.ed = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
 		a.ed.SetOverlayActionHandler(cx, []editor.TupleInputOverlayKindString{{V0: editor.InputOverlayKindCompletion, V1: "input::Tab"},
@@ -52,6 +34,8 @@ func init() {
 	}, view: editorBox, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 overlay-keys routed=%v\n", a.ed.RouteOverlayAction(cx, gk.NewAction(cx, "input::Tab")))
 	}, script: "frame\n" + stepScript}
+	// edits proves OnInputEditsEvent delivers exact UTF-8 byte ranges for typing
+	// "c" (2..2 -> 3, "abc") and Backspace (2..3 -> 2, "ab").
 	modes["edits"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.inp = editor.NewInputState(cx).DefaultValue("ab").Build()
 		a.r6.edits = a.inp.OnInputEditsEvent(cx, a.onEdits)
@@ -66,7 +50,6 @@ func init() {
 	}, script: "click 100 72\nframe\nrclick 60 72\nframe\nadvance 50\nframe\nframe\n" + stepScript}
 }
 
-// editorBox and inputBox are the bodies of the modes that draw the base editor or an input.
 func editorBox(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(420)).H(gk.Px(120)).Child(editor.BaseEditor(a.ed))
 }

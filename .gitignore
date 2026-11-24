@@ -1,4 +1,4 @@
-# Build output
+# Built libraries, example binaries, Cargo outputs, release bundles, and Python bytecode.
 /lib/
 /bin/
 /target/
@@ -6,7 +6,7 @@
 /dist/
 __pycache__/
 
-# Generator and gate output
+# Generator staging output and gate run artifacts.
 /gen-json/
 /gen/out/build.*/
 /gates/out/

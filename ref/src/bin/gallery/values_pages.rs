@@ -1,9 +1,6 @@
-//! The values family's gallery pages (docs/PROTOCOLS.md sections 13.8 to 13.12), written the way a
-//! Rust GPUI-kit app writes them: the theme's mode switched with `Theme::change`, the theme's
-//! fields edited in place through `Theme::global_mut`, and bars placed by the plot scales
-//! (`ScaleBand`, `ScaleLinear`). The Go twin is examples/go/gallery/values_pages.go; the
-//! pages' lines are in ref/gallery/pages.txt. Each theme page toggles with one button, clicked
-//! twice by its script, so the theme is as before afterwards.
+//! Theme, plot scales, settings, drag-and-drop, shadows, resizable panes,
+//! scrollbars, toolbar, calendar, and round-6 component (`comp6-*`) gallery pages.
+
 use gpui_kit::base::plot::scale::{Scale, ScaleBand, ScaleLinear};
 use gpui_kit::component::button::{Button, ButtonVariants};
 use gpui_kit::component::label::Label;
@@ -18,7 +15,7 @@ use gpui_kit::{
 use std::cell::Cell;
 
 thread_local! {
-    /// The theme's font size and radius before the edit page changed them.
+    /// Snapshot of initial `(font_size, radius)` captured before toggling `values-theme-edit`.
     static ORIGINAL: Cell<Option<(Pixels, Pixels)>> = const { Cell::new(None) };
 }
 
@@ -33,6 +30,7 @@ fn sample() -> impl IntoElement {
         .child(Switch::new("sw").checked(true).label("Switch"))
 }
 
+/// Renders stateless `values-*` and `comp6-*` pages that only need `&App`.
 pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
     Some(match id {
         "values-theme-mode" => div()
@@ -87,7 +85,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                 }))
                 .into_any_element()
         }
-        // docs/PROTOCOLS.md 13.19, 13.20
+
         "values-settings" => settings_page().into_any_element(),
         "values-drag" => {
             let preview = PREVIEW.with(|p| p.borrow().clone()).expect("the preview view (ValuesPages::new)");
@@ -158,9 +156,6 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
     })
 }
 
-// --- docs/PROTOCOLS.md 13.19, 13.20: the settings page over values a Rust app keeps,
-// drag and drop of a value.
-
 thread_local! {
     static DARK: Cell<bool> = const { Cell::new(false) };
     static COMPACT: Cell<bool> = const { Cell::new(true) };
@@ -210,14 +205,12 @@ fn settings_page() -> impl IntoElement {
     )
 }
 
-/// The value a drag carries.
 #[derive(Clone)]
 struct DragValue {
     id: u64,
     text: SharedString,
 }
 
-/// The drag's preview, a view.
 struct Preview;
 impl gpui_kit::Render for Preview {
     fn render(&mut self, _: &mut Window, cx: &mut gpui_kit::Context<Self>) -> impl IntoElement {
@@ -225,15 +218,15 @@ impl gpui_kit::Render for Preview {
     }
 }
 
-/// PROTOCOLS.md 13.13, 13.14: a calendar whose state was given a date (jiff's civil::Date),
-/// and a list scrolled from code through a ScrollHandle with a scrollbar over it.
+/// Persistent state entities for `calendar-date`, `values-scroll`, and stateful `comp6-*` pages.
 pub struct ValuesPages {
     pub cal: Entity<CalendarState>,
     pub scroll: ScrollHandle,
-    pub c6: Comp6Pages, // the components family
+    pub c6: Comp6Pages,
 }
 
 impl ValuesPages {
+    /// Initializes calendar dates, scrolled offset, drag preview, and `Comp6Pages`.
     pub fn new(window: &mut Window, cx: &mut App) -> Self {
         let cal = cx.new(|cx| CalendarState::new(window, cx));
         let date = jiff::civil::date(2024, 2, 29);
@@ -247,6 +240,7 @@ impl ValuesPages {
     }
 }
 
+/// Renders stateful `calendar-date`, `values-scroll`, and `comp6-*` gallery pages.
 pub fn page_state(id: &str, g: &crate::Gallery) -> Option<AnyElement> {
     let v = &g.values;
     Some(match id {
@@ -270,18 +264,13 @@ pub fn page_state(id: &str, g: &crate::Gallery) -> Option<AnyElement> {
     })
 }
 
-// --- the components family, docs/PROTOCOLS.md 11.17 to 11.24, written the way a Rust
-// GPUI-kit app writes them; the Go twins are in examples/go/gallery/values_pages.go:
-// tooltips the kit's Tooltip describes, a resizable group whose divider the app draws beside one the
-// kit draws, labels in Markdown (Text::TextView), calendars with a disabled range and a set of
-// disabled days, and a table's and a tree's context menus.
-
 use crate::overlay_pages::{MenuZoomIn, MenuZoomOut};
 use gpui_kit::component::list::ListItem;
 use gpui_kit::component::menu::PopupMenu;
 use gpui_kit::component::table::{Column, DataTable, TableDelegate, TableState};
 use gpui_kit::component::tree::{TreeItem, TreeState, tree};
 
+/// Persistent state for round-6 calendar matchers, table context menu, and tree context menu.
 pub struct Comp6Pages {
     cal_range: Entity<CalendarState>,
     cal_days: Entity<CalendarState>,
@@ -311,7 +300,6 @@ impl Comp6Pages {
     }
 }
 
-/// A table whose rows each open a menu on a right-click.
 pub struct MenuTable {
     columns: Vec<Column>,
 }
@@ -393,7 +381,7 @@ fn comp6_page(id: &str, _cx: &App) -> Option<AnyElement> {
                 let color = if ctx.is_active() { cx.theme().primary } else { cx.theme().border };
                 Some(div().h_full().w(px(3.)).bg(color).into_any_element())
             });
-            // A handle of its own (ResizeHandle::with_appearance) at the left edge of a band.
+
             let alone = div().relative().w(px(600.)).h(px(40.)).bg(_cx.theme().muted).child(
                 gpui_kit::base::resize_handle::<u32, gpui_kit::EmptyView>("c6h", gpui_kit::Axis::Horizontal)
                     .with_appearance(app_drawn.clone()),

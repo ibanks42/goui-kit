@@ -1,21 +1,7 @@
 #!/bin/bash
-# run.sh [MODE...]: the runtime's protocol tests of the families (docs/PROTOCOLS.md), in Go.
-# Each family is one Go test app,
-# core/tests/go/FAMILY (module gpuikit.dev/coretests), built against the diag library and run
-# offscreen (no display, no compositor) in one mode per check; a check is the mode's exit code and
-# the lines it printed. The core protocol tests in Go
-# (examples/go/proto) are gates/go-proto.sh; `make go-proto-all`
-# runs both.
-#
-# Prints one line per check and "GATE proto-families go PASS|FAIL n of m" at the end; exit 0 only
-# if every check that ran passed.
-#
-#   core/tests/go/run.sh                   every family
-#   core/tests/go/run.sh actions timers    those modes only
-#   GK_FAMILIES="rows input" core/tests/go/run.sh   those families only
-# GK_LIB_ROOT=the directory holding diag/libgpuikit.so (default lib), which the tests load
-# (LD_LIBRARY_PATH); GK_BIN=where the test
-# binaries go (default bin). Logs: gates/out/go-proto-families/MODE.log.
+# Master runner for Go protocol-family tests under core/tests/go/.
+# Sources each run-*.sh family (or $GK_FAMILIES), optionally filters individual
+# modes via positional arguments, and prints a GATE summary line.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(cd "$here/../../.." && pwd)
 . "$repo/go/env.sh"
 lib=${GK_LIB_ROOT:-$repo/lib}/diag
@@ -23,10 +9,10 @@ bin=${GK_BIN:-$repo/bin}
 out=$repo/gates/out/go-proto-families
 rm -rf "$out"; mkdir -p "$out" "$bin"
 export LD_LIBRARY_PATH=$lib
+# Force headless execution even when invoked from a graphical desktop session.
 unset WAYLAND_DISPLAY DISPLAY
 
-# build NAME DIR: go build core/tests/go/DIR into bin/NAME. A family that does not build fails
-# each of its checks (they find no binary) instead of stopping the suite.
+# Builds a Go test package into $bin/$name, logging failures under $out.
 build() {
   name=$1; dir=$2
   rm -f "$bin/$name"
@@ -37,7 +23,8 @@ build() {
 }
 
 pass=0; total=0
-# check MODE EXIT PATTERN...: every pattern (grep -E) must appear in the mode's output.
+# Runs $GK_PROTO_BIN with GK_PROTO=$mode, verifies exit code $want, and checks
+# that every extended regex argument matches the captured log.
 check() {
   mode=$1; want=$2; shift 2
   log=$out/$mode.log
@@ -61,8 +48,6 @@ wanted() { [ ${#only[@]} -eq 0 ] && return 0; for m in "${only[@]}"; do [ "$m" =
 run() { mode_name=$1; if wanted; then check "$@"; fi; }
 only=("$@")
 
-# Each family: core/tests/go/run-FAMILY.sh, sourced here; it builds its app with `build NAME DIR`
-# and checks it with `GK_PROTO_BIN=NAME run MODE EXIT PATTERN...`.
 families=${GK_FAMILIES:-$(cd "$here" && ls run-*.sh | sed 's/^run-//; s/\.sh$//')}
 for fam in $families; do
   [ -f "$here/run-$fam.sh" ] && . "$here/run-$fam.sh"

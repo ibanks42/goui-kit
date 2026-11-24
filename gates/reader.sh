@@ -1,9 +1,10 @@
 #!/bin/bash
-# reader.sh [SCRIPT]: runs the reader example (examples/go/reader, bin/reader-go) offscreen under a gk-meter script
-# (default gates/reader.script) over a generated feed of 3,000 articles (gates/reader-feed.py), keeps
-# the images in gates/out/reader/ and checks the log for what the session must have done. No Rust
-# twin: the images are looked at by eye. Builds the app first. Prints one line
-# "GATE reader session-go ...".
+# Standalone offscreen session gate for the Go reader app (`gates/reader.sh [script]`).
+# Gates: building reader-go and running a full scripted session over a 3000-article feed.
+# Method: builds examples/go/reader, generates feed.md via gates/reader-feed.py, and executes
+# reader-go offscreen on lib/diag with GK_SCRIPT (default gates/reader.script, 120 s timeout).
+# PASS: build succeeds and reader-go exits 0 (`GATE reader session-go PASS`).
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 front=go; gate="reader session-$front"
 script=$(realpath "${1:-$here/reader.script}")

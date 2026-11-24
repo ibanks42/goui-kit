@@ -1,12 +1,16 @@
-# The counter app's scripted run: first frame, a click on "Add", text typed into the input.
-# Positions are window coordinates in logical pixels (the Add button and the input).
+# Offscreen script for the counter pixel gate (gates/pixels.sh counter).
+# Captures initial render, one button click, and typing into the text input.
 size 640 480
 frame
 frame
 shot 1-start.png
+
+# Click the increment button.
 click 40 32
 frame
 shot 2-clicked.png
+
+# Focus the text input and type a name.
 click 250 32
 type Ada
 frame

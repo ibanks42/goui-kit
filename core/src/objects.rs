@@ -1,18 +1,28 @@
-//! Library objects behind handles (docs/PROTOCOLS.md section 13): kit values that are not
-//! entities (a dialog's handle, a scroll handle, a display map, a search matcher, the theme)
-//! held by the library and named by a handle of kind OBJ. Generated call ops reach them only
-//! through the functions here, re-exported by `genapi`.
+//! Handle-backed Rust library objects (`HK_OBJ`), temporary-handle sweeping, and global singletons.
 //!
-//! - An object made by a constructor is *kept*: it lives until `gk.release`.
-//! - An object a read, a call or an event hands out is *temporary*: it lives until the next
-//!   frame begins (the pre-frame hook sweeps it), after the buffered writes of the turn that
-//!   got it have landed. `gk.retain` (call op OBJ_RETAIN) keeps it.
-//! - A kit global (`impl Global`: the theme, the theme registry) has one handle per type,
-//!   interned, that reads and updates the global in place (`cx.global`, `cx.update_global`).
+//! # Object Handle Lifetimes and Retirement
 //!
-//! An owned object sits in an `Rc<RefCell<T>>`, cloned out of the handle table before any kit
-//! code runs, so no kit method runs inside the session borrow. A method that re-enters the
-//! binding and touches the same object meets a borrowed cell: GK_ERR_BUSY, never a panic.
+//! Non-entity Rust values (scroll handles, keyframes, image caches, diff files, theme configs,
+//! and GPUI `Global` singletons) cannot cross the wire by value and are stored under `HK_OBJ`
+//! generational handles in `Session`:
+//!
+//! - **Permanent handles ([`obj_new`])**: explicitly constructed by the host; live until released
+//!   via `C_RELEASE` (or moved out via [`obj_take`]).
+//! - **Temporary handles ([`obj_temp`], [`Owned`])**: returned by getters, method calls, or event
+//!   payloads. Each is appended to thread-local `TEMPS` (setting `HAS_TEMPS`), and `rt::pre_frame`
+//!   invokes [`sweep`] at the start of the next frame to release every unretained temporary handle
+//!   along with expired view pins from `values::sweep_pins`. Calling `C_OBJ_RETAIN` (or pinning
+//!   via `values::pin` / [`untemp`]) removes a handle from `TEMPS` so it survives across frames.
+//!   When a host mistakenly uses a swept temporary, [`stale`] augments `ERR_STALE_HANDLE` with a
+//!   hint pointing to `gk.Retain`.
+//! - **Global singletons ([`obj_global`])**: maps each `Global` type's `TypeId` to one cached
+//!   `ObjItem::Global` handle (`GLOBALS`). `obj_read_global` / `obj_update_global` /
+//!   `obj_update_w_global` route global handles to `cx.global::<T>()` / `cx.update_global::<T>()`,
+//!   while `obj_rc` rejects them so globals cannot be moved or taken by value.
+//! - **Borrow & move safety**: owned objects live in `Rc<RefCell<T>>`. `try_borrow` /
+//!   `try_borrow_mut` convert re-entrant conflicts into `ERR_BUSY` rather than panicking, and
+//!   [`obj_take`] releases the handle before `Rc::try_unwrap` so an in-use object fails with
+//!   `ERR_BUSY` instead of corrupting an active borrow.
 
 use crate::genapi::Wire;
 use crate::ops::*;
@@ -27,11 +37,9 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 static HAS_TEMPS: AtomicBool = AtomicBool::new(false);
 
-/// What a handle of kind OBJ names.
+/// Stored payload for an `HK_OBJ` handle: either an owned `RefCell<T>` or a GPUI global marker.
 pub enum ObjItem {
-    /// An `Rc<RefCell<T>>` as `dyn Any`.
     Owned { cell: Rc<dyn Any>, type_name: &'static str },
-    /// The kit global of this type.
     Global { type_id: TypeId, type_name: &'static str },
 }
 
@@ -44,9 +52,9 @@ impl ObjItem {
 }
 
 thread_local! {
-    /// Temporary handles, released when the next frame begins.
+    /// Temporary `HK_OBJ` handles scheduled for release at the next [`sweep`].
     static TEMPS: RefCell<Vec<u64>> = const { RefCell::new(Vec::new()) };
-    /// The interned handle of each global type.
+    /// Cached singleton handles for GPUI `Global` types, keyed by `TypeId`.
     static GLOBALS: RefCell<HashMap<TypeId, u64>> = RefCell::new(HashMap::new());
 }
 
@@ -69,12 +77,13 @@ fn insert<T: 'static>(v: T) -> u64 {
     rt::with(|s| s.insert(HK_OBJ, Item::Obj(item)))
 }
 
-/// A new kept object (a constructor's result): released with gk.release.
+/// Inserts a permanent (retained) library object and returns its `HK_OBJ` handle.
 pub fn obj_new<T: 'static>(v: T) -> u64 {
     insert(v)
 }
 
-/// A new temporary object (a read's, a call's or an event's result).
+/// Inserts a temporary library object that [`sweep`] will release before the next frame unless
+/// the host calls `C_OBJ_RETAIN`.
 pub fn obj_temp<T: 'static>(v: T) -> u64 {
     let h = insert(v);
     TEMPS.with(|t| t.borrow_mut().push(h));
@@ -82,8 +91,7 @@ pub fn obj_temp<T: 'static>(v: T) -> u64 {
     h
 }
 
-/// The handle of the kit global `T`. One per type, never temporary; releasing it is allowed
-/// and the next request makes a new one.
+/// Returns the cached `HK_OBJ` handle representing GPUI global `T`, creating one if needed.
 pub fn obj_global<T: Global>() -> u64 {
     let id = TypeId::of::<T>();
     if let Some(h) = GLOBALS.with(|g| g.borrow().get(&id).copied()) {
@@ -120,7 +128,7 @@ fn get<T: 'static>(h: u64) -> GkResult<Got<T>> {
     })
 }
 
-/// The cell of an owned object (an argument passed by reference).
+/// Returns the `Rc<RefCell<T>>` backing an owned `HK_OBJ` handle (rejecting global handles).
 pub fn obj_rc<T: 'static>(h: u64) -> GkResult<Rc<RefCell<T>>> {
     match get::<T>(h)? {
         Got::Cell(c) => Ok(c),
@@ -138,15 +146,14 @@ fn busy<T>() -> GkErr {
     )
 }
 
-/// A copy of an owned object (an argument passed by value, of a type that is Clone).
+/// Clones the value inside owned object handle `h`.
 pub fn obj_clone<T: Clone + 'static>(h: u64) -> GkResult<T> {
     let c = obj_rc::<T>(h)?;
     let v = c.try_borrow().map_err(|_| busy::<T>())?.clone();
     Ok(v)
 }
 
-/// An owned object given away (an argument passed by value, of a type that is not Clone):
-/// the handle is released, and using it again stops with a message.
+/// Releases handle `h` and moves the owned value out if no other `Rc` reference is held.
 pub fn obj_take<T: 'static>(h: u64) -> GkResult<T> {
     let c = obj_rc::<T>(h)?;
     drop(rt::with(|s| s.release(h))?);
@@ -156,8 +163,7 @@ pub fn obj_take<T: 'static>(h: u64) -> GkResult<T> {
     }
 }
 
-/// A copy of an object a view's tape names (an element's argument). A released or swept
-/// handle there is a mistake in app code and the element cannot be drawn: exit 2.
+/// Clones an object handle referenced by an element on a tape, stopping the app on stale handles.
 pub fn obj_shown<T: Clone + 'static>(h: u64) -> T {
     match obj_clone::<T>(h) {
         Ok(v) => v,
@@ -165,7 +171,7 @@ pub fn obj_shown<T: Clone + 'static>(h: u64) -> T {
     }
 }
 
-/// A read (`&self`) of an owned object.
+/// Immutably borrows an owned `HK_OBJ` value of type `T`.
 pub fn obj_read<T: 'static, V>(h: u64, c: &mut crate::genapi::Call, f: impl FnOnce(&T, &App) -> V) -> GkResult<V> {
     match get::<T>(h)? {
         Got::Cell(cell) => {
@@ -176,7 +182,7 @@ pub fn obj_read<T: 'static, V>(h: u64, c: &mut crate::genapi::Call, f: impl FnOn
     }
 }
 
-/// A read of an owned object or of the global of that type.
+/// Immutably borrows either an owned `HK_OBJ` or the GPUI `Global` singleton of type `T`.
 pub fn obj_read_global<T: Global, V>(h: u64, c: &mut crate::genapi::Call, f: impl FnOnce(&T, &App) -> V) -> GkResult<V> {
     match get::<T>(h)? {
         Got::Cell(cell) => {
@@ -193,8 +199,7 @@ pub fn obj_read_global<T: Global, V>(h: u64, c: &mut crate::genapi::Call, f: imp
     }
 }
 
-/// An update of an owned object (`&mut self`, or `&self` with the app): a buffered write
-/// returns (), a call returns its value.
+/// Mutably borrows an owned `HK_OBJ` value of type `T`.
 pub fn obj_update<T: 'static, V>(h: u64, c: &mut crate::genapi::Call, f: impl FnOnce(&mut T, &mut App) -> V) -> GkResult<V> {
     match get::<T>(h)? {
         Got::Cell(cell) => {
@@ -205,7 +210,7 @@ pub fn obj_update<T: 'static, V>(h: u64, c: &mut crate::genapi::Call, f: impl Fn
     }
 }
 
-/// `obj_update` that also accepts the global of that type.
+/// Mutably borrows either an owned `HK_OBJ` or the GPUI `Global` singleton of type `T`.
 pub fn obj_update_global<T: Global, V>(h: u64, c: &mut crate::genapi::Call, f: impl FnOnce(&mut T, &mut App) -> V) -> GkResult<V> {
     match get::<T>(h)? {
         Got::Cell(cell) => {
@@ -221,8 +226,8 @@ pub fn obj_update_global<T: Global, V>(h: u64, c: &mut crate::genapi::Call, f: i
     }
 }
 
-/// Runs `f` with a window: the turn's, or the app's first open window (a buffered write
-/// applied after its turn). GK_ERR_NO_CONTEXT when no window is open.
+/// Runs `f` with the call's current window, falling back to the first open window when the call
+/// arrived without window context.
 pub fn with_window<V>(c: &mut crate::genapi::Call, f: impl FnOnce(&mut Window, &mut App) -> V) -> GkResult<V> {
     if let Some(window) = c.window_opt() {
         return Ok(f(window, c.cx));
@@ -234,7 +239,7 @@ pub fn with_window<V>(c: &mut crate::genapi::Call, f: impl FnOnce(&mut Window, &
     }
 }
 
-/// `obj_update` for a method that also takes the window.
+/// Mutably borrows an owned `HK_OBJ` with window access.
 pub fn obj_update_w<T: 'static, V>(
     h: u64,
     c: &mut crate::genapi::Call,
@@ -248,7 +253,7 @@ pub fn obj_update_w<T: 'static, V>(
     with_window(c, |window, cx| f(&mut s, window, cx))
 }
 
-/// `obj_update_w` that also accepts the global of that type.
+/// Mutably borrows an owned `HK_OBJ` or GPUI `Global` with window access.
 pub fn obj_update_w_global<T: Global, V>(
     h: u64,
     c: &mut crate::genapi::Call,
@@ -263,8 +268,8 @@ pub fn obj_update_w_global<T: Global, V>(
     }
 }
 
-/// A method that takes the object by value (`self`): a copy when the type is Clone (the
-/// handle stays good), else the object itself (the handle is released).
+/// Extracts `T` by value from handle `h`, cloning via `clone` when supported and otherwise
+/// consuming the handle with [`obj_take`].
 pub fn obj_by_value<T: 'static>(h: u64, clone: impl FnOnce(&T) -> Option<T>) -> GkResult<T> {
     let cell = obj_rc::<T>(h)?;
     let copy = {
@@ -278,8 +283,7 @@ pub fn obj_by_value<T: 'static>(h: u64, clone: impl FnOnce(&T) -> Option<T>) -> 
     }
 }
 
-/// A result that is a library object by value, handed out as a temporary handle without a
-/// copy (`Wire::put` takes `&self`, so the value waits in a cell).
+/// Move-once wrapper that encodes an owned `T` onto the wire as a temporary `HK_OBJ` handle.
 pub struct Owned<T>(Cell<Option<T>>);
 
 impl<T> Owned<T> {
@@ -297,9 +301,7 @@ impl<T: 'static> Wire for Owned<T> {
     }
 }
 
-/// A builder value made outside a view as a call op's argument (PROTOCOLS.md section 13.6):
-/// u32 length, then a tape whose root is the value; decoded by the value's generated decoder
-/// with a window (the turn's, or the app's first) and the app in hand.
+/// Decodes a length-prefixed mini-tape argument using `build`.
 pub fn value_arg<T>(
     c: &mut crate::genapi::Call,
     r: &mut R,
@@ -314,15 +316,13 @@ pub fn value_arg<T>(
     }
 }
 
-/// Rems (a length in the theme's tokens) as it travels out: an f32, as `Pixels` does.
 impl Wire for gpui_kit::Rems {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_f32(self.0)
     }
 }
 
-/// Releases the temporary handles handed out before this point. Called when a frame begins
-/// (`rt::pre_frame`), after every buffered write of the turns that got them has landed.
+/// Releases all unretained temporary object handles and expired value pins before a frame begins.
 pub fn sweep() {
     if !needs_sweep() {
         return;
@@ -332,23 +332,21 @@ pub fn sweep() {
     } else {
         Vec::new()
     };
-    // Handles an earlier build of a view pinned and no build names now (values.rs, OBJ_PIN).
     temps.extend(crate::values::sweep_pins());
     if temps.is_empty() {
         return;
     }
     let items: Vec<_> = rt::with(|s| temps.iter().filter_map(|h| s.release(*h).ok()).collect());
-    drop(items); // outside the session borrow: dropping a kit value may run GPUI code
+    drop(items);
 }
 
-/// Whether temporary handles or retired view pins are waiting for `sweep` at the next frame.
 #[inline]
 pub fn needs_sweep() -> bool {
     HAS_TEMPS.load(Ordering::Relaxed) || crate::values::has_pending_pins()
 }
 
-/// Makes a temporary handle kept (it is no longer swept); false when `h` was not temporary.
-/// A view that places one in its elements pins it this way (values.rs, OBJ_PIN).
+/// Removes `h` from the temporary list without requiring a `C_OBJ_RETAIN` call; returns `true`
+/// if `h` was pending sweep.
 pub fn untemp(h: u64) -> bool {
     if !HAS_TEMPS.load(Ordering::Relaxed) {
         return false;
@@ -364,7 +362,7 @@ pub fn untemp(h: u64) -> bool {
     })
 }
 
-/// The runtime's own call ops of this protocol.
+/// Handles `C_OBJ_RETAIN`, `C_TABLE_COLUMN_VALUES`, and `C_OBJ_TEST_TEMPS`.
 pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<()>> {
     match op {
         C_OBJ_RETAIN => {
@@ -384,7 +382,6 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             })())
         }
         C_TABLE_COLUMN_VALUES => Some((|| {
-            // A table's columns as the kit's own Column values, each a tape of its own.
             let (src, state) = (r.u64(), r.u64());
             let n = r.u32() as usize;
             let mut columns = Vec::with_capacity(n.min(4096));
@@ -402,7 +399,6 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             let live = rt::with(|s| s.count(HK_OBJ));
             c.out.put_u32(n as u32);
             c.out.put_u32(live as u32);
-            // then the live kit states, views and focus handles (the Go runtime's lifetime tests)
             for kind in [HK_STATE, HK_VIEW, HK_FOCUS] {
                 c.out.put_u32(rt::with(|s| s.count(kind)) as u32);
             }

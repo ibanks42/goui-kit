@@ -1,8 +1,8 @@
-//! The hand-written bridges: what the generator does not emit yet and the examples need.
-//! The uniform list keeps its rows in the library (DESIGN.md section 9). It is written
-//! exactly as generated code is, using `crate::genapi`, and is asked after the generated
-//! module. The test call ops of core/tests are here too. (InputState was a bridge here until
-//! 11 Nov 2026; the generator instantiates it now: `[instantiate] states` in overrides.toml.)
+//! Hand-written node decoder hub and row-store call handlers.
+//!
+//! Dispatches built-in node opcodes (text, uniform lists, source lists, virtual lists) and
+//! delegates specialized families (input, rows, overlay, dock, plot, motion, items) to their
+//! dedicated modules. Also implements `C_ROWS_NEW`, `C_ROWS_PUSH`, and update-reentrancy test calls.
 
 use crate::generated;
 use crate::genapi::{self, *};
@@ -13,59 +13,54 @@ use gpui_kit::{AnyElement, AppContext, Div, IntoElement, ParentElement, SharedSt
 use std::cell::RefCell;
 use std::rc::Rc;
 
+/// Decodes a hand-written node opcode `ty` into a GPUI `AnyElement`, or returns `None`.
 pub fn node(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<AnyElement> {
-    // This file's own elements first: a view of a list or of a text decodes them every time it is
-    // drawn, and none of the families below is any of them.
     match ty {
         N_UNIFORM_LIST => return Some(decode_uniform_list(dx, args, first)),
         N_SOURCE_LIST => return Some(decode_source_list(dx, args, first)),
         N_TEXT => return Some(SharedString::from(dx.args(args).str()).into_any_element()),
         _ => {}
     }
-    // The delegate families' own elements (docs/PROTOCOLS.md section 9).
+
     if let Some(el) = crate::shim_input::node(dx, ty, args, first) {
         return Some(el);
     }
     if let Some(el) = crate::shim_rows::node(dx, ty, args, first) {
         return Some(el);
     }
-    // View-built closures and the dropdown button (docs/PROTOCOLS.md section 11.6).
     if let Some(el) = crate::overlay::node(dx, ty, args, first) {
         return Some(el);
     }
     if let Some(el) = crate::dock::node(dx, ty, args, first) {
         return Some(el);
     }
-    // A described plot (docs/PROTOCOLS.md section 12).
     if let Some(el) = crate::plot::node(dx, ty, args, first) {
         return Some(el);
     }
-    // An element wrapped by an animation, motion values or a focus trap (PROTOCOLS.md 13.30).
     if let Some(el) = crate::motion::node(dx, ty, args, first) {
         return Some(el);
     }
-    // A view handed to an item procedure (PROTOCOLS.md 9.41).
     if let Some(el) = crate::items::node(dx, ty, args, first) {
         return Some(el);
     }
-    // A virtual list over a row source (PROTOCOLS.md 13.31).
     if ty == N_VIRTUAL_LIST {
         return Some(crate::source::virtual_list(dx, args, first));
     }
     Some(match ty {
         N_UNIFORM_LIST => decode_uniform_list(dx, args, first),
         N_SOURCE_LIST => decode_source_list(dx, args, first),
-        // A string where upstream takes `impl IntoElement` (GroupBox::title("..")).
         N_TEXT => SharedString::from(dx.args(args).str()).into_any_element(),
         _ => return None,
     })
 }
 
-/// A list row as the sample draws it. The Rust reference builds the same element.
+/// Builds a default 24 px text row for `N_UNIFORM_LIST` and [`crate::tape::FastTree`].
 pub fn list_row(text: SharedString) -> Div {
     div().h(px(24.)).px_2().child(text)
 }
 
+/// Decodes `N_UNIFORM_LIST`: `[id: str][rows_handle: u64]` plus style ops, rendering each
+/// `RowStore` string through [`list_row`].
 fn decode_uniform_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     let mut a = dx.args(args);
     let id = SharedString::from(a.str());
@@ -73,7 +68,7 @@ fn decode_uniform_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
         Ok(store) => store,
         Err(GkErr(_, msg)) => genapi::released_shown(&msg, "Rows"),
     };
-    // Read during the view's build, so gpui-fast records that this view depends on the store.
+
     let rows = store.read(dx.cx).rows.clone();
     let count = rows.borrow().len();
     let mut el = uniform_list(id, count, move |range, _, _| {
@@ -89,9 +84,8 @@ fn decode_uniform_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     el.into_any_element()
 }
 
-/// A list over a row source (the shared core of the delegate protocol, core/src/source.rs):
-/// each row is a view of its own, a row without one is drawn as an empty row of the row's
-/// height for one frame. Args: str id, u64 source, f32 row height.
+/// Decodes `N_SOURCE_LIST`: `[id: str][src_handle: u64][row_height: f32]` plus style ops,
+/// watching `src` on the enclosing view so new row tapes refresh the list.
 fn decode_source_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     let mut a = dx.args(args);
     let id = SharedString::from(a.str());
@@ -102,7 +96,7 @@ fn decode_source_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
         Ok(parts) => parts,
         Err(GkErr(_, msg)) => genapi::released_shown(&msg, "row source"),
     };
-    // The view that draws the list is notified when the rows it drew as placeholders arrive.
+
     if let Ok(view) = rt::with(|s| s.view(dx.view_handle())) {
         source::watch(src, view.entity_id());
     }
@@ -124,9 +118,10 @@ fn decode_source_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     el.into_any_element()
 }
 
+/// Fast path invoked by the reply processor to append strings directly to a [`RowStore`].
 pub(crate) fn rows_push_slice(op: &[u8], cx: &mut gpui_kit::App) -> GkResult<()> {
     let mut r = R::new(op);
-    let _ = r.u16(); // C_ROWS_PUSH already checked by caller
+    let _ = r.u16();
     let entity = rt::with(|s| s.rows(r.u64()))?;
     let n = r.u32();
     entity.update(cx, |store, cx| {
@@ -140,6 +135,7 @@ pub(crate) fn rows_push_slice(op: &[u8], cx: &mut gpui_kit::App) -> GkResult<()>
     Ok(())
 }
 
+/// Handles `C_ROWS_NEW`, `C_ROWS_PUSH`, and the entity-update handler test opcodes.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_ROWS_NEW => {
@@ -164,8 +160,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_TEST_FIRE_IN_UPDATE => (|| {
-            // Stands in for a delegate method: fires the handler synchronously from inside
-            // the input entity's own update, where that entity is on lease.
+            // Fires a handler while an `InputState` entity borrow is active on the stack.
             let entity = genapi::state::<InputState>(r.u64())?;
             let h = HandlerRef {
                 view: r.u64(),
@@ -179,7 +174,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_TEST_FIRE_QUEUED => (|| {
-            // The same, as a queued event: the handler runs when the update has ended.
+            // Queues an event from inside an `InputState` update to test deferred delivery.
             let entity = genapi::state::<InputState>(r.u64())?;
             let h = HandlerRef {
                 view: r.u64(),

@@ -12,7 +12,7 @@ import (
 // macOS: https://support.apple.com/en-us/HT201236 Windows:
 // https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec
 //
-// Format is gpui_kit::component::kbd::Kbd::format.
+// Format calls gpui_kit::component::kbd::Kbd::format.
 func Format(cx *gk.Cx, key gk.Keystroke) string {
 	rt.UseComponentKbd()
 	o := rt.NewReq(1179)
@@ -23,7 +23,7 @@ func Format(cx *gk.Cx, key gk.Keystroke) string {
 
 // Returns the default title bar options for compatible with the `TitleBarEl`.
 //
-// TitleBarOptions is gpui_kit::component::TitleBar::title_bar_options.
+// TitleBarOptions calls gpui_kit::component::TitleBar::title_bar_options.
 func TitleBarOptions(cx *gk.Cx) gk.TitlebarOptions {
 	rt.UseComponentTitleBar()
 	o := rt.NewReq(1178)

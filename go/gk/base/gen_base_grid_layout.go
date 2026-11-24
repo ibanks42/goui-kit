@@ -9,7 +9,7 @@ import (
 // GrowHeight is gpui_kit::base::grid_layout::GrowHeight.
 type GrowHeight struct{ rt.Val }
 
-// NewGrowHeightDefault is <gpui_kit::base::grid_layout::GrowHeight as Default>::default.
+// NewGrowHeightDefault calls <gpui_kit::base::grid_layout::GrowHeight as Default>::default.
 func NewGrowHeightDefault() GrowHeight {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(449)
@@ -19,7 +19,7 @@ func NewGrowHeightDefault() GrowHeight {
 // GrowWidth is gpui_kit::base::grid_layout::GrowWidth.
 type GrowWidth struct{ rt.Val }
 
-// NewGrowWidthDefault is <gpui_kit::base::grid_layout::GrowWidth as Default>::default.
+// NewGrowWidthDefault calls <gpui_kit::base::grid_layout::GrowWidth as Default>::default.
 func NewGrowWidthDefault() GrowWidth {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(450)
@@ -29,7 +29,7 @@ func NewGrowWidthDefault() GrowWidth {
 // MoveDown is gpui_kit::base::grid_layout::MoveDown.
 type MoveDown struct{ rt.Val }
 
-// NewMoveDownDefault is <gpui_kit::base::grid_layout::MoveDown as Default>::default.
+// NewMoveDownDefault calls <gpui_kit::base::grid_layout::MoveDown as Default>::default.
 func NewMoveDownDefault() MoveDown {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(451)
@@ -39,7 +39,7 @@ func NewMoveDownDefault() MoveDown {
 // MoveLeft is gpui_kit::base::grid_layout::MoveLeft.
 type MoveLeft struct{ rt.Val }
 
-// NewMoveLeftDefault is <gpui_kit::base::grid_layout::MoveLeft as Default>::default.
+// NewMoveLeftDefault calls <gpui_kit::base::grid_layout::MoveLeft as Default>::default.
 func NewMoveLeftDefault() MoveLeft {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(452)
@@ -49,7 +49,7 @@ func NewMoveLeftDefault() MoveLeft {
 // MoveRight is gpui_kit::base::grid_layout::MoveRight.
 type MoveRight struct{ rt.Val }
 
-// NewMoveRightDefault is <gpui_kit::base::grid_layout::MoveRight as Default>::default.
+// NewMoveRightDefault calls <gpui_kit::base::grid_layout::MoveRight as Default>::default.
 func NewMoveRightDefault() MoveRight {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(453)
@@ -59,7 +59,7 @@ func NewMoveRightDefault() MoveRight {
 // MoveUp is gpui_kit::base::grid_layout::MoveUp.
 type MoveUp struct{ rt.Val }
 
-// NewMoveUpDefault is <gpui_kit::base::grid_layout::MoveUp as Default>::default.
+// NewMoveUpDefault calls <gpui_kit::base::grid_layout::MoveUp as Default>::default.
 func NewMoveUpDefault() MoveUp {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(454)
@@ -69,7 +69,7 @@ func NewMoveUpDefault() MoveUp {
 // SelectNextItem is gpui_kit::base::grid_layout::SelectNextItem.
 type SelectNextItem struct{ rt.Val }
 
-// NewSelectNextItemDefault is <gpui_kit::base::grid_layout::SelectNextItem as Default>::default.
+// NewSelectNextItemDefault calls <gpui_kit::base::grid_layout::SelectNextItem as Default>::default.
 func NewSelectNextItemDefault() SelectNextItem {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(455)
@@ -79,7 +79,7 @@ func NewSelectNextItemDefault() SelectNextItem {
 // SelectPreviousItem is gpui_kit::base::grid_layout::SelectPreviousItem.
 type SelectPreviousItem struct{ rt.Val }
 
-// NewSelectPreviousItemDefault is <gpui_kit::base::grid_layout::SelectPreviousItem as Default>::default.
+// NewSelectPreviousItemDefault calls <gpui_kit::base::grid_layout::SelectPreviousItem as Default>::default.
 func NewSelectPreviousItemDefault() SelectPreviousItem {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(456)
@@ -89,7 +89,7 @@ func NewSelectPreviousItemDefault() SelectPreviousItem {
 // ShrinkHeight is gpui_kit::base::grid_layout::ShrinkHeight.
 type ShrinkHeight struct{ rt.Val }
 
-// NewShrinkHeightDefault is <gpui_kit::base::grid_layout::ShrinkHeight as Default>::default.
+// NewShrinkHeightDefault calls <gpui_kit::base::grid_layout::ShrinkHeight as Default>::default.
 func NewShrinkHeightDefault() ShrinkHeight {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(457)
@@ -99,7 +99,7 @@ func NewShrinkHeightDefault() ShrinkHeight {
 // ShrinkWidth is gpui_kit::base::grid_layout::ShrinkWidth.
 type ShrinkWidth struct{ rt.Val }
 
-// NewShrinkWidthDefault is <gpui_kit::base::grid_layout::ShrinkWidth as Default>::default.
+// NewShrinkWidthDefault calls <gpui_kit::base::grid_layout::ShrinkWidth as Default>::default.
 func NewShrinkWidthDefault() ShrinkWidth {
 	rt.UseBaseGridLayout()
 	n := rt.NewValue(458)

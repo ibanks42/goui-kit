@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- The application manifest a Windows program on libgpuikit embeds (core/windows/gpuikit.rc):
-     per-monitor DPI awareness v2, common controls 6, Windows 10. gpui-fast's own manifest
-     (gpui-fast 0.1.14, resources/windows/gpui.manifest.xml, Apache-2.0), which the library does not
-     embed: gpui-kit selects gpui-fast's feature windows-manifest-provided-by-host, and only the
-     program's manifest counts for these settings. -->
+<!-- Windows application manifest embedded via gpuikit.rc.
+     Enables Per-Monitor V2 DPI awareness, SegmentHeap, Common Controls v6,
+     and standard user execution privileges for Windows 10 and later hosts. -->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
     <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
         <security>
@@ -14,7 +12,7 @@
     </trustInfo>
     <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
         <application>
-            <!-- Windows 10 -->
+            <!-- Windows 10 and Windows 11 compatibility GUID -->
             <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
         </application>
     </compatibility>

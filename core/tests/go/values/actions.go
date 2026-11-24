@@ -1,4 +1,3 @@
-// val-actions and val-action-in-view: the kit's own action values named as actions (gk.ActionOf).
 package main
 
 import (
@@ -8,11 +7,14 @@ import (
 )
 
 func init() {
+	// Register builtin action deduplication and view-context rejection tests.
 	modes["val-actions"] = &mode{click: once(actions)}
 	modes["val-action-in-view"] = &mode{body: actionInView}
 }
 
-// The kit's own action values as actions: the same value gives the same id, a built-in one.
+// actions proves gk.ActionOf returns the exact same built-in action ID for
+// repeated calls with Cancel (same=true, builtin=true) and a distinct ID for
+// SelectDown (other=true).
 func actions(a *App, cx *gk.Cx) {
 	x := gk.ActionOf(cx, gk.NewCancelDefault())
 	y := gk.ActionOf(cx, gk.NewCancelDefault())
@@ -20,7 +22,8 @@ func actions(a *App, cx *gk.Cx) {
 	fmt.Printf("values actions same=%v builtin=%v other=%v\n", x == y, x.IsBuiltin(), x != z)
 }
 
-// Misuse: naming an action in a view function stops at its line (exit 2).
+// actionInView proves calling gk.ActionOf inside a view render callback is
+// rejected by the runtime misuse guard because actions must be registered outside views.
 func actionInView(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 	fmt.Println("values naming an action in a view")
 	_ = gk.ActionOf(cx, gk.NewCancelDefault())

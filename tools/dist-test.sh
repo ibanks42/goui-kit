@@ -1,19 +1,24 @@
 #!/bin/bash
-# dist-test.sh DOWNLOAD [go]: what an app developer does first, from an unpacked download
-# (dist/gpuikit-VERSION-PLATFORM), on any of the three platforms: build the hello example with
-# the download's own examples/go/build.sh, then run that program in a real window for 30 frames
-# (GK_FRAMES=5,30: the library draws them and exits; Linux without a display runs it under
-# xvfb-run). Both ways an app is built: the default (no C compiler, cgo off; the program loads
-# the library, which is copied beside it as an app ships it) and GK_STATIC=1 (-tags gkstatic: the
-# static library linked in, one file; needs a C compiler on PATH). Writes DOWNLOAD/../test-PLATFORM/
-# and exits non-zero on the first failure.
-# macOS (the universal download): first the libraries' slices (lipo: exactly arm64 and x86_64);
-# then hello for this Mac's architecture as above, and again for the other one (Apple silicon:
-# x86_64, GOARCH=amd64, with CC='clang -arch x86_64' for the static build; Intel: arm64), each
-# binary checked to be that architecture alone. The other architecture's hello runs the same
-# way when this Mac can run it (x86_64 on Apple silicon with Rosetta 2); otherwise it is built
-# and linked against the universal library only, and the log says so. GK_OTHER_ARCH=0 skips the
-# other architecture.
+# Smoke-test an unpacked distribution folder (produced by `tools/dist.sh`) from a user's
+# perspective: builds and runs the bundled Go `hello` example in both default shared mode
+# (`CGO_ENABLED=0` purego) and static mode (`GK_STATIC=1` with `-tags gkstatic`).
+#
+# What this verifies on each platform:
+# - Isolated runtime lookup: copies the built executable (and shared library in shared mode,
+#   nothing else in static mode) into a fresh staging directory outside the archive so hidden
+#   build-tree paths cannot mask missing libraries or broken rpaths.
+# - Real window lifecycle: sets `GK_FRAMES=5,30` so the app opens a real window, renders
+#   30 frames, and exits cleanly with status 0 within a 120-second watchdog timeout.
+# - macOS universal check: verifies `libgpuikit_static.a` and `libgpuikit.dylib` each carry
+#   both `arm64` and `x86_64` slices, checks the host binary's Mach-O slice via `lipo -archs`,
+#   cross-compiles `hello` for the non-host architecture (using `GOARCH` + `CC="clang -arch ..."`
+#   for static cgo), and executes the x86_64 build under Rosetta 2 when available on Apple Silicon.
+# - Headless Linux fallback: wraps execution in `xvfb-run` if neither `DISPLAY` nor
+#   `WAYLAND_DISPLAY` is set.
+#
+# Usage: tools/dist-test.sh DIST_DIR [go]
+# Environment variables:
+#   GK_OTHER_ARCH  set to 0 on macOS to skip cross-building/running the non-host architecture.
 set -euo pipefail
 dl=$(cd "${1:?usage: dist-test.sh DOWNLOAD [go]}" && pwd); shift
 [ $# -gt 0 ] || set -- go
@@ -24,21 +29,19 @@ case "$(uname -s)" in
 esac
 out=$(dirname "$dl")/test-$(basename "$dl" | sed 's/^gpuikit-[^-]*-//')
 rm -rf "$out"; mkdir -p "$out"
-# A two-minute limit without timeout(1), which macOS lacks; and without a helper program between,
-# since macOS drops DYLD_LIBRARY_PATH when it starts a system binary (perl, env).
+# Run a command with a 120-second watchdog so a hung GUI window fails cleanly instead of blocking CI.
 limit() { "$@" & local pid=$! rc=0; ( sleep 120; kill $pid 2> /dev/null ) & local w=$!
   wait $pid || rc=$?; kill $w 2> /dev/null || true; return $rc; }
-# Linux without a display: a virtual X server for the run (xvfb-run, from the xvfb package).
 xvfb=()
 if [ $os = linux ] && [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
   command -v xvfb-run > /dev/null || { echo "dist-test.sh: no display and no xvfb-run" >&2; exit 1; }
   xvfb=(xvfb-run -a -s "-screen 0 1280x800x24")
 fi
-run() { # NAME BINARY [LIBRARY]: runs the program as built, in a window, for 30 frames
+# Copy only the built binary (and shared library in shared mode) into an isolated temp folder
+# and run 30 frames to verify self-contained library loading and clean shutdown.
+run() {
   local name=$1 bin=$2 so=${3:-} dir=$out/$1 rc=0
   mkdir -p "$dir"
-  # From a copy in its own folder, the way it is shipped: one file (static), or the program and
-  # the library beside it.
   cp "$bin" "$dir/"
   [ -z "$so" ] || cp "$so" "$dir/"
   (cd "$dir" && GK_FRAMES=5,30 limit ${xvfb[@]+"${xvfb[@]}"} "./$(basename "$bin")") > "$dir/log" 2>&1 || rc=$?
@@ -46,7 +49,6 @@ run() { # NAME BINARY [LIBRARY]: runs the program as built, in a window, for 30 
   if [ $rc != 0 ]; then echo "dist-test: FAIL $name: exit $rc (log $dir/log)"; return 1; fi
   echo "dist-test: PASS $name: 30 frames in a window, exit 0"
 }
-# macOS: the universal library's slices, and which architecture is the other one here.
 other=
 if [ $os = macos ]; then
   for f in "$dl/lib/libgpuikit_static.a" "$dl/lib/libgpuikit.dylib"; do
@@ -61,8 +63,6 @@ if [ $os = macos ]; then
     *) echo "dist-test: FAIL unknown Mac architecture $here"; exit 1 ;;
   esac
   [ "${GK_OTHER_ARCH:-1}" = 1 ] || other=
-  # Rosetta 2 runs x86_64 code on Apple silicon; an Intel Mac cannot run arm64 at all. The probe
-  # is a system binary run as x86_64: it starts only when Rosetta is installed.
   other_runs=
   if [ "$other" = x86_64 ] && /usr/bin/arch -x86_64 /usr/bin/true 2> /dev/null; then other_runs=1; fi
   if [ -z "$other" ]; then note="the other architecture is skipped (GK_OTHER_ARCH=0)"
@@ -71,7 +71,7 @@ if [ $os = macos ]; then
   else note="hello is built and linked for $other too, not run (an Intel Mac cannot run arm64)"; fi
   echo "dist-test: this Mac is $here; $note"
 fi
-arch_of() { # BINARY ARCH: the binary is that one architecture alone
+arch_of() {
   local got; got=$(lipo -archs "$1" | awk '{for (i = 1; i <= NF; i++) printf "%s%s", (n++ ? " " : ""), $i}')
   [ "$got" = "$2" ] || { echo "dist-test: FAIL $1 is '$got', not $2"; return 1; }
 }

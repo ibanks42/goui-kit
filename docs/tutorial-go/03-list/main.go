@@ -1,4 +1,4 @@
-// Step 3 of the Go tutorial: a list whose rows the app draws.
+// Step 3 of the Go tutorial: render items through a virtualized List backed by a RowSource.
 package main
 
 import (
@@ -19,15 +19,20 @@ type Item struct {
 
 type App struct {
 	items []Item
-	list  table.ListState // kit state: it lives in the library; the app keeps the handle
+	list  table.ListState
 }
 
+// init runs once when OpenWindow mounts the root view, which is when window-backed
+// GPUI-kit states (such as ListState) can be constructed.
 func (a *App) init(cx *gk.Cx) {
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.items = append(a.items, Item{"Milk", 2}, Item{"Bread", 1}, Item{"Apples", 6})
+	// Refresh notifies the view and re-syncs row source counts after changing a.items.
 	gk.Refresh(cx)
 }
 
+// itemRow describes one visible row on demand as its own retained view.
+// gk.Key("item", at.Row) gives each row a stable, unique element ID.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	it := a.items[at.Row]
 	return table.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
@@ -36,6 +41,8 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
+	// s.Flex1 and s.MinH0 constrain the list's height inside the flex column so it scrolls
+	// instead of expanding off-screen.
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
 		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
@@ -45,7 +52,8 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{"Milk", 1})
-	gk.Refresh(cx) // the rows show data this handler changed: describe them again
+	// Refresh is required here so the row source re-reads len(a.items).
+	gk.Refresh(cx)
 }
 
 func main() {

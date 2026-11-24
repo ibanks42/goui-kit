@@ -1,4 +1,3 @@
-// val-pins: the temporary handles pinned to views, now and released later (gk.TestValuePins).
 package main
 
 import (
@@ -9,6 +8,7 @@ import (
 )
 
 func init() {
+	// Register value-pin retention tests across theme changes and view re-renders.
 	modes["val-pins"] = &mode{click: pins, start: pinsStart,
 		body: func(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl { return body.ChildView(a.child) }}
 }
@@ -19,17 +19,18 @@ func pinsStart(a *App, cx *gk.Cx) {
 	a.child = gk.NewView(nil, a.childView)
 }
 
-// A temporary handle (a read's result) placed in a view's elements: pinned to that view, so a redraw
-// of the same tape frames later still finds it (Theme::change redraws every window without describing
-// the view again); a newer build releases the old one at the next sweep.
+// pins proves view-scoped value pins stay live across a theme-only redraw
+// (click 2: builds=1, pinned=1, later=0), queue the old pin for deferred
+// retirement when childView rebuilds (click 3: builds=2, pinned=1, later=1),
+// and free the retired pin on the next frame (click 4: later=0).
 func pins(a *App, cx *gk.Cx) {
 	pinned, later := gk.TestValuePins(cx)
 	fmt.Printf("values pins click=%d builds=%d pinned=%d later=%d\n", a.clicks, a.builds, pinned, later)
 	switch a.clicks {
 	case 1:
-		gk.ThemeChange(cx, gk.ThemeModeDark) // every window drawn again, the child's tape unchanged
+		gk.ThemeChange(cx, gk.ThemeModeDark)
 	case 2:
-		gk.Notify(cx, a.child) // the child described again: a new temporary handle, the old one released later
+		gk.Notify(cx, a.child)
 	}
 }
 

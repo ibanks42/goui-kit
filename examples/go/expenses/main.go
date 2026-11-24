@@ -1,9 +1,5 @@
-// expenses: a small expense tracker. A form with
-// validation adds an expense (what, amount, category); the list shows them with a delete button
-// each; a bar chart shows the total per category.
-//
-//	expenses-go                 a real window
-//	GK_SCRIPT=file expenses-go  offscreen under a gk-meter script (gates/go-apps.sh)
+// Expenses tracker example demonstrating forms, validation, a Select dropdown,
+// a virtualized list, toast notifications, and a BarChart driven by Go structs.
 package main
 
 import (
@@ -43,14 +39,15 @@ type Expense struct {
 }
 
 type App struct {
-	expenses     []Expense
-	what, amount editor.InputState
-	category     table.SelectState
-	list         table.ListState
-	// the fields' messages, "" while a field is valid
+	expenses                        []Expense
+	what, amount                    editor.InputState
+	category                        table.SelectState
+	list                            table.ListState
 	whatErr, amountErr, categoryErr string
 }
 
+// init builds the form's input states, populates the category SelectState from a
+// SearchSource, creates the virtualized expense list, and seeds starter rows.
 func (a *App) init(cx *gk.Cx) {
 	a.what = editor.NewInputState(cx).Placeholder("Coffee, bus ticket, ...").Build()
 	a.amount = editor.NewInputState(cx).Placeholder("0.00").Build()
@@ -61,6 +58,7 @@ func (a *App) init(cx *gk.Cx) {
 	for i, c := range categories {
 		items[i] = gk.SearchItem{Value: c.String()}
 	}
+	// table.NoRow leaves the dropdown unselected until the user picks a category.
 	a.category = table.NewSelectState(cx, gk.NewSearchSource(cx, items), table.NoRow).Build()
 	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ table.SelectEvent) { a.revalidate(cx) })
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.expenses) }, a.expenseRow)).Build()
@@ -99,7 +97,6 @@ func (a *App) form() gk.Element {
 		Footer(kit.Button("add").Primary().Label("Add expense").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.add(cx) }))
 }
 
-// field is a form field with its message under it while it has one.
 func field(label string, input gk.Element, message string) kit.FieldEl {
 	f := kit.Field().Label(label).Child(input)
 	if message != "" {
@@ -108,12 +105,13 @@ func field(label string, input gk.Element, message string) kit.FieldEl {
 	return f
 }
 
-// total is one bar of the chart.
 type total struct {
 	Category string
 	Total    float64
 }
 
+// chart aggregates totals per category and feeds the struct slice directly to chart.NewData.
+// Exported struct field names ("Category", "Total") are validated against the chart builders.
 func (a *App) chart() gk.Element {
 	totals := make([]total, len(categories))
 	for i, c := range categories {
@@ -140,7 +138,6 @@ func (a *App) expenseRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 		})))
 }
 
-// validate checks the fields, sets their messages, and returns the expense they describe.
 func (a *App) validate(cx *gk.Cx) (e Expense, ok bool) {
 	e.What = strings.TrimSpace(a.what.Value(cx))
 	a.whatErr = ""
@@ -181,7 +178,6 @@ func (a *App) add(cx *gk.Cx) {
 	gk.Refresh(cx)
 }
 
-// fieldEvent: Enter in either field adds; typing clears a message once the field is fixed.
 func (a *App) fieldEvent(cx *gk.Cx, e editor.InputEvent) {
 	switch e.(type) {
 	case editor.InputEventPressEnter:
@@ -191,7 +187,6 @@ func (a *App) fieldEvent(cx *gk.Cx, e editor.InputEvent) {
 	}
 }
 
-// revalidate updates the messages once one is shown, so a fixed field loses its message.
 func (a *App) revalidate(cx *gk.Cx) {
 	if a.whatErr != "" || a.amountErr != "" || a.categoryErr != "" {
 		a.validate(cx)

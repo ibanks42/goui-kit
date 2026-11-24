@@ -8,27 +8,26 @@ import (
 	"github.com/ebitengine/purego"
 )
 
-// The turn callback without reflection. purego enters every callback through one Go function,
-// held in its variable callbackWrap_call, which finds the Go function by index and calls it with
-// reflect (a few microseconds a turn when the caches are cold, as they are between frames). This
-// file puts a wrapper in front of it that calls dynCallback directly when the index is the turn
-// callback's, and hands any other callback to purego's own. It depends on purego's internals
-// (the variable, and its callbackArgs: the index, then the argument block of 8 float registers
-// followed by the integer registers on amd64 and arm64), which are those of the pinned version;
-// installFastCallback checks them by calling the callback once with a marker, and keeps purego's
-// path when the marker does not arrive where it should.
-
+// puregoCallbackWrap links to purego's internal callbackWrap_call function
+// variable. By default, purego unpacks callback arguments using reflect.Call on
+// every C-to-Go transition; replacing this dispatcher lets the hot UI turn
+// callback read the saved integer argument registers directly.
+//
 //go:linkname puregoCallbackWrap github.com/ebitengine/purego.callbackWrap_call
 var puregoCallbackWrap func(*cbArgs)
 
-// cbArgs is purego's callbackArgs on amd64 and arm64 (syscall_notstackargs.go).
+// cbArgs mirrors purego's internal callbackArgs struct passed from assembly:
+// index identifies the registered callback slot, args points to the saved
+// register spill area, and result holds up to four return words.
 type cbArgs struct {
 	index  uintptr
 	args   unsafe.Pointer
 	result [4]uintptr
 }
 
-const cbFloatRegs = 8 // float registers come first in the argument block
+// Number of floating-point register save slots (XMM0..XMM7 on amd64, V0..V7 on
+// arm64) that precede the integer argument registers in purego's spill frame.
+const cbFloatRegs = 8
 
 var (
 	puregoWrap func(*cbArgs)
@@ -36,6 +35,10 @@ var (
 	probing    bool
 )
 
+// fastWrap intercepts purego callback dispatch. Once turnIndex is confirmed by
+// installFastCallback, calls for that index read the five integer arguments
+// directly from a.args[cbFloatRegs : cbFloatRegs+5] and call dynCallback
+// without reflection. All other callbacks fall through to puregoWrap.
 func fastWrap(a *cbArgs) {
 	if a.index == turnIndex {
 		f := (*[cbFloatRegs + 5]uintptr)(a.args)
@@ -52,8 +55,10 @@ func fastWrap(a *cbArgs) {
 	puregoWrap(a)
 }
 
-// installFastCallback puts fastWrap in front of purego's callback wrapper for the callback at
-// addr, once its probe has found the callback's index. It runs once, before the library runs.
+// installFastCallback wraps puregoCallbackWrap and performs a self-verifying
+// probe call to addr with sentinel arguments (cbMarker, 0, ^uintptr(0)-1, 0, 0).
+// If purego's internal register layout ever changes, the probe fails to match
+// and installFastCallback cleanly restores purego's original dispatcher.
 func installFastCallback(addr uintptr) {
 	if puregoCallbackWrap == nil {
 		return
@@ -65,6 +70,6 @@ func installFastCallback(addr uintptr) {
 	probing = false
 	if r != cbMarker || turnIndex == ^uintptr(0) {
 		turnIndex = ^uintptr(0)
-		puregoCallbackWrap = puregoWrap // the layout is not the one this file knows: purego's path
+		puregoCallbackWrap = puregoWrap
 	}
 }

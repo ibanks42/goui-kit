@@ -1,6 +1,7 @@
-//! Call ops: executed at once through `gk_call`, or from a turn's reply (buffered writes).
-//! This file holds the runtime's own ops; the generator's (`core/src/gen/`, feature `gen`)
-//! and the hand-written bridges (`hand.rs`) are asked for everything else.
+//! Top-level dispatcher for synchronous (`gk_call`) and deferred wire call opcodes.
+//!
+//! Core lifecycle, focus, handle release, and protocol-test opcodes are handled here; all other
+//! opcodes are routed through the domain subsystems and the generated state/call dispatcher.
 
 use crate::genapi::{self, Call, HandlerRef};
 use crate::ops::*;
@@ -8,7 +9,7 @@ use crate::rt::{self, GkResult, Item, err};
 use crate::wire::{Put, R};
 use gpui_kit::{App, Window};
 
-/// `deferred` is true when the op comes from a reply and runs outside the turn that wrote it.
+/// Decodes the leading `u16` opcode of `req`, executes it, and writes any reply bytes into `out`.
 pub fn call(
     req: &[u8],
     window: Option<&mut Window>,
@@ -51,18 +52,16 @@ pub fn call(
             Ok(())
         }
         C_QUIT => {
-            // Offscreen, quitting ends the script (the test platform has no loop to end).
             #[cfg(feature = "diag")]
             gk_meter::headless::stop();
             c.cx.quit();
             Ok(())
         }
         C_RELEASE => {
-            // The object is dropped here, outside the session borrow: dropping an entity or
-            // a subscription may run GPUI code.
+            // Remove from the handle table before dropping so any Drop impl can safely borrow rt.
             let item = rt::with(|s| s.release(r.u64()))?;
             if let Some(Item::Source(source)) = &item {
-                // A source's rows go with it (the binding forgot them when it released it).
+                // Cascade release to child row views owned by a released row source.
                 for v in source.views() {
                     let row = rt::with(|s| s.release(v)).ok();
                     drop(row);
@@ -87,8 +86,7 @@ pub fn call(
             rt::with_window(any, window, c.cx, |window, cx| window.focus(&focus, cx))
         }
         C_TEST_FIRE => {
-            // Stands in for a GPUI listener that returns a value (Fn(..) -> bool): fires the
-            // handler synchronously and hands its return value back.
+            // Protocol test hook: fires a `() -> bool` handler synchronously.
             let h = HandlerRef {
                 view: r.u64(),
                 generation: r.u32(),
@@ -100,7 +98,7 @@ pub fn call(
             Ok(())
         }
         C_TEST_FIRE_VALUE => {
-            // A two-argument payload and a string coming back: (str, u32) -> str.
+            // Protocol test hook: fires a `(str, u32) -> String` handler synchronously.
             let h = HandlerRef {
                 view: r.u64(),
                 generation: r.u32(),
@@ -114,9 +112,7 @@ pub fn call(
             Ok(())
         }
         C_TEST_FIRE_SHAPE => {
-            // The generated handler-shape test (core/tests/gen): the payload is decoded into the
-            // Rust types a real listener hands over and fired through their own Wire impls when
-            // the generated codecs can build it (typed), else fired as the bytes it is.
+            // Protocol test hook: fires any wire handler shape through generated or raw dispatch.
             let h = HandlerRef {
                 view: r.u64(),
                 generation: r.u32(),
@@ -136,8 +132,6 @@ pub fn call(
             Ok(())
         }
         C_TEST_PANIC => panic!("test panic asked for by the app (call op TEST_PANIC)"),
-        // The row store's ops (hand.rs) are the ones a frame sends most (a list that grows on a
-        // click): straight to their module rather than past every other family's.
         C_ROWS_NEW | C_ROWS_PUSH => match crate::hand::call(op, &mut r, &mut c) {
             Some(done) => done,
             None => err(ERR_BAD_OP, format!("unknown call op {op}")),
@@ -147,7 +141,7 @@ pub fn call(
                 return done;
             }
             if let Some(done) = crate::platform::call(op, &mut r, &mut c) {
-                return done; // docs/PROTOCOLS.md 11.30
+                return done;
             }
             if let Some(done) = crate::objects::call(op, &mut r, &mut c) {
                 return done;

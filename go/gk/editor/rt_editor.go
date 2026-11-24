@@ -1,3 +1,7 @@
+// Hand-written code editor element and LSP-style provider request/response
+// channel (completions, hover, definitions, document colors, code actions,
+// semantic tokens, and inline ghost-text completions).
+
 package editor
 
 import (
@@ -5,34 +9,29 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// CodeEditorEl is the kit's styled code editor (gpui_kit::component::input::Editor): what the
-// generated base editor is plus the border, the size and the menus of the providers. Upstream
-// declares it in a doc(hidden) module, so the generator has no item for it; this is its
-// hand-written node (core/src/shim_input.rs).
+// CodeEditorEl is the element handle returned by CodeEditor.
 type CodeEditorEl struct{ rt.ElCore }
 
-// Style adds style tokens (s.SizeFull, s.H64).
+// Style applies nullary style tokens to e.
 func (e CodeEditorEl) Style(st ...gk.Style) CodeEditorEl { rt.Tokens(rt.N(e.Core), st); return e }
 
-// W sets the width.
+// W sets the width of e.
 func (e CodeEditorEl) W(l gk.Length) CodeEditorEl { tStyledW(rt.N(e.Core), l); return e }
 
-// H sets the height.
+// H sets the height of e.
 func (e CodeEditorEl) H(l gk.Length) CodeEditorEl { tStyledH(rt.N(e.Core), l); return e }
 
-// CodeEditorOptions are a code editor's looks; the zero value is upstream's (bordered, with the
-// kit's appearance, enabled, editable, the height left to the layout).
+// CodeEditorOptions configures height, chrome, disabled, and read-only flags
+// for CodeEditor.
 type CodeEditorOptions struct {
-	Height       float32 // 0 leaves the height to the layout
+	Height       float32
 	NoBorder     bool
 	NoAppearance bool
 	Disabled     bool
 	ReadOnly     bool
 }
 
-// CodeEditor shows an EditorState as the kit's code editor.
-//
-//	gk.CodeEditor(a.editor, gk.CodeEditorOptions{Height: 320}, s.WFull)
+// CodeEditor renders a code editor element bound to editor state.
 func CodeEditor(state State, opts CodeEditorOptions, st ...gk.Style) CodeEditorEl {
 	n := rt.NewNode(rt.NInputEditor)
 	o := rt.NodeArgs(n)
@@ -49,14 +48,11 @@ func CodeEditor(state State, opts CodeEditorOptions, st ...gk.Style) CodeEditorE
 	return CodeEditorEl{ElCore: rt.MkElCore(n)}
 }
 
-// ProviderRequest is one of the questions: ProviderCompletions, ProviderHover,
-// ProviderDefinitions, ProviderColors, ProviderCodeActions, ProviderPerform, ProviderTokens,
-// ProviderInline.
+// ProviderRequest is implemented by all LSP-style request structs delivered in
+// ProviderEvent.Request.
 type ProviderRequest interface{ isProviderRequest() }
 
-// ProviderCompletions asks for the completions at Offset (bytes) of Text, the editor's whole text.
-// TriggerKind is LSP's: 1 invoked, 2 a trigger character, 3 an incomplete list asked again.
-// Answer with gk.AnswerCompletions.
+// ProviderCompletions requests autocomplete items at byte Offset in Text.
 type ProviderCompletions struct {
 	Text        string
 	Offset      int
@@ -64,45 +60,41 @@ type ProviderCompletions struct {
 	Trigger     gk.Option[string]
 }
 
-// ProviderHover asks for the hover at Offset of Text. Answer with gk.AnswerHover.
+// ProviderHover requests hover markdown documentation at byte Offset in Text.
 type ProviderHover struct {
 	Text   string
 	Offset int
 }
 
-// ProviderDefinitions asks where the symbol at Offset is defined. Answer with gk.AnswerDefinitions.
+// ProviderDefinitions requests go-to-definition targets at byte Offset in Text.
 type ProviderDefinitions struct {
 	Text   string
 	Offset int
 }
 
-// ProviderColors asks for the colors written in Text. Answer with gk.AnswerColors.
+// ProviderColors requests document color swatches for Text.
 type ProviderColors struct{ Text string }
 
-// ProviderCodeActions asks for the code actions of bytes Start to End. Answer with
-// gk.AnswerCodeActions.
+// ProviderCodeActions requests available code actions for byte range [Start, End).
 type ProviderCodeActions struct{ Start, End int }
 
-// ProviderPerform asks the app to perform a code action it offered (its ID); the app edits the
-// editor with its generated writes and answers gk.AnswerPerformed when done.
+// ProviderPerform requests execution of a previously offered code action.
 type ProviderPerform struct {
 	Title, ID     string
 	PushToHistory bool
 }
 
-// ProviderTokens asks for the semantic tokens of bytes Start to End. Answer with
-// gk.AnswerTokens: LSP's encoded tokens, five numbers each, named by the legend given to
-// editor.Providers.
+// ProviderTokens requests semantic token data for byte range [Start, End) of Text.
 type ProviderTokens struct {
 	Text       string
 	Start, End int
 }
 
-// ProviderInline asks for an inline completion at Offset. Answer with gk.AnswerInline.
+// ProviderInline requests inline ghost-text completion at byte Offset in Text.
 type ProviderInline struct {
 	Text      string
 	Offset    int
-	Automatic bool // typed (true) or asked for (false)
+	Automatic bool
 }
 
 func (ProviderCompletions) isProviderRequest() {}
@@ -121,7 +113,8 @@ func (ProviderTokens) isProviderRequest() {}
 
 func (ProviderInline) isProviderRequest() {}
 
-// ProviderEvent is what a provider handler receives: the request id to answer and the question.
+// ProviderEvent pairs a correlation ID with an incoming editor ProviderRequest.
+// Handlers reply using the matching Answer* function with e.ID.
 type ProviderEvent struct {
 	ID      uint64
 	Request ProviderRequest
@@ -164,9 +157,11 @@ func init() {
 	}})
 }
 
-// EditorProvider is a set of the providers editor.Providers installs.
+// Provider is a bitmask selecting which language-intelligence providers are
+// enabled on an editor State.
 type Provider uint32
 
+// Provider capability flags combined in ProvidersOptions.Which.
 const (
 	ProvideCompletions       Provider = 1
 	ProvideHover             Provider = 2
@@ -177,21 +172,20 @@ const (
 	ProvideInlineCompletions Provider = 64
 )
 
-// ProvidersOptions are what editor.Providers installs; the zero value is completions and hover,
-// "." as the trigger, "gk" as the code action provider's id, upstream's inline debounce, no legend.
+// ProvidersOptions configures enabled provider kinds, completion trigger
+// characters, code-action provider ID, inline completion debounce, and semantic
+// token legends.
 type ProvidersOptions struct {
 	Which            Provider
-	Triggers         gk.Option[string] // the characters that ask for completions (default ".")
-	CodeActionID     string            // default "gk"
-	InlineDebounceMs int               // 0: upstream's 300 ms
-	TokenTypes       []string          // the semantic tokens' legend
+	Triggers         gk.Option[string]
+	CodeActionID     string
+	InlineDebounceMs int
+	TokenTypes       []string
 	TokenModifiers   []string
 }
 
-// EditorProviders installs the providers of an EditorState: f receives every question (a queued
-// event, after the editor's own update) and answers it with the gk.Answer* of its kind. Returns
-// the row source that carries the questions; releasing it ends them. Needs a window: init or a
-// handler.
+// Providers attaches an LSP-style provider handler f to editor and returns the
+// backing RowSource handle passed to Answer* replies.
 func Providers(cx *gk.Cx, editor State, f func(cx *gk.Cx, e ProviderEvent), opts ProvidersOptions) gk.RowSource {
 	if f == nil {
 		rt.Stop("editor.Providers needs a handler")
@@ -227,7 +221,6 @@ func Providers(cx *gk.Cx, editor State, f func(cx *gk.Cx, e ProviderEvent), opts
 	return src
 }
 
-// answerBody answers request id of src with an encoded body (buffered).
 func answerBody(cx *gk.Cx, src gk.RowSource, id uint64, body rt.Tape) {
 	t := rt.CheckCx(cx)
 	o := rt.NewReq(rt.CSourceAnswer)
@@ -246,13 +239,14 @@ func putOptString2(o *rt.Tape, s gk.Option[string]) {
 	o.U8(0)
 }
 
-// CompletionResponse is the answer to a ProviderCompletions.
+// CompletionResponse holds the completion items and incomplete flag returned
+// by AnswerCompletions.
 type CompletionResponse struct {
 	Items      []gk.CompletionItem
 	Incomplete bool
 }
 
-// AnswerCompletions answers a ProviderCompletions.
+// AnswerCompletions replies to a ProviderCompletions request.
 func AnswerCompletions(cx *gk.Cx, src gk.RowSource, id uint64, c CompletionResponse) {
 	var b rt.Tape
 	b.U32(uint32(len(c.Items)))
@@ -263,14 +257,14 @@ func AnswerCompletions(cx *gk.Cx, src gk.RowSource, id uint64, c CompletionRespo
 	answerBody(cx, src, id, b)
 }
 
-// AnswerHover answers a ProviderHover with its markdown, or none for no hover.
+// AnswerHover replies to a ProviderHover request with optional markdown content.
 func AnswerHover(cx *gk.Cx, src gk.RowSource, id uint64, markdown gk.Option[string]) {
 	var b rt.Tape
 	putOptString2(&b, markdown)
 	answerBody(cx, src, id, b)
 }
 
-// TextRange is an LSP range: lines and UTF-16 characters from 0.
+// TextRange is a zero-based (line, character) span used by LSP provider replies.
 type TextRange struct{ StartLine, StartChar, EndLine, EndChar uint32 }
 
 func putTextRange(o *rt.Tape, r TextRange) {
@@ -280,14 +274,14 @@ func putTextRange(o *rt.Tape, r TextRange) {
 	o.U32(r.EndChar)
 }
 
-// Definition is one place a symbol is defined.
+// Definition identifies a go-to-definition target URI and ranges.
 type Definition struct {
 	URI       string
-	Target    TextRange // the whole definition
-	Selection TextRange // its name
+	Target    TextRange
+	Selection TextRange
 }
 
-// AnswerDefinitions answers a ProviderDefinitions.
+// AnswerDefinitions replies to a ProviderDefinitions request.
 func AnswerDefinitions(cx *gk.Cx, src gk.RowSource, id uint64, defs []Definition) {
 	var b rt.Tape
 	b.U32(uint32(len(defs)))
@@ -299,13 +293,13 @@ func AnswerDefinitions(cx *gk.Cx, src gk.RowSource, id uint64, defs []Definition
 	answerBody(cx, src, id, b)
 }
 
-// DocumentColor is a color written in the text, red green blue alpha from 0 to 1.
+// DocumentColor associates a document TextRange with an RGBA color (0..1 channels).
 type DocumentColor struct {
 	Range TextRange
 	RGBA  [4]float32
 }
 
-// AnswerColors answers a ProviderColors.
+// AnswerColors replies to a ProviderColors request.
 func AnswerColors(cx *gk.Cx, src gk.RowSource, id uint64, colors []DocumentColor) {
 	var b rt.Tape
 	b.U32(uint32(len(colors)))
@@ -318,11 +312,10 @@ func AnswerColors(cx *gk.Cx, src gk.RowSource, id uint64, colors []DocumentColor
 	answerBody(cx, src, id, b)
 }
 
-// CodeAction is one action offered: its title, its LSP kind ("quickfix", "refactor", or empty)
-// and an ID that comes back in ProviderPerform.
+// CodeAction describes one actionable quick-fix or refactoring entry.
 type CodeAction struct{ Title, Kind, ID string }
 
-// AnswerCodeActions answers a ProviderCodeActions.
+// AnswerCodeActions replies to a ProviderCodeActions request.
 func AnswerCodeActions(cx *gk.Cx, src gk.RowSource, id uint64, actions []CodeAction) {
 	var b rt.Tape
 	b.U32(uint32(len(actions)))
@@ -334,14 +327,15 @@ func AnswerCodeActions(cx *gk.Cx, src gk.RowSource, id uint64, actions []CodeAct
 	answerBody(cx, src, id, b)
 }
 
-// AnswerPerformed answers a ProviderPerform once the app has edited.
+// AnswerPerformed acknowledges completion of a ProviderPerform request.
 func AnswerPerformed(cx *gk.Cx, src gk.RowSource, id uint64) {
 	var b rt.Tape
 	b.Bool(true)
 	answerBody(cx, src, id, b)
 }
 
-// AnswerTokens answers a ProviderTokens with LSP's encoded tokens, five numbers each.
+// AnswerTokens replies to a ProviderTokens request with LSP-encoded semantic
+// token integers.
 func AnswerTokens(cx *gk.Cx, src gk.RowSource, id uint64, data []uint32) {
 	var b rt.Tape
 	b.U32(uint32(len(data)))
@@ -351,7 +345,7 @@ func AnswerTokens(cx *gk.Cx, src gk.RowSource, id uint64, data []uint32) {
 	answerBody(cx, src, id, b)
 }
 
-// AnswerInline answers a ProviderInline with the text to insert, or none.
+// AnswerInline replies to a ProviderInline request with optional ghost text.
 func AnswerInline(cx *gk.Cx, src gk.RowSource, id uint64, text gk.Option[string]) {
 	var b rt.Tape
 	putOptString2(&b, text)

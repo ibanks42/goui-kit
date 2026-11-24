@@ -1,58 +1,85 @@
-"""gk_go: writes the generated half of the Go package (go/gk/gen_*.go and the token packages
-s, theme and palette) from the generator's model (docs/GO.md).
+"""Flat Go binding emitter (pre-split package `gk` plus `s`, `palette`, and `theme` subpackages).
 
-It runs after gk_names.Names, whose stems (node["stem"], it["stem"], ...) it turns into Go
-names by the rules of docs/GO.md section 2. Generated Go
-calls only the runtime's emitter interface (go/gk/rt_emit.go). An item whose parameter or result
-is a descriptor this emitter does not map yet is left out of the package and listed, with the
-descriptor, in gen/out/go-report.md; nothing is left out silently.
+This module translates the classified, wire-numbered `Model` into idiomatic Go:
+1. **Deterministic naming (`Go.claim`, `Go.name_all`)**:
+   Pre-seeds every hand-written exported identifier across `go/gk/**` into `self.names`
+   (inverting any legacy renames from `gen/gk_go_legacy.json`) so generated declarations
+   never collide with runtime types or helpers. Processes crates in priority order
+   (`gpui_component` > `gpui_base` > `gpui` > `gpui_kit`) so high-level components win
+   clean unprefixed names (`Button`, `Input`) while lower-level collisions receive a crate
+   prefix (`BaseButton`, `GpuiPoint`). Element node types receive an `El` suffix (`DivEl`)
+   so their constructor can take the clean noun (`Div(...)`).
+2. **Type mapping and wire codecs (`gtype`, `put`, `rd`)**:
+   - Maps model descriptors to Go types (`bool`, `GO_INT`, `float32`/`float64`, `string`,
+     `Option[T]`, slices, fixed arrays, `Tuple*`, generated structs/enums/interfaces,
+     `Element`, `RowSource`, `View`, `Data`, `Built[T]`, `Ask[K, V]`, `Cell[T]`, etc.).
+   - Distinguishes inbound vs outbound color types (`Color` inbound vs `Hsla` outbound)
+     and call-op vs view-tape handle encoding (`self.in_call`: `putVtape` vs `takeValue`,
+     `held(h)` vs `putObj`).
+   - Delegates extended descriptors to `gk_go_kinds` and dock descriptors to `gk_go_bridges`.
+3. **Flat file emission (`emit`)**:
+   - Emits enums, data enums (sealed interfaces + unit-variant `Kind` enums + variant structs),
+     records (with optional shorthands), `Into` union interfaces, `oneof` element unions,
+     event structs + `init()` handler shape decoders, ambient/state/object handles +
+     `StateBuilder` chains, per-module element/value node files, `gen_items.go`,
+     `gen_bridges.go`, and the three token subpackages (`go/gk/s`, `go/gk/palette`, `go/gk/theme`).
+   - Keeps package `gk`'s files in `self.files` in memory, passes them through
+     `gk_fam.Families.go_link()` (to inject `use<Family>()` hooks for static dead-stripping),
+     and hands them to `gk_split.Split` to partition into the final layered Go subpackages.
+4. **Coverage report (`report`)**:
+   Verifies every bound/bridged model item was either emitted in `self.mapped` or accounted
+   for by `gk_go_bridges.covered()`, writing any gaps to `gen/out/go-report.md`.
 """
 import os
 import re
 import gk_doc
-import gk_go_kinds  # the descriptor kinds beyond the core ones (gen/gk_go_kinds.py)
-import gk_go_bridges  # the hand-written bridges of the Go runtime (docs/GO.md, gen/gk_go_bridges.py)
+import gk_go_kinds
+import gk_go_bridges
 import gk_values
 
 from gk_model import INT_WIRE, SHORT, ada, is_fill, snake
 
+# Go keywords and predeclared identifiers suffixed with `_` when used as parameter names.
 GO_KEYWORDS = {"break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough", "for",
                "func", "go", "goto", "if", "import", "interface", "map", "package", "range", "return", "select",
                "struct", "switch", "type", "var",
-               # predeclared names a parameter would shadow inside generated bodies
                "len", "cap", "make", "new", "append", "copy", "delete", "panic", "string", "int", "bool", "byte",
                "error", "any", "nil", "true", "false", "rune", "float32", "float64", "uint8", "uint16", "uint32",
                "uint64", "int8", "int16", "int32", "int64", "min", "max", "clear", "print", "real", "close"}
-# Names generated bodies use for themselves: a parameter that meets one gets a trailing underscore.
+# Local variable names used inside generated Go method bodies that parameter names must not shadow.
 LOCALS = {"o", "e", "b", "cx", "r", "n", "src", "s", "slot", "gen", "ok", "c"}
+# Uppercase Go initialisms preserved by `camel()` and `lower_camel()`.
 INITIALISMS = {"id": "ID", "ids": "IDs", "url": "URL", "urls": "URLs", "uri": "URI", "json": "JSON", "html": "HTML",
                "http": "HTTP", "https": "HTTPS", "svg": "SVG", "css": "CSS", "api": "API", "ascii": "ASCII",
                "utf8": "UTF8"}
-# Names the hand-written runtime declares in package gk (read from go/gk/rt_*.go at start, these
-# are only the ones a generated name is likely to meet first).
+# Mapping from Rust integer primitive names to Go integer types (`usize`/`isize` map to Go `int`).
 GO_INT = {"u8": "uint8", "u16": "uint16", "u32": "uint32", "u64": "uint64", "i8": "int8", "i16": "int16",
           "i32": "int32", "i64": "int64", "usize": "int", "isize": "int"}
 
-
-# Library values (`["libval", rust path, stem]`, gk_lists.libval) the Go runtime declares, with
-# their put and rd functions (go/gk/rt_platform.go): stem -> Go type.
+# Hand-written Go value types wired directly in `gk_go.py` (additional libvals live in `gk_go_kinds.py`).
 GO_LIBVALS = {"Drag_Value": "DragValue"}
-# Plot parts of the binding's own (go/gk/rt_data.go; PROTOCOLS.md 12.17).
+# Hand-written Go plot part types that also implement the generated `PlotPart` marker interface.
 GO_PLOT_OWN_PARTS = ("PlotPath", "PlotQuad")
 
 
 class Unsup(Exception):
-    """A descriptor the Go emitter does not map (yet): the item is left out and listed."""
+    """Raised when a descriptor cannot yet be mapped into Go; caught by `try_item()` to record unmapped reasons."""
+    pass
 
 
 def camel(name):
-    """A stem in snake_case or Ada_Case -> exported Go CamelCase (docs/GO.md section 2)."""
+    """Convert a snake_case or mixed identifier into exported Go CamelCase with initialisms.
+
+    Strips trailing underscores, expands `INITIALISMS`, and preserves an underscore between
+    adjacent numeric segments (e.g. `2_1` stays `2_1`, not `21`).
+    """
     name = name.rstrip("_")
     parts = [p for p in name.split("_") if p]
     out = ""
     for p in parts:
         low = p.lower()
         w = INITIALISMS.get(low) or (p[:1].upper() + p[1:])
+        # Preserve an underscore between adjacent digits (for example 2_1 -> 2_1, not 21).
         if out and out[-1].isdigit() and w[:1].isdigit():
             out += "_"
         out += w
@@ -60,6 +87,7 @@ def camel(name):
 
 
 def lower_camel(name):
+    """Convert an identifier into unexported Go lowerCamelCase, lowercasing leading initialisms (e.g. `IDFoo` -> `idFoo`)."""
     c = camel(name)
     for k, v in INITIALISMS.items():
         if c.startswith(v) and (len(c) == len(v) or not c[len(v)].islower()):
@@ -68,6 +96,7 @@ def lower_camel(name):
 
 
 def pname(name):
+    """Sanitize a Rust parameter name for Go, avoiding keywords, predeclared names, digits-only names, and body locals."""
     if re.fullmatch(r"\d+", name or ""):
         name = "arg" + name
     n = lower_camel(snake(name)) if name else "arg"
@@ -75,33 +104,48 @@ def pname(name):
 
 
 class Go:
+    """Generates flat Go source files for all bound/bridged model items and reports Go coverage.
+
+    Key internal accumulators shared across emission helpers:
+    - `self.names`: `{go_ident: owner_key}` enforcing uniqueness across the entire flat package.
+    - `self.claim_base`: `{go_ident: (unprefixed_base, crate)}` passed to `gk_split.Split.name_all()`
+      so package-prefix stripping knows the original crate priority and unprefixed stem.
+    - `self.files`: `{filename: source_text}` flat Go files written to `gen/out/build.go/flat/`.
+    - `self.mapped` / `self.unmapped`: tracks every bound/bridged model item ID emitted vs skipped.
+    - `self.need_readers` / `self.reader_src`: deferred `rd<Type>` wire decoders emitted only
+      for types actually read back by calls, events, `Ask` keys, or `Items` rows.
+    - `self.tuples` / `self.handles` / `self.oneofs`: on-demand auxiliary declarations synthesized
+      whenever `gtype()` encounters a tuple, opaque handle, or `oneof` element union.
+    """
+
     def __init__(self, m, outdir):
         self.m, self.out = m, outdir
-        self.docs = self.doc_names = None  # gk_doc.Docs and its link resolver (gkgen.py sets them)
+        self.docs = self.doc_names = None
         self.names = {}
-        self.claim_base = {}  # a claimed name -> (its base, its crate): gk_split.py names per package
+        self.claim_base = {}
         self.collisions = []
         self.files = {}
         self.lines = []
         self.file = None
         self.tuples = {}
         self.handles = {}
-        self.unmapped = []      # (item, reason)
-        self.mapped = set()     # item ids emitted
+        self.unmapped = []
+        self.mapped = set()
         self.in_call = False
-        self.oneofs = {}        # trait name -> (iface, [node keys])
-        self.readers = {}       # Go type -> reader function name (records, denums, tuples)
-        self.reader_src = {}    # reader name -> lines
+        self.oneofs = {}
+        self.readers = {}
+        self.reader_src = {}
         self.need_readers = set()
         prefixes = m.ov.get("go", {}).get("enum_prefix", {})
         self.enum_prefix = prefixes
-        # every package's hand-written names (gen/gk_split.py), and their flat spellings
         hand = []
         for root, _, fns in sorted(os.walk(outdir)) if os.path.isdir(outdir) else []:
             hand += [os.path.join(root, fn) for fn in sorted(fns)]
-        import gk_split  # noqa: PLC0415
-        legacy = gk_split.hand_decls()[1]  # flat name -> (package, name now)
+        import gk_split
+        legacy = gk_split.hand_decls()[1]
         back = {v: k for k, v in legacy.items()}
+        # Reserve every exported identifier declared by hand-written Go files so generated
+        # symbols automatically receive a crate prefix instead of colliding.
         for path in hand:
             fn = os.path.relpath(path, outdir)
             if fn.endswith(".go") and not os.path.basename(fn).startswith("gen_"):
@@ -110,13 +154,13 @@ class Go:
                 found = re.findall(r"(?m)^(?:func|type|var|const)\s+([A-Z]\w*)", text)
                 for block in re.findall(r"(?ms)^(?:const|var) \((.*?)^\)", text):
                     found += re.findall(r"(?m)^\t([A-Z]\w*)", block)
-                for name in found:  # by the flat spelling it had
+                for name in found:
                     self.names.setdefault(back.get((pkg, name), name), "hand " + fn)
         self.name_all()
 
-    # ------------------------------------------------------------ names
 
     def claim(self, base, crate, key):
+        """Claim a unique exported Go identifier in the flat namespace, adding a crate prefix or suffix on collision."""
         pre = {"gpui_base": "Base", "gpui": "Gpui", "gpui_component": "Kit", "gpui_kit": "Kit"}[crate]
         for c in (base, pre + base):
             if self.names.get(c, key) == key:
@@ -132,9 +176,14 @@ class Go:
         return f"{pre}{base}{n}"
 
     def name_all(self):
+        """Assign deterministic Go identifiers to all nodes, types, enums, states, constructors, and shorthands.
+
+        Crates are processed in priority order (`gpui_component`, `gpui_base`, `gpui`, `gpui_kit`)
+        so higher-level kit components keep unprefixed names when base and component types share a stem.
+        """
         m = self.m
         order = {"gpui_component": 0, "gpui_base": 1, "gpui": 2, "gpui_kit": 3}
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        bound = lambda i: i["status"] in ("bound", "bridged")
         for key in sorted(m.nodes, key=lambda k: (order[m.nodes[k]["crate"]], k)):
             node = m.nodes[key]
             if "stem" in node:
@@ -151,7 +200,6 @@ class Go:
             s = m.intos[rt]
             if "stem" in s:
                 s["go"] = self.claim(camel(s["stem"]), "gpui_kit", "into " + rt)
-        # enum values and variant structs
         for rt in sorted(m.enums):
             e = m.enums[rt]
             pre = self.enum_prefix.get(e["name"], e["go"])
@@ -164,7 +212,6 @@ class Go:
                     v["go"] = self.claim(e["go"] + camel(ada(v["name"])), e["crate"], f"{rt}::{v['name']}")
             if self.unit_values(e):
                 e["go_kind"] = self.claim(e["go"] + "Kind", e["crate"], rt + " (unit variants)")
-        # constructors (elements: the type's name without El; values and states: New + name)
         for key in sorted(m.nodes, key=lambda k: (order[m.nodes[k]["crate"]], k)):
             node = m.nodes[key]
             for it in sorted(node["ctors"], key=lambda i: i["id"]):
@@ -185,15 +232,15 @@ class Go:
             if rc.get("short_stem"):
                 rc["short_go"] = self.claim(camel(rc["shorthand"]), rc["crate"], "shorthand " + rt)
 
-    # ------------------------------------------------------------ types
 
     def gtype(self, d, out=False):
+        """Return the Go type expression for model descriptor `d` (`out=True` for Rust-to-Go reads)."""
         m, k = self.m, d[0]
         x = gk_go_kinds.gtype(self, d, out)
         if x is not None:
             return x
         if k == "dock":
-            return gk_go_bridges.gtype(self, d, out)  # PROTOCOLS.md 11.8
+            return gk_go_bridges.gtype(self, d, out)
         if k == "bool":
             return "bool"
         if k == "int":
@@ -206,7 +253,7 @@ class Go:
             if out and d[1] == "color":
                 return "Hsla"
             if is_fill(d):
-                return "Fill"  # a colour or a gradient (rt_emit.go, PROTOCOLS.md 11.38)
+                return "Fill"
             t = {"px": "float32", "rems": "float32", "color": "Color", "length": "Length", "definite_length": "Length",
                  "absolute_length": "Length", "id": "ID", "duration": "time.Duration", "range": "Range",
                  "click_event": "ClickEvent", "key_event": "KeyEvent", "mouse_event": "MouseEvent"}.get(d[1])
@@ -239,9 +286,7 @@ class Go:
             return "rune"
         if k == "tuple":
             ts = [self.gtype(x, out) for x in d[1]]
-            # each element type's name with its first letter and every letter after a non-letter
-            # upper case, the rest kept (TupleRangeHighlightStyle, TupleListStringListListString)
-            up = lambda t: re.sub(r"(^|[^A-Za-z0-9])([a-z])", lambda x: x.group(1) + x.group(2).upper(), t)  # noqa: E731
+            up = lambda t: re.sub(r"(^|[^A-Za-z0-9])([a-z])", lambda x: x.group(1) + x.group(2).upper(), t)
             name = "Tuple" + "".join(re.sub(r"\W+", "", up(t.replace("[]", "List "))) for t in ts)
             self.tuples[name] = (ts, d[1])
             return name
@@ -279,30 +324,28 @@ class Go:
         if k == "oneof":
             return self.oneof(d)
         if k == "panelview":
-            import gk_overlay  # noqa: PLC0415
-            return self.gtype(["entity", gk_overlay.PANEL_RUST, gk_overlay.PANEL_NAME], out)  # a dock panel (11.7)
+            import gk_overlay
+            return self.gtype(["entity", gk_overlay.PANEL_RUST, gk_overlay.PANEL_NAME], out)
         if k == "data":
-            return "Data"  # gk.NewData(rows): a slice of the app's structs (rt_data.go, PROTOCOLS.md 12)
+            return "Data"
         if k in ("field", "format"):
-            return "string"  # a column's name, or a template
+            return "string"
         if k == "viewbuild":
             node = m.nodes[d[1]]
             if "go" not in node:
                 raise Unsup(f"viewbuild of {d[1]} without a Go type")
-            return f"Built[{node['go']}]"  # a view-built closure (PROTOCOLS.md 11.6, rt_built.go)
-        # The hand-written values and platform families (PROTOCOLS.md 11.17, 13.20, 13.31;
-        # go/gk/rt_platform.go).
+            return f"Built[{node['go']}]"
         if k == "libval" and d[2] in GO_LIBVALS:
             return GO_LIBVALS[d[2]]
         if k == "dragview":
-            return "View"  # a drag's preview: the app's view
+            return "View"
         if k == "dragstyle":
-            return self.gtype(["stylefn", d[1], d[2]], out)  # a described style while a drag is over
+            return self.gtype(["stylefn", d[1], d[2]], out)
         if k == "dropaccept":
             return "DropAccept"
         if k == "viewany":
             if len(d) > 1 and "go" in m.nodes.get(d[1][1], {}):
-                return "ViewOrTooltip"  # the app's view or the kit's Tooltip value (11.17)
+                return "ViewOrTooltip"
             return "View"
         if k in ("uri", "arcpath"):
             return "string"
@@ -314,8 +357,6 @@ class Go:
 
     @staticmethod
     def shape_args(sh):
-        """A shape's payload descriptors; an index (Rust usize) is a Go int, though the model
-        keeps it as a u64 on the wire."""
         def fix(d):
             if isinstance(d, list) and d[:2] == ["int", "u64"]:
                 return ["int", "usize"]
@@ -351,16 +392,15 @@ class Go:
             self.oneofs[d[1]] = (name, [k for k in d[2] if "go" in self.m.nodes.get(k, {})])
         return self.oneofs[d[1]][0]
 
-    # ------------------------------------------------------------ writers
 
     def put(self, d, v, depth=0):
-        """Go statements that write `v` (of descriptor d) to the op stream `o`."""
+        """Return Go statements that encode Go expression `v` of descriptor `d` onto tape `o`."""
         m, k = self.m, d[0]
         x = gk_go_kinds.put(self, d, v, depth)
         if x is not None:
             return x
         if k == "dock":
-            return gk_go_bridges.put(self, d, v)  # PROTOCOLS.md 11.8
+            return gk_go_bridges.put(self, d, v)
         if k == "bool":
             return [f"o.bool({v})"]
         if k in ("int", "nonzero"):
@@ -432,8 +472,6 @@ class Go:
                     return [f"putVtape(o, {v}.n)"]
                 return [f"o.u32(takeValue({v}.n))"]
             return [f"o.u32(takeNode({v}.n, false))"]
-        # A handle given as an argument is held(): outside a view's description the library may
-        # keep it, so the collector does not release it (rt_life.go).
         if k == "obj":
             self.gtype(d)
             if not self.in_call:
@@ -486,17 +524,15 @@ class Go:
             return [f"putRenderImage(o, {v})"]
         raise Unsup(k)
 
-    # ------------------------------------------------------------ readers
 
     def rd(self, d, out=True):
-        """A Go expression reading a value of descriptor d from the reader `r`, as gtype(d, out)
-        (a record that also travels in holds the in-types: a colour is then a Color)."""
+        """Return a Go expression that decodes descriptor `d` from wire reader `r`."""
         m, k = self.m, d[0]
         x = gk_go_kinds.rd(self, d, out)
         if x is not None:
             return x
         if k == "dock":
-            return gk_go_bridges.rd(self, d, out)  # PROTOCOLS.md 11.8
+            return gk_go_bridges.rd(self, d, out)
         if k == "bool":
             return "r.bool()"
         if k in ("int", "nonzero"):
@@ -551,17 +587,19 @@ class Go:
             return f"rd{GO_LIBVALS[d[2]]}(r)"
         raise Unsup(f"{k} read back")
 
-    # ------------------------------------------------------------ files
 
     def open(self, name, doc, imports=()):
+        """Begin accumulating lines for a generated flat Go file."""
         self.file = name
         self.lines = ["// Code generated by gen/gkgen.py (gen/gk_go.py). DO NOT EDIT.", "", "// " + doc, "", "package gk", ""]
         self.imports = set(imports)
 
     def add(self, *lines):
+        """Append lines to the currently open generated Go file."""
         self.lines += lines
 
     def close(self):
+        """Finalize imports (adding `time` if `time.*` is referenced) and store the file in `self.files`."""
         text = "\n".join(self.lines) + "\n"
         imps = set(self.imports)
         if re.search(r"\btime\.[A-Z]", text):
@@ -571,7 +609,7 @@ class Go:
         self.files[self.file] = text
 
     def try_item(self, it, fn):
-        """Runs fn() -> lines for an item; an unmapped descriptor leaves the item out, listed."""
+        """Run emitter thunk `fn()` for item `it`, rolling back side tables if `Unsup` is raised."""
         try:
             saved = (dict(self.tuples), set(self.need_readers))
             lines = fn()
@@ -583,7 +621,7 @@ class Go:
         return lines
 
     def params(self, it, extra=(), do=False):
-        """The Go parameters of an item; do: its handler takes no event (do_handler)."""
+        """Format Go parameter declarations for item `it`, omitting Rust-only `ctx` parameters."""
         ps = []
         at = self.do_handler(it) if do else None
         for i, a in enumerate(it["args"]):
@@ -592,15 +630,11 @@ class Go:
             ps.append(f"{pname(a['name'])} {'func(cx *Cx)' if i == at else self.ptype(a['desc'])}")
         return list(extra) + ps
 
-    # The event payloads a handler usually ignores: a click, a press or release, the pointer
-    # leaving. A builder whose one handler takes one of them, and returns nothing, has a twin
-    # NameDo whose handler takes only the cx (.OnClickDo(a.save)); the runtime calls a func(*Cx)
-    # handler for any shape (rt_handler.go). Payloads that say what happened (a key, a scroll
-    # delta, a kit state's event, a bool or an index) keep the one form.
+    # Single-event handler payload types that also get an event-free `*Do(func(cx *Cx))` convenience method.
     DO_EVENTS = {"ClickEvent", "MouseEvent", "MouseExitEvent"}
 
     def do_handler(self, it):
-        """The index of the item's handler argument when the item gets a NameDo twin, else None."""
+        """Return the arg index of a single void handler taking a `DO_EVENTS` payload, or None."""
         hs = [i for i, a in enumerate(it["args"]) if a["desc"][0] == "handler"]
         if len(hs) != 1:
             return None
@@ -636,20 +670,18 @@ class Go:
         return out
 
     def doc(self, it, name):
-        """The comment above a function: GPUI-kit's own doc of it (gen/gk_doc.py), then what it is
-        upstream, last."""
-        head = f"// {name} is {it.get('callee') or it['id']}."
+        """Format a Go doc comment combining upstream rustdoc text (if any) with the Rust target."""
+        head = f"// {name} calls {it.get('callee') or it['id']}."
         body = self.docs.comment(it.get("doc"), "go", self.doc_names, it["id"]) if self.docs else []
         if not body:
             return head
         return "\n".join([("// " + x).rstrip() for x in body] + ["//", head])
 
-    # ------------------------------------------------------------ emit
 
     def emit(self):
+        """Emit all flat Go files plus s/, palette/, and theme/ token packages."""
         m = self.m
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
-        # ---- nodes, per upstream module
+        bound = lambda i: i["status"] in ("bound", "bridged")
         groups = {}
         for key in sorted(m.nodes):
             node = m.nodes[key]
@@ -658,17 +690,15 @@ class Go:
                 groups.setdefault(fname, []).append(node)
         trait_fns = {}
         for fname in sorted(groups):
-            self.open(fname + ".go", "The node types of one upstream module.")
+            self.open(fname + ".go", "Generated element and value builders for one upstream module.")
             for node in groups[fname]:
                 self.node(node, trait_fns)
             self.close()
-        # ---- shared trait op bodies
-        self.open("gen_traits.go", "One function per builder-trait method, shared by every node type that has the trait.")
+        self.open("gen_traits.go", "Shared helper functions for builder-trait methods.")
         for name in sorted(trait_fns):
             self.add(*trait_fns[name])
         self.close()
-        # ---- kit state and library objects
-        self.open("gen_state.go", "Kit state types and library objects: handles to what the library keeps (PROTOCOLS.md 5, 13).")
+        self.open("gen_state.go", "Handle types and methods for runtime-owned kit states and library objects.")
         for key in sorted(m.states, key=lambda k: m.states[k].get("go", "")):
             if "go" in m.states[key]:
                 self.in_call = True
@@ -677,18 +707,12 @@ class Go:
                 finally:
                     self.in_call = False
         self.close()
-        # ---- ambient calls
         self.ambient()
-        # ---- parts of a described plot (gk.Plot, rt_data.go; PROTOCOLS.md 12.6, 12.17)
         self.plot_parts()
-        # ---- item functions, asks and the kinds' interfaces (gen/gk_go_kinds.py)
         gk_go_kinds.emit_files(self)
-        # ---- what the bridges add (gen/gk_go_bridges.py)
         gk_go_bridges.emit(self)
-        # ---- types (last: the items above asked for tuples, readers and handle types)
         self.types()
         self.tokens()
-        # the token packages are written as they are; the flat package gk is split by gen/gk_split.py
         for name, text in self.files.items():
             if "/" in name:
                 path = os.path.join(self.out, name)
@@ -696,19 +720,24 @@ class Go:
                 if not os.path.exists(path) or open(path).read() != text:
                     open(path, "w").write(text)
 
-    # ------------------------------------------------------------ nodes
 
     def node(self, node, trait_fns):
+        """Emit Go struct, constructors, inherent builder ops, conversions, and trait methods for one node.
+
+        Trait methods delegate to shared `t<Trait><Method>` helpers in `gen_traits.go` so
+        the tape-encoding logic is emitted once per trait method rather than duplicated
+        across every element type.
+        """
         m = self.m
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        bound = lambda i: i["status"] in ("bound", "bridged")
         T = node["go"]
         el = node["element"]
+        # Format `// <T> is <path>.` is parsed by gates/conformance.py and gen/gk_apidoc.py.
         self.add(f"// {T} is {node['path']}.", f"type {T} struct{{ n *node }}", "")
         if el:
             self.add(f"func (e {T}) node() *node {{ return e.n }}", "")
         else:
             self.add(f"func (e {T}) valueNode() *node {{ return e.n }}", "")
-        # constructors
         for it in sorted([i for i in node["ctors"] if bound(i) and i["kind"] != "convert" and "go" in i], key=lambda i: i["go"]):
             def ctor(it=it):
                 ps = self.params(it)
@@ -728,9 +757,7 @@ class Go:
                 lines += [f"\treturn {T}{{n}}", "}", ""]
                 return lines
             self.add(*self.try_item(it, ctor))
-        # methods: own ops, converts, then the traits' (an inherent method shadows a trait's)
         seen = {"node", "valueNode"}
-        # every method name the node has from upstream: a NameDo twin never takes one of them
         allnames = {camel(i["name"]) for i in node.get("ops", []) + node.get("converts", [])}
         for tk in node["tables"]:
             for t in self.m.traits.values():
@@ -749,7 +776,7 @@ class Go:
                 lines += ([f"\to := op(e.n, {it['op']})"] + ["\t" + s for s in body]) if body else [f"\top(e.n, {it['op']})"]
                 lines += ["\treturn e", "}", ""]
                 if self.do_handler(it) is not None and name + "Do" not in allnames:
-                    lines += [f"// {name}Do is {name} with a handler that takes no event (docs/GO.md section 4).",
+                    lines += [f"// {name}Do is the event-free convenience variant of {name}.",
                               f"func (e {T}) {name}Do({', '.join(self.params(it, do=True))}) {T} {{",
                               f"\to := op(e.n, {it['op']})"] + ["\t" + s for s in body] + ["\treturn e", "}", ""]
                 return lines
@@ -771,7 +798,8 @@ class Go:
             def conv(it=it, name=name, target=target):
                 U = target["go"]
                 ps = self.params(it)
-                lines = [f"// {name} is {it.get('callee') or it['id']}: it makes a {U} of the element.",
+                # Leading `// <name> ` is rewritten by gk_split.lifted() if this method is lifted cross-package.
+                lines = [f"// {name} calls {it.get('callee') or it['id']} and converts the element into {U}.",
                          f"func (e {T}) {name}({', '.join(ps)}) {U} {{", "\tsrc := takeNode(e.n, true)",
                          f"\tn := {'newNode' if target['element'] else 'newValue'}({it['op']})", "\to := nodeArgs(n)", "\to.u32(src)"]
                 lines += ["\t" + s for s in self.body(it)] + [f"\treturn {U}{{n}}", "}", ""]
@@ -787,14 +815,15 @@ class Go:
             tl = camel(t["low"])
             if t["name"] == "Styled" and "Style" not in seen:
                 seen.add("Style")
-                self.add(f"// Style adds style tokens (s.Gap2, s.SizeFull).", f"func (e {T}) Style(st ...Style) {T} {{ tokens(e.n, st); return e }}", "")
+                self.add(f"// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).", f"func (e {T}) Style(st ...Style) {T} {{ tokens(e.n, st); return e }}", "")
             if t["name"] == "ParentElement" and el:
                 if "Text" not in seen:
                     seen.add("Text")
-                    self.add(f"func (e {T}) Text(s string) {T} {{ putText(e.n, s); return e }}", "")
+                    self.add("// Text appends a plain text child to the element.",
+                             f"func (e {T}) Text(s string) {T} {{ putText(e.n, s); return e }}", "")
                 if "ChildView" not in seen:
                     seen.add("ChildView")
-                    self.add(f"// ChildView embeds a view: the parent's description does not change when the child is described again.",
+                    self.add(f"// ChildView attaches a child view slot so the child can re-render independently.",
                              f"func (e {T}) ChildView(v View) {T} {{ slotView(e.n, v); return e }}", "")
             for it in sorted([i for i in t["ops"] if bound(i)], key=lambda i: i["name"]):
                 name = camel(it["name"])
@@ -812,6 +841,7 @@ class Go:
                                 return [f"func {fn}({', '.join(ps)}) {{", f"\tfor _, c := range {a} {{", "\t\tattach(n, c)", "\t}", "}", ""]
                             return [f"func {fn}({', '.join(ps)}) {{", f"\tattach(n, {a})", "}", ""]
                         body = self.body(it)
+                        # Format parsed by gen/gk_apidoc.py (GO_TRAITFN).
                         lines = [f"// {fn}: {it['id']}.", f"func {fn}({', '.join(ps)}) {{"]
                         lines += ([f"\to := op(n, {it['op']})"] + ["\t" + s for s in body]) if body else [f"\top(n, {it['op']})"]
                         return lines + ["}", ""]
@@ -825,32 +855,32 @@ class Go:
                 if runtime_child and it["args"][0]["desc"][0] == "list":
                     ps[-1] = ps[-1].replace(" []Element", " ...Element")
                     args[-1] += "..."
-                body = self.docs.comment(it.get("doc"), "go", self.doc_names, it["id"]) if self.docs else []
-                self.add(*[("// " + x).rstrip() for x in body],
+                self.add(self.doc(it, name),
                          f"func (e {T}) {name}({', '.join(ps)}) {T} {{ {fn}({', '.join(['e.n'] + args)}); return e }}")
                 if not runtime_child and self.do_handler(it) is not None and name + "Do" not in seen and name + "Do" not in allnames:
                     fdo = fn + "Do"
                     if fdo not in trait_fns:
                         dps = self.params(it, ["n *node"], do=True)
                         dbody = self.body(it)
-                        trait_fns[fdo] = [f"// {fdo}: {it['id']}, a handler that takes no event.", f"func {fdo}({', '.join(dps)}) {{",
+                        trait_fns[fdo] = [f"// {fdo}: event-free helper for {it['id']}.", f"func {fdo}({', '.join(dps)}) {{",
                                           f"\to := op(n, {it['op']})"] + ["\t" + s for s in dbody] + ["}", ""]
                     seen.add(name + "Do")
-                    self.add(f"// {name}Do is {name} with a handler that takes no event (docs/GO.md section 4).",
+                    self.add(f"// {name}Do is the event-free convenience variant of {name}.",
                              f"func (e {T}) {name}Do({', '.join(self.params(it, do=True))}) {T} {{ {fdo}({', '.join(['e.n'] + args)}); return e }}")
             self.add("")
         if node.get("oneof_of"):
             pass
 
-    # ------------------------------------------------------------ kit state
 
     def state(self, st):
+        """Emit Go handle type, read/write/call/event methods, optional builder chain, and ctors for `st`."""
         m = self.m
-        ok = lambda i: i["status"] == "bridged"  # noqa: E731
+        ok = lambda i: i["status"] == "bridged"
         S = st["go"]
         obj = st.get("obj", False)
         get = "objGet" if obj else "stateGet"
-        what = "a library object (PROTOCOLS.md section 13)" if obj else "kit state that lives in the library"
+        what = "a runtime-owned library object" if obj else "a runtime-owned kit state entity"
+        # Format parsed by gen/gk_apidoc.py (GO_DECL).
         self.add(f"// {S} is a handle to {st['path']}, {what}.", f"type {S} struct{{ h uint64 }}", "",
                  f"func (s {S}) handle() uint64 {{ return s.h }}", "")
         reads = sorted([i for i in st["reads"] if ok(i)], key=lambda i: i["name"])
@@ -859,7 +889,7 @@ class Go:
         builders = sorted([i for i in st["builders"] if ok(i)], key=lambda i: i["name"])
         want = set(m.ov.get("state", {}).get("try_reads", []))
         names = set()
-        head = lambda it: [f"\to := newReq({it['op']})", "\to.u64(s.h)"]  # noqa: E731
+        head = lambda it: [f"\to := newReq({it['op']})", "\to.u64(s.h)"]
         for it in reads:
             name = camel(it["name"])
             if name in names:
@@ -871,7 +901,7 @@ class Go:
                 lines = [self.doc(it, name), f"func (s {S}) {name}({', '.join(self.params(it, ['cx *Cx']))}) {R} {{"] + head(it)
                 lines += ["\t" + x for x in self.body(it)] + [f"\tr := {get}(s.h, cx, o)", f"\treturn {ex}", "}", ""]
                 if it["name"] in want and not obj:
-                    lines += [f"// Try{name} is {name} for a handler the component calls from inside its own update: ok is false while the state is busy.",
+                    lines += [f"// Try{name} is a non-blocking variant of {name} that returns ok=false if the state is currently borrowed.",
                               f"func (s {S}) Try{name}({', '.join(self.params(it, ['cx *Cx']))}) (v {R}, ok bool) {{"] + head(it)
                     lines += ["\t" + x for x in self.body(it)] + ["\tr, ok := stateTry(s.h, cx, o)", "\tif !ok {", "\t\treturn v, false", "\t}",
                                                                   f"\treturn {ex}, true", "}", ""]
@@ -914,7 +944,7 @@ class Go:
             def sub(ev=ev, name=name):
                 sh = m.shapes[ev["shape"]]
                 H = self.handler_type(sh)
-                return [f"// {name} subscribes a handler to the state's {ev['name']} events; gk.Release ends it.",
+                return [f"// {name} registers a listener for {ev['name']} events on this state; release the returned Subscription to unsubscribe.",
                         f"func (s {S}) {name}(cx *Cx, h {H}) Subscription {{",
                         f"\tslot, gen := keepHandler(cx, h, {sh['num']})", f"\to := newReq({ev['op']})", "\to.u64(s.h)",
                         "\to.u32(slot)", "\to.u32(gen)", f"\tr := stateGet(s.h, cx, o)", "\treturn rt.MkSubscription(r.u64(), slot)", "}", ""]
@@ -924,18 +954,19 @@ class Go:
                 self.add(*lines)
         B = S + "Builder" if builders else S
         if builders:
-            self.add(f"// {B} is the chain of {st['name']}'s `self -> Self` methods; Build makes it, in one crossing.",
+            self.add(f"// {B} accumulates chained {st['name']} builder options before creating the handle in Build.",
                      f"type {B} struct{{ sb *stateBuilder }}", "")
             for it in builders:
                 name = camel(it["name"])
 
                 def bl(it=it, name=name):
                     body = self.body(it)
-                    lines = [f"func (b {B}) {name}({', '.join(self.params(it))}) {B} {{",
+                    lines = [self.doc(it, name),
+                             f"func (b {B}) {name}({', '.join(self.params(it))}) {B} {{",
                              f"\to := b.sb.op({it['op']})" if body else f"\tb.sb.op({it['op']})"]
                     return lines + ["\t" + x for x in body] + ["\treturn b", "}", ""]
                 self.add(*self.try_item(it, bl))
-            self.add(f"// Build makes the {st['name']}.", f"func (b {B}) Build() {S} {{ return {S}{{HCore: rt.MkH(b.sb.build())}} }}", "")
+            self.add(f"// Build commits the queued options and returns the new {st['name']} handle.", f"func (b {B}) Build() {S} {{ return {S}{{HCore: rt.MkH(b.sb.build())}} }}", "")
         for it in sorted([i for i in st["ctors"] if ok(i) and "go" in i], key=lambda i: i["go"]):
             def ct(it=it):
                 lines = [self.doc(it, it["go"]), f"func {it['go']}({', '.join(self.params(it, ['cx *Cx']))}) {B} {{",
@@ -944,7 +975,7 @@ class Go:
                 if builders:
                     lines += ["\treturn " + B + "{newStateBuilder(cx, o)}", "}", ""]
                 else:
-                    lines += ["\to.u16(0) // no builder ops follow", f"\treturn {S}{{HCore: rt.MkH(stateMake(cx, o))}}", "}", ""]
+                    lines += ["\to.u16(0) // zero chained builder ops", f"\treturn {S}{{HCore: rt.MkH(stateMake(cx, o))}}", "}", ""]
                 return lines
             self.add(*self.try_item(it, ct))
         for it in sorted([i for i in st.get("globals", []) + st.get("statics", []) if ok(i) and "go" in i], key=lambda i: i["go"]):
@@ -962,20 +993,17 @@ class Go:
                 return lines + [f"func {it['go']}({', '.join(self.params(it, ['cx *Cx']))}) {{"] + hd + body + ["\tstateSet(cx, o)", "}", ""]
             self.add(*self.try_item(it, gl))
 
-    # ------------------------------------------------------------ plot parts
 
     def plot_parts(self):
-        """gen_plot.go: the PlotPart interface over every value type that paints itself, and the
-        binding's own parts. gk.Plot and gk.PlotWith (rt_data.go) stand for the kit's Plot trait,
-        so its items and each part's paint are mapped."""
+        """Emit `gen_plot.go` declaring `PlotPart` and implementing it for paintable value nodes."""
         m = self.m
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        bound = lambda i: i["status"] in ("bound", "bridged")
         nodes = sorted((n for n in m.nodes.values() if n.get("paint") and n["paint"]["status"] == "bridged"
                         and any(bound(i) for i in n["ctors"]) and "go" in n), key=lambda n: n["go"])
         if not nodes:
             return
-        self.open("gen_plot.go", "The parts of a described plot: every value type that paints itself.")
-        self.add("// PlotPart is a value gk.Plot paints, in the order given: one of " +
+        self.open("gen_plot.go", "PlotPart marker implementations for all paintable value nodes.")
+        self.add("// PlotPart marks a value accepted by Plot for painting in order: " +
                  ", ".join(sorted([n["go"] for n in nodes] + list(GO_PLOT_OWN_PARTS))) + ".",
                  "type PlotPart interface {", "\tvalueNode() *node", "\tisPlotPart()", "}", "")
         for n in nodes:
@@ -987,15 +1015,14 @@ class Go:
         self.close()
         for it in m.all_items():
             if bound(it) and it["id"].startswith("gpui_kit::base::plot::Plot::"):
-                self.mapped.add(it["id"])  # Plot's id, interactive, appear_generation, paint: gk.PlotWith
+                self.mapped.add(it["id"])
 
-    # ------------------------------------------------------------ ambient calls
 
     def ambient(self):
-        import gk_app  # noqa: PLC0415
+        """Emit `gen_ambient.go` with top-level functions for immediate ambient calls."""
+        import gk_app
         items = sorted([i for i in gk_app.bound(self.m) if "stem" in i], key=lambda i: i["stem"])
-        self.open("gen_ambient.go", "Calls of the ambient context: free functions of the kit and methods of Window "
-                  "(PROTOCOLS.md 11.5). Each runs at once, with the turn's window and app.")
+        self.open("gen_ambient.go", "Immediate ambient calls backed by upstream free functions and Window/App extension traits.")
         self.in_call = True
         try:
             for it in items:
@@ -1003,8 +1030,6 @@ class Go:
 
                 def amb(it=it):
                     ps = self.params(it, ["cx *Cx"])
-                    # A view-built closure is a Built[T] made once, or the function itself: the call
-                    # is generic over the two (rt_built.go, Builder).
                     tps = ""
                     vb = [a for a in it["args"] if a["desc"][0] == "viewbuild"]
                     if vb:
@@ -1025,15 +1050,15 @@ class Go:
             self.in_call = False
         self.close()
 
-    # ------------------------------------------------------------ types
 
     def types(self):
+        """Emit `gen_types.go` with unit enums, records, data enums, Into sets, handler codecs, tuples, handles, and readers."""
         m = self.m
-        self.open("gen_types.go", "Enums, records, enums with data, Into sets, handle types and handler shapes.")
+        self.open("gen_types.go", "Generated enums, records, tagged unions, Into interfaces, handles, and handler shape codecs.")
         for rt in sorted(m.enums, key=lambda k: m.enums[k]["go"]):
             e = m.enums[rt]
             E = e["go"]
-            self.add(f"// {E} is {rt}.", f"type {E} uint16", "", "const (")
+            self.add(f"// {E} is {rt}.", f"type {E} uint16", "", f"// {E} enum values.", "const (")
             for v in e["variants"]:
                 self.add(f"\t{v['go']} {E} = {v['num']}")
             self.add(")", "")
@@ -1044,7 +1069,6 @@ class Go:
         for rt in sorted(m.intos, key=lambda k: m.intos[k].get("go", "")):
             if "go" in m.intos[rt]:
                 self.into(rt, m.intos[rt])
-        # handler shapes: event structs and the table the runtime calls handlers through
         reg = []
         for key in sorted(m.shapes, key=lambda k: m.shapes[k]["num"]):
             sh = m.shapes[key]
@@ -1056,7 +1080,7 @@ class Go:
                     S = f"Event{sh['num']}"
                     fields = [f"\tA{n} {self.gtype(a, True)}" for n, a in enumerate(sargs)]
                     exprs = [self.rd(a) for a in sargs]
-                    self.add(f"// {S} is the payload of handlers of shape {sh['num']}: ({', '.join(sh['rust'])}).",
+                    self.add(f"// {S} holds the multi-argument payload for handler shape {sh['num']} ({', '.join(sh['rust'])}).",
                              f"type {S} struct {{", *fields, "}", "")
                     args = [f"{S}{{" + ", ".join(exprs) + "}"]
                 elif sargs:
@@ -1073,30 +1097,30 @@ class Go:
             except Unsup as e:
                 sh["go_ok"] = False
                 sh["go_why"] = str(e)
-        self.add(*reg)  # one init per shape: each lives in the package of its payload's types (gen/gk_split.py)
+        self.add(*reg)
         for name, (ts, ds) in sorted(self.tuples.items()):
-            self.add(f"type {name} struct {{", *[f"\tV{n} {t}" for n, t in enumerate(ts)], "}", "")
+            self.add(f"// {name} holds a {len(ts)}-element tuple ({', '.join(ts)}).",
+                     f"type {name} struct {{", *[f"\tV{n} {t}" for n, t in enumerate(ts)], "}", "")
         for name, rt in sorted(self.handles.items()):
-            self.add(f"// {name} is a handle to {rt}, kept by the library.", f"type {name} struct{{ h uint64 }}", "")
-        import gk_comp6  # noqa: PLC0415
+            self.add(f"// {name} is an opaque runtime handle to {rt}.", f"type {name} struct{{ h uint64 }}", "")
+        import gk_comp6
         tip = gk_comp6.tooltip_key(m)
         if tip is not None and "go" in m.nodes[tip]:
-            self.add(f"// {m.nodes[tip]['go']} is a tooltip an element's Tooltip takes (PROTOCOLS.md 11.17; rt_platform.go).",
+            self.add(f"// {m.nodes[tip]['go']} satisfies ViewOrTooltip so it can be passed directly to Tooltip builders.",
                      f"func ({m.nodes[tip]['go']}) isViewOrTooltip() {{}}", "")
-        import gk_values  # noqa: PLC0415
+        import gk_values
         anim, _ = gk_values.animatable(m)
         anim = [m.nodes[k]["go"] for k, _ in anim if "go" in m.nodes[k]]
-        self.add("// AnimatableElement is a styled element an animation or effect may wrap (gk.Effect; PROTOCOLS.md 13.30).",
+        self.add("// AnimatableElement marks styled elements accepted by Motion and Effect wrappers.",
                  "type AnimatableElement interface {", "\tElement", "\tisAnimatable()", "}", "")
         for name in anim:
             self.add(f"func ({name}) isAnimatable() {{}}")
         self.add("")
         for trait, (iface, nodes) in sorted(self.oneofs.items()):
-            self.add(f"// {iface} is one of the node types implementing {trait}.", f"type {iface} interface {{", "\tElement", f"\tis{iface}()", "}", "")
+            self.add(f"// {iface} marks element nodes implementing the upstream {trait} trait.", f"type {iface} interface {{", "\tElement", f"\tis{iface}()", "}", "")
             for k in nodes:
                 self.add(f"func ({self.m.nodes[k]['go']}) is{iface}() {{}}")
             self.add("")
-        # readers asked for (records, enums with data travelling out), transitively
         done = set()
         while self.need_readers - done:
             for k, rt in sorted(self.need_readers - done):
@@ -1107,17 +1131,18 @@ class Go:
         self.close()
 
     def record(self, rt, rc):
+        """Emit Go struct, tape encoder `put<R>`, and optional integer shorthand for record `rc`."""
         R = rc["go"]
-        fname = lambda f: ("V" + f["name"]) if rc["tuple"] else camel(f["name"])  # noqa: E731
+        fname = lambda f: ("V" + f["name"]) if rc["tuple"] else camel(f["name"])
         try:
             fields = [f"\t{fname(f)} {self.gtype(f['desc'], not rc['in'])}" for f in rc["fields"]]
         except Unsup as e:
             rc["go_bad"] = str(e)
-            self.add(f"// {R} is {rt}: not carried in Go yet ({e}).", f"type {R} struct{{}}", "")
+            self.add(f"// {R} mirrors {rt} (placeholder; fields not yet wired in Go: {e}).", f"type {R} struct{{}}", "")
             if rc["in"]:
                 self.add(f"func put{R}(o *tape, v {R}) {{ stop(\"{R} is not carried by the Go package yet: leave out the builder that takes it (docs/API-GO.md, section Not in Go yet)\") }}", "")
             return
-        self.add(f"// {R} is {rt}." + ("" if rc["complete"] else " Only the fields the binding can carry."),
+        self.add(f"// {R} mirrors {rt}." + ("" if rc["complete"] else " Includes only wire-supported fields."),
                  f"type {R} struct {{", *fields, "}", "")
         if rc["in"]:
             lines = [f"func put{R}(o *tape, v {R}) {{"]
@@ -1129,20 +1154,19 @@ class Go:
             self.add(*lines, "}", "")
         if rc.get("short_go"):
             f = camel(rc["shorthand"])
-            self.add(f"// {rc['short_go']} is a {R} with only {f} set (the other fields 0): gk.{rc['short_go']}(4) (PROTOCOLS.md 11.36).",
+            self.add(f"// {rc['short_go']} constructs a {R} with {f} set and all other fields zero.",
                      f"func {rc['short_go']}({lower_camel(f)} int) {R} {{ return {R}{{{f}: {lower_camel(f)}}} }}", "",
-                     f"// No{rc['short_go']} is no {R}, for a parameter that takes an optional one: gk.NewSelectState(cx, src, gk.No{rc['short_go']}).",
+                     f"// No{rc['short_go']} represents an unset optional {R}.",
                      f"var No{rc['short_go']} = Option[{R}]{{}}", "")
 
     def reader(self, k, rt):
+        """Emit a `rd<T>(r *reader)` decoder function for a record or data enum read from Rust."""
         m = self.m
         if k == "rec":
             rc = m.records[rt]
             R = rc["go"]
-            fname = lambda f: ("V" + f["name"]) if rc["tuple"] else camel(f["name"])  # noqa: E731
+            fname = lambda f: ("V" + f["name"]) if rc["tuple"] else camel(f["name"])
             try:
-                # A colour field the library writes in gk.Color's layout (theme u16 first): the
-                # same test as the Rust side's Wire impl (gk_values.rust_field_put).
                 body = [f"\tv.{fname(f)} = rdColorField(r)" if "put_color_field" in gk_values.rust_field_put(rc, f)
                         else f"\tv.{fname(f)} = {self.rd(f['desc'], not rc['in'])}" for f in rc["fields"]]
             except Unsup as e:
@@ -1158,7 +1182,7 @@ class Go:
             if v in units:
                 lines += [f"\tcase {v['num']}:", f"\t\treturn {v['go']}"]
                 continue
-            fld = lambda f: self.vfield(v, f)  # noqa: E731
+            fld = lambda f: self.vfield(v, f)
             try:
                 inits = [f"{fld(f)}: {self.rd(f['desc'], not e['in'])}" for f in v["fields"]]
             except Unsup as ex:
@@ -1173,47 +1197,41 @@ class Go:
 
     @staticmethod
     def vfield(v, f):
-        """A variant's field name: a struct variant's own (CamelCase); the one field of a tuple
-        variant is Value (e.Value of SelectEventConfirm), more are V0, V1, ..."""
         if v["shape"] == "struct":
             return camel(f["name"])
         return "Value" if len(v["fields"]) == 1 else "V" + f["name"]
 
     def embeds(self, v):
-        """A tuple variant whose one field is a record embeds it: e.Row for ListEvent::Select(IndexPath)."""
         return v["shape"] not in ("struct", "unit") and len(v["fields"]) == 1 and v["fields"][0]["desc"][0] == "rec"
 
     @staticmethod
     def unit_values(e):
-        """The unit variants of an enum with data that the app gives to the kit (ButtonVariant,
-        Size, Easing): they are constants of one kind type, values like a plain enum's
-        (`.OkVariant(gk.ButtonVariantDanger)`, `.WithSize(gk.SizeLarge)`), where a struct type per
-        variant would need `gk.ButtonVariantDanger{}`. An enum only the kit
-        hands out (an event) keeps a struct type per variant, for a type switch."""
         if not e["in"]:
             return []
         return [v for v in e["variants"] if v.get("ok") and "go" in v and v["shape"] == "unit" and not v["fields"]]
 
     def denum(self, rt, e):
+        """Emit Go tagged-union interface, unit-variant `Kind` enum, variant structs, and `put<E>` encoder."""
         E = e["go"]
         units = self.unit_values(e)
         if units:
             K = e["go_kind"]
-            self.add(f"// {E} is {rt}: a constant of {K} for each variant without data, a struct type for each other one.",
+            self.add(f"// {E} represents {rt}: unit variants use {K} constants and payload variants use distinct struct types.",
                      f"type {E} interface {{ is{E}() }}", "",
-                     f"// {K} is a variant of {rt} without data: gk.{units[0]['go']}.", f"type {K} uint16", "",
-                     f"func ({K}) is{E}() {{}}", "", "const (")
+                     f"// {K} represents unit variants of {rt} (for example {units[0]['go']}).", f"type {K} uint16", "",
+                     f"func ({K}) is{E}() {{}}", "", f"// {K} unit variant values.", "const (")
             for v in units:
+                # Trailing Rust path comment is parsed by gates/conformance.py.
                 self.add(f"\t{v['go']} {K} = {v['num']} // {rt}::{v['name']}")
             self.add(")", "")
         else:
-            self.add(f"// {E} is {rt}: one struct type per variant.", f"type {E} interface {{ is{E}() }}", "")
+            self.add(f"// {E} represents {rt} with one struct type per variant.", f"type {E} interface {{ is{E}() }}", "")
         puts = [(e["go_kind"], ["o.u16(uint16(x))"])] if units else []
         for v in e["variants"]:
             if not v.get("ok") or "go" not in v or v in units:
                 continue
             V = v["go"]
-            fld = lambda f: self.vfield(v, f)  # noqa: E731
+            fld = lambda f: self.vfield(v, f)
             try:
                 if self.embeds(v):
                     fields = ["\t" + self.gtype(v["fields"][0]["desc"], not e["in"])]
@@ -1221,10 +1239,10 @@ class Go:
                     fields = [f"\t{fld(f)} {self.gtype(f['desc'], not e['in'])}" for f in v["fields"]]
             except Unsup as ex:
                 v["go_bad"] = str(ex)
-                self.add(f"// {V} is {rt}::{v['name']}: not carried in Go yet ({ex}).", f"type {V} struct{{}}",
+                self.add(f"// {V} represents {rt}::{v['name']} (placeholder; not yet wired in Go: {ex}).", f"type {V} struct{{}}",
                          f"func ({V}) is{E}() {{}}", "")
                 continue
-            self.add(*gk_doc.note(f"{rt}::{v['name']}", "go"), f"// {V} is {rt}::{v['name']}.", f"type {V} struct {{", *fields, "}",
+            self.add(*gk_doc.note(f"{rt}::{v['name']}", "go"), f"// {V} represents {rt}::{v['name']}.", f"type {V} struct {{", *fields, "}",
                      f"func ({V}) is{E}() {{}}", "")
             if e["in"]:
                 try:
@@ -1235,7 +1253,7 @@ class Go:
                     puts.append((V, [f"o.u16({v['num']})"] + body))
                 except Unsup as ex:
                     puts.append((V, [f"stop(\"{V} cannot be written by the Go package yet ({ex}): give another variant (docs/API-GO.md, section Not in Go yet)\")"]))
-        gk_go_kinds.denum_held(self, e, puts)  # a value the library holds (PROTOCOLS.md 9.30)
+        gk_go_kinds.denum_held(self, e, puts)
         if e["in"]:
             lines = [f"func put{E}(o *tape, v {E}) {{", "\tswitch x := v.(type) {" if puts else "\tswitch v.(type) {"]
             for V, body in puts:
@@ -1244,6 +1262,7 @@ class Go:
             self.add(*lines)
 
     def into(self, rt, s):
+        """Emit an untagged Go interface and type-switch encoder `put<I>` for an `impl Into<T>` set."""
         I = s["go"]
         cases, seen = [], set()
         for n, mem in enumerate(s["members"]):
@@ -1257,22 +1276,22 @@ class Go:
                 seen.add(t)
                 cases.append((t, n, body))
         names = ", ".join(t for t, _, _ in cases)
-        self.add(f"// {I} is what `impl Into<{rt}>` accepts: one of {names}.", f"type {I} interface{{}}", "")
+        self.add(f"// {I} accepts any Go type accepted by `impl Into<{rt}>`: {names}.", f"type {I} interface{{}}", "")
         lines = [f"func put{I}(o *tape, v {I}) {{", "\tswitch x := v.(type) {" if cases else "\tswitch v.(type) {"]
         for t, n, body in cases:
             lines += [f"\tcase {t}:", f"\t\to.u8({n})", "\t\t_ = x"] + ["\t\t" + b for b in body]
         lines += ["\tdefault:", f"\t\tstop(\"a %T was given where the kit takes a {I}: give one of {names}\", v)", "\t}", "}", ""]
         self.add(*lines)
 
-    # ------------------------------------------------------------ tokens, palette, theme
 
     def tokens(self):
+        """Emit the generated `s/`, `palette/`, and `theme/` Go subpackages."""
         m = self.m
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        bound = lambda i: i["status"] in ("bound", "bridged")
         head = ["// Code generated by gen/gkgen.py (gen/gk_go.py). DO NOT EDIT.", ""]
-        lines = head + ["// Package s holds the style tokens: every nullary method of GPUI's Styled trait and of the",
-                        "// kit's style-only traits, by upstream's name: gk.VFlex(s.SizeFull, s.Gap3).", "package s", "",
-                        'import "gpuikit.dev/gk"', "", "const ("]
+        lines = head + ["// Package s defines nullary style tokens for GPUI's Styled trait and style-only kit traits,",
+                        "// passed to element constructors or .Style(...) (for example gk.VFlex(s.SizeFull, s.Gap3)).", "package s", "",
+                        'import "gpuikit.dev/gk"', "", "// Nullary style token constants.", "const ("]
         seen = set()
         for it in sorted(m.tokens, key=lambda i: i["op"]):
             if bound(it):
@@ -1283,27 +1302,26 @@ class Go:
                 lines.append(f"\t{n} gk.Style = {it['op']}")
                 self.mapped.add(it["id"])
         self.files["s/gen_s.go"] = "\n".join(lines + [")"]) + "\n"
-        lines = head + ["// Package palette holds the kit's fixed colours (the colour functions without arguments):",
-                        "// .Bg(palette.Blue500).", "package palette", "", 'import "gpuikit.dev/gk"', "", "var ("]
+        lines = head + ["// Package palette provides fixed palette color tokens (for example .Bg(palette.Blue500)).",
+                        "package palette", "", 'import "gpuikit.dev/gk"', "", "// Fixed palette color tokens.", "var ("]
         for it in sorted(m.palette, key=lambda i: i["op"]):
             if bound(it):
                 lines.append(f"\t{camel(ada(it['name']))} = gk.PaletteColor({0x8000 + it['op']})")
                 self.mapped.add(it["id"])
         self.files["palette/gen_palette.go"] = "\n".join(lines + [")"]) + "\n"
-        lines = head + ["// Package theme holds the colours of the kit's theme, resolved by the library each time it",
-                        "// draws (a theme switch redraws without the app): .Bg(theme.Background).", "package theme", "",
-                        'import "gpuikit.dev/gk"', "", "var ("]
+        lines = head + ["// Package theme provides semantic theme color tokens resolved at draw time",
+                        "// (for example .Bg(theme.Background)) so theme switches update automatically.", "package theme", "",
+                        'import "gpuikit.dev/gk"', "", "// Semantic theme color tokens.", "var ("]
         for name, n in sorted(m.theme_nums.items(), key=lambda kv: kv[1]):
             lines.append(f"\t{camel(ada(name))} = gk.ThemeColor({n})")
         self.files["theme/gen_theme.go"] = "\n".join(lines + [")"]) + "\n"
 
-    # ------------------------------------------------------------ report
 
     def report(self, path, family):
-        """Per family: bound or bridged in the model, generated in Go; and what is left."""
+        """Write `gen/out/go-coverage.md` summarizing bound vs emitted Go items and unmapped reasons."""
         m = self.m
         rows = {}
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
+        bound = lambda i: i["status"] in ("bound", "bridged")
         why = {it["id"]: r for it, r in self.unmapped}
         for it in m.all_items():
             if not bound(it):
@@ -1314,7 +1332,7 @@ class Go:
             if it["id"] in self.mapped:
                 r[1] += 1
             elif it["id"] not in why and gk_go_bridges.covered(self, it, self.mapped) is None:
-                r[1] += 1  # ported by hand, or derived from generated items (gen/gk_go_bridges.py)
+                r[1] += 1
             else:
                 r[2] += 1
                 why.setdefault(it["id"], gk_go_bridges.covered(self, it, self.mapped))

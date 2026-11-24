@@ -4,8 +4,8 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// TestFileDropEntered returns gpui's FileDropEvent::Entered as the library writes a handler's
-// payload (core/tests/go/platform).
+// TestFileDropEntered triggers a synthetic file-drop-entered payload from the
+// diagnostic library and decodes the resulting FileDropEvent.
 func TestFileDropEntered(cx *Cx) FileDropEvent {
 	rt.CheckCx(cx).Flush()
 	o := rt.NewReq(rt.CPlatformTest)

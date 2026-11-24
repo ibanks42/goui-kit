@@ -12,7 +12,7 @@ type PopoverEl struct{ rt.ElAnimatableElement }
 
 // Create a new Popover with `view` mode.
 //
-// Popover is <gpui_kit::component::popover::Popover>::new.
+// Popover calls <gpui_kit::component::popover::Popover>::new.
 func Popover(id gk.ID, st ...gk.Style) PopoverEl {
 	rt.UseComponentPopover()
 	n := rt.NewNode(715)
@@ -28,7 +28,7 @@ func Popover(id gk.ID, st ...gk.Style) PopoverEl {
 // trigger, left-aligned; `BottomRight` opens above it, right-aligned. Legacy anchoring clamps
 // without flipping.
 //
-// Anchor is <gpui_kit::component::popover::Popover>::anchor.
+// Anchor calls <gpui_kit::component::popover::Popover>::anchor.
 func (e PopoverEl) Anchor(anchor gk.Anchor) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(anchor))
@@ -41,7 +41,7 @@ func (e PopoverEl) Anchor(anchor gk.Anchor) PopoverEl {
 // - The popover will not have a bg, border, shadow, or padding.
 // - The click out of the popover will not dismiss it.
 //
-// Appearance is <gpui_kit::component::popover::Popover>::appearance.
+// Appearance calls <gpui_kit::component::popover::Popover>::appearance.
 func (e PopoverEl) Appearance(appearance bool) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(appearance)
@@ -52,7 +52,7 @@ func (e PopoverEl) Appearance(appearance bool) PopoverEl {
 // inset to avoid rounded corners. Uses the surface background, falling back to the theme's popover
 // color.
 //
-// Arrow is <gpui_kit::component::popover::Popover>::arrow.
+// Arrow calls <gpui_kit::component::popover::Popover>::arrow.
 func (e PopoverEl) Arrow(arrow bool) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(arrow)
@@ -64,7 +64,7 @@ func (e PopoverEl) Arrow(arrow bool) PopoverEl {
 // This callback will called every time on render the popover. So, you should avoid creating new
 // elements or entities in the content closure.
 //
-// Content is <gpui_kit::component::popover::Popover>::content.
+// Content calls <gpui_kit::component::popover::Popover>::content.
 func (e PopoverEl) Content(content gk.RowSource) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.U64(rt.ItemsCheck(content, 7))
@@ -77,7 +77,7 @@ func (e PopoverEl) Content(content gk.RowSource) PopoverEl {
 //
 // And please note that if you use the `open` method, this value will be ignored.
 //
-// DefaultOpen is <gpui_kit::component::popover::Popover>::default_open.
+// DefaultOpen calls <gpui_kit::component::popover::Popover>::default_open.
 func (e PopoverEl) DefaultOpen(open bool) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(open)
@@ -86,7 +86,7 @@ func (e PopoverEl) DefaultOpen(open bool) PopoverEl {
 
 // Set the mouse button to trigger the popover, default is `MouseButton::Left`.
 //
-// MouseButton is <gpui_kit::component::popover::Popover>::mouse_button.
+// MouseButton calls <gpui_kit::component::popover::Popover>::mouse_button.
 func (e PopoverEl) MouseButton(mouseButton gk.MouseButton) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	putMouseButton(o, mouseButton)
@@ -96,7 +96,7 @@ func (e PopoverEl) MouseButton(mouseButton gk.MouseButton) PopoverEl {
 // Gap from the trigger to the surface (or arrow tip), default 0.25rem. Preserves the anchor and
 // does not enable automatic flipping.
 //
-// Offset is <gpui_kit::component::popover::Popover>::offset.
+// Offset calls <gpui_kit::component::popover::Popover>::offset.
 func (e PopoverEl) Offset(offset float32) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.F32(offset)
@@ -109,7 +109,7 @@ func (e PopoverEl) Offset(offset float32) PopoverEl {
 //
 // This is useful when using the `open` method to control the popover state.
 //
-// OnOpenChange is <gpui_kit::component::popover::Popover>::on_open_change.
+// OnOpenChange calls <gpui_kit::component::popover::Popover>::on_open_change.
 func (e PopoverEl) OnOpenChange(callback func(cx *gk.Cx, e bool)) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.Register(callback, 4))
@@ -122,7 +122,7 @@ func (e PopoverEl) OnOpenChange(callback func(cx *gk.Cx, e bool)) PopoverEl {
 //
 // NOTE: You must be used in conjunction with `on_open_change` to handle state changes.
 //
-// Open is <gpui_kit::component::popover::Popover>::open.
+// Open calls <gpui_kit::component::popover::Popover>::open.
 func (e PopoverEl) Open(open bool) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Bool(open)
@@ -131,7 +131,7 @@ func (e PopoverEl) Open(open bool) PopoverEl {
 
 // Set whether clicking outside the popover will dismiss it, default is `true`.
 //
-// OverlayClosable is <gpui_kit::component::popover::Popover>::overlay_closable.
+// OverlayClosable calls <gpui_kit::component::popover::Popover>::overlay_closable.
 func (e PopoverEl) OverlayClosable(closable bool) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Bool(closable)
@@ -143,7 +143,7 @@ func (e PopoverEl) OverlayClosable(closable bool) PopoverEl {
 //
 // If popover is opened, the focus will be moved to the focus handle.
 //
-// TrackFocus is <gpui_kit::component::popover::Popover>::track_focus.
+// TrackFocus calls <gpui_kit::component::popover::Popover>::track_focus.
 func (e PopoverEl) TrackFocus(handle gk.FocusHandle) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U64(rt.Held(rt.H(handle.HCore)))
@@ -152,7 +152,7 @@ func (e PopoverEl) TrackFocus(handle gk.FocusHandle) PopoverEl {
 
 // Set the trigger element of the popover.
 //
-// Trigger is <gpui_kit::component::popover::Popover>::trigger.
+// Trigger calls <gpui_kit::component::popover::Popover>::trigger.
 func (e PopoverEl) Trigger(trigger gk.SelectableNode) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.U32(rt.Take(trigger))
@@ -164,7 +164,7 @@ func (e PopoverEl) Trigger(trigger gk.SelectableNode) PopoverEl {
 // The container is the element laid out in the parent and measured to anchor the popup, so this is
 // where `w_full` or `flex_1` must go for the trigger to fill its slot.
 //
-// TriggerStyle is <gpui_kit::component::popover::Popover>::trigger_style.
+// TriggerStyle calls <gpui_kit::component::popover::Popover>::trigger_style.
 func (e PopoverEl) TriggerStyle(style gk.StyleRefinement) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -173,32 +173,38 @@ func (e PopoverEl) TriggerStyle(style gk.StyleRefinement) PopoverEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e PopoverEl) PopoverStyle() PopoverEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e PopoverEl) RoundedFullStyle() PopoverEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e PopoverEl) FocusRingStyle() PopoverEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -211,24 +217,32 @@ func (e PopoverEl) FocusRingStyle() PopoverEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e PopoverEl) KeepTextSelection(id gk.ID) PopoverEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e PopoverEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) PopoverEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e PopoverEl) BorderE(width gk.Length) PopoverEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e PopoverEl) BorderS(width gk.Length) PopoverEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -236,121 +250,163 @@ func (e PopoverEl) BorderS(width gk.Length) PopoverEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e PopoverEl) FlexRowDir() PopoverEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e PopoverEl) InsetE(length gk.Length) PopoverEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e PopoverEl) InsetS(length gk.Length) PopoverEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e PopoverEl) JustifyFlexEnd() PopoverEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e PopoverEl) JustifyFlexStart() PopoverEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e PopoverEl) Me(length gk.Length) PopoverEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e PopoverEl) Ms(length gk.Length) PopoverEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e PopoverEl) Pe(length gk.Length) PopoverEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e PopoverEl) Ps(length gk.Length) PopoverEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e PopoverEl) RoundedE(radius gk.Length) PopoverEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e PopoverEl) RoundedS(radius gk.Length) PopoverEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e PopoverEl) TextEnd() PopoverEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e PopoverEl) TextStart() PopoverEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e PopoverEl) CornerRadii(radius gk.Corners) PopoverEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e PopoverEl) DebugBlue() PopoverEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e PopoverEl) DebugFocused(focusHandle gk.FocusHandle) PopoverEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e PopoverEl) DebugGreen() PopoverEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e PopoverEl) DebugPink() PopoverEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e PopoverEl) DebugRed() PopoverEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e PopoverEl) DebugYellow() PopoverEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e PopoverEl) FontBlack() PopoverEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e PopoverEl) FontBold() PopoverEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e PopoverEl) FontExtrabold() PopoverEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e PopoverEl) FontExtralight() PopoverEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e PopoverEl) FontLight() PopoverEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e PopoverEl) FontMedium() PopoverEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e PopoverEl) FontNormal() PopoverEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e PopoverEl) FontSemibold() PopoverEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e PopoverEl) FontThin() PopoverEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -359,18 +415,23 @@ func (e PopoverEl) FontThin() PopoverEl { tStyledExtFontThin(rt.N(e.Core)); retu
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e PopoverEl) HFlex() PopoverEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e PopoverEl) Margins(margins gk.EdgesInto) PopoverEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e PopoverEl) Paddings(paddings gk.EdgesInto) PopoverEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e PopoverEl) RefineStyle(style gk.StyleRefinement) PopoverEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -380,48 +441,65 @@ func (e PopoverEl) RefineStyle(style gk.StyleRefinement) PopoverEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e PopoverEl) VFlex() PopoverEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e PopoverEl) Text(s string) PopoverEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e PopoverEl) ChildView(v gk.View) PopoverEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e PopoverEl) Child(child gk.Element) PopoverEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e PopoverEl) Children(children ...gk.Element) PopoverEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e PopoverEl) Style(st ...gk.Style) PopoverEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e PopoverEl) AspectRatio(ratio float32) PopoverEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e PopoverEl) Bg(fill gk.Fill) PopoverEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e PopoverEl) Border(length gk.Length) PopoverEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e PopoverEl) BorderB(length gk.Length) PopoverEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e PopoverEl) BorderColor(borderColor gk.Color) PopoverEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -429,6 +507,8 @@ func (e PopoverEl) BorderColor(borderColor gk.Color) PopoverEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e PopoverEl) BorderL(length gk.Length) PopoverEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -436,6 +516,8 @@ func (e PopoverEl) BorderL(length gk.Length) PopoverEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e PopoverEl) BorderR(length gk.Length) PopoverEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -443,6 +525,8 @@ func (e PopoverEl) BorderR(length gk.Length) PopoverEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e PopoverEl) BorderT(length gk.Length) PopoverEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -450,6 +534,8 @@ func (e PopoverEl) BorderT(length gk.Length) PopoverEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e PopoverEl) BorderX(length gk.Length) PopoverEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -457,6 +543,8 @@ func (e PopoverEl) BorderX(length gk.Length) PopoverEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e PopoverEl) BorderY(length gk.Length) PopoverEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -464,18 +552,28 @@ func (e PopoverEl) BorderY(length gk.Length) PopoverEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e PopoverEl) Bottom(length gk.Length) PopoverEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e PopoverEl) ColEnd(end int16) PopoverEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e PopoverEl) ColSpan(span uint16) PopoverEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e PopoverEl) ColStart(start int16) PopoverEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e PopoverEl) Cursor(cursor gk.CursorStyle) PopoverEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -483,30 +581,42 @@ func (e PopoverEl) Cursor(cursor gk.CursorStyle) PopoverEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e PopoverEl) FlexBasis(basis gk.Length) PopoverEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e PopoverEl) FlexGrow(grow float32) PopoverEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e PopoverEl) FlexShrink(shrink float32) PopoverEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e PopoverEl) Font(font gk.Font) PopoverEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e PopoverEl) FontFamily(familyName string) PopoverEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e PopoverEl) FontFeatures(features gk.FontFeatures) PopoverEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -515,26 +625,38 @@ func (e PopoverEl) FontFeatures(features gk.FontFeatures) PopoverEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e PopoverEl) FontWeight(weight gk.FontWeight) PopoverEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e PopoverEl) Gap(length gk.Length) PopoverEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e PopoverEl) GapX(length gk.Length) PopoverEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e PopoverEl) GapY(length gk.Length) PopoverEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e PopoverEl) GridCols(cols uint16) PopoverEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e PopoverEl) GridColsMaxContent(cols uint16) PopoverEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -542,15 +664,21 @@ func (e PopoverEl) GridColsMaxContent(cols uint16) PopoverEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e PopoverEl) GridColsMinContent(cols uint16) PopoverEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e PopoverEl) GridRows(rows uint16) PopoverEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e PopoverEl) GridRowsMaxContent(rows uint16) PopoverEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -558,121 +686,179 @@ func (e PopoverEl) GridRowsMaxContent(rows uint16) PopoverEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e PopoverEl) GridRowsMinContent(rows uint16) PopoverEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e PopoverEl) H(length gk.Length) PopoverEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e PopoverEl) Inset(length gk.Length) PopoverEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e PopoverEl) Left(length gk.Length) PopoverEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e PopoverEl) LineClamp(lines int) PopoverEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e PopoverEl) LineHeight(lineHeight gk.Length) PopoverEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e PopoverEl) M(length gk.Length) PopoverEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e PopoverEl) MaxH(length gk.Length) PopoverEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e PopoverEl) MaxSize(length gk.Length) PopoverEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e PopoverEl) MaxW(length gk.Length) PopoverEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e PopoverEl) Mb(length gk.Length) PopoverEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e PopoverEl) MinH(length gk.Length) PopoverEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e PopoverEl) MinSize(length gk.Length) PopoverEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e PopoverEl) MinW(length gk.Length) PopoverEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e PopoverEl) Ml(length gk.Length) PopoverEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e PopoverEl) Mr(length gk.Length) PopoverEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e PopoverEl) Mt(length gk.Length) PopoverEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e PopoverEl) Mx(length gk.Length) PopoverEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e PopoverEl) My(length gk.Length) PopoverEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e PopoverEl) Opacity(opacity float32) PopoverEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e PopoverEl) P(length gk.Length) PopoverEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e PopoverEl) Pb(length gk.Length) PopoverEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e PopoverEl) Pl(length gk.Length) PopoverEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e PopoverEl) Pr(length gk.Length) PopoverEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e PopoverEl) Pt(length gk.Length) PopoverEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e PopoverEl) Px(length gk.Length) PopoverEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e PopoverEl) Py(length gk.Length) PopoverEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e PopoverEl) Right(length gk.Length) PopoverEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e PopoverEl) Rounded(length gk.Length) PopoverEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -680,6 +866,8 @@ func (e PopoverEl) Rounded(length gk.Length) PopoverEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e PopoverEl) RoundedB(length gk.Length) PopoverEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -687,6 +875,8 @@ func (e PopoverEl) RoundedB(length gk.Length) PopoverEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e PopoverEl) RoundedBl(length gk.Length) PopoverEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -694,6 +884,8 @@ func (e PopoverEl) RoundedBl(length gk.Length) PopoverEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e PopoverEl) RoundedBr(length gk.Length) PopoverEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -701,6 +893,8 @@ func (e PopoverEl) RoundedBr(length gk.Length) PopoverEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e PopoverEl) RoundedL(length gk.Length) PopoverEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -708,6 +902,8 @@ func (e PopoverEl) RoundedL(length gk.Length) PopoverEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e PopoverEl) RoundedR(length gk.Length) PopoverEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -715,6 +911,8 @@ func (e PopoverEl) RoundedR(length gk.Length) PopoverEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e PopoverEl) RoundedT(length gk.Length) PopoverEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -722,6 +920,8 @@ func (e PopoverEl) RoundedT(length gk.Length) PopoverEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e PopoverEl) RoundedTl(length gk.Length) PopoverEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -729,39 +929,55 @@ func (e PopoverEl) RoundedTl(length gk.Length) PopoverEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e PopoverEl) RoundedTr(length gk.Length) PopoverEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e PopoverEl) RowEnd(end int16) PopoverEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e PopoverEl) RowSpan(span uint16) PopoverEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e PopoverEl) RowStart(start int16) PopoverEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e PopoverEl) ScrollbarWidth(width gk.Length) PopoverEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e PopoverEl) Shadow(shadows []gk.BoxShadow) PopoverEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e PopoverEl) Size(length gk.Length) PopoverEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e PopoverEl) TextAlign(align gk.TextAlign) PopoverEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -770,23 +986,31 @@ func (e PopoverEl) TextAlign(align gk.TextAlign) PopoverEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e PopoverEl) TextBg(bg gk.Color) PopoverEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e PopoverEl) TextColor(color gk.Color) PopoverEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e PopoverEl) TextDecorationColor(color gk.Color) PopoverEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e PopoverEl) TextOverflow(overflow gk.TextOverflow) PopoverEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -795,11 +1019,17 @@ func (e PopoverEl) TextOverflow(overflow gk.TextOverflow) PopoverEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e PopoverEl) TextSize(size gk.Length) PopoverEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e PopoverEl) Top(length gk.Length) PopoverEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e PopoverEl) W(length gk.Length) PopoverEl { tStyledW(rt.N(e.Core), length); return e }

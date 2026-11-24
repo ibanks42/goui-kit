@@ -8,11 +8,11 @@ import (
 )
 
 // Routes a key press to the questionnaire's behavior and reports whether it was consumed. The skin
-// installs it on the root; the contract — arrows move between answers and items, Enter confirms a
-// filled answer, a bare letter or digit activates a shortcut — lives here so a different skin
+// installs it on the root; the contract - arrows move between answers and items, Enter confirms a
+// filled answer, a bare letter or digit activates a shortcut - lives here so a different skin
 // keeps it.
 //
-// BaseHandleKeyDown is gpui_kit::base::questionnaire::handle_key_down.
+// BaseHandleKeyDown calls gpui_kit::base::questionnaire::handle_key_down.
 func HandleKeyDown(cx *gk.Cx, state QuestionnaireState, event gk.KeyDownEvent) {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(733)
@@ -29,7 +29,7 @@ func HandleKeyDown(cx *gk.Cx, state QuestionnaireState, event gk.KeyDownEvent) {
 // still has room in the swipe's direction it claims the swipe; once it reaches that edge the
 // claims stop and the host may take over. Read on the thread that dispatches input.
 //
-// BaseLastHorizontalScrollClaim is gpui_kit::base::last_horizontal_scroll_claim.
+// BaseLastHorizontalScrollClaim calls gpui_kit::base::last_horizontal_scroll_claim.
 func LastHorizontalScrollClaim(cx *gk.Cx) gk.Option[HorizontalScrollClaim] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(1031)

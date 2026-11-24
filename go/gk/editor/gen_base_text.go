@@ -12,7 +12,7 @@ type BaseCodeBlock struct{ rt.Val }
 
 // A code block of `code` in `lang`.
 //
-// NewBaseCodeBlock is <gpui_kit::base::text::CodeBlock>::new.
+// NewBaseCodeBlock calls <gpui_kit::base::text::CodeBlock>::new.
 func NewBaseCodeBlock(code string, lang gk.Option[string], span gk.Option[Span]) BaseCodeBlock {
 	n := rt.NewValue(802)
 	o := rt.NodeArgs(n)
@@ -37,7 +37,7 @@ func NewBaseCodeBlock(code string, lang gk.Option[string], span gk.Option[Span])
 // `CodeBlockHighlighter` hands a `&CodeBlock` to the highlighter it is given, so anyone writing
 // one needs a way to build a block to exercise it against.
 //
-// NewBaseCodeBlockFromCode is <gpui_kit::base::text::CodeBlock>::from_code.
+// NewBaseCodeBlockFromCode calls <gpui_kit::base::text::CodeBlock>::from_code.
 func NewBaseCodeBlockFromCode(code string, lang gk.Option[string]) BaseCodeBlock {
 	n := rt.NewValue(544)
 	o := rt.NodeArgs(n)
@@ -54,7 +54,7 @@ func NewBaseCodeBlockFromCode(code string, lang gk.Option[string]) BaseCodeBlock
 // Marks this code block as a leaf of an external editor, like `WithLeafKey`. Rekeying detaches
 // runtime state from clones.
 //
-// WithLeafKey is <gpui_kit::base::text::CodeBlock>::with_leaf_key.
+// WithLeafKey calls <gpui_kit::base::text::CodeBlock>::with_leaf_key.
 func (e BaseCodeBlock) WithLeafKey(key uint64) BaseCodeBlock {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(uint64(key))
@@ -63,7 +63,7 @@ func (e BaseCodeBlock) WithLeafKey(key uint64) BaseCodeBlock {
 
 // Sets the fence's info string after the language. It is kept for round trips and is not rendered.
 //
-// WithMeta is <gpui_kit::base::text::CodeBlock>::with_meta.
+// WithMeta calls <gpui_kit::base::text::CodeBlock>::with_meta.
 func (e BaseCodeBlock) WithMeta(meta gk.Option[string]) BaseCodeBlock {
 	o := rt.Op(rt.N(e.Core), 257)
 	if x0, ok := meta.Get(); ok {
@@ -80,7 +80,7 @@ type BaseLink2 struct{ rt.Val }
 
 // A link to `url` with no title.
 //
-// NewBaseLink2 is <gpui_kit::base::text::Link>::new.
+// NewBaseLink2 calls <gpui_kit::base::text::Link>::new.
 func NewBaseLink2(url string) BaseLink2 {
 	n := rt.NewValue(889)
 	o := rt.NodeArgs(n)
@@ -90,7 +90,7 @@ func NewBaseLink2(url string) BaseLink2 {
 
 // Set the link title.
 //
-// Title is <gpui_kit::base::text::Link>::title.
+// Title calls <gpui_kit::base::text::Link>::title.
 func (e BaseLink2) Title(title string) BaseLink2 {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(title)
@@ -99,7 +99,7 @@ func (e BaseLink2) Title(title string) BaseLink2 {
 
 // Point the link at `url`.
 //
-// URL is <gpui_kit::base::text::Link>::url.
+// URL calls <gpui_kit::base::text::Link>::url.
 func (e BaseLink2) URL(url string) BaseLink2 {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(url)
@@ -109,7 +109,7 @@ func (e BaseLink2) URL(url string) BaseLink2 {
 // BlockState is gpui_kit::base::text::editor_host::BlockState.
 type BlockState struct{ rt.Val }
 
-// NewBlockStateDefault is <gpui_kit::base::text::editor_host::BlockState as Default>::default.
+// NewBlockStateDefault calls <gpui_kit::base::text::editor_host::BlockState as Default>::default.
 func NewBlockStateDefault() BlockState {
 	n := rt.NewValue(545)
 	return BlockState{Val: rt.MkVal(n)}
@@ -121,7 +121,7 @@ type FlowPosition struct{ rt.Val }
 // The position of `blocks`ix“ among its siblings. Blocks that render nothing (definitions,
 // breaks) are skipped when looking for the block before it.
 //
-// NewFlowPositionAt is <gpui_kit::base::text::editor_host::FlowPosition>::at.
+// NewFlowPositionAt calls <gpui_kit::base::text::editor_host::FlowPosition>::at.
 func NewFlowPositionAt(blocks []BlockNode, ix int, isLast bool) FlowPosition {
 	n := rt.NewValue(546)
 	o := rt.NodeArgs(n)
@@ -137,7 +137,7 @@ func NewFlowPositionAt(blocks []BlockNode, ix int, isLast bool) FlowPosition {
 // Overrides whether the block opens its flow, e.g. for a chunk of a long list rendered as a list
 // of its own.
 //
-// First is <gpui_kit::base::text::editor_host::FlowPosition>::first.
+// First calls <gpui_kit::base::text::editor_host::FlowPosition>::first.
 func (e FlowPosition) First(isFirst bool) FlowPosition {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(isFirst)
@@ -146,7 +146,7 @@ func (e FlowPosition) First(isFirst bool) FlowPosition {
 
 // Overrides whether the block closes its flow.
 //
-// Last is <gpui_kit::base::text::editor_host::FlowPosition>::last.
+// Last calls <gpui_kit::base::text::editor_host::FlowPosition>::last.
 func (e FlowPosition) Last(isLast bool) FlowPosition {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(isLast)
@@ -158,7 +158,7 @@ type InlineNode struct{ rt.Val }
 
 // A run of text with no marks.
 //
-// NewInlineNode is <gpui_kit::base::text::editor_host::InlineNode>::new.
+// NewInlineNode calls <gpui_kit::base::text::editor_host::InlineNode>::new.
 func NewInlineNode(text string) InlineNode {
 	n := rt.NewValue(549)
 	o := rt.NodeArgs(n)
@@ -166,7 +166,7 @@ func NewInlineNode(text string) InlineNode {
 	return InlineNode{Val: rt.MkVal(n)}
 }
 
-// NewInlineNodeDefault is <gpui_kit::base::text::editor_host::InlineNode as Default>::default.
+// NewInlineNodeDefault calls <gpui_kit::base::text::editor_host::InlineNode as Default>::default.
 func NewInlineNodeDefault() InlineNode {
 	n := rt.NewValue(547)
 	return InlineNode{Val: rt.MkVal(n)}
@@ -174,7 +174,7 @@ func NewInlineNodeDefault() InlineNode {
 
 // An inline image, an atomic object in the flow.
 //
-// NewInlineNodeImage is <gpui_kit::base::text::editor_host::InlineNode>::image.
+// NewInlineNodeImage calls <gpui_kit::base::text::editor_host::InlineNode>::image.
 func NewInlineNodeImage(image ImageNode) InlineNode {
 	n := rt.NewValue(826)
 	o := rt.NodeArgs(n)
@@ -184,7 +184,7 @@ func NewInlineNodeImage(image ImageNode) InlineNode {
 
 // Sets the marks, each a byte range of the text and its style.
 //
-// Marks is <gpui_kit::base::text::editor_host::InlineNode>::marks.
+// Marks calls <gpui_kit::base::text::editor_host::InlineNode>::marks.
 func (e InlineNode) Marks(marks []TupleRangeTextMark) InlineNode {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(uint32(len(marks)))
@@ -198,7 +198,7 @@ func (e InlineNode) Marks(marks []TupleRangeTextMark) InlineNode {
 // Paragraph is gpui_kit::base::text::editor_host::Paragraph.
 type Paragraph struct{ rt.Val }
 
-// NewParagraphDefault is <gpui_kit::base::text::editor_host::Paragraph as Default>::default.
+// NewParagraphDefault calls <gpui_kit::base::text::editor_host::Paragraph as Default>::default.
 func NewParagraphDefault() Paragraph {
 	n := rt.NewValue(550)
 	return Paragraph{Val: rt.MkVal(n)}
@@ -206,7 +206,7 @@ func NewParagraphDefault() Paragraph {
 
 // Appends an inline run.
 //
-// Push is (|mut s: gpui_kit::base::text::editor_host::Paragraph, a0| { s.push(a0); s }).
+// Push calls (|mut s: gpui_kit::base::text::editor_host::Paragraph, a0| { s.push(a0); s }).
 func (e Paragraph) Push(text InlineNode) Paragraph {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(text.Core)))
@@ -217,7 +217,7 @@ func (e Paragraph) Push(text InlineNode) Paragraph {
 // active, it reports its geometry under `key` and paints the decorations given for `key`. Rekeying
 // detaches runtime state from clones.
 //
-// WithLeafKey is <gpui_kit::base::text::editor_host::Paragraph>::with_leaf_key.
+// WithLeafKey calls <gpui_kit::base::text::editor_host::Paragraph>::with_leaf_key.
 func (e Paragraph) WithLeafKey(key uint64) Paragraph {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(uint64(key))
@@ -230,7 +230,7 @@ type RenderContext struct{ rt.Val }
 // Creates a local rendering context without reading application globals. The host supplies body
 // typography through its container or `with_body_font_size`.
 //
-// NewRenderContext is <gpui_kit::base::text::editor_host::RenderContext>::new.
+// NewRenderContext calls <gpui_kit::base::text::editor_host::RenderContext>::new.
 func NewRenderContext(style BaseTextViewStyle) RenderContext {
 	n := rt.NewValue(552)
 	o := rt.NodeArgs(n)
@@ -241,7 +241,7 @@ func NewRenderContext(style BaseTextViewStyle) RenderContext {
 // The context TextView would start from: the global `TextViewDefaults` style and code-block
 // highlighter when set, else the theme's style.
 //
-// NewRenderContextFromApp is <gpui_kit::base::text::editor_host::RenderContext>::from_app.
+// NewRenderContextFromApp calls <gpui_kit::base::text::editor_host::RenderContext>::from_app.
 func NewRenderContextFromApp() RenderContext {
 	n := rt.NewValue(551)
 	return RenderContext{Val: rt.MkVal(n)}
@@ -249,7 +249,7 @@ func NewRenderContextFromApp() RenderContext {
 
 // Handles link activation. Without a handler, links use App::open_url.
 //
-// OnLinkClick is <gpui_kit::base::text::editor_host::RenderContext>::on_link_click.
+// OnLinkClick calls <gpui_kit::base::text::editor_host::RenderContext>::on_link_click.
 func (e RenderContext) OnLinkClick(handler func(cx *gk.Cx, e gk.Event83)) RenderContext {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Register(handler, 83))
@@ -258,7 +258,7 @@ func (e RenderContext) OnLinkClick(handler func(cx *gk.Cx, e gk.Event83)) Render
 
 // Sets the font size body text inherits, which the block gaps and heading sizes are relative to.
 //
-// WithBodyFontSize is <gpui_kit::base::text::editor_host::RenderContext>::with_body_font_size.
+// WithBodyFontSize calls <gpui_kit::base::text::editor_host::RenderContext>::with_body_font_size.
 func (e RenderContext) WithBodyFontSize(size float32) RenderContext {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F32(size)
@@ -267,7 +267,7 @@ func (e RenderContext) WithBodyFontSize(size float32) RenderContext {
 
 // Replaces code highlighting for this context only.
 //
-// WithCodeBlockHighlighter is <gpui_kit::base::text::editor_host::RenderContext>::with_code_block_highlighter.
+// WithCodeBlockHighlighter calls <gpui_kit::base::text::editor_host::RenderContext>::with_code_block_highlighter.
 func (e RenderContext) WithCodeBlockHighlighter(highlighter gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]) RenderContext {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U64(rt.H(highlighter.Src.HCore))
@@ -287,7 +287,7 @@ func (e RenderContext) WithCodeBlockHighlighter(highlighter gk.Ask[gk.CodeBlock,
 // Colors belong to this rendering context, never the document tree: supply current theme/surface
 // colors on each render, or omit the ranges to restore inheritance.
 //
-// WithForegroundRanges is <gpui_kit::base::text::editor_host::RenderContext>::with_foreground_ranges.
+// WithForegroundRanges calls <gpui_kit::base::text::editor_host::RenderContext>::with_foreground_ranges.
 func (e RenderContext) WithForegroundRanges(key uint64, ranges []gk.TupleRangeColor) RenderContext {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U64(uint64(key))
@@ -301,7 +301,7 @@ func (e RenderContext) WithForegroundRanges(key uint64, ranges []gk.TupleRangeCo
 
 // Resolves document image URIs. The host owns resource access policy.
 //
-// WithImageSource is <gpui_kit::base::text::editor_host::RenderContext>::with_image_source.
+// WithImageSource calls <gpui_kit::base::text::editor_host::RenderContext>::with_image_source.
 func (e RenderContext) WithImageSource(resolver gk.Ask[string, string]) RenderContext {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U64(rt.H(resolver.Src.HCore))
@@ -311,7 +311,7 @@ func (e RenderContext) WithImageSource(resolver gk.Ask[string, string]) RenderCo
 // Registers a reference-link definition from the host's document. Supply definitions for the
 // entire document, including virtualized blocks.
 //
-// WithLinkReference is <gpui_kit::base::text::editor_host::RenderContext>::with_link_reference.
+// WithLinkReference calls <gpui_kit::base::text::editor_host::RenderContext>::with_link_reference.
 func (e RenderContext) WithLinkReference(identifier string, link LinkMark) RenderContext {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Str(identifier)
@@ -321,7 +321,7 @@ func (e RenderContext) WithLinkReference(identifier string, link LinkMark) Rende
 
 // Sets the Markdown extensions that render custom nodes.
 //
-// WithMarkdownExtensions is <gpui_kit::base::text::editor_host::RenderContext>::with_markdown_extensions.
+// WithMarkdownExtensions calls <gpui_kit::base::text::editor_host::RenderContext>::with_markdown_extensions.
 func (e RenderContext) WithMarkdownExtensions(extensions MarkdownExtensionsArc) RenderContext {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutObj(o, rt.H(extensions.HCore))
@@ -330,7 +330,7 @@ func (e RenderContext) WithMarkdownExtensions(extensions MarkdownExtensionsArc) 
 
 // Replaces the text style.
 //
-// WithStyle is <gpui_kit::base::text::editor_host::RenderContext>::with_style.
+// WithStyle calls <gpui_kit::base::text::editor_host::RenderContext>::with_style.
 func (e RenderContext) WithStyle(style BaseTextViewStyle) RenderContext {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -340,19 +340,19 @@ func (e RenderContext) WithStyle(style BaseTextViewStyle) RenderContext {
 // TextMark is gpui_kit::base::text::editor_host::TextMark.
 type TextMark struct{ rt.Val }
 
-// NewTextMarkDefault is <gpui_kit::base::text::editor_host::TextMark as Default>::default.
+// NewTextMarkDefault calls <gpui_kit::base::text::editor_host::TextMark as Default>::default.
 func NewTextMarkDefault() TextMark {
 	n := rt.NewValue(553)
 	return TextMark{Val: rt.MkVal(n)}
 }
 
-// Bold is <gpui_kit::base::text::editor_host::TextMark>::bold.
+// Bold calls <gpui_kit::base::text::editor_host::TextMark>::bold.
 func (e TextMark) Bold() TextMark {
 	rt.Op(rt.N(e.Core), 256)
 	return e
 }
 
-// Code is <gpui_kit::base::text::editor_host::TextMark>::code.
+// Code calls <gpui_kit::base::text::editor_host::TextMark>::code.
 func (e TextMark) Code() TextMark {
 	rt.Op(rt.N(e.Core), 257)
 	return e
@@ -360,40 +360,40 @@ func (e TextMark) Code() TextMark {
 
 // Mark the text as highlighted (`<mark>`) with the given background color.
 //
-// Highlight is <gpui_kit::base::text::editor_host::TextMark>::highlight.
+// Highlight calls <gpui_kit::base::text::editor_host::TextMark>::highlight.
 func (e TextMark) Highlight(color gk.Color) TextMark {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutColor(o, color)
 	return e
 }
 
-// Italic is <gpui_kit::base::text::editor_host::TextMark>::italic.
+// Italic calls <gpui_kit::base::text::editor_host::TextMark>::italic.
 func (e TextMark) Italic() TextMark {
 	rt.Op(rt.N(e.Core), 259)
 	return e
 }
 
-// Link is <gpui_kit::base::text::editor_host::TextMark>::link.
+// Link calls <gpui_kit::base::text::editor_host::TextMark>::link.
 func (e TextMark) Link(link LinkMark) TextMark {
 	o := rt.Op(rt.N(e.Core), 262)
 	putLinkMark(o, link)
 	return e
 }
 
-// Merge is (|mut s: gpui_kit::base::text::editor_host::TextMark, a0| { s.merge(a0); s }).
+// Merge calls (|mut s: gpui_kit::base::text::editor_host::TextMark, a0| { s.merge(a0); s }).
 func (e TextMark) Merge(other TextMark) TextMark {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.TakeValue(rt.N(other.Core)))
 	return e
 }
 
-// Strikethrough is <gpui_kit::base::text::editor_host::TextMark>::strikethrough.
+// Strikethrough calls <gpui_kit::base::text::editor_host::TextMark>::strikethrough.
 func (e TextMark) Strikethrough() TextMark {
 	rt.Op(rt.N(e.Core), 260)
 	return e
 }
 
-// Underline is <gpui_kit::base::text::editor_host::TextMark>::underline.
+// Underline calls <gpui_kit::base::text::editor_host::TextMark>::underline.
 func (e TextMark) Underline() TextMark {
 	rt.Op(rt.N(e.Core), 261)
 	return e

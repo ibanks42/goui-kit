@@ -1,19 +1,3 @@
-// The lists and editor families' modes of docs/PROTOCOLS.md 9.16 to 9.19:
-//
-//	ctx-token   an input's token drawn by a row of the app's (an element closure over a context):
-//	            the row reads the token's context, and is described again when it is selected
-//	            (an item function over gk.InlineTokenContext, gk.Items, given to InputEl.Token)
-//	lend        an editor's diagnostics lent (EditorState.DiagnosticsMut: lent), written
-//	            (gk.NewDiagnostic, gk.LspPosition: libval), and given back (gk.TestLends)
-//	highlight   an editor whose highlighter is the app's: the styles and folds functions asked
-//	            between frames with the language, the text and a range (gk.NewHighlighter,
-//	            gk.HighlightQuery, gk.HighlightRun, gk.FoldQuery, gk.TestAsks)
-//	languages   the app's language service: an alias, and the syntax function asked while typing
-//	            (gk.NewLanguageProvider, gk.LanguageAlias, gk.SyntaxQuery)
-//	bad-lend    a lent object used after the turn that lent it (exit 2)
-//	small       9.19: a patch's error as the kit's value, a tree's scroll handle as gpui's
-//	            ScrollHandle (TreeState.ScrollHandle: uscroll; the tree's row source), the
-//	            completion highlighters over an LSP item (gk.BaseHighlightPrefix, gk.CompletionItem)
 package main
 
 import (
@@ -28,6 +12,8 @@ import (
 	"gpuikit.dev/gk/table"
 )
 
+// r4 holds handles and counters for round-4 inline-token, diagnostic-set
+// lending (`lend`/`bad-lend`), syntax highlighter, language provider, and small helpers.
 var r4 struct {
 	tokens                               gk.RowSource
 	tokenRows                            int
@@ -46,10 +32,8 @@ func init() {
 	}
 }
 
-// rng prints a range in the form the checks expect: Range{lo = 6, hi = 11}.
 func rng(r gk.Range) string { return fmt.Sprintf("Range{lo = %d, hi = %d}", r.Lo, r.Hi) }
 
-// Go: an item function is handed the token's context, not its row: the input has one token, row 0.
 func (a *App) r4TokenRow(cx *gk.Cx, t editor.InlineTokenContext) gk.Element {
 	r4.tokenRows++
 	fmt.Printf("lists2 ctx token row=%d range=%s selected=%v disabled=%v readonly=%v label=%q height_ok=%v\n",
@@ -80,6 +64,12 @@ func (a *App) r4Syntax(cx *gk.Cx, q gk.SyntaxQuery) gk.SyntaxContext {
 	return gk.SyntaxContextString
 }
 
+// r4Init sets up round-4 protocol scenarios:
+//   - ctx-token: Input containing an inline token at [6, 11] ("World") to test selection updates.
+//   - lend / bad-lend: Editor whose DiagnosticSet is mutably lent for one turn (and illegally reused in bad-lend).
+//   - highlight: Custom Highlighter providing both highlight runs and fold ranges for lang "demo".
+//   - languages: Custom LanguageProvider mapping alias "od" -> "demo" and answering syntax queries.
+//   - small: 300-node Tree plus diff parse-error and prefix-highlight helper checks.
 func r4Init(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "ctx-token":
@@ -115,10 +105,15 @@ func r4View(a *App, cx *gk.Cx) gk.Element {
 	return kit.Label("-")
 }
 
+// r4Step verifies each round-4 mode's expected post-condition: inline token
+// selection toggling to true, lent DiagnosticsMut persisting 2 pushed diagnostics
+// with balanced lent==given_back==1 (or failing on stale access in bad-lend),
+// highlighter cache reuse (gets > asked), language syntax callback firing, and
+// small helper readbacks (parse error at line 1, prefix [0, 2], tree scroll y<0).
 func r4Step(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "ctx-token":
-		a.in1.SetSelectedRange(cx, gk.Range{Lo: 0, Hi: 11}) // the token is selected now: its row is described again
+		a.in1.SetSelectedRange(cx, gk.Range{Lo: 0, Hi: 11})
 	case "lend", "bad-lend":
 		switch a.step {
 		case 1:
@@ -132,7 +127,7 @@ func r4Step(a *App, cx *gk.Cx) {
 		case 2:
 			if a.mode == "bad-lend" {
 				fmt.Printf("lists2 bad-lend using the lent handle\n")
-				_ = r4.lent.Len(cx) // given back at the end of the turn that lent it: stops
+				_ = r4.lent.Len(cx)
 				return
 			}
 			n := -1
@@ -194,7 +189,7 @@ func r4Script(a *App, sb *strings.Builder) {
 		sb.WriteString("frame\nadvance 100\nframe\nadvance 100\nframe\nframe\n")
 		sb.WriteString(stepClick)
 	case "languages":
-		// The caret after "x := ", then a quote: the editor asks where in the syntax it is.
+
 		sb.WriteString("click 300 80\nframe\nkey end\ntype \"\nframe\nadvance 100\nframe\ntype \"\nframe\nframe\n")
 		sb.WriteString(stepClick)
 	case "small":

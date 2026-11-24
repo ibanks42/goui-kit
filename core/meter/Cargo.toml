@@ -1,3 +1,5 @@
+# Shared runtime instrumentation, input helpers, and headless script runner
+# used by both libgpuikit and the pure-Rust reference apps.
 [package]
 name = "gk-meter"
 version.workspace = true
@@ -11,8 +13,8 @@ anyhow = "1"
 image = { version = "0.25", default-features = false, features = ["png"], optional = true }
 
 [features]
-# Retention counters (Window::layout_stats) and the offscreen driver need gpui's test-support.
 default = ["gpui-fast"]
 gpui-fast = ["gpui-kit/gpui-fast"]
-# Retention counters exist only in gpui-fast.
+
+# Enables headless offscreen rendering, PNG capture, and GPUI layout stats.
 diag = ["gpui-fast", "gpui-kit/test-support", "dep:image"]

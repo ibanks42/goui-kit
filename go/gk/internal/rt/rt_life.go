@@ -1,3 +1,17 @@
+// Handle lifetime management: view-scoped ownership cascades and GC cleanup.
+//
+// Rust handles held by Go code are freed through three cooperating mechanisms:
+//  1. Explicit gk.Release(cx, h): frees the handle immediately and cascades to
+//     every handle it owns.
+//  2. View/panel ownership (ownerOf / ownedBy): any state, child view, or row
+//     source created during a view's init or event turn is owned by that view
+//     (and dock.NewPanel adopts its view). Releasing the owner releases all of
+//     its owned handles in reverse creation order (LIFO).
+//  3. Garbage collection (lives / fresh / pinned + runtime.AddCleanup): state
+//     handles embed a *life pointer inside HCore. When all Go copies become
+//     unreachable, Go's cleanup callback pushes the handle onto gcQueue and
+//     wakes the UI thread; KWake drains gcQueue via releaseCollected.
+
 package rt
 
 import (
@@ -6,35 +20,20 @@ import (
 	"weak"
 )
 
-// Handle lifetimes (docs/GO.md section 4). gk.Release gives a handle back at once; two rules
-// give back what the app forgot:
-//
-//   - A view owns what is made in its turns (its init, its handlers, its frame handler): kit
-//     state, library objects, focus handles, row sources, views and overlays opened with a
-//     function. When the view is released they are released with it, the newest first. A dock
-//     panel owns its view, so a panel the user closes (removed from the dock and not added back)
-//     releases its view and all the view made (dock.KeepWhenClosed keeps it).
-//   - A kit state, library object or focus handle that the app can no longer reach is released
-//     when the collector finds it: runtime.AddCleanup on the handle value posts its handle, and
-//     the next WAKE turn on the UI thread releases it (the library is never called from the
-//     cleanup's goroutine). One the app handed to the library outside a view (an argument of a
-//     call, or of a value given to one: a panel given to a dock) may be held there, and is kept
-//     until it is released or its owner is.
-//
-// Releasing a handle twice, or one its owner released, stops as before (the library's message);
-// a stale handle stops where it is used.
-
-// life is what every copy of a tracked handle's value points at; the collector finding it
-// unreachable means no copy is left.
+// life is the heap-allocated GC token embedded inside HCore for tracked handles.
+// The unused self-typed pointer field ensures Go allocates a distinct non-zero
+// object with pointer-bearing memory so runtime.AddCleanup always tracks it.
 type life struct {
 	h uint64
-	_ *life // a pointer: never a tiny allocation, whose cleanup could wait for its neighbors
+	_ *life
 }
 
+// Ownership categories recorded in ownedBy so releasing a parent view cascades
+// cleanly through child views, row sources, and kit states.
 const (
-	ownState  = iota // kit state, a library object, a focus handle: released through C_RELEASE
-	ownView          // a view: releaseView
-	ownSource        // a row source: releaseSource
+	ownState = iota
+	ownView
+	ownSource
 )
 
 type ownEntry struct {
@@ -42,21 +41,31 @@ type ownEntry struct {
 	kind uint8
 }
 
+// Handle ownership and GC lifetime tracking tables. All maps are accessed only
+// on the UI thread; gcQueue is guarded by gcMu because collected() runs on a
+// Go GC cleanup goroutine.
 var (
-	ownerOf = map[uint64]uint64{}     // handle -> the handle that owns it (a view, a panel)
-	ownedBy = map[uint64][]ownEntry{} // owner -> what it owns, oldest first
+	ownerOf = map[uint64]uint64{}
+	ownedBy = map[uint64][]ownEntry{}
 
-	lives  = map[uint64]weak.Pointer[life]{} // tracked handles
-	fresh  = map[uint64]*life{}              // made this turn: held until the turn ends
-	pinned = map[uint64]*life{}              // handed to the library: kept until released
+	// lives holds weak references to every GC-tracked handle's life token.
+	// fresh pins newly created tokens until the end of the top-level turn so a
+	// handle cannot be collected before the app stores it in state or returns it.
+	// pinned permanently retains tokens for handles handed to Rust outside a
+	// view build (via Held) so GC cannot free objects Rust still references.
+	lives  = map[uint64]weak.Pointer[life]{}
+	fresh  = map[uint64]*life{}
+	pinned = map[uint64]*life{}
 
-	gone = map[uint64]struct{}{} // released by their owner or the collector: a gk.Release of one stops
+	// gone records handles already released by an owner cascade or GC cleanup so
+	// a later explicit gk.Release reports an informative double-release error.
+	gone = map[uint64]struct{}{}
 
 	gcMu    sync.Mutex
-	gcQueue []uint64 // handles the collector found unreachable, for the UI thread
+	gcQueue []uint64
 )
 
-// own records that the turn's view owns h (nothing when no view's turn runs).
+// own attaches handle h to the currently active turn's owning view, if any.
 func own(h uint64, kind uint8) {
 	if cur == nil || cur.owner == nil || h == 0 || cur.owner.h == h {
 		return
@@ -64,13 +73,14 @@ func own(h uint64, kind uint8) {
 	adopt(cur.owner.h, h, kind)
 }
 
+// adopt assigns handle h to owner, removing any previous ownership link first.
 func adopt(owner, h uint64, kind uint8) {
 	disown(h)
 	ownerOf[h] = owner
 	ownedBy[owner] = append(ownedBy[owner], ownEntry{h, kind})
 }
 
-// disown forgets h's owner: released by the app, it is not released again with its owner.
+// disown detaches handle h from its owning view without releasing it.
 func disown(h uint64) {
 	o, ok := ownerOf[h]
 	if !ok {
@@ -89,30 +99,31 @@ func disown(h uint64) {
 	}
 }
 
-// checkNotGone stops a gk.Release of a handle the runtime released already with its owner.
+// checkNotGone stops if h was already released by an earlier cascade or GC cleanup.
 func checkNotGone(h uint64) {
 	if _, ok := gone[h]; ok {
 		Stop("gk.Release was given a handle that was released already, with the view (or dock panel) that made it: what a view makes in its turns goes with it (docs/GO.md section 4). Release a handle once, and not after its view")
 	}
 }
 
-// AdoptView makes owner (a dock panel) the owner of view v: releasing the panel releases the view.
+// AdoptView reparents view v so releasing owner also releases v.
 func AdoptView(owner uint64, v View) { adopt(owner, v.h, ownView) }
 
-// Made records a handle the hand-written packages made (a dock panel): owned by the turn's view,
-// released when no copy of its value is left.
+// Made registers a newly created Rust state handle for GC cleanup and attaches
+// it to the current turn's owning view.
 func Made(h uint64) {
 	track(h)
 	own(h, ownState)
 }
 
-// Tracked reports whether h is a handle the runtime follows that was not released yet.
+// Tracked reports whether handle h is currently tracked for GC cleanup.
 func Tracked(h uint64) bool {
 	_, ok := lives[h]
 	return ok
 }
 
-// releaseOwned releases what h owns, the newest first; each also releases what it owns.
+// releaseOwned recursively releases every handle owned by h in reverse creation
+// order (LIFO) so child resources tear down before the handles they reference.
 func releaseOwned(t *turn, h uint64) {
 	list := ownedBy[h]
 	if len(list) == 0 {
@@ -141,8 +152,8 @@ func releaseOwned(t *turn, h uint64) {
 	}
 }
 
-// track makes h a handle the collector releases when no copy of its value is left. The handle
-// value is made from it right away (MkH finds it in fresh until the turn ends).
+// track creates a GC-tracked life token for h, pins it for the current turn,
+// and installs a runtime cleanup that enqueues h onto gcQueue when unreachable.
 func track(h uint64) {
 	if h == 0 {
 		return
@@ -153,7 +164,7 @@ func track(h uint64) {
 	runtime.AddCleanup(l, collected, h)
 }
 
-// lifeOf is the life of h, for a handle value made from the number (MkH): every copy shares it.
+// lifeOf returns the live *life token for h, or nil if h is untracked or gone.
 func lifeOf(h uint64) *life {
 	if len(lives) == 0 {
 		return nil
@@ -167,15 +178,15 @@ func lifeOf(h uint64) *life {
 	return nil
 }
 
-// forget stops tracking h (released by the app or with its owner).
+// forget removes handle h from all GC-tracking maps.
 func forget(h uint64) {
 	delete(lives, h)
 	delete(fresh, h)
 	delete(pinned, h)
 }
 
-// Held is a handle given to the library as an argument (generated code): outside a view's
-// description the library may keep it, so the collector does not release it.
+// Held pins a tracked handle when it is passed to the library outside a view
+// build (for example, stored in a Rust object), preventing premature GC cleanup.
 func Held(h uint64) uint64 {
 	if !Vb.Active && len(lives) > 0 {
 		heldSlow(h)
@@ -189,7 +200,8 @@ func heldSlow(h uint64) {
 	}
 }
 
-// collected runs on the cleanup goroutine: the handle goes to the UI thread, never to the library.
+// collected is the runtime.AddCleanup callback. It runs on a GC goroutine,
+// queues h for UI-thread release, and wakes the event loop if the queue was empty.
 func collected(h uint64) {
 	gcMu.Lock()
 	first := len(gcQueue) == 0
@@ -200,8 +212,8 @@ func collected(h uint64) {
 	}
 }
 
-// releaseCollected releases, in a WAKE turn, the handles the collector found unreachable that
-// are still tracked (one released meanwhile is not).
+// releaseCollected drains gcQueue on the UI thread during KWake turns and
+// releases every handle whose weak token is actually dead and not pinned.
 func releaseCollected(t *turn) {
 	gcMu.Lock()
 	q := gcQueue
@@ -222,7 +234,8 @@ func releaseCollected(t *turn) {
 	}
 }
 
-// endTurnLife lets go of the handles made this turn: their values hold them from here on.
+// endTurnLife drops the per-turn strong references in fresh so handles that the
+// app did not keep become eligible for garbage collection.
 func endTurnLife() {
 	if len(fresh) > 0 {
 		clear(fresh)
@@ -231,10 +244,11 @@ func endTurnLife() {
 
 var gcReleased int
 
-// TestLife returns how many handles the collector has released and how many are tracked (tests).
+// TestLife returns the count of GC-released handles and currently tracked handles.
 func TestLife() (released, tracked int) { return gcReleased, len(lives) }
 
-// TestLiveCounts returns the library's live kit states, views and focus handles (tests).
+// TestLiveCounts queries the diagnostic library for live Rust state, view, and
+// focus handle counts.
 func TestLiveCounts(cx *Cx) (states, views, focus int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CObjTestTemps))}

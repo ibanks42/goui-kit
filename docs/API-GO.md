@@ -186,7 +186,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 <!-- index:begin (written by gen/gk_apidoc.py from the generated Go packages; do not edit) -->
 
-254 element types, 144 kit state types and 97 value types, in 76 upstream modules. Styling builders every element has (`.Bg`, `.W`, `.P`, `.BorderColor`, … and the style tokens) are not repeated per type.
+254 element types, 144 kit state types, and 97 value types across 76 upstream modules. Shared styling builders (`.Bg`, `.W`, `.P`, `.BorderColor`, and style tokens) are omitted from per-type rows.
 
 ### component
 

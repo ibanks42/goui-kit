@@ -1,11 +1,5 @@
-// notes: a small notes app, the Go twin of ref/src/bin/notes.rs: the kit's
-// styled dock with two panels (a list of notes, an editor with the kit's Input), a File menu whose
-// items are actions with keyboard shortcuts, a confirmation dialog, and the theme switched
-// between light and dark. gates/pixels.sh notes runs Rust and Go under gates/notes.script
-// and compares every image byte for byte.
-//
-//	notes-go                    a real window
-//	GK_SCRIPT=file notes-go     offscreen under a gk-meter script (the diag library)
+// Notes app example: combines a skinned dock layout, a virtualized note list,
+// live title editing, dropdown menus, keyboard shortcuts, alert dialogs, and theme switching.
 package main
 
 import (
@@ -30,23 +24,26 @@ type Note struct {
 
 type App struct {
 	notes    []Note
-	selected int // -1: none
-	made     int // notes made so far, for "Untitled N"
+	selected int
+	made     int
 	dark     bool
 
-	title gkeditor.InputState // kit state that lives in the library
+	title gkeditor.InputState
 	list  table.ListState
 	dock  gkdock.Area
 
-	newNote, deleteNote, toggleTheme gk.Action // shortcuts, also in the menu (it shows their keys)
+	newNote, deleteNote, toggleTheme gk.Action
 }
 
+// init creates actions, window-backed states, and a skinned DockArea with a left
+// sidebar panel and a center editor panel.
 func (a *App) init(cx *gk.Cx) {
 	a.notes = []Note{{"Groceries", 4}, {"Ideas for the weekend", 12}, {"Meeting notes", 31}}
 	a.made = len(a.notes)
 
+	// Passing an empty key string creates a menu-only action without a keystroke binding.
 	a.newNote = gk.Shortcut(cx, "ctrl-n", a.addNote)
-	a.deleteNote = gk.Shortcut(cx, "", a.askDelete) // the menu's item only
+	a.deleteNote = gk.Shortcut(cx, "", a.askDelete)
 	a.toggleTheme = gk.Shortcut(cx, "ctrl-t", a.switchTheme)
 
 	a.title = gkeditor.NewInputState(cx).Placeholder("Title").Build()
@@ -54,16 +51,14 @@ func (a *App) init(cx *gk.Cx) {
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.notes) }, a.noteRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
 
+	// Each dock panel wraps a regular gk.View; DockArea manages resizing, tabs, and chrome.
 	a.dock = gkdock.NewAreaSkinned(cx, "notes")
 	notes := gkdock.NewPanel(cx, gk.NewView(nil, a.notesView), gkdock.PanelData{Name: "notes", Title: "Notes"})
 	editor := gkdock.NewPanel(cx, gk.NewView(nil, a.editorView), gkdock.PanelData{Name: "editor", Title: "Editor"})
-	// PanelView: the kit's PanelHandle over the panel, so the tabs show the titles
 	a.dock.SetDock(cx, gkdock.PlacementLeft, gkdock.NewLayoutTabs().PanelView(notes))
 	a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(editor))
 	a.selectNote(cx, 0)
 }
-
-// --- the views --------------------------------------------------------------------------------
 
 func (a *App) fileMenu() kit.PopupMenu {
 	return kit.NewPopupMenu().
@@ -126,8 +121,6 @@ func (a *App) confirmView(cx *gk.Cx) overlay.AlertDialogEl {
 		OnOk(a.confirmDelete)
 }
 
-// --- what the app does ------------------------------------------------------------------------
-
 func (a *App) selectNote(cx *gk.Cx, row int) {
 	a.selected = row
 	if row >= 0 {
@@ -173,7 +166,7 @@ func (a *App) confirmDelete(cx *gk.Cx, _ gk.ClickEvent) bool {
 		a.notes = slices.Delete(a.notes, a.selected, a.selected+1)
 		a.selectNote(cx, min(a.selected, len(a.notes)-1))
 	}
-	return true // close the dialog
+	return true
 }
 
 func (a *App) switchTheme(cx *gk.Cx) {

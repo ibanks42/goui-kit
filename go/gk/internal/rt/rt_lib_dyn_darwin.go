@@ -8,21 +8,19 @@ import (
 	"github.com/ebitengine/purego"
 )
 
+// macOS shared library filename and dynamic loader environment variable.
 const (
 	libName       = "libgpuikit.dylib"
 	loaderPathVar = "DYLD_LIBRARY_PATH"
 )
 
-// pthreadSelf is libSystem's pthread_self, found the first time osThread runs.
 var (
 	pthreadSelf     uintptr
 	pthreadSelfOnce sync.Once
 )
 
-// osThread identifies the calling OS thread: every call that takes a Cx checks it against the UI
-// thread's (only gk.Post may be called from another goroutine). macOS has no gettid; a running
-// thread's pthread_self is unique among the running threads, which is all the check needs, and
-// takes no out-parameter (pthread_threadid_np, which the static build calls, does).
+// osThread returns the calling thread's pthread handle via libSystem when cgo
+// is disabled on macOS.
 func osThread() int {
 	pthreadSelfOnce.Do(func() {
 		if h, err := purego.Dlopen("/usr/lib/libSystem.B.dylib", purego.RTLD_NOW|purego.RTLD_GLOBAL); err == nil {

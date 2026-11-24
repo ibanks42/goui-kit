@@ -1,14 +1,10 @@
-//! Delegate shims of the input family (docs/PROTOCOLS.md section 9.6). The state types
-//! themselves (InputBaseState<M> as InputState, EditorState and TextareaState) are generated
-//! by the `[instantiate] states` rule; what is here is what an app implements upstream: the
-//! editor's completion and hover providers. Each is a shim over a row source used only for
-//! its request channel (count 0): the kit asks, the shim sends the question to the app as a
-//! queued event with a request id (`source::request`), and the app answers whenever it likes
-//! with `gk.answer`; the kit's task completes with the decoded answer. App code never runs
-//! while the kit lays out or draws, and an unanswered request leaves the menu empty, as an
-//! upstream provider that returns nothing does.
-//! Call op 32 (EDITOR_PROVIDERS), shape 14 (PROVIDER), node 10 (INPUT_EDITOR, the kit's styled
-//! code editor, which draws the menus).
+//! Editor element decoding and asynchronous LSP provider shims.
+//!
+//! `Editor` nodes are decoded here (`N_INPUT_EDITOR`) alongside forwarding
+//! `N_EDITOR_HOST` to `editor_text`. All six gpui-kit LSP provider traits
+//! (completions/inline completions, hover, definitions, document colors,
+//! code actions, and range semantic tokens) are bridged to host code over
+//! `source::request` using the `SHAPE_PROVIDER` request-reply channel.
 
 use crate::genapi::{self, Call, Dx, GkErr, GkResult, R, Wire};
 use crate::ops::*;
@@ -33,19 +29,20 @@ use std::time::Duration;
 use ropey::Rope;
 use std::rc::Rc;
 
-/// The family's element nodes; None: not one of them.
+/// Decodes custom editor tape nodes (`N_INPUT_EDITOR` and `N_EDITOR_HOST`).
 pub fn node(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<AnyElement> {
     Some(match ty {
         N_INPUT_EDITOR => decode_editor(dx, args, first),
-        // the editor host (docs/PROTOCOLS.md 9.30)
         crate::ops::N_EDITOR_HOST => return crate::editor_text::host_node(dx, args, first),
         _ => return None,
     })
 }
 
-/// The kit's styled code editor, which draws the providers' menus. Upstream declares it in a
-/// doc(hidden) module (re-exported as gpui_kit::component::input::Editor), so the API extract
-/// has no item for the generator: this node is written by hand, as generated decoders are.
+/// Decodes an `N_INPUT_EDITOR` node.
+///
+/// Argument layout: `state: u64`, `height: f32` (`> 0` applies fixed height),
+/// `flags: u8` (`1`=bordered, `2`=appearance, `4`=disabled, `8`=readonly),
+/// followed by style ops on the node's op list.
 fn decode_editor(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     let mut a = dx.args(args);
     let state = genapi::shown::<EditorState>(a.u64());
@@ -68,7 +65,9 @@ fn decode_editor(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
     el.into_any_element()
 }
 
-/// A provider's question, after the request id (shape PROVIDER).
+/// Tagged LSP provider query payloads sent over `SHAPE_PROVIDER`.
+///
+/// Each variant writes a `u16` discriminant (`0..=7`) followed by its fields.
 enum Ask {
     Completions {
         text: String,
@@ -80,7 +79,6 @@ enum Ask {
         text: String,
         offset: usize,
     },
-    // The lists and editor families' providers (docs/PROTOCOLS.md 9.11): variants 2 to 7.
     Definitions {
         text: String,
         offset: usize,
@@ -165,12 +163,12 @@ impl Wire for Ask {
     }
 }
 
+/// Reads an optional string prefixed by a `u8` presence flag.
 fn opt_str(r: &mut R) -> Option<String> {
     (r.u8() != 0).then(|| r.str().to_string())
 }
 
-/// `gk.Completion_Response`: u32 n, (str label, u8 kind, opt<str> detail, opt<str>
-/// insert_text) each, u8 incomplete. Kind 0 is none, otherwise LSP's CompletionItemKind.
+/// Decodes a `CompletionResponse::List` reply: `count: u32`, items, then `is_incomplete: u8`.
 fn completions(bytes: &[u8]) -> CompletionResponse {
     let mut r = R::new(bytes);
     let n = r.u32() as usize;
@@ -195,9 +193,6 @@ fn completions(bytes: &[u8]) -> CompletionResponse {
     })
 }
 
-/// An LSP completion item given to a call (`highlight_prefix(query, &item)`, PROTOCOLS.md 9.19):
-/// `gk.Completion_Item` as a provider answers one, str label, u8 kind, opt<str> detail, opt<str>
-/// insert_text.
 impl crate::genapi::Unwire for CompletionItem {
     fn get(r: &mut R) -> Self {
         let label = r.str().to_string();
@@ -208,8 +203,6 @@ impl crate::genapi::Unwire for CompletionItem {
     }
 }
 
-/// An LSP completion item read back (a key of the completion highlighter's ask, PROTOCOLS.md 9.33):
-/// the layout `Unwire` reads, kind by number (0: none).
 impl crate::genapi::Wire for CompletionItem {
     fn put(&self, out: &mut Vec<u8>) {
         use crate::genapi::Wire as _;
@@ -221,7 +214,8 @@ impl crate::genapi::Wire for CompletionItem {
     }
 }
 
-/// LSP's CompletionItemKind by number (1 text .. 25 type parameter); 0 or unknown: none.
+/// Maps wire completion-kind tags (`1..=25`, matching LSP `CompletionItemKind`)
+/// to `Option<CompletionItemKind>`, with `0` or out-of-range returning `None`.
 fn item_kind(n: u8) -> Option<CompletionItemKind> {
     use CompletionItemKind as K;
     const KINDS: [CompletionItemKind; 25] = [
@@ -233,7 +227,7 @@ fn item_kind(n: u8) -> Option<CompletionItemKind> {
     (n as usize).checked_sub(1).and_then(|i| KINDS.get(i)).copied()
 }
 
-/// `Maybe(string)`: the hover's markdown, or none.
+/// Decodes a markdown hover reply (`opt_str`).
 fn hover(bytes: &[u8]) -> Option<Hover> {
     let mut r = R::new(bytes);
     opt_str(&mut r).map(|value| Hover {
@@ -245,7 +239,8 @@ fn hover(bytes: &[u8]) -> Option<Hover> {
     })
 }
 
-/// Sends `ask` to the app and decodes its answer on the foreground executor.
+/// Sends an asynchronous LSP provider request to `src` and decodes the host
+/// reply on the foreground executor.
 fn ask<T: 'static>(src: u64, ask: Ask, cx: &mut App, decode: fn(&[u8]) -> T) -> Task<anyhow::Result<T>> {
     match source::request(src, SHAPE_PROVIDER, &ask, cx) {
         Ok(rx) => cx.foreground_executor().spawn(async move {
@@ -258,8 +253,7 @@ fn ask<T: 'static>(src: u64, ask: Ask, cx: &mut App, decode: fn(&[u8]) -> T) -> 
     }
 }
 
-/// CompletionProvider over a row source. The trigger characters and the inline completions'
-/// debounce are data the app set.
+/// Completion and optional inline-completion provider backed by a host source.
 pub struct GkCompletionProvider {
     src: u64,
     triggers: String,
@@ -296,8 +290,6 @@ impl CompletionProvider for GkCompletionProvider {
         !self.triggers.is_empty() && new_text.chars().any(|c| self.triggers.contains(c))
     }
 
-    /// A request when the app asked for inline completions; the answer is the text to insert,
-    /// or none.
     fn inline_completion(
         &self,
         rope: &Rope,
@@ -318,12 +310,12 @@ impl CompletionProvider for GkCompletionProvider {
     }
 
     fn inline_completion_debounce(&self) -> Duration {
-        // 0: upstream's default (300 ms).
+        // Treat 0 as "use default debounce" (300 ms).
         Duration::from_millis(if self.debounce_ms == 0 { 300 } else { self.debounce_ms as u64 })
     }
 }
 
-/// `Maybe(string)`: the inline completion's text.
+/// Decodes a single optional inline-completion suggestion (`opt_str`).
 fn inline_items(bytes: &[u8]) -> InlineCompletionResponse {
     let mut r = R::new(bytes);
     InlineCompletionResponse::Array(
@@ -340,14 +332,13 @@ fn inline_items(bytes: &[u8]) -> InlineCompletionResponse {
     )
 }
 
-/// An LSP range as `gk.Text_Range` writes it: u32 start line, start character, end line, end
-/// character (LSP positions: UTF-16 characters).
+/// Decodes an LSP range as four `u32` values: `(start_line, start_char, end_line, end_char)`.
 fn lsp_range(r: &mut R) -> LspRange {
     let (a, b, c, d) = (r.u32(), r.u32(), r.u32(), r.u32());
     LspRange::new(Position::new(a, b), Position::new(c, d))
 }
 
-/// `[]gk.Definition`: (str uri, range target, range selection) each.
+/// Decodes go-to-definition targets (`count: u32`, then `uri`, `target_range`, `selection_range`).
 fn definitions(bytes: &[u8]) -> Vec<LocationLink> {
     let mut r = R::new(bytes);
     let n = r.u32() as usize;
@@ -362,7 +353,7 @@ fn definitions(bytes: &[u8]) -> Vec<LocationLink> {
     out
 }
 
-/// `[]gk.Document_Color`: (range, [4]f32 rgba) each.
+/// Decodes document color swatches (`count: u32`, then `range` and RGBA `f32`s).
 fn colors(bytes: &[u8]) -> Vec<ColorInformation> {
     let mut r = R::new(bytes);
     let n = r.u32() as usize;
@@ -375,8 +366,7 @@ fn colors(bytes: &[u8]) -> Vec<ColorInformation> {
     out
 }
 
-/// `[]gk.Code_Action`: (str title, str kind, str id) each. The id comes back to the app in
-/// Perform (it rides in the action's command).
+/// Decodes code actions (`count: u32`, then `title`, `kind`, `id` strings).
 fn code_actions(bytes: &[u8]) -> Vec<CodeAction> {
     let mut r = R::new(bytes);
     let n = r.u32() as usize;
@@ -395,7 +385,7 @@ fn code_actions(bytes: &[u8]) -> Vec<CodeAction> {
     out
 }
 
-/// `[]u32`: LSP's encoded semantic tokens, five numbers each.
+/// Decodes LSP relative semantic-token data (`u32` count followed by flat 5-tuples).
 fn tokens(bytes: &[u8]) -> SemanticTokens {
     let mut r = R::new(bytes);
     let n = r.u32() as usize;
@@ -416,7 +406,7 @@ fn tokens(bytes: &[u8]) -> SemanticTokens {
     SemanticTokens { result_id: None, data }
 }
 
-/// DefinitionProvider over a row source.
+/// Go-to-definition provider backed by a host source.
 pub struct GkDefinitionProvider {
     src: u64,
 }
@@ -427,7 +417,7 @@ impl DefinitionProvider for GkDefinitionProvider {
     }
 }
 
-/// DocumentColorProvider over a row source.
+/// Document color swatch provider backed by a host source.
 pub struct GkDocumentColorProvider {
     src: u64,
 }
@@ -438,7 +428,7 @@ impl DocumentColorProvider for GkDocumentColorProvider {
     }
 }
 
-/// CodeActionProvider over a row source; its id is data the app set.
+/// Code action provider backed by a host source and identified by `id`.
 pub struct GkCodeActionProvider {
     src: u64,
     id: SharedString,
@@ -467,13 +457,13 @@ impl CodeActionProvider for GkCodeActionProvider {
         _: &mut Window,
         cx: &mut App,
     ) -> Task<anyhow::Result<()>> {
-        // The app performs it (with the editor's generated writes) and answers when done.
+        // Recover the host-assigned action id stored in `command.command`.
         let id = action.command.as_ref().map(|c| c.command.clone()).unwrap_or_default();
         ask(self.src, Ask::Perform { title: action.title, id, push_to_history }, cx, |_| ())
     }
 }
 
-/// DocumentRangeSemanticTokensProvider over a row source; its legend is data the app set.
+/// Range semantic-tokens provider backed by a host source and static legend.
 pub struct GkSemanticTokensProvider {
     src: u64,
     legend: SemanticTokensLegend,
@@ -495,7 +485,7 @@ impl DocumentRangeSemanticTokensProvider for GkSemanticTokensProvider {
     }
 }
 
-/// HoverProvider over a row source.
+/// Markdown hover provider backed by a host source.
 pub struct GkHoverProvider {
     src: u64,
 }
@@ -510,14 +500,15 @@ impl HoverProvider for GkHoverProvider {
     }
 }
 
-/// The family's call ops; None: not one of them.
+/// Dispatches `C_EDITOR_PROVIDERS` and falls through to `shim_editor::call`.
+///
+/// `C_EDITOR_PROVIDERS` installs or clears LSP providers on an `EditorState`
+/// according to the `which` bitmask:
+/// `1` = completions, `2` = hover, `4` = definitions, `8` = document colors,
+/// `16` = code actions, `32` = semantic tokens, `64` = inline completions.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_EDITOR_PROVIDERS => {
-            // u64 state, u64 source, u32 which (1 completions, 2 hover, 4 definitions, 8 document
-            // colors, 16 code actions, 32 semantic tokens, 64 inline completions), str triggers;
-            // then str code action provider id, u32 inline debounce ms, u32 n, str token type
-            // each, u32 n, str token modifier each.
             let (state, src, which) = (r.u64(), r.u64(), r.u32());
             let triggers = r.str().to_string();
             let action_id = SharedString::from(r.str().to_string());
@@ -541,6 +532,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                     .then(|| Rc::new(GkDefinitionProvider { src }) as Rc<dyn DefinitionProvider>);
                 lsp.document_color_provider = (which & 8 != 0)
                     .then(|| Rc::new(GkDocumentColorProvider { src }) as Rc<dyn DocumentColorProvider>);
+                // Replace any previous code-action provider registered under the same id.
                 lsp.code_action_providers.retain(|p| p.id() != action_id);
                 if which & 16 != 0 {
                     lsp.code_action_providers
@@ -552,8 +544,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                 cx.notify();
             })
         }
-        // The editor family's ops (core/src/shim_editor.rs), asked
-        // from here so that the shared dispatch in calls.rs needs no line of its own.
+
         _ => return crate::shim_editor::call(op, r, c),
     })
 }

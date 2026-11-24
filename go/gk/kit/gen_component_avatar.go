@@ -12,7 +12,7 @@ type AvatarEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// Avatar is <gpui_kit::component::avatar::Avatar>::new.
+// Avatar calls <gpui_kit::component::avatar::Avatar>::new.
 func Avatar(st ...gk.Style) AvatarEl {
 	rt.UseComponentAvatar()
 	n := rt.NewNode(592)
@@ -22,7 +22,7 @@ func Avatar(st ...gk.Style) AvatarEl {
 
 // Set name of the avatar user, if `src` is none, will use this name as placeholder.
 //
-// Name is <gpui_kit::component::avatar::Avatar>::name.
+// Name calls <gpui_kit::component::avatar::Avatar>::name.
 func (e AvatarEl) Name(name string) AvatarEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(name)
@@ -31,7 +31,7 @@ func (e AvatarEl) Name(name string) AvatarEl {
 
 // Set placeholder icon, default: `User`
 //
-// Placeholder is <gpui_kit::component::avatar::Avatar>::placeholder.
+// Placeholder calls <gpui_kit::component::avatar::Avatar>::placeholder.
 func (e AvatarEl) Placeholder(icon gk.IconName) AvatarEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U16(uint16(icon))
@@ -40,7 +40,7 @@ func (e AvatarEl) Placeholder(icon gk.IconName) AvatarEl {
 
 // Set to use image source for the avatar.
 //
-// Src is <gpui_kit::component::avatar::Avatar>::src.
+// Src calls <gpui_kit::component::avatar::Avatar>::src.
 func (e AvatarEl) Src(source gk.ImageSourceInto) AvatarEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	putImageSourceInto(o, source)
@@ -49,26 +49,34 @@ func (e AvatarEl) Src(source gk.ImageSourceInto) AvatarEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AvatarEl) PopoverStyle() AvatarEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AvatarEl) RoundedFullStyle() AvatarEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AvatarEl) BorderE(width gk.Length) AvatarEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AvatarEl) BorderS(width gk.Length) AvatarEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -76,106 +84,148 @@ func (e AvatarEl) BorderS(width gk.Length) AvatarEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AvatarEl) FlexRowDir() AvatarEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AvatarEl) InsetE(length gk.Length) AvatarEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AvatarEl) InsetS(length gk.Length) AvatarEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AvatarEl) JustifyFlexEnd() AvatarEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AvatarEl) JustifyFlexStart() AvatarEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AvatarEl) Me(length gk.Length) AvatarEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AvatarEl) Ms(length gk.Length) AvatarEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AvatarEl) Pe(length gk.Length) AvatarEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AvatarEl) Ps(length gk.Length) AvatarEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AvatarEl) RoundedE(radius gk.Length) AvatarEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AvatarEl) RoundedS(radius gk.Length) AvatarEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AvatarEl) TextEnd() AvatarEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AvatarEl) TextStart() AvatarEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AvatarEl) CornerRadii(radius gk.Corners) AvatarEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AvatarEl) DebugBlue() AvatarEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AvatarEl) DebugFocused(focusHandle gk.FocusHandle) AvatarEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AvatarEl) DebugGreen() AvatarEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AvatarEl) DebugPink() AvatarEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AvatarEl) DebugRed() AvatarEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AvatarEl) DebugYellow() AvatarEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AvatarEl) FontBlack() AvatarEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AvatarEl) FontBold() AvatarEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AvatarEl) FontExtrabold() AvatarEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AvatarEl) FontExtralight() AvatarEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AvatarEl) FontLight() AvatarEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AvatarEl) FontMedium() AvatarEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AvatarEl) FontNormal() AvatarEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AvatarEl) FontSemibold() AvatarEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AvatarEl) FontThin() AvatarEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -184,18 +234,23 @@ func (e AvatarEl) FontThin() AvatarEl { tStyledExtFontThin(rt.N(e.Core)); return
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AvatarEl) HFlex() AvatarEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AvatarEl) Margins(margins gk.EdgesInto) AvatarEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AvatarEl) Paddings(paddings gk.EdgesInto) AvatarEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AvatarEl) RefineStyle(style gk.StyleRefinement) AvatarEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -205,43 +260,63 @@ func (e AvatarEl) RefineStyle(style gk.StyleRefinement) AvatarEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AvatarEl) VFlex() AvatarEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AvatarEl) Large() AvatarEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AvatarEl) Small() AvatarEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AvatarEl) WithSize(size gk.SizeInto) AvatarEl { tSizableWithSize(rt.N(e.Core), size); return e }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AvatarEl) Xsmall() AvatarEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AvatarEl) Style(st ...gk.Style) AvatarEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AvatarEl) AspectRatio(ratio float32) AvatarEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AvatarEl) Bg(fill gk.Fill) AvatarEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AvatarEl) Border(length gk.Length) AvatarEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AvatarEl) BorderB(length gk.Length) AvatarEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AvatarEl) BorderColor(borderColor gk.Color) AvatarEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -249,38 +324,58 @@ func (e AvatarEl) BorderColor(borderColor gk.Color) AvatarEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AvatarEl) BorderL(length gk.Length) AvatarEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AvatarEl) BorderR(length gk.Length) AvatarEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AvatarEl) BorderT(length gk.Length) AvatarEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AvatarEl) BorderX(length gk.Length) AvatarEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AvatarEl) BorderY(length gk.Length) AvatarEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AvatarEl) Bottom(length gk.Length) AvatarEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AvatarEl) ColEnd(end int16) AvatarEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AvatarEl) ColSpan(span uint16) AvatarEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AvatarEl) ColStart(start int16) AvatarEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AvatarEl) Cursor(cursor gk.CursorStyle) AvatarEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -288,30 +383,42 @@ func (e AvatarEl) Cursor(cursor gk.CursorStyle) AvatarEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AvatarEl) FlexBasis(basis gk.Length) AvatarEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AvatarEl) FlexGrow(grow float32) AvatarEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AvatarEl) FlexShrink(shrink float32) AvatarEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AvatarEl) Font(font gk.Font) AvatarEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AvatarEl) FontFamily(familyName string) AvatarEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AvatarEl) FontFeatures(features gk.FontFeatures) AvatarEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -320,26 +427,38 @@ func (e AvatarEl) FontFeatures(features gk.FontFeatures) AvatarEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AvatarEl) FontWeight(weight gk.FontWeight) AvatarEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AvatarEl) Gap(length gk.Length) AvatarEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AvatarEl) GapX(length gk.Length) AvatarEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AvatarEl) GapY(length gk.Length) AvatarEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AvatarEl) GridCols(cols uint16) AvatarEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AvatarEl) GridColsMaxContent(cols uint16) AvatarEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -347,15 +466,21 @@ func (e AvatarEl) GridColsMaxContent(cols uint16) AvatarEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AvatarEl) GridColsMinContent(cols uint16) AvatarEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AvatarEl) GridRows(rows uint16) AvatarEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AvatarEl) GridRowsMaxContent(rows uint16) AvatarEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -363,116 +488,176 @@ func (e AvatarEl) GridRowsMaxContent(rows uint16) AvatarEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AvatarEl) GridRowsMinContent(rows uint16) AvatarEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AvatarEl) H(length gk.Length) AvatarEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AvatarEl) Inset(length gk.Length) AvatarEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AvatarEl) Left(length gk.Length) AvatarEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AvatarEl) LineClamp(lines int) AvatarEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AvatarEl) LineHeight(lineHeight gk.Length) AvatarEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AvatarEl) M(length gk.Length) AvatarEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AvatarEl) MaxH(length gk.Length) AvatarEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AvatarEl) MaxSize(length gk.Length) AvatarEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AvatarEl) MaxW(length gk.Length) AvatarEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AvatarEl) Mb(length gk.Length) AvatarEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AvatarEl) MinH(length gk.Length) AvatarEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AvatarEl) MinSize(length gk.Length) AvatarEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AvatarEl) MinW(length gk.Length) AvatarEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AvatarEl) Ml(length gk.Length) AvatarEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AvatarEl) Mr(length gk.Length) AvatarEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AvatarEl) Mt(length gk.Length) AvatarEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AvatarEl) Mx(length gk.Length) AvatarEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AvatarEl) My(length gk.Length) AvatarEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AvatarEl) Opacity(opacity float32) AvatarEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AvatarEl) P(length gk.Length) AvatarEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AvatarEl) Pb(length gk.Length) AvatarEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AvatarEl) Pl(length gk.Length) AvatarEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AvatarEl) Pr(length gk.Length) AvatarEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AvatarEl) Pt(length gk.Length) AvatarEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AvatarEl) Px(length gk.Length) AvatarEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AvatarEl) Py(length gk.Length) AvatarEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AvatarEl) Right(length gk.Length) AvatarEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AvatarEl) Rounded(length gk.Length) AvatarEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AvatarEl) RoundedB(length gk.Length) AvatarEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -480,6 +665,8 @@ func (e AvatarEl) RoundedB(length gk.Length) AvatarEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AvatarEl) RoundedBl(length gk.Length) AvatarEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -487,6 +674,8 @@ func (e AvatarEl) RoundedBl(length gk.Length) AvatarEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AvatarEl) RoundedBr(length gk.Length) AvatarEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -494,6 +683,8 @@ func (e AvatarEl) RoundedBr(length gk.Length) AvatarEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AvatarEl) RoundedL(length gk.Length) AvatarEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -501,6 +692,8 @@ func (e AvatarEl) RoundedL(length gk.Length) AvatarEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AvatarEl) RoundedR(length gk.Length) AvatarEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -508,6 +701,8 @@ func (e AvatarEl) RoundedR(length gk.Length) AvatarEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AvatarEl) RoundedT(length gk.Length) AvatarEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -515,6 +710,8 @@ func (e AvatarEl) RoundedT(length gk.Length) AvatarEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AvatarEl) RoundedTl(length gk.Length) AvatarEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -522,39 +719,55 @@ func (e AvatarEl) RoundedTl(length gk.Length) AvatarEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AvatarEl) RoundedTr(length gk.Length) AvatarEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AvatarEl) RowEnd(end int16) AvatarEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AvatarEl) RowSpan(span uint16) AvatarEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AvatarEl) RowStart(start int16) AvatarEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AvatarEl) ScrollbarWidth(width gk.Length) AvatarEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AvatarEl) Shadow(shadows []gk.BoxShadow) AvatarEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AvatarEl) Size(length gk.Length) AvatarEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AvatarEl) TextAlign(align gk.TextAlign) AvatarEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -563,20 +776,28 @@ func (e AvatarEl) TextAlign(align gk.TextAlign) AvatarEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AvatarEl) TextBg(bg gk.Color) AvatarEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AvatarEl) TextColor(color gk.Color) AvatarEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AvatarEl) TextDecorationColor(color gk.Color) AvatarEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AvatarEl) TextOverflow(overflow gk.TextOverflow) AvatarEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -585,19 +806,27 @@ func (e AvatarEl) TextOverflow(overflow gk.TextOverflow) AvatarEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AvatarEl) TextSize(size gk.Length) AvatarEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AvatarEl) Top(length gk.Length) AvatarEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AvatarEl) W(length gk.Length) AvatarEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e AvatarEl) BlockMouseExceptScroll() AvatarEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -605,6 +834,8 @@ func (e AvatarEl) BlockMouseExceptScroll() AvatarEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e AvatarEl) CanDrop(predicate gk.DropAccept) AvatarEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -614,6 +845,8 @@ func (e AvatarEl) CanDrop(predicate gk.DropAccept) AvatarEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e AvatarEl) CaptureAction(listener gk.ActionHandler) AvatarEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -623,12 +856,14 @@ func (e AvatarEl) CaptureAction(listener gk.ActionHandler) AvatarEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e AvatarEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e AvatarEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -638,12 +873,14 @@ func (e AvatarEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e AvatarEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e AvatarEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -653,6 +890,8 @@ func (e AvatarEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e AvatarEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -662,6 +901,8 @@ func (e AvatarEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Avatar
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e AvatarEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -671,6 +912,8 @@ func (e AvatarEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e AvatarEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) AvatarEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -680,12 +923,16 @@ func (e AvatarEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressu
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e AvatarEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) AvatarEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e AvatarEl) DragOver(f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -693,6 +940,8 @@ func (e AvatarEl) DragOver(f gk.StyleRefinement) AvatarEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e AvatarEl) Focus(f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -702,30 +951,40 @@ func (e AvatarEl) Focus(f gk.StyleRefinement) AvatarEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e AvatarEl) FocusVisible(f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e AvatarEl) Group(group string) AvatarEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e AvatarEl) GroupDragOver(groupName string, f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e AvatarEl) GroupHover(groupName string, f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e AvatarEl) Hover(f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -733,6 +992,8 @@ func (e AvatarEl) Hover(f gk.StyleRefinement) AvatarEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e AvatarEl) InFocus(f gk.StyleRefinement) AvatarEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -740,6 +1001,8 @@ func (e AvatarEl) InFocus(f gk.StyleRefinement) AvatarEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e AvatarEl) KeyContext(keyContext string) AvatarEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -747,12 +1010,16 @@ func (e AvatarEl) KeyContext(keyContext string) AvatarEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e AvatarEl) Occlude() AvatarEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e AvatarEl) OnAction(listener gk.ActionHandler) AvatarEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -762,12 +1029,14 @@ func (e AvatarEl) OnAction(listener gk.ActionHandler) AvatarEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e AvatarEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e AvatarEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -778,6 +1047,8 @@ func (e AvatarEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e AvatarEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) AvatarEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -788,6 +1059,8 @@ func (e AvatarEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent))
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e AvatarEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) AvatarEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -799,6 +1072,8 @@ func (e AvatarEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e AvatarEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) AvatarEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -808,6 +1083,8 @@ func (e AvatarEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) Avata
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e AvatarEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) AvatarEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -820,6 +1097,8 @@ func (e AvatarEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) AvatarEl {
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e AvatarEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) AvatarEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -829,6 +1108,8 @@ func (e AvatarEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) A
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e AvatarEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -838,6 +1119,8 @@ func (e AvatarEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e AvatarEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -847,6 +1130,8 @@ func (e AvatarEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarEl {
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e AvatarEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) AvatarEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -856,12 +1141,14 @@ func (e AvatarEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChan
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e AvatarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e AvatarEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -872,12 +1159,14 @@ func (e AvatarEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx))
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e AvatarEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e AvatarEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -887,12 +1176,14 @@ func (e AvatarEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e AvatarEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) AvatarEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e AvatarEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -902,12 +1193,14 @@ func (e AvatarEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e AvatarEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e AvatarEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -917,6 +1210,8 @@ func (e AvatarEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e AvatarEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) AvatarEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -926,12 +1221,14 @@ func (e AvatarEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEve
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e AvatarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e AvatarEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -942,12 +1239,14 @@ func (e AvatarEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) A
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e AvatarEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e AvatarEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -957,6 +1256,8 @@ func (e AvatarEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e AvatarEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) AvatarEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -966,6 +1267,8 @@ func (e AvatarEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) AvatarEl {
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e AvatarEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) AvatarEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -975,11 +1278,15 @@ func (e AvatarEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) AvatarEl 
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e AvatarEl) TabGroup() AvatarEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e AvatarEl) TabIndex(index int) AvatarEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -989,6 +1296,8 @@ func (e AvatarEl) TabIndex(index int) AvatarEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e AvatarEl) TabStop(tabStop bool) AvatarEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -996,6 +1305,8 @@ func (e AvatarEl) TabStop(tabStop bool) AvatarEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e AvatarEl) TrackFocus(focusHandle gk.FocusHandle) AvatarEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -1003,6 +1314,8 @@ func (e AvatarEl) TrackFocus(focusHandle gk.FocusHandle) AvatarEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e AvatarEl) WindowControlArea(area gk.WindowControlArea) AvatarEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
@@ -1015,7 +1328,7 @@ type AvatarGroupEl struct {
 
 // Create a new AvatarGroup.
 //
-// AvatarGroup is <gpui_kit::component::avatar::AvatarGroup>::new.
+// AvatarGroup calls <gpui_kit::component::avatar::AvatarGroup>::new.
 func AvatarGroup(st ...gk.Style) AvatarGroupEl {
 	rt.UseComponentAvatar()
 	n := rt.NewNode(593)
@@ -1025,7 +1338,7 @@ func AvatarGroup(st ...gk.Style) AvatarGroupEl {
 
 // Add a child avatar to the group.
 //
-// Child is <gpui_kit::component::avatar::AvatarGroup>::child.
+// Child calls <gpui_kit::component::avatar::AvatarGroup>::child.
 func (e AvatarGroupEl) Child(avatar AvatarEl) AvatarGroupEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(avatar.Core), false))
@@ -1034,7 +1347,7 @@ func (e AvatarGroupEl) Child(avatar AvatarEl) AvatarGroupEl {
 
 // Add multiple child avatars to the group.
 //
-// Children is <gpui_kit::component::avatar::AvatarGroup>::children.
+// Children calls <gpui_kit::component::avatar::AvatarGroup>::children.
 func (e AvatarGroupEl) Children(avatars []AvatarEl) AvatarGroupEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(uint32(len(avatars)))
@@ -1046,7 +1359,7 @@ func (e AvatarGroupEl) Children(avatars []AvatarEl) AvatarGroupEl {
 
 // Set whether to show an ellipsis when the limit is reached, default: false
 //
-// Ellipsis is <gpui_kit::component::avatar::AvatarGroup>::ellipsis.
+// Ellipsis calls <gpui_kit::component::avatar::AvatarGroup>::ellipsis.
 func (e AvatarGroupEl) Ellipsis() AvatarGroupEl {
 	rt.Op(rt.N(e.Core), 258)
 	return e
@@ -1054,7 +1367,7 @@ func (e AvatarGroupEl) Ellipsis() AvatarGroupEl {
 
 // Set the maximum number of avatars to display before showing a "more" avatar.
 //
-// Limit is <gpui_kit::component::avatar::AvatarGroup>::limit.
+// Limit calls <gpui_kit::component::avatar::AvatarGroup>::limit.
 func (e AvatarGroupEl) Limit(limit int) AvatarGroupEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutUsize(o, limit)
@@ -1063,29 +1376,37 @@ func (e AvatarGroupEl) Limit(limit int) AvatarGroupEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AvatarGroupEl) PopoverStyle() AvatarGroupEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AvatarGroupEl) RoundedFullStyle() AvatarGroupEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AvatarGroupEl) BorderE(width gk.Length) AvatarGroupEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AvatarGroupEl) BorderS(width gk.Length) AvatarGroupEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1093,127 +1414,169 @@ func (e AvatarGroupEl) BorderS(width gk.Length) AvatarGroupEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AvatarGroupEl) FlexRowDir() AvatarGroupEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AvatarGroupEl) InsetE(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AvatarGroupEl) InsetS(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AvatarGroupEl) JustifyFlexEnd() AvatarGroupEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AvatarGroupEl) JustifyFlexStart() AvatarGroupEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AvatarGroupEl) Me(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AvatarGroupEl) Ms(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AvatarGroupEl) Pe(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AvatarGroupEl) Ps(length gk.Length) AvatarGroupEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AvatarGroupEl) RoundedE(radius gk.Length) AvatarGroupEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AvatarGroupEl) RoundedS(radius gk.Length) AvatarGroupEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AvatarGroupEl) TextEnd() AvatarGroupEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AvatarGroupEl) TextStart() AvatarGroupEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AvatarGroupEl) CornerRadii(radius gk.Corners) AvatarGroupEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AvatarGroupEl) DebugBlue() AvatarGroupEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AvatarGroupEl) DebugFocused(focusHandle gk.FocusHandle) AvatarGroupEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AvatarGroupEl) DebugGreen() AvatarGroupEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AvatarGroupEl) DebugPink() AvatarGroupEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AvatarGroupEl) DebugRed() AvatarGroupEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AvatarGroupEl) DebugYellow() AvatarGroupEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AvatarGroupEl) FontBlack() AvatarGroupEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AvatarGroupEl) FontBold() AvatarGroupEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AvatarGroupEl) FontExtrabold() AvatarGroupEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AvatarGroupEl) FontExtralight() AvatarGroupEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AvatarGroupEl) FontLight() AvatarGroupEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AvatarGroupEl) FontMedium() AvatarGroupEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AvatarGroupEl) FontNormal() AvatarGroupEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AvatarGroupEl) FontSemibold() AvatarGroupEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AvatarGroupEl) FontThin() AvatarGroupEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1222,18 +1585,23 @@ func (e AvatarGroupEl) FontThin() AvatarGroupEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AvatarGroupEl) HFlex() AvatarGroupEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AvatarGroupEl) Margins(margins gk.EdgesInto) AvatarGroupEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AvatarGroupEl) Paddings(paddings gk.EdgesInto) AvatarGroupEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AvatarGroupEl) RefineStyle(style gk.StyleRefinement) AvatarGroupEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1243,39 +1611,55 @@ func (e AvatarGroupEl) RefineStyle(style gk.StyleRefinement) AvatarGroupEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AvatarGroupEl) VFlex() AvatarGroupEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AvatarGroupEl) Large() AvatarGroupEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AvatarGroupEl) Small() AvatarGroupEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AvatarGroupEl) WithSize(size gk.SizeInto) AvatarGroupEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AvatarGroupEl) Xsmall() AvatarGroupEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AvatarGroupEl) Style(st ...gk.Style) AvatarGroupEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AvatarGroupEl) AspectRatio(ratio float32) AvatarGroupEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AvatarGroupEl) Bg(fill gk.Fill) AvatarGroupEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AvatarGroupEl) Border(length gk.Length) AvatarGroupEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1283,12 +1667,16 @@ func (e AvatarGroupEl) Border(length gk.Length) AvatarGroupEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AvatarGroupEl) BorderB(length gk.Length) AvatarGroupEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AvatarGroupEl) BorderColor(borderColor gk.Color) AvatarGroupEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1296,6 +1684,8 @@ func (e AvatarGroupEl) BorderColor(borderColor gk.Color) AvatarGroupEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AvatarGroupEl) BorderL(length gk.Length) AvatarGroupEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1303,6 +1693,8 @@ func (e AvatarGroupEl) BorderL(length gk.Length) AvatarGroupEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AvatarGroupEl) BorderR(length gk.Length) AvatarGroupEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1310,6 +1702,8 @@ func (e AvatarGroupEl) BorderR(length gk.Length) AvatarGroupEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AvatarGroupEl) BorderT(length gk.Length) AvatarGroupEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1317,6 +1711,8 @@ func (e AvatarGroupEl) BorderT(length gk.Length) AvatarGroupEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AvatarGroupEl) BorderX(length gk.Length) AvatarGroupEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1324,6 +1720,8 @@ func (e AvatarGroupEl) BorderX(length gk.Length) AvatarGroupEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AvatarGroupEl) BorderY(length gk.Length) AvatarGroupEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1331,27 +1729,37 @@ func (e AvatarGroupEl) BorderY(length gk.Length) AvatarGroupEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AvatarGroupEl) Bottom(length gk.Length) AvatarGroupEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AvatarGroupEl) ColEnd(end int16) AvatarGroupEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AvatarGroupEl) ColSpan(span uint16) AvatarGroupEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AvatarGroupEl) ColStart(start int16) AvatarGroupEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AvatarGroupEl) Cursor(cursor gk.CursorStyle) AvatarGroupEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1359,33 +1767,45 @@ func (e AvatarGroupEl) Cursor(cursor gk.CursorStyle) AvatarGroupEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AvatarGroupEl) FlexBasis(basis gk.Length) AvatarGroupEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AvatarGroupEl) FlexGrow(grow float32) AvatarGroupEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AvatarGroupEl) FlexShrink(shrink float32) AvatarGroupEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AvatarGroupEl) Font(font gk.Font) AvatarGroupEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AvatarGroupEl) FontFamily(familyName string) AvatarGroupEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AvatarGroupEl) FontFeatures(features gk.FontFeatures) AvatarGroupEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1394,12 +1814,16 @@ func (e AvatarGroupEl) FontFeatures(features gk.FontFeatures) AvatarGroupEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AvatarGroupEl) FontWeight(weight gk.FontWeight) AvatarGroupEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AvatarGroupEl) Gap(length gk.Length) AvatarGroupEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1407,6 +1831,8 @@ func (e AvatarGroupEl) Gap(length gk.Length) AvatarGroupEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AvatarGroupEl) GapX(length gk.Length) AvatarGroupEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1414,18 +1840,24 @@ func (e AvatarGroupEl) GapX(length gk.Length) AvatarGroupEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AvatarGroupEl) GapY(length gk.Length) AvatarGroupEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AvatarGroupEl) GridCols(cols uint16) AvatarGroupEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AvatarGroupEl) GridColsMaxContent(cols uint16) AvatarGroupEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1433,18 +1865,24 @@ func (e AvatarGroupEl) GridColsMaxContent(cols uint16) AvatarGroupEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AvatarGroupEl) GridColsMinContent(cols uint16) AvatarGroupEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AvatarGroupEl) GridRows(rows uint16) AvatarGroupEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AvatarGroupEl) GridRowsMaxContent(rows uint16) AvatarGroupEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1452,16 +1890,22 @@ func (e AvatarGroupEl) GridRowsMaxContent(rows uint16) AvatarGroupEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AvatarGroupEl) GridRowsMinContent(rows uint16) AvatarGroupEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AvatarGroupEl) H(length gk.Length) AvatarGroupEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AvatarGroupEl) Inset(length gk.Length) AvatarGroupEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1469,6 +1913,8 @@ func (e AvatarGroupEl) Inset(length gk.Length) AvatarGroupEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AvatarGroupEl) Left(length gk.Length) AvatarGroupEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1476,33 +1922,45 @@ func (e AvatarGroupEl) Left(length gk.Length) AvatarGroupEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AvatarGroupEl) LineClamp(lines int) AvatarGroupEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AvatarGroupEl) LineHeight(lineHeight gk.Length) AvatarGroupEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AvatarGroupEl) M(length gk.Length) AvatarGroupEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AvatarGroupEl) MaxH(length gk.Length) AvatarGroupEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AvatarGroupEl) MaxSize(length gk.Length) AvatarGroupEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AvatarGroupEl) MaxW(length gk.Length) AvatarGroupEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1510,21 +1968,29 @@ func (e AvatarGroupEl) MaxW(length gk.Length) AvatarGroupEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AvatarGroupEl) Mb(length gk.Length) AvatarGroupEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AvatarGroupEl) MinH(length gk.Length) AvatarGroupEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AvatarGroupEl) MinSize(length gk.Length) AvatarGroupEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AvatarGroupEl) MinW(length gk.Length) AvatarGroupEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1532,65 +1998,95 @@ func (e AvatarGroupEl) MinW(length gk.Length) AvatarGroupEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AvatarGroupEl) Ml(length gk.Length) AvatarGroupEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AvatarGroupEl) Mr(length gk.Length) AvatarGroupEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AvatarGroupEl) Mt(length gk.Length) AvatarGroupEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AvatarGroupEl) Mx(length gk.Length) AvatarGroupEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AvatarGroupEl) My(length gk.Length) AvatarGroupEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AvatarGroupEl) Opacity(opacity float32) AvatarGroupEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AvatarGroupEl) P(length gk.Length) AvatarGroupEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AvatarGroupEl) Pb(length gk.Length) AvatarGroupEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AvatarGroupEl) Pl(length gk.Length) AvatarGroupEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AvatarGroupEl) Pr(length gk.Length) AvatarGroupEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AvatarGroupEl) Pt(length gk.Length) AvatarGroupEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AvatarGroupEl) Px(length gk.Length) AvatarGroupEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AvatarGroupEl) Py(length gk.Length) AvatarGroupEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AvatarGroupEl) Right(length gk.Length) AvatarGroupEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AvatarGroupEl) Rounded(length gk.Length) AvatarGroupEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1598,6 +2094,8 @@ func (e AvatarGroupEl) Rounded(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AvatarGroupEl) RoundedB(length gk.Length) AvatarGroupEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1605,6 +2103,8 @@ func (e AvatarGroupEl) RoundedB(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AvatarGroupEl) RoundedBl(length gk.Length) AvatarGroupEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1612,6 +2112,8 @@ func (e AvatarGroupEl) RoundedBl(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AvatarGroupEl) RoundedBr(length gk.Length) AvatarGroupEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1619,6 +2121,8 @@ func (e AvatarGroupEl) RoundedBr(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AvatarGroupEl) RoundedL(length gk.Length) AvatarGroupEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1626,6 +2130,8 @@ func (e AvatarGroupEl) RoundedL(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AvatarGroupEl) RoundedR(length gk.Length) AvatarGroupEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1633,6 +2139,8 @@ func (e AvatarGroupEl) RoundedR(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AvatarGroupEl) RoundedT(length gk.Length) AvatarGroupEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1640,6 +2148,8 @@ func (e AvatarGroupEl) RoundedT(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AvatarGroupEl) RoundedTl(length gk.Length) AvatarGroupEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1647,21 +2157,29 @@ func (e AvatarGroupEl) RoundedTl(length gk.Length) AvatarGroupEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AvatarGroupEl) RoundedTr(length gk.Length) AvatarGroupEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AvatarGroupEl) RowEnd(end int16) AvatarGroupEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AvatarGroupEl) RowSpan(span uint16) AvatarGroupEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AvatarGroupEl) RowStart(start int16) AvatarGroupEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1671,24 +2189,32 @@ func (e AvatarGroupEl) RowStart(start int16) AvatarGroupEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AvatarGroupEl) ScrollbarWidth(width gk.Length) AvatarGroupEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AvatarGroupEl) Shadow(shadows []gk.BoxShadow) AvatarGroupEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AvatarGroupEl) Size(length gk.Length) AvatarGroupEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AvatarGroupEl) TextAlign(align gk.TextAlign) AvatarGroupEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1697,23 +2223,31 @@ func (e AvatarGroupEl) TextAlign(align gk.TextAlign) AvatarGroupEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AvatarGroupEl) TextBg(bg gk.Color) AvatarGroupEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AvatarGroupEl) TextColor(color gk.Color) AvatarGroupEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AvatarGroupEl) TextDecorationColor(color gk.Color) AvatarGroupEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AvatarGroupEl) TextOverflow(overflow gk.TextOverflow) AvatarGroupEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1722,6 +2256,8 @@ func (e AvatarGroupEl) TextOverflow(overflow gk.TextOverflow) AvatarGroupEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AvatarGroupEl) TextSize(size gk.Length) AvatarGroupEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1729,18 +2265,24 @@ func (e AvatarGroupEl) TextSize(size gk.Length) AvatarGroupEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AvatarGroupEl) Top(length gk.Length) AvatarGroupEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AvatarGroupEl) W(length gk.Length) AvatarGroupEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e AvatarGroupEl) BlockMouseExceptScroll() AvatarGroupEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -1748,6 +2290,8 @@ func (e AvatarGroupEl) BlockMouseExceptScroll() AvatarGroupEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e AvatarGroupEl) CanDrop(predicate gk.DropAccept) AvatarGroupEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -1757,6 +2301,8 @@ func (e AvatarGroupEl) CanDrop(predicate gk.DropAccept) AvatarGroupEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e AvatarGroupEl) CaptureAction(listener gk.ActionHandler) AvatarGroupEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -1766,12 +2312,14 @@ func (e AvatarGroupEl) CaptureAction(listener gk.ActionHandler) AvatarGroupEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e AvatarGroupEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e AvatarGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -1781,12 +2329,14 @@ func (e AvatarGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGro
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e AvatarGroupEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e AvatarGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -1796,6 +2346,8 @@ func (e AvatarGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarGroup
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e AvatarGroupEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1805,6 +2357,8 @@ func (e AvatarGroupEl) CaptureKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) A
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e AvatarGroupEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1814,6 +2368,8 @@ func (e AvatarGroupEl) CaptureKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) Ava
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e AvatarGroupEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -1823,12 +2379,16 @@ func (e AvatarGroupEl) CaptureMousePressure(listener func(cx *gk.Cx, e gk.MouseP
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e AvatarGroupEl) CapturePinch(listener func(cx *gk.Cx, e gk.PinchEvent)) AvatarGroupEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e AvatarGroupEl) DragOver(f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -1836,6 +2396,8 @@ func (e AvatarGroupEl) DragOver(f gk.StyleRefinement) AvatarGroupEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e AvatarGroupEl) Focus(f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -1845,30 +2407,40 @@ func (e AvatarGroupEl) Focus(f gk.StyleRefinement) AvatarGroupEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e AvatarGroupEl) FocusVisible(f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e AvatarGroupEl) Group(group string) AvatarGroupEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e AvatarGroupEl) GroupDragOver(groupName string, f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e AvatarGroupEl) GroupHover(groupName string, f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e AvatarGroupEl) Hover(f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -1876,6 +2448,8 @@ func (e AvatarGroupEl) Hover(f gk.StyleRefinement) AvatarGroupEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e AvatarGroupEl) InFocus(f gk.StyleRefinement) AvatarGroupEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -1883,6 +2457,8 @@ func (e AvatarGroupEl) InFocus(f gk.StyleRefinement) AvatarGroupEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e AvatarGroupEl) KeyContext(keyContext string) AvatarGroupEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -1890,12 +2466,16 @@ func (e AvatarGroupEl) KeyContext(keyContext string) AvatarGroupEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e AvatarGroupEl) Occlude() AvatarGroupEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e AvatarGroupEl) OnAction(listener gk.ActionHandler) AvatarGroupEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -1905,12 +2485,14 @@ func (e AvatarGroupEl) OnAction(listener gk.ActionHandler) AvatarGroupEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e AvatarGroupEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e AvatarGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -1921,6 +2503,8 @@ func (e AvatarGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGroupEl 
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e AvatarGroupEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEvent)) AvatarGroupEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -1931,6 +2515,8 @@ func (e AvatarGroupEl) OnBackGesture(listener func(cx *gk.Cx, e gk.BackGestureEv
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e AvatarGroupEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, e gk.Action)) AvatarGroupEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -1942,6 +2528,8 @@ func (e AvatarGroupEl) OnBoxedAction(action gk.Action, listener func(cx *gk.Cx, 
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e AvatarGroupEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) AvatarGroupEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -1951,6 +2539,8 @@ func (e AvatarGroupEl) OnDragMove(listener func(cx *gk.Cx, e gk.DragMoveEvent)) 
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e AvatarGroupEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) AvatarGroupEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -1963,6 +2553,8 @@ func (e AvatarGroupEl) OnDrop(listener func(cx *gk.Cx, e gk.DragValue)) AvatarGr
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e AvatarGroupEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEvent)) AvatarGroupEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -1972,6 +2564,8 @@ func (e AvatarGroupEl) OnFileDropExit(listener func(cx *gk.Cx, e gk.FileDropEven
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e AvatarGroupEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarGroupEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1981,6 +2575,8 @@ func (e AvatarGroupEl) OnKeyDown(listener func(cx *gk.Cx, e gk.KeyEvent)) Avatar
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e AvatarGroupEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarGroupEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1990,6 +2586,8 @@ func (e AvatarGroupEl) OnKeyUp(listener func(cx *gk.Cx, e gk.KeyEvent)) AvatarGr
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e AvatarGroupEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.ModifiersChangedEvent)) AvatarGroupEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -1999,12 +2597,14 @@ func (e AvatarGroupEl) OnModifiersChanged(listener func(cx *gk.Cx, e gk.Modifier
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e AvatarGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e AvatarGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -2015,12 +2615,14 @@ func (e AvatarGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e AvatarGroupEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e AvatarGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -2030,12 +2632,14 @@ func (e AvatarGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarGroupEl 
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e AvatarGroupEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e AvatarGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -2045,12 +2649,14 @@ func (e AvatarGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e AvatarGroupEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e AvatarGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -2060,6 +2666,8 @@ func (e AvatarGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarGroupEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e AvatarGroupEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressureEvent)) AvatarGroupEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2069,12 +2677,14 @@ func (e AvatarGroupEl) OnMousePressure(listener func(cx *gk.Cx, e gk.MousePressu
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e AvatarGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e AvatarGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -2085,12 +2695,14 @@ func (e AvatarGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.C
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e AvatarGroupEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e AvatarGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -2100,6 +2712,8 @@ func (e AvatarGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *g
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e AvatarGroupEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) AvatarGroupEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -2109,6 +2723,8 @@ func (e AvatarGroupEl) OnPinch(listener func(cx *gk.Cx, e gk.PinchEvent)) Avatar
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e AvatarGroupEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) AvatarGroupEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -2118,11 +2734,15 @@ func (e AvatarGroupEl) OnScroll(listener func(cx *gk.Cx, e gk.ScrollEvent)) Avat
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e AvatarGroupEl) TabGroup() AvatarGroupEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e AvatarGroupEl) TabIndex(index int) AvatarGroupEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -2132,6 +2752,8 @@ func (e AvatarGroupEl) TabIndex(index int) AvatarGroupEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e AvatarGroupEl) TabStop(tabStop bool) AvatarGroupEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -2139,6 +2761,8 @@ func (e AvatarGroupEl) TabStop(tabStop bool) AvatarGroupEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e AvatarGroupEl) TrackFocus(focusHandle gk.FocusHandle) AvatarGroupEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -2146,6 +2770,8 @@ func (e AvatarGroupEl) TrackFocus(focusHandle gk.FocusHandle) AvatarGroupEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e AvatarGroupEl) WindowControlArea(area gk.WindowControlArea) AvatarGroupEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e

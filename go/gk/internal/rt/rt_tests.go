@@ -1,7 +1,7 @@
 package rt
 
-// TestObjCounts returns the temporary handles waiting for the next frame and the live library
-// objects (core/tests/go/handles).
+// TestObjCounts queries the diagnostic library for the number of frame-temporary
+// object handles and total live object handles currently held in Rust.
 func TestObjCounts(cx *Cx) (temps, live int) {
 	CheckCx(cx).Flush()
 	o := NewReq(CObjTestTemps)
@@ -9,25 +9,24 @@ func TestObjCounts(cx *Cx) (temps, live int) {
 	return int(r.U32()), int(r.U32())
 }
 
-// TestValuePins returns the temporary handles pinned by views and the ones waiting for the next
-// sweep (core/tests/go/values).
+// TestValuePins returns diagnostic counters for pinned value objects and values
+// scheduled for deferred cleanup in Rust.
 func TestValuePins(cx *Cx) (pinned, later int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CValuesTest))}
 	return int(r.U32()), int(r.U32())
 }
 
-// TestEntityHandles reads one entity back through the library's two paths (the values path and
-// the dock's) and again, and returns the three handles and how many distinct handles the table
-// holds for it (core/tests/go/values).
+// TestEntityHandles exercises entity-handle identity round-trips across the
+// values and dock paths in the diagnostic library.
 func TestEntityHandles(cx *Cx) (valuesPath, dockPath, again, handles uint64) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CHandlesTest))}
 	return r.U64(), r.U64(), r.U64(), r.U64()
 }
 
-// TestDragPayload has the library decode an external drag payload as an element's builder would and
-// returns its files (core/tests/go/platform).
+// TestDragPayload encodes p across the C ABI and decodes the round-tripped
+// ExternalFile slice returned by the diagnostic library.
 func TestDragPayload(cx *Cx, p ExternalDragPayload) []ExternalFile {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -42,8 +41,8 @@ func TestDragPayload(cx *Cx, p ExternalDragPayload) []ExternalFile {
 	return out
 }
 
-// TestPrepaintOrder has the library decode a dynamic prepaint order and returns it
-// (core/tests/go/platform).
+// TestPrepaintOrder sends an index order to the diagnostic prepaint hook and
+// returns the order observed by the Rust core.
 func TestPrepaintOrder(cx *Cx, order []int) []int {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -60,9 +59,8 @@ func TestPrepaintOrder(cx *Cx, order []int) []int {
 	return out
 }
 
-// PlatformLog is what the scripted platform recorded (core/tests/go/platform): the URLs opened, the
-// requests made, answers delivered and discarded, requests waiting, and whether the platform is
-// scripted.
+// PlatformLog captures diagnostic counters for URL opens and asynchronous
+// platform dialog requests recorded by the diagnostic library.
 type PlatformLog struct {
 	URLs                           []string
 	Requests, Delivered, Discarded uint64
@@ -70,7 +68,7 @@ type PlatformLog struct {
 	Scripted                       bool
 }
 
-// GetPlatformLog reads the platform's log.
+// GetPlatformLog fetches the current PlatformLog snapshot from the diagnostic library.
 func GetPlatformLog(cx *Cx) PlatformLog {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CPlatformLog))}
@@ -85,22 +83,22 @@ func GetPlatformLog(cx *Cx) PlatformLog {
 	return l
 }
 
-// TestEditorText returns the library's counts of the editor family: Markdown nodes the data plugins
-// claimed, and rows made for the distinct values of view closures (core/tests/go/editor2).
+// TestEditorText queries the diagnostic library for the number of parsed
+// document blocks and materialized editor view rows.
 func TestEditorText(cx *Cx) (parsed, viewRows int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CEditorTest))}
 	return int(r.U64()), int(r.U64())
 }
 
-// TestEditorHostCounts returns editor hosts decoded, leaves collected, leaf events delivered,
-// decorators run and lent values edited (core/tests/go/editor2).
+// TestEditorHostCounts returns diagnostic counters for live editor hosts,
+// leaf views, delivered events, decorated spans, and active lent edits.
 func TestEditorHostCounts(cx *Cx) (hosts, leaves, delivered, decorated, lent int) {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CEditorHostTest))}
 	return int(r.U64()), int(r.U64()), int(r.U64()), int(r.U64()), int(r.U64())
 }
 
-// TestKeptCount returns the handlers the runtime keeps for the library (subscriptions, timers,
-// handlers given to call ops).
+// TestKeptCount returns the number of currently live long-lived handler slots
+// in keptTab.
 func TestKeptCount() int { return keptLive() }

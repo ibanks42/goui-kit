@@ -1,4 +1,4 @@
-// A value that is not an element (a style refinement) given as a child.
+// Compile-time misuse case: builder values like StyleRefinement do not implement gk.Element.
 package main
 
 import (

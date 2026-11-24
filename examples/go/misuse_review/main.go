@@ -1,20 +1,5 @@
-// misuse_review: mistakes against the app protocols (actions, timers, windows: PROTOCOLS.md
-// section 11), the dock's panels (11.7) and library objects (13.2). Each must stop with a
-// message and the app's line (exit 2) or behave correctly (exit 0); exit 0 with wrong content
-// fails. Run offscreen with the diag library by
-// gates/go-misuse.sh, one mode per case:
-//
-//	GK_NEG=rv-ok             timers, a second window opened and closed, an action, a panel: correct (exit 0)
-//	GK_NEG=rv-timer-view     gk.After in a view function: must stop
-//	GK_NEG=rv-timer-zero     a repeating timer of 0: must stop
-//	GK_NEG=rv-window-stale   the title of a window that was closed: must stop
-//	GK_NEG=rv-keys-view      key bindings in a view function: must stop
-//	GK_NEG=rv-temp-later     a temporary library object (a dock's layout) used a frame later: must stop
-//	GK_NEG=rv-panel-released a dock panel released and then changed: must stop
-//
-// A forged action (an action id the library never made) does not compile in Go
-// (examples/go/misuse_compile/action_forged); rv-timer-state (a timer handler of another state
-// type) cannot be written: a Go handler is a closure and carries no state type.
+// Runtime misuse cases for timers, windows, key bindings, temporary dock handles,
+// and released dock panels (GK_NEG).
 package main
 
 import (
@@ -77,11 +62,11 @@ func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {
 			a.second = gk.OpenWindow(cx, "second", 200, 100, a.secondV)
 			gk.After(cx, 20*time.Millisecond, a.closeSecond)
 		} else {
-			gk.SetWindowTitle(cx, a.second, "gone") // the window closed a frame ago
+			gk.SetWindowTitle(cx, a.second, "gone")
 		}
 	case "rv-temp-later":
 		if a.clicks == 1 {
-			a.tree, _ = a.dock.Layout(cx, gkdock.PlacementCenter).Get() // temporary: not retained
+			a.tree, _ = a.dock.Layout(cx, gkdock.PlacementCenter).Get()
 		} else {
 			_ = a.tree.RootKind(cx)
 		}

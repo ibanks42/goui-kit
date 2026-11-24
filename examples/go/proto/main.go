@@ -1,11 +1,6 @@
-// proto: the protocol tests of docs/PROTOCOLS.md in Go.
-// Each mode runs offscreen (the diag library) under a gk-meter script and prints lines that
-// gates/go-proto.sh checks, together with the exit code. Nothing here is an example of good app
-// code; it pokes at the edges on purpose.
-//
-//	GK_PROTO=handlers | state | stale | stale-write | wrong-type | lease | write-rule | frames |
-//	         view-write | model | post | panic-go | panic-call | panic-later | thread | version |
-//	         released-shown | post-memory | handler-memory | rows | stale-cx | stale-element
+// Core protocol test harness for the Go binding, run offscreen by gates/go-proto.sh.
+// GK_PROTO selects the scenario: handlers, state, write-rule, model, rows, list, dialog,
+// background posting, memory checks, ABI version checks, and panic/misuse paths.
 package main
 
 import (
@@ -55,8 +50,6 @@ type App struct {
 	dlgDescribed, cancels, dcount int
 }
 
-// --- handlers of every shape ------------------------------------------------------------------
-
 func (a *App) clicked(cx *gk.Cx, e gk.ClickEvent) {
 	a.clicks++
 	fmt.Printf("proto click n=%d button=%v count=%d kind=%v x=%.0f y=%.0f\n", a.clicks, e.Button, e.ClickCount, e.Kind, e.Position[0], e.Position[1])
@@ -66,7 +59,6 @@ func (a *App) clicked(cx *gk.Cx, e gk.ClickEvent) {
 		fmt.Printf("proto returns true=%d false=%d\n", gk.TestFire(cx, yes), gk.TestFire(cx, no))
 		back := gk.TestFireValue(cx, func(cx *gk.Cx, p gk.TestPayload) string { return fmt.Sprintf("%s/%d", p.Text, p.N) }, "payload", 7)
 		fmt.Printf("proto value back=%q\n", back)
-		// A closure carries its data: the Go form of a handler with a value.
 		d := RowID{9, fmt.Sprintf("row-%d", 9)}
 		back = gk.TestFireValue(cx, func(cx *gk.Cx, p gk.TestPayload) string {
 			return fmt.Sprintf("%s/%d/%d/%s", p.Text, p.N, d.ID, d.Name)
@@ -111,7 +103,6 @@ func (a *App) inputEvent(cx *gk.Cx, e editor.InputEvent) {
 	case editor.InputEventPressEnter:
 		fmt.Printf("proto input enter secondary=%v shift=%v\n", v.Secondary, v.Shift)
 		if a.mode == "state" {
-			// Read your own write: a read flushes the buffered write first.
 			a.name.SetValue(cx, "written")
 			fmt.Printf("proto read-after-write value=%q\n", a.name.Value(cx))
 			gk.Release(cx, a.sub)
@@ -137,7 +128,7 @@ func (a *App) boom(cx *gk.Cx, _ gk.ClickEvent) {
 		fmt.Printf("proto stale value=%q\n", a.name.Value(cx))
 	case "stale-write":
 		gk.Release(cx, a.name)
-		a.name.SetValue(cx, "to a released handle") // buffered: fails after this handler
+		a.name.SetValue(cx, "to a released handle")
 		fmt.Println("proto stale-write buffered")
 	case "wrong-type":
 		fake := editor.TestInputState(gk.Handle(a.rows))
@@ -168,8 +159,6 @@ func (a *App) boom(cx *gk.Cx, _ gk.ClickEvent) {
 		gk.After(cx, 0, func(cx *gk.Cx) { fmt.Println("proto stale-element kept"); gk.Notify(cx, a.root) })
 	}
 }
-
-// --- row sources ------------------------------------------------------------------------------
 
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.described[at.Row]++
@@ -210,8 +199,6 @@ func (a *App) rowsView(cx *gk.Cx) gk.Element {
 		Child(gk.SourceList("rows", a.src, 24).W(gk.Px(300)).H(gk.Px(240)))
 }
 
-// --- handlers of views described often --------------------------------------------------------
-
 func (a *App) memoryFrame(cx *gk.Cx) {
 	a.frame++
 	gk.Notify(cx, a.root)
@@ -228,15 +215,12 @@ func (a *App) memoryView(cx *gk.Cx) gk.Element {
 	a.views++
 	col := gk.VFlex(s.SizeFull)
 	for i := range 100 {
-		// A value that is new on every build, as a clock or a counter in a label would be.
 		col.Child(gk.Div().ID(fmt.Sprintf("m-%d", i)).H(gk.Px(2)).
 			OnClick(a.rowClicked(RowID{i, fmt.Sprintf("row %d of build %d, made in a view and never clicked", i, a.views)})))
 	}
 	return col
 }
 
-// A handler the component calls from inside its own update: a read reports busy, a write is put
-// back and lands after; a queued event runs after the update and reads freely.
 func (a *App) lease(cx *gk.Cx) {
 	inside := gk.NewHandler(func(cx *gk.Cx) bool {
 		_, ok := a.name.TryValue(cx)
@@ -253,16 +237,12 @@ func (a *App) lease(cx *gk.Cx) {
 	fmt.Println("proto queued not yet")
 }
 
-// --- the per-frame handler and the write rule ---------------------------------------------------
-
 func (a *App) writeFrame(cx *gk.Cx) {
 	a.frame++
 	a.name.SetValue(cx, fmt.Sprintf("frame %d", a.frame))
 }
 
 func (a *App) countFrame(cx *gk.Cx) { a.frame++ }
-
-// --- app state --------------------------------------------------------------------------------
 
 func (a *App) bump(cx *gk.Cx, _ gk.ClickEvent) {
 	gk.Quiet(cx)
@@ -275,8 +255,6 @@ func (a *App) sideView(cx *gk.Cx) gk.Element {
 	fmt.Printf("proto side view run=%d count=%d\n", a.sides, a.count.Get())
 	return gk.HFlex().Child(kit.Label(fmt.Sprintf("count %d", a.count.Get())))
 }
-
-// --- background posts ---------------------------------------------------------------------------
 
 const posts = 20_000
 
@@ -318,8 +296,6 @@ func (a *App) poster() {
 		}
 	}
 }
-
-// --- memory: posted lines are freed ------------------------------------------------------------
 
 const lines = 300_000
 
@@ -370,8 +346,6 @@ func (a *App) reportMemory(what string) {
 	fmt.Printf("proto %s rss_mb=%d growth_mb=%d heap_kb=%d\n", what, rssKB()/1024, (rssKB()-a.rss0)/1024, ms.HeapAlloc/1024)
 }
 
-// --- a list over a row source (PROTOCOLS.md 9.5) ----------------------------------------------
-
 func (a *App) listRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	a.described[at.Row]++
 	return table.ListItem(gk.Key("item", at.Row)).Child(kit.Label(fmt.Sprintf("item %d.%d", at.Section, at.Row)))
@@ -394,19 +368,17 @@ func (a *App) listView(cx *gk.Cx) gk.Element {
 		Child(gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(table.List(a.list, s.SizeFull)))
 }
 
-// --- a dialog over a view-built closure (PROTOCOLS.md 11.6) --------------------------------------
-
 func (a *App) confirmDialog(cx *gk.Cx) overlay.DialogEl {
 	a.dlgDescribed++
 	fmt.Printf("proto dialog described n=%d count=%d\n", a.dlgDescribed, a.dcount)
-	seen := a.dcount // the count of this description: which tape the kit used
+	seen := a.dcount
 	return overlay.Dialog().
 		Title(kit.Label("Delete?")).
 		Child(kit.Label(fmt.Sprintf("count %d", a.dcount))).
 		OnCancel(func(cx *gk.Cx, _ gk.ClickEvent) bool {
 			a.cancels++
 			fmt.Printf("proto dialog cancel n=%d seen=%d count=%d\n", a.cancels, seen, a.dcount)
-			return true // closes it
+			return true
 		})
 }
 
@@ -418,19 +390,17 @@ func (a *App) dialogSteps(cx *gk.Cx) {
 	gk.After(cx, 30*time.Millisecond, func(cx *gk.Cx) {
 		fmt.Printf("proto dialog active=%v\n", overlay.HasActiveDialog(cx))
 		a.dcount++
-		gk.Notify(cx, a.dlg.View) // described again while open
+		gk.Notify(cx, a.dlg.View)
 	})
 	gk.After(cx, 50*time.Millisecond, func(cx *gk.Cx) {
 		fmt.Printf("proto dialog closed active=%v\n", overlay.HasActiveDialog(cx))
-		overlay.OpenDialog(cx, a.dlg) // the same view, opened again
+		overlay.OpenDialog(cx, a.dlg)
 	})
 	gk.After(cx, 70*time.Millisecond, func(cx *gk.Cx) { overlay.CloseDialog(cx) })
 	gk.After(cx, 90*time.Millisecond, func(cx *gk.Cx) {
 		fmt.Printf("proto dialog done active=%v described=%d cancels=%d count=%d\n", overlay.HasActiveDialog(cx), a.dlgDescribed, a.cancels, a.dcount)
 	})
 }
-
-// --- the view -----------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
 	a.name = editor.NewInputState(cx).DefaultValue("abc").Build()
@@ -477,7 +447,7 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	}
 	if a.mode == "stale-element" {
 		if a.keptEl != nil {
-			row.Child(a.keptEl) // an element of an earlier build: stops
+			row.Child(a.keptEl)
 		}
 		a.keptEl = kit.Label("kept")
 	}
@@ -493,7 +463,7 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	value := ""
 	switch a.mode {
 	case "state", "write-rule":
-		value = a.name.Value(cx) // a dependency: described again when the input changes
+		value = a.name.Value(cx)
 		fmt.Printf("proto echo view=%d frame=%d value=%q\n", a.views, a.frame, value)
 	case "view-write":
 		a.name.SetValue(cx, "written by a view")
@@ -525,8 +495,6 @@ func (a *App) start(cx *gk.Cx) {
 	gk.OpenWindow(cx, "proto", 480, 300, a.root)
 }
 
-// Positions (window coordinates): the four cells are 100 wide from x = 16, at y = 16; the input
-// is below them.
 const (
 	first  = "click 36 32\n"
 	swtch  = "click 126 26\n"
@@ -536,7 +504,6 @@ const (
 	rowAt0 = "click 40 68\n"
 )
 
-// version: the library's half of the version check, called directly with a wrong gk_app.
 func version() {
 	try := func(what string, hashXor uint64, major, minor uint16, size uint32, noCallback bool) {
 		rc, msg := gk.TestRunRaw(hashXor, major, minor, size, noCallback)
@@ -551,7 +518,7 @@ func version() {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_PROTO"), described: map[int]int{}}
-	if kindsMain(a.mode) || runBridges(a.mode) { // kinds.go: the generator's descriptor kinds; bridges.go: the Go package's hand-written bridges
+	if kindsMain(a.mode) || runBridges(a.mode) {
 		return
 	}
 	if os.Getenv("GK_PROTO_STALE_HASH") != "" {
@@ -577,17 +544,13 @@ func main() {
 	case "rows":
 		script += first + "frame\nframe\nframe\n" + rowAt0 + "frame\n" + first + "frame\nframe\n" + first + "frame\nframe\n" + first + "frame\nstat\n"
 	case "list":
-		// a click on row 0 (select, confirm), down, a right click, escape, a far scroll (one
-		// placeholder frame), back to the top (rows kept, nothing described again).
 		script = "size 480 320\nframe\nstat\nclick 60 74\nkey down\nrclick 60 140\nkey escape\nscroll 160 200 -200000\nframe\nstat\nscroll 160 200 400000\nframe\n"
 	case "dialog":
-		// open at 10; bumped at 30 while open; escape (on_cancel of the second description);
-		// reopened at 50 on the same view; closed by the app at 70; done at 90
 		step := "frame\nframe\n"
 		script = "size 640 480\nframe\n" + "advance 10\n" + step + "advance 20\n" + step + "key escape\n" + step +
 			"advance 20\n" + step + "advance 20\n" + step + "advance 20\n" + step + "stat\n"
 	case "post":
-		gk.Post(a.tick(Tick{0, "tick"})) // before the library's loop exists
+		gk.Post(a.tick(Tick{0, "tick"}))
 		sent.Add(1)
 		go a.poster()
 		go a.postBatch()

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""reader-feed.py OUT [N]: writes a feed file of N articles (default 3000) for the reader example
-(gates/reader.sh): the bundled sample's articles first, then generated ones, one per hour going
-back from the sample's dates. Deterministic: the same file every run."""
+"""Generate a deterministic Markdown feed for the reader gates (gates/reader.sh, gates/go-apps.sh).
+
+Usage:
+  reader-feed.py <out.md> [count]   Write <count> articles (default 3000) starting from sample-feed.md.
+"""
 import datetime
 import os
 import sys

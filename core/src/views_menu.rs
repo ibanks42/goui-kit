@@ -1,14 +1,10 @@
-//! Menu ops a described menu (docs/PROTOCOLS.md 11.6) cannot make with upstream's own function,
-//! which needs the menu entity's Context: done by the library with the App instead, as
-//! `crate::overlay::submenu` does for `PopupMenu::submenu`.
+//! Popup-menu helper for building a submenu item with an optional leading icon.
 
 use gpui_kit::component::Icon;
 use gpui_kit::component::menu::{PopupMenu, PopupMenuItem};
 use gpui_kit::{App, Context, SharedString, Window};
 
-/// `PopupMenu::submenu_with_icon` without the menu's own context: the child menu is built at once
-/// and attached as an item with the icon, as upstream does; upstream wires it to its parent when
-/// the menu draws.
+/// Appends a submenu built by `f` to `menu`, attaching `icon` when provided.
 pub fn submenu_with_icon(
     menu: PopupMenu,
     icon: Option<Icon>,

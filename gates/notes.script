@@ -1,64 +1,73 @@
-# The notes app's scripted session (examples/go/notes against ref/src/bin/notes.rs, gates/pixels.sh
-# notes): every image must be byte-identical between the two. Each step was checked by eye on the
-# first run to show what its comment says, so "identical" means both apps did it. Window coordinates (the images are
-# twice the size): the File button at 30,24, the theme button at 742,24, the list's rows at
-# y = 103, 151, 199, ..., the title input at 500,143, the Delete button at 247,219, the divider
-# between the dock's left panel and its centre at x = 200.
+# Offscreen session script for the notes pixel gate (gates/pixels.sh notes, gates/go-apps.sh notes).
+# Exercises the 800x600 notes app across 25 screenshots compared byte-for-byte against ref-notes:
+# selection, title editing, shortcuts, menus, theme toggles, dialogs, dock dragging, and empty state.
 size 800 600
 frame
 frame
 shot 01-start.png
-# select the second note in the list
+
+# Click the second note in the sidebar.
 click 80 151
 frame
 shot 02-select.png
-# rename it through the kit's Input: select all, type
+
+# Focus the title input, select all, and rename the note to "Weekend trip".
 click 700 143
 key ctrl-a
 type Weekend trip
 frame
 shot 03-renamed.png
-# ctrl-n: a new note, selected
+
+# Create a note with Ctrl+N.
 key ctrl-n
 frame
 shot 04-ctrl-n.png
-# the File menu, then its first item (the same action)
+
+# Open the app menu and create another note via the menu item.
 click 30 24
 frame
 shot 05-menu.png
 click 60 61
 frame
 shot 06-menu-new.png
-# ctrl-t: the dark theme; then the theme button back to light
+
+# Switch to dark theme with Ctrl+T, then back to light theme with the toolbar button.
 key ctrl-t
 frame
 shot 07-dark.png
 click 742 24
 frame
 shot 08-light.png
-# delete the first note: the dialog, cancelled with escape, then confirmed
+
+# Select the first note.
 click 80 103
 frame
 shot 09-select-first.png
+
+# Open the delete confirmation dialog and dismiss it with Escape.
 click 247 219
 frame
 shot 10-dialog.png
 key escape
 frame
 shot 11-cancelled.png
+
+# Reopen the delete dialog and dismiss it using the Cancel button.
 click 247 219
 frame
 shot 12-dialog-again.png
-# the dialog's Cancel button (525,153), then the dialog again and its OK button (587,153)
 click 525 153
 frame
 shot 13-cancel-button.png
+
+# Reopen the delete dialog and confirm deletion.
 click 247 219
 frame
 click 587 153
 frame
 shot 14-deleted.png
-# the File menu's "Delete note…" (64,125), confirmed
+
+# Delete the next note through the app menu and confirm.
 click 30 24
 frame
 click 64 125
@@ -67,17 +76,16 @@ shot 15-menu-delete-dialog.png
 click 587 153
 frame
 shot 16-menu-deleted.png
-# the dock's divider dragged to the right, then back to the left (the kit's skin puts the handle
-# inside the left dock, the 5 px before its edge at x = 200)
+
+# Drag the dock splitter right (wider sidebar), then back left (narrower sidebar).
 drag 198 300 290 300
 frame
 shot 17-dock-wider.png
 drag 288 300 160 300
 frame
 shot 18-dock-narrower.png
-# a drag leaves nothing focused (ctrl-t would go nowhere, in both apps): the first row is clicked,
-# then ctrl-t: dark. With the dock at 160 the Delete button is at 207,219; every note deleted: the
-# editor's empty state and the menu's disabled item
+
+# Return to dark mode and delete two notes, then the final note to reach the empty state.
 click 80 103
 key ctrl-t
 frame
@@ -92,14 +100,16 @@ click 207 219
 click 587 153
 frame
 shot 21-empty.png
+
+# Open the menu to confirm Delete is disabled when empty, then close it with Escape.
 click 30 24
 frame
 shot 22-menu-disabled.png
 key escape
 frame
 shot 23-menu-closed.png
-# ctrl-n with nothing focused (the focused input went with the last note) makes a note: both apps
-# hear their shortcuts app-wide (gk.shortcut); a click into the list and ctrl-n make one more
+
+# Confirm Ctrl+N still works from the empty state and after clicking the empty sidebar area.
 key ctrl-n
 frame
 shot 24-ctrl-n-after-empty.png

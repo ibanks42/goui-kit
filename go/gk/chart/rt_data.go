@@ -8,15 +8,18 @@ import (
 	"strings"
 )
 
-// Data is a slice of the app's rows, made by chart.NewData. The rows are copied into the tape when
-// a builder takes it; nothing keeps them.
+// Data wraps a Go slice of structs (or scalar values) as a columnar data table
+// for chart and plot builders. Exported struct fields become named columns
+// referenced by field name in chart builders and format templates.
 type Data struct {
 	rows reflect.Value
 	typ  reflect.Type
 	set  bool
 }
 
-// NewData makes a data table of a slice of rows, for a builder that takes Data.
+// NewData wraps rows as a chart Data table. Supported field types are signed
+// and unsigned integers, float32, float64, bool, string, fmt.Stringer,
+// gk.Color, gk.Hsla, and optional numbers (*T or gk.Option[T]).
 func NewData[T any](rows []T) Data {
 	return Data{reflect.ValueOf(rows), reflect.TypeFor[T](), true}
 }
@@ -28,7 +31,7 @@ const (
 	dataText  dataKind = 1
 	dataColor dataKind = 2
 	dataOpt   dataKind = 3
-	dataNum32 dataKind = 4 // a float32 field: sent as f32
+	dataNum32 dataKind = 4
 )
 
 var dataKindName = [...]string{"a number", "text", "a colour", "a number or nothing (gk.Option or a pointer)", "a number"}
@@ -45,7 +48,8 @@ var (
 	hslaType     = reflect.TypeFor[gk.Hsla]()
 )
 
-// dataColKind is the kind of a column of Go type t (ok false: none).
+// dataColKind classifies a Go reflect.Type into one of the wire column kinds
+// understood by the Rust chart data decoder.
 func dataColKind(t reflect.Type) (dataKind, bool) {
 	if t == colorType || t == hslaType {
 		return dataColor, true
@@ -75,8 +79,11 @@ func dataColKind(t reflect.Type) (dataKind, bool) {
 	return 0, false
 }
 
+// Per-row-type reflection cache avoiding repeated struct field inspection each frame.
 var dataColsCache = map[reflect.Type][]dataCol{}
 
+// dataCols returns the cached column schema for d, inspecting exported struct
+// fields or synthesizing a single "Value" column for scalar slices.
 func dataCols(d Data) []dataCol {
 	if !d.set {
 		rt.Stop("a zero chart.Data was given to a builder: make it with chart.NewData(rows)")
@@ -127,7 +134,9 @@ func dataNumOf(v reflect.Value) float64 {
 	return 0
 }
 
-// The tables given to the nodes of the build in progress, for the field and format checks.
+// dataNode remembers which Data schema was attached to a chart node during the
+// current view build so chained column and template builders validate column
+// names and types immediately at the Go call site.
 type dataNode struct {
 	serial, node uint32
 	d            Data
@@ -135,9 +144,8 @@ type dataNode struct {
 
 var dataNodes []dataNode
 
-// putData writes a data table: u16 columns, (u8 kind, str name) each, u32 rows, then the rows one
-// after the other, each column's value in its kind (num f64, num32 f32, text str, colour as
-// putColor, opt u8 presence and f64).
+// putData encodes d's column headers and row cells onto o and associates d's
+// row type with the active tape node for subsequent putField/putFormat checks.
 func putData(o *rt.Tape, d Data) {
 	cols := dataCols(d)
 	n := d.rows.Len()
@@ -201,7 +209,6 @@ func putData(o *rt.Tape, d Data) {
 	}
 }
 
-// dataOfCur is the table the node being written was given, if it was given one already.
 func dataOfCur() (Data, bool) {
 	if !rt.Vb.Active {
 		return Data{}, false
@@ -231,8 +238,8 @@ func dataNames(d Data) string {
 	return strings.Join(names, ", ")
 }
 
-// putField writes the name of the column a field builder reads, checked against the node's table
-// when it has one: the column must exist and be of a kind the builder can use.
+// putField checks that column name exists on the active node's Data schema and
+// matches the expected kind before encoding name onto o.
 func putField(o *rt.Tape, name string, want dataKind) {
 	if d, ok := dataOfCur(); ok {
 		c, found := dataFind(d, name)
@@ -248,8 +255,9 @@ func putField(o *rt.Tape, name string, want dataKind) {
 	o.Str(name)
 }
 
-// putFormat writes a template, checked: braces close, a number's index is one the closure has
-// (nums), a column is one of the node's table and the closure has a row to read it from.
+// putFormat validates placeholder braces, numeric indices (0..nums-1), format
+// specifiers ("", ",", ".N", ",.N"), and optional row column names before
+// encoding template onto o.
 func putFormat(o *rt.Tape, template string, nums int, row bool) {
 	d, have := dataOfCur()
 	next := 0
@@ -327,27 +335,18 @@ func dataSpecOK(spec string) bool {
 	return true
 }
 
-// Plot is a plot described as a list of parts: an axis, a grid, the kit's shapes over the app's
-// rows, and the binding's own paths and quads, painted in this order in the plot's bounds, which
-// fill its parent. It stands where a Rust app implements the kit's Plot trait and paints each part
-// (and calls gpui's paint_path and paint_quad).
-//
-//	chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(line),
-//		gk.NewPlotArea(points, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
-//		chart.NewPlotLine(points, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
+// Plot builds an interactive canvas element composed of one or more plot parts.
 func Plot(parts ...gk.PlotPart) gk.Element { return PlotWith(PlotOptions{}, parts...) }
 
-// PlotOptions answer the kit's Plot trait for a described plot: ID keeps the plot's state across
-// frames and opts in to appear motion and hover (Plot::id), NotInteractive keeps that state without
-// hover tracking (Plot::interactive), Appear draws the plot in again whenever it changes
-// (Plot::appear_generation; 0 is none).
+// PlotOptions configures identity, interactivity, and appear-animation timing
+// for PlotWith.
 type PlotOptions struct {
-	ID             gk.ID // nil: none
+	ID             gk.ID
 	NotInteractive bool
 	Appear         uint64
 }
 
-// PlotWith is chart.Plot with options: gk.PlotWith(gk.PlotOptions{ID: "sales", Appear: 2}, parts...).
+// PlotWith builds a plot element from parts using the settings in opts.
 func PlotWith(opts PlotOptions, parts ...gk.PlotPart) gk.Element {
 	n := rt.NewNode(rt.NPlot)
 	o := rt.NodeArgs(n)
@@ -369,18 +368,16 @@ func PlotWith(opts PlotOptions, parts ...gk.PlotPart) gk.Element {
 	return rt.ValueEl{ElCore: rt.MkElCore(n)}
 }
 
-// PlotPath is a path a plot paints (node PLOT_PATH): a polyline stroked at a width, or a polygon
-// filled, in a colour or a gradient (gpui's PathBuilder and paint_path). Points are pixels from the
-// plot's top left.
+// PlotPath is a polyline or filled polygon plot part accepted by Plot.
 type PlotPath struct{ rt.ValPlotPart }
 
-// NewPlotLine is a polyline through points, stroked width pixels wide with fill (a colour or a
-// gk.LinearGradient). Fewer than two points paint nothing.
+// NewPlotLine creates a stroked polyline PlotPath through points with stroke
+// width and fill.
 func NewPlotLine(points [][2]float32, width float32, fill gk.Fill) PlotPath {
 	return plotPath(0, width, points, fill)
 }
 
-// NewPlotArea is the polygon through points, closed back to the first, filled with fill.
+// NewPlotArea creates a filled polygon PlotPath through points with fill.
 func NewPlotArea(points [][2]float32, fill gk.Fill) PlotPath {
 	return plotPath(1, 0, points, fill)
 }
@@ -399,19 +396,18 @@ func plotPath(kind uint8, width float32, points [][2]float32, fill gk.Fill) Plot
 	return PlotPath{ValPlotPart: rt.MkValPlotPart(n)}
 }
 
-// PlotQuad is a rectangle a plot paints (node PLOT_QUAD; gpui's paint_quad): its bounds in pixels
-// from the plot's top left, a fill (a colour or a gradient), round corners and a border.
+// PlotQuad is a styled rectangle plot part accepted by Plot.
 type PlotQuad struct{ rt.ValPlotPart }
 
-// QuadStyle is a quad's corners and border; the zero value is square and without a border.
+// QuadStyle configures optional rounded corners and border styling for NewPlotQuad.
 type QuadStyle struct {
 	CornerRadius float32
 	BorderWidth  float32
 	BorderColor  gk.Color
 }
 
-// NewPlotQuad is the rectangle x, y, width by height, filled with fill, with a style's corners
-// and border: gk.NewPlotQuad(10, 10, 4, 4, theme.Primary, gk.QuadStyle{CornerRadius: 2}).
+// NewPlotQuad creates a rectangle plot part at (x, y) with the given size,
+// fill, and border/corner style.
 func NewPlotQuad(x, y, width, height float32, fill gk.Fill, style QuadStyle) PlotQuad {
 	n := rt.NewValue(rt.NPlotQuad)
 	o := rt.NodeArgs(n)

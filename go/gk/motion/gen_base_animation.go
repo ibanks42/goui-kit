@@ -11,7 +11,7 @@ import (
 // EffectTransition is gpui_kit::base::animation::EffectTransition.
 type EffectTransition struct{ rt.Val }
 
-// NewEffectTransition is <gpui_kit::base::animation::EffectTransition>::new.
+// NewEffectTransition calls <gpui_kit::base::animation::EffectTransition>::new.
 func NewEffectTransition(duration time.Duration) EffectTransition {
 	n := rt.NewValue(441)
 	o := rt.NodeArgs(n)
@@ -21,7 +21,7 @@ func NewEffectTransition(duration time.Duration) EffectTransition {
 
 // Set the easing function.
 //
-// Ease is <gpui_kit::base::animation::EffectTransition>::ease.
+// Ease calls <gpui_kit::base::animation::EffectTransition>::ease.
 func (e EffectTransition) Ease(easing string) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutExpr(o, easing, 1)
@@ -30,7 +30,7 @@ func (e EffectTransition) Ease(easing string) EffectTransition {
 
 // Animate opacity from `from` to `to`.
 //
-// Fade is <gpui_kit::base::animation::EffectTransition>::fade.
+// Fade calls <gpui_kit::base::animation::EffectTransition>::fade.
 func (e EffectTransition) Fade(from float32, to float32) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F32(from)
@@ -40,7 +40,7 @@ func (e EffectTransition) Fade(from float32, to float32) EffectTransition {
 
 // Animate height from `from` to `to`.
 //
-// Height is <gpui_kit::base::animation::EffectTransition>::height.
+// Height calls <gpui_kit::base::animation::EffectTransition>::height.
 func (e EffectTransition) Height(from float32, to float32) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.F32(from)
@@ -50,7 +50,7 @@ func (e EffectTransition) Height(from float32, to float32) EffectTransition {
 
 // Animate horizontal offset from `from` to `to`.
 //
-// SlideX is <gpui_kit::base::animation::EffectTransition>::slide_x.
+// SlideX calls <gpui_kit::base::animation::EffectTransition>::slide_x.
 func (e EffectTransition) SlideX(from float32, to float32) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(from)
@@ -60,7 +60,7 @@ func (e EffectTransition) SlideX(from float32, to float32) EffectTransition {
 
 // Animate vertical offset from `from` to `to`.
 //
-// SlideY is <gpui_kit::base::animation::EffectTransition>::slide_y.
+// SlideY calls <gpui_kit::base::animation::EffectTransition>::slide_y.
 func (e EffectTransition) SlideY(from float32, to float32) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(from)
@@ -70,7 +70,7 @@ func (e EffectTransition) SlideY(from float32, to float32) EffectTransition {
 
 // Animate width from `from` to `to`.
 //
-// Width is <gpui_kit::base::animation::EffectTransition>::width.
+// Width calls <gpui_kit::base::animation::EffectTransition>::width.
 func (e EffectTransition) Width(from float32, to float32) EffectTransition {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.F32(from)

@@ -1,11 +1,7 @@
-//! ref-tutorial: the Rust reference for the tutorial's last step (docs/tutorial-go/09-background,
-//! docs/GETTING-STARTED-GO.md), written the way a Rust GPUI-kit app is written, call for call with
-//! the Go app: a shopping list with a list of custom rows (a ListDelegate), an input, an edit dialog
-//! opened with a closure, shortcuts and a menu, a light and a dark theme, and prices looked up on a
-//! thread that posts the answer to the UI thread.
-//!
-//!   ref-tutorial                  a real window
-//!   ref-tutorial --script FILE    offscreen, driven by a gk-meter script (diag build)
+//! Pure-Rust grocery list tutorial reference app demonstrating text input,
+//! list items with inline checkboxes and delete buttons, edit dialogs,
+//! dropdown menus, theme toggling, and simulated asynchronous price lookups.
+
 use futures::channel::oneshot;
 use gpui_kit::base::{h_flex, v_flex};
 use gpui_kit::component::button::{Button, ButtonVariants};
@@ -27,8 +23,7 @@ use std::time::Duration;
 
 gpui_kit::actions!(groceries, [NewItem, ClearBought, ToggleTheme]);
 
-/// An app-wide listener for action A: it runs `f` on the app in its window once the key's dispatch
-/// is over (as the Go app's gk.Shortcut does).
+/// Registers a global action handler that defers updating `Groceries` in `wh`.
 fn shortcut<A: Action>(cx: &mut App, app: WeakEntity<Groceries>, wh: AnyWindowHandle, f: fn(&mut Groceries, &mut Window, &mut Context<Groceries>)) {
     cx.on_action(move |_: &A, cx: &mut App| {
         let app = app.clone();
@@ -48,7 +43,8 @@ struct Item {
     name: String,
     amount: i64,
     bought: bool,
-    price: f64, // 0 until the price lookup has answered
+    /// Unit price populated asynchronously by `look_up_price` (`0.0` while pending).
+    price: f64,
 }
 
 type Shared = Rc<RefCell<Vec<Item>>>;
@@ -82,7 +78,7 @@ impl ListDelegate for ItemRows {
                     .gap_2()
                     .items_center()
                     .child(Checkbox::new(("bought", row)).checked(it.bought).on_click(move |bought, _, cx| {
-                        cx.stop_propagation(); // the row under the checkbox is not clicked as well
+                        cx.stop_propagation();
                         let bought = *bought;
                         app.update(cx, |a, cx| {
                             a.items.borrow_mut()[row].bought = bought;
@@ -110,7 +106,7 @@ impl ListDelegate for ItemRows {
 
 struct Groceries {
     items: Shared,
-    editing: usize, // the item the dialog edits
+    editing: usize,
     edit_amount: i64,
     dark: bool,
     new_name: Entity<InputState>,
@@ -135,7 +131,7 @@ impl Groceries {
             }),
             cx.subscribe_in(&list, window, |this, _, e: &ListEvent, window, cx| {
                 if let ListEvent::Confirm(ix) = e {
-                    this.open_editor(ix.row, window, cx); // a click on a row, or Enter
+                    this.open_editor(ix.row, window, cx);
                 }
             }),
         ];
@@ -160,7 +156,6 @@ impl Groceries {
         app
     }
 
-    /// Every view and the list drawn again (the Go app's gk.Refresh).
     fn refresh(&mut self, cx: &mut Context<Self>) {
         self.list.update(cx, |_, cx| cx.notify());
         cx.notify();
@@ -270,7 +265,7 @@ impl Groceries {
     fn save_edit(&mut self, window: &mut Window, cx: &mut Context<Self>) -> bool {
         let name = self.edit_name.read(cx).value().trim().to_string();
         if name.is_empty() {
-            return false; // keep the dialog open
+            return false;
         }
         let renamed = {
             let mut items = self.items.borrow_mut();
@@ -287,7 +282,7 @@ impl Groceries {
             self.look_up_price(name, true, window, cx);
         }
         self.refresh(cx);
-        true // close the dialog
+        true
     }
 
     fn switch_theme(&mut self, window: &mut Window, cx: &mut Context<Self>) {
@@ -296,7 +291,6 @@ impl Groceries {
         self.refresh(cx);
     }
 
-    /// Asks a slow price service on a thread; the answer comes back on the UI thread.
     fn look_up_price(&mut self, name: String, announce: bool, window: &mut Window, cx: &mut Context<Self>) {
         let (tx, rx) = oneshot::channel();
         let n = name.len();

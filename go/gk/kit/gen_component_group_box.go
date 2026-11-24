@@ -12,7 +12,7 @@ type GroupBoxEl struct{ rt.ElAnimatableElement }
 
 // Create a new GroupBox.
 //
-// GroupBox is <gpui_kit::component::group_box::GroupBox>::new.
+// GroupBox calls <gpui_kit::component::group_box::GroupBox>::new.
 func GroupBox(st ...gk.Style) GroupBoxEl {
 	rt.UseComponentGroupBox()
 	n := rt.NewNode(672)
@@ -22,7 +22,7 @@ func GroupBox(st ...gk.Style) GroupBoxEl {
 
 // Set the style of the content of the group box to override the default style, default is None.
 //
-// ContentStyle is <gpui_kit::component::group_box::GroupBox>::content_style.
+// ContentStyle calls <gpui_kit::component::group_box::GroupBox>::content_style.
 func (e GroupBoxEl) ContentStyle(style gk.StyleRefinement) GroupBoxEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -34,7 +34,7 @@ func (e GroupBoxEl) ContentStyle(style gk.StyleRefinement) GroupBoxEl {
 // The footer shares the title's leading edge, sits 8 px under the surface, and renders as small
 // muted text like a description.
 //
-// Footer is <gpui_kit::component::group_box::GroupBox>::footer.
+// Footer calls <gpui_kit::component::group_box::GroupBox>::footer.
 func (e GroupBoxEl) Footer(footer gk.Element) GroupBoxEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Take(footer))
@@ -43,7 +43,7 @@ func (e GroupBoxEl) Footer(footer gk.Element) GroupBoxEl {
 
 // Set the id of the group box, default is None.
 //
-// ID is <gpui_kit::component::group_box::GroupBox>::id.
+// ID calls <gpui_kit::component::group_box::GroupBox>::id.
 func (e GroupBoxEl) ID(id gk.ID) GroupBoxEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	rt.PutID(o, id)
@@ -52,7 +52,7 @@ func (e GroupBoxEl) ID(id gk.ID) GroupBoxEl {
 
 // Set the title of the group box, default is None.
 //
-// Title is <gpui_kit::component::group_box::GroupBox>::title.
+// Title calls <gpui_kit::component::group_box::GroupBox>::title.
 func (e GroupBoxEl) Title(title gk.Element) GroupBoxEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Take(title))
@@ -61,7 +61,7 @@ func (e GroupBoxEl) Title(title gk.Element) GroupBoxEl {
 
 // Set the style of the title of the group box to override the default style, default is None.
 //
-// TitleStyle is <gpui_kit::component::group_box::GroupBox>::title_style.
+// TitleStyle calls <gpui_kit::component::group_box::GroupBox>::title_style.
 func (e GroupBoxEl) TitleStyle(style gk.StyleRefinement) GroupBoxEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -70,17 +70,21 @@ func (e GroupBoxEl) TitleStyle(style gk.StyleRefinement) GroupBoxEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e GroupBoxEl) PopoverStyle() GroupBoxEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e GroupBoxEl) RoundedFullStyle() GroupBoxEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -89,16 +93,18 @@ func (e GroupBoxEl) RoundedFullStyle() GroupBoxEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e GroupBoxEl) FocusRingStyle() GroupBoxEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -111,24 +117,32 @@ func (e GroupBoxEl) FocusRingStyle() GroupBoxEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e GroupBoxEl) KeepTextSelection(id gk.ID) GroupBoxEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e GroupBoxEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) GroupBoxEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e GroupBoxEl) BorderE(width gk.Length) GroupBoxEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e GroupBoxEl) BorderS(width gk.Length) GroupBoxEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -136,121 +150,163 @@ func (e GroupBoxEl) BorderS(width gk.Length) GroupBoxEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e GroupBoxEl) FlexRowDir() GroupBoxEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e GroupBoxEl) InsetE(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e GroupBoxEl) InsetS(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e GroupBoxEl) JustifyFlexEnd() GroupBoxEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e GroupBoxEl) JustifyFlexStart() GroupBoxEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e GroupBoxEl) Me(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e GroupBoxEl) Ms(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e GroupBoxEl) Pe(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e GroupBoxEl) Ps(length gk.Length) GroupBoxEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e GroupBoxEl) RoundedE(radius gk.Length) GroupBoxEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e GroupBoxEl) RoundedS(radius gk.Length) GroupBoxEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e GroupBoxEl) TextEnd() GroupBoxEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e GroupBoxEl) TextStart() GroupBoxEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e GroupBoxEl) CornerRadii(radius gk.Corners) GroupBoxEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e GroupBoxEl) DebugBlue() GroupBoxEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e GroupBoxEl) DebugFocused(focusHandle gk.FocusHandle) GroupBoxEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e GroupBoxEl) DebugGreen() GroupBoxEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e GroupBoxEl) DebugPink() GroupBoxEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e GroupBoxEl) DebugRed() GroupBoxEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e GroupBoxEl) DebugYellow() GroupBoxEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e GroupBoxEl) FontBlack() GroupBoxEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e GroupBoxEl) FontBold() GroupBoxEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e GroupBoxEl) FontExtrabold() GroupBoxEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e GroupBoxEl) FontExtralight() GroupBoxEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e GroupBoxEl) FontLight() GroupBoxEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e GroupBoxEl) FontMedium() GroupBoxEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e GroupBoxEl) FontNormal() GroupBoxEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e GroupBoxEl) FontSemibold() GroupBoxEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e GroupBoxEl) FontThin() GroupBoxEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -259,18 +315,23 @@ func (e GroupBoxEl) FontThin() GroupBoxEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e GroupBoxEl) HFlex() GroupBoxEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e GroupBoxEl) Margins(margins gk.EdgesInto) GroupBoxEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e GroupBoxEl) Paddings(paddings gk.EdgesInto) GroupBoxEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e GroupBoxEl) RefineStyle(style gk.StyleRefinement) GroupBoxEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -280,38 +341,51 @@ func (e GroupBoxEl) RefineStyle(style gk.StyleRefinement) GroupBoxEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e GroupBoxEl) VFlex() GroupBoxEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e GroupBoxEl) Text(s string) GroupBoxEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e GroupBoxEl) ChildView(v gk.View) GroupBoxEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e GroupBoxEl) Child(child gk.Element) GroupBoxEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e GroupBoxEl) Children(children ...gk.Element) GroupBoxEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e GroupBoxEl) Style(st ...gk.Style) GroupBoxEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e GroupBoxEl) AspectRatio(ratio float32) GroupBoxEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e GroupBoxEl) Bg(fill gk.Fill) GroupBoxEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e GroupBoxEl) Border(length gk.Length) GroupBoxEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -319,12 +393,16 @@ func (e GroupBoxEl) Border(length gk.Length) GroupBoxEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e GroupBoxEl) BorderB(length gk.Length) GroupBoxEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e GroupBoxEl) BorderColor(borderColor gk.Color) GroupBoxEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -332,6 +410,8 @@ func (e GroupBoxEl) BorderColor(borderColor gk.Color) GroupBoxEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e GroupBoxEl) BorderL(length gk.Length) GroupBoxEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -339,6 +419,8 @@ func (e GroupBoxEl) BorderL(length gk.Length) GroupBoxEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e GroupBoxEl) BorderR(length gk.Length) GroupBoxEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -346,6 +428,8 @@ func (e GroupBoxEl) BorderR(length gk.Length) GroupBoxEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e GroupBoxEl) BorderT(length gk.Length) GroupBoxEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -353,6 +437,8 @@ func (e GroupBoxEl) BorderT(length gk.Length) GroupBoxEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e GroupBoxEl) BorderX(length gk.Length) GroupBoxEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -360,6 +446,8 @@ func (e GroupBoxEl) BorderX(length gk.Length) GroupBoxEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e GroupBoxEl) BorderY(length gk.Length) GroupBoxEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -367,21 +455,31 @@ func (e GroupBoxEl) BorderY(length gk.Length) GroupBoxEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e GroupBoxEl) Bottom(length gk.Length) GroupBoxEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e GroupBoxEl) ColEnd(end int16) GroupBoxEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e GroupBoxEl) ColSpan(span uint16) GroupBoxEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e GroupBoxEl) ColStart(start int16) GroupBoxEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e GroupBoxEl) Cursor(cursor gk.CursorStyle) GroupBoxEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -389,30 +487,42 @@ func (e GroupBoxEl) Cursor(cursor gk.CursorStyle) GroupBoxEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e GroupBoxEl) FlexBasis(basis gk.Length) GroupBoxEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e GroupBoxEl) FlexGrow(grow float32) GroupBoxEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e GroupBoxEl) FlexShrink(shrink float32) GroupBoxEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e GroupBoxEl) Font(font gk.Font) GroupBoxEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e GroupBoxEl) FontFamily(familyName string) GroupBoxEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e GroupBoxEl) FontFeatures(features gk.FontFeatures) GroupBoxEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -421,26 +531,38 @@ func (e GroupBoxEl) FontFeatures(features gk.FontFeatures) GroupBoxEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e GroupBoxEl) FontWeight(weight gk.FontWeight) GroupBoxEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e GroupBoxEl) Gap(length gk.Length) GroupBoxEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e GroupBoxEl) GapX(length gk.Length) GroupBoxEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e GroupBoxEl) GapY(length gk.Length) GroupBoxEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e GroupBoxEl) GridCols(cols uint16) GroupBoxEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e GroupBoxEl) GridColsMaxContent(cols uint16) GroupBoxEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -448,15 +570,21 @@ func (e GroupBoxEl) GridColsMaxContent(cols uint16) GroupBoxEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e GroupBoxEl) GridColsMinContent(cols uint16) GroupBoxEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e GroupBoxEl) GridRows(rows uint16) GroupBoxEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e GroupBoxEl) GridRowsMaxContent(rows uint16) GroupBoxEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -464,121 +592,179 @@ func (e GroupBoxEl) GridRowsMaxContent(rows uint16) GroupBoxEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e GroupBoxEl) GridRowsMinContent(rows uint16) GroupBoxEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e GroupBoxEl) H(length gk.Length) GroupBoxEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e GroupBoxEl) Inset(length gk.Length) GroupBoxEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e GroupBoxEl) Left(length gk.Length) GroupBoxEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e GroupBoxEl) LineClamp(lines int) GroupBoxEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e GroupBoxEl) LineHeight(lineHeight gk.Length) GroupBoxEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e GroupBoxEl) M(length gk.Length) GroupBoxEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e GroupBoxEl) MaxH(length gk.Length) GroupBoxEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e GroupBoxEl) MaxSize(length gk.Length) GroupBoxEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e GroupBoxEl) MaxW(length gk.Length) GroupBoxEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e GroupBoxEl) Mb(length gk.Length) GroupBoxEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e GroupBoxEl) MinH(length gk.Length) GroupBoxEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e GroupBoxEl) MinSize(length gk.Length) GroupBoxEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e GroupBoxEl) MinW(length gk.Length) GroupBoxEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e GroupBoxEl) Ml(length gk.Length) GroupBoxEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e GroupBoxEl) Mr(length gk.Length) GroupBoxEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e GroupBoxEl) Mt(length gk.Length) GroupBoxEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e GroupBoxEl) Mx(length gk.Length) GroupBoxEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e GroupBoxEl) My(length gk.Length) GroupBoxEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e GroupBoxEl) Opacity(opacity float32) GroupBoxEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e GroupBoxEl) P(length gk.Length) GroupBoxEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e GroupBoxEl) Pb(length gk.Length) GroupBoxEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e GroupBoxEl) Pl(length gk.Length) GroupBoxEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e GroupBoxEl) Pr(length gk.Length) GroupBoxEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e GroupBoxEl) Pt(length gk.Length) GroupBoxEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e GroupBoxEl) Px(length gk.Length) GroupBoxEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e GroupBoxEl) Py(length gk.Length) GroupBoxEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e GroupBoxEl) Right(length gk.Length) GroupBoxEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e GroupBoxEl) Rounded(length gk.Length) GroupBoxEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -586,6 +772,8 @@ func (e GroupBoxEl) Rounded(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e GroupBoxEl) RoundedB(length gk.Length) GroupBoxEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -593,6 +781,8 @@ func (e GroupBoxEl) RoundedB(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e GroupBoxEl) RoundedBl(length gk.Length) GroupBoxEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -600,6 +790,8 @@ func (e GroupBoxEl) RoundedBl(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e GroupBoxEl) RoundedBr(length gk.Length) GroupBoxEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -607,6 +799,8 @@ func (e GroupBoxEl) RoundedBr(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e GroupBoxEl) RoundedL(length gk.Length) GroupBoxEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -614,6 +808,8 @@ func (e GroupBoxEl) RoundedL(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e GroupBoxEl) RoundedR(length gk.Length) GroupBoxEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -621,6 +817,8 @@ func (e GroupBoxEl) RoundedR(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e GroupBoxEl) RoundedT(length gk.Length) GroupBoxEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -628,6 +826,8 @@ func (e GroupBoxEl) RoundedT(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e GroupBoxEl) RoundedTl(length gk.Length) GroupBoxEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -635,39 +835,55 @@ func (e GroupBoxEl) RoundedTl(length gk.Length) GroupBoxEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e GroupBoxEl) RoundedTr(length gk.Length) GroupBoxEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e GroupBoxEl) RowEnd(end int16) GroupBoxEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e GroupBoxEl) RowSpan(span uint16) GroupBoxEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e GroupBoxEl) RowStart(start int16) GroupBoxEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e GroupBoxEl) ScrollbarWidth(width gk.Length) GroupBoxEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e GroupBoxEl) Shadow(shadows []gk.BoxShadow) GroupBoxEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e GroupBoxEl) Size(length gk.Length) GroupBoxEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e GroupBoxEl) TextAlign(align gk.TextAlign) GroupBoxEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -676,23 +892,31 @@ func (e GroupBoxEl) TextAlign(align gk.TextAlign) GroupBoxEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e GroupBoxEl) TextBg(bg gk.Color) GroupBoxEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e GroupBoxEl) TextColor(color gk.Color) GroupBoxEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e GroupBoxEl) TextDecorationColor(color gk.Color) GroupBoxEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e GroupBoxEl) TextOverflow(overflow gk.TextOverflow) GroupBoxEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -701,6 +925,8 @@ func (e GroupBoxEl) TextOverflow(overflow gk.TextOverflow) GroupBoxEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e GroupBoxEl) TextSize(size gk.Length) GroupBoxEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -708,21 +934,33 @@ func (e GroupBoxEl) TextSize(size gk.Length) GroupBoxEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e GroupBoxEl) Top(length gk.Length) GroupBoxEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e GroupBoxEl) W(length gk.Length) GroupBoxEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Set to use `Fill` to GroupBox.
+//
+// Fill calls <E as gpui_kit::component::group_box::GroupBoxVariants>::fill.
 func (e GroupBoxEl) Fill() GroupBoxEl { tGroupBoxVariantsFill(rt.N(e.Core)); return e }
 
 // Set to use `Normal` to GroupBox.
+//
+// Normal calls <E as gpui_kit::component::group_box::GroupBoxVariants>::normal.
 func (e GroupBoxEl) Normal() GroupBoxEl { tGroupBoxVariantsNormal(rt.N(e.Core)); return e }
 
 // Set to use `Outline` to GroupBox.
+//
+// Outline calls <E as gpui_kit::component::group_box::GroupBoxVariants>::outline.
 func (e GroupBoxEl) Outline() GroupBoxEl { tGroupBoxVariantsOutline(rt.N(e.Core)); return e }
 
 // Set the variant of the `GroupBoxEl`.
+//
+// WithVariant calls <E as gpui_kit::component::group_box::GroupBoxVariants>::with_variant.
 func (e GroupBoxEl) WithVariant(variant GroupBoxVariant) GroupBoxEl {
 	tGroupBoxVariantsWithVariant(rt.N(e.Core), variant)
 	return e

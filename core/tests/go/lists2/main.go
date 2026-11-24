@@ -1,18 +1,6 @@
-// lists2: the protocol tests of the lists and editor families' searchable lists and table delegate
-// data (docs/PROTOCOLS.md sections 9.9 and 9.10), the port of core/tests/lists2: the kit's Select
-// and Combobox over the library's search delegate (items as data, rows, header rows, search
-// requests), and a table's texts, row labels and looks. Offscreen under a gk-meter script (the
-// diag library). Each mode prints lines core/tests/go/run-lists2.sh checks, with the exit code.
-//
-//	GK_PROTO=select | combobox | search | search-requests | rows | table | bad-source | bad-headers | released
-//	         | mask | validate | text | display-map | providers | expr | bad-expr
-//	         | drive | kept | status-colors | ask | diff   (docs/PROTOCOLS.md 9.13 and 9.14)
-//	         | will-change                                 (docs/PROTOCOLS.md 11.25)
-//	         | ctx-token | lend | highlight | languages | bad-lend | small   (round4.go)
-//
-// Most modes are in modes.go and round4.go, which register their init, step and view from init().
-// There is no bad-ctx mode (a row's context read for a row no closure drew): an item function is
-// handed its context's values (gk.Items), so there is no read of a context to misuse.
+// Command lists2 exercises searchable Select/Combobox delegates, styled tables,
+// input masks/validators, LSP providers, math expressions, Ask caches, diff
+// parsing, inline tokens, state lending, and syntax highlighters.
 package main
 
 import (
@@ -29,6 +17,7 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
+// Sample fruit and vegetable items shared across select/combobox modes.
 var fruit = []gk.SearchItem{
 	{Value: "apple", Title: "Apple"},
 	{Value: "banana", Title: "Banana", Keywords: "yellow"},
@@ -54,26 +43,24 @@ type App struct {
 	rows     map[uint64]int
 	requests int
 	in1, in2 editor.InputState
-	checks   int // validator calls
+	checks   int
 	ed       editor.State
-	prov     gk.RowSource // the editor's providers' requests
+	prov     gk.RowSource
 	asked    map[string]int
-	// drive: a list, a table and a tree selected and scrolled from code
+
 	list     gktable.ListState
 	tree     gktable.TreeState
 	treeRows gk.RowSource
-	drawn    map[string]int // "list 500", "table 700", "tree 150": rows described
+	drawn    map[string]int
 	kept0    int
 }
 
-// What init, the step button and the view do for a mode of modes.go and round4.go.
 var (
 	modeInit = map[string]func(a *App, cx *gk.Cx){}
 	modeStep = map[string]func(a *App, cx *gk.Cx){}
 	modeView = map[string]func(a *App, cx *gk.Cx) gk.Element{}
 )
 
-// The modes whose code is all here; the others register.
 var ready = map[string]bool{
 	"select": true, "search": true, "search-requests": true, "rows": true, "bad-source": true, "bad-headers": true,
 	"released": true, "mask": true, "validate": true, "text": true, "status-colors": true,
@@ -83,7 +70,6 @@ func key(section, row int) uint64 {
 	return uint64(section)<<32 | uint64(uint32(row))
 }
 
-// strs prints strings in the form the checks expect: ["a", "b"].
 func strs(vs []string) string {
 	q := make([]string, len(vs))
 	for i, v := range vs {
@@ -91,8 +77,6 @@ func strs(vs []string) string {
 	}
 	return "[" + strings.Join(q, ", ") + "]"
 }
-
-// --- events -------------------------------------------------------------------------------------
 
 func (a *App) selectEvent(cx *gk.Cx, e gktable.SelectEvent) {
 	a.events++
@@ -112,7 +96,7 @@ func (a *App) comboEvent(cx *gk.Cx, e gktable.ComboboxEvent) {
 	}
 }
 
-// search-requests: the app answers a query with items of its own.
+// searchRequest handles asynchronous SearchRequests by replacing the source's items and answering.
 func (a *App) searchRequest(cx *gk.Cx, e gk.SearchRequest) {
 	a.requests++
 	fmt.Printf("lists2 search request id=%d query=%q\n", e.ID, e.Query)
@@ -122,7 +106,7 @@ func (a *App) searchRequest(cx *gk.Cx, e gk.SearchRequest) {
 	gk.AnswerSearch(cx, a.src, e.ID)
 }
 
-// rows: an item's row and a group's header row, each a view described once.
+// itemRow renders custom grouped rows and section headers for the `rows` and `released` modes.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.rows[key(at.Section, at.Row)]++
 	if at.Row == gktable.HeaderRow {
@@ -140,7 +124,6 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	return kit.Label(fmt.Sprintf("> %s", items[at.Row].Title))
 }
 
-// drive: rows that say which of them were described (drawn after a scroll from code).
 func (a *App) driveListRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	a.drawn[fmt.Sprintf("list %d", at.Row)]++
 	return gktable.ListItem(gk.Key("item", at.Row)).Child(kit.Label(fmt.Sprintf("item %d", at.Row)))
@@ -150,8 +133,14 @@ func (a *App) drawnRow(what string, row int) bool {
 	return a.drawn[fmt.Sprintf("%s %d", what, row)] > 0
 }
 
-// --- steps (the step button) ------------------------------------------------------------------
-
+// stepClicked drives multi-step verifications:
+//   - select: confirms SetSelectedValue("cherry", row 2), SetSelectedIndex(4 -> "mango"),
+//     SetItems re-indexing "mango" to row 0, and NoRow clearing selection.
+//   - released: releases the search source before opening the menu to prove misuse detection.
+//   - status-colors: verifies StatusColors semantic mappings (Created==Success, Deleted==Error)
+//     and default SyntaxColors lookup behavior.
+//   - mask / validate / text: prints formatted masked inputs ("123-456", "1,234,567"),
+//     validator-filtered value ("abc"), and selected substring ("world").
 func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 	a.step++
 	if f, ok := modeStep[a.mode]; ok {
@@ -171,7 +160,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 		case 3:
 			v, _ := a.sel.SelectedValue(cx).Get()
 			fmt.Printf("lists2 select set_selected_index value=%q\n", v)
-			// New items: mango stays (by value), the others go.
+
 			items := []gk.SearchItem{{Value: "mango", Title: "Mango"}, {Value: "plum", Title: "Plum"}}
 			gk.SetSearchItems(cx, a.src, items)
 			a.sel.SetItems(cx, a.src)
@@ -188,7 +177,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 		gk.Release(cx, a.src)
 		fmt.Printf("lists2 released source\n")
 	case "status-colors":
-		// A library object with no constructor but Default (PROTOCOLS.md 9.13): its reads.
+
 		sc := editor.NewStatusColorsDefault(cx)
 		e := sc.Error(cx)
 		fmt.Printf("lists2 status error=%+v warning=%+v\n", e, sc.Warning(cx))
@@ -203,7 +192,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 	case "mask":
 		switch a.step {
 		case 1:
-			// A mask the binding could not set before: the Number variant (a char separator).
+
 			a.in2.SetMaskPattern(cx, editor.MaskPatternNumber{Separator: gk.Some(','), Fraction: gk.Some(2)})
 		case 2:
 			fmt.Printf("lists2 mask pattern=%q number=%q\n", a.in1.Value(cx), a.in2.Value(cx))
@@ -216,13 +205,10 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 	}
 }
 
-// validate: refuses any text with an x in it (a handler kept by the state's builder).
 func (a *App) noX(cx *gk.Cx, text string) bool {
 	a.checks++
 	return !strings.Contains(text, "x")
 }
-
-// --- the views ----------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
 	if f, ok := modeInit[a.mode]; ok {
@@ -288,7 +274,7 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 		}
 	default:
 		if f, ok := modeView[a.mode]; ok {
-			body = f(a, cx) // ask, providers and the round-4 modes
+			body = f(a, cx)
 		} else {
 			body = gktable.Select(a.sel).Placeholder("Fruit").W(gk.Px(220))
 		}
@@ -303,13 +289,11 @@ func (a *App) start(cx *gk.Cx) {
 	gk.OpenWindow(cx, "lists2", 480, 360, a.root)
 }
 
-// Positions: the step button at (36, 30); the select or combobox trigger from (16, 56), 220 wide.
 const (
 	stepClick = "click 36 30\nframe\n"
 	openMenu  = "click 100 72\nframe\nframe\n"
 )
 
-// modeScript: the scripts of the round-4 modes (round4.go).
 var modeScript = map[string]func(a *App, sb *strings.Builder){}
 
 func main() {
@@ -326,15 +310,14 @@ func main() {
 	sb.WriteString("size 480 360\nframe\n")
 	switch a.mode {
 	case "select":
-		// Open the menu, Down to the first item, Enter confirms it; then the generated writes.
+
 		sb.WriteString(openMenu)
 		sb.WriteString("key down\nkey enter\nframe\n")
 		for range 5 {
 			sb.WriteString(stepClick)
 		}
 	case "search":
-		// Searchable: the query input has the focus; "an" leaves Banana and Mango, the first one
-		// under the cursor; Down and Enter take Mango.
+
 		sb.WriteString(openMenu)
 		sb.WriteString("type an\nframe\nframe\nkey down\nkey enter\nframe\n")
 	case "search-requests":
@@ -380,18 +363,17 @@ func main() {
 			sb.WriteString("frame\nframe\nframe\n")
 		}
 	case "expr":
-		// The increment buttons of both inputs, twice each.
+
 		sb.WriteString("click 183 72\nframe\nclick 183 72\nframe\nclick 183 112\nframe\nclick 183 112\nframe\n")
 		sb.WriteString(stepClick)
 	case "providers":
-		// Type, a trigger character, wait for the debounces, Enter takes the completion, ctrl-.
-		// asks for code actions and Enter performs the first.
+
 		sb.WriteString("click 200 100\ntype a\nframe\nadvance 500\nframe\ntype .\nframe\nframe\nadvance 500\nframe\nframe\n")
 		sb.WriteString("key enter\nframe\nkey ctrl-.\nframe\nframe\nadvance 200\nframe\nkey enter\nframe\nframe\nadvance 500\nframe\n")
 	case "ctx-token", "lend", "highlight", "languages", "bad-lend", "small":
 		modeScript[a.mode](a, &sb)
 	case "released":
-		// The source released, then the menu drawn: its rows cannot be drawn (exit 2).
+
 		sb.WriteString(stepClick)
 		sb.WriteString(openMenu)
 	}

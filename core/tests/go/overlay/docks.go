@@ -1,6 +1,3 @@
-// The modes of the dock's node ids, saved layouts, pane tree and renderer (PROTOCOLS.md 11.8, 11.9),
-// the nav stack's views, the toast manager on the library clock (11.10) and a fallible value call
-// (11.15): dock-ids, dock-bad-node, dock-layout, nav, render, render-bad-frame, toast, values.
 package main
 
 import (
@@ -17,10 +14,11 @@ import (
 	"gpuikit.dev/gk/s"
 )
 
-// What the pending modes keep whose types the package does not have yet.
+// ov holds dock-tree, navigation-stack, custom-renderer, and toast-manager
+// state shared across the extended overlay protocol modes.
 var ov struct {
 	node     dock.NodeID
-	saved    string // the first dump, printed
+	saved    string
 	builds   int
 	nav      base.NavStackState
 	pages    [2]*Body
@@ -40,7 +38,6 @@ var ov struct {
 	toggle   gk.Subscription
 }
 
-// Chrome is the view the renderer answers a dock's chrome with.
 type Chrome struct {
 	placement dock.Placement
 	open      bool
@@ -63,7 +60,6 @@ func init() {
 	roots["nav"] = navRoot
 }
 
-// dockPlacementName prints a DockPlacement as the checks expect (the variant's name).
 func dockPlacementName(p dock.Placement) string {
 	names := []string{"Center", "Left", "Bottom", "Right"}
 	if int(p) < len(names) {
@@ -72,7 +68,6 @@ func dockPlacementName(p dock.Placement) string {
 	return fmt.Sprint(uint16(p))
 }
 
-// joinText prints a slice in the form the checks expect: [200, 440].
 func joinText[T any](xs []T) string {
 	parts := make([]string, len(xs))
 	for i, x := range xs {
@@ -81,8 +76,9 @@ func joinText[T any](xs []T) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// --- PROTOCOLS.md 11.8: node ids, the tab group, a split, zoom by node -----------------
-
+// dockIDs proves PanelGroup, Context, and DockArea.Panel resolve identical
+// panel/node handles for a two-panel tab group, then splits panel 1 to the
+// right so dockIDsSplit can verify the new 3-node split tree.
 func dockIDs(a *App, cx *gk.Cx) {
 	g, ok := dock.PanelGroup(cx, a.panels[0])
 	fmt.Printf("overlay ids group=%v\n", ok)
@@ -97,10 +93,13 @@ func dockIDs(a *App, cx *gk.Cx) {
 		g.ActiveIx(cx), ctx.Node(cx) == ov.node, len(ctx.Panels(cx)), ctx.IsPanelClosable(cx, dock.PanelID(cx, a.panels[0])))
 	p, found := a.dock.Panel(cx, dock.PanelID(cx, a.panels[1])).Get()
 	fmt.Printf("overlay ids dock panel found=%v same=%v\n", found, found && p == a.panels[1])
-	// split the group: the second panel goes to the right of it, in a new group
+
 	a.dock.SplitAt(cx, ov.node, dock.PanelID(cx, a.panels[1]), gk.PlacementRight)
 }
 
+// dockIDsSplit proves SplitAt keeps panel 0 on the original node while moving
+// panel 1 to a new sibling node (3 nodes total, split root with 2 children),
+// then applies split sizes [200, 440] and zooms panel 1's group.
 func dockIDsSplit(a *App, cx *gk.Cx) {
 	tree, ok := a.dock.Layout(cx, dock.PlacementCenter).Get()
 	ids := tree.NodeIDs(cx)
@@ -120,7 +119,6 @@ func dockIDsSplit(a *App, cx *gk.Cx) {
 	a.dock.SetZoomedIn(cx, n2)
 }
 
-// panelStyleName prints a PanelStyle as the checks expect (the variant's name).
 func panelStyleName(p dock.PanelStyle) string {
 	switch p {
 	case dock.PanelStyleAuto:
@@ -131,6 +129,9 @@ func panelStyleName(p dock.PanelStyle) string {
 	return fmt.Sprint(uint16(p))
 }
 
+// dockIDsZoom proves ZoomedGroup reports the zoomed node ID, unzooms, updates
+// dock skin settings (PanelStyleTabBar, toggle hidden), and dumps the 2-child
+// split stack sizes.
 func dockIDsZoom(a *App, cx *gk.Cx) {
 	z, zoomed := a.dock.ZoomedGroup(cx).Get()
 	tree, _ := a.dock.Layout(cx, dock.PlacementCenter).Get()
@@ -148,11 +149,11 @@ func dockIDsZoom(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=dock-ids children=%d sizes=%s\n", len(saved.Center.Children), joinText(sizes))
 }
 
+// badNode proves passing an unissued NodeID (987654321) to SetZoomedIn fails
+// cleanly with a diagnostic instead of panicking or touching another node.
 func badNode(a *App, cx *gk.Cx) {
-	a.dock.SetZoomedIn(cx, dock.NodeID(987654321)) // never handed out
+	a.dock.SetZoomedIn(cx, dock.NodeID(987654321))
 }
-
-// --- a saved layout restored through the registry --------------------------------------
 
 func (a *App) restore(cx *gk.Cx, b dock.PanelBuild) {
 	ov.builds++
@@ -165,7 +166,7 @@ func (a *App) restore(cx *gk.Cx, b dock.PanelBuild) {
 	a.bodies[i].text = "restored " + b.Name
 	info := ""
 	if pi, ok := b.State.Info.(dock.PanelInfoPanel); ok {
-		info = pi.JSON // the panel's own saved data
+		info = pi.JSON
 	}
 	dock.PanelFill(cx, b.Panel, gk.NewView(nil, a.bodies[i].view), dock.PanelData{Name: b.Name, Title: b.Name, Info: info},
 		dock.PanelEvents(func(cx *gk.Cx, e dock.PanelEvent) { a.panelEvent(cx, e, i) }))
@@ -192,6 +193,9 @@ func layoutSave(a *App, cx *gk.Cx) {
 	dock.SetPanel(cx, a.panels[0], dock.PanelData{Name: "first", Title: "first", Info: `{"file":"a.demo"}`})
 }
 
+// layoutLoad proves Dump/Load round-trips serialized panel info JSON by invoking
+// registered panel builders for "first" and "second", and layoutCheck confirms
+// PaneTreeToState/FromState plus BuildPanel (known=true, unknown=false) total 5 builds.
 func layoutLoad(a *App, cx *gk.Cx) {
 	saved := a.dock.Dump(cx)
 	ov.saved = printState(saved.Center)
@@ -219,8 +223,6 @@ func layoutDone(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=dock-layout builds=%d\n", ov.builds)
 }
 
-// --- the nav stack takes and gives back app views -------------------------------------
-
 func navMake(a *App, cx *gk.Cx) {
 	ov.pages = [2]*Body{{text: "home"}, {text: "details"}}
 	for i := range 2 {
@@ -231,6 +233,9 @@ func navMake(a *App, cx *gk.Cx) {
 	ov.nav.Push(cx, ov.pageV[1], base.NavMotionImmediate)
 }
 
+// navCheck proves NavStackState tracks depth=2 and Current==page[1] after two
+// pushes, returns page[1] on Pop with 1 forward view remaining, and verifies
+// AppMenuBar and ResizableState construct and query cleanly.
 func navCheck(a *App, cx *gk.Cx) {
 	cur, ok := ov.nav.Current(cx).Get()
 	vs := ov.nav.Views(cx)
@@ -258,8 +263,6 @@ func navRoot(a *App, cx *gk.Cx) gk.Element {
 	return root
 }
 
-// --- PROTOCOLS.md 11.9: a dock drawn by the app's renderer -------------------------------
-
 func (c *Chrome) view(cx *gk.Cx) gk.Element {
 	c.described++
 	return gk.VFlex(s.SizeFull).Child(kit.Label(fmt.Sprintf("%s open=%v", dockPlacementName(c.placement), c.open))).Child(dock.Slot())
@@ -273,7 +276,7 @@ func (a *App) tabbarView(cx *gk.Cx) gk.Element {
 func (a *App) frameView(cx *gk.Cx) gk.Element {
 	ov.frames++
 	if a.mode == "render-bad-frame" {
-		return kit.Label("a frame must be a div") // misuse: a frame hook's view is a gk.Div()
+		return kit.Label("a frame must be a div")
 	}
 	return gk.HFlex(s.SizeFull, s.P1)
 }
@@ -296,6 +299,10 @@ func (a *App) asked(cx *gk.Cx, q dock.Render) {
 	}
 }
 
+// renderMake proves custom DockAreaRenderer hooks (HookFrame, HookDock,
+// HookTabBar) ask Go for chrome/tabbar/frame views, render them alongside panel
+// bodies, and honor Context.Toggle to close the left dock; `render-bad-frame`
+// proves returning a Label instead of a Div for HookFrame fails cleanly.
 func renderMake(a *App, cx *gk.Cx) {
 	a.bodies = [2]*Body{{text: "first"}, {text: "second"}}
 	ov.chromeV = gk.NewView(nil, ov.chrome.view)
@@ -323,18 +330,15 @@ func renderCheck(a *App, cx *gk.Cx) {
 		ov.asks[dock.HookTabBar], answers, drawn > 0)
 	fmt.Printf("overlay render described chrome=%v tabbar=%v frame=%v bodies=%v\n", ov.chrome.described > 0, ov.tabbars > 0,
 		ov.frames > 0, a.bodies[0].described > 0 && a.bodies[1].described > 0)
-	ov.dockCtx.Toggle(cx) // the chrome's own call: the dock closes, its context changes, it is asked again
+	ov.dockCtx.Toggle(cx)
 }
 
 func renderDone(a *App, cx *gk.Cx) {
-	// the kit reports a toggle of the user's (the skin's buttons) only: the chrome's call is the app's
+
 	fmt.Printf("overlay done mode=render open=%v dock_asks=%d chrome_open=%v toggles=%d sub=%v\n", a.dock.IsDockOpen(cx, dock.PlacementLeft),
 		ov.asks[dock.HookDock], ov.chrome.open, ov.toggles, ov.toggle != gk.Subscription{})
 }
 
-// --- PROTOCOLS.md 11.10: the toast manager on the library clock ---------------------------
-
-// toastStatusName prints a ToastTransitionStatus as the checks expect (the variant's name).
 func toastStatusName(t overlay.ToastTransitionStatus) string {
 	names := []string{"Starting", "Present", "Ending"}
 	if int(t) < len(names) {
@@ -343,7 +347,6 @@ func toastStatusName(t overlay.ToastTransitionStatus) string {
 	return fmt.Sprint(uint16(t))
 }
 
-// optText prints an optional value as the checks expect (nil, or the value).
 func optText[T any](o gk.Option[T]) string {
 	v, ok := o.Get()
 	if !ok {
@@ -352,6 +355,9 @@ func optText[T any](o gk.Option[T]) string {
 	return fmt.Sprint(v)
 }
 
+// toastRun proves ToastManager replaces duplicate IDs (200->201), advances
+// timed toasts through Presented -> Ending -> Removed (id 1 removed after 600ms),
+// marks manually dismissed toast 2 as Ending, and returns toast 3 on DismissAll.
 func toastRun(a *App, cx *gk.Cx) {
 	ov.toasts = overlay.NewToastManager(cx, overlay.ToastMotion{Duration: 100 * time.Millisecond, ExitDuration: 50 * time.Millisecond})
 	t0 := kit.ClockNow(cx)
@@ -383,9 +389,9 @@ func toastRun(a *App, cx *gk.Cx) {
 	fmt.Printf("overlay done mode=toast iter=%d dismissed_all=%s clock_moves=%v\n", len(all), joinText(gone), later >= t0)
 }
 
-// --- PROTOCOLS.md 11.15: value calls ----------------------------------------------------------
-
-// Value calls: computations over a value the app built (DockSizing, Sankey), run as ambient calls.
+// valueCalls proves DockSizing clamps oversized/undersized widths to [100, 700]
+// and resolves pointer X=300, and proves SankeyLayout builds a 3-layer graph for
+// valid node counts while returning an error string when node count is too small.
 func valueCalls(a *App, cx *gk.Cx) {
 	sizing := dock.NewSizing(dock.PlacementLeft).WithAreaWidth(1000).WithOppositeDockSize(200)
 	big := dock.BaseDockSizingClamp(cx, sizing, 5000)
@@ -398,6 +404,6 @@ func valueCalls(a *App, cx *gk.Cx) {
 	if graph, ok := g.Value.Get(); ok {
 		layers = graph.LayerCount(cx)
 	}
-	bad := chart.BaseSankeyLayout(cx, chart.NewSankey(), 1, links) // a link to a node that is not there
+	bad := chart.BaseSankeyLayout(cx, chart.NewSankey(), 1, links)
 	fmt.Printf("overlay done mode=values ok=%v layers=%d bad_ok=%v bad_err=%v\n", g.OK, layers, bad.OK, len(bad.Err) > 0)
 }

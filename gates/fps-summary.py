@@ -1,13 +1,34 @@
 #!/usr/bin/env python3
-"""fps-summary.py --hz N --name NAME [--zero-crossings] DIR: the verdict of gates/fps.sh.
+"""Summarize frame-cost runs from gates/fps.sh and emit the GATE fps verdict.
 
-DIR holds rounds.txt (one gk-meter line per run, prefixed round=R) and LABEL-R.csv (one row
-per measured frame). Prints medians over rounds, each binary's ratio to the Rust reference,
-the Rust-against-Rust pair as the noise, missed frames at this refresh rate, and one line
-"GATE fps NAME PASS|FAIL ...". Exit 0 on pass.
+What it gates:
+  Main-thread CPU cost (p50 and p95 microseconds per frame), missed-frame rate, compositor
+  stalls, round completion, and (with --zero-crossings) zero FFI crossings on static scenes
+  for GK_JUDGED (default: go) compared against the pure-Rust reference.
 
-The verdict is paired by round and leaves out rounds another job disturbed (see QUIET
-below); the tables above it show every round."""
+How it measures and why the comparison is fair:
+  1. Interleaved control runs: every round runs `rust`, `go`, and a second identical Rust build
+     `rust2` back to back inside the same display session.
+  2. Disturbance filtering: if `rust2 / rust` on `cpu_p50_us` differs from 1.0 by more than 5%
+     (QUIET = 0.05), another process or CPU boost spike disturbed that round, so the round is
+     excluded. If fewer than half of complete rounds (minimum 3, when at least 3 ran) are quiet,
+     the whole measurement is marked disturbed and exits 3 so gates/fps.sh can add more rounds.
+  3. Paired per-round ratios: instead of dividing global medians, the verdict takes the median
+     of per-round ratios `judged_i / rust_i` over quiet rounds, canceling slow thermal or clock
+     drift across rounds.
+  4. Noise-adjusted ceiling: the allowed ratio is `GK_BAR + noise` (default GK_BAR = 1.03),
+     where `noise = max(|median(rr) - 1|, se)` is estimated from the `rust2 / rust` control
+     ratios `rr` using a robust MAD scale (`sigma = 1.4826 * MAD`) and the asymptotic standard
+     error of the sample median (`se = sqrt(pi/2) * sigma / sqrt(n) = 1.2533 * sigma / sqrt(n)`).
+     A noisy machine widens the margin only by what Rust itself exhibits; a quiet machine holds
+     Go close to the 3% bar.
+
+What PASS means (exit 0):
+  Measurement is not disturbed (exit 3), paired `cpu_p50_us` and `cpu_p95_us` ratios are each
+  <= `GK_BAR + noise`, median missed frames exceed Rust by at most 1% of measured frames,
+  stalls are at most `max(rust, rust2) + 1`, all rounds completed, and (when --zero-crossings
+  is set) `callbacks_per_frame + calls_per_frame == 0` for non-Rust builds.
+"""
 import csv
 import glob
 import os
@@ -20,8 +41,8 @@ name = args[args.index("--name") + 1]
 zero = "--zero-crossings" in args
 d = args[-1]
 period_ns = 1e9 / hz
-BAR = float(os.environ.get("GK_BAR", "1.03"))  # the pass mark: within 3 % of pure Rust (DESIGN.md 18)
-JUDGED = os.environ.get("GK_JUDGED", "go")  # the build an app ships with
+BAR = float(os.environ.get("GK_BAR", "1.03"))
+JUDGED = os.environ.get("GK_JUDGED", "go")
 
 runs = {}
 path = os.path.join(d, "rounds.txt")
@@ -32,6 +53,7 @@ if "rust" not in runs:
     print(f"GATE fps {name} FAIL no Rust reference run")
     sys.exit(1)
 
+# Count frames per round whose frame-to-frame interval exceeded 1.5 display periods.
 missed, frames = {}, {}
 for label in runs:
     m, n = [], 0
@@ -42,10 +64,8 @@ for label in runs:
     missed[label] = statistics.median(m) if m else float("nan")
     frames[label] = n
 
-
 def med(label, key):
     return statistics.median(float(r[key]) for r in runs[label])
-
 
 labels = [l for l in ("rust", "rust2", "go") if l in runs]
 keys = ["cpu_p50_us", "cpu_p95_us", "cpu_mean_us", "interval_p50_ms", "interval_p95_ms",
@@ -87,11 +107,9 @@ judged = JUDGED if JUDGED in runs else None
 if judged is None:
     print(f"GATE fps {name} FAIL no run of {JUDGED}, the build judged")
     sys.exit(1)
-# The verdict is paired by round: within a round the binaries ran one after another,
-# so their ratio is free of whatever the machine was doing in that minute. A round in which
-# the two Rust runs differ by more than QUIET (another job was running, e.g. a build beside the gate) says nothing
-# about the Go app and is left out; the choice looks only at Rust. Fewer than half the
-# rounds (or fewer than three) left is a failed measurement, to be run again.
+
+# Reject rounds where the two identical Rust runs diverged by more than 5% on cpu_p50_us,
+# which indicates background CPU contention during that round.
 QUIET = 0.05
 needed = ("rust", judged) + (("rust2",) if "rust2" in runs else ())
 at = {l: {r["round"]: r for r in runs[l]} for l in needed}
@@ -102,22 +120,20 @@ quiet = [i for i in complete
          if "rust2" not in runs or abs(by_round("rust2", "cpu_p50_us", i) / by_round("rust", "cpu_p50_us", i) - 1) <= QUIET]
 why = []
 detail = []
+# Require at least half of all complete rounds (minimum 3) to be quiet before trusting the verdict.
 disturbed = len(quiet) < max(3, (n_rounds + 1) // 2) and n_rounds >= 3
 if len(quiet) < n_rounds:
     detail.append(f"{n_rounds - len(quiet)} of {n_rounds} rounds left out as disturbed")
 use = quiet or complete
+
 for k in ("cpu_p50_us", "cpu_p95_us"):
+    # Pair judged and rust within each round to cancel slow thermal or frequency drift across rounds.
     paired = lambda l: statistics.median(by_round(l, k, i) / by_round("rust", k, i) for i in use)
-    # The noise is what Rust against itself shows in this run: the larger of its bias (the
-    # median of rust2 / rust away from 1) and the uncertainty of such a median over this many
-    # rounds (its standard error, 1.2533 sigma / sqrt(n), sigma from the median absolute
-    # deviation so that one wild round does not open the limit). The bias alone was often
-    # 0.00x while the rounds spread by several per cent, so a binding at 1.02 of Rust read
-    # anywhere from 1.026 to 1.048 on the click-on-every-frame scene (in profiles,
-    # the binding's own functions were 19 us of a 1,000 us frame; the rest of the difference
-    # moved between runs in the kernel time of the same system calls, counted equal for both).
     noise = 0.0
     if "rust2" in runs:
+        # Estimate measurement noise from the rust2/rust control ratios using robust MAD scale:
+        # sigma = 1.4826 * MAD (normal-consistent std dev) and se = sqrt(pi/2) * sigma / sqrt(n)
+        # (1.2533 * sigma / sqrt(n), the asymptotic standard error of the sample median).
         rr = [by_round("rust2", k, i) / by_round("rust", k, i) for i in use]
         m = statistics.median(rr)
         sigma = 1.4826 * statistics.median(abs(x - m) for x in rr)
@@ -128,6 +144,8 @@ for k in ("cpu_p50_us", "cpu_p95_us"):
     detail.append(f"{k[4:7]} {r:.3f} (limit {limit:.3f})")
     if r > limit:
         why.append(f"{k} {r:.3f} over {limit:.3f}")
+
+# Allow at most 1% more missed frames than Rust and at most 1 extra stalled run.
 tolerated = 0.01 * frames["rust"]
 detail.append(f"missed {missed[judged]:g} against Rust's {missed['rust']:g}")
 if missed[judged] > missed["rust"] + tolerated:
@@ -143,7 +161,6 @@ if zero:
         why.append("crossings on frames with nothing changing")
 print()
 if disturbed:
-    # No verdict on the judged app: exit 3, and gates/fps.sh measures the scene once more.
     print(f"GATE fps {name} FAIL {judged}: the measurement was disturbed, only {len(quiet)} of {n_rounds} rounds had the two "
           f"Rust runs within {QUIET:.0%} of each other (another job was running): run it again; " + ", ".join(detail))
     sys.exit(3)

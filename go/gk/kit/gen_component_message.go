@@ -12,7 +12,7 @@ type MessageEl struct{ rt.ElAnimatableElement }
 
 // Create a leading-aligned message.
 //
-// Message is <gpui_kit::component::message::Message>::new.
+// Message calls <gpui_kit::component::message::Message>::new.
 func Message(st ...gk.Style) MessageEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(697)
@@ -20,7 +20,7 @@ func Message(st ...gk.Style) MessageEl {
 	return MessageEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageDefault is <gpui_kit::component::message::Message as Default>::default.
+// MessageDefault calls <gpui_kit::component::message::Message as Default>::default.
 func MessageDefault(st ...gk.Style) MessageEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(696)
@@ -30,7 +30,7 @@ func MessageDefault(st ...gk.Style) MessageEl {
 
 // Set whether the message is aligned to the leading or trailing edge.
 //
-// Alignment is <gpui_kit::component::message::Message>::alignment.
+// Alignment calls <gpui_kit::component::message::Message>::alignment.
 func (e MessageEl) Alignment(alignment MessageAlignment) MessageEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(alignment))
@@ -39,7 +39,7 @@ func (e MessageEl) Alignment(alignment MessageAlignment) MessageEl {
 
 // Set an optional avatar or other sender identity element.
 //
-// Avatar is <gpui_kit::component::message::Message>::avatar.
+// Avatar calls <gpui_kit::component::message::Message>::avatar.
 func (e MessageEl) Avatar(avatar gk.Element) MessageEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.Take(avatar))
@@ -48,7 +48,7 @@ func (e MessageEl) Avatar(avatar gk.Element) MessageEl {
 
 // Set a fully configured avatar slot.
 //
-// AvatarSlot is <gpui_kit::component::message::Message>::avatar_slot.
+// AvatarSlot calls <gpui_kit::component::message::Message>::avatar_slot.
 func (e MessageEl) AvatarSlot(avatar MessageAvatarEl) MessageEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeNode(rt.N(avatar.Core), false))
@@ -57,7 +57,7 @@ func (e MessageEl) AvatarSlot(avatar MessageAvatarEl) MessageEl {
 
 // Set the message body.
 //
-// Content is <gpui_kit::component::message::Message>::content.
+// Content calls <gpui_kit::component::message::Message>::content.
 func (e MessageEl) Content(content MessageContentEl) MessageEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeNode(rt.N(content.Core), false))
@@ -66,7 +66,7 @@ func (e MessageEl) Content(content MessageContentEl) MessageEl {
 
 // Set the message footer.
 //
-// Footer is <gpui_kit::component::message::Message>::footer.
+// Footer calls <gpui_kit::component::message::Message>::footer.
 func (e MessageEl) Footer(footer MessageFooterEl) MessageEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeNode(rt.N(footer.Core), false))
@@ -75,7 +75,7 @@ func (e MessageEl) Footer(footer MessageFooterEl) MessageEl {
 
 // Set the message header.
 //
-// Header is <gpui_kit::component::message::Message>::header.
+// Header calls <gpui_kit::component::message::Message>::header.
 func (e MessageEl) Header(header MessageHeaderEl) MessageEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.TakeNode(rt.N(header.Core), false))
@@ -85,7 +85,7 @@ func (e MessageEl) Header(header MessageHeaderEl) MessageEl {
 // Set a stable identity so the message can appear in the accessibility tree and keep element state
 // across frames.
 //
-// ID is <gpui_kit::component::message::Message>::id.
+// ID calls <gpui_kit::component::message::Message>::id.
 func (e MessageEl) ID(id gk.ID) MessageEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	rt.PutID(o, id)
@@ -98,7 +98,7 @@ func (e MessageEl) ID(id gk.ID) MessageEl {
 // so assistive technology can move between them. Accessibility nodes need a stable identity, so
 // the role takes effect only together with `ID`.
 //
-// Role is <gpui_kit::component::message::Message>::role.
+// Role calls <gpui_kit::component::message::Message>::role.
 func (e MessageEl) Role(role gk.RoleOverride) MessageEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	putRoleOverride(o, role)
@@ -107,7 +107,7 @@ func (e MessageEl) Role(role gk.RoleOverride) MessageEl {
 
 // Refine the inner vertical stack that contains the named slots.
 //
-// WithStackStyle is <gpui_kit::component::message::Message>::with_stack_style.
+// WithStackStyle calls <gpui_kit::component::message::Message>::with_stack_style.
 func (e MessageEl) WithStackStyle(style gk.StyleRefinement) MessageEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -116,26 +116,34 @@ func (e MessageEl) WithStackStyle(style gk.StyleRefinement) MessageEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageEl) PopoverStyle() MessageEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageEl) RoundedFullStyle() MessageEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageEl) BorderE(width gk.Length) MessageEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageEl) BorderS(width gk.Length) MessageEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -143,121 +151,163 @@ func (e MessageEl) BorderS(width gk.Length) MessageEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageEl) FlexRowDir() MessageEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageEl) InsetE(length gk.Length) MessageEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageEl) InsetS(length gk.Length) MessageEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageEl) JustifyFlexEnd() MessageEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageEl) JustifyFlexStart() MessageEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageEl) Me(length gk.Length) MessageEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageEl) Ms(length gk.Length) MessageEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageEl) Pe(length gk.Length) MessageEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageEl) Ps(length gk.Length) MessageEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageEl) RoundedE(radius gk.Length) MessageEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageEl) RoundedS(radius gk.Length) MessageEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageEl) TextEnd() MessageEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageEl) TextStart() MessageEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageEl) CornerRadii(radius gk.Corners) MessageEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageEl) DebugBlue() MessageEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageEl) DebugFocused(focusHandle gk.FocusHandle) MessageEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageEl) DebugGreen() MessageEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageEl) DebugPink() MessageEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageEl) DebugRed() MessageEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageEl) DebugYellow() MessageEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageEl) FontBlack() MessageEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageEl) FontBold() MessageEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageEl) FontExtrabold() MessageEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageEl) FontExtralight() MessageEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageEl) FontLight() MessageEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageEl) FontMedium() MessageEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageEl) FontNormal() MessageEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageEl) FontSemibold() MessageEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageEl) FontThin() MessageEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -266,18 +316,23 @@ func (e MessageEl) FontThin() MessageEl { tStyledExtFontThin(rt.N(e.Core)); retu
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageEl) HFlex() MessageEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageEl) Margins(margins gk.EdgesInto) MessageEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageEl) Paddings(paddings gk.EdgesInto) MessageEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageEl) RefineStyle(style gk.StyleRefinement) MessageEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -287,31 +342,43 @@ func (e MessageEl) RefineStyle(style gk.StyleRefinement) MessageEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageEl) VFlex() MessageEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageEl) Style(st ...gk.Style) MessageEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageEl) AspectRatio(ratio float32) MessageEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageEl) Bg(fill gk.Fill) MessageEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageEl) Border(length gk.Length) MessageEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageEl) BorderB(length gk.Length) MessageEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageEl) BorderColor(borderColor gk.Color) MessageEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -319,6 +386,8 @@ func (e MessageEl) BorderColor(borderColor gk.Color) MessageEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageEl) BorderL(length gk.Length) MessageEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -326,6 +395,8 @@ func (e MessageEl) BorderL(length gk.Length) MessageEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageEl) BorderR(length gk.Length) MessageEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -333,6 +404,8 @@ func (e MessageEl) BorderR(length gk.Length) MessageEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageEl) BorderT(length gk.Length) MessageEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -340,6 +413,8 @@ func (e MessageEl) BorderT(length gk.Length) MessageEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageEl) BorderX(length gk.Length) MessageEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -347,6 +422,8 @@ func (e MessageEl) BorderX(length gk.Length) MessageEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageEl) BorderY(length gk.Length) MessageEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -354,18 +431,28 @@ func (e MessageEl) BorderY(length gk.Length) MessageEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageEl) Bottom(length gk.Length) MessageEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageEl) ColEnd(end int16) MessageEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageEl) ColSpan(span uint16) MessageEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageEl) ColStart(start int16) MessageEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageEl) Cursor(cursor gk.CursorStyle) MessageEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -373,30 +460,42 @@ func (e MessageEl) Cursor(cursor gk.CursorStyle) MessageEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageEl) FlexBasis(basis gk.Length) MessageEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageEl) FlexGrow(grow float32) MessageEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageEl) FlexShrink(shrink float32) MessageEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageEl) Font(font gk.Font) MessageEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageEl) FontFamily(familyName string) MessageEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageEl) FontFeatures(features gk.FontFeatures) MessageEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -405,26 +504,38 @@ func (e MessageEl) FontFeatures(features gk.FontFeatures) MessageEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageEl) FontWeight(weight gk.FontWeight) MessageEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageEl) Gap(length gk.Length) MessageEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageEl) GapX(length gk.Length) MessageEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageEl) GapY(length gk.Length) MessageEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageEl) GridCols(cols uint16) MessageEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageEl) GridColsMaxContent(cols uint16) MessageEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -432,15 +543,21 @@ func (e MessageEl) GridColsMaxContent(cols uint16) MessageEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageEl) GridColsMinContent(cols uint16) MessageEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageEl) GridRows(rows uint16) MessageEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageEl) GridRowsMaxContent(rows uint16) MessageEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -448,121 +565,179 @@ func (e MessageEl) GridRowsMaxContent(rows uint16) MessageEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageEl) GridRowsMinContent(rows uint16) MessageEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageEl) H(length gk.Length) MessageEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageEl) Inset(length gk.Length) MessageEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageEl) Left(length gk.Length) MessageEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageEl) LineClamp(lines int) MessageEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageEl) LineHeight(lineHeight gk.Length) MessageEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageEl) M(length gk.Length) MessageEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageEl) MaxH(length gk.Length) MessageEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageEl) MaxSize(length gk.Length) MessageEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageEl) MaxW(length gk.Length) MessageEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageEl) Mb(length gk.Length) MessageEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageEl) MinH(length gk.Length) MessageEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageEl) MinSize(length gk.Length) MessageEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageEl) MinW(length gk.Length) MessageEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageEl) Ml(length gk.Length) MessageEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageEl) Mr(length gk.Length) MessageEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageEl) Mt(length gk.Length) MessageEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageEl) Mx(length gk.Length) MessageEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageEl) My(length gk.Length) MessageEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageEl) Opacity(opacity float32) MessageEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageEl) P(length gk.Length) MessageEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageEl) Pb(length gk.Length) MessageEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageEl) Pl(length gk.Length) MessageEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageEl) Pr(length gk.Length) MessageEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageEl) Pt(length gk.Length) MessageEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageEl) Px(length gk.Length) MessageEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageEl) Py(length gk.Length) MessageEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageEl) Right(length gk.Length) MessageEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageEl) Rounded(length gk.Length) MessageEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -570,6 +745,8 @@ func (e MessageEl) Rounded(length gk.Length) MessageEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageEl) RoundedB(length gk.Length) MessageEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -577,6 +754,8 @@ func (e MessageEl) RoundedB(length gk.Length) MessageEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageEl) RoundedBl(length gk.Length) MessageEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -584,6 +763,8 @@ func (e MessageEl) RoundedBl(length gk.Length) MessageEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageEl) RoundedBr(length gk.Length) MessageEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -591,6 +772,8 @@ func (e MessageEl) RoundedBr(length gk.Length) MessageEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageEl) RoundedL(length gk.Length) MessageEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -598,6 +781,8 @@ func (e MessageEl) RoundedL(length gk.Length) MessageEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageEl) RoundedR(length gk.Length) MessageEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -605,6 +790,8 @@ func (e MessageEl) RoundedR(length gk.Length) MessageEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageEl) RoundedT(length gk.Length) MessageEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -612,6 +799,8 @@ func (e MessageEl) RoundedT(length gk.Length) MessageEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageEl) RoundedTl(length gk.Length) MessageEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -619,39 +808,55 @@ func (e MessageEl) RoundedTl(length gk.Length) MessageEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageEl) RoundedTr(length gk.Length) MessageEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageEl) RowEnd(end int16) MessageEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageEl) RowSpan(span uint16) MessageEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageEl) RowStart(start int16) MessageEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageEl) ScrollbarWidth(width gk.Length) MessageEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageEl) Shadow(shadows []gk.BoxShadow) MessageEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageEl) Size(length gk.Length) MessageEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageEl) TextAlign(align gk.TextAlign) MessageEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -660,23 +865,31 @@ func (e MessageEl) TextAlign(align gk.TextAlign) MessageEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageEl) TextBg(bg gk.Color) MessageEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageEl) TextColor(color gk.Color) MessageEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageEl) TextDecorationColor(color gk.Color) MessageEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageEl) TextOverflow(overflow gk.TextOverflow) MessageEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -685,13 +898,19 @@ func (e MessageEl) TextOverflow(overflow gk.TextOverflow) MessageEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageEl) TextSize(size gk.Length) MessageEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageEl) Top(length gk.Length) MessageEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageEl) W(length gk.Length) MessageEl { tStyledW(rt.N(e.Core), length); return e }
 
 // MessageAvatarEl is gpui_kit::component::message::MessageAvatar.
@@ -699,7 +918,7 @@ type MessageAvatarEl struct{ rt.ElAnimatableElement }
 
 // Create an empty avatar slot.
 //
-// MessageAvatar is <gpui_kit::component::message::MessageAvatar>::new.
+// MessageAvatar calls <gpui_kit::component::message::MessageAvatar>::new.
 func MessageAvatar(st ...gk.Style) MessageAvatarEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(699)
@@ -707,7 +926,7 @@ func MessageAvatar(st ...gk.Style) MessageAvatarEl {
 	return MessageAvatarEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageAvatarDefault is <gpui_kit::component::message::MessageAvatar as Default>::default.
+// MessageAvatarDefault calls <gpui_kit::component::message::MessageAvatar as Default>::default.
 func MessageAvatarDefault(st ...gk.Style) MessageAvatarEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(698)
@@ -717,20 +936,24 @@ func MessageAvatarDefault(st ...gk.Style) MessageAvatarEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageAvatarEl) PopoverStyle() MessageAvatarEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageAvatarEl) RoundedFullStyle() MessageAvatarEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -739,16 +962,18 @@ func (e MessageAvatarEl) RoundedFullStyle() MessageAvatarEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e MessageAvatarEl) FocusRingStyle() MessageAvatarEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -761,24 +986,32 @@ func (e MessageAvatarEl) FocusRingStyle() MessageAvatarEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e MessageAvatarEl) KeepTextSelection(id gk.ID) MessageAvatarEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e MessageAvatarEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) MessageAvatarEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageAvatarEl) BorderE(width gk.Length) MessageAvatarEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageAvatarEl) BorderS(width gk.Length) MessageAvatarEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -786,136 +1019,178 @@ func (e MessageAvatarEl) BorderS(width gk.Length) MessageAvatarEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageAvatarEl) FlexRowDir() MessageAvatarEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageAvatarEl) InsetE(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageAvatarEl) InsetS(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageAvatarEl) JustifyFlexEnd() MessageAvatarEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageAvatarEl) JustifyFlexStart() MessageAvatarEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageAvatarEl) Me(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageAvatarEl) Ms(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageAvatarEl) Pe(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageAvatarEl) Ps(length gk.Length) MessageAvatarEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageAvatarEl) RoundedE(radius gk.Length) MessageAvatarEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageAvatarEl) RoundedS(radius gk.Length) MessageAvatarEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageAvatarEl) TextEnd() MessageAvatarEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageAvatarEl) TextStart() MessageAvatarEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageAvatarEl) CornerRadii(radius gk.Corners) MessageAvatarEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageAvatarEl) DebugBlue() MessageAvatarEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageAvatarEl) DebugFocused(focusHandle gk.FocusHandle) MessageAvatarEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageAvatarEl) DebugGreen() MessageAvatarEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageAvatarEl) DebugPink() MessageAvatarEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageAvatarEl) DebugRed() MessageAvatarEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageAvatarEl) DebugYellow() MessageAvatarEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageAvatarEl) FontBlack() MessageAvatarEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageAvatarEl) FontBold() MessageAvatarEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageAvatarEl) FontExtrabold() MessageAvatarEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageAvatarEl) FontExtralight() MessageAvatarEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageAvatarEl) FontLight() MessageAvatarEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageAvatarEl) FontMedium() MessageAvatarEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageAvatarEl) FontNormal() MessageAvatarEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageAvatarEl) FontSemibold() MessageAvatarEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageAvatarEl) FontThin() MessageAvatarEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -924,18 +1199,23 @@ func (e MessageAvatarEl) FontThin() MessageAvatarEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageAvatarEl) HFlex() MessageAvatarEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageAvatarEl) Margins(margins gk.EdgesInto) MessageAvatarEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageAvatarEl) Paddings(paddings gk.EdgesInto) MessageAvatarEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageAvatarEl) RefineStyle(style gk.StyleRefinement) MessageAvatarEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -945,38 +1225,51 @@ func (e MessageAvatarEl) RefineStyle(style gk.StyleRefinement) MessageAvatarEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageAvatarEl) VFlex() MessageAvatarEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e MessageAvatarEl) Text(s string) MessageAvatarEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e MessageAvatarEl) ChildView(v gk.View) MessageAvatarEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e MessageAvatarEl) Child(child gk.Element) MessageAvatarEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e MessageAvatarEl) Children(children ...gk.Element) MessageAvatarEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageAvatarEl) Style(st ...gk.Style) MessageAvatarEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageAvatarEl) AspectRatio(ratio float32) MessageAvatarEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageAvatarEl) Bg(fill gk.Fill) MessageAvatarEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageAvatarEl) Border(length gk.Length) MessageAvatarEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -984,12 +1277,16 @@ func (e MessageAvatarEl) Border(length gk.Length) MessageAvatarEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageAvatarEl) BorderB(length gk.Length) MessageAvatarEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageAvatarEl) BorderColor(borderColor gk.Color) MessageAvatarEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -997,6 +1294,8 @@ func (e MessageAvatarEl) BorderColor(borderColor gk.Color) MessageAvatarEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageAvatarEl) BorderL(length gk.Length) MessageAvatarEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1004,6 +1303,8 @@ func (e MessageAvatarEl) BorderL(length gk.Length) MessageAvatarEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageAvatarEl) BorderR(length gk.Length) MessageAvatarEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1011,6 +1312,8 @@ func (e MessageAvatarEl) BorderR(length gk.Length) MessageAvatarEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageAvatarEl) BorderT(length gk.Length) MessageAvatarEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1018,6 +1321,8 @@ func (e MessageAvatarEl) BorderT(length gk.Length) MessageAvatarEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageAvatarEl) BorderX(length gk.Length) MessageAvatarEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1025,6 +1330,8 @@ func (e MessageAvatarEl) BorderX(length gk.Length) MessageAvatarEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageAvatarEl) BorderY(length gk.Length) MessageAvatarEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1032,30 +1339,40 @@ func (e MessageAvatarEl) BorderY(length gk.Length) MessageAvatarEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageAvatarEl) Bottom(length gk.Length) MessageAvatarEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageAvatarEl) ColEnd(end int16) MessageAvatarEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageAvatarEl) ColSpan(span uint16) MessageAvatarEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageAvatarEl) ColStart(start int16) MessageAvatarEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageAvatarEl) Cursor(cursor gk.CursorStyle) MessageAvatarEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1063,36 +1380,48 @@ func (e MessageAvatarEl) Cursor(cursor gk.CursorStyle) MessageAvatarEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageAvatarEl) FlexBasis(basis gk.Length) MessageAvatarEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageAvatarEl) FlexGrow(grow float32) MessageAvatarEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageAvatarEl) FlexShrink(shrink float32) MessageAvatarEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageAvatarEl) Font(font gk.Font) MessageAvatarEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageAvatarEl) FontFamily(familyName string) MessageAvatarEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageAvatarEl) FontFeatures(features gk.FontFeatures) MessageAvatarEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1101,12 +1430,16 @@ func (e MessageAvatarEl) FontFeatures(features gk.FontFeatures) MessageAvatarEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageAvatarEl) FontWeight(weight gk.FontWeight) MessageAvatarEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageAvatarEl) Gap(length gk.Length) MessageAvatarEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1114,6 +1447,8 @@ func (e MessageAvatarEl) Gap(length gk.Length) MessageAvatarEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageAvatarEl) GapX(length gk.Length) MessageAvatarEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1121,18 +1456,24 @@ func (e MessageAvatarEl) GapX(length gk.Length) MessageAvatarEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageAvatarEl) GapY(length gk.Length) MessageAvatarEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageAvatarEl) GridCols(cols uint16) MessageAvatarEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageAvatarEl) GridColsMaxContent(cols uint16) MessageAvatarEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1140,18 +1481,24 @@ func (e MessageAvatarEl) GridColsMaxContent(cols uint16) MessageAvatarEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageAvatarEl) GridColsMinContent(cols uint16) MessageAvatarEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageAvatarEl) GridRows(rows uint16) MessageAvatarEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageAvatarEl) GridRowsMaxContent(rows uint16) MessageAvatarEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1159,12 +1506,16 @@ func (e MessageAvatarEl) GridRowsMaxContent(rows uint16) MessageAvatarEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageAvatarEl) GridRowsMinContent(rows uint16) MessageAvatarEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageAvatarEl) H(length gk.Length) MessageAvatarEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1172,6 +1523,8 @@ func (e MessageAvatarEl) H(length gk.Length) MessageAvatarEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageAvatarEl) Inset(length gk.Length) MessageAvatarEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1179,6 +1532,8 @@ func (e MessageAvatarEl) Inset(length gk.Length) MessageAvatarEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageAvatarEl) Left(length gk.Length) MessageAvatarEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1186,36 +1541,48 @@ func (e MessageAvatarEl) Left(length gk.Length) MessageAvatarEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageAvatarEl) LineClamp(lines int) MessageAvatarEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageAvatarEl) LineHeight(lineHeight gk.Length) MessageAvatarEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageAvatarEl) M(length gk.Length) MessageAvatarEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageAvatarEl) MaxH(length gk.Length) MessageAvatarEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageAvatarEl) MaxSize(length gk.Length) MessageAvatarEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageAvatarEl) MaxW(length gk.Length) MessageAvatarEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1223,24 +1590,32 @@ func (e MessageAvatarEl) MaxW(length gk.Length) MessageAvatarEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageAvatarEl) Mb(length gk.Length) MessageAvatarEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageAvatarEl) MinH(length gk.Length) MessageAvatarEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageAvatarEl) MinSize(length gk.Length) MessageAvatarEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageAvatarEl) MinW(length gk.Length) MessageAvatarEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1248,6 +1623,8 @@ func (e MessageAvatarEl) MinW(length gk.Length) MessageAvatarEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageAvatarEl) Ml(length gk.Length) MessageAvatarEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1255,6 +1632,8 @@ func (e MessageAvatarEl) Ml(length gk.Length) MessageAvatarEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageAvatarEl) Mr(length gk.Length) MessageAvatarEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1262,6 +1641,8 @@ func (e MessageAvatarEl) Mr(length gk.Length) MessageAvatarEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageAvatarEl) Mt(length gk.Length) MessageAvatarEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1269,6 +1650,8 @@ func (e MessageAvatarEl) Mt(length gk.Length) MessageAvatarEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageAvatarEl) Mx(length gk.Length) MessageAvatarEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1276,18 +1659,24 @@ func (e MessageAvatarEl) Mx(length gk.Length) MessageAvatarEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageAvatarEl) My(length gk.Length) MessageAvatarEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageAvatarEl) Opacity(opacity float32) MessageAvatarEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageAvatarEl) P(length gk.Length) MessageAvatarEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1295,6 +1684,8 @@ func (e MessageAvatarEl) P(length gk.Length) MessageAvatarEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageAvatarEl) Pb(length gk.Length) MessageAvatarEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1302,6 +1693,8 @@ func (e MessageAvatarEl) Pb(length gk.Length) MessageAvatarEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageAvatarEl) Pl(length gk.Length) MessageAvatarEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1309,6 +1702,8 @@ func (e MessageAvatarEl) Pl(length gk.Length) MessageAvatarEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageAvatarEl) Pr(length gk.Length) MessageAvatarEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1316,6 +1711,8 @@ func (e MessageAvatarEl) Pr(length gk.Length) MessageAvatarEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageAvatarEl) Pt(length gk.Length) MessageAvatarEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1323,6 +1720,8 @@ func (e MessageAvatarEl) Pt(length gk.Length) MessageAvatarEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageAvatarEl) Px(length gk.Length) MessageAvatarEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1330,6 +1729,8 @@ func (e MessageAvatarEl) Px(length gk.Length) MessageAvatarEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageAvatarEl) Py(length gk.Length) MessageAvatarEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1337,12 +1738,16 @@ func (e MessageAvatarEl) Py(length gk.Length) MessageAvatarEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageAvatarEl) Right(length gk.Length) MessageAvatarEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageAvatarEl) Rounded(length gk.Length) MessageAvatarEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1350,6 +1755,8 @@ func (e MessageAvatarEl) Rounded(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageAvatarEl) RoundedB(length gk.Length) MessageAvatarEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1357,6 +1764,8 @@ func (e MessageAvatarEl) RoundedB(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageAvatarEl) RoundedBl(length gk.Length) MessageAvatarEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1364,6 +1773,8 @@ func (e MessageAvatarEl) RoundedBl(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageAvatarEl) RoundedBr(length gk.Length) MessageAvatarEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1371,6 +1782,8 @@ func (e MessageAvatarEl) RoundedBr(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageAvatarEl) RoundedL(length gk.Length) MessageAvatarEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1378,6 +1791,8 @@ func (e MessageAvatarEl) RoundedL(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageAvatarEl) RoundedR(length gk.Length) MessageAvatarEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1385,6 +1800,8 @@ func (e MessageAvatarEl) RoundedR(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageAvatarEl) RoundedT(length gk.Length) MessageAvatarEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1392,6 +1809,8 @@ func (e MessageAvatarEl) RoundedT(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageAvatarEl) RoundedTl(length gk.Length) MessageAvatarEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1399,24 +1818,32 @@ func (e MessageAvatarEl) RoundedTl(length gk.Length) MessageAvatarEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageAvatarEl) RoundedTr(length gk.Length) MessageAvatarEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageAvatarEl) RowEnd(end int16) MessageAvatarEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageAvatarEl) RowSpan(span uint16) MessageAvatarEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageAvatarEl) RowStart(start int16) MessageAvatarEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1426,24 +1853,32 @@ func (e MessageAvatarEl) RowStart(start int16) MessageAvatarEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageAvatarEl) ScrollbarWidth(width gk.Length) MessageAvatarEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageAvatarEl) Shadow(shadows []gk.BoxShadow) MessageAvatarEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageAvatarEl) Size(length gk.Length) MessageAvatarEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageAvatarEl) TextAlign(align gk.TextAlign) MessageAvatarEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1452,6 +1887,8 @@ func (e MessageAvatarEl) TextAlign(align gk.TextAlign) MessageAvatarEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageAvatarEl) TextBg(bg gk.Color) MessageAvatarEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1460,18 +1897,24 @@ func (e MessageAvatarEl) TextBg(bg gk.Color) MessageAvatarEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageAvatarEl) TextColor(color gk.Color) MessageAvatarEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageAvatarEl) TextDecorationColor(color gk.Color) MessageAvatarEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageAvatarEl) TextOverflow(overflow gk.TextOverflow) MessageAvatarEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1480,6 +1923,8 @@ func (e MessageAvatarEl) TextOverflow(overflow gk.TextOverflow) MessageAvatarEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageAvatarEl) TextSize(size gk.Length) MessageAvatarEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1487,12 +1932,16 @@ func (e MessageAvatarEl) TextSize(size gk.Length) MessageAvatarEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageAvatarEl) Top(length gk.Length) MessageAvatarEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageAvatarEl) W(length gk.Length) MessageAvatarEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -1503,7 +1952,7 @@ type MessageContentEl struct{ rt.ElAnimatableElement }
 
 // Create an empty message body.
 //
-// MessageContent is <gpui_kit::component::message::MessageContent>::new.
+// MessageContent calls <gpui_kit::component::message::MessageContent>::new.
 func MessageContent(st ...gk.Style) MessageContentEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(701)
@@ -1511,7 +1960,7 @@ func MessageContent(st ...gk.Style) MessageContentEl {
 	return MessageContentEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageContentDefault is <gpui_kit::component::message::MessageContent as Default>::default.
+// MessageContentDefault calls <gpui_kit::component::message::MessageContent as Default>::default.
 func MessageContentDefault(st ...gk.Style) MessageContentEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(700)
@@ -1524,7 +1973,7 @@ func MessageContentDefault(st ...gk.Style) MessageContentEl {
 // Ordinary `.child(...)` content remains available for arbitrary elements; use this builder when
 // surrounding message slots should react to a bubble's variant.
 //
-// Bubble is <gpui_kit::component::message::MessageContent>::bubble.
+// Bubble calls <gpui_kit::component::message::MessageContent>::bubble.
 func (e MessageContentEl) Bubble(bubble BubbleEl) MessageContentEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(bubble.Core), false))
@@ -1533,20 +1982,24 @@ func (e MessageContentEl) Bubble(bubble BubbleEl) MessageContentEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageContentEl) PopoverStyle() MessageContentEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageContentEl) RoundedFullStyle() MessageContentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1555,16 +2008,18 @@ func (e MessageContentEl) RoundedFullStyle() MessageContentEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e MessageContentEl) FocusRingStyle() MessageContentEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1577,24 +2032,32 @@ func (e MessageContentEl) FocusRingStyle() MessageContentEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e MessageContentEl) KeepTextSelection(id gk.ID) MessageContentEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e MessageContentEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) MessageContentEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageContentEl) BorderE(width gk.Length) MessageContentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageContentEl) BorderS(width gk.Length) MessageContentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1602,142 +2065,184 @@ func (e MessageContentEl) BorderS(width gk.Length) MessageContentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageContentEl) FlexRowDir() MessageContentEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageContentEl) InsetE(length gk.Length) MessageContentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageContentEl) InsetS(length gk.Length) MessageContentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageContentEl) JustifyFlexEnd() MessageContentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageContentEl) JustifyFlexStart() MessageContentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageContentEl) Me(length gk.Length) MessageContentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageContentEl) Ms(length gk.Length) MessageContentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageContentEl) Pe(length gk.Length) MessageContentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageContentEl) Ps(length gk.Length) MessageContentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageContentEl) RoundedE(radius gk.Length) MessageContentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageContentEl) RoundedS(radius gk.Length) MessageContentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageContentEl) TextEnd() MessageContentEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageContentEl) TextStart() MessageContentEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageContentEl) CornerRadii(radius gk.Corners) MessageContentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageContentEl) DebugBlue() MessageContentEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageContentEl) DebugFocused(focusHandle gk.FocusHandle) MessageContentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageContentEl) DebugGreen() MessageContentEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageContentEl) DebugPink() MessageContentEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageContentEl) DebugRed() MessageContentEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageContentEl) DebugYellow() MessageContentEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageContentEl) FontBlack() MessageContentEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageContentEl) FontBold() MessageContentEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageContentEl) FontExtrabold() MessageContentEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageContentEl) FontExtralight() MessageContentEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageContentEl) FontLight() MessageContentEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageContentEl) FontMedium() MessageContentEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageContentEl) FontNormal() MessageContentEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageContentEl) FontSemibold() MessageContentEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageContentEl) FontThin() MessageContentEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1746,18 +2251,23 @@ func (e MessageContentEl) FontThin() MessageContentEl { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageContentEl) HFlex() MessageContentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageContentEl) Margins(margins gk.EdgesInto) MessageContentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageContentEl) Paddings(paddings gk.EdgesInto) MessageContentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageContentEl) RefineStyle(style gk.StyleRefinement) MessageContentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1767,44 +2277,57 @@ func (e MessageContentEl) RefineStyle(style gk.StyleRefinement) MessageContentEl
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageContentEl) VFlex() MessageContentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e MessageContentEl) Text(s string) MessageContentEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e MessageContentEl) ChildView(v gk.View) MessageContentEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e MessageContentEl) Child(child gk.Element) MessageContentEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e MessageContentEl) Children(children ...gk.Element) MessageContentEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageContentEl) Style(st ...gk.Style) MessageContentEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageContentEl) AspectRatio(ratio float32) MessageContentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageContentEl) Bg(fill gk.Fill) MessageContentEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageContentEl) Border(length gk.Length) MessageContentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1812,12 +2335,16 @@ func (e MessageContentEl) Border(length gk.Length) MessageContentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageContentEl) BorderB(length gk.Length) MessageContentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageContentEl) BorderColor(borderColor gk.Color) MessageContentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1825,6 +2352,8 @@ func (e MessageContentEl) BorderColor(borderColor gk.Color) MessageContentEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageContentEl) BorderL(length gk.Length) MessageContentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1832,6 +2361,8 @@ func (e MessageContentEl) BorderL(length gk.Length) MessageContentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageContentEl) BorderR(length gk.Length) MessageContentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1839,6 +2370,8 @@ func (e MessageContentEl) BorderR(length gk.Length) MessageContentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageContentEl) BorderT(length gk.Length) MessageContentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1846,6 +2379,8 @@ func (e MessageContentEl) BorderT(length gk.Length) MessageContentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageContentEl) BorderX(length gk.Length) MessageContentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1853,6 +2388,8 @@ func (e MessageContentEl) BorderX(length gk.Length) MessageContentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageContentEl) BorderY(length gk.Length) MessageContentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1860,30 +2397,40 @@ func (e MessageContentEl) BorderY(length gk.Length) MessageContentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageContentEl) Bottom(length gk.Length) MessageContentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageContentEl) ColEnd(end int16) MessageContentEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageContentEl) ColSpan(span uint16) MessageContentEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageContentEl) ColStart(start int16) MessageContentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageContentEl) Cursor(cursor gk.CursorStyle) MessageContentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1891,36 +2438,48 @@ func (e MessageContentEl) Cursor(cursor gk.CursorStyle) MessageContentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageContentEl) FlexBasis(basis gk.Length) MessageContentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageContentEl) FlexGrow(grow float32) MessageContentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageContentEl) FlexShrink(shrink float32) MessageContentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageContentEl) Font(font gk.Font) MessageContentEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageContentEl) FontFamily(familyName string) MessageContentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageContentEl) FontFeatures(features gk.FontFeatures) MessageContentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1929,12 +2488,16 @@ func (e MessageContentEl) FontFeatures(features gk.FontFeatures) MessageContentE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageContentEl) FontWeight(weight gk.FontWeight) MessageContentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageContentEl) Gap(length gk.Length) MessageContentEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1942,6 +2505,8 @@ func (e MessageContentEl) Gap(length gk.Length) MessageContentEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageContentEl) GapX(length gk.Length) MessageContentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1949,18 +2514,24 @@ func (e MessageContentEl) GapX(length gk.Length) MessageContentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageContentEl) GapY(length gk.Length) MessageContentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageContentEl) GridCols(cols uint16) MessageContentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageContentEl) GridColsMaxContent(cols uint16) MessageContentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1968,18 +2539,24 @@ func (e MessageContentEl) GridColsMaxContent(cols uint16) MessageContentEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageContentEl) GridColsMinContent(cols uint16) MessageContentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageContentEl) GridRows(rows uint16) MessageContentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageContentEl) GridRowsMaxContent(rows uint16) MessageContentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1987,12 +2564,16 @@ func (e MessageContentEl) GridRowsMaxContent(rows uint16) MessageContentEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageContentEl) GridRowsMinContent(rows uint16) MessageContentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageContentEl) H(length gk.Length) MessageContentEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2000,6 +2581,8 @@ func (e MessageContentEl) H(length gk.Length) MessageContentEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageContentEl) Inset(length gk.Length) MessageContentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2007,6 +2590,8 @@ func (e MessageContentEl) Inset(length gk.Length) MessageContentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageContentEl) Left(length gk.Length) MessageContentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2014,36 +2599,48 @@ func (e MessageContentEl) Left(length gk.Length) MessageContentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageContentEl) LineClamp(lines int) MessageContentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageContentEl) LineHeight(lineHeight gk.Length) MessageContentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageContentEl) M(length gk.Length) MessageContentEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageContentEl) MaxH(length gk.Length) MessageContentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageContentEl) MaxSize(length gk.Length) MessageContentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageContentEl) MaxW(length gk.Length) MessageContentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2051,24 +2648,32 @@ func (e MessageContentEl) MaxW(length gk.Length) MessageContentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageContentEl) Mb(length gk.Length) MessageContentEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageContentEl) MinH(length gk.Length) MessageContentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageContentEl) MinSize(length gk.Length) MessageContentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageContentEl) MinW(length gk.Length) MessageContentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2076,6 +2681,8 @@ func (e MessageContentEl) MinW(length gk.Length) MessageContentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageContentEl) Ml(length gk.Length) MessageContentEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2083,6 +2690,8 @@ func (e MessageContentEl) Ml(length gk.Length) MessageContentEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageContentEl) Mr(length gk.Length) MessageContentEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2090,6 +2699,8 @@ func (e MessageContentEl) Mr(length gk.Length) MessageContentEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageContentEl) Mt(length gk.Length) MessageContentEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2097,6 +2708,8 @@ func (e MessageContentEl) Mt(length gk.Length) MessageContentEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageContentEl) Mx(length gk.Length) MessageContentEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2104,18 +2717,24 @@ func (e MessageContentEl) Mx(length gk.Length) MessageContentEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageContentEl) My(length gk.Length) MessageContentEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageContentEl) Opacity(opacity float32) MessageContentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageContentEl) P(length gk.Length) MessageContentEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2123,6 +2742,8 @@ func (e MessageContentEl) P(length gk.Length) MessageContentEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageContentEl) Pb(length gk.Length) MessageContentEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2130,6 +2751,8 @@ func (e MessageContentEl) Pb(length gk.Length) MessageContentEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageContentEl) Pl(length gk.Length) MessageContentEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2137,6 +2760,8 @@ func (e MessageContentEl) Pl(length gk.Length) MessageContentEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageContentEl) Pr(length gk.Length) MessageContentEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2144,6 +2769,8 @@ func (e MessageContentEl) Pr(length gk.Length) MessageContentEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageContentEl) Pt(length gk.Length) MessageContentEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2151,6 +2778,8 @@ func (e MessageContentEl) Pt(length gk.Length) MessageContentEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageContentEl) Px(length gk.Length) MessageContentEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2158,6 +2787,8 @@ func (e MessageContentEl) Px(length gk.Length) MessageContentEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageContentEl) Py(length gk.Length) MessageContentEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2165,12 +2796,16 @@ func (e MessageContentEl) Py(length gk.Length) MessageContentEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageContentEl) Right(length gk.Length) MessageContentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageContentEl) Rounded(length gk.Length) MessageContentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2178,6 +2813,8 @@ func (e MessageContentEl) Rounded(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageContentEl) RoundedB(length gk.Length) MessageContentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2185,6 +2822,8 @@ func (e MessageContentEl) RoundedB(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageContentEl) RoundedBl(length gk.Length) MessageContentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2192,6 +2831,8 @@ func (e MessageContentEl) RoundedBl(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageContentEl) RoundedBr(length gk.Length) MessageContentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2199,6 +2840,8 @@ func (e MessageContentEl) RoundedBr(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageContentEl) RoundedL(length gk.Length) MessageContentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2206,6 +2849,8 @@ func (e MessageContentEl) RoundedL(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageContentEl) RoundedR(length gk.Length) MessageContentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2213,6 +2858,8 @@ func (e MessageContentEl) RoundedR(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageContentEl) RoundedT(length gk.Length) MessageContentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2220,6 +2867,8 @@ func (e MessageContentEl) RoundedT(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageContentEl) RoundedTl(length gk.Length) MessageContentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2227,24 +2876,32 @@ func (e MessageContentEl) RoundedTl(length gk.Length) MessageContentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageContentEl) RoundedTr(length gk.Length) MessageContentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageContentEl) RowEnd(end int16) MessageContentEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageContentEl) RowSpan(span uint16) MessageContentEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageContentEl) RowStart(start int16) MessageContentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2254,24 +2911,32 @@ func (e MessageContentEl) RowStart(start int16) MessageContentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageContentEl) ScrollbarWidth(width gk.Length) MessageContentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageContentEl) Shadow(shadows []gk.BoxShadow) MessageContentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageContentEl) Size(length gk.Length) MessageContentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageContentEl) TextAlign(align gk.TextAlign) MessageContentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2280,6 +2945,8 @@ func (e MessageContentEl) TextAlign(align gk.TextAlign) MessageContentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageContentEl) TextBg(bg gk.Color) MessageContentEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2288,18 +2955,24 @@ func (e MessageContentEl) TextBg(bg gk.Color) MessageContentEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageContentEl) TextColor(color gk.Color) MessageContentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageContentEl) TextDecorationColor(color gk.Color) MessageContentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageContentEl) TextOverflow(overflow gk.TextOverflow) MessageContentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2308,6 +2981,8 @@ func (e MessageContentEl) TextOverflow(overflow gk.TextOverflow) MessageContentE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageContentEl) TextSize(size gk.Length) MessageContentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2315,12 +2990,16 @@ func (e MessageContentEl) TextSize(size gk.Length) MessageContentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageContentEl) Top(length gk.Length) MessageContentEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageContentEl) W(length gk.Length) MessageContentEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -2331,7 +3010,7 @@ type MessageFooterEl struct{ rt.ElAnimatableElement }
 
 // Create an empty message footer.
 //
-// MessageFooter is <gpui_kit::component::message::MessageFooter>::new.
+// MessageFooter calls <gpui_kit::component::message::MessageFooter>::new.
 func MessageFooter(st ...gk.Style) MessageFooterEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(703)
@@ -2339,7 +3018,7 @@ func MessageFooter(st ...gk.Style) MessageFooterEl {
 	return MessageFooterEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageFooterDefault is <gpui_kit::component::message::MessageFooter as Default>::default.
+// MessageFooterDefault calls <gpui_kit::component::message::MessageFooter as Default>::default.
 func MessageFooterDefault(st ...gk.Style) MessageFooterEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(702)
@@ -2349,7 +3028,7 @@ func MessageFooterDefault(st ...gk.Style) MessageFooterEl {
 
 // Set whether the footer keeps its default horizontal content inset.
 //
-// ContentInset is <gpui_kit::component::message::MessageFooter>::content_inset.
+// ContentInset calls <gpui_kit::component::message::MessageFooter>::content_inset.
 func (e MessageFooterEl) ContentInset(contentInset bool) MessageFooterEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(contentInset)
@@ -2358,20 +3037,24 @@ func (e MessageFooterEl) ContentInset(contentInset bool) MessageFooterEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageFooterEl) PopoverStyle() MessageFooterEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageFooterEl) RoundedFullStyle() MessageFooterEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2380,16 +3063,18 @@ func (e MessageFooterEl) RoundedFullStyle() MessageFooterEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e MessageFooterEl) FocusRingStyle() MessageFooterEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2402,24 +3087,32 @@ func (e MessageFooterEl) FocusRingStyle() MessageFooterEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e MessageFooterEl) KeepTextSelection(id gk.ID) MessageFooterEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e MessageFooterEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) MessageFooterEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageFooterEl) BorderE(width gk.Length) MessageFooterEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageFooterEl) BorderS(width gk.Length) MessageFooterEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2427,136 +3120,178 @@ func (e MessageFooterEl) BorderS(width gk.Length) MessageFooterEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageFooterEl) FlexRowDir() MessageFooterEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageFooterEl) InsetE(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageFooterEl) InsetS(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageFooterEl) JustifyFlexEnd() MessageFooterEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageFooterEl) JustifyFlexStart() MessageFooterEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageFooterEl) Me(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageFooterEl) Ms(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageFooterEl) Pe(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageFooterEl) Ps(length gk.Length) MessageFooterEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageFooterEl) RoundedE(radius gk.Length) MessageFooterEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageFooterEl) RoundedS(radius gk.Length) MessageFooterEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageFooterEl) TextEnd() MessageFooterEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageFooterEl) TextStart() MessageFooterEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageFooterEl) CornerRadii(radius gk.Corners) MessageFooterEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageFooterEl) DebugBlue() MessageFooterEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageFooterEl) DebugFocused(focusHandle gk.FocusHandle) MessageFooterEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageFooterEl) DebugGreen() MessageFooterEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageFooterEl) DebugPink() MessageFooterEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageFooterEl) DebugRed() MessageFooterEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageFooterEl) DebugYellow() MessageFooterEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageFooterEl) FontBlack() MessageFooterEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageFooterEl) FontBold() MessageFooterEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageFooterEl) FontExtrabold() MessageFooterEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageFooterEl) FontExtralight() MessageFooterEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageFooterEl) FontLight() MessageFooterEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageFooterEl) FontMedium() MessageFooterEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageFooterEl) FontNormal() MessageFooterEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageFooterEl) FontSemibold() MessageFooterEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageFooterEl) FontThin() MessageFooterEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2565,18 +3300,23 @@ func (e MessageFooterEl) FontThin() MessageFooterEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageFooterEl) HFlex() MessageFooterEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageFooterEl) Margins(margins gk.EdgesInto) MessageFooterEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageFooterEl) Paddings(paddings gk.EdgesInto) MessageFooterEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageFooterEl) RefineStyle(style gk.StyleRefinement) MessageFooterEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2586,38 +3326,51 @@ func (e MessageFooterEl) RefineStyle(style gk.StyleRefinement) MessageFooterEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageFooterEl) VFlex() MessageFooterEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e MessageFooterEl) Text(s string) MessageFooterEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e MessageFooterEl) ChildView(v gk.View) MessageFooterEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e MessageFooterEl) Child(child gk.Element) MessageFooterEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e MessageFooterEl) Children(children ...gk.Element) MessageFooterEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageFooterEl) Style(st ...gk.Style) MessageFooterEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageFooterEl) AspectRatio(ratio float32) MessageFooterEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageFooterEl) Bg(fill gk.Fill) MessageFooterEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageFooterEl) Border(length gk.Length) MessageFooterEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2625,12 +3378,16 @@ func (e MessageFooterEl) Border(length gk.Length) MessageFooterEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageFooterEl) BorderB(length gk.Length) MessageFooterEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageFooterEl) BorderColor(borderColor gk.Color) MessageFooterEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2638,6 +3395,8 @@ func (e MessageFooterEl) BorderColor(borderColor gk.Color) MessageFooterEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageFooterEl) BorderL(length gk.Length) MessageFooterEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2645,6 +3404,8 @@ func (e MessageFooterEl) BorderL(length gk.Length) MessageFooterEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageFooterEl) BorderR(length gk.Length) MessageFooterEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2652,6 +3413,8 @@ func (e MessageFooterEl) BorderR(length gk.Length) MessageFooterEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageFooterEl) BorderT(length gk.Length) MessageFooterEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2659,6 +3422,8 @@ func (e MessageFooterEl) BorderT(length gk.Length) MessageFooterEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageFooterEl) BorderX(length gk.Length) MessageFooterEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2666,6 +3431,8 @@ func (e MessageFooterEl) BorderX(length gk.Length) MessageFooterEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageFooterEl) BorderY(length gk.Length) MessageFooterEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2673,30 +3440,40 @@ func (e MessageFooterEl) BorderY(length gk.Length) MessageFooterEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageFooterEl) Bottom(length gk.Length) MessageFooterEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageFooterEl) ColEnd(end int16) MessageFooterEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageFooterEl) ColSpan(span uint16) MessageFooterEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageFooterEl) ColStart(start int16) MessageFooterEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageFooterEl) Cursor(cursor gk.CursorStyle) MessageFooterEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2704,36 +3481,48 @@ func (e MessageFooterEl) Cursor(cursor gk.CursorStyle) MessageFooterEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageFooterEl) FlexBasis(basis gk.Length) MessageFooterEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageFooterEl) FlexGrow(grow float32) MessageFooterEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageFooterEl) FlexShrink(shrink float32) MessageFooterEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageFooterEl) Font(font gk.Font) MessageFooterEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageFooterEl) FontFamily(familyName string) MessageFooterEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageFooterEl) FontFeatures(features gk.FontFeatures) MessageFooterEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2742,12 +3531,16 @@ func (e MessageFooterEl) FontFeatures(features gk.FontFeatures) MessageFooterEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageFooterEl) FontWeight(weight gk.FontWeight) MessageFooterEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageFooterEl) Gap(length gk.Length) MessageFooterEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2755,6 +3548,8 @@ func (e MessageFooterEl) Gap(length gk.Length) MessageFooterEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageFooterEl) GapX(length gk.Length) MessageFooterEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2762,18 +3557,24 @@ func (e MessageFooterEl) GapX(length gk.Length) MessageFooterEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageFooterEl) GapY(length gk.Length) MessageFooterEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageFooterEl) GridCols(cols uint16) MessageFooterEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageFooterEl) GridColsMaxContent(cols uint16) MessageFooterEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2781,18 +3582,24 @@ func (e MessageFooterEl) GridColsMaxContent(cols uint16) MessageFooterEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageFooterEl) GridColsMinContent(cols uint16) MessageFooterEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageFooterEl) GridRows(rows uint16) MessageFooterEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageFooterEl) GridRowsMaxContent(rows uint16) MessageFooterEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2800,12 +3607,16 @@ func (e MessageFooterEl) GridRowsMaxContent(rows uint16) MessageFooterEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageFooterEl) GridRowsMinContent(rows uint16) MessageFooterEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageFooterEl) H(length gk.Length) MessageFooterEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2813,6 +3624,8 @@ func (e MessageFooterEl) H(length gk.Length) MessageFooterEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageFooterEl) Inset(length gk.Length) MessageFooterEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2820,6 +3633,8 @@ func (e MessageFooterEl) Inset(length gk.Length) MessageFooterEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageFooterEl) Left(length gk.Length) MessageFooterEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2827,36 +3642,48 @@ func (e MessageFooterEl) Left(length gk.Length) MessageFooterEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageFooterEl) LineClamp(lines int) MessageFooterEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageFooterEl) LineHeight(lineHeight gk.Length) MessageFooterEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageFooterEl) M(length gk.Length) MessageFooterEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageFooterEl) MaxH(length gk.Length) MessageFooterEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageFooterEl) MaxSize(length gk.Length) MessageFooterEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageFooterEl) MaxW(length gk.Length) MessageFooterEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2864,24 +3691,32 @@ func (e MessageFooterEl) MaxW(length gk.Length) MessageFooterEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageFooterEl) Mb(length gk.Length) MessageFooterEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageFooterEl) MinH(length gk.Length) MessageFooterEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageFooterEl) MinSize(length gk.Length) MessageFooterEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageFooterEl) MinW(length gk.Length) MessageFooterEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2889,6 +3724,8 @@ func (e MessageFooterEl) MinW(length gk.Length) MessageFooterEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageFooterEl) Ml(length gk.Length) MessageFooterEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2896,6 +3733,8 @@ func (e MessageFooterEl) Ml(length gk.Length) MessageFooterEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageFooterEl) Mr(length gk.Length) MessageFooterEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2903,6 +3742,8 @@ func (e MessageFooterEl) Mr(length gk.Length) MessageFooterEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageFooterEl) Mt(length gk.Length) MessageFooterEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2910,6 +3751,8 @@ func (e MessageFooterEl) Mt(length gk.Length) MessageFooterEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageFooterEl) Mx(length gk.Length) MessageFooterEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2917,18 +3760,24 @@ func (e MessageFooterEl) Mx(length gk.Length) MessageFooterEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageFooterEl) My(length gk.Length) MessageFooterEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageFooterEl) Opacity(opacity float32) MessageFooterEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageFooterEl) P(length gk.Length) MessageFooterEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2936,6 +3785,8 @@ func (e MessageFooterEl) P(length gk.Length) MessageFooterEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageFooterEl) Pb(length gk.Length) MessageFooterEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2943,6 +3794,8 @@ func (e MessageFooterEl) Pb(length gk.Length) MessageFooterEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageFooterEl) Pl(length gk.Length) MessageFooterEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2950,6 +3803,8 @@ func (e MessageFooterEl) Pl(length gk.Length) MessageFooterEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageFooterEl) Pr(length gk.Length) MessageFooterEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2957,6 +3812,8 @@ func (e MessageFooterEl) Pr(length gk.Length) MessageFooterEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageFooterEl) Pt(length gk.Length) MessageFooterEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2964,6 +3821,8 @@ func (e MessageFooterEl) Pt(length gk.Length) MessageFooterEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageFooterEl) Px(length gk.Length) MessageFooterEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2971,6 +3830,8 @@ func (e MessageFooterEl) Px(length gk.Length) MessageFooterEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageFooterEl) Py(length gk.Length) MessageFooterEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2978,12 +3839,16 @@ func (e MessageFooterEl) Py(length gk.Length) MessageFooterEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageFooterEl) Right(length gk.Length) MessageFooterEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageFooterEl) Rounded(length gk.Length) MessageFooterEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2991,6 +3856,8 @@ func (e MessageFooterEl) Rounded(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageFooterEl) RoundedB(length gk.Length) MessageFooterEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2998,6 +3865,8 @@ func (e MessageFooterEl) RoundedB(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageFooterEl) RoundedBl(length gk.Length) MessageFooterEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3005,6 +3874,8 @@ func (e MessageFooterEl) RoundedBl(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageFooterEl) RoundedBr(length gk.Length) MessageFooterEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3012,6 +3883,8 @@ func (e MessageFooterEl) RoundedBr(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageFooterEl) RoundedL(length gk.Length) MessageFooterEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3019,6 +3892,8 @@ func (e MessageFooterEl) RoundedL(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageFooterEl) RoundedR(length gk.Length) MessageFooterEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3026,6 +3901,8 @@ func (e MessageFooterEl) RoundedR(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageFooterEl) RoundedT(length gk.Length) MessageFooterEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3033,6 +3910,8 @@ func (e MessageFooterEl) RoundedT(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageFooterEl) RoundedTl(length gk.Length) MessageFooterEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3040,24 +3919,32 @@ func (e MessageFooterEl) RoundedTl(length gk.Length) MessageFooterEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageFooterEl) RoundedTr(length gk.Length) MessageFooterEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageFooterEl) RowEnd(end int16) MessageFooterEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageFooterEl) RowSpan(span uint16) MessageFooterEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageFooterEl) RowStart(start int16) MessageFooterEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3067,24 +3954,32 @@ func (e MessageFooterEl) RowStart(start int16) MessageFooterEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageFooterEl) ScrollbarWidth(width gk.Length) MessageFooterEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageFooterEl) Shadow(shadows []gk.BoxShadow) MessageFooterEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageFooterEl) Size(length gk.Length) MessageFooterEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageFooterEl) TextAlign(align gk.TextAlign) MessageFooterEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3093,6 +3988,8 @@ func (e MessageFooterEl) TextAlign(align gk.TextAlign) MessageFooterEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageFooterEl) TextBg(bg gk.Color) MessageFooterEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3101,18 +3998,24 @@ func (e MessageFooterEl) TextBg(bg gk.Color) MessageFooterEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageFooterEl) TextColor(color gk.Color) MessageFooterEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageFooterEl) TextDecorationColor(color gk.Color) MessageFooterEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageFooterEl) TextOverflow(overflow gk.TextOverflow) MessageFooterEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3121,6 +4024,8 @@ func (e MessageFooterEl) TextOverflow(overflow gk.TextOverflow) MessageFooterEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageFooterEl) TextSize(size gk.Length) MessageFooterEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3128,12 +4033,16 @@ func (e MessageFooterEl) TextSize(size gk.Length) MessageFooterEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageFooterEl) Top(length gk.Length) MessageFooterEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageFooterEl) W(length gk.Length) MessageFooterEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -3144,7 +4053,7 @@ type MessageGroupEl struct{ rt.ElAnimatableElement }
 
 // Create an empty message group.
 //
-// MessageGroup is <gpui_kit::component::message::MessageGroup>::new.
+// MessageGroup calls <gpui_kit::component::message::MessageGroup>::new.
 func MessageGroup(st ...gk.Style) MessageGroupEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(705)
@@ -3152,7 +4061,7 @@ func MessageGroup(st ...gk.Style) MessageGroupEl {
 	return MessageGroupEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageGroupDefault is <gpui_kit::component::message::MessageGroup as Default>::default.
+// MessageGroupDefault calls <gpui_kit::component::message::MessageGroup as Default>::default.
 func MessageGroupDefault(st ...gk.Style) MessageGroupEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(704)
@@ -3162,20 +4071,24 @@ func MessageGroupDefault(st ...gk.Style) MessageGroupEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageGroupEl) PopoverStyle() MessageGroupEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageGroupEl) RoundedFullStyle() MessageGroupEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3184,16 +4097,18 @@ func (e MessageGroupEl) RoundedFullStyle() MessageGroupEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e MessageGroupEl) FocusRingStyle() MessageGroupEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3206,24 +4121,32 @@ func (e MessageGroupEl) FocusRingStyle() MessageGroupEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e MessageGroupEl) KeepTextSelection(id gk.ID) MessageGroupEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e MessageGroupEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) MessageGroupEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageGroupEl) BorderE(width gk.Length) MessageGroupEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageGroupEl) BorderS(width gk.Length) MessageGroupEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3231,133 +4154,175 @@ func (e MessageGroupEl) BorderS(width gk.Length) MessageGroupEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageGroupEl) FlexRowDir() MessageGroupEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageGroupEl) InsetE(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageGroupEl) InsetS(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageGroupEl) JustifyFlexEnd() MessageGroupEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageGroupEl) JustifyFlexStart() MessageGroupEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageGroupEl) Me(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageGroupEl) Ms(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageGroupEl) Pe(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageGroupEl) Ps(length gk.Length) MessageGroupEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageGroupEl) RoundedE(radius gk.Length) MessageGroupEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageGroupEl) RoundedS(radius gk.Length) MessageGroupEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageGroupEl) TextEnd() MessageGroupEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageGroupEl) TextStart() MessageGroupEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageGroupEl) CornerRadii(radius gk.Corners) MessageGroupEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageGroupEl) DebugBlue() MessageGroupEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageGroupEl) DebugFocused(focusHandle gk.FocusHandle) MessageGroupEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageGroupEl) DebugGreen() MessageGroupEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageGroupEl) DebugPink() MessageGroupEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageGroupEl) DebugRed() MessageGroupEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageGroupEl) DebugYellow() MessageGroupEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageGroupEl) FontBlack() MessageGroupEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageGroupEl) FontBold() MessageGroupEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageGroupEl) FontExtrabold() MessageGroupEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageGroupEl) FontExtralight() MessageGroupEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageGroupEl) FontLight() MessageGroupEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageGroupEl) FontMedium() MessageGroupEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageGroupEl) FontNormal() MessageGroupEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageGroupEl) FontSemibold() MessageGroupEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageGroupEl) FontThin() MessageGroupEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3366,18 +4331,23 @@ func (e MessageGroupEl) FontThin() MessageGroupEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageGroupEl) HFlex() MessageGroupEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageGroupEl) Margins(margins gk.EdgesInto) MessageGroupEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageGroupEl) Paddings(paddings gk.EdgesInto) MessageGroupEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageGroupEl) RefineStyle(style gk.StyleRefinement) MessageGroupEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3387,38 +4357,51 @@ func (e MessageGroupEl) RefineStyle(style gk.StyleRefinement) MessageGroupEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageGroupEl) VFlex() MessageGroupEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e MessageGroupEl) Text(s string) MessageGroupEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e MessageGroupEl) ChildView(v gk.View) MessageGroupEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e MessageGroupEl) Child(child gk.Element) MessageGroupEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e MessageGroupEl) Children(children ...gk.Element) MessageGroupEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageGroupEl) Style(st ...gk.Style) MessageGroupEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageGroupEl) AspectRatio(ratio float32) MessageGroupEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageGroupEl) Bg(fill gk.Fill) MessageGroupEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageGroupEl) Border(length gk.Length) MessageGroupEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3426,12 +4409,16 @@ func (e MessageGroupEl) Border(length gk.Length) MessageGroupEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageGroupEl) BorderB(length gk.Length) MessageGroupEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageGroupEl) BorderColor(borderColor gk.Color) MessageGroupEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3439,6 +4426,8 @@ func (e MessageGroupEl) BorderColor(borderColor gk.Color) MessageGroupEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageGroupEl) BorderL(length gk.Length) MessageGroupEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3446,6 +4435,8 @@ func (e MessageGroupEl) BorderL(length gk.Length) MessageGroupEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageGroupEl) BorderR(length gk.Length) MessageGroupEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3453,6 +4444,8 @@ func (e MessageGroupEl) BorderR(length gk.Length) MessageGroupEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageGroupEl) BorderT(length gk.Length) MessageGroupEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3460,6 +4453,8 @@ func (e MessageGroupEl) BorderT(length gk.Length) MessageGroupEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageGroupEl) BorderX(length gk.Length) MessageGroupEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3467,6 +4462,8 @@ func (e MessageGroupEl) BorderX(length gk.Length) MessageGroupEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageGroupEl) BorderY(length gk.Length) MessageGroupEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3474,27 +4471,37 @@ func (e MessageGroupEl) BorderY(length gk.Length) MessageGroupEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageGroupEl) Bottom(length gk.Length) MessageGroupEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageGroupEl) ColEnd(end int16) MessageGroupEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageGroupEl) ColSpan(span uint16) MessageGroupEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageGroupEl) ColStart(start int16) MessageGroupEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageGroupEl) Cursor(cursor gk.CursorStyle) MessageGroupEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3502,33 +4509,45 @@ func (e MessageGroupEl) Cursor(cursor gk.CursorStyle) MessageGroupEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageGroupEl) FlexBasis(basis gk.Length) MessageGroupEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageGroupEl) FlexGrow(grow float32) MessageGroupEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageGroupEl) FlexShrink(shrink float32) MessageGroupEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageGroupEl) Font(font gk.Font) MessageGroupEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageGroupEl) FontFamily(familyName string) MessageGroupEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageGroupEl) FontFeatures(features gk.FontFeatures) MessageGroupEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3537,12 +4556,16 @@ func (e MessageGroupEl) FontFeatures(features gk.FontFeatures) MessageGroupEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageGroupEl) FontWeight(weight gk.FontWeight) MessageGroupEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageGroupEl) Gap(length gk.Length) MessageGroupEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3550,6 +4573,8 @@ func (e MessageGroupEl) Gap(length gk.Length) MessageGroupEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageGroupEl) GapX(length gk.Length) MessageGroupEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3557,18 +4582,24 @@ func (e MessageGroupEl) GapX(length gk.Length) MessageGroupEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageGroupEl) GapY(length gk.Length) MessageGroupEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageGroupEl) GridCols(cols uint16) MessageGroupEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageGroupEl) GridColsMaxContent(cols uint16) MessageGroupEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3576,18 +4607,24 @@ func (e MessageGroupEl) GridColsMaxContent(cols uint16) MessageGroupEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageGroupEl) GridColsMinContent(cols uint16) MessageGroupEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageGroupEl) GridRows(rows uint16) MessageGroupEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageGroupEl) GridRowsMaxContent(rows uint16) MessageGroupEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3595,16 +4632,22 @@ func (e MessageGroupEl) GridRowsMaxContent(rows uint16) MessageGroupEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageGroupEl) GridRowsMinContent(rows uint16) MessageGroupEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageGroupEl) H(length gk.Length) MessageGroupEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageGroupEl) Inset(length gk.Length) MessageGroupEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3612,6 +4655,8 @@ func (e MessageGroupEl) Inset(length gk.Length) MessageGroupEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageGroupEl) Left(length gk.Length) MessageGroupEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3619,33 +4664,45 @@ func (e MessageGroupEl) Left(length gk.Length) MessageGroupEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageGroupEl) LineClamp(lines int) MessageGroupEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageGroupEl) LineHeight(lineHeight gk.Length) MessageGroupEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageGroupEl) M(length gk.Length) MessageGroupEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageGroupEl) MaxH(length gk.Length) MessageGroupEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageGroupEl) MaxSize(length gk.Length) MessageGroupEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageGroupEl) MaxW(length gk.Length) MessageGroupEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3653,24 +4710,32 @@ func (e MessageGroupEl) MaxW(length gk.Length) MessageGroupEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageGroupEl) Mb(length gk.Length) MessageGroupEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageGroupEl) MinH(length gk.Length) MessageGroupEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageGroupEl) MinSize(length gk.Length) MessageGroupEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageGroupEl) MinW(length gk.Length) MessageGroupEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3678,6 +4743,8 @@ func (e MessageGroupEl) MinW(length gk.Length) MessageGroupEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageGroupEl) Ml(length gk.Length) MessageGroupEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3685,6 +4752,8 @@ func (e MessageGroupEl) Ml(length gk.Length) MessageGroupEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageGroupEl) Mr(length gk.Length) MessageGroupEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3692,6 +4761,8 @@ func (e MessageGroupEl) Mr(length gk.Length) MessageGroupEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageGroupEl) Mt(length gk.Length) MessageGroupEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3699,6 +4770,8 @@ func (e MessageGroupEl) Mt(length gk.Length) MessageGroupEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageGroupEl) Mx(length gk.Length) MessageGroupEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3706,22 +4779,30 @@ func (e MessageGroupEl) Mx(length gk.Length) MessageGroupEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageGroupEl) My(length gk.Length) MessageGroupEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageGroupEl) Opacity(opacity float32) MessageGroupEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageGroupEl) P(length gk.Length) MessageGroupEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageGroupEl) Pb(length gk.Length) MessageGroupEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3729,6 +4810,8 @@ func (e MessageGroupEl) Pb(length gk.Length) MessageGroupEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageGroupEl) Pl(length gk.Length) MessageGroupEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3736,6 +4819,8 @@ func (e MessageGroupEl) Pl(length gk.Length) MessageGroupEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageGroupEl) Pr(length gk.Length) MessageGroupEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3743,6 +4828,8 @@ func (e MessageGroupEl) Pr(length gk.Length) MessageGroupEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageGroupEl) Pt(length gk.Length) MessageGroupEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3750,6 +4837,8 @@ func (e MessageGroupEl) Pt(length gk.Length) MessageGroupEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageGroupEl) Px(length gk.Length) MessageGroupEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3757,6 +4846,8 @@ func (e MessageGroupEl) Px(length gk.Length) MessageGroupEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageGroupEl) Py(length gk.Length) MessageGroupEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3764,12 +4855,16 @@ func (e MessageGroupEl) Py(length gk.Length) MessageGroupEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageGroupEl) Right(length gk.Length) MessageGroupEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageGroupEl) Rounded(length gk.Length) MessageGroupEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3777,6 +4872,8 @@ func (e MessageGroupEl) Rounded(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageGroupEl) RoundedB(length gk.Length) MessageGroupEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3784,6 +4881,8 @@ func (e MessageGroupEl) RoundedB(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageGroupEl) RoundedBl(length gk.Length) MessageGroupEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3791,6 +4890,8 @@ func (e MessageGroupEl) RoundedBl(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageGroupEl) RoundedBr(length gk.Length) MessageGroupEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3798,6 +4899,8 @@ func (e MessageGroupEl) RoundedBr(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageGroupEl) RoundedL(length gk.Length) MessageGroupEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3805,6 +4908,8 @@ func (e MessageGroupEl) RoundedL(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageGroupEl) RoundedR(length gk.Length) MessageGroupEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3812,6 +4917,8 @@ func (e MessageGroupEl) RoundedR(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageGroupEl) RoundedT(length gk.Length) MessageGroupEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3819,6 +4926,8 @@ func (e MessageGroupEl) RoundedT(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageGroupEl) RoundedTl(length gk.Length) MessageGroupEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3826,21 +4935,29 @@ func (e MessageGroupEl) RoundedTl(length gk.Length) MessageGroupEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageGroupEl) RoundedTr(length gk.Length) MessageGroupEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageGroupEl) RowEnd(end int16) MessageGroupEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageGroupEl) RowSpan(span uint16) MessageGroupEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageGroupEl) RowStart(start int16) MessageGroupEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3850,24 +4967,32 @@ func (e MessageGroupEl) RowStart(start int16) MessageGroupEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageGroupEl) ScrollbarWidth(width gk.Length) MessageGroupEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageGroupEl) Shadow(shadows []gk.BoxShadow) MessageGroupEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageGroupEl) Size(length gk.Length) MessageGroupEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageGroupEl) TextAlign(align gk.TextAlign) MessageGroupEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3876,23 +5001,31 @@ func (e MessageGroupEl) TextAlign(align gk.TextAlign) MessageGroupEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageGroupEl) TextBg(bg gk.Color) MessageGroupEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageGroupEl) TextColor(color gk.Color) MessageGroupEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageGroupEl) TextDecorationColor(color gk.Color) MessageGroupEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageGroupEl) TextOverflow(overflow gk.TextOverflow) MessageGroupEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3901,6 +5034,8 @@ func (e MessageGroupEl) TextOverflow(overflow gk.TextOverflow) MessageGroupEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageGroupEl) TextSize(size gk.Length) MessageGroupEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3908,12 +5043,16 @@ func (e MessageGroupEl) TextSize(size gk.Length) MessageGroupEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageGroupEl) Top(length gk.Length) MessageGroupEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageGroupEl) W(length gk.Length) MessageGroupEl { tStyledW(rt.N(e.Core), length); return e }
 
 // MessageHeaderEl is gpui_kit::component::message::MessageHeader.
@@ -3921,7 +5060,7 @@ type MessageHeaderEl struct{ rt.ElAnimatableElement }
 
 // Create an empty message header.
 //
-// MessageHeader is <gpui_kit::component::message::MessageHeader>::new.
+// MessageHeader calls <gpui_kit::component::message::MessageHeader>::new.
 func MessageHeader(st ...gk.Style) MessageHeaderEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(707)
@@ -3929,7 +5068,7 @@ func MessageHeader(st ...gk.Style) MessageHeaderEl {
 	return MessageHeaderEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// MessageHeaderDefault is <gpui_kit::component::message::MessageHeader as Default>::default.
+// MessageHeaderDefault calls <gpui_kit::component::message::MessageHeader as Default>::default.
 func MessageHeaderDefault(st ...gk.Style) MessageHeaderEl {
 	rt.UseComponentMessage()
 	n := rt.NewNode(706)
@@ -3939,7 +5078,7 @@ func MessageHeaderDefault(st ...gk.Style) MessageHeaderEl {
 
 // Set whether the header keeps its default horizontal content inset.
 //
-// ContentInset is <gpui_kit::component::message::MessageHeader>::content_inset.
+// ContentInset calls <gpui_kit::component::message::MessageHeader>::content_inset.
 func (e MessageHeaderEl) ContentInset(contentInset bool) MessageHeaderEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(contentInset)
@@ -3948,20 +5087,24 @@ func (e MessageHeaderEl) ContentInset(contentInset bool) MessageHeaderEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e MessageHeaderEl) PopoverStyle() MessageHeaderEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e MessageHeaderEl) RoundedFullStyle() MessageHeaderEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3970,16 +5113,18 @@ func (e MessageHeaderEl) RoundedFullStyle() MessageHeaderEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e MessageHeaderEl) FocusRingStyle() MessageHeaderEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3992,24 +5137,32 @@ func (e MessageHeaderEl) FocusRingStyle() MessageHeaderEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e MessageHeaderEl) KeepTextSelection(id gk.ID) MessageHeaderEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e MessageHeaderEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) MessageHeaderEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e MessageHeaderEl) BorderE(width gk.Length) MessageHeaderEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e MessageHeaderEl) BorderS(width gk.Length) MessageHeaderEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4017,136 +5170,178 @@ func (e MessageHeaderEl) BorderS(width gk.Length) MessageHeaderEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e MessageHeaderEl) FlexRowDir() MessageHeaderEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e MessageHeaderEl) InsetE(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e MessageHeaderEl) InsetS(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e MessageHeaderEl) JustifyFlexEnd() MessageHeaderEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e MessageHeaderEl) JustifyFlexStart() MessageHeaderEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e MessageHeaderEl) Me(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e MessageHeaderEl) Ms(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e MessageHeaderEl) Pe(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e MessageHeaderEl) Ps(length gk.Length) MessageHeaderEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e MessageHeaderEl) RoundedE(radius gk.Length) MessageHeaderEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e MessageHeaderEl) RoundedS(radius gk.Length) MessageHeaderEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e MessageHeaderEl) TextEnd() MessageHeaderEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e MessageHeaderEl) TextStart() MessageHeaderEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e MessageHeaderEl) CornerRadii(radius gk.Corners) MessageHeaderEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e MessageHeaderEl) DebugBlue() MessageHeaderEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e MessageHeaderEl) DebugFocused(focusHandle gk.FocusHandle) MessageHeaderEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e MessageHeaderEl) DebugGreen() MessageHeaderEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e MessageHeaderEl) DebugPink() MessageHeaderEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e MessageHeaderEl) DebugRed() MessageHeaderEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e MessageHeaderEl) DebugYellow() MessageHeaderEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e MessageHeaderEl) FontBlack() MessageHeaderEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e MessageHeaderEl) FontBold() MessageHeaderEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e MessageHeaderEl) FontExtrabold() MessageHeaderEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e MessageHeaderEl) FontExtralight() MessageHeaderEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e MessageHeaderEl) FontLight() MessageHeaderEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e MessageHeaderEl) FontMedium() MessageHeaderEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e MessageHeaderEl) FontNormal() MessageHeaderEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e MessageHeaderEl) FontSemibold() MessageHeaderEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e MessageHeaderEl) FontThin() MessageHeaderEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4155,18 +5350,23 @@ func (e MessageHeaderEl) FontThin() MessageHeaderEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e MessageHeaderEl) HFlex() MessageHeaderEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e MessageHeaderEl) Margins(margins gk.EdgesInto) MessageHeaderEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e MessageHeaderEl) Paddings(paddings gk.EdgesInto) MessageHeaderEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e MessageHeaderEl) RefineStyle(style gk.StyleRefinement) MessageHeaderEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4176,38 +5376,51 @@ func (e MessageHeaderEl) RefineStyle(style gk.StyleRefinement) MessageHeaderEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e MessageHeaderEl) VFlex() MessageHeaderEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e MessageHeaderEl) Text(s string) MessageHeaderEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e MessageHeaderEl) ChildView(v gk.View) MessageHeaderEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e MessageHeaderEl) Child(child gk.Element) MessageHeaderEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e MessageHeaderEl) Children(children ...gk.Element) MessageHeaderEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e MessageHeaderEl) Style(st ...gk.Style) MessageHeaderEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e MessageHeaderEl) AspectRatio(ratio float32) MessageHeaderEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e MessageHeaderEl) Bg(fill gk.Fill) MessageHeaderEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e MessageHeaderEl) Border(length gk.Length) MessageHeaderEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4215,12 +5428,16 @@ func (e MessageHeaderEl) Border(length gk.Length) MessageHeaderEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e MessageHeaderEl) BorderB(length gk.Length) MessageHeaderEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e MessageHeaderEl) BorderColor(borderColor gk.Color) MessageHeaderEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4228,6 +5445,8 @@ func (e MessageHeaderEl) BorderColor(borderColor gk.Color) MessageHeaderEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e MessageHeaderEl) BorderL(length gk.Length) MessageHeaderEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4235,6 +5454,8 @@ func (e MessageHeaderEl) BorderL(length gk.Length) MessageHeaderEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e MessageHeaderEl) BorderR(length gk.Length) MessageHeaderEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4242,6 +5463,8 @@ func (e MessageHeaderEl) BorderR(length gk.Length) MessageHeaderEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e MessageHeaderEl) BorderT(length gk.Length) MessageHeaderEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4249,6 +5472,8 @@ func (e MessageHeaderEl) BorderT(length gk.Length) MessageHeaderEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e MessageHeaderEl) BorderX(length gk.Length) MessageHeaderEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4256,6 +5481,8 @@ func (e MessageHeaderEl) BorderX(length gk.Length) MessageHeaderEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e MessageHeaderEl) BorderY(length gk.Length) MessageHeaderEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4263,30 +5490,40 @@ func (e MessageHeaderEl) BorderY(length gk.Length) MessageHeaderEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e MessageHeaderEl) Bottom(length gk.Length) MessageHeaderEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e MessageHeaderEl) ColEnd(end int16) MessageHeaderEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e MessageHeaderEl) ColSpan(span uint16) MessageHeaderEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e MessageHeaderEl) ColStart(start int16) MessageHeaderEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e MessageHeaderEl) Cursor(cursor gk.CursorStyle) MessageHeaderEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4294,36 +5531,48 @@ func (e MessageHeaderEl) Cursor(cursor gk.CursorStyle) MessageHeaderEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e MessageHeaderEl) FlexBasis(basis gk.Length) MessageHeaderEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e MessageHeaderEl) FlexGrow(grow float32) MessageHeaderEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e MessageHeaderEl) FlexShrink(shrink float32) MessageHeaderEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e MessageHeaderEl) Font(font gk.Font) MessageHeaderEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e MessageHeaderEl) FontFamily(familyName string) MessageHeaderEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e MessageHeaderEl) FontFeatures(features gk.FontFeatures) MessageHeaderEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4332,12 +5581,16 @@ func (e MessageHeaderEl) FontFeatures(features gk.FontFeatures) MessageHeaderEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e MessageHeaderEl) FontWeight(weight gk.FontWeight) MessageHeaderEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e MessageHeaderEl) Gap(length gk.Length) MessageHeaderEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4345,6 +5598,8 @@ func (e MessageHeaderEl) Gap(length gk.Length) MessageHeaderEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e MessageHeaderEl) GapX(length gk.Length) MessageHeaderEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4352,18 +5607,24 @@ func (e MessageHeaderEl) GapX(length gk.Length) MessageHeaderEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e MessageHeaderEl) GapY(length gk.Length) MessageHeaderEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e MessageHeaderEl) GridCols(cols uint16) MessageHeaderEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e MessageHeaderEl) GridColsMaxContent(cols uint16) MessageHeaderEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4371,18 +5632,24 @@ func (e MessageHeaderEl) GridColsMaxContent(cols uint16) MessageHeaderEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e MessageHeaderEl) GridColsMinContent(cols uint16) MessageHeaderEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e MessageHeaderEl) GridRows(rows uint16) MessageHeaderEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e MessageHeaderEl) GridRowsMaxContent(rows uint16) MessageHeaderEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4390,12 +5657,16 @@ func (e MessageHeaderEl) GridRowsMaxContent(rows uint16) MessageHeaderEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e MessageHeaderEl) GridRowsMinContent(rows uint16) MessageHeaderEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e MessageHeaderEl) H(length gk.Length) MessageHeaderEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4403,6 +5674,8 @@ func (e MessageHeaderEl) H(length gk.Length) MessageHeaderEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e MessageHeaderEl) Inset(length gk.Length) MessageHeaderEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4410,6 +5683,8 @@ func (e MessageHeaderEl) Inset(length gk.Length) MessageHeaderEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e MessageHeaderEl) Left(length gk.Length) MessageHeaderEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4417,36 +5692,48 @@ func (e MessageHeaderEl) Left(length gk.Length) MessageHeaderEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e MessageHeaderEl) LineClamp(lines int) MessageHeaderEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e MessageHeaderEl) LineHeight(lineHeight gk.Length) MessageHeaderEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e MessageHeaderEl) M(length gk.Length) MessageHeaderEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e MessageHeaderEl) MaxH(length gk.Length) MessageHeaderEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e MessageHeaderEl) MaxSize(length gk.Length) MessageHeaderEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e MessageHeaderEl) MaxW(length gk.Length) MessageHeaderEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4454,24 +5741,32 @@ func (e MessageHeaderEl) MaxW(length gk.Length) MessageHeaderEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e MessageHeaderEl) Mb(length gk.Length) MessageHeaderEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e MessageHeaderEl) MinH(length gk.Length) MessageHeaderEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e MessageHeaderEl) MinSize(length gk.Length) MessageHeaderEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e MessageHeaderEl) MinW(length gk.Length) MessageHeaderEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4479,6 +5774,8 @@ func (e MessageHeaderEl) MinW(length gk.Length) MessageHeaderEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e MessageHeaderEl) Ml(length gk.Length) MessageHeaderEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4486,6 +5783,8 @@ func (e MessageHeaderEl) Ml(length gk.Length) MessageHeaderEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e MessageHeaderEl) Mr(length gk.Length) MessageHeaderEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4493,6 +5792,8 @@ func (e MessageHeaderEl) Mr(length gk.Length) MessageHeaderEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e MessageHeaderEl) Mt(length gk.Length) MessageHeaderEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4500,6 +5801,8 @@ func (e MessageHeaderEl) Mt(length gk.Length) MessageHeaderEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e MessageHeaderEl) Mx(length gk.Length) MessageHeaderEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4507,18 +5810,24 @@ func (e MessageHeaderEl) Mx(length gk.Length) MessageHeaderEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e MessageHeaderEl) My(length gk.Length) MessageHeaderEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e MessageHeaderEl) Opacity(opacity float32) MessageHeaderEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e MessageHeaderEl) P(length gk.Length) MessageHeaderEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -4526,6 +5835,8 @@ func (e MessageHeaderEl) P(length gk.Length) MessageHeaderEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e MessageHeaderEl) Pb(length gk.Length) MessageHeaderEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4533,6 +5844,8 @@ func (e MessageHeaderEl) Pb(length gk.Length) MessageHeaderEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e MessageHeaderEl) Pl(length gk.Length) MessageHeaderEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4540,6 +5853,8 @@ func (e MessageHeaderEl) Pl(length gk.Length) MessageHeaderEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e MessageHeaderEl) Pr(length gk.Length) MessageHeaderEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4547,6 +5862,8 @@ func (e MessageHeaderEl) Pr(length gk.Length) MessageHeaderEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e MessageHeaderEl) Pt(length gk.Length) MessageHeaderEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4554,6 +5871,8 @@ func (e MessageHeaderEl) Pt(length gk.Length) MessageHeaderEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e MessageHeaderEl) Px(length gk.Length) MessageHeaderEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4561,6 +5880,8 @@ func (e MessageHeaderEl) Px(length gk.Length) MessageHeaderEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e MessageHeaderEl) Py(length gk.Length) MessageHeaderEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4568,12 +5889,16 @@ func (e MessageHeaderEl) Py(length gk.Length) MessageHeaderEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e MessageHeaderEl) Right(length gk.Length) MessageHeaderEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e MessageHeaderEl) Rounded(length gk.Length) MessageHeaderEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4581,6 +5906,8 @@ func (e MessageHeaderEl) Rounded(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e MessageHeaderEl) RoundedB(length gk.Length) MessageHeaderEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4588,6 +5915,8 @@ func (e MessageHeaderEl) RoundedB(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e MessageHeaderEl) RoundedBl(length gk.Length) MessageHeaderEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4595,6 +5924,8 @@ func (e MessageHeaderEl) RoundedBl(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e MessageHeaderEl) RoundedBr(length gk.Length) MessageHeaderEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4602,6 +5933,8 @@ func (e MessageHeaderEl) RoundedBr(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e MessageHeaderEl) RoundedL(length gk.Length) MessageHeaderEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4609,6 +5942,8 @@ func (e MessageHeaderEl) RoundedL(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e MessageHeaderEl) RoundedR(length gk.Length) MessageHeaderEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4616,6 +5951,8 @@ func (e MessageHeaderEl) RoundedR(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e MessageHeaderEl) RoundedT(length gk.Length) MessageHeaderEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4623,6 +5960,8 @@ func (e MessageHeaderEl) RoundedT(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e MessageHeaderEl) RoundedTl(length gk.Length) MessageHeaderEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4630,24 +5969,32 @@ func (e MessageHeaderEl) RoundedTl(length gk.Length) MessageHeaderEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e MessageHeaderEl) RoundedTr(length gk.Length) MessageHeaderEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e MessageHeaderEl) RowEnd(end int16) MessageHeaderEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e MessageHeaderEl) RowSpan(span uint16) MessageHeaderEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e MessageHeaderEl) RowStart(start int16) MessageHeaderEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4657,24 +6004,32 @@ func (e MessageHeaderEl) RowStart(start int16) MessageHeaderEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e MessageHeaderEl) ScrollbarWidth(width gk.Length) MessageHeaderEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e MessageHeaderEl) Shadow(shadows []gk.BoxShadow) MessageHeaderEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e MessageHeaderEl) Size(length gk.Length) MessageHeaderEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e MessageHeaderEl) TextAlign(align gk.TextAlign) MessageHeaderEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4683,6 +6038,8 @@ func (e MessageHeaderEl) TextAlign(align gk.TextAlign) MessageHeaderEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e MessageHeaderEl) TextBg(bg gk.Color) MessageHeaderEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -4691,18 +6048,24 @@ func (e MessageHeaderEl) TextBg(bg gk.Color) MessageHeaderEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e MessageHeaderEl) TextColor(color gk.Color) MessageHeaderEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e MessageHeaderEl) TextDecorationColor(color gk.Color) MessageHeaderEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e MessageHeaderEl) TextOverflow(overflow gk.TextOverflow) MessageHeaderEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4711,6 +6074,8 @@ func (e MessageHeaderEl) TextOverflow(overflow gk.TextOverflow) MessageHeaderEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e MessageHeaderEl) TextSize(size gk.Length) MessageHeaderEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4718,12 +6083,16 @@ func (e MessageHeaderEl) TextSize(size gk.Length) MessageHeaderEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e MessageHeaderEl) Top(length gk.Length) MessageHeaderEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e MessageHeaderEl) W(length gk.Length) MessageHeaderEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

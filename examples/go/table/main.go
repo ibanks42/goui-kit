@@ -1,10 +1,6 @@
-// table: the `table` scene in Go, the same table as ref/src/bin/table.rs:
-// the kit's DataTable with `rows` rows of `cols` columns over a row source
-// (docs/PROTOCOLS.md section 9.5). Each row is described once into one tape holding its cells,
-// when it is first needed near the visible rows, and kept while the table scrolls; the
-// frame-cost gate scrolls it before every frame with GK_SCROLL (gates/fps.sh table).
-//
-//	table-go [rows] [cols]      (default 100000 6)
+// Large DataTable example: renders a virtualized table (default 100,000 rows by 6 columns)
+// backed by a row source. Used by frame-cost scroll gates against ref-table.
+// Usage: table [rows] [cols]
 package main
 
 import (
@@ -27,10 +23,13 @@ type App struct {
 	root       gk.View
 }
 
+// cell describes one cell at (at.Row, at.Col). The table row source packs every column
+// of a visible row into a single N_TABLE_CELLS tape pre-parsed by Rust during Tape::parse.
 func (a *App) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 }
 
+// init constructs column definitions, the virtualized row source, and the TableState.
 func (a *App) init(cx *gk.Cx) {
 	columns := make([]gktable.TableColumn, a.cols)
 	for i := range columns {

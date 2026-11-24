@@ -14,7 +14,7 @@ type AccordionEl struct {
 
 // Create a new Accordion with the given ID.
 //
-// Accordion is <gpui_kit::component::accordion::Accordion>::new.
+// Accordion calls <gpui_kit::component::accordion::Accordion>::new.
 func Accordion(id gk.ID, st ...gk.Style) AccordionEl {
 	rt.UseComponentAccordion()
 	n := rt.NewNode(574)
@@ -26,7 +26,7 @@ func Accordion(id gk.ID, st ...gk.Style) AccordionEl {
 
 // Set whether the accordion items have borders, default: true
 //
-// Bordered is <gpui_kit::component::accordion::Accordion>::bordered.
+// Bordered calls <gpui_kit::component::accordion::Accordion>::bordered.
 func (e AccordionEl) Bordered(bordered bool) AccordionEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(bordered)
@@ -35,7 +35,7 @@ func (e AccordionEl) Bordered(bordered bool) AccordionEl {
 
 // Set whether the accordion is disabled, default: false
 //
-// Disabled is <gpui_kit::component::accordion::Accordion>::disabled.
+// Disabled calls <gpui_kit::component::accordion::Accordion>::disabled.
 func (e AccordionEl) Disabled(disabled bool) AccordionEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
@@ -44,7 +44,7 @@ func (e AccordionEl) Disabled(disabled bool) AccordionEl {
 
 // Adds an AccordionItem to the Accordion.
 //
-// Item is <gpui_kit::component::accordion::Accordion>::item.
+// Item calls <gpui_kit::component::accordion::Accordion>::item.
 func (e AccordionEl) Item(child AccordionItemEl) AccordionEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeNode(rt.N(child.Core), false))
@@ -53,7 +53,7 @@ func (e AccordionEl) Item(child AccordionItemEl) AccordionEl {
 
 // Set whether multiple accordion items can be opened simultaneously, default: false
 //
-// Multiple is <gpui_kit::component::accordion::Accordion>::multiple.
+// Multiple calls <gpui_kit::component::accordion::Accordion>::multiple.
 func (e AccordionEl) Multiple(multiple bool) AccordionEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(multiple)
@@ -64,7 +64,7 @@ func (e AccordionEl) Multiple(multiple bool) AccordionEl {
 //
 // The first argument `Vec<usize>` is the indices of the open accordions.
 //
-// OnToggleClick is <gpui_kit::component::accordion::Accordion>::on_toggle_click.
+// OnToggleClick calls <gpui_kit::component::accordion::Accordion>::on_toggle_click.
 func (e AccordionEl) OnToggleClick(onToggleClick func(cx *gk.Cx, e []int)) AccordionEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(onToggleClick, 72))
@@ -73,29 +73,37 @@ func (e AccordionEl) OnToggleClick(onToggleClick func(cx *gk.Cx, e []int)) Accor
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AccordionEl) PopoverStyle() AccordionEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AccordionEl) RoundedFullStyle() AccordionEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AccordionEl) BorderE(width gk.Length) AccordionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AccordionEl) BorderS(width gk.Length) AccordionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -103,121 +111,163 @@ func (e AccordionEl) BorderS(width gk.Length) AccordionEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AccordionEl) FlexRowDir() AccordionEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AccordionEl) InsetE(length gk.Length) AccordionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AccordionEl) InsetS(length gk.Length) AccordionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AccordionEl) JustifyFlexEnd() AccordionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AccordionEl) JustifyFlexStart() AccordionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AccordionEl) Me(length gk.Length) AccordionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AccordionEl) Ms(length gk.Length) AccordionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AccordionEl) Pe(length gk.Length) AccordionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AccordionEl) Ps(length gk.Length) AccordionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AccordionEl) RoundedE(radius gk.Length) AccordionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AccordionEl) RoundedS(radius gk.Length) AccordionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AccordionEl) TextEnd() AccordionEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AccordionEl) TextStart() AccordionEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AccordionEl) CornerRadii(radius gk.Corners) AccordionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AccordionEl) DebugBlue() AccordionEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AccordionEl) DebugFocused(focusHandle gk.FocusHandle) AccordionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AccordionEl) DebugGreen() AccordionEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AccordionEl) DebugPink() AccordionEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AccordionEl) DebugRed() AccordionEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AccordionEl) DebugYellow() AccordionEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AccordionEl) FontBlack() AccordionEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AccordionEl) FontBold() AccordionEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AccordionEl) FontExtrabold() AccordionEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AccordionEl) FontExtralight() AccordionEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AccordionEl) FontLight() AccordionEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AccordionEl) FontMedium() AccordionEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AccordionEl) FontNormal() AccordionEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AccordionEl) FontSemibold() AccordionEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AccordionEl) FontThin() AccordionEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -226,18 +276,23 @@ func (e AccordionEl) FontThin() AccordionEl { tStyledExtFontThin(rt.N(e.Core)); 
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AccordionEl) HFlex() AccordionEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AccordionEl) Margins(margins gk.EdgesInto) AccordionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AccordionEl) Paddings(paddings gk.EdgesInto) AccordionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AccordionEl) RefineStyle(style gk.StyleRefinement) AccordionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -247,39 +302,55 @@ func (e AccordionEl) RefineStyle(style gk.StyleRefinement) AccordionEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AccordionEl) VFlex() AccordionEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AccordionEl) Large() AccordionEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AccordionEl) Small() AccordionEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AccordionEl) WithSize(size gk.SizeInto) AccordionEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AccordionEl) Xsmall() AccordionEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AccordionEl) Style(st ...gk.Style) AccordionEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AccordionEl) AspectRatio(ratio float32) AccordionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AccordionEl) Bg(fill gk.Fill) AccordionEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AccordionEl) Border(length gk.Length) AccordionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -287,12 +358,16 @@ func (e AccordionEl) Border(length gk.Length) AccordionEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AccordionEl) BorderB(length gk.Length) AccordionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AccordionEl) BorderColor(borderColor gk.Color) AccordionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -300,6 +375,8 @@ func (e AccordionEl) BorderColor(borderColor gk.Color) AccordionEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AccordionEl) BorderL(length gk.Length) AccordionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -307,6 +384,8 @@ func (e AccordionEl) BorderL(length gk.Length) AccordionEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AccordionEl) BorderR(length gk.Length) AccordionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -314,6 +393,8 @@ func (e AccordionEl) BorderR(length gk.Length) AccordionEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AccordionEl) BorderT(length gk.Length) AccordionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -321,6 +402,8 @@ func (e AccordionEl) BorderT(length gk.Length) AccordionEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AccordionEl) BorderX(length gk.Length) AccordionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -328,6 +411,8 @@ func (e AccordionEl) BorderX(length gk.Length) AccordionEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AccordionEl) BorderY(length gk.Length) AccordionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -335,24 +420,34 @@ func (e AccordionEl) BorderY(length gk.Length) AccordionEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AccordionEl) Bottom(length gk.Length) AccordionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AccordionEl) ColEnd(end int16) AccordionEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AccordionEl) ColSpan(span uint16) AccordionEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AccordionEl) ColStart(start int16) AccordionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AccordionEl) Cursor(cursor gk.CursorStyle) AccordionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -360,33 +455,45 @@ func (e AccordionEl) Cursor(cursor gk.CursorStyle) AccordionEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AccordionEl) FlexBasis(basis gk.Length) AccordionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AccordionEl) FlexGrow(grow float32) AccordionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AccordionEl) FlexShrink(shrink float32) AccordionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AccordionEl) Font(font gk.Font) AccordionEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AccordionEl) FontFamily(familyName string) AccordionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AccordionEl) FontFeatures(features gk.FontFeatures) AccordionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -395,26 +502,38 @@ func (e AccordionEl) FontFeatures(features gk.FontFeatures) AccordionEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AccordionEl) FontWeight(weight gk.FontWeight) AccordionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AccordionEl) Gap(length gk.Length) AccordionEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AccordionEl) GapX(length gk.Length) AccordionEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AccordionEl) GapY(length gk.Length) AccordionEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AccordionEl) GridCols(cols uint16) AccordionEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AccordionEl) GridColsMaxContent(cols uint16) AccordionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -422,15 +541,21 @@ func (e AccordionEl) GridColsMaxContent(cols uint16) AccordionEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AccordionEl) GridColsMinContent(cols uint16) AccordionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AccordionEl) GridRows(rows uint16) AccordionEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AccordionEl) GridRowsMaxContent(rows uint16) AccordionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -438,16 +563,22 @@ func (e AccordionEl) GridRowsMaxContent(rows uint16) AccordionEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AccordionEl) GridRowsMinContent(rows uint16) AccordionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AccordionEl) H(length gk.Length) AccordionEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AccordionEl) Inset(length gk.Length) AccordionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -455,113 +586,165 @@ func (e AccordionEl) Inset(length gk.Length) AccordionEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AccordionEl) Left(length gk.Length) AccordionEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AccordionEl) LineClamp(lines int) AccordionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AccordionEl) LineHeight(lineHeight gk.Length) AccordionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AccordionEl) M(length gk.Length) AccordionEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AccordionEl) MaxH(length gk.Length) AccordionEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AccordionEl) MaxSize(length gk.Length) AccordionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AccordionEl) MaxW(length gk.Length) AccordionEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AccordionEl) Mb(length gk.Length) AccordionEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AccordionEl) MinH(length gk.Length) AccordionEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AccordionEl) MinSize(length gk.Length) AccordionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AccordionEl) MinW(length gk.Length) AccordionEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AccordionEl) Ml(length gk.Length) AccordionEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AccordionEl) Mr(length gk.Length) AccordionEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AccordionEl) Mt(length gk.Length) AccordionEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AccordionEl) Mx(length gk.Length) AccordionEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AccordionEl) My(length gk.Length) AccordionEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AccordionEl) Opacity(opacity float32) AccordionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AccordionEl) P(length gk.Length) AccordionEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AccordionEl) Pb(length gk.Length) AccordionEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AccordionEl) Pl(length gk.Length) AccordionEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AccordionEl) Pr(length gk.Length) AccordionEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AccordionEl) Pt(length gk.Length) AccordionEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AccordionEl) Px(length gk.Length) AccordionEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AccordionEl) Py(length gk.Length) AccordionEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AccordionEl) Right(length gk.Length) AccordionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AccordionEl) Rounded(length gk.Length) AccordionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -569,6 +752,8 @@ func (e AccordionEl) Rounded(length gk.Length) AccordionEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AccordionEl) RoundedB(length gk.Length) AccordionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -576,6 +761,8 @@ func (e AccordionEl) RoundedB(length gk.Length) AccordionEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AccordionEl) RoundedBl(length gk.Length) AccordionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -583,6 +770,8 @@ func (e AccordionEl) RoundedBl(length gk.Length) AccordionEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AccordionEl) RoundedBr(length gk.Length) AccordionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -590,6 +779,8 @@ func (e AccordionEl) RoundedBr(length gk.Length) AccordionEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AccordionEl) RoundedL(length gk.Length) AccordionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -597,6 +788,8 @@ func (e AccordionEl) RoundedL(length gk.Length) AccordionEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AccordionEl) RoundedR(length gk.Length) AccordionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -604,6 +797,8 @@ func (e AccordionEl) RoundedR(length gk.Length) AccordionEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AccordionEl) RoundedT(length gk.Length) AccordionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -611,6 +806,8 @@ func (e AccordionEl) RoundedT(length gk.Length) AccordionEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AccordionEl) RoundedTl(length gk.Length) AccordionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -618,18 +815,26 @@ func (e AccordionEl) RoundedTl(length gk.Length) AccordionEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AccordionEl) RoundedTr(length gk.Length) AccordionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AccordionEl) RowEnd(end int16) AccordionEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AccordionEl) RowSpan(span uint16) AccordionEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AccordionEl) RowStart(start int16) AccordionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -639,21 +844,29 @@ func (e AccordionEl) RowStart(start int16) AccordionEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AccordionEl) ScrollbarWidth(width gk.Length) AccordionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AccordionEl) Shadow(shadows []gk.BoxShadow) AccordionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AccordionEl) Size(length gk.Length) AccordionEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AccordionEl) TextAlign(align gk.TextAlign) AccordionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -662,23 +875,31 @@ func (e AccordionEl) TextAlign(align gk.TextAlign) AccordionEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AccordionEl) TextBg(bg gk.Color) AccordionEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AccordionEl) TextColor(color gk.Color) AccordionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AccordionEl) TextDecorationColor(color gk.Color) AccordionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AccordionEl) TextOverflow(overflow gk.TextOverflow) AccordionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -687,6 +908,8 @@ func (e AccordionEl) TextOverflow(overflow gk.TextOverflow) AccordionEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AccordionEl) TextSize(size gk.Length) AccordionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -694,9 +917,13 @@ func (e AccordionEl) TextSize(size gk.Length) AccordionEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AccordionEl) Top(length gk.Length) AccordionEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AccordionEl) W(length gk.Length) AccordionEl { tStyledW(rt.N(e.Core), length); return e }
 
 // AccordionItemEl is gpui_kit::component::accordion::AccordionItem.
@@ -706,7 +933,7 @@ type AccordionItemEl struct {
 
 // Create a new AccordionItem.
 //
-// AccordionItem is <gpui_kit::component::accordion::AccordionItem>::new.
+// AccordionItem calls <gpui_kit::component::accordion::AccordionItem>::new.
 func AccordionItem(st ...gk.Style) AccordionItemEl {
 	rt.UseComponentAccordion()
 	n := rt.NewNode(575)
@@ -716,14 +943,14 @@ func AccordionItem(st ...gk.Style) AccordionItemEl {
 
 // Set extra style for the content below the title.
 //
-// ContentStyle is <gpui_kit::component::accordion::AccordionItem>::content_style.
+// ContentStyle calls <gpui_kit::component::accordion::AccordionItem>::content_style.
 func (e AccordionItemEl) ContentStyle(style gk.StyleRefinement) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
 	return e
 }
 
-// Disabled is <gpui_kit::component::accordion::AccordionItem>::disabled.
+// Disabled calls <gpui_kit::component::accordion::AccordionItem>::disabled.
 func (e AccordionItemEl) Disabled(disabled bool) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
@@ -735,7 +962,7 @@ func (e AccordionItemEl) Disabled(disabled bool) AccordionItemEl {
 // There is no hover style by default. The title row is the part that toggles the item, so the
 // hover feedback belongs there, not on the whole item.
 //
-// Hover is <gpui_kit::component::accordion::AccordionItem>::hover.
+// Hover calls <gpui_kit::component::accordion::AccordionItem>::hover.
 func (e AccordionItemEl) Hover(f gk.StyleRefinement) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(f.Core)))
@@ -744,14 +971,14 @@ func (e AccordionItemEl) Hover(f gk.StyleRefinement) AccordionItemEl {
 
 // Set the icon for the accordion item.
 //
-// Icon is <gpui_kit::component::accordion::AccordionItem>::icon.
+// Icon calls <gpui_kit::component::accordion::AccordionItem>::icon.
 func (e AccordionItemEl) Icon(icon gk.IconName) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U16(uint16(icon))
 	return e
 }
 
-// Open is <gpui_kit::component::accordion::AccordionItem>::open.
+// Open calls <gpui_kit::component::accordion::AccordionItem>::open.
 func (e AccordionItemEl) Open(open bool) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.Bool(open)
@@ -760,7 +987,7 @@ func (e AccordionItemEl) Open(open bool) AccordionItemEl {
 
 // Set the title for the accordion item.
 //
-// Title is <gpui_kit::component::accordion::AccordionItem>::title.
+// Title calls <gpui_kit::component::accordion::AccordionItem>::title.
 func (e AccordionItemEl) Title(title gk.Element) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Take(title))
@@ -769,7 +996,7 @@ func (e AccordionItemEl) Title(title gk.Element) AccordionItemEl {
 
 // Set extra style for the title row.
 //
-// TitleStyle is <gpui_kit::component::accordion::AccordionItem>::title_style.
+// TitleStyle calls <gpui_kit::component::accordion::AccordionItem>::title_style.
 func (e AccordionItemEl) TitleStyle(style gk.StyleRefinement) AccordionItemEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -778,20 +1005,24 @@ func (e AccordionItemEl) TitleStyle(style gk.StyleRefinement) AccordionItemEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AccordionItemEl) PopoverStyle() AccordionItemEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AccordionItemEl) RoundedFullStyle() AccordionItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -800,16 +1031,18 @@ func (e AccordionItemEl) RoundedFullStyle() AccordionItemEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AccordionItemEl) FocusRingStyle() AccordionItemEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -822,24 +1055,32 @@ func (e AccordionItemEl) FocusRingStyle() AccordionItemEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AccordionItemEl) KeepTextSelection(id gk.ID) AccordionItemEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AccordionItemEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AccordionItemEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AccordionItemEl) BorderE(width gk.Length) AccordionItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AccordionItemEl) BorderS(width gk.Length) AccordionItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -847,136 +1088,178 @@ func (e AccordionItemEl) BorderS(width gk.Length) AccordionItemEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AccordionItemEl) FlexRowDir() AccordionItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AccordionItemEl) InsetE(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AccordionItemEl) InsetS(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AccordionItemEl) JustifyFlexEnd() AccordionItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AccordionItemEl) JustifyFlexStart() AccordionItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AccordionItemEl) Me(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AccordionItemEl) Ms(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AccordionItemEl) Pe(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AccordionItemEl) Ps(length gk.Length) AccordionItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AccordionItemEl) RoundedE(radius gk.Length) AccordionItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AccordionItemEl) RoundedS(radius gk.Length) AccordionItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AccordionItemEl) TextEnd() AccordionItemEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AccordionItemEl) TextStart() AccordionItemEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AccordionItemEl) CornerRadii(radius gk.Corners) AccordionItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AccordionItemEl) DebugBlue() AccordionItemEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AccordionItemEl) DebugFocused(focusHandle gk.FocusHandle) AccordionItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AccordionItemEl) DebugGreen() AccordionItemEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AccordionItemEl) DebugPink() AccordionItemEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AccordionItemEl) DebugRed() AccordionItemEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AccordionItemEl) DebugYellow() AccordionItemEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AccordionItemEl) FontBlack() AccordionItemEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AccordionItemEl) FontBold() AccordionItemEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AccordionItemEl) FontExtrabold() AccordionItemEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AccordionItemEl) FontExtralight() AccordionItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AccordionItemEl) FontLight() AccordionItemEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AccordionItemEl) FontMedium() AccordionItemEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AccordionItemEl) FontNormal() AccordionItemEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AccordionItemEl) FontSemibold() AccordionItemEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AccordionItemEl) FontThin() AccordionItemEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -985,18 +1268,23 @@ func (e AccordionItemEl) FontThin() AccordionItemEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AccordionItemEl) HFlex() AccordionItemEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AccordionItemEl) Margins(margins gk.EdgesInto) AccordionItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AccordionItemEl) Paddings(paddings gk.EdgesInto) AccordionItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AccordionItemEl) RefineStyle(style gk.StyleRefinement) AccordionItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1006,56 +1294,77 @@ func (e AccordionItemEl) RefineStyle(style gk.StyleRefinement) AccordionItemEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AccordionItemEl) VFlex() AccordionItemEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e AccordionItemEl) Text(s string) AccordionItemEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AccordionItemEl) ChildView(v gk.View) AccordionItemEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AccordionItemEl) Child(child gk.Element) AccordionItemEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AccordionItemEl) Children(children ...gk.Element) AccordionItemEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AccordionItemEl) Large() AccordionItemEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AccordionItemEl) Small() AccordionItemEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AccordionItemEl) WithSize(size gk.SizeInto) AccordionItemEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AccordionItemEl) Xsmall() AccordionItemEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AccordionItemEl) Style(st ...gk.Style) AccordionItemEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AccordionItemEl) AspectRatio(ratio float32) AccordionItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AccordionItemEl) Bg(fill gk.Fill) AccordionItemEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AccordionItemEl) Border(length gk.Length) AccordionItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1063,12 +1372,16 @@ func (e AccordionItemEl) Border(length gk.Length) AccordionItemEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AccordionItemEl) BorderB(length gk.Length) AccordionItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AccordionItemEl) BorderColor(borderColor gk.Color) AccordionItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1076,6 +1389,8 @@ func (e AccordionItemEl) BorderColor(borderColor gk.Color) AccordionItemEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AccordionItemEl) BorderL(length gk.Length) AccordionItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1083,6 +1398,8 @@ func (e AccordionItemEl) BorderL(length gk.Length) AccordionItemEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AccordionItemEl) BorderR(length gk.Length) AccordionItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1090,6 +1407,8 @@ func (e AccordionItemEl) BorderR(length gk.Length) AccordionItemEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AccordionItemEl) BorderT(length gk.Length) AccordionItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1097,6 +1416,8 @@ func (e AccordionItemEl) BorderT(length gk.Length) AccordionItemEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AccordionItemEl) BorderX(length gk.Length) AccordionItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1104,6 +1425,8 @@ func (e AccordionItemEl) BorderX(length gk.Length) AccordionItemEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AccordionItemEl) BorderY(length gk.Length) AccordionItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1111,30 +1434,40 @@ func (e AccordionItemEl) BorderY(length gk.Length) AccordionItemEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AccordionItemEl) Bottom(length gk.Length) AccordionItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AccordionItemEl) ColEnd(end int16) AccordionItemEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AccordionItemEl) ColSpan(span uint16) AccordionItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AccordionItemEl) ColStart(start int16) AccordionItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AccordionItemEl) Cursor(cursor gk.CursorStyle) AccordionItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1142,36 +1475,48 @@ func (e AccordionItemEl) Cursor(cursor gk.CursorStyle) AccordionItemEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AccordionItemEl) FlexBasis(basis gk.Length) AccordionItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AccordionItemEl) FlexGrow(grow float32) AccordionItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AccordionItemEl) FlexShrink(shrink float32) AccordionItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AccordionItemEl) Font(font gk.Font) AccordionItemEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AccordionItemEl) FontFamily(familyName string) AccordionItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AccordionItemEl) FontFeatures(features gk.FontFeatures) AccordionItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1180,12 +1525,16 @@ func (e AccordionItemEl) FontFeatures(features gk.FontFeatures) AccordionItemEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AccordionItemEl) FontWeight(weight gk.FontWeight) AccordionItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AccordionItemEl) Gap(length gk.Length) AccordionItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1193,6 +1542,8 @@ func (e AccordionItemEl) Gap(length gk.Length) AccordionItemEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AccordionItemEl) GapX(length gk.Length) AccordionItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1200,18 +1551,24 @@ func (e AccordionItemEl) GapX(length gk.Length) AccordionItemEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AccordionItemEl) GapY(length gk.Length) AccordionItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AccordionItemEl) GridCols(cols uint16) AccordionItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AccordionItemEl) GridColsMaxContent(cols uint16) AccordionItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1219,18 +1576,24 @@ func (e AccordionItemEl) GridColsMaxContent(cols uint16) AccordionItemEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AccordionItemEl) GridColsMinContent(cols uint16) AccordionItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AccordionItemEl) GridRows(rows uint16) AccordionItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AccordionItemEl) GridRowsMaxContent(rows uint16) AccordionItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1238,12 +1601,16 @@ func (e AccordionItemEl) GridRowsMaxContent(rows uint16) AccordionItemEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AccordionItemEl) GridRowsMinContent(rows uint16) AccordionItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AccordionItemEl) H(length gk.Length) AccordionItemEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1251,6 +1618,8 @@ func (e AccordionItemEl) H(length gk.Length) AccordionItemEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AccordionItemEl) Inset(length gk.Length) AccordionItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1258,6 +1627,8 @@ func (e AccordionItemEl) Inset(length gk.Length) AccordionItemEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AccordionItemEl) Left(length gk.Length) AccordionItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1265,36 +1636,48 @@ func (e AccordionItemEl) Left(length gk.Length) AccordionItemEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AccordionItemEl) LineClamp(lines int) AccordionItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AccordionItemEl) LineHeight(lineHeight gk.Length) AccordionItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AccordionItemEl) M(length gk.Length) AccordionItemEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AccordionItemEl) MaxH(length gk.Length) AccordionItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AccordionItemEl) MaxSize(length gk.Length) AccordionItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AccordionItemEl) MaxW(length gk.Length) AccordionItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1302,24 +1685,32 @@ func (e AccordionItemEl) MaxW(length gk.Length) AccordionItemEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AccordionItemEl) Mb(length gk.Length) AccordionItemEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AccordionItemEl) MinH(length gk.Length) AccordionItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AccordionItemEl) MinSize(length gk.Length) AccordionItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AccordionItemEl) MinW(length gk.Length) AccordionItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1327,6 +1718,8 @@ func (e AccordionItemEl) MinW(length gk.Length) AccordionItemEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AccordionItemEl) Ml(length gk.Length) AccordionItemEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1334,6 +1727,8 @@ func (e AccordionItemEl) Ml(length gk.Length) AccordionItemEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AccordionItemEl) Mr(length gk.Length) AccordionItemEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1341,6 +1736,8 @@ func (e AccordionItemEl) Mr(length gk.Length) AccordionItemEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AccordionItemEl) Mt(length gk.Length) AccordionItemEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1348,6 +1745,8 @@ func (e AccordionItemEl) Mt(length gk.Length) AccordionItemEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AccordionItemEl) Mx(length gk.Length) AccordionItemEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1355,18 +1754,24 @@ func (e AccordionItemEl) Mx(length gk.Length) AccordionItemEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AccordionItemEl) My(length gk.Length) AccordionItemEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AccordionItemEl) Opacity(opacity float32) AccordionItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AccordionItemEl) P(length gk.Length) AccordionItemEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1374,6 +1779,8 @@ func (e AccordionItemEl) P(length gk.Length) AccordionItemEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AccordionItemEl) Pb(length gk.Length) AccordionItemEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1381,6 +1788,8 @@ func (e AccordionItemEl) Pb(length gk.Length) AccordionItemEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AccordionItemEl) Pl(length gk.Length) AccordionItemEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1388,6 +1797,8 @@ func (e AccordionItemEl) Pl(length gk.Length) AccordionItemEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AccordionItemEl) Pr(length gk.Length) AccordionItemEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1395,6 +1806,8 @@ func (e AccordionItemEl) Pr(length gk.Length) AccordionItemEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AccordionItemEl) Pt(length gk.Length) AccordionItemEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1402,6 +1815,8 @@ func (e AccordionItemEl) Pt(length gk.Length) AccordionItemEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AccordionItemEl) Px(length gk.Length) AccordionItemEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1409,6 +1824,8 @@ func (e AccordionItemEl) Px(length gk.Length) AccordionItemEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AccordionItemEl) Py(length gk.Length) AccordionItemEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1416,12 +1833,16 @@ func (e AccordionItemEl) Py(length gk.Length) AccordionItemEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AccordionItemEl) Right(length gk.Length) AccordionItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AccordionItemEl) Rounded(length gk.Length) AccordionItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1429,6 +1850,8 @@ func (e AccordionItemEl) Rounded(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AccordionItemEl) RoundedB(length gk.Length) AccordionItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1436,6 +1859,8 @@ func (e AccordionItemEl) RoundedB(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AccordionItemEl) RoundedBl(length gk.Length) AccordionItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1443,6 +1868,8 @@ func (e AccordionItemEl) RoundedBl(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AccordionItemEl) RoundedBr(length gk.Length) AccordionItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1450,6 +1877,8 @@ func (e AccordionItemEl) RoundedBr(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AccordionItemEl) RoundedL(length gk.Length) AccordionItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1457,6 +1886,8 @@ func (e AccordionItemEl) RoundedL(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AccordionItemEl) RoundedR(length gk.Length) AccordionItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1464,6 +1895,8 @@ func (e AccordionItemEl) RoundedR(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AccordionItemEl) RoundedT(length gk.Length) AccordionItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1471,6 +1904,8 @@ func (e AccordionItemEl) RoundedT(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AccordionItemEl) RoundedTl(length gk.Length) AccordionItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1478,24 +1913,32 @@ func (e AccordionItemEl) RoundedTl(length gk.Length) AccordionItemEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AccordionItemEl) RoundedTr(length gk.Length) AccordionItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AccordionItemEl) RowEnd(end int16) AccordionItemEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AccordionItemEl) RowSpan(span uint16) AccordionItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AccordionItemEl) RowStart(start int16) AccordionItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1505,24 +1948,32 @@ func (e AccordionItemEl) RowStart(start int16) AccordionItemEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AccordionItemEl) ScrollbarWidth(width gk.Length) AccordionItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AccordionItemEl) Shadow(shadows []gk.BoxShadow) AccordionItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AccordionItemEl) Size(length gk.Length) AccordionItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AccordionItemEl) TextAlign(align gk.TextAlign) AccordionItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1531,6 +1982,8 @@ func (e AccordionItemEl) TextAlign(align gk.TextAlign) AccordionItemEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AccordionItemEl) TextBg(bg gk.Color) AccordionItemEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1539,18 +1992,24 @@ func (e AccordionItemEl) TextBg(bg gk.Color) AccordionItemEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AccordionItemEl) TextColor(color gk.Color) AccordionItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AccordionItemEl) TextDecorationColor(color gk.Color) AccordionItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AccordionItemEl) TextOverflow(overflow gk.TextOverflow) AccordionItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1559,6 +2018,8 @@ func (e AccordionItemEl) TextOverflow(overflow gk.TextOverflow) AccordionItemEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AccordionItemEl) TextSize(size gk.Length) AccordionItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1566,12 +2027,16 @@ func (e AccordionItemEl) TextSize(size gk.Length) AccordionItemEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AccordionItemEl) Top(length gk.Length) AccordionItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AccordionItemEl) W(length gk.Length) AccordionItemEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

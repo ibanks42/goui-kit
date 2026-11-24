@@ -1,6 +1,4 @@
-// A view-built closure whose function describes something other than a dialog, given to
-// gk.OpenDialog (Go does not compile:
-// gk.NewBuilt over a func returning a gk.LabelEl is a gk.Built[gk.LabelEl]).
+// Compile-time misuse case: overlay.OpenDialog requires a Builder[overlay.DialogEl], not a LabelEl.
 package main
 
 import (

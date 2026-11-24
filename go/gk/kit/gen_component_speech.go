@@ -14,7 +14,7 @@ type SpeechButtonEl struct {
 
 // A button for `state`.
 //
-// SpeechButton is <gpui_kit::component::speech::SpeechButton>::new.
+// SpeechButton calls <gpui_kit::component::speech::SpeechButton>::new.
 func SpeechButton(state SpeechState, st ...gk.Style) SpeechButtonEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(761)
@@ -27,7 +27,7 @@ func SpeechButton(state SpeechState, st ...gk.Style) SpeechButtonEl {
 // Render a disabled button, instead of nothing, when the state has no recognizer on this platform.
 // Default `false`.
 //
-// ShowWhenUnsupported is <gpui_kit::component::speech::SpeechButton>::show_when_unsupported.
+// ShowWhenUnsupported calls <gpui_kit::component::speech::SpeechButton>::show_when_unsupported.
 func (e SpeechButtonEl) ShowWhenUnsupported(show bool) SpeechButtonEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(show)
@@ -36,32 +36,40 @@ func (e SpeechButtonEl) ShowWhenUnsupported(show bool) SpeechButtonEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SpeechButtonEl) PopoverStyle() SpeechButtonEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SpeechButtonEl) RoundedFullStyle() SpeechButtonEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SpeechButtonEl) BorderE(width gk.Length) SpeechButtonEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SpeechButtonEl) BorderS(width gk.Length) SpeechButtonEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -69,133 +77,175 @@ func (e SpeechButtonEl) BorderS(width gk.Length) SpeechButtonEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SpeechButtonEl) FlexRowDir() SpeechButtonEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SpeechButtonEl) InsetE(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SpeechButtonEl) InsetS(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SpeechButtonEl) JustifyFlexEnd() SpeechButtonEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SpeechButtonEl) JustifyFlexStart() SpeechButtonEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SpeechButtonEl) Me(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SpeechButtonEl) Ms(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SpeechButtonEl) Pe(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SpeechButtonEl) Ps(length gk.Length) SpeechButtonEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SpeechButtonEl) RoundedE(radius gk.Length) SpeechButtonEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SpeechButtonEl) RoundedS(radius gk.Length) SpeechButtonEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SpeechButtonEl) TextEnd() SpeechButtonEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SpeechButtonEl) TextStart() SpeechButtonEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SpeechButtonEl) CornerRadii(radius gk.Corners) SpeechButtonEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SpeechButtonEl) DebugBlue() SpeechButtonEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SpeechButtonEl) DebugFocused(focusHandle gk.FocusHandle) SpeechButtonEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SpeechButtonEl) DebugGreen() SpeechButtonEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SpeechButtonEl) DebugPink() SpeechButtonEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SpeechButtonEl) DebugRed() SpeechButtonEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SpeechButtonEl) DebugYellow() SpeechButtonEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SpeechButtonEl) FontBlack() SpeechButtonEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SpeechButtonEl) FontBold() SpeechButtonEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SpeechButtonEl) FontExtrabold() SpeechButtonEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SpeechButtonEl) FontExtralight() SpeechButtonEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SpeechButtonEl) FontLight() SpeechButtonEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SpeechButtonEl) FontMedium() SpeechButtonEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SpeechButtonEl) FontNormal() SpeechButtonEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SpeechButtonEl) FontSemibold() SpeechButtonEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SpeechButtonEl) FontThin() SpeechButtonEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -204,18 +254,23 @@ func (e SpeechButtonEl) FontThin() SpeechButtonEl { tStyledExtFontThin(rt.N(e.Co
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SpeechButtonEl) HFlex() SpeechButtonEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SpeechButtonEl) Margins(margins gk.EdgesInto) SpeechButtonEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SpeechButtonEl) Paddings(paddings gk.EdgesInto) SpeechButtonEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SpeechButtonEl) RefineStyle(style gk.StyleRefinement) SpeechButtonEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -225,39 +280,55 @@ func (e SpeechButtonEl) RefineStyle(style gk.StyleRefinement) SpeechButtonEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SpeechButtonEl) VFlex() SpeechButtonEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e SpeechButtonEl) Large() SpeechButtonEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e SpeechButtonEl) Small() SpeechButtonEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e SpeechButtonEl) WithSize(size gk.SizeInto) SpeechButtonEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e SpeechButtonEl) Xsmall() SpeechButtonEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SpeechButtonEl) Style(st ...gk.Style) SpeechButtonEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SpeechButtonEl) AspectRatio(ratio float32) SpeechButtonEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SpeechButtonEl) Bg(fill gk.Fill) SpeechButtonEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SpeechButtonEl) Border(length gk.Length) SpeechButtonEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -265,12 +336,16 @@ func (e SpeechButtonEl) Border(length gk.Length) SpeechButtonEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SpeechButtonEl) BorderB(length gk.Length) SpeechButtonEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SpeechButtonEl) BorderColor(borderColor gk.Color) SpeechButtonEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -278,6 +353,8 @@ func (e SpeechButtonEl) BorderColor(borderColor gk.Color) SpeechButtonEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SpeechButtonEl) BorderL(length gk.Length) SpeechButtonEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -285,6 +362,8 @@ func (e SpeechButtonEl) BorderL(length gk.Length) SpeechButtonEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SpeechButtonEl) BorderR(length gk.Length) SpeechButtonEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -292,6 +371,8 @@ func (e SpeechButtonEl) BorderR(length gk.Length) SpeechButtonEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SpeechButtonEl) BorderT(length gk.Length) SpeechButtonEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -299,6 +380,8 @@ func (e SpeechButtonEl) BorderT(length gk.Length) SpeechButtonEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SpeechButtonEl) BorderX(length gk.Length) SpeechButtonEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -306,6 +389,8 @@ func (e SpeechButtonEl) BorderX(length gk.Length) SpeechButtonEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SpeechButtonEl) BorderY(length gk.Length) SpeechButtonEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -313,27 +398,37 @@ func (e SpeechButtonEl) BorderY(length gk.Length) SpeechButtonEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SpeechButtonEl) Bottom(length gk.Length) SpeechButtonEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SpeechButtonEl) ColEnd(end int16) SpeechButtonEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SpeechButtonEl) ColSpan(span uint16) SpeechButtonEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SpeechButtonEl) ColStart(start int16) SpeechButtonEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SpeechButtonEl) Cursor(cursor gk.CursorStyle) SpeechButtonEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -341,33 +436,45 @@ func (e SpeechButtonEl) Cursor(cursor gk.CursorStyle) SpeechButtonEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SpeechButtonEl) FlexBasis(basis gk.Length) SpeechButtonEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SpeechButtonEl) FlexGrow(grow float32) SpeechButtonEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SpeechButtonEl) FlexShrink(shrink float32) SpeechButtonEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SpeechButtonEl) Font(font gk.Font) SpeechButtonEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SpeechButtonEl) FontFamily(familyName string) SpeechButtonEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SpeechButtonEl) FontFeatures(features gk.FontFeatures) SpeechButtonEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -376,12 +483,16 @@ func (e SpeechButtonEl) FontFeatures(features gk.FontFeatures) SpeechButtonEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SpeechButtonEl) FontWeight(weight gk.FontWeight) SpeechButtonEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SpeechButtonEl) Gap(length gk.Length) SpeechButtonEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -389,6 +500,8 @@ func (e SpeechButtonEl) Gap(length gk.Length) SpeechButtonEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SpeechButtonEl) GapX(length gk.Length) SpeechButtonEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -396,18 +509,24 @@ func (e SpeechButtonEl) GapX(length gk.Length) SpeechButtonEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SpeechButtonEl) GapY(length gk.Length) SpeechButtonEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SpeechButtonEl) GridCols(cols uint16) SpeechButtonEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SpeechButtonEl) GridColsMaxContent(cols uint16) SpeechButtonEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -415,18 +534,24 @@ func (e SpeechButtonEl) GridColsMaxContent(cols uint16) SpeechButtonEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SpeechButtonEl) GridColsMinContent(cols uint16) SpeechButtonEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SpeechButtonEl) GridRows(rows uint16) SpeechButtonEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SpeechButtonEl) GridRowsMaxContent(rows uint16) SpeechButtonEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -434,16 +559,22 @@ func (e SpeechButtonEl) GridRowsMaxContent(rows uint16) SpeechButtonEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SpeechButtonEl) GridRowsMinContent(rows uint16) SpeechButtonEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SpeechButtonEl) H(length gk.Length) SpeechButtonEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SpeechButtonEl) Inset(length gk.Length) SpeechButtonEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -451,6 +582,8 @@ func (e SpeechButtonEl) Inset(length gk.Length) SpeechButtonEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SpeechButtonEl) Left(length gk.Length) SpeechButtonEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -458,33 +591,45 @@ func (e SpeechButtonEl) Left(length gk.Length) SpeechButtonEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SpeechButtonEl) LineClamp(lines int) SpeechButtonEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SpeechButtonEl) LineHeight(lineHeight gk.Length) SpeechButtonEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SpeechButtonEl) M(length gk.Length) SpeechButtonEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SpeechButtonEl) MaxH(length gk.Length) SpeechButtonEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SpeechButtonEl) MaxSize(length gk.Length) SpeechButtonEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SpeechButtonEl) MaxW(length gk.Length) SpeechButtonEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -492,24 +637,32 @@ func (e SpeechButtonEl) MaxW(length gk.Length) SpeechButtonEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SpeechButtonEl) Mb(length gk.Length) SpeechButtonEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SpeechButtonEl) MinH(length gk.Length) SpeechButtonEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SpeechButtonEl) MinSize(length gk.Length) SpeechButtonEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SpeechButtonEl) MinW(length gk.Length) SpeechButtonEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -517,6 +670,8 @@ func (e SpeechButtonEl) MinW(length gk.Length) SpeechButtonEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SpeechButtonEl) Ml(length gk.Length) SpeechButtonEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -524,6 +679,8 @@ func (e SpeechButtonEl) Ml(length gk.Length) SpeechButtonEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SpeechButtonEl) Mr(length gk.Length) SpeechButtonEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -531,6 +688,8 @@ func (e SpeechButtonEl) Mr(length gk.Length) SpeechButtonEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SpeechButtonEl) Mt(length gk.Length) SpeechButtonEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -538,6 +697,8 @@ func (e SpeechButtonEl) Mt(length gk.Length) SpeechButtonEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SpeechButtonEl) Mx(length gk.Length) SpeechButtonEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -545,22 +706,30 @@ func (e SpeechButtonEl) Mx(length gk.Length) SpeechButtonEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SpeechButtonEl) My(length gk.Length) SpeechButtonEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SpeechButtonEl) Opacity(opacity float32) SpeechButtonEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SpeechButtonEl) P(length gk.Length) SpeechButtonEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SpeechButtonEl) Pb(length gk.Length) SpeechButtonEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -568,6 +737,8 @@ func (e SpeechButtonEl) Pb(length gk.Length) SpeechButtonEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SpeechButtonEl) Pl(length gk.Length) SpeechButtonEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -575,6 +746,8 @@ func (e SpeechButtonEl) Pl(length gk.Length) SpeechButtonEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SpeechButtonEl) Pr(length gk.Length) SpeechButtonEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -582,6 +755,8 @@ func (e SpeechButtonEl) Pr(length gk.Length) SpeechButtonEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SpeechButtonEl) Pt(length gk.Length) SpeechButtonEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -589,6 +764,8 @@ func (e SpeechButtonEl) Pt(length gk.Length) SpeechButtonEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SpeechButtonEl) Px(length gk.Length) SpeechButtonEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -596,6 +773,8 @@ func (e SpeechButtonEl) Px(length gk.Length) SpeechButtonEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SpeechButtonEl) Py(length gk.Length) SpeechButtonEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -603,12 +782,16 @@ func (e SpeechButtonEl) Py(length gk.Length) SpeechButtonEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SpeechButtonEl) Right(length gk.Length) SpeechButtonEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SpeechButtonEl) Rounded(length gk.Length) SpeechButtonEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -616,6 +799,8 @@ func (e SpeechButtonEl) Rounded(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SpeechButtonEl) RoundedB(length gk.Length) SpeechButtonEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -623,6 +808,8 @@ func (e SpeechButtonEl) RoundedB(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SpeechButtonEl) RoundedBl(length gk.Length) SpeechButtonEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -630,6 +817,8 @@ func (e SpeechButtonEl) RoundedBl(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SpeechButtonEl) RoundedBr(length gk.Length) SpeechButtonEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -637,6 +826,8 @@ func (e SpeechButtonEl) RoundedBr(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SpeechButtonEl) RoundedL(length gk.Length) SpeechButtonEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -644,6 +835,8 @@ func (e SpeechButtonEl) RoundedL(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SpeechButtonEl) RoundedR(length gk.Length) SpeechButtonEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -651,6 +844,8 @@ func (e SpeechButtonEl) RoundedR(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SpeechButtonEl) RoundedT(length gk.Length) SpeechButtonEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -658,6 +853,8 @@ func (e SpeechButtonEl) RoundedT(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SpeechButtonEl) RoundedTl(length gk.Length) SpeechButtonEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -665,21 +862,29 @@ func (e SpeechButtonEl) RoundedTl(length gk.Length) SpeechButtonEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SpeechButtonEl) RoundedTr(length gk.Length) SpeechButtonEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SpeechButtonEl) RowEnd(end int16) SpeechButtonEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SpeechButtonEl) RowSpan(span uint16) SpeechButtonEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SpeechButtonEl) RowStart(start int16) SpeechButtonEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -689,24 +894,32 @@ func (e SpeechButtonEl) RowStart(start int16) SpeechButtonEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SpeechButtonEl) ScrollbarWidth(width gk.Length) SpeechButtonEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SpeechButtonEl) Shadow(shadows []gk.BoxShadow) SpeechButtonEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SpeechButtonEl) Size(length gk.Length) SpeechButtonEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SpeechButtonEl) TextAlign(align gk.TextAlign) SpeechButtonEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -715,23 +928,31 @@ func (e SpeechButtonEl) TextAlign(align gk.TextAlign) SpeechButtonEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SpeechButtonEl) TextBg(bg gk.Color) SpeechButtonEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SpeechButtonEl) TextColor(color gk.Color) SpeechButtonEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SpeechButtonEl) TextDecorationColor(color gk.Color) SpeechButtonEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SpeechButtonEl) TextOverflow(overflow gk.TextOverflow) SpeechButtonEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -740,6 +961,8 @@ func (e SpeechButtonEl) TextOverflow(overflow gk.TextOverflow) SpeechButtonEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SpeechButtonEl) TextSize(size gk.Length) SpeechButtonEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -747,14 +970,19 @@ func (e SpeechButtonEl) TextSize(size gk.Length) SpeechButtonEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SpeechButtonEl) Top(length gk.Length) SpeechButtonEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SpeechButtonEl) W(length gk.Length) SpeechButtonEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Disabled calls <E as gpui_kit::base::Disableable>::disabled.
 func (e SpeechButtonEl) Disabled(disabled bool) SpeechButtonEl {
 	tDisableableDisabled(rt.N(e.Core), disabled)
 	return e
@@ -765,7 +993,7 @@ type SpeechIndicatorEl struct{ rt.ElSizableNode }
 
 // An indicator for `state`.
 //
-// SpeechIndicator is <gpui_kit::component::speech::SpeechIndicator>::new.
+// SpeechIndicator calls <gpui_kit::component::speech::SpeechIndicator>::new.
 func SpeechIndicator(state SpeechState) SpeechIndicatorEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(762)
@@ -775,21 +1003,29 @@ func SpeechIndicator(state SpeechState) SpeechIndicatorEl {
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e SpeechIndicatorEl) Large() SpeechIndicatorEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e SpeechIndicatorEl) Small() SpeechIndicatorEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e SpeechIndicatorEl) WithSize(size gk.SizeInto) SpeechIndicatorEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e SpeechIndicatorEl) Xsmall() SpeechIndicatorEl { tSizableXsmall(rt.N(e.Core)); return e }
 
 // SpeechWaveformEl is gpui_kit::component::speech::SpeechWaveform.
@@ -799,7 +1035,7 @@ type SpeechWaveformEl struct {
 
 // A waveform for `state`.
 //
-// SpeechWaveform is <gpui_kit::component::speech::SpeechWaveform>::new.
+// SpeechWaveform calls <gpui_kit::component::speech::SpeechWaveform>::new.
 func SpeechWaveform(state SpeechState, st ...gk.Style) SpeechWaveformEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(763)
@@ -821,7 +1057,7 @@ func SpeechWaveform(state SpeechState, st ...gk.Style) SpeechWaveformEl {
 // Waves need room to travel: use it for a waveform that spans a row, not a compact one beside a
 // button.
 //
-// Liquid is <gpui_kit::component::speech::SpeechWaveform>::liquid.
+// Liquid calls <gpui_kit::component::speech::SpeechWaveform>::liquid.
 func (e SpeechWaveformEl) Liquid() SpeechWaveformEl {
 	rt.Op(rt.N(e.Core), 256)
 	return e
@@ -829,32 +1065,40 @@ func (e SpeechWaveformEl) Liquid() SpeechWaveformEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SpeechWaveformEl) PopoverStyle() SpeechWaveformEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SpeechWaveformEl) RoundedFullStyle() SpeechWaveformEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SpeechWaveformEl) BorderE(width gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SpeechWaveformEl) BorderS(width gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -862,142 +1106,184 @@ func (e SpeechWaveformEl) BorderS(width gk.Length) SpeechWaveformEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SpeechWaveformEl) FlexRowDir() SpeechWaveformEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SpeechWaveformEl) InsetE(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SpeechWaveformEl) InsetS(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SpeechWaveformEl) JustifyFlexEnd() SpeechWaveformEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SpeechWaveformEl) JustifyFlexStart() SpeechWaveformEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SpeechWaveformEl) Me(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SpeechWaveformEl) Ms(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SpeechWaveformEl) Pe(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SpeechWaveformEl) Ps(length gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SpeechWaveformEl) RoundedE(radius gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SpeechWaveformEl) RoundedS(radius gk.Length) SpeechWaveformEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SpeechWaveformEl) TextEnd() SpeechWaveformEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SpeechWaveformEl) TextStart() SpeechWaveformEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SpeechWaveformEl) CornerRadii(radius gk.Corners) SpeechWaveformEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SpeechWaveformEl) DebugBlue() SpeechWaveformEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SpeechWaveformEl) DebugFocused(focusHandle gk.FocusHandle) SpeechWaveformEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SpeechWaveformEl) DebugGreen() SpeechWaveformEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SpeechWaveformEl) DebugPink() SpeechWaveformEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SpeechWaveformEl) DebugRed() SpeechWaveformEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SpeechWaveformEl) DebugYellow() SpeechWaveformEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SpeechWaveformEl) FontBlack() SpeechWaveformEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SpeechWaveformEl) FontBold() SpeechWaveformEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SpeechWaveformEl) FontExtrabold() SpeechWaveformEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SpeechWaveformEl) FontExtralight() SpeechWaveformEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SpeechWaveformEl) FontLight() SpeechWaveformEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SpeechWaveformEl) FontMedium() SpeechWaveformEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SpeechWaveformEl) FontNormal() SpeechWaveformEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SpeechWaveformEl) FontSemibold() SpeechWaveformEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SpeechWaveformEl) FontThin() SpeechWaveformEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1006,18 +1292,23 @@ func (e SpeechWaveformEl) FontThin() SpeechWaveformEl { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SpeechWaveformEl) HFlex() SpeechWaveformEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SpeechWaveformEl) Margins(margins gk.EdgesInto) SpeechWaveformEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SpeechWaveformEl) Paddings(paddings gk.EdgesInto) SpeechWaveformEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SpeechWaveformEl) RefineStyle(style gk.StyleRefinement) SpeechWaveformEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1027,42 +1318,58 @@ func (e SpeechWaveformEl) RefineStyle(style gk.StyleRefinement) SpeechWaveformEl
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SpeechWaveformEl) VFlex() SpeechWaveformEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e SpeechWaveformEl) Large() SpeechWaveformEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e SpeechWaveformEl) Small() SpeechWaveformEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e SpeechWaveformEl) WithSize(size gk.SizeInto) SpeechWaveformEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e SpeechWaveformEl) Xsmall() SpeechWaveformEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SpeechWaveformEl) Style(st ...gk.Style) SpeechWaveformEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SpeechWaveformEl) AspectRatio(ratio float32) SpeechWaveformEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SpeechWaveformEl) Bg(fill gk.Fill) SpeechWaveformEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SpeechWaveformEl) Border(length gk.Length) SpeechWaveformEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1070,12 +1377,16 @@ func (e SpeechWaveformEl) Border(length gk.Length) SpeechWaveformEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SpeechWaveformEl) BorderB(length gk.Length) SpeechWaveformEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SpeechWaveformEl) BorderColor(borderColor gk.Color) SpeechWaveformEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1083,6 +1394,8 @@ func (e SpeechWaveformEl) BorderColor(borderColor gk.Color) SpeechWaveformEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SpeechWaveformEl) BorderL(length gk.Length) SpeechWaveformEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1090,6 +1403,8 @@ func (e SpeechWaveformEl) BorderL(length gk.Length) SpeechWaveformEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SpeechWaveformEl) BorderR(length gk.Length) SpeechWaveformEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1097,6 +1412,8 @@ func (e SpeechWaveformEl) BorderR(length gk.Length) SpeechWaveformEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SpeechWaveformEl) BorderT(length gk.Length) SpeechWaveformEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1104,6 +1421,8 @@ func (e SpeechWaveformEl) BorderT(length gk.Length) SpeechWaveformEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SpeechWaveformEl) BorderX(length gk.Length) SpeechWaveformEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1111,6 +1430,8 @@ func (e SpeechWaveformEl) BorderX(length gk.Length) SpeechWaveformEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SpeechWaveformEl) BorderY(length gk.Length) SpeechWaveformEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1118,30 +1439,40 @@ func (e SpeechWaveformEl) BorderY(length gk.Length) SpeechWaveformEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SpeechWaveformEl) Bottom(length gk.Length) SpeechWaveformEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SpeechWaveformEl) ColEnd(end int16) SpeechWaveformEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SpeechWaveformEl) ColSpan(span uint16) SpeechWaveformEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SpeechWaveformEl) ColStart(start int16) SpeechWaveformEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SpeechWaveformEl) Cursor(cursor gk.CursorStyle) SpeechWaveformEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1149,36 +1480,48 @@ func (e SpeechWaveformEl) Cursor(cursor gk.CursorStyle) SpeechWaveformEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SpeechWaveformEl) FlexBasis(basis gk.Length) SpeechWaveformEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SpeechWaveformEl) FlexGrow(grow float32) SpeechWaveformEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SpeechWaveformEl) FlexShrink(shrink float32) SpeechWaveformEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SpeechWaveformEl) Font(font gk.Font) SpeechWaveformEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SpeechWaveformEl) FontFamily(familyName string) SpeechWaveformEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SpeechWaveformEl) FontFeatures(features gk.FontFeatures) SpeechWaveformEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1187,12 +1530,16 @@ func (e SpeechWaveformEl) FontFeatures(features gk.FontFeatures) SpeechWaveformE
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SpeechWaveformEl) FontWeight(weight gk.FontWeight) SpeechWaveformEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SpeechWaveformEl) Gap(length gk.Length) SpeechWaveformEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1200,6 +1547,8 @@ func (e SpeechWaveformEl) Gap(length gk.Length) SpeechWaveformEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SpeechWaveformEl) GapX(length gk.Length) SpeechWaveformEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1207,18 +1556,24 @@ func (e SpeechWaveformEl) GapX(length gk.Length) SpeechWaveformEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SpeechWaveformEl) GapY(length gk.Length) SpeechWaveformEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SpeechWaveformEl) GridCols(cols uint16) SpeechWaveformEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SpeechWaveformEl) GridColsMaxContent(cols uint16) SpeechWaveformEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1226,18 +1581,24 @@ func (e SpeechWaveformEl) GridColsMaxContent(cols uint16) SpeechWaveformEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SpeechWaveformEl) GridColsMinContent(cols uint16) SpeechWaveformEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SpeechWaveformEl) GridRows(rows uint16) SpeechWaveformEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SpeechWaveformEl) GridRowsMaxContent(rows uint16) SpeechWaveformEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1245,12 +1606,16 @@ func (e SpeechWaveformEl) GridRowsMaxContent(rows uint16) SpeechWaveformEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SpeechWaveformEl) GridRowsMinContent(rows uint16) SpeechWaveformEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SpeechWaveformEl) H(length gk.Length) SpeechWaveformEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1258,6 +1623,8 @@ func (e SpeechWaveformEl) H(length gk.Length) SpeechWaveformEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SpeechWaveformEl) Inset(length gk.Length) SpeechWaveformEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1265,6 +1632,8 @@ func (e SpeechWaveformEl) Inset(length gk.Length) SpeechWaveformEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SpeechWaveformEl) Left(length gk.Length) SpeechWaveformEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1272,36 +1641,48 @@ func (e SpeechWaveformEl) Left(length gk.Length) SpeechWaveformEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SpeechWaveformEl) LineClamp(lines int) SpeechWaveformEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SpeechWaveformEl) LineHeight(lineHeight gk.Length) SpeechWaveformEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SpeechWaveformEl) M(length gk.Length) SpeechWaveformEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SpeechWaveformEl) MaxH(length gk.Length) SpeechWaveformEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SpeechWaveformEl) MaxSize(length gk.Length) SpeechWaveformEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SpeechWaveformEl) MaxW(length gk.Length) SpeechWaveformEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1309,24 +1690,32 @@ func (e SpeechWaveformEl) MaxW(length gk.Length) SpeechWaveformEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SpeechWaveformEl) Mb(length gk.Length) SpeechWaveformEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SpeechWaveformEl) MinH(length gk.Length) SpeechWaveformEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SpeechWaveformEl) MinSize(length gk.Length) SpeechWaveformEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SpeechWaveformEl) MinW(length gk.Length) SpeechWaveformEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1334,6 +1723,8 @@ func (e SpeechWaveformEl) MinW(length gk.Length) SpeechWaveformEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SpeechWaveformEl) Ml(length gk.Length) SpeechWaveformEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1341,6 +1732,8 @@ func (e SpeechWaveformEl) Ml(length gk.Length) SpeechWaveformEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SpeechWaveformEl) Mr(length gk.Length) SpeechWaveformEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1348,6 +1741,8 @@ func (e SpeechWaveformEl) Mr(length gk.Length) SpeechWaveformEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SpeechWaveformEl) Mt(length gk.Length) SpeechWaveformEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1355,6 +1750,8 @@ func (e SpeechWaveformEl) Mt(length gk.Length) SpeechWaveformEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SpeechWaveformEl) Mx(length gk.Length) SpeechWaveformEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1362,18 +1759,24 @@ func (e SpeechWaveformEl) Mx(length gk.Length) SpeechWaveformEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SpeechWaveformEl) My(length gk.Length) SpeechWaveformEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SpeechWaveformEl) Opacity(opacity float32) SpeechWaveformEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SpeechWaveformEl) P(length gk.Length) SpeechWaveformEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1381,6 +1784,8 @@ func (e SpeechWaveformEl) P(length gk.Length) SpeechWaveformEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SpeechWaveformEl) Pb(length gk.Length) SpeechWaveformEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1388,6 +1793,8 @@ func (e SpeechWaveformEl) Pb(length gk.Length) SpeechWaveformEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SpeechWaveformEl) Pl(length gk.Length) SpeechWaveformEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1395,6 +1802,8 @@ func (e SpeechWaveformEl) Pl(length gk.Length) SpeechWaveformEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SpeechWaveformEl) Pr(length gk.Length) SpeechWaveformEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1402,6 +1811,8 @@ func (e SpeechWaveformEl) Pr(length gk.Length) SpeechWaveformEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SpeechWaveformEl) Pt(length gk.Length) SpeechWaveformEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1409,6 +1820,8 @@ func (e SpeechWaveformEl) Pt(length gk.Length) SpeechWaveformEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SpeechWaveformEl) Px(length gk.Length) SpeechWaveformEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1416,6 +1829,8 @@ func (e SpeechWaveformEl) Px(length gk.Length) SpeechWaveformEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SpeechWaveformEl) Py(length gk.Length) SpeechWaveformEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1423,12 +1838,16 @@ func (e SpeechWaveformEl) Py(length gk.Length) SpeechWaveformEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SpeechWaveformEl) Right(length gk.Length) SpeechWaveformEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SpeechWaveformEl) Rounded(length gk.Length) SpeechWaveformEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1436,6 +1855,8 @@ func (e SpeechWaveformEl) Rounded(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SpeechWaveformEl) RoundedB(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1443,6 +1864,8 @@ func (e SpeechWaveformEl) RoundedB(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SpeechWaveformEl) RoundedBl(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1450,6 +1873,8 @@ func (e SpeechWaveformEl) RoundedBl(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SpeechWaveformEl) RoundedBr(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1457,6 +1882,8 @@ func (e SpeechWaveformEl) RoundedBr(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SpeechWaveformEl) RoundedL(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1464,6 +1891,8 @@ func (e SpeechWaveformEl) RoundedL(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SpeechWaveformEl) RoundedR(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1471,6 +1900,8 @@ func (e SpeechWaveformEl) RoundedR(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SpeechWaveformEl) RoundedT(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1478,6 +1909,8 @@ func (e SpeechWaveformEl) RoundedT(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SpeechWaveformEl) RoundedTl(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1485,24 +1918,32 @@ func (e SpeechWaveformEl) RoundedTl(length gk.Length) SpeechWaveformEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SpeechWaveformEl) RoundedTr(length gk.Length) SpeechWaveformEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SpeechWaveformEl) RowEnd(end int16) SpeechWaveformEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SpeechWaveformEl) RowSpan(span uint16) SpeechWaveformEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SpeechWaveformEl) RowStart(start int16) SpeechWaveformEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1512,24 +1953,32 @@ func (e SpeechWaveformEl) RowStart(start int16) SpeechWaveformEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SpeechWaveformEl) ScrollbarWidth(width gk.Length) SpeechWaveformEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SpeechWaveformEl) Shadow(shadows []gk.BoxShadow) SpeechWaveformEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SpeechWaveformEl) Size(length gk.Length) SpeechWaveformEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SpeechWaveformEl) TextAlign(align gk.TextAlign) SpeechWaveformEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1538,6 +1987,8 @@ func (e SpeechWaveformEl) TextAlign(align gk.TextAlign) SpeechWaveformEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SpeechWaveformEl) TextBg(bg gk.Color) SpeechWaveformEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1546,18 +1997,24 @@ func (e SpeechWaveformEl) TextBg(bg gk.Color) SpeechWaveformEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SpeechWaveformEl) TextColor(color gk.Color) SpeechWaveformEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SpeechWaveformEl) TextDecorationColor(color gk.Color) SpeechWaveformEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SpeechWaveformEl) TextOverflow(overflow gk.TextOverflow) SpeechWaveformEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1566,6 +2023,8 @@ func (e SpeechWaveformEl) TextOverflow(overflow gk.TextOverflow) SpeechWaveformE
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SpeechWaveformEl) TextSize(size gk.Length) SpeechWaveformEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1573,12 +2032,16 @@ func (e SpeechWaveformEl) TextSize(size gk.Length) SpeechWaveformEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SpeechWaveformEl) Top(length gk.Length) SpeechWaveformEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SpeechWaveformEl) W(length gk.Length) SpeechWaveformEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

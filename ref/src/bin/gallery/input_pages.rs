@@ -1,10 +1,5 @@
-//! The input family's gallery pages (docs/PROTOCOLS.md section 9.8): an input edited by keys
-//! (typing, select all, copy, paste, undo, redo, a selection), a multi-line textarea, the code
-//! editor without grammars, the editor's completion menu filled by a provider, a number input,
-//! an OTP input and a masked input, written the way a
-//! Rust GPUI-kit app writes them. The Go twin is examples/go/gallery/input_pages.go, call
-//! for call; the pages' lines are in ref/gallery/pages.txt. Each page has its own state, made
-//! once when the gallery starts, so a page shows only what its own steps did.
+//! Input, textarea, code editor, number input, OTP, and LSP completion gallery pages.
+
 use crate::Gallery;
 use gpui_kit::base::Editor;
 use gpui_kit::base::input::{CompletionProvider, EditorState, TextareaState};
@@ -17,6 +12,8 @@ use lsp_types::{CompletionContext, CompletionItem, CompletionItemKind, Completio
 use ropey::Rope;
 use std::rc::Rc;
 
+/// Persistent state entities shared across the `input-*`, `textarea`, `editor*`,
+/// `number-input`, and `otp-input` gallery pages.
 pub struct InputPages {
     pub edit: Entity<InputState>,
     pub text: Entity<TextareaState>,
@@ -29,8 +26,7 @@ pub struct InputPages {
     pub writes: Entity<InputState>,
 }
 
-/// The completion provider of the editor-completion page: two fixed items, asked for when a
-/// typed character is a dot.
+/// Static completion provider triggered by `.` on the `editor-completion` page.
 struct Completions;
 
 impl CompletionProvider for Completions {
@@ -62,9 +58,11 @@ impl CompletionProvider for Completions {
     }
 }
 
+/// Sample Rust snippet preloaded into the `editor` page.
 pub const EDITOR_TEXT: &str = "fn main() {\n    let x = 40 + 2;\n    println!(\"{x}\");\n}\n";
 
 impl InputPages {
+    /// Allocates and configures all input/editor state entities for the gallery.
     pub fn new(window: &mut Window, cx: &mut App) -> Self {
         InputPages {
             edit: cx.new(|cx| InputState::new(window, cx).placeholder("Type here")),
@@ -90,7 +88,7 @@ impl InputPages {
     }
 }
 
-/// The element of an input-family page, or None for any other page.
+/// Renders an input/editor gallery page if `id` belongs to this module.
 pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
     let p = &g.input;
     Some(match id {
@@ -104,7 +102,7 @@ pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
             div().w(px(480.)).child(editor).into_any_element()
         }
         "input-writes" => {
-            // Writes to the state from click handlers, as an app does them.
+
             let s = &p.writes;
             let button = |id: &'static str, label: &'static str| Button::new(id).label(label).w(px(80.));
             v_flex()

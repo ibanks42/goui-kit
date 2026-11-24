@@ -1,5 +1,4 @@
-// A builder the element does not have: a Label has no OnClick (upstream's Label is not
-// interactive), so the call does not compile instead of being dropped by the library.
+// Compile-time misuse case: LabelEl does not implement interactive builders such as OnClick.
 package main
 
 import (

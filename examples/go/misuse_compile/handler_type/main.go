@@ -1,5 +1,4 @@
-// A handler of the wrong kind: a switch's OnClick hands a bool, not a ClickEvent (Go does
-// not compile).
+// Compile-time misuse case: Switch.OnClick expects func(*gk.Cx, bool), not a ClickEvent handler.
 package main
 
 import (

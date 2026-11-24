@@ -12,7 +12,7 @@ type BubbleEl struct{ rt.ElAnimatableElement }
 
 // Create a filled bubble that can inherit alignment from its parent.
 //
-// Bubble is <gpui_kit::component::bubble::Bubble>::new.
+// Bubble calls <gpui_kit::component::bubble::Bubble>::new.
 func Bubble(st ...gk.Style) BubbleEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(598)
@@ -20,7 +20,7 @@ func Bubble(st ...gk.Style) BubbleEl {
 	return BubbleEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// BubbleDefault is <gpui_kit::component::bubble::Bubble as Default>::default.
+// BubbleDefault calls <gpui_kit::component::bubble::Bubble as Default>::default.
 func BubbleDefault(st ...gk.Style) BubbleEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(597)
@@ -30,7 +30,7 @@ func BubbleDefault(st ...gk.Style) BubbleEl {
 
 // Set the bubble alignment.
 //
-// Alignment is <gpui_kit::component::bubble::Bubble>::alignment.
+// Alignment calls <gpui_kit::component::bubble::Bubble>::alignment.
 func (e BubbleEl) Alignment(alignment MessageAlignment) BubbleEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(alignment))
@@ -42,7 +42,7 @@ func (e BubbleEl) Alignment(alignment MessageAlignment) BubbleEl {
 // Children already added directly to the bubble move into the new surface, in front of its own
 // children, so `.child(...)` composes the same way on either side of this call.
 //
-// Content is <gpui_kit::component::bubble::Bubble>::content.
+// Content calls <gpui_kit::component::bubble::Bubble>::content.
 func (e BubbleEl) Content(content BubbleContentEl) BubbleEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeNode(rt.N(content.Core), false))
@@ -51,7 +51,7 @@ func (e BubbleEl) Content(content BubbleContentEl) BubbleEl {
 
 // Set an optional reaction region anchored to the bubble edge.
 //
-// Reactions is <gpui_kit::component::bubble::Bubble>::reactions.
+// Reactions calls <gpui_kit::component::bubble::Bubble>::reactions.
 func (e BubbleEl) Reactions(reactions BubbleReactionsEl) BubbleEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeNode(rt.N(reactions.Core), false))
@@ -60,7 +60,7 @@ func (e BubbleEl) Reactions(reactions BubbleReactionsEl) BubbleEl {
 
 // Set the visual treatment.
 //
-// WithVariant is <gpui_kit::component::bubble::Bubble>::with_variant.
+// WithVariant calls <gpui_kit::component::bubble::Bubble>::with_variant.
 func (e BubbleEl) WithVariant(variant BubbleVariant) BubbleEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U16(uint16(variant))
@@ -69,32 +69,38 @@ func (e BubbleEl) WithVariant(variant BubbleVariant) BubbleEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BubbleEl) PopoverStyle() BubbleEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BubbleEl) RoundedFullStyle() BubbleEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e BubbleEl) FocusRingStyle() BubbleEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -107,24 +113,32 @@ func (e BubbleEl) FocusRingStyle() BubbleEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BubbleEl) KeepTextSelection(id gk.ID) BubbleEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BubbleEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BubbleEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BubbleEl) BorderE(width gk.Length) BubbleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BubbleEl) BorderS(width gk.Length) BubbleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -132,106 +146,148 @@ func (e BubbleEl) BorderS(width gk.Length) BubbleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BubbleEl) FlexRowDir() BubbleEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BubbleEl) InsetE(length gk.Length) BubbleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BubbleEl) InsetS(length gk.Length) BubbleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BubbleEl) JustifyFlexEnd() BubbleEl { tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core)); return e }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BubbleEl) JustifyFlexStart() BubbleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BubbleEl) Me(length gk.Length) BubbleEl { tLogicalStyledExtMe(rt.N(e.Core), length); return e }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BubbleEl) Ms(length gk.Length) BubbleEl { tLogicalStyledExtMs(rt.N(e.Core), length); return e }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BubbleEl) Pe(length gk.Length) BubbleEl { tLogicalStyledExtPe(rt.N(e.Core), length); return e }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BubbleEl) Ps(length gk.Length) BubbleEl { tLogicalStyledExtPs(rt.N(e.Core), length); return e }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BubbleEl) RoundedE(radius gk.Length) BubbleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BubbleEl) RoundedS(radius gk.Length) BubbleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BubbleEl) TextEnd() BubbleEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BubbleEl) TextStart() BubbleEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BubbleEl) CornerRadii(radius gk.Corners) BubbleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BubbleEl) DebugBlue() BubbleEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BubbleEl) DebugFocused(focusHandle gk.FocusHandle) BubbleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BubbleEl) DebugGreen() BubbleEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BubbleEl) DebugPink() BubbleEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BubbleEl) DebugRed() BubbleEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BubbleEl) DebugYellow() BubbleEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BubbleEl) FontBlack() BubbleEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BubbleEl) FontBold() BubbleEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BubbleEl) FontExtrabold() BubbleEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BubbleEl) FontExtralight() BubbleEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BubbleEl) FontLight() BubbleEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BubbleEl) FontMedium() BubbleEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BubbleEl) FontNormal() BubbleEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BubbleEl) FontSemibold() BubbleEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BubbleEl) FontThin() BubbleEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -240,18 +296,23 @@ func (e BubbleEl) FontThin() BubbleEl { tStyledExtFontThin(rt.N(e.Core)); return
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BubbleEl) HFlex() BubbleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BubbleEl) Margins(margins gk.EdgesInto) BubbleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BubbleEl) Paddings(paddings gk.EdgesInto) BubbleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BubbleEl) RefineStyle(style gk.StyleRefinement) BubbleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -261,45 +322,62 @@ func (e BubbleEl) RefineStyle(style gk.StyleRefinement) BubbleEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BubbleEl) VFlex() BubbleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e BubbleEl) Text(s string) BubbleEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BubbleEl) ChildView(v gk.View) BubbleEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BubbleEl) Child(child gk.Element) BubbleEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BubbleEl) Children(children ...gk.Element) BubbleEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BubbleEl) Style(st ...gk.Style) BubbleEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BubbleEl) AspectRatio(ratio float32) BubbleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BubbleEl) Bg(fill gk.Fill) BubbleEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BubbleEl) Border(length gk.Length) BubbleEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BubbleEl) BorderB(length gk.Length) BubbleEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BubbleEl) BorderColor(borderColor gk.Color) BubbleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -307,38 +385,58 @@ func (e BubbleEl) BorderColor(borderColor gk.Color) BubbleEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BubbleEl) BorderL(length gk.Length) BubbleEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BubbleEl) BorderR(length gk.Length) BubbleEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BubbleEl) BorderT(length gk.Length) BubbleEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BubbleEl) BorderX(length gk.Length) BubbleEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BubbleEl) BorderY(length gk.Length) BubbleEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BubbleEl) Bottom(length gk.Length) BubbleEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BubbleEl) ColEnd(end int16) BubbleEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BubbleEl) ColSpan(span uint16) BubbleEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BubbleEl) ColStart(start int16) BubbleEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BubbleEl) Cursor(cursor gk.CursorStyle) BubbleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -346,30 +444,42 @@ func (e BubbleEl) Cursor(cursor gk.CursorStyle) BubbleEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BubbleEl) FlexBasis(basis gk.Length) BubbleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BubbleEl) FlexGrow(grow float32) BubbleEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BubbleEl) FlexShrink(shrink float32) BubbleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BubbleEl) Font(font gk.Font) BubbleEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BubbleEl) FontFamily(familyName string) BubbleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BubbleEl) FontFeatures(features gk.FontFeatures) BubbleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -378,26 +488,38 @@ func (e BubbleEl) FontFeatures(features gk.FontFeatures) BubbleEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BubbleEl) FontWeight(weight gk.FontWeight) BubbleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BubbleEl) Gap(length gk.Length) BubbleEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BubbleEl) GapX(length gk.Length) BubbleEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BubbleEl) GapY(length gk.Length) BubbleEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BubbleEl) GridCols(cols uint16) BubbleEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BubbleEl) GridColsMaxContent(cols uint16) BubbleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -405,15 +527,21 @@ func (e BubbleEl) GridColsMaxContent(cols uint16) BubbleEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BubbleEl) GridColsMinContent(cols uint16) BubbleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BubbleEl) GridRows(rows uint16) BubbleEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BubbleEl) GridRowsMaxContent(rows uint16) BubbleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -421,116 +549,176 @@ func (e BubbleEl) GridRowsMaxContent(rows uint16) BubbleEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BubbleEl) GridRowsMinContent(rows uint16) BubbleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BubbleEl) H(length gk.Length) BubbleEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BubbleEl) Inset(length gk.Length) BubbleEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BubbleEl) Left(length gk.Length) BubbleEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BubbleEl) LineClamp(lines int) BubbleEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BubbleEl) LineHeight(lineHeight gk.Length) BubbleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BubbleEl) M(length gk.Length) BubbleEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BubbleEl) MaxH(length gk.Length) BubbleEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BubbleEl) MaxSize(length gk.Length) BubbleEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BubbleEl) MaxW(length gk.Length) BubbleEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BubbleEl) Mb(length gk.Length) BubbleEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BubbleEl) MinH(length gk.Length) BubbleEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BubbleEl) MinSize(length gk.Length) BubbleEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BubbleEl) MinW(length gk.Length) BubbleEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BubbleEl) Ml(length gk.Length) BubbleEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BubbleEl) Mr(length gk.Length) BubbleEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BubbleEl) Mt(length gk.Length) BubbleEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BubbleEl) Mx(length gk.Length) BubbleEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BubbleEl) My(length gk.Length) BubbleEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BubbleEl) Opacity(opacity float32) BubbleEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BubbleEl) P(length gk.Length) BubbleEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BubbleEl) Pb(length gk.Length) BubbleEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BubbleEl) Pl(length gk.Length) BubbleEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BubbleEl) Pr(length gk.Length) BubbleEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BubbleEl) Pt(length gk.Length) BubbleEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BubbleEl) Px(length gk.Length) BubbleEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BubbleEl) Py(length gk.Length) BubbleEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BubbleEl) Right(length gk.Length) BubbleEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BubbleEl) Rounded(length gk.Length) BubbleEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BubbleEl) RoundedB(length gk.Length) BubbleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -538,6 +726,8 @@ func (e BubbleEl) RoundedB(length gk.Length) BubbleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BubbleEl) RoundedBl(length gk.Length) BubbleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -545,6 +735,8 @@ func (e BubbleEl) RoundedBl(length gk.Length) BubbleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BubbleEl) RoundedBr(length gk.Length) BubbleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -552,6 +744,8 @@ func (e BubbleEl) RoundedBr(length gk.Length) BubbleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BubbleEl) RoundedL(length gk.Length) BubbleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -559,6 +753,8 @@ func (e BubbleEl) RoundedL(length gk.Length) BubbleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BubbleEl) RoundedR(length gk.Length) BubbleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -566,6 +762,8 @@ func (e BubbleEl) RoundedR(length gk.Length) BubbleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BubbleEl) RoundedT(length gk.Length) BubbleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -573,6 +771,8 @@ func (e BubbleEl) RoundedT(length gk.Length) BubbleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BubbleEl) RoundedTl(length gk.Length) BubbleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -580,39 +780,55 @@ func (e BubbleEl) RoundedTl(length gk.Length) BubbleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BubbleEl) RoundedTr(length gk.Length) BubbleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BubbleEl) RowEnd(end int16) BubbleEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BubbleEl) RowSpan(span uint16) BubbleEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BubbleEl) RowStart(start int16) BubbleEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BubbleEl) ScrollbarWidth(width gk.Length) BubbleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BubbleEl) Shadow(shadows []gk.BoxShadow) BubbleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BubbleEl) Size(length gk.Length) BubbleEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BubbleEl) TextAlign(align gk.TextAlign) BubbleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -621,20 +837,28 @@ func (e BubbleEl) TextAlign(align gk.TextAlign) BubbleEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BubbleEl) TextBg(bg gk.Color) BubbleEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BubbleEl) TextColor(color gk.Color) BubbleEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BubbleEl) TextDecorationColor(color gk.Color) BubbleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BubbleEl) TextOverflow(overflow gk.TextOverflow) BubbleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -643,13 +867,19 @@ func (e BubbleEl) TextOverflow(overflow gk.TextOverflow) BubbleEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BubbleEl) TextSize(size gk.Length) BubbleEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BubbleEl) Top(length gk.Length) BubbleEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BubbleEl) W(length gk.Length) BubbleEl { tStyledW(rt.N(e.Core), length); return e }
 
 // BubbleContentEl is gpui_kit::component::bubble::BubbleContent.
@@ -657,7 +887,7 @@ type BubbleContentEl struct{ rt.ElAnimatableElement }
 
 // Create an empty bubble content surface.
 //
-// BubbleContent is <gpui_kit::component::bubble::BubbleContent>::new.
+// BubbleContent calls <gpui_kit::component::bubble::BubbleContent>::new.
 func BubbleContent(st ...gk.Style) BubbleContentEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(600)
@@ -665,7 +895,7 @@ func BubbleContent(st ...gk.Style) BubbleContentEl {
 	return BubbleContentEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// BubbleContentDefault is <gpui_kit::component::bubble::BubbleContent as Default>::default.
+// BubbleContentDefault calls <gpui_kit::component::bubble::BubbleContent as Default>::default.
 func BubbleContentDefault(st ...gk.Style) BubbleContentEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(599)
@@ -675,20 +905,24 @@ func BubbleContentDefault(st ...gk.Style) BubbleContentEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BubbleContentEl) PopoverStyle() BubbleContentEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BubbleContentEl) RoundedFullStyle() BubbleContentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -697,16 +931,18 @@ func (e BubbleContentEl) RoundedFullStyle() BubbleContentEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e BubbleContentEl) FocusRingStyle() BubbleContentEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -719,24 +955,32 @@ func (e BubbleContentEl) FocusRingStyle() BubbleContentEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BubbleContentEl) KeepTextSelection(id gk.ID) BubbleContentEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BubbleContentEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BubbleContentEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BubbleContentEl) BorderE(width gk.Length) BubbleContentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BubbleContentEl) BorderS(width gk.Length) BubbleContentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -744,136 +988,178 @@ func (e BubbleContentEl) BorderS(width gk.Length) BubbleContentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BubbleContentEl) FlexRowDir() BubbleContentEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BubbleContentEl) InsetE(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BubbleContentEl) InsetS(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BubbleContentEl) JustifyFlexEnd() BubbleContentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BubbleContentEl) JustifyFlexStart() BubbleContentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BubbleContentEl) Me(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BubbleContentEl) Ms(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BubbleContentEl) Pe(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BubbleContentEl) Ps(length gk.Length) BubbleContentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BubbleContentEl) RoundedE(radius gk.Length) BubbleContentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BubbleContentEl) RoundedS(radius gk.Length) BubbleContentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BubbleContentEl) TextEnd() BubbleContentEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BubbleContentEl) TextStart() BubbleContentEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BubbleContentEl) CornerRadii(radius gk.Corners) BubbleContentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BubbleContentEl) DebugBlue() BubbleContentEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BubbleContentEl) DebugFocused(focusHandle gk.FocusHandle) BubbleContentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BubbleContentEl) DebugGreen() BubbleContentEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BubbleContentEl) DebugPink() BubbleContentEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BubbleContentEl) DebugRed() BubbleContentEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BubbleContentEl) DebugYellow() BubbleContentEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BubbleContentEl) FontBlack() BubbleContentEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BubbleContentEl) FontBold() BubbleContentEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BubbleContentEl) FontExtrabold() BubbleContentEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BubbleContentEl) FontExtralight() BubbleContentEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BubbleContentEl) FontLight() BubbleContentEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BubbleContentEl) FontMedium() BubbleContentEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BubbleContentEl) FontNormal() BubbleContentEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BubbleContentEl) FontSemibold() BubbleContentEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BubbleContentEl) FontThin() BubbleContentEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -882,18 +1168,23 @@ func (e BubbleContentEl) FontThin() BubbleContentEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BubbleContentEl) HFlex() BubbleContentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BubbleContentEl) Margins(margins gk.EdgesInto) BubbleContentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BubbleContentEl) Paddings(paddings gk.EdgesInto) BubbleContentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BubbleContentEl) RefineStyle(style gk.StyleRefinement) BubbleContentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -903,38 +1194,51 @@ func (e BubbleContentEl) RefineStyle(style gk.StyleRefinement) BubbleContentEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BubbleContentEl) VFlex() BubbleContentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e BubbleContentEl) Text(s string) BubbleContentEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BubbleContentEl) ChildView(v gk.View) BubbleContentEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BubbleContentEl) Child(child gk.Element) BubbleContentEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BubbleContentEl) Children(children ...gk.Element) BubbleContentEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BubbleContentEl) Style(st ...gk.Style) BubbleContentEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BubbleContentEl) AspectRatio(ratio float32) BubbleContentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BubbleContentEl) Bg(fill gk.Fill) BubbleContentEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BubbleContentEl) Border(length gk.Length) BubbleContentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -942,12 +1246,16 @@ func (e BubbleContentEl) Border(length gk.Length) BubbleContentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BubbleContentEl) BorderB(length gk.Length) BubbleContentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BubbleContentEl) BorderColor(borderColor gk.Color) BubbleContentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -955,6 +1263,8 @@ func (e BubbleContentEl) BorderColor(borderColor gk.Color) BubbleContentEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BubbleContentEl) BorderL(length gk.Length) BubbleContentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -962,6 +1272,8 @@ func (e BubbleContentEl) BorderL(length gk.Length) BubbleContentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BubbleContentEl) BorderR(length gk.Length) BubbleContentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -969,6 +1281,8 @@ func (e BubbleContentEl) BorderR(length gk.Length) BubbleContentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BubbleContentEl) BorderT(length gk.Length) BubbleContentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -976,6 +1290,8 @@ func (e BubbleContentEl) BorderT(length gk.Length) BubbleContentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BubbleContentEl) BorderX(length gk.Length) BubbleContentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -983,6 +1299,8 @@ func (e BubbleContentEl) BorderX(length gk.Length) BubbleContentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BubbleContentEl) BorderY(length gk.Length) BubbleContentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -990,30 +1308,40 @@ func (e BubbleContentEl) BorderY(length gk.Length) BubbleContentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BubbleContentEl) Bottom(length gk.Length) BubbleContentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BubbleContentEl) ColEnd(end int16) BubbleContentEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BubbleContentEl) ColSpan(span uint16) BubbleContentEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BubbleContentEl) ColStart(start int16) BubbleContentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BubbleContentEl) Cursor(cursor gk.CursorStyle) BubbleContentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1021,36 +1349,48 @@ func (e BubbleContentEl) Cursor(cursor gk.CursorStyle) BubbleContentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BubbleContentEl) FlexBasis(basis gk.Length) BubbleContentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BubbleContentEl) FlexGrow(grow float32) BubbleContentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BubbleContentEl) FlexShrink(shrink float32) BubbleContentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BubbleContentEl) Font(font gk.Font) BubbleContentEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BubbleContentEl) FontFamily(familyName string) BubbleContentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BubbleContentEl) FontFeatures(features gk.FontFeatures) BubbleContentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1059,12 +1399,16 @@ func (e BubbleContentEl) FontFeatures(features gk.FontFeatures) BubbleContentEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BubbleContentEl) FontWeight(weight gk.FontWeight) BubbleContentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BubbleContentEl) Gap(length gk.Length) BubbleContentEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1072,6 +1416,8 @@ func (e BubbleContentEl) Gap(length gk.Length) BubbleContentEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BubbleContentEl) GapX(length gk.Length) BubbleContentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1079,18 +1425,24 @@ func (e BubbleContentEl) GapX(length gk.Length) BubbleContentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BubbleContentEl) GapY(length gk.Length) BubbleContentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BubbleContentEl) GridCols(cols uint16) BubbleContentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BubbleContentEl) GridColsMaxContent(cols uint16) BubbleContentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1098,18 +1450,24 @@ func (e BubbleContentEl) GridColsMaxContent(cols uint16) BubbleContentEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BubbleContentEl) GridColsMinContent(cols uint16) BubbleContentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BubbleContentEl) GridRows(rows uint16) BubbleContentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BubbleContentEl) GridRowsMaxContent(rows uint16) BubbleContentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1117,12 +1475,16 @@ func (e BubbleContentEl) GridRowsMaxContent(rows uint16) BubbleContentEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BubbleContentEl) GridRowsMinContent(rows uint16) BubbleContentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BubbleContentEl) H(length gk.Length) BubbleContentEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1130,6 +1492,8 @@ func (e BubbleContentEl) H(length gk.Length) BubbleContentEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BubbleContentEl) Inset(length gk.Length) BubbleContentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1137,6 +1501,8 @@ func (e BubbleContentEl) Inset(length gk.Length) BubbleContentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BubbleContentEl) Left(length gk.Length) BubbleContentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1144,36 +1510,48 @@ func (e BubbleContentEl) Left(length gk.Length) BubbleContentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BubbleContentEl) LineClamp(lines int) BubbleContentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BubbleContentEl) LineHeight(lineHeight gk.Length) BubbleContentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BubbleContentEl) M(length gk.Length) BubbleContentEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BubbleContentEl) MaxH(length gk.Length) BubbleContentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BubbleContentEl) MaxSize(length gk.Length) BubbleContentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BubbleContentEl) MaxW(length gk.Length) BubbleContentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1181,24 +1559,32 @@ func (e BubbleContentEl) MaxW(length gk.Length) BubbleContentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BubbleContentEl) Mb(length gk.Length) BubbleContentEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BubbleContentEl) MinH(length gk.Length) BubbleContentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BubbleContentEl) MinSize(length gk.Length) BubbleContentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BubbleContentEl) MinW(length gk.Length) BubbleContentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1206,6 +1592,8 @@ func (e BubbleContentEl) MinW(length gk.Length) BubbleContentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BubbleContentEl) Ml(length gk.Length) BubbleContentEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1213,6 +1601,8 @@ func (e BubbleContentEl) Ml(length gk.Length) BubbleContentEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BubbleContentEl) Mr(length gk.Length) BubbleContentEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1220,6 +1610,8 @@ func (e BubbleContentEl) Mr(length gk.Length) BubbleContentEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BubbleContentEl) Mt(length gk.Length) BubbleContentEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1227,6 +1619,8 @@ func (e BubbleContentEl) Mt(length gk.Length) BubbleContentEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BubbleContentEl) Mx(length gk.Length) BubbleContentEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1234,18 +1628,24 @@ func (e BubbleContentEl) Mx(length gk.Length) BubbleContentEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BubbleContentEl) My(length gk.Length) BubbleContentEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BubbleContentEl) Opacity(opacity float32) BubbleContentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BubbleContentEl) P(length gk.Length) BubbleContentEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1253,6 +1653,8 @@ func (e BubbleContentEl) P(length gk.Length) BubbleContentEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BubbleContentEl) Pb(length gk.Length) BubbleContentEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1260,6 +1662,8 @@ func (e BubbleContentEl) Pb(length gk.Length) BubbleContentEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BubbleContentEl) Pl(length gk.Length) BubbleContentEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1267,6 +1671,8 @@ func (e BubbleContentEl) Pl(length gk.Length) BubbleContentEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BubbleContentEl) Pr(length gk.Length) BubbleContentEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1274,6 +1680,8 @@ func (e BubbleContentEl) Pr(length gk.Length) BubbleContentEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BubbleContentEl) Pt(length gk.Length) BubbleContentEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1281,6 +1689,8 @@ func (e BubbleContentEl) Pt(length gk.Length) BubbleContentEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BubbleContentEl) Px(length gk.Length) BubbleContentEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1288,6 +1698,8 @@ func (e BubbleContentEl) Px(length gk.Length) BubbleContentEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BubbleContentEl) Py(length gk.Length) BubbleContentEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1295,12 +1707,16 @@ func (e BubbleContentEl) Py(length gk.Length) BubbleContentEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BubbleContentEl) Right(length gk.Length) BubbleContentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BubbleContentEl) Rounded(length gk.Length) BubbleContentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1308,6 +1724,8 @@ func (e BubbleContentEl) Rounded(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BubbleContentEl) RoundedB(length gk.Length) BubbleContentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1315,6 +1733,8 @@ func (e BubbleContentEl) RoundedB(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BubbleContentEl) RoundedBl(length gk.Length) BubbleContentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1322,6 +1742,8 @@ func (e BubbleContentEl) RoundedBl(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BubbleContentEl) RoundedBr(length gk.Length) BubbleContentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1329,6 +1751,8 @@ func (e BubbleContentEl) RoundedBr(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BubbleContentEl) RoundedL(length gk.Length) BubbleContentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1336,6 +1760,8 @@ func (e BubbleContentEl) RoundedL(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BubbleContentEl) RoundedR(length gk.Length) BubbleContentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1343,6 +1769,8 @@ func (e BubbleContentEl) RoundedR(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BubbleContentEl) RoundedT(length gk.Length) BubbleContentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1350,6 +1778,8 @@ func (e BubbleContentEl) RoundedT(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BubbleContentEl) RoundedTl(length gk.Length) BubbleContentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1357,24 +1787,32 @@ func (e BubbleContentEl) RoundedTl(length gk.Length) BubbleContentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BubbleContentEl) RoundedTr(length gk.Length) BubbleContentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BubbleContentEl) RowEnd(end int16) BubbleContentEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BubbleContentEl) RowSpan(span uint16) BubbleContentEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BubbleContentEl) RowStart(start int16) BubbleContentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1384,24 +1822,32 @@ func (e BubbleContentEl) RowStart(start int16) BubbleContentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BubbleContentEl) ScrollbarWidth(width gk.Length) BubbleContentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BubbleContentEl) Shadow(shadows []gk.BoxShadow) BubbleContentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BubbleContentEl) Size(length gk.Length) BubbleContentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BubbleContentEl) TextAlign(align gk.TextAlign) BubbleContentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1410,6 +1856,8 @@ func (e BubbleContentEl) TextAlign(align gk.TextAlign) BubbleContentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BubbleContentEl) TextBg(bg gk.Color) BubbleContentEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1418,18 +1866,24 @@ func (e BubbleContentEl) TextBg(bg gk.Color) BubbleContentEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BubbleContentEl) TextColor(color gk.Color) BubbleContentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BubbleContentEl) TextDecorationColor(color gk.Color) BubbleContentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BubbleContentEl) TextOverflow(overflow gk.TextOverflow) BubbleContentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1438,6 +1892,8 @@ func (e BubbleContentEl) TextOverflow(overflow gk.TextOverflow) BubbleContentEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BubbleContentEl) TextSize(size gk.Length) BubbleContentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1445,12 +1901,16 @@ func (e BubbleContentEl) TextSize(size gk.Length) BubbleContentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BubbleContentEl) Top(length gk.Length) BubbleContentEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BubbleContentEl) W(length gk.Length) BubbleContentEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -1461,7 +1921,7 @@ type BubbleGroupEl struct{ rt.ElAnimatableElement }
 
 // Create an empty bubble group.
 //
-// BubbleGroup is <gpui_kit::component::bubble::BubbleGroup>::new.
+// BubbleGroup calls <gpui_kit::component::bubble::BubbleGroup>::new.
 func BubbleGroup(st ...gk.Style) BubbleGroupEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(602)
@@ -1469,7 +1929,7 @@ func BubbleGroup(st ...gk.Style) BubbleGroupEl {
 	return BubbleGroupEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// BubbleGroupDefault is <gpui_kit::component::bubble::BubbleGroup as Default>::default.
+// BubbleGroupDefault calls <gpui_kit::component::bubble::BubbleGroup as Default>::default.
 func BubbleGroupDefault(st ...gk.Style) BubbleGroupEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(601)
@@ -1479,17 +1939,21 @@ func BubbleGroupDefault(st ...gk.Style) BubbleGroupEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BubbleGroupEl) PopoverStyle() BubbleGroupEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BubbleGroupEl) RoundedFullStyle() BubbleGroupEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1498,16 +1962,18 @@ func (e BubbleGroupEl) RoundedFullStyle() BubbleGroupEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e BubbleGroupEl) FocusRingStyle() BubbleGroupEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1520,24 +1986,32 @@ func (e BubbleGroupEl) FocusRingStyle() BubbleGroupEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BubbleGroupEl) KeepTextSelection(id gk.ID) BubbleGroupEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BubbleGroupEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BubbleGroupEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BubbleGroupEl) BorderE(width gk.Length) BubbleGroupEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BubbleGroupEl) BorderS(width gk.Length) BubbleGroupEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1545,127 +2019,169 @@ func (e BubbleGroupEl) BorderS(width gk.Length) BubbleGroupEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BubbleGroupEl) FlexRowDir() BubbleGroupEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BubbleGroupEl) InsetE(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BubbleGroupEl) InsetS(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BubbleGroupEl) JustifyFlexEnd() BubbleGroupEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BubbleGroupEl) JustifyFlexStart() BubbleGroupEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BubbleGroupEl) Me(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BubbleGroupEl) Ms(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BubbleGroupEl) Pe(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BubbleGroupEl) Ps(length gk.Length) BubbleGroupEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BubbleGroupEl) RoundedE(radius gk.Length) BubbleGroupEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BubbleGroupEl) RoundedS(radius gk.Length) BubbleGroupEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BubbleGroupEl) TextEnd() BubbleGroupEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BubbleGroupEl) TextStart() BubbleGroupEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BubbleGroupEl) CornerRadii(radius gk.Corners) BubbleGroupEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BubbleGroupEl) DebugBlue() BubbleGroupEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BubbleGroupEl) DebugFocused(focusHandle gk.FocusHandle) BubbleGroupEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BubbleGroupEl) DebugGreen() BubbleGroupEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BubbleGroupEl) DebugPink() BubbleGroupEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BubbleGroupEl) DebugRed() BubbleGroupEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BubbleGroupEl) DebugYellow() BubbleGroupEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BubbleGroupEl) FontBlack() BubbleGroupEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BubbleGroupEl) FontBold() BubbleGroupEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BubbleGroupEl) FontExtrabold() BubbleGroupEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BubbleGroupEl) FontExtralight() BubbleGroupEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BubbleGroupEl) FontLight() BubbleGroupEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BubbleGroupEl) FontMedium() BubbleGroupEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BubbleGroupEl) FontNormal() BubbleGroupEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BubbleGroupEl) FontSemibold() BubbleGroupEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BubbleGroupEl) FontThin() BubbleGroupEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1674,18 +2190,23 @@ func (e BubbleGroupEl) FontThin() BubbleGroupEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BubbleGroupEl) HFlex() BubbleGroupEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BubbleGroupEl) Margins(margins gk.EdgesInto) BubbleGroupEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BubbleGroupEl) Paddings(paddings gk.EdgesInto) BubbleGroupEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BubbleGroupEl) RefineStyle(style gk.StyleRefinement) BubbleGroupEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1695,38 +2216,51 @@ func (e BubbleGroupEl) RefineStyle(style gk.StyleRefinement) BubbleGroupEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BubbleGroupEl) VFlex() BubbleGroupEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e BubbleGroupEl) Text(s string) BubbleGroupEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BubbleGroupEl) ChildView(v gk.View) BubbleGroupEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BubbleGroupEl) Child(child gk.Element) BubbleGroupEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BubbleGroupEl) Children(children ...gk.Element) BubbleGroupEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BubbleGroupEl) Style(st ...gk.Style) BubbleGroupEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BubbleGroupEl) AspectRatio(ratio float32) BubbleGroupEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BubbleGroupEl) Bg(fill gk.Fill) BubbleGroupEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BubbleGroupEl) Border(length gk.Length) BubbleGroupEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1734,12 +2268,16 @@ func (e BubbleGroupEl) Border(length gk.Length) BubbleGroupEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BubbleGroupEl) BorderB(length gk.Length) BubbleGroupEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BubbleGroupEl) BorderColor(borderColor gk.Color) BubbleGroupEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1747,6 +2285,8 @@ func (e BubbleGroupEl) BorderColor(borderColor gk.Color) BubbleGroupEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BubbleGroupEl) BorderL(length gk.Length) BubbleGroupEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1754,6 +2294,8 @@ func (e BubbleGroupEl) BorderL(length gk.Length) BubbleGroupEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BubbleGroupEl) BorderR(length gk.Length) BubbleGroupEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1761,6 +2303,8 @@ func (e BubbleGroupEl) BorderR(length gk.Length) BubbleGroupEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BubbleGroupEl) BorderT(length gk.Length) BubbleGroupEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1768,6 +2312,8 @@ func (e BubbleGroupEl) BorderT(length gk.Length) BubbleGroupEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BubbleGroupEl) BorderX(length gk.Length) BubbleGroupEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1775,6 +2321,8 @@ func (e BubbleGroupEl) BorderX(length gk.Length) BubbleGroupEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BubbleGroupEl) BorderY(length gk.Length) BubbleGroupEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1782,27 +2330,37 @@ func (e BubbleGroupEl) BorderY(length gk.Length) BubbleGroupEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BubbleGroupEl) Bottom(length gk.Length) BubbleGroupEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BubbleGroupEl) ColEnd(end int16) BubbleGroupEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BubbleGroupEl) ColSpan(span uint16) BubbleGroupEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BubbleGroupEl) ColStart(start int16) BubbleGroupEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BubbleGroupEl) Cursor(cursor gk.CursorStyle) BubbleGroupEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1810,33 +2368,45 @@ func (e BubbleGroupEl) Cursor(cursor gk.CursorStyle) BubbleGroupEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BubbleGroupEl) FlexBasis(basis gk.Length) BubbleGroupEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BubbleGroupEl) FlexGrow(grow float32) BubbleGroupEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BubbleGroupEl) FlexShrink(shrink float32) BubbleGroupEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BubbleGroupEl) Font(font gk.Font) BubbleGroupEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BubbleGroupEl) FontFamily(familyName string) BubbleGroupEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BubbleGroupEl) FontFeatures(features gk.FontFeatures) BubbleGroupEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1845,12 +2415,16 @@ func (e BubbleGroupEl) FontFeatures(features gk.FontFeatures) BubbleGroupEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BubbleGroupEl) FontWeight(weight gk.FontWeight) BubbleGroupEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BubbleGroupEl) Gap(length gk.Length) BubbleGroupEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1858,6 +2432,8 @@ func (e BubbleGroupEl) Gap(length gk.Length) BubbleGroupEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BubbleGroupEl) GapX(length gk.Length) BubbleGroupEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1865,18 +2441,24 @@ func (e BubbleGroupEl) GapX(length gk.Length) BubbleGroupEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BubbleGroupEl) GapY(length gk.Length) BubbleGroupEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BubbleGroupEl) GridCols(cols uint16) BubbleGroupEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BubbleGroupEl) GridColsMaxContent(cols uint16) BubbleGroupEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1884,18 +2466,24 @@ func (e BubbleGroupEl) GridColsMaxContent(cols uint16) BubbleGroupEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BubbleGroupEl) GridColsMinContent(cols uint16) BubbleGroupEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BubbleGroupEl) GridRows(rows uint16) BubbleGroupEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BubbleGroupEl) GridRowsMaxContent(rows uint16) BubbleGroupEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1903,16 +2491,22 @@ func (e BubbleGroupEl) GridRowsMaxContent(rows uint16) BubbleGroupEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BubbleGroupEl) GridRowsMinContent(rows uint16) BubbleGroupEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BubbleGroupEl) H(length gk.Length) BubbleGroupEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BubbleGroupEl) Inset(length gk.Length) BubbleGroupEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1920,6 +2514,8 @@ func (e BubbleGroupEl) Inset(length gk.Length) BubbleGroupEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BubbleGroupEl) Left(length gk.Length) BubbleGroupEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1927,33 +2523,45 @@ func (e BubbleGroupEl) Left(length gk.Length) BubbleGroupEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BubbleGroupEl) LineClamp(lines int) BubbleGroupEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BubbleGroupEl) LineHeight(lineHeight gk.Length) BubbleGroupEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BubbleGroupEl) M(length gk.Length) BubbleGroupEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BubbleGroupEl) MaxH(length gk.Length) BubbleGroupEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BubbleGroupEl) MaxSize(length gk.Length) BubbleGroupEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BubbleGroupEl) MaxW(length gk.Length) BubbleGroupEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1961,21 +2569,29 @@ func (e BubbleGroupEl) MaxW(length gk.Length) BubbleGroupEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BubbleGroupEl) Mb(length gk.Length) BubbleGroupEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BubbleGroupEl) MinH(length gk.Length) BubbleGroupEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BubbleGroupEl) MinSize(length gk.Length) BubbleGroupEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BubbleGroupEl) MinW(length gk.Length) BubbleGroupEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1983,65 +2599,95 @@ func (e BubbleGroupEl) MinW(length gk.Length) BubbleGroupEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BubbleGroupEl) Ml(length gk.Length) BubbleGroupEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BubbleGroupEl) Mr(length gk.Length) BubbleGroupEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BubbleGroupEl) Mt(length gk.Length) BubbleGroupEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BubbleGroupEl) Mx(length gk.Length) BubbleGroupEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BubbleGroupEl) My(length gk.Length) BubbleGroupEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BubbleGroupEl) Opacity(opacity float32) BubbleGroupEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BubbleGroupEl) P(length gk.Length) BubbleGroupEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BubbleGroupEl) Pb(length gk.Length) BubbleGroupEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BubbleGroupEl) Pl(length gk.Length) BubbleGroupEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BubbleGroupEl) Pr(length gk.Length) BubbleGroupEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BubbleGroupEl) Pt(length gk.Length) BubbleGroupEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BubbleGroupEl) Px(length gk.Length) BubbleGroupEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BubbleGroupEl) Py(length gk.Length) BubbleGroupEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BubbleGroupEl) Right(length gk.Length) BubbleGroupEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BubbleGroupEl) Rounded(length gk.Length) BubbleGroupEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2049,6 +2695,8 @@ func (e BubbleGroupEl) Rounded(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BubbleGroupEl) RoundedB(length gk.Length) BubbleGroupEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2056,6 +2704,8 @@ func (e BubbleGroupEl) RoundedB(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BubbleGroupEl) RoundedBl(length gk.Length) BubbleGroupEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2063,6 +2713,8 @@ func (e BubbleGroupEl) RoundedBl(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BubbleGroupEl) RoundedBr(length gk.Length) BubbleGroupEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2070,6 +2722,8 @@ func (e BubbleGroupEl) RoundedBr(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BubbleGroupEl) RoundedL(length gk.Length) BubbleGroupEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2077,6 +2731,8 @@ func (e BubbleGroupEl) RoundedL(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BubbleGroupEl) RoundedR(length gk.Length) BubbleGroupEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2084,6 +2740,8 @@ func (e BubbleGroupEl) RoundedR(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BubbleGroupEl) RoundedT(length gk.Length) BubbleGroupEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2091,6 +2749,8 @@ func (e BubbleGroupEl) RoundedT(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BubbleGroupEl) RoundedTl(length gk.Length) BubbleGroupEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2098,21 +2758,29 @@ func (e BubbleGroupEl) RoundedTl(length gk.Length) BubbleGroupEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BubbleGroupEl) RoundedTr(length gk.Length) BubbleGroupEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BubbleGroupEl) RowEnd(end int16) BubbleGroupEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BubbleGroupEl) RowSpan(span uint16) BubbleGroupEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BubbleGroupEl) RowStart(start int16) BubbleGroupEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2122,24 +2790,32 @@ func (e BubbleGroupEl) RowStart(start int16) BubbleGroupEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BubbleGroupEl) ScrollbarWidth(width gk.Length) BubbleGroupEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BubbleGroupEl) Shadow(shadows []gk.BoxShadow) BubbleGroupEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BubbleGroupEl) Size(length gk.Length) BubbleGroupEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BubbleGroupEl) TextAlign(align gk.TextAlign) BubbleGroupEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2148,23 +2824,31 @@ func (e BubbleGroupEl) TextAlign(align gk.TextAlign) BubbleGroupEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BubbleGroupEl) TextBg(bg gk.Color) BubbleGroupEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BubbleGroupEl) TextColor(color gk.Color) BubbleGroupEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BubbleGroupEl) TextDecorationColor(color gk.Color) BubbleGroupEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BubbleGroupEl) TextOverflow(overflow gk.TextOverflow) BubbleGroupEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2173,6 +2857,8 @@ func (e BubbleGroupEl) TextOverflow(overflow gk.TextOverflow) BubbleGroupEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BubbleGroupEl) TextSize(size gk.Length) BubbleGroupEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2180,12 +2866,16 @@ func (e BubbleGroupEl) TextSize(size gk.Length) BubbleGroupEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BubbleGroupEl) Top(length gk.Length) BubbleGroupEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BubbleGroupEl) W(length gk.Length) BubbleGroupEl { tStyledW(rt.N(e.Core), length); return e }
 
 // BubbleReactionsEl is gpui_kit::component::bubble::BubbleReactions.
@@ -2193,7 +2883,7 @@ type BubbleReactionsEl struct{ rt.ElAnimatableElement }
 
 // Create a trailing-aligned reaction region on the lower edge.
 //
-// BubbleReactions is <gpui_kit::component::bubble::BubbleReactions>::new.
+// BubbleReactions calls <gpui_kit::component::bubble::BubbleReactions>::new.
 func BubbleReactions(st ...gk.Style) BubbleReactionsEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(604)
@@ -2201,7 +2891,7 @@ func BubbleReactions(st ...gk.Style) BubbleReactionsEl {
 	return BubbleReactionsEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// BubbleReactionsDefault is <gpui_kit::component::bubble::BubbleReactions as Default>::default.
+// BubbleReactionsDefault calls <gpui_kit::component::bubble::BubbleReactions as Default>::default.
 func BubbleReactionsDefault(st ...gk.Style) BubbleReactionsEl {
 	rt.UseComponentBubble()
 	n := rt.NewNode(603)
@@ -2216,7 +2906,7 @@ func BubbleReactionsDefault(st ...gk.Style) BubbleReactionsEl {
 // `.child(...)` for emoji, labels, and arbitrary elements when the child should retain its own
 // styling, including a custom button radius.
 //
-// Action is <gpui_kit::component::bubble::BubbleReactions>::action.
+// Action calls <gpui_kit::component::bubble::BubbleReactions>::action.
 func (e BubbleReactionsEl) Action(action ButtonEl) BubbleReactionsEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(action.Core), false))
@@ -2225,7 +2915,7 @@ func (e BubbleReactionsEl) Action(action ButtonEl) BubbleReactionsEl {
 
 // Set the reaction region alignment along the bubble edge.
 //
-// Alignment is <gpui_kit::component::bubble::BubbleReactions>::alignment.
+// Alignment calls <gpui_kit::component::bubble::BubbleReactions>::alignment.
 func (e BubbleReactionsEl) Alignment(alignment MessageAlignment) BubbleReactionsEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(alignment))
@@ -2234,7 +2924,7 @@ func (e BubbleReactionsEl) Alignment(alignment MessageAlignment) BubbleReactions
 
 // Set the edge on which reactions are positioned.
 //
-// Side is <gpui_kit::component::bubble::BubbleReactions>::side.
+// Side calls <gpui_kit::component::bubble::BubbleReactions>::side.
 func (e BubbleReactionsEl) Side(side BubbleReactionSide) BubbleReactionsEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U16(uint16(side))
@@ -2243,20 +2933,24 @@ func (e BubbleReactionsEl) Side(side BubbleReactionSide) BubbleReactionsEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e BubbleReactionsEl) PopoverStyle() BubbleReactionsEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e BubbleReactionsEl) RoundedFullStyle() BubbleReactionsEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2265,16 +2959,18 @@ func (e BubbleReactionsEl) RoundedFullStyle() BubbleReactionsEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e BubbleReactionsEl) FocusRingStyle() BubbleReactionsEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2287,24 +2983,32 @@ func (e BubbleReactionsEl) FocusRingStyle() BubbleReactionsEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e BubbleReactionsEl) KeepTextSelection(id gk.ID) BubbleReactionsEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e BubbleReactionsEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) BubbleReactionsEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e BubbleReactionsEl) BorderE(width gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e BubbleReactionsEl) BorderS(width gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2312,151 +3016,193 @@ func (e BubbleReactionsEl) BorderS(width gk.Length) BubbleReactionsEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e BubbleReactionsEl) FlexRowDir() BubbleReactionsEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e BubbleReactionsEl) InsetE(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e BubbleReactionsEl) InsetS(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e BubbleReactionsEl) JustifyFlexEnd() BubbleReactionsEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e BubbleReactionsEl) JustifyFlexStart() BubbleReactionsEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e BubbleReactionsEl) Me(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e BubbleReactionsEl) Ms(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e BubbleReactionsEl) Pe(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e BubbleReactionsEl) Ps(length gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e BubbleReactionsEl) RoundedE(radius gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e BubbleReactionsEl) RoundedS(radius gk.Length) BubbleReactionsEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e BubbleReactionsEl) TextEnd() BubbleReactionsEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e BubbleReactionsEl) TextStart() BubbleReactionsEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e BubbleReactionsEl) CornerRadii(radius gk.Corners) BubbleReactionsEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e BubbleReactionsEl) DebugBlue() BubbleReactionsEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e BubbleReactionsEl) DebugFocused(focusHandle gk.FocusHandle) BubbleReactionsEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e BubbleReactionsEl) DebugGreen() BubbleReactionsEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e BubbleReactionsEl) DebugPink() BubbleReactionsEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e BubbleReactionsEl) DebugRed() BubbleReactionsEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e BubbleReactionsEl) DebugYellow() BubbleReactionsEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e BubbleReactionsEl) FontBlack() BubbleReactionsEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e BubbleReactionsEl) FontBold() BubbleReactionsEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e BubbleReactionsEl) FontExtrabold() BubbleReactionsEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e BubbleReactionsEl) FontExtralight() BubbleReactionsEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e BubbleReactionsEl) FontLight() BubbleReactionsEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e BubbleReactionsEl) FontMedium() BubbleReactionsEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e BubbleReactionsEl) FontNormal() BubbleReactionsEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e BubbleReactionsEl) FontSemibold() BubbleReactionsEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e BubbleReactionsEl) FontThin() BubbleReactionsEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2465,18 +3211,23 @@ func (e BubbleReactionsEl) FontThin() BubbleReactionsEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e BubbleReactionsEl) HFlex() BubbleReactionsEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e BubbleReactionsEl) Margins(margins gk.EdgesInto) BubbleReactionsEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e BubbleReactionsEl) Paddings(paddings gk.EdgesInto) BubbleReactionsEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e BubbleReactionsEl) RefineStyle(style gk.StyleRefinement) BubbleReactionsEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2486,47 +3237,60 @@ func (e BubbleReactionsEl) RefineStyle(style gk.StyleRefinement) BubbleReactions
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e BubbleReactionsEl) VFlex() BubbleReactionsEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e BubbleReactionsEl) Text(s string) BubbleReactionsEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e BubbleReactionsEl) ChildView(v gk.View) BubbleReactionsEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e BubbleReactionsEl) Child(child gk.Element) BubbleReactionsEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e BubbleReactionsEl) Children(children ...gk.Element) BubbleReactionsEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e BubbleReactionsEl) Style(st ...gk.Style) BubbleReactionsEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e BubbleReactionsEl) AspectRatio(ratio float32) BubbleReactionsEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e BubbleReactionsEl) Bg(fill gk.Fill) BubbleReactionsEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e BubbleReactionsEl) Border(length gk.Length) BubbleReactionsEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2534,12 +3298,16 @@ func (e BubbleReactionsEl) Border(length gk.Length) BubbleReactionsEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e BubbleReactionsEl) BorderB(length gk.Length) BubbleReactionsEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e BubbleReactionsEl) BorderColor(borderColor gk.Color) BubbleReactionsEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2547,6 +3315,8 @@ func (e BubbleReactionsEl) BorderColor(borderColor gk.Color) BubbleReactionsEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e BubbleReactionsEl) BorderL(length gk.Length) BubbleReactionsEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2554,6 +3324,8 @@ func (e BubbleReactionsEl) BorderL(length gk.Length) BubbleReactionsEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e BubbleReactionsEl) BorderR(length gk.Length) BubbleReactionsEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2561,6 +3333,8 @@ func (e BubbleReactionsEl) BorderR(length gk.Length) BubbleReactionsEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e BubbleReactionsEl) BorderT(length gk.Length) BubbleReactionsEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2568,6 +3342,8 @@ func (e BubbleReactionsEl) BorderT(length gk.Length) BubbleReactionsEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e BubbleReactionsEl) BorderX(length gk.Length) BubbleReactionsEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2575,6 +3351,8 @@ func (e BubbleReactionsEl) BorderX(length gk.Length) BubbleReactionsEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e BubbleReactionsEl) BorderY(length gk.Length) BubbleReactionsEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2582,30 +3360,40 @@ func (e BubbleReactionsEl) BorderY(length gk.Length) BubbleReactionsEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e BubbleReactionsEl) Bottom(length gk.Length) BubbleReactionsEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e BubbleReactionsEl) ColEnd(end int16) BubbleReactionsEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e BubbleReactionsEl) ColSpan(span uint16) BubbleReactionsEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e BubbleReactionsEl) ColStart(start int16) BubbleReactionsEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e BubbleReactionsEl) Cursor(cursor gk.CursorStyle) BubbleReactionsEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2613,36 +3401,48 @@ func (e BubbleReactionsEl) Cursor(cursor gk.CursorStyle) BubbleReactionsEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e BubbleReactionsEl) FlexBasis(basis gk.Length) BubbleReactionsEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e BubbleReactionsEl) FlexGrow(grow float32) BubbleReactionsEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e BubbleReactionsEl) FlexShrink(shrink float32) BubbleReactionsEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e BubbleReactionsEl) Font(font gk.Font) BubbleReactionsEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e BubbleReactionsEl) FontFamily(familyName string) BubbleReactionsEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e BubbleReactionsEl) FontFeatures(features gk.FontFeatures) BubbleReactionsEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2651,12 +3451,16 @@ func (e BubbleReactionsEl) FontFeatures(features gk.FontFeatures) BubbleReaction
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e BubbleReactionsEl) FontWeight(weight gk.FontWeight) BubbleReactionsEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e BubbleReactionsEl) Gap(length gk.Length) BubbleReactionsEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2664,6 +3468,8 @@ func (e BubbleReactionsEl) Gap(length gk.Length) BubbleReactionsEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e BubbleReactionsEl) GapX(length gk.Length) BubbleReactionsEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2671,18 +3477,24 @@ func (e BubbleReactionsEl) GapX(length gk.Length) BubbleReactionsEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e BubbleReactionsEl) GapY(length gk.Length) BubbleReactionsEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e BubbleReactionsEl) GridCols(cols uint16) BubbleReactionsEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e BubbleReactionsEl) GridColsMaxContent(cols uint16) BubbleReactionsEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2690,18 +3502,24 @@ func (e BubbleReactionsEl) GridColsMaxContent(cols uint16) BubbleReactionsEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e BubbleReactionsEl) GridColsMinContent(cols uint16) BubbleReactionsEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e BubbleReactionsEl) GridRows(rows uint16) BubbleReactionsEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e BubbleReactionsEl) GridRowsMaxContent(rows uint16) BubbleReactionsEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2709,12 +3527,16 @@ func (e BubbleReactionsEl) GridRowsMaxContent(rows uint16) BubbleReactionsEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e BubbleReactionsEl) GridRowsMinContent(rows uint16) BubbleReactionsEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e BubbleReactionsEl) H(length gk.Length) BubbleReactionsEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2722,6 +3544,8 @@ func (e BubbleReactionsEl) H(length gk.Length) BubbleReactionsEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e BubbleReactionsEl) Inset(length gk.Length) BubbleReactionsEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2729,6 +3553,8 @@ func (e BubbleReactionsEl) Inset(length gk.Length) BubbleReactionsEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e BubbleReactionsEl) Left(length gk.Length) BubbleReactionsEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2736,36 +3562,48 @@ func (e BubbleReactionsEl) Left(length gk.Length) BubbleReactionsEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e BubbleReactionsEl) LineClamp(lines int) BubbleReactionsEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e BubbleReactionsEl) LineHeight(lineHeight gk.Length) BubbleReactionsEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e BubbleReactionsEl) M(length gk.Length) BubbleReactionsEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e BubbleReactionsEl) MaxH(length gk.Length) BubbleReactionsEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e BubbleReactionsEl) MaxSize(length gk.Length) BubbleReactionsEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e BubbleReactionsEl) MaxW(length gk.Length) BubbleReactionsEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2773,24 +3611,32 @@ func (e BubbleReactionsEl) MaxW(length gk.Length) BubbleReactionsEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e BubbleReactionsEl) Mb(length gk.Length) BubbleReactionsEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e BubbleReactionsEl) MinH(length gk.Length) BubbleReactionsEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e BubbleReactionsEl) MinSize(length gk.Length) BubbleReactionsEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e BubbleReactionsEl) MinW(length gk.Length) BubbleReactionsEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2798,6 +3644,8 @@ func (e BubbleReactionsEl) MinW(length gk.Length) BubbleReactionsEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e BubbleReactionsEl) Ml(length gk.Length) BubbleReactionsEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2805,6 +3653,8 @@ func (e BubbleReactionsEl) Ml(length gk.Length) BubbleReactionsEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e BubbleReactionsEl) Mr(length gk.Length) BubbleReactionsEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2812,6 +3662,8 @@ func (e BubbleReactionsEl) Mr(length gk.Length) BubbleReactionsEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e BubbleReactionsEl) Mt(length gk.Length) BubbleReactionsEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2819,6 +3671,8 @@ func (e BubbleReactionsEl) Mt(length gk.Length) BubbleReactionsEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e BubbleReactionsEl) Mx(length gk.Length) BubbleReactionsEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2826,18 +3680,24 @@ func (e BubbleReactionsEl) Mx(length gk.Length) BubbleReactionsEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e BubbleReactionsEl) My(length gk.Length) BubbleReactionsEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e BubbleReactionsEl) Opacity(opacity float32) BubbleReactionsEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e BubbleReactionsEl) P(length gk.Length) BubbleReactionsEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2845,6 +3705,8 @@ func (e BubbleReactionsEl) P(length gk.Length) BubbleReactionsEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e BubbleReactionsEl) Pb(length gk.Length) BubbleReactionsEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2852,6 +3714,8 @@ func (e BubbleReactionsEl) Pb(length gk.Length) BubbleReactionsEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e BubbleReactionsEl) Pl(length gk.Length) BubbleReactionsEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2859,6 +3723,8 @@ func (e BubbleReactionsEl) Pl(length gk.Length) BubbleReactionsEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e BubbleReactionsEl) Pr(length gk.Length) BubbleReactionsEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2866,6 +3732,8 @@ func (e BubbleReactionsEl) Pr(length gk.Length) BubbleReactionsEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e BubbleReactionsEl) Pt(length gk.Length) BubbleReactionsEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2873,6 +3741,8 @@ func (e BubbleReactionsEl) Pt(length gk.Length) BubbleReactionsEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e BubbleReactionsEl) Px(length gk.Length) BubbleReactionsEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2880,6 +3750,8 @@ func (e BubbleReactionsEl) Px(length gk.Length) BubbleReactionsEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e BubbleReactionsEl) Py(length gk.Length) BubbleReactionsEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2887,12 +3759,16 @@ func (e BubbleReactionsEl) Py(length gk.Length) BubbleReactionsEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e BubbleReactionsEl) Right(length gk.Length) BubbleReactionsEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e BubbleReactionsEl) Rounded(length gk.Length) BubbleReactionsEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2900,6 +3776,8 @@ func (e BubbleReactionsEl) Rounded(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e BubbleReactionsEl) RoundedB(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2907,6 +3785,8 @@ func (e BubbleReactionsEl) RoundedB(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e BubbleReactionsEl) RoundedBl(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2914,6 +3794,8 @@ func (e BubbleReactionsEl) RoundedBl(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e BubbleReactionsEl) RoundedBr(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2921,6 +3803,8 @@ func (e BubbleReactionsEl) RoundedBr(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e BubbleReactionsEl) RoundedL(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2928,6 +3812,8 @@ func (e BubbleReactionsEl) RoundedL(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e BubbleReactionsEl) RoundedR(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2935,6 +3821,8 @@ func (e BubbleReactionsEl) RoundedR(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e BubbleReactionsEl) RoundedT(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2942,6 +3830,8 @@ func (e BubbleReactionsEl) RoundedT(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e BubbleReactionsEl) RoundedTl(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2949,24 +3839,32 @@ func (e BubbleReactionsEl) RoundedTl(length gk.Length) BubbleReactionsEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e BubbleReactionsEl) RoundedTr(length gk.Length) BubbleReactionsEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e BubbleReactionsEl) RowEnd(end int16) BubbleReactionsEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e BubbleReactionsEl) RowSpan(span uint16) BubbleReactionsEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e BubbleReactionsEl) RowStart(start int16) BubbleReactionsEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2976,24 +3874,32 @@ func (e BubbleReactionsEl) RowStart(start int16) BubbleReactionsEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e BubbleReactionsEl) ScrollbarWidth(width gk.Length) BubbleReactionsEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e BubbleReactionsEl) Shadow(shadows []gk.BoxShadow) BubbleReactionsEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e BubbleReactionsEl) Size(length gk.Length) BubbleReactionsEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e BubbleReactionsEl) TextAlign(align gk.TextAlign) BubbleReactionsEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3002,6 +3908,8 @@ func (e BubbleReactionsEl) TextAlign(align gk.TextAlign) BubbleReactionsEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e BubbleReactionsEl) TextBg(bg gk.Color) BubbleReactionsEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3010,18 +3918,24 @@ func (e BubbleReactionsEl) TextBg(bg gk.Color) BubbleReactionsEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e BubbleReactionsEl) TextColor(color gk.Color) BubbleReactionsEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e BubbleReactionsEl) TextDecorationColor(color gk.Color) BubbleReactionsEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e BubbleReactionsEl) TextOverflow(overflow gk.TextOverflow) BubbleReactionsEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3030,6 +3944,8 @@ func (e BubbleReactionsEl) TextOverflow(overflow gk.TextOverflow) BubbleReaction
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e BubbleReactionsEl) TextSize(size gk.Length) BubbleReactionsEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3037,12 +3953,16 @@ func (e BubbleReactionsEl) TextSize(size gk.Length) BubbleReactionsEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e BubbleReactionsEl) Top(length gk.Length) BubbleReactionsEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e BubbleReactionsEl) W(length gk.Length) BubbleReactionsEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

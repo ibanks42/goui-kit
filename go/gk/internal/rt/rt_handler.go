@@ -6,9 +6,10 @@ import (
 	"reflect"
 )
 
-// KeyMods is a set of modifier keys.
+// KeyMods is a bitmask of keyboard modifier keys held during an input event.
 type KeyMods uint8
 
+// Modifier bit flags for KeyMods.
 const (
 	ModControl  KeyMods = 1
 	ModAlt      KeyMods = 2
@@ -17,6 +18,7 @@ const (
 	ModFunction KeyMods = 16
 )
 
+// String formats the active modifier flags in brace-delimited form.
 func (m KeyMods) String() string {
 	s := "{"
 	for i, n := range []string{"Control", "Alt", "Shift", "Platform", "Function"} {
@@ -30,9 +32,10 @@ func (m KeyMods) String() string {
 	return s + "}"
 }
 
-// PointerButton is a mouse button.
+// PointerButton identifies a mouse or pointer button.
 type PointerButton uint8
 
+// Pointer button constants matching the wire protocol.
 const (
 	ButtonLeft    PointerButton = 0
 	ButtonRight   PointerButton = 1
@@ -42,6 +45,7 @@ const (
 	ButtonNone    PointerButton = 255
 )
 
+// String returns the human-readable name of pointer button b.
 func (b PointerButton) String() string {
 	switch b {
 	case ButtonLeft:
@@ -60,20 +64,23 @@ func (b PointerButton) String() string {
 	return fmt.Sprintf("PointerButton(%d)", uint8(b))
 }
 
-// ClickKind is what made a click.
+// ClickKind distinguishes mouse, keyboard, and touch click activations.
 type ClickKind uint8
 
+// Click activation sources for ClickEvent.Kind.
 const (
 	ClickMouse    ClickKind = 0
 	ClickKeyboard ClickKind = 1
 	ClickTouch    ClickKind = 2
 )
 
+// String returns the name of click kind k.
 func (k ClickKind) String() string {
 	return [...]string{"Mouse", "Keyboard", "Touch", "?"}[min(int(k), 3)]
 }
 
-// ClickEvent is GPUI's ClickEvent.
+// ClickEvent carries pointer coordinates, button, modifiers, click count, and
+// activation kind for element click handlers.
 type ClickEvent struct {
 	Position   [2]float32
 	Button     PointerButton
@@ -82,7 +89,8 @@ type ClickEvent struct {
 	Kind       ClickKind
 }
 
-// KeyEvent is GPUI's KeyDownEvent or KeyUpEvent.
+// KeyEvent carries key name, optional typed character, modifiers, and repeat
+// state for keyboard handlers.
 type KeyEvent struct {
 	Key       string
 	KeyChar   Option[string]
@@ -90,7 +98,8 @@ type KeyEvent struct {
 	IsHeld    bool
 }
 
-// MouseEvent is GPUI's MouseDownEvent, MouseUpEvent or MouseMoveEvent.
+// MouseEvent carries pointer coordinates, button, modifiers, and click count
+// for low-level mouse handlers.
 type MouseEvent struct {
 	Position   [2]float32
 	Button     PointerButton
@@ -98,33 +107,39 @@ type MouseEvent struct {
 	ClickCount uint32
 }
 
-// TestPayload is the payload of the runtime's own test shape.
+// TestPayload is a diagnostic event payload used by protocol tests.
 type TestPayload struct {
 	Text string
 	N    uint32
 }
 
+// RdClickEvent decodes a ClickEvent from r.
 func RdClickEvent(r *Reader) ClickEvent {
 	return ClickEvent{[2]float32{r.F32(), r.F32()}, PointerButton(r.U8()), KeyMods(r.U8()), r.U32(), ClickKind(r.U8())}
 }
 
+// RdKeyEvent decodes a KeyEvent from r.
 func RdKeyEvent(r *Reader) KeyEvent {
 	return KeyEvent{r.Str(), RdOpt(r, (*Reader).Str), KeyMods(r.U8()), r.Bool()}
 }
 
+// RdMouseEvent decodes a MouseEvent from r.
 func RdMouseEvent(r *Reader) MouseEvent {
 	return MouseEvent{[2]float32{r.F32(), r.F32()}, PointerButton(r.U8()), KeyMods(r.U8()), r.U32()}
 }
 
-// shapeInfo calls a handler of one shape: decodes the payload, calls, encodes the return value.
-// call is false when the handler is not of the shape's Go type.
+// ShapeInfo describes how to decode and invoke a handler closure for one wire
+// event shape ID.
 type ShapeInfo struct {
 	Name string
 	Call func(h any, cx *Cx, r *Reader, ret *Tape) bool
 }
 
+// Shapes maps event shape opcodes to their Go dispatch adapters. Hand-written
+// core shapes register in init below; generated packages register theirs on init.
 var Shapes [1024]ShapeInfo
 
+// RegisterShape installs info for shape ID n if no adapter is already registered.
 func RegisterShape(n int, info ShapeInfo) {
 	if Shapes[n].Call == nil {
 		Shapes[n] = info
@@ -132,7 +147,6 @@ func RegisterShape(n int, info ShapeInfo) {
 }
 
 func init() {
-	// The runtime's own shapes (the generated ones are in gen_types.go).
 	RegisterShape(ShapeClick, ShapeInfo{"func(cx *Cx, e ClickEvent)", func(h any, cx *Cx, r *Reader, ret *Tape) bool {
 		f, ok := h.(func(*Cx, ClickEvent))
 		if ok {
@@ -210,6 +224,8 @@ type handlerRec struct {
 	shape uint16
 }
 
+// isNilFunc detects both untyped nil and typed nil function values, checking
+// common callback types via a type switch before falling back to reflect.
 func isNilFunc(h any) bool {
 	if h == nil {
 		return true
@@ -243,8 +259,8 @@ func checkShape(h any, shape uint16) {
 	}
 }
 
-// register puts a handler into the table of the view being built and returns its id, which the
-// builder writes into the op.
+// Register appends an element event handler to the active view build's table
+// and returns its per-generation handler index.
 func Register(h any, shape uint16) uint32 {
 	if !Vb.Active {
 		Stop("a handler for an element was given outside a view function: give it to an element's builder (.OnClick) while the view function describes it")
@@ -254,11 +270,13 @@ func Register(h any, shape uint16) uint32 {
 	return uint32(len(Vb.handlers) - 1)
 }
 
+// kept stores a long-lived handler (timers, global actions, subscriptions,
+// completions, and state callbacks) in a generational slot table.
 type kept struct {
 	h       handlerRec
 	gen     uint32
 	live    bool
-	owner   uint64 // the view marked dirty when the handler returns; 0 for none
+	owner   uint64
 	retired bool
 }
 
@@ -269,8 +287,8 @@ var (
 
 func keptLive() int { return len(keptTab) - len(keptFree) }
 
-// keepHandler stores a handler until dropHandler: for subscriptions and anything else the library
-// calls back outside a view's tape. It belongs to the view whose init or handler is running.
+// KeepHandler stores a long-lived handler in keptTab, tagging it with the
+// current turn's owning view so releasing that view retires the handler.
 func KeepHandler(cx *Cx, h any, shape uint16) (slot, gen uint32) {
 	t := CheckCx(cx)
 	checkShape(h, shape)
@@ -291,6 +309,8 @@ func KeepHandler(cx *Cx, h any, shape uint16) (slot, gen uint32) {
 	return slot, k.gen
 }
 
+// dropHandler invalidates slot, bumps its generation counter so stale events
+// cannot match a reused slot, and returns slot to keptFree.
 func dropHandler(slot uint32) {
 	if int(slot) >= len(keptTab) {
 		return
@@ -309,8 +329,9 @@ func dropHandler(slot uint32) {
 	keptFree = append(keptFree, slot)
 }
 
-// dropKeptOf drops the kept handlers of a view being released (its timers, subscriptions,
-// listeners, requests), so none runs again for a view that is gone.
+// dropKeptOf retires every kept handler owned by view when view is released.
+// Non-timer, non-completion slots are marked retired rather than freed immediately
+// until their explicit owner handle releases them via dropHandler.
 func dropKeptOf(t *turn, view uint64) {
 	for i := range keptTab {
 		k := &keptTab[i]
@@ -332,8 +353,9 @@ func dropKeptOf(t *turn, view uint64) {
 	}
 }
 
-// putKeptHandler writes a handler given to a call op (a state's method, a builder of its
-// constructor): kept, and dropped with the state when it is released (PROTOCOLS.md 9.12, 9.13).
+// PutKeptHandler allocates a kept handler slot, writes (slot, gen) onto o, and
+// records the slot in keptPending until StateMake/StateCall/StateSet binds it
+// to the target state handle.
 func PutKeptHandler(o *Tape, h any, shape uint16) {
 	if cur == nil {
 		Stop("a handler was given outside the app's functions: give it in init, a handler or a view function, after gk.Run has started the app")
@@ -349,7 +371,6 @@ var (
 	keptBy      = map[uint64][]uint32{}
 )
 
-// keptAttach gives the handlers kept for the call being made to handle h.
 func keptAttach(h uint64) {
 	if len(keptPending) == 0 {
 		return
@@ -360,7 +381,8 @@ func keptAttach(h uint64) {
 	keptPending = keptPending[:0]
 }
 
-// keptAttachReq: the handle a state's write or call names right after its op.
+// keptAttachReq binds any pending kept handler slots to the state handle at
+// bytes [2:10] of a state call/set request tape.
 func keptAttachReq(req []byte) {
 	if len(keptPending) == 0 {
 		return
@@ -379,6 +401,9 @@ func keptRelease(h uint64) {
 	delete(keptBy, h)
 }
 
+// event decodes a KEvent or KDone header, resolves the handler from either
+// keptTab (view == 0) or the view's current/old generation table, invokes it,
+// and marks the owning view dirty unless Quiet was called.
 func event(cx *Cx, r *Reader) {
 	t := cx.t
 	view := r.U64()
@@ -405,21 +430,17 @@ func event(cx *Cx, r *Reader) {
 			h, found, owner = table[id], true, view
 			t.owner = v
 		} else if libDiag {
-			// Every description the library holds keeps its table (retireTable), so an event
-			// for a live view always finds its handler: one that does not is a bug in the
-			// binding, which would otherwise drop a click without a word.
 			panic(&Error{Msg: fmt.Sprintf("an event came for handler %d of description %d of view %#x, whose handler table is gone (the view's description is %d): the library and the package disagree about which descriptions are alive. This is a bug in the binding; please report it", id, gen, view, v.gen)})
 		}
 	}
 	if !found {
-		// The view was released, or the subscription or timer that named this handler. The
-		// library falls back to the default return value.
 		dropped++
 		if debug {
 			fmt.Fprintf(os.Stderr, "gk: dropped event for view %#x generation %d handler %d\n", view, gen, id)
 		}
 		return
 	}
+	// Fast path for the two most frequent shapes before consulting Shapes.
 	if shape == ShapeClick {
 		if f, ok := h.fn.(func(*Cx, ClickEvent)); ok {
 			f(cx, RdClickEvent(r))
@@ -434,8 +455,7 @@ func event(cx *Cx, r *Reader) {
 	{
 		info := Shapes[shape]
 		if info.Call == nil || !info.Call(h.fn, cx, r, &t.ret) {
-			// A handler that takes no event fits every shape (a kept handler given where another
-			// shape fires): it runs, and the library gets the default return value.
+			// Accept a zero-argument handler (created by *Do wrappers) for any event shape.
 			if f, ok := h.fn.(func(*Cx)); ok {
 				f(cx)
 				goto ran
@@ -445,18 +465,16 @@ func event(cx *Cx, r *Reader) {
 	}
 ran:
 	if view == 0 {
-		timerFired(id) // a one-shot timer's handler is forgotten once it has run
+		timerFired(id)
 	}
-	// The view that registered the handler is marked dirty when it returns; an unchanged tape
-	// costs one view function and a compare.
 	if owner != 0 && !t.quiet {
 		t.markDirty(owner)
 	}
 	t.quiet = false
 }
 
-// NewHandler keeps a handler that returns a bool and belongs to no tape, and returns its slot
-// (the runtime's tests fire it with TestFire).
+// NewHandler stores a bool-returning diagnostic handler in keptTab and returns
+// its slot index.
 func NewHandler(f func(cx *Cx) bool) uint32 {
 	if cur == nil {
 		Stop("gk.NewHandler was called before the app started: call it in the function given to gk.Run, in init or in a handler")

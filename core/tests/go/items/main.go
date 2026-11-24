@@ -1,25 +1,6 @@
-// items: item functions (docs/PROTOCOLS.md 9.41), the port of core/tests/items: one mode per kind
-// of value the kit hands one, run offscreen (the diag library) under a gk-meter script;
-// core/tests/go/run-items.sh checks the lines.
-//
-//	GK_PROTO=items-calendar    an element the kit built (a calendar's day) decorated by the app, with
-//	                           the record of its state; the rows are described once and kept
-//	GK_PROTO=items-time-field  the same over a time field's segments (the segment's kind and value)
-//	GK_PROTO=items-tree        values 9.16 reads (the entry's index as the row's key) beside records
-//	                           of a value's reads (TreeEntryReads, BaseTreeEntryState)
-//	GK_PROTO=items-popover     kit state handed by reference with its own context (a popover's
-//	                           content reads PopoverStateReads)
-//	GK_PROTO=items-command     kit state handed by reference with the app's context (a command
-//	                           palette's header and footer)
-//	GK_PROTO=items-hover       a closure that returns one element type (a base hover card's content
-//	                           is a StatefulDivEl), opened by the pointer
-//	GK_PROTO=items-close       FnOnce(Button) -> E: the dialog's close button built from the app's ops
-//	GK_PROTO=items-combobox    a generic context (ComboboxTriggerContext with the binding's delegate) as
-//	                           a record: the trigger reads the selection and the placeholder
-//	GK_PROTO=items-nav         an element handed with the record of its own reads (a nav stack's page)
-//	GK_PROTO=items-wrong-kind  a time field's function given to a calendar: stops where it is given
-//
-// Every mode but items-close (gk.Items and the builders that take its source) is in items.go.
+// Command items exercises typed `overlay.Items` callback renderers across
+// calendar, time field, tree, popover, command palette, hover card, combobox,
+// navigation stack, dialog close, and type-mismatch rejection modes.
 package main
 
 import (
@@ -35,6 +16,7 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
+// App holds widget states and invocation counters across all `items-*` modes.
 type App struct {
 	mode      string
 	root      gk.View
@@ -46,25 +28,22 @@ type App struct {
 	nav       base.NavStackState
 	page      gk.View
 	builds    int
-	described int // item rows described
+	described int
 	kinds     [base.CalendarItemKindYear + 1]int
 	segments  [base.TimeSegmentPeriod + 1]int
 	active    int
-	after     int // rows described after the first three frames
+	after     int
 	frames    int
 }
 
-// views: what a mode's view adds to the root, by mode; the others register from items.go.
 var views = map[string]func(a *App, cx *gk.Cx, root gk.DivEl) gk.Element{
 	"items-close": closeView,
 }
 
-// modeInit: what a mode's init does, by mode (items.go).
 var modeInit = map[string]func(a *App, cx *gk.Cx){}
 
 var fruit = []gk.SearchItem{{Value: "apple", Title: "Apple"}, {Value: "pear", Title: "Pear"}}
 
-// Go: the Go package's enums print as numbers; these print them by name, as the checks expect.
 var (
 	segmentNames = [...]string{"Hour", "Minute", "Second", "Period"}
 	phaseNames   = [...]string{"Entering", "Present", "Exiting", "Absent"}
@@ -76,8 +55,6 @@ func name(names []string, v int) string {
 	}
 	return fmt.Sprint(v)
 }
-
-// --- the view -------------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
 	gk.OnFrame(cx, a.onFrame)
@@ -91,7 +68,7 @@ func (a *App) init(cx *gk.Cx) {
 	case "items-command":
 		a.cmd = table.NewCommandState(cx)
 	case "items-combobox":
-		a.combo = table.NewComboboxState(cx, gk.NewSearchSource(cx, fruit), []table.BaseIndexPath{{Row: 1}}).Build() // Pear
+		a.combo = table.NewComboboxState(cx, gk.NewSearchSource(cx, fruit), []table.BaseIndexPath{{Row: 1}}).Build()
 	case "items-nav":
 		a.nav = base.NewNavStackState(cx)
 		a.page = gk.NewView(nil, a.pageView)

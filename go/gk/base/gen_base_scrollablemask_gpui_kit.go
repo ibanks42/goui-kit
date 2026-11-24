@@ -12,7 +12,7 @@ type ScrollableMaskEl struct{ rt.El }
 
 // Create a new scrollable mask element.
 //
-// ScrollableMask is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::new.
+// ScrollableMask calls <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::new.
 func ScrollableMask(axis gk.Axis, scrollHandle gk.ScrollHandle) ScrollableMaskEl {
 	rt.UseBaseScrollableMask()
 	n := rt.NewNode(843)
@@ -22,15 +22,15 @@ func ScrollableMask(axis gk.Axis, scrollHandle gk.ScrollHandle) ScrollableMaskEl
 	return ScrollableMaskEl{El: rt.MkEl(n)}
 }
 
-// Create a mask over a native horizontal scroller — one with `overflow_x_scroll` and a locked
-// scroll axis, such as a strip of tabs — that scrolls it sideways with a plain mouse wheel's
+// Create a mask over a native horizontal scroller - one with `overflow_x_scroll` and a locked
+// scroll axis, such as a strip of tabs - that scrolls it sideways with a plain mouse wheel's
 // vertical lines, the only axis such a wheel has.
 //
 // Once the scroller cannot move that way, the wheel goes on to the parent, so a page still scrolls
 // past the strip. Trackpad gestures and horizontal wheels are left to the scroller, with its own
 // axis lock and bounce.
 //
-// ScrollableMaskVerticalWheel is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::vertical_wheel.
+// ScrollableMaskVerticalWheel calls <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::vertical_wheel.
 func ScrollableMaskVerticalWheel(scrollHandle gk.ScrollHandle) ScrollableMaskEl {
 	rt.UseBaseScrollableMask()
 	n := rt.NewNode(844)
@@ -41,7 +41,7 @@ func ScrollableMaskVerticalWheel(scrollHandle gk.ScrollHandle) ScrollableMaskEl 
 
 // Enable the debug border, to show the mask bounds.
 //
-// Debug is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::debug.
+// Debug calls <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::debug.
 func (e ScrollableMaskEl) Debug() ScrollableMaskEl {
 	rt.Op(rt.N(e.Core), 256)
 	return e
@@ -52,7 +52,7 @@ func (e ScrollableMaskEl) Debug() ScrollableMaskEl {
 // Only needed when one call site creates several masks of the same axis, which would otherwise
 // share their gesture axis lock.
 //
-// ID is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::id.
+// ID calls <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::id.
 func (e ScrollableMaskEl) ID(id gk.ID) ScrollableMaskEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutID(o, id)

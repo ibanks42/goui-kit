@@ -16,7 +16,7 @@ type StepperEl struct {
 //
 // Default use is horizontal layout with step 0 selected.
 //
-// Stepper is <gpui_kit::component::stepper::Stepper>::new.
+// Stepper calls <gpui_kit::component::stepper::Stepper>::new.
 func Stepper(id gk.ID, st ...gk.Style) StepperEl {
 	rt.UseComponentStepper()
 	n := rt.NewNode(766)
@@ -28,7 +28,7 @@ func Stepper(id gk.ID, st ...gk.Style) StepperEl {
 
 // Set the disabled state of the stepper, default is false.
 //
-// Disabled is <gpui_kit::component::stepper::Stepper>::disabled.
+// Disabled calls <gpui_kit::component::stepper::Stepper>::disabled.
 func (e StepperEl) Disabled(disabled bool) StepperEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(disabled)
@@ -37,7 +37,7 @@ func (e StepperEl) Disabled(disabled bool) StepperEl {
 
 // Adds a stepper item to the stepper.
 //
-// Item is <gpui_kit::component::stepper::Stepper>::item.
+// Item calls <gpui_kit::component::stepper::Stepper>::item.
 func (e StepperEl) Item(item StepperItemEl) StepperEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeNode(rt.N(item.Core), false))
@@ -46,7 +46,7 @@ func (e StepperEl) Item(item StepperItemEl) StepperEl {
 
 // Add multiple stepper items to the stepper.
 //
-// Items is <gpui_kit::component::stepper::Stepper>::items.
+// Items calls <gpui_kit::component::stepper::Stepper>::items.
 func (e StepperEl) Items(items []StepperItemEl) StepperEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(items)))
@@ -58,7 +58,7 @@ func (e StepperEl) Items(items []StepperItemEl) StepperEl {
 
 // Set the layout of the stepper, default is horizontal.
 //
-// Layout is <gpui_kit::component::stepper::Stepper>::layout.
+// Layout calls <gpui_kit::component::stepper::Stepper>::layout.
 func (e StepperEl) Layout(layout gk.Axis) StepperEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U16(uint16(layout))
@@ -69,7 +69,7 @@ func (e StepperEl) Layout(layout gk.Axis) StepperEl {
 //
 // The first parameter is the `step` of currently clicked item.
 //
-// OnClick is <gpui_kit::component::stepper::Stepper>::on_click.
+// OnClick calls <gpui_kit::component::stepper::Stepper>::on_click.
 func (e StepperEl) OnClick(f func(cx *gk.Cx, e int)) StepperEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(f, 5))
@@ -78,7 +78,7 @@ func (e StepperEl) OnClick(f func(cx *gk.Cx, e int)) StepperEl {
 
 // Sets the selected index of the stepper, default is 0.
 //
-// SelectedIndex is <gpui_kit::component::stepper::Stepper>::selected_index.
+// SelectedIndex calls <gpui_kit::component::stepper::Stepper>::selected_index.
 func (e StepperEl) SelectedIndex(index int) StepperEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutUsize(o, index)
@@ -87,7 +87,7 @@ func (e StepperEl) SelectedIndex(index int) StepperEl {
 
 // Set whether to center the text within each stepper item.
 //
-// TextCenter is <gpui_kit::component::stepper::Stepper>::text_center.
+// TextCenter calls <gpui_kit::component::stepper::Stepper>::text_center.
 func (e StepperEl) TextCenter(center bool) StepperEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Bool(center)
@@ -96,7 +96,7 @@ func (e StepperEl) TextCenter(center bool) StepperEl {
 
 // Sets the layout of the stepper to Vertical.
 //
-// Vertical is <gpui_kit::component::stepper::Stepper>::vertical.
+// Vertical calls <gpui_kit::component::stepper::Stepper>::vertical.
 func (e StepperEl) Vertical() StepperEl {
 	rt.Op(rt.N(e.Core), 263)
 	return e
@@ -104,26 +104,34 @@ func (e StepperEl) Vertical() StepperEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e StepperEl) PopoverStyle() StepperEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e StepperEl) RoundedFullStyle() StepperEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e StepperEl) BorderE(width gk.Length) StepperEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e StepperEl) BorderS(width gk.Length) StepperEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -131,121 +139,163 @@ func (e StepperEl) BorderS(width gk.Length) StepperEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e StepperEl) FlexRowDir() StepperEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e StepperEl) InsetE(length gk.Length) StepperEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e StepperEl) InsetS(length gk.Length) StepperEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e StepperEl) JustifyFlexEnd() StepperEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e StepperEl) JustifyFlexStart() StepperEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e StepperEl) Me(length gk.Length) StepperEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e StepperEl) Ms(length gk.Length) StepperEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e StepperEl) Pe(length gk.Length) StepperEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e StepperEl) Ps(length gk.Length) StepperEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e StepperEl) RoundedE(radius gk.Length) StepperEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e StepperEl) RoundedS(radius gk.Length) StepperEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e StepperEl) TextEnd() StepperEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e StepperEl) TextStart() StepperEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e StepperEl) CornerRadii(radius gk.Corners) StepperEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e StepperEl) DebugBlue() StepperEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e StepperEl) DebugFocused(focusHandle gk.FocusHandle) StepperEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e StepperEl) DebugGreen() StepperEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e StepperEl) DebugPink() StepperEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e StepperEl) DebugRed() StepperEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e StepperEl) DebugYellow() StepperEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e StepperEl) FontBlack() StepperEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e StepperEl) FontBold() StepperEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e StepperEl) FontExtrabold() StepperEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e StepperEl) FontExtralight() StepperEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e StepperEl) FontLight() StepperEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e StepperEl) FontMedium() StepperEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e StepperEl) FontNormal() StepperEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e StepperEl) FontSemibold() StepperEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e StepperEl) FontThin() StepperEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -254,18 +304,23 @@ func (e StepperEl) FontThin() StepperEl { tStyledExtFontThin(rt.N(e.Core)); retu
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e StepperEl) HFlex() StepperEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e StepperEl) Margins(margins gk.EdgesInto) StepperEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e StepperEl) Paddings(paddings gk.EdgesInto) StepperEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e StepperEl) RefineStyle(style gk.StyleRefinement) StepperEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -275,49 +330,69 @@ func (e StepperEl) RefineStyle(style gk.StyleRefinement) StepperEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e StepperEl) VFlex() StepperEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e StepperEl) Large() StepperEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e StepperEl) Small() StepperEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e StepperEl) WithSize(size gk.SizeInto) StepperEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e StepperEl) Xsmall() StepperEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e StepperEl) Style(st ...gk.Style) StepperEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e StepperEl) AspectRatio(ratio float32) StepperEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e StepperEl) Bg(fill gk.Fill) StepperEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e StepperEl) Border(length gk.Length) StepperEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e StepperEl) BorderB(length gk.Length) StepperEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e StepperEl) BorderColor(borderColor gk.Color) StepperEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -325,6 +400,8 @@ func (e StepperEl) BorderColor(borderColor gk.Color) StepperEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e StepperEl) BorderL(length gk.Length) StepperEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -332,6 +409,8 @@ func (e StepperEl) BorderL(length gk.Length) StepperEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e StepperEl) BorderR(length gk.Length) StepperEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -339,6 +418,8 @@ func (e StepperEl) BorderR(length gk.Length) StepperEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e StepperEl) BorderT(length gk.Length) StepperEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -346,6 +427,8 @@ func (e StepperEl) BorderT(length gk.Length) StepperEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e StepperEl) BorderX(length gk.Length) StepperEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -353,6 +436,8 @@ func (e StepperEl) BorderX(length gk.Length) StepperEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e StepperEl) BorderY(length gk.Length) StepperEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -360,18 +445,28 @@ func (e StepperEl) BorderY(length gk.Length) StepperEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e StepperEl) Bottom(length gk.Length) StepperEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e StepperEl) ColEnd(end int16) StepperEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e StepperEl) ColSpan(span uint16) StepperEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e StepperEl) ColStart(start int16) StepperEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e StepperEl) Cursor(cursor gk.CursorStyle) StepperEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -379,30 +474,42 @@ func (e StepperEl) Cursor(cursor gk.CursorStyle) StepperEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e StepperEl) FlexBasis(basis gk.Length) StepperEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e StepperEl) FlexGrow(grow float32) StepperEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e StepperEl) FlexShrink(shrink float32) StepperEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e StepperEl) Font(font gk.Font) StepperEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e StepperEl) FontFamily(familyName string) StepperEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e StepperEl) FontFeatures(features gk.FontFeatures) StepperEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -411,26 +518,38 @@ func (e StepperEl) FontFeatures(features gk.FontFeatures) StepperEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e StepperEl) FontWeight(weight gk.FontWeight) StepperEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e StepperEl) Gap(length gk.Length) StepperEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e StepperEl) GapX(length gk.Length) StepperEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e StepperEl) GapY(length gk.Length) StepperEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e StepperEl) GridCols(cols uint16) StepperEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e StepperEl) GridColsMaxContent(cols uint16) StepperEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -438,15 +557,21 @@ func (e StepperEl) GridColsMaxContent(cols uint16) StepperEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e StepperEl) GridColsMinContent(cols uint16) StepperEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e StepperEl) GridRows(rows uint16) StepperEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e StepperEl) GridRowsMaxContent(rows uint16) StepperEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -454,121 +579,179 @@ func (e StepperEl) GridRowsMaxContent(rows uint16) StepperEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e StepperEl) GridRowsMinContent(rows uint16) StepperEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e StepperEl) H(length gk.Length) StepperEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e StepperEl) Inset(length gk.Length) StepperEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e StepperEl) Left(length gk.Length) StepperEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e StepperEl) LineClamp(lines int) StepperEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e StepperEl) LineHeight(lineHeight gk.Length) StepperEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e StepperEl) M(length gk.Length) StepperEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e StepperEl) MaxH(length gk.Length) StepperEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e StepperEl) MaxSize(length gk.Length) StepperEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e StepperEl) MaxW(length gk.Length) StepperEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e StepperEl) Mb(length gk.Length) StepperEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e StepperEl) MinH(length gk.Length) StepperEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e StepperEl) MinSize(length gk.Length) StepperEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e StepperEl) MinW(length gk.Length) StepperEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e StepperEl) Ml(length gk.Length) StepperEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e StepperEl) Mr(length gk.Length) StepperEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e StepperEl) Mt(length gk.Length) StepperEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e StepperEl) Mx(length gk.Length) StepperEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e StepperEl) My(length gk.Length) StepperEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e StepperEl) Opacity(opacity float32) StepperEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e StepperEl) P(length gk.Length) StepperEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e StepperEl) Pb(length gk.Length) StepperEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e StepperEl) Pl(length gk.Length) StepperEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e StepperEl) Pr(length gk.Length) StepperEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e StepperEl) Pt(length gk.Length) StepperEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e StepperEl) Px(length gk.Length) StepperEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e StepperEl) Py(length gk.Length) StepperEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e StepperEl) Right(length gk.Length) StepperEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e StepperEl) Rounded(length gk.Length) StepperEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -576,6 +759,8 @@ func (e StepperEl) Rounded(length gk.Length) StepperEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e StepperEl) RoundedB(length gk.Length) StepperEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -583,6 +768,8 @@ func (e StepperEl) RoundedB(length gk.Length) StepperEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e StepperEl) RoundedBl(length gk.Length) StepperEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -590,6 +777,8 @@ func (e StepperEl) RoundedBl(length gk.Length) StepperEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e StepperEl) RoundedBr(length gk.Length) StepperEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -597,6 +786,8 @@ func (e StepperEl) RoundedBr(length gk.Length) StepperEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e StepperEl) RoundedL(length gk.Length) StepperEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -604,6 +795,8 @@ func (e StepperEl) RoundedL(length gk.Length) StepperEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e StepperEl) RoundedR(length gk.Length) StepperEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -611,6 +804,8 @@ func (e StepperEl) RoundedR(length gk.Length) StepperEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e StepperEl) RoundedT(length gk.Length) StepperEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -618,6 +813,8 @@ func (e StepperEl) RoundedT(length gk.Length) StepperEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e StepperEl) RoundedTl(length gk.Length) StepperEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -625,39 +822,55 @@ func (e StepperEl) RoundedTl(length gk.Length) StepperEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e StepperEl) RoundedTr(length gk.Length) StepperEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e StepperEl) RowEnd(end int16) StepperEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e StepperEl) RowSpan(span uint16) StepperEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e StepperEl) RowStart(start int16) StepperEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e StepperEl) ScrollbarWidth(width gk.Length) StepperEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e StepperEl) Shadow(shadows []gk.BoxShadow) StepperEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e StepperEl) Size(length gk.Length) StepperEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e StepperEl) TextAlign(align gk.TextAlign) StepperEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -666,23 +879,31 @@ func (e StepperEl) TextAlign(align gk.TextAlign) StepperEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e StepperEl) TextBg(bg gk.Color) StepperEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e StepperEl) TextColor(color gk.Color) StepperEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e StepperEl) TextDecorationColor(color gk.Color) StepperEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e StepperEl) TextOverflow(overflow gk.TextOverflow) StepperEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -691,13 +912,19 @@ func (e StepperEl) TextOverflow(overflow gk.TextOverflow) StepperEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e StepperEl) TextSize(size gk.Length) StepperEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e StepperEl) Top(length gk.Length) StepperEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e StepperEl) W(length gk.Length) StepperEl { tStyledW(rt.N(e.Core), length); return e }
 
 // StepperItemEl is gpui_kit::component::stepper::StepperItem.
@@ -705,7 +932,7 @@ type StepperItemEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// StepperItem is <gpui_kit::component::stepper::StepperItem>::new.
+// StepperItem calls <gpui_kit::component::stepper::StepperItem>::new.
 func StepperItem(st ...gk.Style) StepperItemEl {
 	rt.UseComponentStepper()
 	n := rt.NewNode(767)
@@ -719,7 +946,7 @@ func StepperItem(st ...gk.Style) StepperItemEl {
 //
 // Default is false.
 //
-// Disabled is <gpui_kit::component::stepper::StepperItem>::disabled.
+// Disabled calls <gpui_kit::component::stepper::StepperItem>::disabled.
 func (e StepperItemEl) Disabled(disabled bool) StepperItemEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(disabled)
@@ -728,7 +955,7 @@ func (e StepperItemEl) Disabled(disabled bool) StepperItemEl {
 
 // Set the icon of the stepper item.
 //
-// Icon is <gpui_kit::component::stepper::StepperItem>::icon.
+// Icon calls <gpui_kit::component::stepper::StepperItem>::icon.
 func (e StepperItemEl) Icon(icon gk.IconName) StepperItemEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(icon))
@@ -737,17 +964,21 @@ func (e StepperItemEl) Icon(icon gk.IconName) StepperItemEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e StepperItemEl) PopoverStyle() StepperItemEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e StepperItemEl) RoundedFullStyle() StepperItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -756,16 +987,18 @@ func (e StepperItemEl) RoundedFullStyle() StepperItemEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e StepperItemEl) FocusRingStyle() StepperItemEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -778,24 +1011,32 @@ func (e StepperItemEl) FocusRingStyle() StepperItemEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e StepperItemEl) KeepTextSelection(id gk.ID) StepperItemEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e StepperItemEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) StepperItemEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e StepperItemEl) BorderE(width gk.Length) StepperItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e StepperItemEl) BorderS(width gk.Length) StepperItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -803,127 +1044,169 @@ func (e StepperItemEl) BorderS(width gk.Length) StepperItemEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e StepperItemEl) FlexRowDir() StepperItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e StepperItemEl) InsetE(length gk.Length) StepperItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e StepperItemEl) InsetS(length gk.Length) StepperItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e StepperItemEl) JustifyFlexEnd() StepperItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e StepperItemEl) JustifyFlexStart() StepperItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e StepperItemEl) Me(length gk.Length) StepperItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e StepperItemEl) Ms(length gk.Length) StepperItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e StepperItemEl) Pe(length gk.Length) StepperItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e StepperItemEl) Ps(length gk.Length) StepperItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e StepperItemEl) RoundedE(radius gk.Length) StepperItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e StepperItemEl) RoundedS(radius gk.Length) StepperItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e StepperItemEl) TextEnd() StepperItemEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e StepperItemEl) TextStart() StepperItemEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e StepperItemEl) CornerRadii(radius gk.Corners) StepperItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e StepperItemEl) DebugBlue() StepperItemEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e StepperItemEl) DebugFocused(focusHandle gk.FocusHandle) StepperItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e StepperItemEl) DebugGreen() StepperItemEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e StepperItemEl) DebugPink() StepperItemEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e StepperItemEl) DebugRed() StepperItemEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e StepperItemEl) DebugYellow() StepperItemEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e StepperItemEl) FontBlack() StepperItemEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e StepperItemEl) FontBold() StepperItemEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e StepperItemEl) FontExtrabold() StepperItemEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e StepperItemEl) FontExtralight() StepperItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e StepperItemEl) FontLight() StepperItemEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e StepperItemEl) FontMedium() StepperItemEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e StepperItemEl) FontNormal() StepperItemEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e StepperItemEl) FontSemibold() StepperItemEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e StepperItemEl) FontThin() StepperItemEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -932,18 +1215,23 @@ func (e StepperItemEl) FontThin() StepperItemEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e StepperItemEl) HFlex() StepperItemEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e StepperItemEl) Margins(margins gk.EdgesInto) StepperItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e StepperItemEl) Paddings(paddings gk.EdgesInto) StepperItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e StepperItemEl) RefineStyle(style gk.StyleRefinement) StepperItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -953,56 +1241,77 @@ func (e StepperItemEl) RefineStyle(style gk.StyleRefinement) StepperItemEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e StepperItemEl) VFlex() StepperItemEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e StepperItemEl) Text(s string) StepperItemEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e StepperItemEl) ChildView(v gk.View) StepperItemEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e StepperItemEl) Child(child gk.Element) StepperItemEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e StepperItemEl) Children(children ...gk.Element) StepperItemEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e StepperItemEl) Large() StepperItemEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e StepperItemEl) Small() StepperItemEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e StepperItemEl) WithSize(size gk.SizeInto) StepperItemEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e StepperItemEl) Xsmall() StepperItemEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e StepperItemEl) Style(st ...gk.Style) StepperItemEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e StepperItemEl) AspectRatio(ratio float32) StepperItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e StepperItemEl) Bg(fill gk.Fill) StepperItemEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e StepperItemEl) Border(length gk.Length) StepperItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1010,12 +1319,16 @@ func (e StepperItemEl) Border(length gk.Length) StepperItemEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e StepperItemEl) BorderB(length gk.Length) StepperItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e StepperItemEl) BorderColor(borderColor gk.Color) StepperItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1023,6 +1336,8 @@ func (e StepperItemEl) BorderColor(borderColor gk.Color) StepperItemEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e StepperItemEl) BorderL(length gk.Length) StepperItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1030,6 +1345,8 @@ func (e StepperItemEl) BorderL(length gk.Length) StepperItemEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e StepperItemEl) BorderR(length gk.Length) StepperItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1037,6 +1354,8 @@ func (e StepperItemEl) BorderR(length gk.Length) StepperItemEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e StepperItemEl) BorderT(length gk.Length) StepperItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1044,6 +1363,8 @@ func (e StepperItemEl) BorderT(length gk.Length) StepperItemEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e StepperItemEl) BorderX(length gk.Length) StepperItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1051,6 +1372,8 @@ func (e StepperItemEl) BorderX(length gk.Length) StepperItemEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e StepperItemEl) BorderY(length gk.Length) StepperItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1058,27 +1381,37 @@ func (e StepperItemEl) BorderY(length gk.Length) StepperItemEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e StepperItemEl) Bottom(length gk.Length) StepperItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e StepperItemEl) ColEnd(end int16) StepperItemEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e StepperItemEl) ColSpan(span uint16) StepperItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e StepperItemEl) ColStart(start int16) StepperItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e StepperItemEl) Cursor(cursor gk.CursorStyle) StepperItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1086,33 +1419,45 @@ func (e StepperItemEl) Cursor(cursor gk.CursorStyle) StepperItemEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e StepperItemEl) FlexBasis(basis gk.Length) StepperItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e StepperItemEl) FlexGrow(grow float32) StepperItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e StepperItemEl) FlexShrink(shrink float32) StepperItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e StepperItemEl) Font(font gk.Font) StepperItemEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e StepperItemEl) FontFamily(familyName string) StepperItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e StepperItemEl) FontFeatures(features gk.FontFeatures) StepperItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1121,12 +1466,16 @@ func (e StepperItemEl) FontFeatures(features gk.FontFeatures) StepperItemEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e StepperItemEl) FontWeight(weight gk.FontWeight) StepperItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e StepperItemEl) Gap(length gk.Length) StepperItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1134,6 +1483,8 @@ func (e StepperItemEl) Gap(length gk.Length) StepperItemEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e StepperItemEl) GapX(length gk.Length) StepperItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1141,18 +1492,24 @@ func (e StepperItemEl) GapX(length gk.Length) StepperItemEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e StepperItemEl) GapY(length gk.Length) StepperItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e StepperItemEl) GridCols(cols uint16) StepperItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e StepperItemEl) GridColsMaxContent(cols uint16) StepperItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1160,18 +1517,24 @@ func (e StepperItemEl) GridColsMaxContent(cols uint16) StepperItemEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e StepperItemEl) GridColsMinContent(cols uint16) StepperItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e StepperItemEl) GridRows(rows uint16) StepperItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e StepperItemEl) GridRowsMaxContent(rows uint16) StepperItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1179,16 +1542,22 @@ func (e StepperItemEl) GridRowsMaxContent(rows uint16) StepperItemEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e StepperItemEl) GridRowsMinContent(rows uint16) StepperItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e StepperItemEl) H(length gk.Length) StepperItemEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e StepperItemEl) Inset(length gk.Length) StepperItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1196,6 +1565,8 @@ func (e StepperItemEl) Inset(length gk.Length) StepperItemEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e StepperItemEl) Left(length gk.Length) StepperItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1203,33 +1574,45 @@ func (e StepperItemEl) Left(length gk.Length) StepperItemEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e StepperItemEl) LineClamp(lines int) StepperItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e StepperItemEl) LineHeight(lineHeight gk.Length) StepperItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e StepperItemEl) M(length gk.Length) StepperItemEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e StepperItemEl) MaxH(length gk.Length) StepperItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e StepperItemEl) MaxSize(length gk.Length) StepperItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e StepperItemEl) MaxW(length gk.Length) StepperItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1237,21 +1620,29 @@ func (e StepperItemEl) MaxW(length gk.Length) StepperItemEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e StepperItemEl) Mb(length gk.Length) StepperItemEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e StepperItemEl) MinH(length gk.Length) StepperItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e StepperItemEl) MinSize(length gk.Length) StepperItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e StepperItemEl) MinW(length gk.Length) StepperItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1259,65 +1650,95 @@ func (e StepperItemEl) MinW(length gk.Length) StepperItemEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e StepperItemEl) Ml(length gk.Length) StepperItemEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e StepperItemEl) Mr(length gk.Length) StepperItemEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e StepperItemEl) Mt(length gk.Length) StepperItemEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e StepperItemEl) Mx(length gk.Length) StepperItemEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e StepperItemEl) My(length gk.Length) StepperItemEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e StepperItemEl) Opacity(opacity float32) StepperItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e StepperItemEl) P(length gk.Length) StepperItemEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e StepperItemEl) Pb(length gk.Length) StepperItemEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e StepperItemEl) Pl(length gk.Length) StepperItemEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e StepperItemEl) Pr(length gk.Length) StepperItemEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e StepperItemEl) Pt(length gk.Length) StepperItemEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e StepperItemEl) Px(length gk.Length) StepperItemEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e StepperItemEl) Py(length gk.Length) StepperItemEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e StepperItemEl) Right(length gk.Length) StepperItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e StepperItemEl) Rounded(length gk.Length) StepperItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1325,6 +1746,8 @@ func (e StepperItemEl) Rounded(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e StepperItemEl) RoundedB(length gk.Length) StepperItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1332,6 +1755,8 @@ func (e StepperItemEl) RoundedB(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e StepperItemEl) RoundedBl(length gk.Length) StepperItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1339,6 +1764,8 @@ func (e StepperItemEl) RoundedBl(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e StepperItemEl) RoundedBr(length gk.Length) StepperItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1346,6 +1773,8 @@ func (e StepperItemEl) RoundedBr(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e StepperItemEl) RoundedL(length gk.Length) StepperItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1353,6 +1782,8 @@ func (e StepperItemEl) RoundedL(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e StepperItemEl) RoundedR(length gk.Length) StepperItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1360,6 +1791,8 @@ func (e StepperItemEl) RoundedR(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e StepperItemEl) RoundedT(length gk.Length) StepperItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1367,6 +1800,8 @@ func (e StepperItemEl) RoundedT(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e StepperItemEl) RoundedTl(length gk.Length) StepperItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1374,21 +1809,29 @@ func (e StepperItemEl) RoundedTl(length gk.Length) StepperItemEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e StepperItemEl) RoundedTr(length gk.Length) StepperItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e StepperItemEl) RowEnd(end int16) StepperItemEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e StepperItemEl) RowSpan(span uint16) StepperItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e StepperItemEl) RowStart(start int16) StepperItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1398,24 +1841,32 @@ func (e StepperItemEl) RowStart(start int16) StepperItemEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e StepperItemEl) ScrollbarWidth(width gk.Length) StepperItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e StepperItemEl) Shadow(shadows []gk.BoxShadow) StepperItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e StepperItemEl) Size(length gk.Length) StepperItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e StepperItemEl) TextAlign(align gk.TextAlign) StepperItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1424,23 +1875,31 @@ func (e StepperItemEl) TextAlign(align gk.TextAlign) StepperItemEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e StepperItemEl) TextBg(bg gk.Color) StepperItemEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e StepperItemEl) TextColor(color gk.Color) StepperItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e StepperItemEl) TextDecorationColor(color gk.Color) StepperItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e StepperItemEl) TextOverflow(overflow gk.TextOverflow) StepperItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1449,6 +1908,8 @@ func (e StepperItemEl) TextOverflow(overflow gk.TextOverflow) StepperItemEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e StepperItemEl) TextSize(size gk.Length) StepperItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1456,10 +1917,14 @@ func (e StepperItemEl) TextSize(size gk.Length) StepperItemEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e StepperItemEl) Top(length gk.Length) StepperItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e StepperItemEl) W(length gk.Length) StepperItemEl { tStyledW(rt.N(e.Core), length); return e }

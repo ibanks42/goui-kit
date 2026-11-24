@@ -1,31 +1,29 @@
 #!/bin/bash
-# zigbuild.sh ACTION [ARGS...]: how the released Linux library is linked, in one place for
-# tools/build-lib.sh (GK_TARGET set; make lib-release and CI, .github/workflows/platforms.yml). cargo-zigbuild with a pinned zig links against the glibc of
-# GK_TARGET (default x86_64-unknown-linux-gnu.2.28), so the library loads on any distribution with
-# that glibc or newer.
+# Manage pinned Zig and cargo-zigbuild toolchains and run glibc-targeted Linux Rust builds.
 #
-#   ACTION
-#   fetch-zig DIR             put the pinned zig into DIR/zig-x86_64-linux-VERSION/ (once; the
-#                             archive's sha256 is checked) and print the zig binary's path
-#   fetch-cargo-zigbuild DIR  put the pinned cargo-zigbuild release binary into DIR/ (sha256
-#                             checked) and print DIR; for a machine that has none (CI)
-#   build ARGS...             cargo zigbuild --target GK_TARGET ARGS... with the link setup below
-#   rustc ARGS...             cargo-zigbuild rustc, the same (ARGS may end in -- RUSTC_ARGS)
-#   outdir                    print cargo's output folder for GK_TARGET (target/TRIPLE/release)
+# Subcommands:
+#   fetch-zig DIR             download and SHA-256 verify Zig into DIR, printing the zig path
+#   fetch-cargo-zigbuild DIR  download and SHA-256 verify cargo-zigbuild into DIR
+#   build ARGS...             invoke `cargo zigbuild --target $GK_TARGET` with link overrides
+#   rustc ARGS...             invoke `cargo-zigbuild rustc --target $GK_TARGET` with link overrides
+#   outdir                    print target/<triple>/release for the configured GK_TARGET
 #
-# build and rustc need GK_ZIG (the zig binary) and cargo-zigbuild on PATH, and run in the
-# workspace. GK_ZIG_WORK is where the link folder and cargo-zigbuild's cache live (default
-# target/zigbuild in the workspace; the paths are part of cargo's fingerprints, so keep it the
-# same between builds). A cargo-zigbuild other than the pinned version below works, and the log
-# names it.
+# Environment variables:
+#   GK_TARGET     glibc-pinned Rust target (default: x86_64-unknown-linux-gnu.2.28)
+#   GK_ZIG        path to the zig executable (required for build/rustc)
+#   GK_ZIG_WORK   scratch directory for cargo-zigbuild cache and system-lib symlink shim
 set -euo pipefail
+# Pinned release versions and SHA-256 checksums shared with CI.
 ZIG_VERSION=0.14.1
 ZIG_SHA256=24aeeec8af16c381934a6cd7d95c807a8cb2cf7df9fa40d359aa884195c4716c
 CARGO_ZIGBUILD_VERSION=0.24.1
 CARGO_ZIGBUILD_SHA256=32581c8e13f27a807bb244aaaac870522f5b51263c766cf77b1a99771ce9fa5c
 target=${GK_TARGET:-x86_64-unknown-linux-gnu.2.28}
-triple=${target%.*}; triple=${triple%.*}   # x86_64-unknown-linux-gnu.2.28 -> x86_64-unknown-linux-gnu
+# Strip the trailing .MAJOR.MINOR glibc suffix to obtain Cargo's output target triple.
+triple=${target%.*}; triple=${triple%.*}
 
+# Stage a clean directory containing symlinks only to the five dynamic system libraries
+# we link against, preventing Zig's linker from picking up host glibc or static archives in /usr/lib.
 link_setup() {
   : "${GK_ZIG:?zigbuild.sh: GK_ZIG names the zig binary (zigbuild.sh fetch-zig DIR prints it)}"
   local work have
@@ -35,10 +33,6 @@ link_setup() {
   [ "$have" = "$CARGO_ZIGBUILD_VERSION" ] ||
     echo "zigbuild.sh: note: cargo-zigbuild $have here, $CARGO_ZIGBUILD_VERSION pinned in tools/zigbuild.sh (and used by CI)" >&2
   export CARGO_ZIGBUILD_ZIG_PATH=$GK_ZIG CARGO_ZIGBUILD_CACHE_DIR=$work/zigbuild-cache
-  # The system libraries the link names (freetype and fontconfig through pkg-config, xkbcommon
-  # and xcb through #[link]) come from a folder that holds only them: with pkg-config's
-  # -L /usr/lib/x86_64-linux-gnu the linker took the host's libm and libc over zig's glibc 2.28
-  # and the library needed glibc 2.43 again (measured).
   linkdir=$work/zig-link; mkdir -p "$linkdir"
   local l
   for l in freetype fontconfig xkbcommon xkbcommon-x11 xcb; do
@@ -51,7 +45,7 @@ link_setup() {
     --config "$t.fontconfig.rustc-link-search=[\"native=$linkdir\"]" --config "$t.fontconfig.rustc-link-lib=[\"fontconfig\"]")
 }
 
-sha_ok() { echo "$2  $1" | sha256sum -c - >&2; }   # FILE SHA256 (stdout carries only the printed path)
+sha_ok() { echo "$2  $1" | sha256sum -c - >&2; }
 
 action=${1:?usage: zigbuild.sh fetch-zig DIR | fetch-cargo-zigbuild DIR | build ARGS | rustc ARGS | outdir}; shift
 case "$action" in
@@ -69,7 +63,6 @@ case "$action" in
       mkdir -p "$dir"; a=cargo-zigbuild-x86_64-unknown-linux-gnu.tar.xz
       curl -fsSL --retry 3 "https://github.com/rust-cross/cargo-zigbuild/releases/download/v$CARGO_ZIGBUILD_VERSION/$a" -o "$dir/$a"
       (cd "$dir" && sha_ok "$a" "$CARGO_ZIGBUILD_SHA256" && tar xf "$a" && rm "$a")
-      # The archive may hold the binary in a folder of its own.
       [ -x "$dir/cargo-zigbuild" ] || mv "$(find "$dir" -type f -name cargo-zigbuild | head -1)" "$dir/"
       rm -rf "$dir"/cargo-zigbuild-*/
     fi

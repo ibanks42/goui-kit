@@ -1,47 +1,41 @@
-//! gk-capi: GPUI-kit on gpui-fast behind a C interface of seven functions and one callback
-//! (docs/DESIGN.md section 5, docs/PROTOCOLS.md). The protocol runtime is hand-written
-//! (rt.rs, genapi.rs, calls.rs); element and call ops come from the generator (src/gen/,
-//! written by `make gen`) and, for the few things it leaves to a bridge, from hand.rs.
+//! C ABI entry points for `libgpuikit`.
+//!
+//! Exports the lifecycle and message-passing surface (`gk_info_get`, `gk_last_error`, `gk_run`,
+//! `gk_headless_run`, `gk_call`, `gk_reply`, and `gk_post`), validates ABI compatibility, catches
+//! panics across the FFI boundary, and bridges background wakes onto the GPUI UI thread.
 
-// GPUI's proc macros emit `gpui::` paths; the kit resolves them through this alias.
 extern crate gpui_kit as gpui;
-
-// The engine is gpui-fast (the default `gpui-fast` feature) or upstream GPUI (gpui-pre, with
-// `--no-default-features`). `gk_info` reports which one in its feature bits and version string.
 
 mod app;
 mod calls;
-// The data protocol: rows of the app's data for charts and plots (docs/PROTOCOLS.md section 12).
 mod data;
-// A plot described as a list of parts (docs/PROTOCOLS.md section 12).
 mod plot;
 pub mod genapi;
-// The generator's output (docs/PROTOCOLS.md section 7). `gen` is a reserved word in the
-// 2024 edition, hence the path.
+
 #[path = "gen/mod.rs"]
 mod generated;
 mod hand;
-mod items; // item procedures: element closures over handed elements (docs/PROTOCOLS.md 9.41)
+mod items;
 #[cfg(feature = "all")]
 mod keep;
 mod objects;
-mod overlay; // view-built closures, described values (docs/PROTOCOLS.md 11.6)
-mod dock; // dock panels as app views (docs/PROTOCOLS.md 11.7)
-mod editor_text; // the editor's runtime (docs/PROTOCOLS.md 9.20 to 9.26)
+mod overlay;
+mod dock;
+mod editor_text;
 mod ops;
 mod rt;
-mod shim_editor; // the editor's providers (docs/PROTOCOLS.md 9.11, 9.12)
+mod shim_editor;
 mod shim_input;
 mod shim_rows;
-mod shim_select; // select and combobox over a row source (docs/PROTOCOLS.md 9.9)
-mod shim_text; // data closures answered between frames (docs/PROTOCOLS.md 9.14)
+mod shim_select;
+mod shim_text;
 mod source;
 mod tape;
-mod values; // results, maps and kit values that travel to the app (docs/PROTOCOLS.md 13.8 to 13.12)
-mod platform; // requests that answer later, dialogs, menus, URLs (docs/PROTOCOLS.md 11.30)
-mod motion; // animations and motion values (docs/PROTOCOLS.md 13.30)
-mod views_after; // observations delivered after the frame (docs/PROTOCOLS.md 11.14)
-mod views_menu; // PopupMenu::submenu_with_icon (docs/PROTOCOLS.md 11.16)
+mod values;
+mod platform;
+mod motion;
+mod views_after;
+mod views_menu;
 mod wire;
 
 use futures::StreamExt;
@@ -54,8 +48,10 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicBool, Ordering};
 
+/// Little-endian ASCII `"GPK1"` tag identifying [`GkInfo`].
 const MAGIC: u32 = 0x314b_5047;
 
+/// Static library metadata returned by [`gk_info_get`].
 #[repr(C)]
 pub struct GkInfo {
     size: u32,
@@ -68,9 +64,11 @@ pub struct GkInfo {
     versions_len: usize,
 }
 
-// SAFETY: the only pointer is to a static string.
+// SAFETY: `GkInfo` is immutable once constructed and its `versions` pointer references
+// `'static` string data compiled into the binary.
 unsafe impl Sync for GkInfo {}
 
+/// Startup descriptor passed by the host binding to [`gk_run`] and [`gk_headless_run`].
 #[repr(C)]
 pub struct GkApp {
     size: u32,
@@ -109,12 +107,13 @@ static INFO: GkInfo = GkInfo {
     versions_len: VERSIONS.len(),
 };
 
+/// Channel sender used by [`gk_post`] and [`quit_soon`] to wake the UI thread's async task.
 static WAKE: Mutex<Option<UnboundedSender<()>>> = Mutex::new(None);
+/// Coalesces repeated `gk_post` notifications into a single queued wake message.
 static WAKE_PENDING: AtomicBool = AtomicBool::new(false);
 static QUIT_SOON: AtomicBool = AtomicBool::new(false);
 
-/// Ends the app from where no `App` is in hand (a panic caught outside a call): the wake task
-/// quits it at its next turn, and the offscreen driver stops after the line it runs.
+/// Requests an asynchronous shutdown of the GPUI application loop from any thread.
 pub(crate) fn quit_soon() {
     QUIT_SOON.store(true, Ordering::SeqCst);
     #[cfg(feature = "diag")]
@@ -125,7 +124,9 @@ pub(crate) fn quit_soon() {
 }
 
 thread_local! {
+    /// Last error message recorded on the calling thread for [`gk_last_error`].
     static LAST_ERROR: RefCell<String> = const { RefCell::new(String::new()) };
+    /// Reusable reply buffer backing the output slice returned by [`gk_call`].
     static RESULT: RefCell<Vec<u8>> = const { RefCell::new(Vec::new()) };
 }
 
@@ -134,30 +135,40 @@ fn fail(code: i32, msg: impl Into<String>) -> i32 {
     code
 }
 
-/// Any thread.
+/// Returns a pointer to the static [`GkInfo`] describing this library's ABI and features.
+///
+/// # Safety
+/// The symbol is exported unmangled for C FFI; the returned pointer references static read-only
+/// memory valid for the lifetime of the loaded library.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_info_get() -> *const GkInfo {
     &INFO
 }
 
-/// Thread-local; valid until the next failing export on this thread.
+/// Returns the calling thread's last error message as UTF-8 bytes and optionally writes its length.
+///
+/// The returned pointer stays valid until the next FFI call on the same thread overwrites it.
+///
+/// # Safety
+/// If `len` is non-null it must point to writable memory aligned for `usize`.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_last_error(len: *mut usize) -> *const u8 {
     LAST_ERROR.with(|e| {
         let e = e.borrow();
         if !len.is_null() {
-            // SAFETY: the caller passed a valid pointer or null.
+            // SAFETY: Caller passed a non-null writable `usize` out-pointer per the C ABI contract.
             unsafe { *len = e.len() };
         }
         e.as_ptr()
     })
 }
 
+/// Validates the host's [`GkApp`] struct size, ABI version, interface hash, and callback pointer.
 fn check_app(app: *const GkApp) -> Result<(GkCallback, *mut c_void), i32> {
     if app.is_null() {
         return Err(fail(ERR_VERSION, "gk_run: null gk_app"));
     }
-    // SAFETY: the caller passes a valid gk_app; `size` is its first field.
+    // SAFETY: `app` is non-null; the first 4 bytes are always `size: u32` across ABI revisions.
     let size = unsafe { (*app).size } as usize;
     if size != std::mem::size_of::<GkApp>() {
         return Err(fail(
@@ -169,10 +180,9 @@ fn check_app(app: *const GkApp) -> Result<(GkCallback, *mut c_void), i32> {
             ),
         ));
     }
-    // SAFETY: the size matches.
+    // SAFETY: `app` is non-null and its reported byte size matches `GkApp` exactly.
     let app = unsafe { &*app };
-    // An app built against an older minor of the same major is accepted once the major is
-    // above 0. While it is 0 the interface hash must be equal as well.
+
     if app.abi_major != ABI_MAJOR || app.abi_minor > ABI_MINOR || app.api_hash != API_HASH {
         return Err(fail(
             ERR_VERSION,
@@ -190,10 +200,8 @@ fn check_app(app: *const GkApp) -> Result<(GkCallback, *mut c_void), i32> {
     }
 }
 
-/// What both ways of running share: the wake channel and the INIT turn.
+/// Installs the background-wake task, platform hooks, and runs the host's `K_INIT` turn.
 fn start(cx: &mut gpui_kit::App) {
-    // The wake: gk_post, from any thread, sends on this channel; one main-thread task turns
-    // any number of posts into one WAKE turn.
     let (tx, mut rx) = unbounded::<()>();
     *WAKE.lock().unwrap() = Some(tx);
     cx.spawn(async move |cx| {
@@ -205,9 +213,7 @@ fn start(cx: &mut gpui_kit::App) {
             }
             let _ = cx.update(|cx| {
                 rt::guard("running a WAKE turn", || {
-                    // The posted procedures run with the app's first window in scope, as a queued
-                    // event does, so they may open a dialog or push a notification (PROTOCOLS.md
-                    // 11.33); before a window is open, without one.
+                    // Prefer delivering WAKE with the first open window so window-scoped calls succeed.
                     let first = rt::with(|s| s.windows.first().and_then(|wh| s.window(*wh).ok()));
                     let ran = first.is_some_and(|w| {
                         w.update(cx, |_, window, cx| {
@@ -226,11 +232,12 @@ fn start(cx: &mut gpui_kit::App) {
     })
     .detach();
     app::install(cx);
-    views_after::install(cx); // observations (docs/PROTOCOLS.md 11.14)
+    views_after::install(cx);
     let mut reply = rt::turn(K_INIT, &[], None, cx);
     rt::process_reply(&mut reply, K_INIT, None, cx);
 }
 
+/// Clears the wake channel and translates the caught run result into a C ABI status code.
 fn finish(run: std::thread::Result<Result<(), String>>) -> i32 {
     *WAKE.lock().unwrap() = None;
     if rt::with(|s| s.debug) {
@@ -239,7 +246,7 @@ fn finish(run: std::thread::Result<Result<(), String>>) -> i32 {
     match run {
         Ok(Ok(())) => ERR_OK,
         Ok(Err(e)) => fail(ERR_UNSUPPORTED, e),
-        Err(e) if e.is::<rt::AppStop>() => ERR_OK, // the binding was told (rt::app_stop)
+        Err(e) if e.is::<rt::AppStop>() => ERR_OK,
         Err(_) => {
             POISONED.store(true, Ordering::SeqCst);
             fail(ERR_POISONED, rt::panic_message())
@@ -247,7 +254,11 @@ fn finish(run: std::thread::Result<Result<(), String>>) -> i32 {
     }
 }
 
-/// Blocks; the caller becomes the UI thread. Returns when the app quits.
+/// Runs a live GPUI application event loop until the app quits or panics.
+///
+/// # Safety
+/// `app` must be null or point to a valid [`GkApp`] struct with `size == sizeof(GkApp)`, and
+/// `app.callback` must be a valid C function pointer safe to call with `app.user` on the UI thread.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_run(app: *const GkApp) -> i32 {
     let (callback, user) = match check_app(app) {
@@ -268,8 +279,11 @@ pub extern "C" fn gk_run(app: *const GkApp) -> i32 {
     finish(run)
 }
 
-/// The diag variant only: runs the app on gpui's HeadlessAppContext (no display), driven by
-/// a gk-meter script (frames, clicks, typed text, PNG captures).
+/// Runs the application offscreen under a headless test script (requires the `diag` feature).
+///
+/// # Safety
+/// `app` must satisfy the same requirements as [`gk_run`], and `script` must point to at least
+/// `len` readable bytes for the duration of this call (when `diag` is enabled).
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_headless_run(app: *const GkApp, script: *const u8, len: usize) -> i32 {
     #[cfg(feature = "diag")]
@@ -280,15 +294,14 @@ pub extern "C" fn gk_headless_run(app: *const GkApp, script: *const u8, len: usi
         };
         rt::install_panic_hook();
         rt::install(callback, user);
-        platform::set_scripted(true); // file dialogs and prompts answered by the test (PROTOCOLS.md 11.30)
-        gk_meter::headless::on_answer(platform::answer_line); // or by the script's `answer` lines (11.31)
-        // SAFETY: the caller passes `len` readable bytes.
+        platform::set_scripted(true);
+        gk_meter::headless::on_answer(platform::answer_line);
+        // SAFETY: Caller passes a readable buffer of `len` bytes for the duration of this call.
         let script = unsafe { std::slice::from_raw_parts(script, len) };
         let script = String::from_utf8_lossy(script).into_owned();
         let run = catch_unwind(AssertUnwindSafe(|| {
             gk_meter::headless::run_opt(&script, |cx| {
                 start(cx);
-                // None: the app opened no window (it stopped first, or the script says so).
                 let first = rt::with(|s| s.windows.first().copied())?;
                 rt::with(|s| s.window(first)).ok()
             })
@@ -303,7 +316,14 @@ pub extern "C" fn gk_headless_run(app: *const GkApp, script: *const u8, len: usi
     }
 }
 
-/// UI thread, inside a callback. `*res` is the library's and valid until the next gk_call.
+/// Executes a synchronous wire call from inside a host callback on the UI thread.
+///
+/// The reply slice written to `*res` and `*res_len` borrows a thread-local buffer that remains
+/// valid until the next `gk_call` on this thread.
+///
+/// # Safety
+/// `req` must point to `len` readable bytes when non-null; `res` and `res_len`, when both
+/// non-null, must point to writable memory aligned for `*const u8` and `usize` respectively.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_call(
     req: *const u8,
@@ -311,10 +331,9 @@ pub extern "C" fn gk_call(
     res: *mut *const u8,
     res_len: *mut usize,
 ) -> i32 {
-    // A poisoned library refuses every call but QUIT, which a binding sends to end gk_run
-    // after the panic (it then reports the panic from gk_run's caller, PROTOCOLS.md 3.4).
+    // Allow C_QUIT even when poisoned so the host can exit cleanly after reporting an error.
     let quit = !req.is_null() && len >= 2 && {
-        // SAFETY: the caller passes `len` readable bytes (not null, checked here).
+        // SAFETY: `req` is non-null and `len >= 2`, so reading the 2-byte opcode header is valid.
         let b = unsafe { std::slice::from_raw_parts(req, 2) };
         u16::from_le_bytes([b[0], b[1]]) == ops::C_QUIT
     };
@@ -334,26 +353,24 @@ pub extern "C" fn gk_call(
     if req.is_null() {
         return fail(ERR_BAD_OP, "gk_call with a null request");
     }
-    // SAFETY: the caller passes `len` readable bytes (not null, checked above).
+    // SAFETY: `req` is non-null and the C ABI guarantees `len` readable bytes for this call.
     let req = unsafe { std::slice::from_raw_parts(req, len) };
+    // Take `RESULT` out of the RefCell so re-entrant callbacks inside `calls::call` do not conflict.
     let mut out = RESULT.with(|r| std::mem::take(&mut *r.borrow_mut()));
     out.clear();
     let done = catch_unwind(AssertUnwindSafe(|| calls::call(req, window, cx, &mut out, false)));
     let code = match done {
         Ok(Ok(())) => ERR_OK,
         Ok(Err(GkErr(code, msg))) => fail(code, msg),
-        // A mistake in app code the call found where it could not return it (rt::app_stop): the
-        // binding was told, the library is not poisoned.
         Err(e) if e.is::<rt::AppStop>() => fail(ERR_BAD_OP, "the app is stopping after a mistake in its code"),
         Err(_) => {
-            // Nothing unwinds into the app: the panic stops here, the library is poisoned
-            // and the binding prints the message with the app's call site and exits.
             POISONED.store(true, Ordering::SeqCst);
             fail(ERR_POISONED, rt::panic_message())
         }
     };
     if !res.is_null() && !res_len.is_null() {
-        // SAFETY: valid out-pointers from the caller; the buffer is kept in RESULT below.
+        // SAFETY: Both output pointers are non-null and writable per the C ABI contract.
+        // Moving `out` back into `RESULT` preserves the heap allocation pointer `out.as_ptr()`.
         unsafe {
             *res = out.as_ptr();
             *res_len = out.len();
@@ -363,23 +380,24 @@ pub extern "C" fn gk_call(
     code
 }
 
-/// Inside the callback that received `cb`. Copies `out` before it returns.
+/// Copies the host callback's reply payload into the active [`GkCb`] frame.
+///
+/// # Safety
+/// `cb` must be the opaque pointer passed to the currently executing callback on the UI thread,
+/// and `out` must point to `len` readable bytes whenever `len > 0`.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_reply(cb: *mut GkCb, out: *const u8, len: usize) -> i32 {
     if cb.is_null() {
         return fail(ERR_NO_CONTEXT, "gk_reply without a callback");
     }
-    // A gk_cb is valid only inside the callback that received it: one kept from an earlier
-    // callback points into a stack frame that has returned, and writing through it would
-    // corrupt memory. Only the running callback's own is accepted.
     if !rt::is_ui() || !rt::current_cb(cb) {
         return fail(ERR_NO_CONTEXT, "gk_reply with a gk_cb that is not the running callback's (a gk_cb is valid only inside the callback that received it)");
     }
     if out.is_null() && len > 0 {
         return fail(ERR_BAD_OP, "gk_reply with a null reply of nonzero length");
     }
-    // SAFETY: cb is the running callback's (checked above) and live for its duration; out
-    // points to `len` readable bytes.
+    // SAFETY: `rt::current_cb(cb)` verified `cb` is the live `GkCb` on the UI thread's active
+    // turn frame, and `out` is non-null whenever `len > 0`.
     unsafe {
         let cb = &mut *cb;
         cb.inline_ptr = std::ptr::null();
@@ -395,9 +413,12 @@ pub extern "C" fn gk_reply(cb: *mut GkCb, out: *const u8, len: usize) -> i32 {
     ERR_OK
 }
 
-/// Any thread. Asks for one WAKE turn on the UI thread; posts made before that turn runs
-/// are folded into it. Before `gk_run` has started the loop it returns GK_ERR_NO_CONTEXT;
-/// the binding drains what was posted that early at the end of its INIT turn.
+/// Wakes the UI thread from any thread so the host receives a `K_WAKE` callback turn.
+///
+/// Multiple calls before the UI thread drains the channel are coalesced into one wake.
+///
+/// # Safety
+/// Thread-safe C ABI entry point with no pointer arguments; safe to invoke from any thread.
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_post(_token: u64) -> i32 {
     if WAKE_PENDING.swap(true, Ordering::SeqCst) {

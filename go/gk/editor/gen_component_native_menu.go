@@ -12,13 +12,13 @@ type NativeMenu struct{ rt.Val }
 
 // Create an empty native menu.
 //
-// NewNativeMenu is <gpui_kit::component::native_menu::NativeMenu>::new.
+// NewNativeMenu calls <gpui_kit::component::native_menu::NativeMenu>::new.
 func NewNativeMenu() NativeMenu {
 	n := rt.NewValue(709)
 	return NativeMenu{Val: rt.MkVal(n)}
 }
 
-// NewNativeMenuDefault is <gpui_kit::component::native_menu::NativeMenu as Default>::default.
+// NewNativeMenuDefault calls <gpui_kit::component::native_menu::NativeMenu as Default>::default.
 func NewNativeMenuDefault() NativeMenu {
 	n := rt.NewValue(708)
 	return NativeMenu{Val: rt.MkVal(n)}
@@ -26,7 +26,7 @@ func NewNativeMenuDefault() NativeMenu {
 
 // Append a clickable item that dispatches `action` when selected.
 //
-// Menu is <gpui_kit::component::native_menu::NativeMenu>::menu.
+// Menu calls <gpui_kit::component::native_menu::NativeMenu>::menu.
 func (e NativeMenu) Menu(label string, action gk.Action) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(label)
@@ -36,7 +36,7 @@ func (e NativeMenu) Menu(label string, action gk.Action) NativeMenu {
 
 // Append an item, controlling its `checked` state (a check mark is shown).
 //
-// MenuWithCheck is <gpui_kit::component::native_menu::NativeMenu>::menu_with_check.
+// MenuWithCheck calls <gpui_kit::component::native_menu::NativeMenu>::menu_with_check.
 func (e NativeMenu) MenuWithCheck(label string, checked bool, action gk.Action) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(label)
@@ -47,7 +47,7 @@ func (e NativeMenu) MenuWithCheck(label string, checked bool, action gk.Action) 
 
 // Append an item, controlling its `disabled` state.
 //
-// MenuWithDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_disabled.
+// MenuWithDisabled calls <gpui_kit::component::native_menu::NativeMenu>::menu_with_disabled.
 func (e NativeMenu) MenuWithDisabled(label string, disabled bool, action gk.Action) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(label)
@@ -69,7 +69,7 @@ func (e NativeMenu) MenuWithDisabled(label string, disabled bool, action gk.Acti
 //
 // Note: this is the menu item's *content* icon, not its state/check-mark indicator.
 //
-// MenuWithIcon is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon.
+// MenuWithIcon calls <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon.
 func (e NativeMenu) MenuWithIcon(label string, icon gk.IconName, action gk.Action) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Str(label)
@@ -82,7 +82,7 @@ func (e NativeMenu) MenuWithIcon(label string, icon gk.IconName, action gk.Actio
 //
 // Alias for `MenuWithIconDisabled`, matching `PopupMenu`.
 //
-// MenuWithIconAndDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_and_disabled.
+// MenuWithIconAndDisabled calls <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_and_disabled.
 func (e NativeMenu) MenuWithIconAndDisabled(label string, icon gk.IconName, action gk.Action, disabled bool) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Str(label)
@@ -97,7 +97,7 @@ func (e NativeMenu) MenuWithIconAndDisabled(label string, icon gk.IconName, acti
 // Same icon behavior as `MenuWithIcon`. Use this when an item carries an icon but should be greyed
 // out.
 //
-// MenuWithIconDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_disabled.
+// MenuWithIconDisabled calls <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_disabled.
 func (e NativeMenu) MenuWithIconDisabled(label string, icon gk.IconName, disabled bool, action gk.Action) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.Str(label)
@@ -109,7 +109,7 @@ func (e NativeMenu) MenuWithIconDisabled(label string, icon gk.IconName, disable
 
 // Append a separator line.
 //
-// Separator is <gpui_kit::component::native_menu::NativeMenu>::separator.
+// Separator calls <gpui_kit::component::native_menu::NativeMenu>::separator.
 func (e NativeMenu) Separator() NativeMenu {
 	rt.Op(rt.N(e.Core), 259)
 	return e
@@ -117,7 +117,7 @@ func (e NativeMenu) Separator() NativeMenu {
 
 // Append a submenu built from another `NativeMenu`.
 //
-// Submenu is <gpui_kit::component::native_menu::NativeMenu>::submenu.
+// Submenu calls <gpui_kit::component::native_menu::NativeMenu>::submenu.
 func (e NativeMenu) Submenu(label string, submenu NativeMenu) NativeMenu {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Str(label)

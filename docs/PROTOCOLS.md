@@ -1,3107 +1,1542 @@
-# Protocols: what the runtime gives the generator
+# Wire and Runtime Protocols
 
-This file is the contract between the hand-written runtime and the generated code. It says
-what bytes go over the wire, which Rust module generated Rust may call (`core/src/genapi.rs`),
-and which functions generated Go may call (`go/gk/internal/rt/rt_emit.go`). It is written for people working on the binding itself; you don't need
-it to write an app. For the reasoning behind the design, see [DESIGN.md](DESIGN.md),
-sections 5 to 9 and 11.
+This document is the complete specification for `libgpuikit` (`core/`), the C ABI library that exposes GPUI and GPUI-kit to foreign front ends. A front-end author in any language (Go, Zig, C, Swift, Python, and so on) should be able to implement a conformant binding from this specification, `core/include/gpuikit.h`, `core/wire/ops.txt`, and `api/opcodes.lock` without reading the Rust source.
 
-Section numbers are stable: source comments cite them ("PROTOCOLS.md 9.41"), so a section is
-edited in place and never renumbered. Some numbers (10, 11.29, 12.10 to 12.13, 13.22 to
-13.29) were never used. Section 8 says what is tested. Anything still marked "not built"
-already has its wire format fixed here.
+The specification is organized from the lowest layer (C exports and byte primitives) up through turns, tapes, handles, and each domain protocol family, ending with error handling and a front-end implementation checklist.
 
-The library's backend is gpui-fast by default; it also builds against upstream gpui. Nothing
-in this file depends on which one is used, except where a passage names gpui-fast
-explicitly.
+---
 
-## 1. Numbers
+## 1. Architecture, Versioning, and Opcode Numbering
 
-Protocol numbers are in `core/wire/ops.txt` (classes `abi`, `feat`, `kind`, `err`, `hkind`,
-`shape`, and the runtime's own `call` and `elop` rows). `core/wire/gen.py` writes
-`core/src/ops.rs` and `core/include/gk_ops.h` from it.
+### 1.1 Split Between Hand-Written and Generated Interfaces
 
-Reserved ranges, so the generator's `api/opcodes.lock` never collides with the runtime:
+The library consists of two halves that share one binary wire format:
 
-| class | runtime and hand sample | generator |
+1. **Hand-written core (`core/wire/ops.txt`)**: defines the ABI version, feature flags, turn kinds, error codes, handle kinds, built-in handler shapes, universal element ops, color encodings, and hand-written call ops / node types for runtime mechanisms that cannot be generated mechanically (row sources, editor providers, docks, plots, motion, overlays, platform completions, value cells).
+2. **Generated bindings (`api/opcodes.lock`)**: generated from the upstream rustdoc JSON extract (`api/rustdoc/`) by `gen/gkgen.py`. Covers every generated element constructor (`node`), per-type builder method (`op`), builder trait method (`trait` + `trait-op`), state/object/ambient call (`call`), state constructor builder option (`state-op`), closure payload shape (`shape`), nullary style token (`style`), semantic theme color (`theme`), fixed palette color (`palette`), and enum discriminant (`variant`).
+
+`core/wire/gen.py` reads `core/wire/ops.txt` and `api/opcodes.lock` and emits:
+
+- `core/src/ops.rs` (Rust constants)
+- `core/include/gk_ops.h` (C `#define` constants)
+- `go/gk/internal/rt/gen_ops.go` (Go constants)
+
+### 1.2 Opcode Numbering Ranges
+
+All opcode tables are **append-only**. Retired numbers are never reused.
+
+| Table | Hand-written range (`ops.txt`) | Generated range (`opcodes.lock`) | Wire width | Notes |
+|---|---|---|---|---|
+| Turn kind (`K_*`) | `1..=10` | none | `u32` (C parameter) | Fixed by C callback signature |
+| Error code (`GK_ERR_*`) | `0..=10` | none | `i32` (C return) | `0` is success |
+| Handle kind (`HK_*`) | `1..=9` | none | `u8` (bits 63..56 of `u64`) | Reserved slots: `10..=13` for future tracks |
+| Handler shape (`SHAPE_*`) | `1..=63` | `64..` | `u16` | Built-in shapes use `1..=46` |
+| Node type (`N_*`) | `1..=63` | `256..` | `u16` | `64..=255` reserved |
+| Element op (`OP_*`) | `1..=255` (universal) | `256..=0x3fff` (per-type), `0x4000..=0xffff` (trait ops) | `u16` | Universal ops (`1..=4`) work on every node decoder |
+| Call op (`C_*`) | `1..=255` | `256..` | `u16` | Hand-written blocks listed below |
+| State builder op | none | `1..` (scoped per state type) | `u16` | Passed inside state constructor chains |
+| Style token | none | `1..` | `u16` | Nullary methods on `Styled` and `StyledExt` |
+| Theme color token | none | `1..=0x7fff` | `u16` | Bit 15 clear (`< 0x8000`) |
+| Palette color token | none | `0x8000 | palette_num` | `u16` | Bit 15 set (`>= 0x8000`) |
+| Enum variant | none | `0..` (scoped per enum) | `u16` | Some built-in protocol enums use `u8` where specified |
+
+#### Reserved Hand-Written Blocks in `core/wire/ops.txt`
+
+| Family | `call` range | `shape` range | `node` range | `hkind` |
+|---|---|---|---|---|
+| Core runtime & hand bridges | `1..=31` | `1..=13` | `7..=9` | `1..=7` |
+| Input & editor providers | `32..=47` | `14..=15` | `10..=11` | - |
+| Rows, lists, tables, trees | `48..=63` | `16..=19` | `12..=15` (`12..=14` retired) | - |
+| App, windows, actions, platform | `64..=111` | `20..=27` | `16..=23` | `9..=10` |
+| Library objects & handles | `112..=127` | `28..=31` | `24..=27` | `8` |
+| Data tables & described plots | `128..=143` | `32..=35` | `28..=31` | - |
+| Overlays, menus, docks | `144..=175` | `36..=43` | `32..=39` | `11` |
+| Searchable lists, asks, editor host | `176..=207` | `44..=51` | `40..=47` | `12` |
+| Value cells, pinning, motion | `208..=239` | `52..=59` | `48..=55` | `13` |
+
+#### Trait Element Op Encoding
+
+A builder trait (such as `Styled`, `ParentElement`, `InteractiveElement`, `StatefulInteractiveElement`, `StyledExt`, `Sizable`, `Disableable`, `Selectable`) is assigned a small positive `trait_num` (`1..=22` currently) in `api/opcodes.lock`, and each method of that trait is assigned a 0-based `method_idx` (`0..=127`). Its wire `u16` element opcode is:
+
+```text
+trait_elop = 0x4000 | (trait_num << 7) | method_idx
+```
+
+Wait: note that `0x4000 + (trait_num << 7) + method_idx` is identical since `method_idx < 128` and `trait_num < 384`. Decoders check `op >= 0x4000` (or match exact constants) and dispatch to the generic trait applier.
+
+#### `api/opcodes.lock` File Format and `API_HASH`
+
+`api/opcodes.lock` is a plain-text, tab-separated file (LF line endings, `#` comments ignored) with four columns per entry:
+
+```text
+<kind>\t<scope>\t<name>\t<number>
+```
+
+where `<scope>` is empty for global tables (`node`, `call`, `shape`, `style`, `theme`, `palette`, `trait`) or the Rust type/trait path for scoped tables (`op`, `trait-op`, `state-op`, `variant`).
+
+`API_HASH` is the 64-bit FNV-1a hash (offset basis `0xcbf29ce484222325`, prime `0x00000100000001b3`) computed over the exact bytes of `core/wire/ops.txt` followed immediately by the exact bytes of `api/opcodes.lock`. Both the compiled library and every front end embed `API_HASH` and verify exact equality during startup.
+
+---
+
+## 2. C ABI and Handshake
+
+The complete C interface is declared in `core/include/gpuikit.h`. It contains 7 exported C functions (plus `gk_use_all` and per-family `gk_use_<family>` registration symbols).
+
+### 2.1 Struct Layouts (`#[repr(C)]`)
+
+All structs follow the platform C ABI with natural alignment. On 64-bit platforms (`LP64` and `LLP64`), both `gk_info` and `gk_app` are 40 bytes.
+
+#### `gk_info`
+
+| Offset (64-bit) | Size | C Field | Type | Description |
+|---:|---:|---|---|---|
+| 0 | 4 | `size` | `uint32_t` | `sizeof(gk_info)` (`48` on 64-bit). Checked for forward compatibility. |
+| 4 | 4 | `magic` | `uint32_t` | `GK_MAGIC = 0x314B5047` (`"GPK1"` in little-endian bytes `47 50 4B 31`). |
+| 8 | 2 | `abi_major` | `uint16_t` | Breaking ABI version (`0`). Must match exactly. |
+| 10 | 2 | `abi_minor` | `uint16_t` | Additive ABI version (`6`). Library `abi_minor` must be `>=` front-end `abi_minor`. |
+| 12 | 4 | *(padding)* | - | Alignment padding for `uint64_t`. |
+| 16 | 8 | `api_hash` | `uint64_t` | FNV-1a hash of `ops.txt` + `opcodes.lock`. Must match exactly. |
+| 24 | 4 | `features` | `uint32_t` | Bitmask of `GK_FEAT_*` flags. |
+| 28 | 4 | *(padding)* | - | Alignment padding for pointer. |
+| 32 | 8 | `versions` | `const char *` | Static UTF-8 build string (not NUL-terminated), e.g., `"gk 0.0.2; gpui-kit 0.11.0; gpui-fast 0.1.19"`. |
+| 40 | 8 | `versions_len` | `size_t` | Byte length of `versions`. |
+
+Total size on 64-bit platforms is 48 bytes. Front ends must always compute `sizeof(gk_info)` and `sizeof(gk_app)` from the target C struct layout rather than assuming 64-bit offsets on 32-bit architectures.
+
+#### `GK_FEAT_*` Feature Bits
+
+| Bit | Value | Constant | Meaning |
+|---:|---:|---|---|
+| 0 | `1` | `GK_FEAT_GPUI_FAST` | Built on `gpui-fast` (retained view caching). Clear when built on upstream `gpui-pre`. |
+| 1 | `2` | `GK_FEAT_DIAG` | Diagnostic build: `gk_headless_run` is enabled and offscreen/scripted helpers are active. |
+| 2 | `4` | `GK_FEAT_ALL` | Full dynamic library (`cdylib`) containing all component families. |
+| 3 | `8` | `GK_FEAT_INLINE_REPLY` | `gk_cb` exposes `(inline_ptr, inline_len)` as its first two pointer-sized words so callbacks can reply without calling `gk_reply`. |
+
+#### `gk_app`
+
+| Offset (64-bit) | Size | C Field | Type | Description |
+|---:|---:|---|---|---|
+| 0 | 4 | `size` | `uint32_t` | Must equal `sizeof(gk_app)` (`40` on 64-bit). |
+| 4 | 2 | `abi_major` | `uint16_t` | Front-end `GK_ABI_MAJOR`. Must equal library `abi_major`. |
+| 6 | 2 | `abi_minor` | `uint16_t` | Front-end `GK_ABI_MINOR`. Must be `<=` library `abi_minor`. |
+| 8 | 8 | `api_hash` | `uint64_t` | Front-end `GK_API_HASH`. Must equal library `api_hash`. |
+| 16 | 8 | `callback` | `gk_callback` | Non-NULL function pointer invoked for every turn. |
+| 24 | 8 | `user` | `void *` | Opaque context pointer passed back unchanged to `callback`. |
+| 32 | 4 | `flags` | `uint32_t` | Reserved; must be `0`. |
+| 36 | 4 | *(padding)* | - | Trailing struct alignment padding. |
+
+#### Callback Signature and `gk_cb`
+
+```c
+typedef struct gk_cb gk_cb;
+typedef int32_t (*gk_callback)(
+    void          *user,
+    gk_cb         *cb,
+    uint32_t       kind,
+    const uint8_t *req,
+    size_t         len
+);
+```
+
+The callback returns `0` (`GK_ERR_OK`) on normal completion. A nonzero return value is logged to stderr by `rt.rs` (`gk: callback kind <kind> returned <rc>`); it does not abort the process. To abort cleanly after a front-end panic or contract violation, the front end calls `C_QUIT` via `gk_call` and returns `0`.
+
+When `GK_FEAT_INLINE_REPLY` (`8`) is advertised in `gk_info.features`, the first two words of `gk_cb` are guaranteed by the ABI to be:
+
+```c
+struct gk_cb_prefix {
+    const uint8_t *inline_ptr;
+    size_t         inline_len;
+};
+```
+
+Instead of invoking `gk_reply(cb, buf, len)`, the callback may write `(buf, len)` directly into `cb->inline_ptr` and `cb->inline_len`. The pointed-to buffer must remain valid and immutable until the callback is next entered or `gk_run` returns (a single reusable front-end reply buffer satisfies this if re-entrant nested turns use a stack of buffers or copy out before issuing `gk_call`). If the callback also calls `gk_reply`, `gk_reply` clears `inline_ptr`/`inline_len` and replaces the reply with a copied buffer.
+
+### 2.2 Exported C Functions
+
+| Function | Signature | Threading & Re-entrancy Rules |
 |---|---|---|
-| `elop` (element ops) | 1 to 63 | 256 and up |
-| `call` (call ops) | 1 to 63 | 256 and up |
-| `node` (node types) | 1 to 63 | 256 and up |
-| `shape` (closure shapes) | 1 to 63 | 64 to 1023 |
-| `style`, `color`, `theme` | the sample rows, until the generator moves them | all, afterwards |
-| `kind`, `err`, `hkind`, `feat`, `abi` | all | none |
+| `gk_info_get` | `const gk_info *gk_info_get(void)` | Safe from any thread, before or after `gk_run`. Returned pointer is static for the life of the process. |
+| `gk_run` | `int32_t gk_run(const gk_app *app)` | Blocks until the application exits. The calling OS thread becomes the **UI thread** (lock it to one OS thread in green-threaded runtimes like Go). Fails with `GK_ERR_BUSY` if another run is active, `GK_ERR_VERSION` if handshake fails. |
+| `gk_headless_run` | `int32_t gk_headless_run(const gk_app *app, const uint8_t *script, size_t len)` | Same contract as `gk_run`, using the offscreen test platform and executing `script` (UTF-8 lines). Available only when `GK_FEAT_DIAG` is set; returns `GK_ERR_UNSUPPORTED` in `ship` builds. Automatically enables scripted platform dialogs (`PLATFORM_ANSWER`). |
+| `gk_call` | `int32_t gk_call(const uint8_t *req, size_t len, const uint8_t **res, size_t *res_len)` | UI thread only, and only while inside an active `gk_callback` (except during a `K_PANIC` turn). Writes result bytes to a thread-local buffer and stores its pointer and length in `*res` / `*res_len`; valid until the next `gk_call` on the UI thread. When the session is poisoned, refuses every call except `C_QUIT`. |
+| `gk_reply` | `int32_t gk_reply(gk_cb *cb, const uint8_t *out, size_t len)` | UI thread only, and only with the exact `cb` pointer of the innermost currently active `gk_callback`. Passing a stale or outer `cb` returns `GK_ERR_NO_CONTEXT`. Copies `out[0..len]` into `cb`. |
+| `gk_post` | `int32_t gk_post(uint64_t token)` | Safe from **any thread** while `gk_run` / `gk_headless_run` is running. Returns `GK_ERR_NO_CONTEXT` before `gk_run` starts or after it ends. Coalesces concurrent calls via an atomic `WAKE_PENDING` flag into a single `K_WAKE` turn on the UI thread (`token` is currently ignored on the wire; front ends keep their own thread-safe work queue). |
+| `gk_last_error` | `const char *gk_last_error(size_t *len)` | Thread-local UTF-8 error message from the most recent failing C export on the calling thread. **Not NUL-terminated**; `*len` receives the exact byte length (`0` if none). Valid until the next failing export on the same thread. |
+| `gk_use_all` | `void gk_use_all(void)` | Dynamic-library (`cdylib`) entry point that registers every generated component family into the dispatch tables. Dynamic loaders must call `gk_use_all()` once before `gk_run`. Static builds call per-family `gk_use_<family>()` functions instead so linkers dead-strip unused families. |
 
-Element ops every decoder understands (the runtime's): `CHILD 1` (u32 node), `CHILD_VIEW 2`
-(u64 view handle), `TEXT 3` (str), `STYLE 4` (u16 count, u16 token each).
+### 2.3 Startup Handshake Sequence
 
-## 2. Scalars and records on the wire
+1. Load the library (or resolve static symbols).
+2. If dynamically loaded (`GK_FEAT_ALL`), call `gk_use_all()` once.
+3. Call `info = gk_info_get()`. Reject if:
+   - `info == NULL`
+   - `info->size < sizeof(gk_info)`
+   - `info->magic != 0x314B5047` (`GK_MAGIC`)
+   - `info->abi_major != EXPECTED_ABI_MAJOR`
+   - `info->abi_minor < EXPECTED_ABI_MINOR`
+   - `info->api_hash != EXPECTED_API_HASH`
+4. Populate `gk_app` with `size = sizeof(gk_app)`, `abi_major`, `abi_minor`, `api_hash`, `callback`, `user`, `flags = 0`.
+5. Lock the current OS thread (if applicable) and call `gk_run(&app)` (or `gk_headless_run(&app, script, len)`).
+6. Never unwind a foreign exception or panic across `gk_callback` into Rust. Catch panics at the callback boundary, issue `C_QUIT` via `gk_call` (or return an empty reply after recording the panic), let `gk_run` exit cleanly, and re-raise or return the error in the host language.
 
-Little-endian, no padding, no alignment.
+---
 
-| wire type | bytes | Rust |
+## 3. Wire Primitives and Value Encodings
+
+All multi-byte integers and IEEE-754 floats on the wire are **little-endian**, **packed** (no alignment padding), and **unaligned-safe** (read via byte copies, never cast pointers).
+
+### 3.1 Scalar and Container Primitives
+
+| Wire Type | Size (bytes) | Encoding |
+|---|---:|---|
+| `u8` / `i8` | 1 | Raw byte / two's complement |
+| `bool` | 1 | `0` = false, any nonzero byte (`1` canonical) = true |
+| `u16` / `i16` | 2 | Little-endian |
+| `u32` / `i32` | 4 | Little-endian |
+| `u64` / `i64` | 8 | Little-endian |
+| `usize` / `isize` | 8 | Always widened to `u64` / `i64` on the wire (even on 32-bit hosts) |
+| `f32` | 4 | IEEE-754 binary32, little-endian |
+| `f64` | 8 | IEEE-754 binary64, little-endian |
+| `char` | 4 | `u32` Unicode scalar value (`0` if invalid on decode) |
+| `str` | `4 + N` | `u32` byte length `N` followed by `N` UTF-8 bytes (no NUL terminator). **Contract**: all strings sent to the library must be valid UTF-8; invalid UTF-8 is a protocol violation (front ends should validate before sending). |
+| `bytes` | `4 + N` | `u32` byte length `N` followed by `N` raw bytes (not required to be UTF-8) |
+| `opt<T>` | `1` or `1 + |T|` | `u8 0` for `None`; `u8 1` followed immediately by `T` for `Some(T)` |
+| `list<T>` | `4 + sum(|T|)` | `u32` element count followed by elements back to back |
+| `tuple(A, B, ...)` | `|A| + |B| + ...` | Fields concatenated in order with no framing |
+| `Range<usize>` | 16 | `u64 start`, `u64 end` |
+| `HashMap<K, V>` | `4 + sum(|K|+|V|)` | `u32` entry count, then `(K, V)` pairs sorted lexicographically by encoded key bytes for determinism |
+| `Fallible<T>` | `2 + [|T|] + |str|` | `u8 ok` (`1` = Ok, `0` = Err), `u8 has_val` (`1` if `T` follows, `0` if omitted), optional `T`, `str error_message` (empty when `ok == 1`) |
+
+### 3.2 Built-In Domain Value Types
+
+#### Colors and Fills
+
+Used wherever an element op or value accepts `Hsla`, `Color`, or `Fill`:
+
+| Tag (`u8`) | Constant | Payload | Meaning |
+|---:|---|---|---|
+| `0` | `COLOR_HSLA` | `f32 h, f32 s, f32 l, f32 a` | Direct HSLA color (components in `0.0..=1.0`) |
+| `1` | `COLOR_THEME` | `u16 token` | If `token < 0x8000`: field of active `ThemeColor` resolved at decode time. If `token >= 0x8000`: fixed palette color `(token & 0x7fff)` from `api/opcodes.lock` `palette` table. |
+| `2` | `COLOR_GRADIENT` | `f32 angle_deg, u8 color_space, color stop0, f32 pct0, color stop1, f32 pct1` | Linear gradient (`angle_deg`: 0 = up, clockwise; `color_space`: `0` = sRGB, `1` = Oklab; each `stop` is a `COLOR_HSLA` or `COLOR_THEME`; `pct` in `0.0..=1.0`). Valid wherever GPUI accepts a `Fill` (e.g., `Styled::bg`) and in `PLOT_PATH` / `PLOT_QUAD`. |
+
+*Note on record color fields*: When a color is read back as a standalone `Hsla` value (e.g., from a theme read), it is written as 4 `f32` (`h, s, l, a`). When a color is a field inside a bidirectional record whose host type carries a theme-token slot (`genapi::put_color_field`), the library writes `u16 0` followed by `f32 h, s, l, a`.
+
+#### `Background` Read-Back
+
+When reading back a GPUI `Background` (`core/src/values.rs`):
+
+| Field | Wire Type | Description |
 |---|---|---|
-| `u8 u16 u32 u64 i32 i64 f32 f64` | as named | the same |
-| `bool` | 1 | `bool` |
-| `usize` / `isize` | 8 | `usize` |
-| `str` | u32 length, UTF-8 | `&str`, `String`, `SharedString` |
-| `opt<T>` | u8 presence, then T | `Option<T>` |
-| `list<T>` | u32 count, then each | `Vec<T>`, `&[T]` |
-| `enum:<T>` (no data) | the enum's backing integer, u8 unless the generator says u16 | a number from `opcodes.lock`, never a Rust discriminant |
-| `rec:<T>` | fields in declaration order | struct |
-| enum with data | u16 variant number from 0, then that variant's fields | enum |
-| `handle` | u64 | `u64` |
-| `handler:<shape>` | u32 handler id | `genapi::HandlerRef` (read with `Dx::handler`) |
-| fixed array `[N]T` | N times T | `[T; N]`, `Point` as `[2]f32` |
-| flags | the backing integer | bit tests |
+| `kind` | `u8` | `0` = Solid, `1` = LinearGradient, `2` = PatternSlash, `3` = PatternCheckerboard |
+| `color_space` | `u8` | `0` = sRGB, `1` = Oklab |
+| `solid` | `4 * f32` | Solid `Hsla` (`h, s, l, a`) |
+| `angle_or_height` | `f32` | Gradient angle (degrees) or pattern height (px) |
+| `stop0` | `4 * f32, f32` | Stop 0 `Hsla` + percentage |
+| `stop1` | `4 * f32, f32` | Stop 1 `Hsla` + percentage |
 
-The Go package reads event payloads and writes handler return values following exactly this
-table. In Rust each payload type implements `genapi::Wire`
-(`fn put(&self, out: &mut Vec<u8>)`) and each return type `genapi::Unwire`.
+#### Lengths and Dimensions
 
-Built-in records (Rust impls in `genapi.rs`, Go types in `rt_handler.go`):
+- `Pixels`, `Rems`: single `f32`.
+- `Length` / `DefiniteLength`: `u8 kind` followed by `f32 value`:
+  - `0` = pixels (`px(v)`)
+  - `1` = rems (`rems(v)`)
+  - `2` = relative fraction (`relative(v)`, where `1.0` = 100%)
+  - `3` = `Auto` (`value` ignored, canonical `0.0`)
 
-- `Click_Event`: `[2]f32 position`, `u8 button` (0 left, 1 right, 2 middle, 3 back,
-  4 forward), `u8 modifiers` (bits: 1 control, 2 alt, 4 shift, 8 platform, 16 function),
-  `u32 click_count`, `u8 kind` (0 mouse, 1 keyboard, 2 touch).
-- `Key_Event`: `str key`, `opt<str> key_char`, `u8 modifiers`, `bool is_held`.
-- `Mouse_Event` (down, up, move): `[2]f32 position`, `u8 button` (255 = none),
-  `u8 modifiers`, `u32 click_count`.
+#### `ElementId`
 
-## 3. Turns
+| Tag (`u8`) | Payload | Meaning |
+|---:|---|---|
+| `0` | `str name` | Named ID (`ElementId::Name`) |
+| `1` | `u64 n` | Integer ID (`ElementId::Integer`) |
+| `2` | `str name, u64 n` | Keyed ID (`ElementId::NamedInteger`, Go `gk.Key(name, n)`) |
 
-One callback, `gk_callback(user, cb, kind, req, len)`, on the UI thread.
+#### Time, Dates, and Clock
 
-| kind | request | when |
+| Type | Wire Layout | Notes |
 |---|---|---|
-| `INIT 1` | empty | once, inside `gk_run` |
-| `WINDOW_INIT 2` | u64 window, u64 root view | inside `open_window`, window in hand |
-| `FRAME 3` | u64 window, u64 frame number, u32 n, u64 pre-dirty view each, u32 n, (u64 view, u32 generation) retired each | pre-frame hook, only if the app asked (`on_frame`); if the frame handler buffers no writes, the binding describes dirty mounted views inline in the same reply |
-| `VIEWS 4` | u64 window, u32 n, u64 view each, u32 n, (u64 view, u32 generation) each: the descriptions dropped since the last turn (section 4) | pre-frame hook, only if a mounted view is still dirty |
-| `EVENT 5` | u64 window, u8 flags (bit 0: outermost turn with a window, inline describe allowed), u32 n, (u64 view, u32 generation) retired each, u64 view, u32 generation, u32 handler, u16 shape, payload | a listener, a subscription, a queued event; when bit 0 is set, pure-Go dirty mounted views may be described inline in the same reply |
-| `WAKE 7` | empty | after `gk_post`, at most one per turn of the main loop |
-| `PANIC 10` | str message, u8 kind (0 a Rust panic the library caught, 1 a mistake in app code found outside any call; absent: 0) | the binding records it and returns; the library quits the app (section 3) |
+| `Duration` (outbound & `TimedTransformation`) | `i64 nanos` | Signed nanoseconds; negative clamped to `0` on input |
+| `Duration` (in `TIMER_NEW` & `ANIMATED`) | `u32 millis` | Milliseconds |
+| `Instant` | `i64 nanos` | Nanoseconds relative to the library's monotonic `OnceLock<Instant>` epoch (queried via `C_CLOCK_NOW`) |
+| `jiff::civil::Date` | `i32 year, u32 month, u32 day` | Month `1..=12`, day `1..=31` |
+| `jiff::civil::Time` | `u32 hour, u32 minute, u32 second, u32 nanosecond` | 24-hour clock |
+| `jiff::civil::DateTime` | `Date` followed by `Time` | 28 bytes total |
+| `jiff::civil::Weekday` | `u8` | `0` = Monday .. `6` = Sunday |
 
-`ROWS 6` is section 9's and `DONE 8` section 11.30's. `QUIT 9` keeps its number and is not sent.
+#### Fonts, Drag Values, Transformations, Expressions, and Format Templates
 
-An `EVENT` with view 0 names a *kept handler* (a subscription, a global): `handler` is its
-slot and `generation` the slot's generation.
+- **`Font`**: `str family, f32 weight` (`<= 0` means default weight 400), `u16 style` (`0` = Normal, `1` = Italic, `2` = Oblique).
+- **`Drag`**: `u64 id, str text`. Fixed payload type backing GPUI's generic drag-and-drop API.
+- **`Transformation`** (SVG): `f32 scale_x, f32 scale_y, f32 translate_x_px, f32 translate_y_px, f32 rotation_rad, f32 alpha`.
+- **`TimedTransformation`** (SVG): `i64 period_ns`, `Transformation from`, `Transformation to`, `u8 scale_easing`, `u8 translate_easing`, `u8 rotate_easing`, `u8 alpha_easing` (`0` = Linear, `1` = Quadratic, `2` = EaseInOut, `3` = EaseOutQuint, `4` = Heartbeat), `u8 alternate`, `f32 max_fps` (`0` = unlimited).
+- **`Expr`** (expression closures, Section 9.7): UTF-8 string evaluated by `core/src/shim_editor.rs`. Supports variables `x`, `y`, `z`, `a0..a9`, binary `+ - * / % == != < <= > >= && ||`, unary `- !`, ternary `cond ? a : b`, and 13 functions (`abs`, `min`, `max`, `clamp`, `floor`, `ceil`, `round`, `sqrt`, `pow`, `sin`, `cos`, `ln`, `exp`).
+- **`Format`** (chart/plot format templates, Section 13.2): UTF-8 string with `{}` (first argument), `{0}`/`{1}` (positional argument), `{col}` (column of current `Datum`), format specs `{:,}` (thousands separator) and `{:.N}` (fixed decimal places), and `{{` / `}}` literal braces.
 
-The reply (`gk_reply`, copied before it returns). An empty reply means all zero. When
-`gk_info.features` advertises `GK_FEAT_INLINE_REPLY` (`feat INLINE_REPLY 8`), the callback may
-instead write its reply buffer pointer and byte length directly into the first two pointer-sized
-fields of `gk_cb` (`inline_ptr`, `inline_len`) without calling `gk_reply`; the library parses
-those bytes before returning from the turn and never retains the pointer. `gk_reply`
-accepts only the `gk_cb` of the callback running now (`GK_ERR_NO_CONTEXT` otherwise: one kept
-from an earlier callback points into a stack frame that has returned). A request shorter than
-its op number, or a null one, is `GK_ERR_BAD_OP`; a request or reply whose lengths run past its
-bytes, or a string that is not UTF-8, stops the library (poisoned, the message in
-`gk_last_error`). Tests: `core/tests/go/attack` (`run-attack.sh`).
+---
 
-```
-u32 ret_len, bytes                         the handler's return value in the shape's wire type; 0 = Default
-u32 n, u64 view each                       views to mark dirty
-u32 n, (u32 len, call op bytes) each       buffered writes
-u32 n, (u64 view, u32 generation, u32 len, tape) each     changed tapes (VIEWS, WINDOW_INIT, FRAME, EVENT, ROWS)
-```
+## 4. Turns and the Reply Envelope
 
-When buffered writes are applied (DESIGN.md section 7, "When a write lands"):
+All foreign code executes inside **turns** initiated by the library calling `gk_callback(user, cb, kind, req, len)` on the UI thread.
 
-- `EVENT`: from one deferred callback when the outermost entity update has ended, in order,
-  before the next draw.
-- `INIT`, `WINDOW_INIT`, `WAKE`, `FRAME`: immediately after the callback returns.
-- In the pre-frame hook the order is `FRAME` turn, its writes, then every mounted view
-  whose dependency list names a state that was just written is marked dirty by the runtime
-  itself, then the `VIEWS` turn, then the draw. A per-frame handler's write is in the pixels
-  of the frame it ran in.
-- `VIEWS`: a view procedure may not write. The Go runtime stops at the call site; the library also refuses writes in a `VIEWS` reply.
-- A write that meets a state on lease is put back and applied when the update has ended;
-  a read of a state on lease returns `GK_ERR_BUSY`.
+### 4.1 Common Reply Envelope
 
-## 4. Handlers (closure parameters with the `handler` resolution)
+A callback may return an **empty reply** (`0` bytes, or no `gk_reply` call) when it has no return value, no dirty views, no deferred calls, and no tapes. Otherwise, the reply buffer has four sequential sections:
 
-A *shape* is one closure signature seen from the app: the payload arguments in order (the
-`&mut Window`, `&mut App` or `&mut Context<T>` tail is not payload) and the return type.
-Two closures with the same payload types and return type are the same shape.
-
-Built-in shapes (`core/wire/ops.txt`):
-
-| shape | payload | returns | upstream closures |
-|---|---|---|---|
-| `CLICK 1` | `Click_Event` | nothing | `Fn(&ClickEvent, &mut Window, &mut App)` |
-| `UNIT_BOOL 2` | none | bool | `Fn(&mut Window, &mut App) -> bool` |
-| `UNIT 3` | none | nothing | `Fn(&mut Window, &mut App)`, `Fn(&mut App)` (focus, blur, close, dismiss) |
-| `BOOL 4` | bool | nothing | `Fn(&bool, ..)`, `Fn(bool, ..)` (toggle, change, hover, open) |
-| `USIZE 5` | usize | nothing | `Fn(&usize, ..)` (select by index) |
-| `STR 6` | str | nothing | `Fn(&str, ..)`, `Fn(&SharedString, ..)` (input, change of text) |
-| `KEY 7` | `Key_Event` | nothing | `Fn(&KeyDownEvent, ..)`, `Fn(&KeyUpEvent, ..)` |
-| `CLICK_BOOL 8` | `Click_Event` | bool | `Fn(&ClickEvent, ..) -> bool` (dialog ok, cancel) |
-| `MOUSE 9` | `Mouse_Event` | nothing | `Fn(&MouseDownEvent, ..)`, up, move |
-| `F64 10` | f64 | nothing | `Fn(&f64, ..)`, `Fn(f32, ..)` widened (slider, number) |
-| `INPUT_EVENT 11` | `Input_Event` (the sample's enum with data) | nothing | `EventEmitter<InputEvent>` of `InputState` |
-| `TEST 12` | `Test_Payload` (str, u32) | str | fired only by the runtime's tests |
-
-For any other signature the generator takes the next number from 64 in `opcodes.lock`,
-emits a Go struct for the payload (one field per payload argument, in order; a single
-payload argument is its own type, without a wrapping struct) and registers it.
-
-**Element op.** A handler argument is a u32 handler id in the op's arguments.
-
-**Generated Rust**, one line per closure parameter, any shape:
-
-```rust
-E_BUTTON_ON_CLICK => {
-    let h = dx.handler(&mut r);                     // (view, tape generation, id)
-    let k = dx.pin();                               // that generation's handlers stay while k does
-    el = el.on_click(move |ev, window, cx| { let _ = &k; genapi::fire(h, SHAPE_CLICK, ev, window, cx) });
-}
-// two payload arguments: a tuple of references
-el = el.on_toggle(move |on, ev, window, cx| genapi::fire(h, SHAPE_BOOL_CLICK, &(on, ev), window, cx));
-// a return value: fire is generic over it (Unwire + Default)
-el = el.on_ok(move |ev, window, cx| -> bool { genapi::fire(h, SHAPE_CLICK_BOOL, ev, window, cx) });
-// no window in the closure
-el = el.on_close(move |cx| genapi::fire_app(h, SHAPE_UNIT, &(), cx));
-// called from inside an entity's own update (delegate methods): delivered after it
-genapi::fire_queued(h, SHAPE_USIZE, &row, cx);
-```
-
-`fire` makes one synchronous `EVENT` turn with the real window and app in scope, applies the
-reply and returns the handler's return value. A handler that was registered without a return
-value, or an event for a released view, gives `Default::default()`.
-
-**How long a description's handlers live.** An element's handler is (view, generation of the
-tape that registered it, id), and upstream may keep its closure long after the view has been
-described again: an open dropdown's menu is built, when it opens, from the description that drew
-its button, and its items' closures are kept while it is open; a kit element keeps its listeners
-until it is built again. So the binding keeps every generation's handler table, not only the
-newest, until the library says nothing holds that description any more. Each accepted tape gets a
-`tape::GenPin` (an `Arc`: upstream may want a closure that is `Send`), shared by the tape and by
-every handler closure made from it (`Dx::pin`); when the last one is dropped, `rt::retire` lists
-(view, generation), and the next `VIEWS` turn carries the list. The binding then frees that table; a retired generation that is still the view's newest is
-only marked, and dropped when the view is next described anew. An event for a live view whose
-table is gone cannot happen this way: with the diagnostic library the binding stops the app (gk.Run's error,
-"whose handler table is gone") rather than drop the event in silence. Until 17 Nov 2026 the
-binding kept two tables (the newest and the one before), and a menu item's `on_click` clicked
-after its view had been described twice more was dropped (`core/tests/go/run-overlay.sh
-menu-redraw`, `gates/go-proto.sh menu-redraw`).
-
-**What the app writes.** A handler is any Go function of the builder's shape
-(`OnClick(func(cx *gk.Cx, e gk.ClickEvent))`), a method value or a closure; the compiler checks
-its type. When the handler returns, the view that registered it is marked dirty (`gk.Quiet(cx)`
-inside the handler opts out).
-
-## 5. Kit state behind handles
-
-A handle is u64: kind (8 bits), generation (24), index (32); 0 is nil. Kinds: `VIEW 1`,
-`WINDOW 2`, `STATE 3` (any kit entity; the library also checks the Rust type), `ROWS 4`,
-`SUB 5` (a subscription), `FOCUS 6` (a focus handle). A released, stale or wrong-type
-handle is `GK_ERR_STALE_HANDLE` with a message naming both types; never undefined
-behaviour. `C_RELEASE` (call op 12: u64 handle) releases any handle; the slot's generation
-goes up and the index is reused.
-
-**Generated Rust** for a state type `T`, in call-op arms (`c: &mut genapi::Call`, which
-holds `cx`, the window if the turn has one, `out`, and whether the op is deferred):
-
-```rust
-C_INPUT_STATE_NEW => {                       // constructor chain: one crossing
-    let window = c.window()?;                // GK_ERR_NO_CONTEXT if the turn has none; not a borrow of `c`
-    let entity = c.cx.new(|cx| InputState::new(window, cx) /* then the self -> Self ops */);
-    let h = genapi::state_new(entity, c);    // remembers the window; returns the handle
-    c.out.put_u64(h);
-}
-C_INPUT_STATE_VALUE => {                     // a read (&self): GK_ERR_BUSY if on lease
-    let v = genapi::state_read::<InputState, _>(r.u64(), c, |s, _cx| s.value())?;
-    c.out.put_str(&v);
-}
-C_INPUT_STATE_SET_VALUE => {                 // a write (&mut self, .., window, cx)
-    let h = r.u64();
-    let v = SharedString::from(r.str());
-    genapi::state_update::<InputState>(h, c, move |s, window, cx| s.set_value(v, window, cx))?;
-}
-C_INPUT_STATE_SUBSCRIBE => {                 // EventEmitter<E>: u64 state, u32 slot, u32 generation
-    let (h, slot, generation) = (r.u64(), r.u32(), r.u32());
-    let sub = genapi::state_subscribe::<InputState, InputEvent>(h, slot, generation, SHAPE_INPUT_EVENT, c)?;
-    c.out.put_u64(sub);
-}
-```
-
-`state_update` applies the closure with the state's own window, or, if the state is on
-lease, puts the op back to run when the update has ended. It also tells the runtime the
-state was written (the write rule of section 3). `state_update_cx` is the same for a
-mutator that takes no window (`&mut self, .., cx: &mut Context<Self>`).
-
-A constructor that takes `&Entity<State>` in a decode arm: `genapi::state::<T>(handle)?`
-gives the `Entity<T>`.
-
-**Generated Go** (over `rt_emit.go`): a state type is a struct holding the handle, and each
-method is a Go method (`a.name.Value(cx)`). Methods are built from `stateGet` (a read: flushes
-buffered writes first; inside a view build it records the dependency, so the view is described
-again when the state notifies), `stateTry` (the same, false when the state is busy), `stateSet`
-(a buffered write), `stateMake` (a constructor call) and `keepHandler` (for subscriptions). A
-call that stops reports the app's line.
-
-## 6. App state, background posts, panics, versions
-
-These need nothing from the generator; they are listed so the API is in one place.
-
-- `gk.Model[T]`: `m.Get()` in a view records that view; `m.Set(cx, v)` and
-  `m.Update(cx, f)` mark the views that read it in their latest build;
-  `m.Observe(cx, f)` runs a function on every change. `gk.Notify(cx, view)` marks
-  one view. No crossing: marks travel in the turn's reply.
-- `gk.Post(func(cx *gk.Cx) {..})` from any goroutine: the first post into an empty queue calls `gk_post`, the library makes one `WAKE`
-  turn per turn of the main loop, and views marked in it are described once, in the next
-  pre-frame hook.
-- A Rust panic never unwinds into the app: every export and every closure the library
-  hands to GPUI catches it, the library is poisoned (`GK_ERR_POISONED` from every later
-  export but `QUIT`), and the binding is told: inside a `gk_call` by its status, outside one
-  by the `PANIC` turn (kind 0). A mistake in app code the library finds where no call can
-  return it (a view's tape names a released handle, a buffered write fails after its handler
-  returned) is the `PANIC` turn of kind 1, and the drawing unwinds to the nearest guard
-  (`rt::app_stop`, `rt::AppStop`; the library is not poisoned). Either way the app ends as
-  `QUIT` ends it (`quit_soon`: the wake task quits it; offscreen, `QUIT` also ends the
-  script), and `gk_run` returns. The Go package records the first failure, asks for `QUIT`,
-  runs no app code in the turns that still come, and `gk.Run` returns it (a mistake as a
-  `*gk.Error` with the app's line, a library fault as a `*gk.LibraryError`) or, for a panic in
-  app code, panics again with a `*gk.PanicError` (docs/GO.md section 5). Nothing calls
-  `exit`; with no binding to tell (no session), the library prints the message and exits 2.
-- Versions: `gk_info_get()` is checked by the binding before `gk_run` (struct size, magic,
-  `abi_major` equal, the library's `abi_minor` at least the binding's, `api_hash` equal;
-  the `feat` bits say which backend the library was built on, gpui-fast or upstream gpui,
-  and either is accepted), and `gk_run` checks the `gk_app` the same way from its side.
-  While `abi_major` is 0 the hash must be equal: a library and a package from different
-  generations refuse each other with both versions in the message.
-
-## 7. What generated code may use
-
-**Rust: `crate::genapi` only.**
-
-```rust
-pub use crate::ops::*;                         // the numbers
-pub struct R<'a>;                              // reader: u8 u16 u32 u64 i32 i64 f32 f64 str bytes
-pub trait Put;                                 // writer on Vec<u8>: put_u8 .. put_str
-pub struct GkErr(pub i32, pub String);  pub type GkResult<T>;  pub fn err<T>(code, msg) -> GkResult<T>;
-
-// decoding a tape
-pub struct Dx<'a> { pub window: &'a mut Window, pub cx: &'a mut App, .. }
-impl Dx { fn child(&mut self, node: u32) -> AnyElement;        // decodes a child node (CHILD)
-          fn child_view(&mut self, handle: u64) -> Option<AnyView>;
-          fn args(&self, at: u32) -> R;                        // a node's constructor arguments
-          fn op(&self, at: &mut u32) -> Option<(u16, R)>;      // next op of a node; advances
-          fn handler(&self, r: &mut R) -> HandlerRef;
-          fn node(&self, n: u32) -> (u16, u32, u32);           // type, args, first op of any node
-          fn frag(&self, node: u32) -> Frag; }                 // keeps the tape and a node for a closure
-impl Frag { fn with<T>(&self, window: &mut Window, cx: &mut App, f: impl FnOnce(&mut Dx, u32) -> T) -> T; }   // Clone, 'static
-pub fn style_op(style: &mut StyleRefinement, op: u16, r: &mut R, cx: &App) -> bool;
-pub fn color(r: &mut R, cx: &App) -> Hsla;
-
-// handlers
-pub struct HandlerRef;                         // Copy
-pub trait Wire { fn put(&self, out: &mut Vec<u8>); }
-pub trait Unwire: Sized { fn get(r: &mut R) -> Self; }
-pub fn fire<P: Wire + ?Sized, T: Unwire + Default>(h: HandlerRef, shape: u16, payload: &P, window: &mut Window, cx: &mut App) -> T;
-pub fn fire_app<P: Wire + ?Sized, T: Unwire + Default>(h: HandlerRef, shape: u16, payload: &P, cx: &mut App) -> T;
-pub fn fire_queued<P: Wire + ?Sized>(h: HandlerRef, shape: u16, payload: &P, cx: &mut App);
-pub fn focus(handle: u64) -> GkResult<FocusHandle>;             // a handle of kind FOCUS
-pub fn action(r: &mut R) -> GkResult<Box<dyn Action>>;          // u32 action id (section 11.1)
-
-// call ops and state
-pub struct Call<'a> { pub cx: &'a mut App, pub out: &'a mut Vec<u8>, .. }
-impl<'a> Call<'a> { fn window(&mut self) -> GkResult<&'a mut Window>;   // the turn's window; not a borrow of the Call
-                    fn window_handle(&self) -> Option<AnyWindowHandle>; }
-// public fields: cx, out, deferred, req
-pub fn state_new<T: 'static>(entity: Entity<T>, c: &mut Call) -> u64;
-pub fn state<T: 'static>(handle: u64) -> GkResult<Entity<T>>;
-pub fn state_read<T: 'static, V>(handle: u64, c: &mut Call, f: impl FnOnce(&T, &App) -> V) -> GkResult<V>;
-pub fn state_update<T: 'static>(handle: u64, c: &mut Call, f: impl FnOnce(&mut T, &mut Window, &mut Context<T>) + 'static) -> GkResult<()>;
-pub fn state_update_cx<T: 'static>(handle: u64, c: &mut Call, f: impl FnOnce(&mut T, &mut Context<T>)) -> GkResult<()>;
-pub fn state_subscribe<T: EventEmitter<E> + 'static, E: Wire + 'static>(handle: u64, slot: u32, generation: u32, shape: u16, c: &mut Call) -> GkResult<u64>;
-pub fn state_subscribe_with<T: EventEmitter<E> + 'static, E: 'static>(handle: u64, slot: u32, generation: u32, shape: u16, c: &mut Call, encode: fn(&E, &mut Vec<u8>)) -> GkResult<u64>;
-pub fn style_token(style: &mut StyleRefinement, token: u16);    // one nullary Styled method
-pub struct StyleOf<'a>(pub &'a mut StyleRefinement);            // implements Styled over a borrowed refinement
-```
-
-The generated module plugs in through three functions in `core/src/gen/mod.rs`. It is
-always compiled, declared in `lib.rs` as `#[path = "gen/mod.rs"] mod generated;` because
-`gen` is a reserved word in the 2024 edition. The runtime asks it first for every node type,
-call op and style token, and falls back to the hand-written decoders of `core/src/hand.rs`
-for what it returns `None` or `false`:
-
-```rust
-pub fn node(dx: &mut genapi::Dx, ty: u16, args: u32, first: u32) -> Option<AnyElement>;   // None: not mine
-pub fn call(op: u16, r: &mut genapi::R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>>;
-pub fn style_token(style: &mut StyleRefinement, token: u16) -> bool;
-```
-
-`core/src/hand.rs` (a text node, the uniform list over rows, the test call ops) uses only
-`genapi` and is the pattern to copy for hand-written decoders.
-
-**Go: `go/gk/internal/rt/rt_emit.go` only.** The generated packages call it as `rt.X` (the runtime
-is an internal package, so the names are exported but no app can import them); the generator
-writes the flat names and gen/gosplit qualifies them (docs/GO.md section 1). The header of
-`rt_emit.go` lists the names the runtime leaves to the generated packages.
-
-## 8. Status
-
-Everything in sections 1 to 7 is built. The test is `gates/go-proto.sh` (`make proto`): one test
-app, `examples/go/proto`, run offscreen with the diag library in one mode per check; each mode
-checks an exit code and the lines the app printed.
-
-| protocol | test mode | what it shows |
+| Section | Wire Layout | Allowed Turn Kinds |
 |---|---|---|
-| handlers of every shape | `handlers` | click (`Click_Event`), toggle (bool, a Switch), hover (bool, `quiet`), click with owned data, mouse down (`Mouse_Event`), key down (`Key_Event`, twice, one with shift), bool returns, `(str, u32) -> str` with and without data, default return |
-| registration checks | `shape`, `state-type` | a handler whose event or state type does not fit stops at the `gk.on` line (a stop) |
-| kit state behind handles | `state` | constructor chain, a read in a view as a dependency (described again per keystroke), a subscription (`Input_Event`), read-your-writes, unsubscribe |
-| handle checks | `stale`, `stale-write`, `wrong-type` | a read through a released handle or one of another kind stops at its line; a buffered write to a released handle stops when it is applied, after its handler, with the hint to run with `GK_DEBUG=1` for the line; exit 2 each |
-| leases and queued events | `lease` | inside the state's own update a read is busy and a write lands after; a queued event runs after the update |
-| the write rule | `write-rule`, `frames`, `view-write` | a per-frame write is described in the same frame; a frame handler alone runs every frame; a view procedure that writes stops |
-| app state | `model` | `gk.Model`: only the view that read it is described again; observers run |
-| background posts | `post` | 20,001 posts from another thread: all delivered, 5 `WAKE` turns, 7 descriptions over 11 frames |
-| panics | `panic-go`, `panic-call`, `panic-later`, `thread` | app panic: gk.Run panics again with it and its line (exit 2 unrecovered); library panic: gk.Run returns it (the test exits 1), inside a call and outside one (the `PANIC` turn); a UI call from another thread stops |
-| versions | `version`, `version-lib` | the library refuses five wrong `gk_app`s; the binding refuses a library with another hash |
-| every handler shape, generated (`core/tests/go/gen`, `run-gen.sh`) | `shapes` | each of the 45 shapes the package registers fired once through the library (call op `TEST_FIRE_SHAPE 26`) with a payload `gen/gk_tests.py` writes from the wire model: 36 decoded into the Rust payload types and fired through their own `Wire` impls (typed), 9 fired as bytes (raw: a `ClickEvent`, `KeyDownEvent` or `MouseDownEvent` in the payload, or no payload); the handler, registered with `gk.on` for the registered type, gets back exactly the bytes sent, and its return value arrives |
-| every generated state type | `states` | 25 of 27 state types made through their builder chains, every read, write and call once with fixed arguments, every event subscribed (13), read again after the writes were applied, released; `List_State` and `Table_State` take a row source and are the rows tests' |
+| 1. Return value | `u32 ret_len`, `ret_len` bytes | `EVENT` (shapes with non-unit return values such as `UNIT_BOOL`, `CLICK_BOOL`) |
+| 2. Dirty views | `u32 n_dirty`, `n_dirty * u64 view_handle` | Any turn except `PANIC` |
+| 3. Deferred calls | `u32 n_deferred`, `n_deferred * (u32 op_len, op_len bytes)` | `INIT`, `WINDOW_INIT`, `FRAME`, `EVENT`, `WAKE`, `DONE`. **Forbidden** in `VIEWS` and `ROWS` (causes `app_stop`). |
+| 4. View tapes | `u32 n_tapes`, `n_tapes * (u64 view_handle, u32 gen, u32 tape_len, tape_len bytes)` | `VIEWS`, `ROWS`, and inline at the end of outermost `EVENT` (when `flags & 1 != 0`) or outermost `FRAME` (when `n_deferred == 0`). |
 
-The `ROWS` turn is section 9's, `DONE` is 11.30's, and actions, key bindings and timers are
-11.1 and 11.2, each with its own tests. The `QUIT` turn kind keeps its number and is not
-sent. Focus events of the kit's Input (`Input_Focus`, `Input_Blur`) are encoded but don't
-fire offscreen, where the window is never active, so they are untested.
+#### Deferred Call Scheduling Semantics
 
-## 9. Delegates and row sources
+Deferred calls are packed call-op requests (exact same format as `gk_call`: `u16 op` + arguments) whose results are discarded:
 
-The kit asks the app things through traits the app implements: the list,
-table and searchable-list delegates, the tree's render closure, and the input's completion,
-hover, code-action, definition and document-colour providers. Upstream calls those methods
-while it lays out and draws. The binding never does: **app code never runs in the middle of
-a frame** (user decision 3). Every trait is implemented once in Rust by a *shim* that answers
-from data the app pushed, draws rows the app described earlier, and turns everything else
-into events or requests delivered between frames. Handlers and kit state follow sections 4
-and 5 unchanged. Sections 9.1 to 9.4 are the shared core, built and tested
-(`core/src/source.rs`, `go/gk/internal/rt/rt_source.go`, test mode `rows`); 9.5 to 9.8 are the two delegate
-families built on it.
+- In `INIT`, `WINDOW_INIT`, `FRAME`, `WAKE`, and `DONE`: applied immediately after the callback returns.
+- In `EVENT`: scheduled via `cx.defer` to run right after the event handler unwinds GPUI's entity borrow, **except** as a fast-path optimization when every deferred op is `C_ROWS_PUSH` and the defer queue is empty, in which case they apply immediately.
+- If the front end executes a synchronous `gk_call` (for example, a read) during a turn that has pending buffered writes, the front end **must flush** its buffered writes via `gk_call` first so the read sees prior writes in program order.
 
-### 9.1 Row sources
+#### Inline View Description (Single-Crossing Fast Path)
 
-A *row source* (handle kind `SOURCE 7`) holds the rows of one list, table or tree. A row is
-named by a key, `u64 section << 32 | row` (section 0 when there are none). **Each row is a
-view**: a `GkView` with its own tape, described by the app's row procedure for that key,
-retained by gpui-fast like any view, and described again only when it is marked dirty (by
-`gk.invalidate`, by its own handlers, by kit state or a `gk.Model` it read). Its handlers,
-their data and their events are exactly those of a view (section 4: `EVENT` with the row
-view's handle).
+When an outermost `EVENT` arrives with `flags & 1 != 0` (meaning `wh != 0` and no outer turn is on the stack) or an outermost `FRAME` finishes with `n_deferred == 0`:
 
-- **Pull by range.** While GPUI draws, a shim asks `source::row(src, key, window, cx)`. It
-  gets `Row::View(AnyView)` for a row whose view has a tape, or `Row::Missing`: the shim
-  draws a placeholder of the row's height (the kit's skeleton where the kit has one), the
-  key is recorded as wanted and the window's pre-frame hook is armed. Nothing calls the app.
-- **The ROWS turn** (`kind 6`), in the pre-frame hook after `FRAME` and before `VIEWS`, for
-  every source of that window with wanted keys. The library extends the wanted rows of each
-  section by as many again on each side (clamped to 8 ..= capacity / 4), makes a view for
-  every extended key that has none, evicts the farthest bound rows beyond the source's
-  capacity, and sends
+1. The front end may immediately run view functions for any dirty views that belong to `wh` and did not need to call into `gk_call` on their previous build (and have no un-flushed deferred writes).
+2. The resulting tapes are placed directly into Section 4 (`n_tapes`) of the `EVENT` or `FRAME` reply, and those views are omitted from Section 2 (`n_dirty`).
+3. The library installs those tapes directly into each `GkView` entity and calls `cx.notify()`, eliminating a separate `K_VIEWS` round trip on the same frame.
 
+### 4.2 Complete Catalog of Turn Kinds (`K_*`)
+
+| Code | Constant | Request Wire Layout | Reply Behavior & Notes |
+|---:|---|---|---|
+| `1` | `K_INIT` | *(empty, 0 bytes)* | Fired once when GPUI's app loop starts. Front end runs app startup code (typically creating root views and opening windows). `gk_post` wakeups queued during `INIT` drain afterwards. |
+| `2` | `K_WINDOW_INIT` | `u64 wh, u64 root_view` | Fired once per opened window right after the GPUI window exists and before the first `K_VIEWS` for that window. Front end runs `root_view`'s `init` callback with the window in scope (required to create window-backed kit states like `InputState`, `ListState`, `DockArea`). |
+| `3` | `K_FRAME` | `u64 wh, u64 frame_no, u32 n_pre_dirty, n_pre_dirty * u64 view, u32 n_retired, n_retired * (u64 view, u32 gen)` | Fired once per frame in the pre-frame hook when `C_ON_FRAME` is enabled. Front end drops retired handler tables, runs the app's frame hook, and may inline-describe dirty views if `n_deferred == 0`. |
+| `4` | `K_VIEWS` | `u64 wh, u32 n_views, n_views * u64 view, u32 n_retired, n_retired * (u64 view, u32 gen)` | Fired before painting a frame whenever one or more mounted views are dirty or newly slotted without a tape. Front end drops retired handler tables, runs each requested view (plus any views dirtied during the turn? No: views must not write state), and returns changed tapes in Section 4. Unchanged tapes may be omitted from Section 4 (the library retains the previous tape). |
+| `5` | `K_EVENT` | `u64 wh, u8 flags, u32 n_retired, n_retired * (u64 view, u32 gen), u64 view, u32 gen, u32 handler_id, u16 shape, <payload bytes>` | Fires a view handler (`view != 0`) or a kept handler (`view == 0`, where `handler_id` is the slot and `gen` is the slot generation). `flags` bit 0 (`1`) indicates inline view description is allowed. If the front end no longer holds `(view, gen, handler_id)`, it replies empty (ignored stale event). Return value (if `shape` expects one) goes in Section 1. |
+| `6` | `K_ROWS` | `u64 wh, u32 n_sources, [u64 src, u32 n_bind, n_bind * (u64 key, u64 view), u32 n_evict, n_evict * u64 view] * n_sources, u32 n_pre_dirty, n_pre_dirty * u64 view, u32 n_retired, n_retired * (u64 view, u32 gen)` | Fired in the pre-frame hook when any row source needs rows bound or evicted. Front end drops retired handler tables, removes evicted row views, creates/binds `(key, view)` pairs, describes the newly bound row views and `pre_dirty` views, and returns their tapes in Section 4. Deferred calls are forbidden. |
+| `7` | `K_WAKE` | *(empty, 0 bytes)* | Fired on the UI thread after one or more background `gk_post` calls. Runs with the first open window in scope (if any). Front end drains its posted closures and GC-queued handle releases. |
+| `8` | `K_DONE` | `u64 view (always 0), u32 gen, u32 slot, u16 shape, <payload bytes>` | Delivers an asynchronous platform completion (`SHAPE_PATHS = 22` or `SHAPE_PROMPT = 23`). Front end invokes the kept completion handler once, removes it from its table, and releases the `HK_TASK` handle (buffered `C_RELEASE` in Section 3). |
+| `9` | `K_QUIT` | *(reserved, never sent)* | Reserved constant in `ops.txt`. App shutdown is signaled via `C_ON_APP_QUIT` (which fires a `K_EVENT` of `SHAPE_UNIT`) and initiated via `C_QUIT`. |
+| `10` | `K_PANIC` | `str message` *(or `str message, u8 is_app_stop`)* | Notification that the library caught a Rust panic (`is_app_stop` absent or `0`) or triggered an `app_stop` violation (`is_app_stop == 1`, e.g., drawing a released handle inside a tape). No reply is expected; `gk_call` is forbidden. The library schedules shutdown immediately after `K_PANIC` returns. |
+
+### 4.3 Nested Turns and Pre-Frame Execution Order
+
+Some synchronous `gk_call` operations can cause GPUI to emit an event synchronously before `gk_call` returns (for example, changing focus, submitting a form, or programmatically dispatching an action). This invokes `gk_callback` recursively while an outer turn is still on the stack.
+
+Front ends **must** maintain a stack of active turns:
+
+- Each nested turn receives a distinct turn serial (`Cx` validity token) and its own reply buffer and deferred-op buffer.
+- `flags & 1` (inline description) is `0` on nested `K_EVENT` turns.
+- When `GK_FEAT_INLINE_REPLY` is used, a nested turn must not overwrite the outer turn's pending reply slice (only the innermost active turn returns its reply slice, and the library consumes it before returning to the outer turn's `gk_call`).
+
+#### Pre-Frame Hook State Machine (`core/src/rt.rs`)
+
+Whenever a window has dirty views, enabled `C_ON_FRAME`, pending row-source binds/evictions, or pending temporary/pinned object sweeps, `rt::ensure_hook` installs a GPUI pre-frame hook on that window (`window.on_next_frame`). When GPUI prepares the next frame, the pre-frame hook runs strictly in this order **before** any `Render::render` or paint runs:
+
+1. **Sweep expired objects**: releases every temporary `HK_OBJ` allocated in prior frames (`objects::sweep_temps`) and every `OBJ_PIN` handle dropped by a view's newer build or view release (`values::sweep_pins`).
+2. **`K_FRAME` turn** (only if `C_ON_FRAME` is enabled): sends `wh`, monotonic `frame_no`, `pre_dirty` views, and `retired` handler generations. If the reply has `n_deferred == 0`, inline tapes in Section 4 are installed immediately. Any deferred ops are applied immediately.
+3. **`K_ROWS` turn** (only if any row source attached to `wh` has `wanted` or `ahead` keys or needs eviction): runs `Source::plan()` for each source (see Section 9.1), allocates new `HK_VIEW` entities for newly bound keys, sends `K_ROWS` with `bind`, `evict`, `pre_dirty`, and `retired`, installs returned tapes, releases evicted row views, and notifies every watcher entity (`source::notify_watchers`) if `missed` was set.
+4. **`K_VIEWS` turn** (only if any mounted views on `wh` remain dirty or newly slotted without a tape): sends `K_VIEWS`, installs returned tapes, and updates `deps` subscriptions and `slots` mounts.
+5. **Re-arm hook if needed**: if `K_VIEWS` newly slotted a child view that has never been described, or if a row source still has remaining pure-prefetch rows (`source.has_ahead()`), another turn or next-frame hook is scheduled so no view is left blank.
+6. **GPUI layout and paint**: GPUI calls `GkView::render` and delegate shims. No foreign code runs during this phase.
+
+#### `GkView` Rendering and `FastTree` Caching
+
+When GPUI calls `GkView::render` on a mounted view:
+
+- If `tape` is `None`, it renders `div()` (empty placeholder).
+- If the tape has `handler_count == 0`, `render_count >= 1` (second render of the same unchanged tape), and every node in the tape is eligible for fast rendering (basic layout containers `div`/`h_flex`/`v_flex`, `N_TEXT`, `OP_CHILD`, `OP_CHILD_VIEW`, `OP_TEXT`, `OP_STYLE`, and common styled properties without dynamic state reads), `GkView` compiles a compact `FastTree` and renders from it on subsequent frames.
+- Whenever `C_RELEASE` runs, the global `RELEASE_EPOCH` bumps; `GkView` stores the `RELEASE_EPOCH` at which its `FastTree` was built and invalidates the cache if the epoch changed (ensuring a released child view or resource is never silently reused).
+
+---
+
+## 5. The Tape Format (`GKT1`)
+
+A **tape** is a self-contained, little-endian byte buffer encoding a tree of UI elements (or a single value tree). Front ends emit tapes in a single forward pass with zero heap allocations per node; Rust decodes a tape into real GPUI elements when `GkView::render` runs.
+
+### 5.1 Tape Header and Sections
+
+Minimum header size is 28 bytes (for `n_deps = 0, n_slots = 0, ops_len = 0, node_count = 0`). Every valid tape has `node_count > 0` and `root < node_count`.
+
+| Section | Wire Layout | Description |
+|---|---|---|
+| Magic | `u32` = `0x31544B47` (`"GKT1"` LE: `47 4B 54 31`) | Checked by `Tape::parse`; mismatch returns `GK_ERR_BAD_TAPE`. |
+| `node_count` | `u32` | Number of node descriptors in the trailing node table. |
+| `root` | `u32` | 0-based index into the node table of the root element (or value). |
+| `handler_count` | `u32` | Number of view-scoped handlers registered for this tape generation (`0` if none). When `> 0`, Rust attaches an `Arc<GenPin>` to the tape so the front end is notified via `retired` once all closures drop. |
+| Dependencies (`deps`) | `u16 n_deps`, `n_deps * u64 state_handle` | State handles read during the view build. Rust subscribes `cx.observe` on each entity so mutations automatically mark this view dirty. |
+| Child slots (`slots`) | `u16 n_slots`, `n_slots * u64 view_handle` | Child view handles embedded via `OP_CHILD_VIEW`. Rust mounts them into the window and moves any unmounted-dirty views onto the window's dirty list. |
+| Ops & args stream (`ops`) | `u32 ops_len`, `ops_len` bytes | Contiguous byte arena holding constructor arguments and linked builder-op records. **Offset `0` is the null sentinel** (meaning "no op / empty args"): front ends should reserve offset `0..4` as zeros (`[0, 0, 0, 0]`) so all real offsets are `>= 4`. |
+| Node table | `node_count * 10` bytes | Packed array of 10-byte node records (see below). |
+
+#### Node Table Entry (10 bytes each, indexed `0..node_count`)
+
+| Offset | Size | Type | Field | Description |
+|---:|---:|---|---|---|
+| 0 | 2 | `u16` | `typ` | Node type opcode (`N_*`: `< 64` hand-written, `>= 256` generated constructor). |
+| 2 | 4 | `u32` | `args_off` | Byte offset into `ops` where this node's constructor arguments begin (`0` if constructor takes no arguments). |
+| 6 | 4 | `u32` | `first_op_off` | Byte offset into `ops` of the first builder op attached to this node (`0` if none). |
+
+#### Linked Op Record Inside `ops`
+
+Each builder method called on a node appends a record to `ops` and links it into the node's singly-linked list (appending at the tail preserves call order):
+
+| Offset | Size | Type | Field | Description |
+|---:|---:|---|---|---|
+| 0 | 2 | `u16` | `opcode` | Universal op (`1..=4`), per-type op (`256..=0x3fff`), or trait op (`0x4000..=0xffff`). |
+| 2 | 4 | `u32` | `next_op_off` | Byte offset of the next op on the same node, or `0` for the tail. |
+| 6 | var | bytes | `args` | Packed little-endian operands for `opcode`. |
+
+#### Handler Reference Operand
+
+Whenever an element op or constructor takes a view-scoped event handler, the tape stores a single `u32 handler_id` (0-based index into this view generation's handler table). The library combines `(view_handle, tape_gen, handler_id)` into a `HandlerRef` and clones the tape's `Arc<GenPin>` into the GPUI closure.
+
+### 5.2 Universal Element Ops (`elop`)
+
+Every generated and hand-written element decoder supports these four opcodes:
+
+| Opcode | Constant | Operands | Meaning |
+|---:|---|---|---|
+| `1` | `OP_CHILD` | `u32 child_node` | Attach node `child_node` (from the same tape's node table) as a child element (`ParentElement::child`). |
+| `2` | `OP_CHILD_VIEW` | `u64 view_handle` | Embed another `GkView` as a child (`AnyView`). `view_handle` must also appear in the tape's `slots` header list so it is mounted and described before paint. |
+| `3` | `OP_TEXT` | `str text` | Attach a text child (`ParentElement::child(SharedString)`). |
+| `4` | `OP_STYLE` | `u16 count`, `count * u16 style_token` | Apply `count` nullary style tokens (from `api/opcodes.lock` `style` table) directly to the element's `StyleRefinement`. Batching tokens into one `OP_STYLE` avoids repeating the 6-byte op header per token. |
+
+### 5.3 Value Tapes (`PutVtape`)
+
+Some call ops accept complex builder values outside a view (for example `C_TABLE_COLUMN_VALUES`, `C_TABLE_LOOK` header/row styles, `C_VALUE_ACTION`, and generated calls taking builder structs such as `StyleRefinement` or `Column`). These are encoded as:
+
+```text
+u32 byte_len, <byte_len bytes of a complete GKT1 tape>
+```
+
+Value tapes set `handler_count = 0`, `n_deps = 0`, `n_slots = 0`, and point `root` at the value node.
+
+### 5.4 Tape Runtime Optimizations (`FastTree` and `TableCell`)
+
+Two transparent optimizations live in `core/src/tape.rs`; front ends do not emit special bytes for them, but knowing their invariants helps avoid defeating them:
+
+1. **`FastTree`**: When a view tape has `handler_count == 0` and consists purely of `div` / `h_flex` / `v_flex` / `TEXT` / `OP_CHILD` / `OP_STYLE` / common styled ops without dynamic state reads, `GkView` lazily compiles the tape into a pre-parsed `FastTree` on its **second** render (avoiding compilation cost for one-shot tapes). `FastTree` is invalidated automatically if `RELEASE_EPOCH` changes or a new tape arrives.
+2. **`TableCell` pre-parse**: When a tape's root node is `N_TABLE_CELLS` (`15`), `Tape::parse` immediately pre-parses each column cell into a fast enum (`Label`, `Text`, or generic `Node`) so `DataTable` renders hundreds of visible cells per frame without re-scanning the tape per column.
+
+### 5.5 Worked Byte Examples
+
+#### Example A: View Tape for `v_flex(s.P4).child(text("Hi"))`
+
+Assume `N_V_FLEX = 257` (`0x0101`), `N_TEXT = 8` (`0x0008`), `style_token(p_4) = 120` (`0x0078`).
+
+- Node 0 (`N_TEXT`): `args_off = 4` (`str "Hi"` = `02 00 00 00 48 69`, 6 bytes, ends at offset 10), `first_op_off = 0`.
+- Node 1 (`N_V_FLEX`, root): `args_off = 0`, `first_op_off = 10`.
+  - Op at offset 10: `OP_STYLE (4)`, `next = 20`, `count = 1`, `token = 120` -> `04 00  14 00 00 00  01 00  78 00` (10 bytes, ends at 20).
+  - Op at offset 20: `OP_CHILD (1)`, `next = 0`, `child_node = 0` -> `01 00  00 00 00 00  00 00 00 00` (10 bytes, ends at 30).
+
+Complete tape bytes (64 bytes total):
+
+```text
+Offset  Hex Bytes                                      Meaning
+------  ---------------------------------------------  ----------------------------------------
+0x00    47 4B 54 31                                    magic = "GKT1" (0x31544B47 LE)
+0x04    02 00 00 00                                    node_count = 2
+0x08    01 00 00 00                                    root = 1
+0x0C    00 00 00 00                                    handler_count = 0
+0x10    00 00                                          n_deps = 0
+0x12    00 00                                          n_slots = 0
+0x14    1E 00 00 00                                    ops_len = 30 (0x1E)
+0x18    00 00 00 00                                    ops[0..4]: null offset sentinel
+0x1C    02 00 00 00 48 69                              ops[4..10]: str "Hi" (len=2, 'H','i')
+0x22    04 00 14 00 00 00 01 00 78 00                  ops[10..20]: OP_STYLE(4), next=20, n=1, tok=120
+0x2C    01 00 00 00 00 00 00 00 00 00                  ops[20..30]: OP_CHILD(1), next=0, node=0
+0x36    08 00 04 00 00 00 00 00 00 00                  node[0]: typ=8 (TEXT), args=4, first_op=0
+0x40    01 01 00 00 00 00 0A 00 00 00                  node[1]: typ=257 (V_FLEX), args=0, first_op=10
+```
+
+#### Example B: `K_EVENT` Request and Inline-Describe Reply
+
+Suppose the user clicks button handler `0` of view `0x0100_0001_0000_0001` (kind `1`, gen `1`, slot `1`), tape gen `3`, inside window `0x0200_0001_0000_0001`, at `(100.0, 20.0)` with left button, no modifiers, single click, mouse click.
+
+Request (`kind = 5`, 55 bytes):
+
+```text
+Offset  Hex Bytes                       Meaning
+------  ------------------------------  ----------------------------------------
+0x00    01 00 00 00 01 00 00 02         wh = 0x0200_0001_0000_0001
+0x08    01                              flags = 1 (inline describe allowed)
+0x09    00 00 00 00                     n_retired = 0
+0x0D    01 00 00 00 01 00 00 01         view = 0x0100_0001_0000_0001
+0x15    03 00 00 00                     gen = 3
+0x19    00 00 00 00                     handler_id = 0
+0x1D    01 00                           shape = 1 (SHAPE_CLICK)
+0x1F    00 00 C8 42  00 00 A0 41        position = (100.0f32, 20.0f32)
+0x27    00                              button = 0 (Left)
+0x28    00                              modifiers = 0
+0x29    01 00 00 00                     click_count = 1
+0x2D    00                              kind = 0 (Mouse)
+```
+
+Reply with inline re-description (say new tape gen `4`, 64 bytes):
+
+```text
+00 00 00 00                             ret_len = 0 (SHAPE_CLICK returns unit)
+00 00 00 00                             n_dirty = 0 (already described inline)
+00 00 00 00                             n_deferred = 0
+01 00 00 00                             n_tapes = 1
+01 00 00 00 01 00 00 01                 view = 0x0100_0001_0000_0001
+04 00 00 00                             gen = 4
+40 00 00 00                             tape_len = 64
+<64 bytes of GKT1 tape>
+```
+
+#### Example C: `K_ROWS` Request (Bind 2 Rows, Evict 1 Row)
+
+```text
+01 00 00 00 01 00 00 02                 wh
+01 00 00 00                             n_sources = 1
+01 00 00 00 01 00 00 07                 src = 0x0700_0001_0000_0001 (HK_SOURCE)
+02 00 00 00                             n_bind = 2
+00 00 00 00 00 00 00 00                 key = (section=0, row=0)
+05 00 00 00 01 00 00 01                 view handle for row 0
+01 00 00 00 00 00 00 00                 key = (section=0, row=1)
+06 00 00 00 01 00 00 01                 view handle for row 1
+01 00 00 00                             n_evict = 1
+02 00 00 00 01 00 00 01                 evicted view handle
+00 00 00 00                             n_pre_dirty = 0
+00 00 00 00                             n_retired = 0
+```
+
+The front end binds keys `0` and `1` to views `5` and `6`, drops view `2`, describes views `5` and `6`, and returns both tapes in Section 4 of the reply.
+
+#### Example D: `StateBuilder` Constructor Call (`InputState::new().placeholder("Name")`)
+
+Suppose `InputState::new` has call op `C = 310` (`0x0136`), takes no direct arguments (only `(window, cx)` on the Rust side), and its `state-op` `placeholder` is `3` (`0x0003`) taking `str`:
+
+```text
+Offset  Hex Bytes                       Meaning
+------  ------------------------------  ----------------------------------------
+0x00    36 01                           call op = 310 (InputState::new)
+0x02    01 00                           n_state_ops = 1
+0x04    03 00                           state_op = 3 (placeholder)
+0x06    04 00 00 00 4E 61 6D 65         str "Name" (len=4)
+```
+
+Response (`*res`, 8 bytes):
+
+```text
+03 00 00 00 01 00 00 03                 HK_STATE handle (kind=3, gen=1, slot=3)
+```
+
+#### Example E: Columnar `Datum` Table Inside a Chart Node
+
+Two rows with columns `("Category": TEXT, "Total": NUM)`: `("Food", 12.5)` and `("Bus", 3.0)`:
+
+```text
+Offset  Hex Bytes                                   Meaning
+------  ------------------------------------------  ---------------------------------
+0x00    02 00                                       n_cols = 2
+0x02    01                                          col[0].kind = 1 (TEXT)
+0x03    08 00 00 00 43 61 74 65 67 6F 72 79         col[0].name = "Category"
+0x0F    00                                          col[1].kind = 0 (NUM / f64)
+0x10    05 00 00 00 54 6F 74 61 6C                  col[1].name = "Total"
+0x19    02 00 00 00                                 n_rows = 2
+0x1D    04 00 00 00 46 6F 6F 64                     row[0][0] = "Food"
+0x25    00 00 00 00 00 00 29 40                     row[0][1] = 12.5f64
+0x2D    03 00 00 00 42 75 73                        row[1][0] = "Bus"
+0x34    00 00 00 00 00 00 08 40                     row[1][1] = 3.0f64
+```
+
+---
+
+## 6. Handles and Lifetimes
+
+### 6.1 64-Bit Handle Bit Layout
+
+Every handle handed out by the library is an opaque non-zero `u64` (`0` always means "none / unset"):
+
+```text
+Bit:  63       56 55                     32 31                             0
+     +-----------+-------------------------+--------------------------------+
+     | kind (8b) |    generation (24b)     |         slot index (32b)       |
+     +-----------+-------------------------+--------------------------------+
+```
+
+- **`kind` (`(h >> 56) & 0xFF`)**: identifies the resource category.
+- **`generation` (`(h >> 32) & 0x00FF_FFFF`)**: starts at `1`, increments on every slot release, wraps `0x00FF_FFFF -> 1` (never `0`). Prevents ABA reuse of stale handles.
+- **`index` (`h & 0xFFFF_FFFF`)**: 1-based slot index (`0` reserved).
+
+### 6.2 Handle Kinds (`HK_*`)
+
+| Value | Constant | Underlying Rust Resource | Created By |
+|---:|---|---|---|
+| `1` | `HK_VIEW` | `Entity<GkView>` | `C_VIEW_NEW`, `K_ROWS` binds |
+| `2` | `HK_WINDOW` | `AnyWindowHandle` | `C_OPEN_WINDOW`, `C_WINDOW_OPEN`, `C_WINDOWS` |
+| `3` | `HK_STATE` | Any GPUI `Entity<T>` (kit states, `GkPanel`, `DockArea`, `AppMenuBar`, `Root`) | Generated state constructors, `C_INPUT_STATE_NEW`, `C_PANEL_NEW`, `C_DOCK_AREA_SKINNED`, `C_APP_MENU_BAR_NEW`, entity read-backs (`dock::entity_handle`) |
+| `4` | `HK_ROWS` | Legacy `Rows` uniform-list store | `C_ROWS_NEW` |
+| `5` | `HK_SUB` | `gpui::Subscription` | Generated `*_subscribe`, `C_INPUT_STATE_SUBSCRIBE`, `C_ON_ACTION`, `C_ON_WINDOW_CLOSED`, `C_ON_WINDOW_SHOULD_CLOSE`, `C_ON_APP_QUIT`, `C_DOCK_TOGGLE_SUBSCRIBE` |
+| `6` | `HK_FOCUS` | `gpui::FocusHandle` | `C_FOCUS_HANDLE_NEW`, `FocusHandle` read-back |
+| `7` | `HK_SOURCE` | `RowSource` (also backs `Ask`, editor providers, highlighters) | `C_SOURCE_NEW` |
+| `8` | `HK_OBJ` | Non-entity Rust object (`Rc<RefCell<T>>` or `Global`) | Generated object constructors, read/call/event returns, `C_IMAGE_CACHE_NEW`, `C_RENDER_IMAGE_NEW`, `C_SCROLL_ANCHOR_NEW`, `C_TEXT_SCOPE_NEW`, `C_DOCK_RENDERER_NEW`, `C_CELL_NEW` |
+| `9` | `HK_TASK` | Running timer or pending platform completion | `C_TIMER_NEW`, `C_PROMPT_PATHS`, `C_PROMPT_NEW_PATH`, `C_WINDOW_PROMPT` |
+
+### 6.3 Object Handle Lifetimes (`HK_OBJ`)
+
+Non-entity Rust objects behind `HK_OBJ` have three lifetime tiers:
+
+1. **Kept objects**: returned by constructors (e.g. `ScrollHandle::new`, `C_CELL_NEW`, `C_RENDER_IMAGE_NEW`, `C_DOCK_RENDERER_NEW`). They remain live until explicitly freed with `C_RELEASE`.
+2. **Temporary objects (`TEMPS`)**: returned by reads, calls, or event payloads (including `Clone` objects and lent values). They live until the next frame's pre-frame hook sweeps `TEMPS`, **unless**:
+   - The app promotes the handle to kept with `C_OBJ_RETAIN (112)`, or
+   - A view embeds the temporary handle in its tape and pins it with `C_OBJ_PIN (209)` (`u64 view, u32 build_no, u64 obj`). A pinned handle survives across frames as long as the view's latest build names it; when a subsequent build omits it (or the view is released), it moves to the next frame's sweep queue (`sweep_pins`).
+3. **Global objects**: GPUI globals (`App::global::<T>()`) are interned once per `TypeId` and never swept.
+
+### 6.4 Release, `RELEASE_EPOCH`, and `GenPin` Retirement
+
+- **`C_RELEASE (12)`**: `u64 handle`. Releases the slot, increments its generation, drops the underlying Rust resource, and increments the global `RELEASE_EPOCH` counter (which invalidates any `FastTree` caches that may have referenced it).
+  - Releasing a `HK_VIEW` also moves its `OBJ_PIN` entries to the sweep list and unmounts it.
+  - Releasing a `HK_TASK` cancels the timer or marks a pending platform completion as discarded.
+  - Releasing a `RenderImage` (`HK_OBJ`) calls `Window::drop_image` on every open window so GPU atlas textures are freed.
+  - Calling `C_RELEASE` on an already-released or unknown handle returns `GK_ERR_STALE_HANDLE`.
+- **Drawing a released handle**: If a tape references a handle that was already released (`genapi::shown`, `shown_focus`, `cell_shown`, `panel_view_shown`, `row_source` count), the library calls `rt::app_stop(...)` (sending `K_PANIC` with `is_app_stop = 1` and quitting) rather than silently substituting defaults.
+- **Handler generation retirement (`GenPin`)**: Each tape with `handler_count > 0` creates an `Arc<GenPin { view, gen }>` cloned into every GPUI closure produced from that tape. When the tape is replaced and GPUI drops all closures from the old generation, `GenPin::drop` records `(view, gen)` in a thread-local retired list. That list is sent to the front end in the `retired` header of the next `VIEWS`, `FRAME`, `EVENT`, or `ROWS` turn so the front end can free the old handler closures.
+
+---
+
+## 7. Handler Shapes and Event Payloads
+
+Every event handler is identified by `(view: u64, gen: u32, handler_id: u32)` and a `u16 shape`:
+
+- **View handlers (`view != 0`)**: created during a view build; `gen` is the tape generation; `handler_id` is `0..handler_count`. Automatically retired via `GenPin`.
+- **Kept handlers (`view == 0`)**: registered outside views (subscriptions, actions, timers, window hooks, row source events, dock panels, renderers, completions). Passed on the wire as `(u32 slot, u32 generation)` and kept by the front end until the owning resource is released (or until `K_DONE` fires once).
+
+### 7.1 Built-In Event Shapes (`1..=46`)
+
+| Shape | Constant | Request Payload (Library -> Front End) | Return Payload (Section 1) |
+|---:|---|---|---|
+| `1` | `SHAPE_CLICK` | `ClickEvent`: `f32 x, f32 y, u8 button` (`0` L, `1` R, `2` M), `u8 mods` (`1` ctrl, `2` alt, `4` shift, `8` platform, `16` fn), `u32 click_count, u8 kind` (`0` mouse, `1` keyboard, `2` touch) | *(empty)* |
+| `2` | `SHAPE_UNIT_BOOL` | *(empty)* | `bool` (`u8`) |
+| `3` | `SHAPE_UNIT` | *(empty)* | *(empty)* |
+| `4` | `SHAPE_BOOL` | `bool` (`u8`) | *(empty)* |
+| `5` | `SHAPE_USIZE` | `u64` | *(empty)* |
+| `6` | `SHAPE_STR` | `str` | *(empty)* |
+| `7` | `SHAPE_KEY` | `KeyEvent`: `str key, opt<str> key_char, u8 mods, bool is_held` (`false` on key-up) | *(empty)* |
+| `8` | `SHAPE_CLICK_BOOL` | `ClickEvent` (same as `SHAPE_CLICK`) | `bool` (`u8`) |
+| `9` | `SHAPE_MOUSE` | `MouseEvent`: `f32 x, f32 y, u8 button` (`0` L, `1` R, `2` M, `3` back, `4` fwd, `255` none on move), `u8 mods, u32 click_count` | *(empty)* |
+| `10` | `SHAPE_F64` | `f64` | *(empty)* |
+| `11` | `SHAPE_INPUT_EVENT` | Legacy hand-written input event (`u8 kind`, `0` change, `1` enter, `2` focus, `3` blur) | *(empty)* |
+| `12` | `SHAPE_TEST` | `u64 a, str b` (protocol self-test) | `str` (optional) |
+| `13` | `SHAPE_SOURCE_TEST` | `u64 req_id, str query` (row source request test) | *(empty)* |
+| `14` | `SHAPE_PROVIDER` | `u64 req_id, u16 variant, ...` (Section 10.2) | *(empty)* |
+| `16` | `SHAPE_LIST_EVENT` | `u64 req_id, u16 kind, opt<(u64 sec, u64 row, u64 col)>, bool secondary, str query` (Section 9.3) | *(empty)* |
+| `17` | `SHAPE_TABLE_EVENT` | `u64 req_id, u16 kind, u64 row, u64 col, u64 to, u16 sort` (Section 9.4) | *(empty)* |
+| `20` | `SHAPE_ACTION` | `u32 action_id` (bit 31 set for built-in kit actions) | *(empty)* |
+| `21` | `SHAPE_WINDOW` | `u64 window_handle` | *(empty)* |
+| `22` | `SHAPE_PATHS` | `u8 status` (`0` ok, `1` cancelled, `2` error), `list<str> paths, str error` (`K_DONE`) | *(empty)* |
+| `23` | `SHAPE_PROMPT` | `u8 status` (`0` ok, `1` cancelled, `2` error), `u32 button_index` (`K_DONE`) | *(empty)* |
+| `36` | `SHAPE_PANEL_EVENT` | `u8 kind` (`0` active, `1` zoomed, `2` added, `3` removed), `bool flag` | *(empty)* |
+| `37` | `SHAPE_PANEL_BUILD` | `u64 panel, str name, PanelState, u64 dock_area` | *(empty)* |
+| `38` | `SHAPE_DOCK_RENDER` | `u64 renderer, u8 hook, u64 key, u64 node, u16 placement, u16 axis, u8 flags, f32 size, u64 dock_ctx, u64 group_ctx, u64 panel, str panel_name` | *(empty)* |
+| `39` | `SHAPE_DOCK_TOGGLE` | `u16 placement, u8 open` | *(empty)* |
+| `44` | `SHAPE_SEARCH_EVENT` | `u64 req_id, str query` | *(empty)* |
+| `45` | `SHAPE_ASK_EVENT` | `u64 req_id, u64 ask_source, <key bytes>` | *(empty)* |
+| `46` | `SHAPE_LEAF_GEOMETRY` | `u32 n, n * (u64 leaf_key, u64 LeafGeometry_handle)` | *(empty)* |
+
+### 7.2 Generated Event Shapes (`64..`)
+
+Every generated closure parameter whose signature is not covered by a built-in shape gets an entry in `api/opcodes.lock` under `shape` (starting at `64`). Its payload is the concatenation of the closure's wire-encoded arguments (`Wire::put`), and its return value (if non-unit) is decoded via `Unwire::get` from Section 1 of the reply.
+
+---
+
+## 8. Core Call Ops and Generated State Calls
+
+Every call op request begins with `u16 op` followed by op-specific arguments. Immediate calls go through `gk_call` and write their result into `*res`. Buffered calls return no value and may be batched in Section 3 of a turn reply (or sent immediately via `gk_call` when flushing or in debug mode).
+
+### 8.1 Core Runtime Call Ops (`1..=26`)
+
+| Op | Constant | Mode | Request (after `u16 op`) | Response | Description |
+|---:|---|---|---|---|---|
+| `1` | `C_VIEW_NEW` | Immediate | *(empty)* | `u64 view` (`HK_VIEW`) | Allocates a new `GkView` entity. |
+| `2` | `C_OPEN_WINDOW` | Immediate | `f32 w, f32 h, u64 root_view, str title` | `u64 wh` (`HK_WINDOW`) | Opens a standard window (`WINDOW_OPEN` is the full-featured form). |
+| `3` | `C_INPUT_STATE_NEW` | Immediate | `str placeholder` | `u64 state` (`HK_STATE`) | Legacy hand-written input state bridge (prefer generated `InputState`). |
+| `4` | `C_INPUT_STATE_VALUE` | Immediate | `u64 state` | `str value` | Legacy input read. |
+| `5` | `C_INPUT_STATE_SET_VALUE` | Buffered | `u64 state, str value` | *(empty)* | Legacy input write. |
+| `6` | `C_ON_FRAME` | Buffered | `u8 enable` (`0`/`1`) | *(empty)* | Enables or disables `K_FRAME` turns in the pre-frame hook. |
+| `7` | `C_QUIT` | Immediate | *(empty)* | *(empty)* | Requests clean GPUI shutdown (`cx.quit()`). Allowed even when poisoned. |
+| `8` | `C_ROWS_NEW` | Immediate | *(empty)* | `u64 rows` (`HK_ROWS`) | Legacy string-row store for `N_UNIFORM_LIST`. |
+| `9` | `C_ROWS_PUSH` | Buffered | `u64 rows, u32 n, n * str` | *(empty)* | Appends strings to a legacy `HK_ROWS` store. |
+| `12` | `C_RELEASE` | Buffered or Immediate | `u64 handle` | *(empty)* | Releases any handle (`HK_*`), bumping slot generation and `RELEASE_EPOCH`. |
+| `13` | `C_INPUT_STATE_SUBSCRIBE` | Immediate | `u64 state, u32 slot, u32 gen` | `u64 sub` (`HK_SUB`) | Legacy input subscription (`SHAPE_INPUT_EVENT`). |
+| `16` | `C_FOCUS_HANDLE_NEW` | Immediate | *(empty)* | `u64 focus` (`HK_FOCUS`) | Creates a GPUI `FocusHandle`. |
+| `17` | `C_FOCUS` | Buffered | `u64 focus` | *(empty)* | Focuses `focus` in the turn's window. |
+| `19` | `C_INPUT_STATE_FOCUS` | Buffered | `u64 state` | *(empty)* | Legacy input focus. |
+| `20` | `C_SOURCE_NEW` | Immediate | `u32 slot, u32 gen` (`0, 0` if no events) | `u64 src` (`HK_SOURCE`) | Creates a row source (Section 9.1). |
+| `21` | `C_SOURCE_SET_COUNT` | Buffered | `u64 src, u32 n_sections, n_sections * u32 count, u32 overscan` | *(empty)* | Sets section counts and overscan; marks existing bound rows dirty if needed. |
+| `22` | `C_SOURCE_SCROLL_TO` | Buffered | `u64 src, u32 row` | *(empty)* | Scrolls a `N_SOURCE_LIST` to `row`. |
+| `23` | `C_SOURCE_ANSWER` | Immediate | `u64 req_id, u32 len, len bytes` | *(empty)* | Delivers an async answer for a pending source/provider/ask request. |
+| `10, 11, 14, 15, 18, 24, 25, 26` | `C_TEST_*` | Immediate | Test-specific | Test-specific | Conformance and protocol self-test ops (`TEST_FIRE`, `TEST_FIRE_IN_UPDATE`, `TEST_PANIC`, `TEST_FIRE_VALUE`, `TEST_FIRE_QUEUED`, `TEST_SOURCE_REQUEST`, `TEST_SOURCE_TAKE`, `TEST_FIRE_SHAPE`). |
+
+### 8.2 Generated Call Ops (`>= 256`) and Generated Codec Conventions
+
+Generated call ops in `core/src/gen/calls.rs` and generated element decoders in `core/src/gen/nodes.rs` / `codecs.rs` follow deterministic wire rules emitted by `gen/gk_rust.py`. A front end can decode or encode any generated item solely from `api/rustdoc/`, `api/overrides.toml`, and `api/opcodes.lock` using these rules:
+
+#### Call Op Patterns
+
+1. **State / Object Constructors (`StateBuilder`)**:
+   - Request: `<direct constructor args>, u16 n_state_ops, [u16 state_op, <op args>] * n_state_ops`
+   - Response: `u64 handle` (`HK_STATE` for GPUI entities, kept `HK_OBJ` for plain Rust structs).
+   - `state_op` numbers are scoped per state type in `api/opcodes.lock` under `state-op`.
+   - Constructors that return `Result<Self, E>` upstream wrap their call in `overlay::Fallible`: on `Err(e)`, the library invokes `rt::app_stop` rather than returning a broken handle.
+2. **State / Object Reads** (allowed inside views):
+   - Request: `u64 handle, <method args>`
+   - Response: `Wire::put(result)`.
+   - Front ends **must** record `handle` in the active view's `deps` list whenever a `HK_STATE` read executes during a view build so GPUI `cx.observe` subscriptions re-trigger `K_VIEWS` on entity mutations.
+   - Reads that return a GPUI `Entity<U>` emit `dock::entity_handle(&entity)` (`HK_STATE`), deduplicated in `HANDED` so repeated reads of the same live entity return the same handle.
+   - Reads that return a `Clone` library object (`!records`) emit `genapi::obj_temp(v.clone())` (temporary `HK_OBJ` swept in the next pre-frame hook unless retained or pinned).
+   - Reads that return `FocusHandle` allocate a new kept `HK_FOCUS` handle on each read.
+3. **State / Object Writes**:
+   - Request: `u64 handle, <method args>`
+   - Response: empty (buffered in Section 3 of reply) or `Wire::put(result)` (immediate when the method returns a non-unit value).
+   - Forbidden inside view builds (`K_VIEWS`, `K_ROWS`, inline describe).
+   - Generated `state_update` / `state_update_cx` acquire the entity, run the closure, and call `cx.notify()`.
+4. **State Subscriptions (`On*Event`)**:
+   - Request: `u64 handle, u32 slot, u32 gen` (kept handler)
+   - Response: `u64 sub` (`HK_SUB`).
+   - Events fire as `K_EVENT` (`view = 0`, `gen`, `handler_id = slot`, generated `shape`).
+5. **Ambient App / Window / Global Calls (`gen/gk_app.py`)**:
+   - Static functions on `App`, `Window`, `Theme`, `Root::read(window, cx)` (`values::window_root`), or GPUI `Global` types. Take `<args>` directly and return `Wire::put(result)` (or empty when buffered).
+
+#### Generated Data Type Wire Rules (`core/src/gen/codecs.rs`)
+
+| Rust Category | Wire Encoding | Notes |
+|---|---|---|
+| Plain C-like enum (`enums`) | `u16 variant_num` | Discriminant from `api/opcodes.lock` `variant` table (0-based). Unknown discriminant returns `GK_ERR_BAD_ENUM`. |
+| Data-carrying enum (`denums`) | `u16 variant_num`, followed by variant fields in declaration order | Unit variants have 0 trailing bytes; tuple/struct variants pack fields back to back. |
+| Record / plain struct (`records`) | Fields packed sequentially in declaration order | No struct header or length prefix. |
+| `impl Into<T>` union (`into_*`) | `u8 arm_index`, followed by the chosen arm's wire encoding | Arm order is deterministic (sorted by generator rule). |
+| Builder value passed to a call op | `ValueTape` (`u32 len` + `GKT1` tape) | Decoded via `genapi::with_tape`. |
+| Builder value passed to an element op | `u32 value_node` (index into the same tape's node table) | Decoded recursively via `build_<type>(dx, node)`. |
+| Action listener (`on_action<A>`) | `u32 action_id, u32 handler_id` | Filters `GkAction` by `action_id`; unmatched actions bubble. |
+| Boxed action listener (`Fn(&dyn Action, ...)`) | `u32 handler_id` (`SHAPE_ACTION = 20`) | Receives `u32 action_id` on fire. |
+| Tooltip view closure (`Fn(&mut Window, &mut App) -> AnyView`) | `u64 view_handle` | Mounted and returned as `AnyView`. |
+| Drag-and-drop (`on_drag`, `can_drop`, `drag_over`, `on_drop`) | `on_drag`: `Drag(u64 id, str text), u64 preview_view (0 = empty)`. `can_drop`: `DropAccept` (`list<u64> ids, u8 accept_external_files`). `drag_over`: `u32 StyleRefinement_node`. `on_drop`: `u32 handler_id` (payload: `Drag`). | Preview view `0` uses a shared lazy `EMPTY_DRAG` `GkView`. |
+| `Result<(), E>` read-back (`overlay::outcome`) | `opt<str>` (`u8 0` = Ok, `u8 1 + str debug_err` = Err) | Used for unit-returning fallible calls. |
+| `Result<T, E>` read-back (`Fallible<T>`) | `u8 ok, u8 has_val, [T], str err` | Used for value-returning fallible calls. |
+
+### 8.3 Protocol Self-Test Call Ops (`core/src/calls.rs`, `core/src/hand.rs`)
+
+These call ops are exposed in both `diag` and `ship` builds so front ends can run the conformance and protocol test suites (`examples/go/proto/`, `core/tests/go/`):
+
+| Op | Constant | Request | Response | Purpose |
+|---:|---|---|---|---|
+| `10` | `C_TEST_FIRE` | `u64 view, u32 gen, u32 handler` | `i32` (`0`/`1`) | Fires handler synchronously with `SHAPE_UNIT_BOOL` and returns its bool result. |
+| `11` | `C_TEST_FIRE_IN_UPDATE` | `u64 input_state, u64 view, u32 gen, u32 handler` | `i32` (`0`/`1`) | Fires `SHAPE_UNIT_BOOL` from inside `InputState::update` (verifying nested turn / borrow safety). |
+| `14` | `C_TEST_PANIC` | *(empty)* | *(returns `GK_ERR_POISONED`)* | Triggers a deliberate Rust panic inside `gk_call` to verify session poisoning. |
+| `15` | `C_TEST_FIRE_VALUE` | `u64 view, u32 gen, u32 handler, str text, u32 n` | `str` | Fires `SHAPE_TEST` (`(str, u32) -> str`) and returns the handler's string reply. |
+| `18` | `C_TEST_FIRE_QUEUED` | `u64 input_state, u64 view, u32 gen, u32 handler, u64 row` | *(empty)* | Queues `SHAPE_USIZE` from inside `InputState::update` (fires after update unwinds). |
+| `24` | `C_TEST_SOURCE_REQUEST` | `u64 src, str query` | *(empty)* | Starts a synthetic `SHAPE_SOURCE_TEST` request on `src` and stores its `oneshot::Receiver`. |
+| `25` | `C_TEST_SOURCE_TAKE` | `u64 src` | `u8 ready, [bytes answer]` | Polls the synthetic `oneshot::Receiver` stored by `C_TEST_SOURCE_REQUEST`. |
+| `26` | `C_TEST_FIRE_SHAPE` | `u64 view, u32 gen, u32 handler, u16 shape, bytes payload` | `u8 typed, bytes return_val` | Decodes `payload` through generated Rust types (if typed codec exists, `typed = 1`) and fires `(view, gen, handler)` with `shape`. |
+
+---
+
+## 9. Row Sources, Lists, Tables, Trees, Selects, and Closures
+
+GPUI calls row-rendering closures (`render_item`, `render_td`, `UniformList` range builder) synchronously during layout/paint, when calling back into foreign code is forbidden. **Row sources** solve this by binding visible rows into real `GkView` entities **before** the frame paints (`K_ROWS` turn).
+
+### 9.1 Row Source Lifecycle (`HK_SOURCE`, `core/src/source.rs`)
+
+- **Row key encoding**: `key = ((section as u64) << 32) | (row as u64)`. For single-section lists, tables, and trees, `section = 0`, so `key == row`.
+- **Maximum rows per section**: `MAX_ROWS = 0xffff_fffe`. The two highest 32-bit row numbers in any section are reserved for `GkListDelegate` section headers and footers:
+  - `HEADER_ROW = 0xffff_fffe`
+  - `FOOTER_ROW = 0xffff_ffff`
+  - Header and footer keys are bound individually when requested and never expanded into an overscan range. Passing a count `> MAX_ROWS` returns `GK_ERR_BAD_OP`.
+- **Overscan, Prefetch, and Eviction Algorithm (`Source::plan()`)**:
+  1. Each source maintains `counts: Vec<usize>`, `rows: IdMap<(u64 view, Option<Rc<Tape>>)>`, `wanted: BTreeSet<u64>` (keys that rendered as placeholders during paint), `ahead: BTreeSet<u64>` (keys requested proactively via `table_bind_ahead`), `ahead_anchor: u64`, and `capacity: usize` (maximum simultaneously retained row views).
+  2. When `wanted` is empty and `ahead.len() > 28` (`PREFETCH_PER_FRAME + 4`, where `PREFETCH_PER_FRAME = 24`), `plan()` sorts `ahead` by distance `k.abs_diff(ahead_anchor)` and takes only the nearest 24 keys so pure prefetch spreads smoothly across frames without spiking frame time. Otherwise all of `ahead` is taken at once.
+  3. For each section present in `wanted`, let `[lo, hi]` be the min/max wanted row and `n` the number of wanted rows in that section. `plan()` computes `over = clamp(n, 8, max(capacity / 4, 8))` and expands the target set to `[lo.saturating_sub(over), min(hi + over + 1, count))`.
+  4. `to_bind` is every target key not already in `rows`.
+  5. If `rows.len() + to_bind.len() > capacity`, let `mid` be the median key of the target set. Existing keys not in the target set are sorted by descending `k.abs_diff(mid)` and the farthest `excess` keys are removed from `rows` and emitted in `to_evict`.
+- **Watcher notification & `missed` flag**:
+  - When a shim draws a row and hits a miss (`Row::Missing`), it sets `source.missed = true`, bumps `gk_meter` (`rows_missing`, and `placeholder_frames` once per frame), and arms the pre-frame hook.
+  - When `K_ROWS` completes, the library calls `cx.notify(entity_id)` on every registered watcher (`source::watch`) **only if `missed` was true** (`source::take_missed`). Pure prefetch binds (`ahead`) that never drew a placeholder do not force redundant redraws.
+- **Decoded vs. View-Mounted Sources (`source.decoded`)**:
+  - Core `N_SOURCE_LIST` mounts each row's `GkView` directly as an `AnyView` child.
+  - Delegate shims (`GkListDelegate`, `GkTableDelegate`, `tree_item`, `GkSearchDelegate`, `items::row`) set `source.decoded = true` and decode each row's `Rc<Tape>` inline inside the delegate closure (`source::row_tape`). Because those row entities are never rendered directly by GPUI, `rt::accept` stores the accepted tape straight into `Source::rows` without notifying the row entity.
+- **Global `ROWS_EPOCH`**: Bumped whenever any source binds, evicts, or changes row count, allowing `GkTableDelegate` to skip redundant `rt::with` lookups while the bound set is unchanged.
+
+### 9.2 Core List Nodes (`N_UNIFORM_LIST`, `N_SOURCE_LIST`, `N_VIRTUAL_LIST`, `N_TABLE_CELLS`, `N_ROW_MENU`)
+
+| Node | Op | Args Layout | Description |
+|---|---:|---|---|
+| `N_UNIFORM_LIST` | `7` | `str id, u64 rows_handle` | Legacy uniform list over `HK_ROWS` string list; style ops follow. |
+| `N_TEXT` | `8` | `str text` | Standalone text leaf node. |
+| `N_SOURCE_LIST` | `9` | `str id, u64 source_handle, f32 row_height_px` | Core uniform list drawing each row's `GkView` (or empty `div().h(px(row_height))` on miss) with scroll tracked by `source.scroll`; style ops follow. |
+| `N_VIRTUAL_LIST` | `16` | `str id, u64 source, u8 axis` (`0` vertical, `1` horizontal), `u32 n, n * (f32 width, f32 height)` | GPUI-kit `v_virtual_list` / `h_virtual_list` with per-item sizes; style ops follow. |
+| `N_TABLE_CELLS` | `15` | `u32 n_cols, n_cols * u32 child_node` | Root node of a table row view holding every column's cell element in column order. Pre-parsed by `Tape::parse` into `TableCell`. |
+| `N_ROW_MENU` | `38` | `u32 child_node, u32 menu_node` | Wraps a table, list, or tree row element (`child_node`) with a described `PopupMenu` (`menu_node`). During row draw, `menu_child` unwraps `child_node`; when `context_menu` opens, `row_menu` replays `menu_node`'s ops onto the upstream `PopupMenu`. |
+
+### 9.3 Lists (`GkListDelegate`)
+
+- Constructed via generated `ListState` constructor taking a `HK_SOURCE` (`[instantiate]` in `api/overrides.toml`). Reading back `ListState::delegate()` or `delegate_mut()` writes `u64 src` (`Wire for GkListDelegate`).
+- **Extra delegate settings (`C_ROWS_DATA = 50`, buffered)**:
+  - `u64 state` (list or table state)
+  - `u8 flags`: bit 0 = `loading`, bit 1 = `has_more`, bit 2 = `visible_events`, bit 3 = `section_headers`, bit 4 = `section_footers`
+  - `u64 load_more_threshold` (default `20`)
+  - `u64 empty_view` (`0` = upstream default inbox icon; nonzero views are mounted into the source's window and marked dirty if undescribed)
+  - `u64 loading_view` (`0` = upstream default 3-row skeleton)
+  - `u64 initial_view` (`0` = none)
+  - `f32 placeholder_height`
+- **Events (`SHAPE_LIST_EVENT = 16`)**:
+  - Payload: `u64 req_id, u16 kind, opt<(u64 section, u64 row, u64 col)>, bool secondary, str query`
+  - Kinds: `0` = Select, `1` = RightClick, `2` = Confirm, `3` = Cancel, `4` = LoadMore, `5` = Search.
+  - For `kind == 5` (Search), `req_id != 0`: `perform_search` returns a GPUI `Task<()>` that awaits `C_SOURCE_ANSWER(req_id, empty)` after the app updates counts.
+
+### 9.4 Data Tables (`GkTableDelegate`)
+
+A table's row source produces `N_TABLE_CELLS` tapes (one row view contains all columns' cells). Columns have stable app-assigned IDs (`0..n`) tracked in `order: Vec<usize>` (mapping visual position -> column ID) so reordering columns never scrambles cell lookup or `TABLE_TEXTS`. Reading back `TableState::delegate()` writes `u64 src`.
+
+#### `ColumnSpec` Wire Layout (`C_TABLE_SOURCE_COLUMNS = 55`, `C_TABLE_SET_COLUMNS = 51`)
+
+Both ops take `u64 handle` (source handle for `55`, table state handle for `51`), `u32 n_cols`, and `n_cols * ColumnSpec`:
+
+| Field | Wire Type | Values / Notes |
+|---|---|---|
+| `key` | `str` | Column key (`SharedString`) |
+| `name` | `str` | Header display name (`SharedString`) |
+| `align` | `u16` | `0` = Left, `1` = Center, `2` = Right |
+| `sort` | `opt<u16>` | `0` = Default, `1` = Ascending, `2` = Descending |
+| `paddings` | `opt<(f32, f32, f32, f32)>` | `(top, right, bottom, left)` in px |
+| `width` | `f32` | Initial width in px |
+| `fixed` | `opt<u16>` | `0` = Left, `1` = Right |
+| `resizable` | `bool` (`u8`) | Whether column width can be dragged |
+| `movable` | `bool` (`u8`) | Whether column can be reordered |
+| `selectable` | `bool` (`u8`) | Whether cells/column can be selected |
+| `min_width` | `f32` | Minimum width in px |
+| `max_width` | `f32` | Maximum width in px |
+
+- **Full `Column` value tapes (`C_TABLE_COLUMN_VALUES = 114`)**: `u64 source, u64 table_state` (`0` = immediate before creation; nonzero = buffered update), `u32 n, n * ValueTape(Column)`. Allows passing any generated `Column` builder option not in `ColumnSpec`.
+- **Cell text & accessibility labels (`C_TABLE_TEXTS = 177`, buffered)**:
+  - `u64 state, u8 replace, u64 first_row, u32 rows, u32 cols, (rows * cols) * str` (row-major by column ID; empty string removes entry). Feeds `cell_text` (copying) and `cell_label`.
+- **Row screen-reader labels (`C_TABLE_ROW_LABELS = 178`, buffered)**:
+  - `u64 state, u32 n, n * (u64 row, str label)` (empty restores default).
+- **Table visual overrides (`C_TABLE_LOOK = 179`, buffered)**:
+  - `u64 state`
+  - `u32 n_fit, n_fit * (u32 col_id, f32 fit_width)` (`fit_column` on resize-handle double click)
+  - `u8 has_groups, u32 n_levels, n_levels * (u32 n, n * (str label, u64 span))`
+  - `u32 n_group_views, n_group_views * (str label, u64 view_handle)` (`render_group_th`)
+  - `u64 last_col_view` (`0` = upstream 12 px filler)
+  - `ValueTape(StyleRefinement) header_style` (`u32 len = 0` for none)
+  - `ValueTape(StyleRefinement) row_style` (`u32 len = 0` for none)
+- **Events (`SHAPE_TABLE_EVENT = 17`)**:
+  - Payload: `u64 req_id, u16 kind, u64 row, u64 col, u64 to, u16 sort` (`0` Default, `1` Ascending, `2` Descending).
+  - Kinds: `0` = Sort, `1` = MoveColumn (`col` -> `to`), `2` = VisibleRows (`row..to`), `3` = VisibleColumns (`col..to`), `4` = LoadMore.
+- **Row-tape caching**: `GkTableDelegate` caches the active row's `Rc<Tape>` in `CurRow` (`Empty | Missing(row) | Found(row, tape, view)`) cleared in `render_tr`, so columns `1..N` avoid repeated session lookups.
+
+### 9.5 Trees
+
+- **`C_TREE_SET_ITEMS (52)` (buffered)**: `u64 tree_state, u32 n, n * (str id, str label, u32 depth, u8 flags)` in depth-first preorder.
+- **`C_TREE_ENTRY (53)` (immediate, allowed in views)**: `u64 tree_state, u64 index` -> `u8 present` (if `1`: `str id, str label, u64 depth, u8 flags` where bit 0 = folder, bit 1 = expanded, bit 2 = disabled). Reading `TREE_ENTRY` inside a row view records `tree_state` as a dependency so expanding/collapsing redraws affected rows.
+- **`Tree::context_menu`**: Backed by `shim_rows::tree_menu(src)` reading `N_ROW_MENU` from the row's tape.
+
+### 9.6 Searchable Lists, Selects, and Comboboxes (`core/src/shim_select.rs`)
+
+`SelectState<GkSearchDelegate>`, `ComboboxState<GkSearchDelegate>`, `Select`, and `Combobox` are generated over `GkSearchDelegate`:
+
+- **`GkItem` wire layout** (used in `C_SEARCH_ITEMS` and as a bidirectional generated value `libval`):
+  - `str value` (unique identifier)
+  - `str title` (shown in menu and trigger)
+  - `opt<str> display` (if present, replaces `title` in the trigger)
+  - `str keywords` (additional searchable text)
+  - `u8 disabled` (`0`/`1`; shown but not selectable)
+- **`C_SEARCH_ITEMS (176)`** (buffered, or immediate before state creation):
+  - `u64 source, u8 flags` (bit 0 = row views draw items instead of default title, bit 1 = searches fire async `SHAPE_SEARCH_EVENT` requests), `u32 n_groups`, each group: `opt<str> title, u32 n_items, n_items * GkItem`.
+  - Filtering runs locally in Rust (matching `title` and `keywords` like upstream `SearchableVec`). When `flags & 1 != 0`, each item's row key is `(section << 32) | original_item_index`, so a row keeps its view handle across filter changes.
+- **`C_SEARCH_RULES (164)` (buffered)**:
+  - `u64 source, u32 min_sel, u32 max_sel, list<str> locked, list<str> blocked`. Implements `SearchableListDelegate::on_will_change` synchronously inside Rust without crossing into foreign code.
+- **`SHAPE_SEARCH_EVENT (44)`**: `u64 req_id, str query`. Front end calls `C_SEARCH_ITEMS` with filtered results and then `C_SOURCE_ANSWER(req_id, empty)`.
+
+### 9.7 Data Closures (`Ask`), Context Closures (`CTX_GET`), Lent Objects, and Item Procedures
+
+1. **Asks (`C_ASK_NEW = 180`, `SHAPE_ASK_EVENT = 45`, `core/src/shim_text.rs`)**:
+   - Turns a `HK_SOURCE` into a thread-safe cached key-value channel (`ASKS: Mutex<HashMap<u64, Arc<Mutex<Cache>>>>`) fed by an unbounded `PUMP` channel on the main thread.
+   - When upstream invokes a synchronous data closure `Fn(K) -> V` during draw, `Ask::get` looks up the wire-encoded `key: Vec<u8>` in `Cache::answers`.
+   - On cache hit: clones and returns the decoded value immediately (zero crossings).
+   - On cache miss: records `key` in `Cache::asked`, stores the type-specific decoder closure, pushes `(src, key)` onto `PUMP`, and returns `fallback()` for the current frame.
+   - The main-thread pump task calls `source::request(src, SHAPE_ASK_EVENT, &(src, key_bytes))` between frames, emitting `SHAPE_ASK_EVENT`: `u64 req_id, u64 ask_source, <raw key bytes>`.
+   - Front end computes the answer and calls `C_SOURCE_ANSWER(req_id, <encoded value bytes>)`.
+   - The pump task decodes the answer inside `with_dx` (using a 34-byte minimal empty `GKT1` tape and the first open window so theme colors resolve), caches it under `key`, and refreshes all windows so upstream asks again and hits the cache.
+   - `C_ASK_TEST (181)` -> `u64 gets, u64 keys_asked, u64 answers_cached`.
+2. **Context closures (`C_CTX_GET = 182`, immediate, allowed in views, `core/src/source.rs`)**:
+   - Used when upstream invokes a render closure carrying extra context values (for example, a calendar day's metadata or a time-field segment).
+   - `source::ctx_key(src, explicit_key, fingerprint_bytes, writer_fn, window, cx)` assigns each call a row key (explicit `by` if provided, else monotonic `ctx_next` reset each frame) and compares `fingerprint_bytes` against the previous frame's stored fingerprint in `Source::ctxs`.
+   - If the fingerprint changed, the library replaces the stored writer and marks that row view dirty before the next frame.
+   - Inside the row view build, the front end calls `C_CTX_GET(u64 src, u32 section, u32 row)` -> the library invokes `writer_fn` and returns the encoded context values in their wire types.
+3. **Lent objects (`C_LEND_TEST = 183`, `core/src/shim_editor.rs`)**:
+   - When a kit state method takes `impl FnOnce(&mut Inner)`, Rust moves or clones `Inner`, hands it to the callback as a temporary `HK_OBJ` handle, and writes it back into the entity's slot when the callback returns (or applies `LentEdit` mutations). `C_LEND_TEST` -> `u64 lent, u64 returned`.
+4. **Item procedures (`core/src/items.rs`, `N_KIT_VIEW = 41`)**:
+   - Combines `source::ctx_key` with a thread-local `HANDED: RefCell<Vec<Option<Box<dyn Any>>>>` stack for upstream closures that hand the app a pre-built element (`CalendarItem`, `TimeFieldSegment`, `NavPage`, dialog close `Button`) or an `AnyView` (tooltip content) to decorate and return.
+   - On the first frame before the row has a tape, `items::row` invokes `fallback(handed)` (returning upstream's element untouched).
+   - Once the row has a tape, `items::row` installs `handed` into `HANDED` and decodes the row tape:
+     - A generated node constructor `handed(u8 index)` takes `HANDED[index].take()` and downcasts it to `T`. Using the same handed element twice, or outside its own row, calls `rt::app_stop`.
+     - `N_KIT_VIEW (41)` with args `u8 index` takes `HANDED[index]` as `AnyView` and embeds it as an `AnyElement`.
+   - Context objects handed to item procedures are serialized via the wrapper `items::Reads<'a, T>` (never implementing `Wire` directly on the object type) so library objects keep their normal `HK_OBJ` handle encoding everywhere else.
+
+---
+
+## 10. Editor and Text Protocols
+
+### 10.1 Styled Code Editor (`N_INPUT_EDITOR = 10`)
+
+Upstream's styled `gpui_kit::component::input::Editor` (which renders completion, hover, and code-action popups) lives in a `doc(hidden)` module, so it is bridged by `N_INPUT_EDITOR`:
+
+- **Args**: `u64 editor_state` (`HK_STATE`), `f32 height` (`0` = none), `u8 flags` (bit 0 = bordered, bit 1 = appearance, bit 2 = disabled, bit 3 = readonly). Followed by standard `Styled` ops.
+
+### 10.2 LSP Providers (`C_EDITOR_PROVIDERS = 32`, `SHAPE_PROVIDER = 14`)
+
+- **`C_EDITOR_PROVIDERS (32)` (buffered)**:
+  - `u64 editor_state, u64 source` (`HK_SOURCE` carrying provider requests), `u32 which` bitmask:
+    - `1` = completions
+    - `2` = hover
+    - `4` = go-to-definition
+    - `8` = document colors
+    - `16` = code actions
+    - `32` = semantic tokens
+    - `64` = inline completions
+  - `str completion_trigger_chars`
+  - `str code_action_provider_id`
+  - `u32 inline_debounce_ms`
+  - `list<str> semantic_token_types`
+  - `list<str> semantic_token_modifiers`
+
+- **`SHAPE_PROVIDER (14)` request payload**: `u64 req_id, u16 variant, ...`
+
+| Variant | Name | Request Fields (after `u16 variant`) | Expected `C_SOURCE_ANSWER` Bytes |
+|---:|---|---|---|
+| `0` | Completions | `str text, u64 offset, u8 trigger_kind, opt<str> trigger_char` | `u32 n, n * (str label, u8 lsp_kind, opt<str> detail, opt<str> insert_text), u8 is_incomplete` |
+| `1` | Hover | `str text, u64 offset` | `u8 has_hover` (if `1`: `str markdown, opt<(u64 start, u64 end)> range`) |
+| `2` | Definitions | `str text, u64 offset` | `u32 n, n * (str uri, u32 start_line, u32 start_char, u32 end_line, u32 end_char)` |
+| `3` | DocumentColors | `str text` | `u32 n, n * (u32 start_line, u32 start_char, u32 end_line, u32 end_char, f32 r, f32 g, f32 b, f32 a)` |
+| `4` | CodeActions | `u64 start_offset, u64 end_offset` | `u32 n, n * (str title, opt<str> kind, str command_id)` |
+| `5` | PerformCodeAction | `str title, str command_id, bool push_to_history` | *(empty; app applies edits via editor state calls)* |
+| `6` | SemanticTokens | `str text, u64 start_offset, u64 end_offset` | `u32 n, n * u32` (LSP delta-encoded 5-tuples: `delta_line, delta_start, length, token_type, token_mods`) |
+| `7` | InlineCompletion | `str text, u64 offset, bool automatic` | `opt<str> insert_text` |
+
+### 10.3 Highlighters and Language Providers (`core/src/shim_editor.rs`)
+
+- **`C_HIGHLIGHTER_NEW (184)` (immediate)**: `u64 styles_ask, u64 folds_ask` (`0` = none), `list<str> languages` (empty = matches any language, case-insensitive) -> registers a highlighter factory under `styles_ask`.
+  - When an editor requests highlights for a byte range, `GkHighlighter` queries `styles_ask` with key `(str lang, str full_text, Range<usize>)`; uncached ranges draw unstyled until the app answers via `C_SOURCE_ANSWER`, then every window redraws.
+  - Fold queries use `folds_ask` with key `(str lang, str full_text)`.
+- **`C_LANGUAGES_NEW (185)` (immediate)**: `u64 handle` (syntax `Ask` or `HK_SOURCE`), `u8 has_syntax, list<(str alias, str canonical_name)>` -> registers a `LanguageProvider`. Aliases are normalized to lowercase; if `has_syntax != 0`, `syntax_context_provider` answers syntax-context queries (`(str lang, str full_text, u64 offset)`) through the `Ask` cache.
+
+### 10.4 Markdown Plugins, Typed Fragments, Lazy Rows, and `EntityId` (`core/src/editor_text.rs`)
+
+Upstream's Markdown and code-editor APIs require several specialized runtime shims:
+
+1. **Typed fragments (`MainThread<Frag>`)**: Some upstream hooks (such as `MarkdownExtensions::block_surface`) require `Send + Sync` closures even though GPUI only calls them on the UI thread during draw. `MainThread<T>` stores the creating `ThreadId` and verifies `std::thread::current().id() == self.thread` on every access (aborting with exit 70 if ever called off-thread). Passing a fragment whose root node type does not match the expected type calls `rt::app_stop`.
+2. **Windowless rows (`lazy_row`)**: When upstream calls a row render closure without a `&mut Window` (for example, `FoldPlaceholderRenderer`), the shim returns a custom `LazyRow` element that defers calling `source::ctx_row` until GPUI's `request_layout` phase, where `&mut Window` is available.
+3. **View-returning closures (`ctx_view`)**: For closures returning `AnyView` per distinct value (such as `TextView::link_tooltip`), the shim binds one row view per distinct serialized value on a row source.
+4. **Markdown plugins (`GkPlugin`)**: Because upstream parses Markdown on a background thread, app code cannot run during parsing. `GkPlugin` either wraps a built-in kit plugin (e.g., `FrontmatterPlugin`) or acts as a `DataPlugin` that claims Markdown nodes declaratively by kind (fenced code block language or JSX element name) during parsing, then draws each claimed node on the main thread as a row of a row source (inline nodes wrapped in `InlineElement`). The row view reads the node (and `InlineRenderContext` for inline nodes) via `C_CTX_GET`.
+5. **Small values (`entity_id`, `Wire for ElementId`)**: Where an editor API takes a `gpui::EntityId`, the wire carries the `u64` state handle of the underlying `InputState` / `Textarea` / `EditorState` and extracts `entity.entity_id()`. Reading back an `ElementId` writes its display string (`str`).
+
+### 10.5 Block Editor Host (`N_EDITOR_HOST = 40`, `SHAPE_LEAF_GEOMETRY = 46`, `core/src/editor_text.rs`)
+
+- **`N_EDITOR_HOST (40)` args**:
+  - `str id` (`ElementId::Name`)
+  - `u32 n_blocks`, `n_blocks * BlockNode` (generated value codec, capped at 4096 prealloc)
+  - `u32 n_flows`, `n_flows * opt<u32 FlowPosition_node>`
+  - `opt<u32 RenderContext_node>`
+  - `u32 n_decorations`, `n_decorations * (u64 leaf_key, <foreground ranges>)`
+  - `opt<u32 handler_id>` (view handler of `SHAPE_LEAF_GEOMETRY = 46`; keeps `dx.pin()`)
+- **`SHAPE_LEAF_GEOMETRY (46)`**: fired after `BlockHost` prepaints, carrying `u32 n, n * (u64 leaf_key, u64 LeafGeometry_handle)` (temporary `HK_OBJ` handles swept on the next frame unless retained).
+- **Test ops**:
+  - `C_EDITOR_TEST (186)` -> `u64 md_plugin_claims, u64 view_rows`
+  - `C_EDITOR_HOST_TEST (187)` -> `u64 hosts_decoded, u64 leaves_collected, u64 leaf_events, u64 decorators_run, u64 lent_edited`.
+
+---
+
+## 11. Overlays, Actions, Menus, Timers, Windows, and Platform Services
+
+### 11.1 View-Built Overlays and Described Values (`core/src/overlay.rs`)
+
+GPUI-kit dialogs, alert dialogs, sheets, popovers, hover cards, context menus, and dropdown menus accept builder closures `Fn(T, &mut Window, &mut App) -> T` invoked lazily when the overlay opens or redraws.
+
+- **View-built closures (`ViewBuild`)**:
+  - Call ops such as `open_dialog` / `open_alert_dialog` / `open_sheet` take a `u64 view_handle` (`HK_VIEW`).
+  - `ViewBuild::take` verifies the handle, mounts it into the turn's window (or the first open window if applied deferred), and marks it dirty so its first tape arrives before paint.
+  - Each time GPUI calls the overlay builder closure, `ViewBuild::apply` reads the view entity (`entity.read(cx)`, which automatically records a GPUI dependency so re-describing the view redraws the open overlay) and checks that the root node's `typ` is in the expected set of node types for `T`. A wrong root type calls `rt::app_stop`; before the first tape arrives, upstream's unmodified `v` is returned for at most one frame.
+- **Described values (`PopupMenu`)**:
+  - A described value has no standalone constructor (`overlay::described<T>()` calls `app_stop` if used outside its owning dropdown/context/submenu op).
+  - Instead, the front end emits a node for the menu in the tape; `dx.frag(menu_node)` captures the tape `Rc` + `GenPin` + node index, and replays `apply_component_popup_menu(dx, menu, first_op)` whenever GPUI opens the menu.
+  - Submenus (`overlay::submenu`) construct child `PopupMenu::build` instances eagerly inside the parent menu build and attach them as `PopupMenuItem::submenu`.
+- **Overlay nodes**:
+  - `N_DROPDOWN_BUTTON (32)`: `u32 button_node, u32 menu_node` (rebuilds `PopupMenu` from `menu_node` each time the dropdown opens).
+  - `N_DROPDOWN_ANCHOR (34)`: `u32 button_node, u32 menu_node, u16 anchor`. `anchor` enum: `0` = TopLeft, `1` = TopRight, `2` = BottomLeft, `3` = BottomRight, `4` = TopCenter, `5` = BottomCenter, `6` = LeftCenter, `7` = RightCenter.
+  - `N_KBD_FOR_ACTION (35)`: `u32 action_id, u8 how` (`0` = `binding_for_action`, `1` = `binding_for_action_in`, `2` = `global_binding_for_action`), `opt<str> context, u64 focus_handle`. Renders `Empty` if the action has no binding.
+  - `N_APP_MENU_BAR (36)`: `u64 app_menu_bar_state`.
+  - `C_APP_MENU_BAR_NEW (155)` (immediate): *(empty)* -> `u64 state` (`HK_STATE`).
+- **Tooltip view closures**: Any `Fn(&mut Window, &mut App) -> AnyView` parameter takes a `u64 view_handle` directly (`["viewany"]` descriptor).
+
+### 11.2 Actions, Key Bindings, and Event Propagation (`core/src/app.rs`)
+
+Actions are identified by a `u32 action_id`. App-defined actions have bit 31 clear (`0..0x7fff_ffff`); built-in GPUI-kit action values registered via `C_VALUE_ACTION (208)` have bit 31 set (`0x8000_0000 | idx`).
+
+| Op | Constant | Mode | Request | Response | Notes |
+|---:|---|---|---|---|---|
+| `64` | `C_ACTION_NEW` | Immediate | `str name, str json_data` (`""` = none) | `u32 action_id` | Registers a named app action (`GkAction`). |
+| `65` | `C_BIND_KEYS` | Buffered | `u32 n, n * (str keystrokes, u32 action_id, str context)` | *(empty)* | Binds GPUI keystrokes (e.g., `"ctrl-n"`, `"cmd-s"`); empty `context` means global. |
+| `66` | `C_ON_ACTION` | Immediate | `u32 action_id, u32 slot, u32 gen` | `u64 sub` (`HK_SUB`) | Installs an app-wide action listener (`SHAPE_ACTION` or `SHAPE_UNIT`). |
+| `67` | `C_DISPATCH_ACTION` | Buffered | `u32 action_id` | *(empty)* | Dispatches to focused element in turn's window, or app-wide. |
+| `68` | `C_ACTION_AVAILABLE` | Immediate | `u32 action_id` | `u8` (`0`/`1`) | Checks if any listener on focus path or app-wide handles `action_id`. |
+| `69` | `C_ACTION_KEYSTROKES` | Immediate | `u32 action_id, str context` (`""` = any) | `opt<str>` | Highest-precedence keystroke binding string. |
+| `70` | `C_CLEAR_KEY_BINDINGS` | Buffered | *(empty)* | *(empty)* | Clears all key bindings. |
+| `95` | `C_STOP_PROPAGATION` | Immediate | *(empty)* | *(empty)* | Calls `App::stop_propagation()`; valid inside an event handler turn. |
+| `208` | `C_VALUE_ACTION` | Immediate | `ValueTape(Action)` | `u32 action_id` | Converts a GPUI-kit `Action` value node into an `action_id` (bit 31 set). |
+
+*Element-scoped action listeners*: `on_action` / `capture_action` element ops encode `(u32 action_id, u32 handler_id)` on the tape; Rust filters `GkAction` by `action_id` and lets unmatched actions continue bubbling.
+
+### 11.3 Timers and Clock
+
+| Op | Constant | Mode | Request | Response | Notes |
+|---:|---|---|---|---|---|
+| `71` | `C_TIMER_NEW` | Immediate | `u32 millis, u8 repeat` (`0` once, `1` repeating), `u32 slot, u32 gen` | `u64 task` (`HK_TASK`) | Fires kept handler with `SHAPE_UNIT`. Releasing `task` cancels the timer. |
+| `159` | `C_CLOCK_NOW` | Immediate | *(empty)* | `i64 nanos` | Monotonic nanoseconds since the library's start epoch. |
+
+### 11.4 Windows, Quit Hooks, Clipboard, and Reduced Motion
+
+| Op | Constant | Mode | Request | Response | Notes |
+|---:|---|---|---|---|---|
+| `72` | `C_WINDOW_OPEN` | Immediate | `f32 w, f32 h, u64 root_view, str title, u8 flags` (`1` not resizable, `2` not minimizable, `4` not movable, `8` no focus, `16` hidden, `32` kit title bar), `f32 min_w, f32 min_h` (`0` none), `u8 kind` (`0` normal, `1` popup, `2` floating), `u8 has_pos, f32 x, f32 y, str app_id, bytes icon_png` | `u64 wh` (`HK_WINDOW`) | Opens a configured window. `app_id` sets Wayland `app_id` / X11 `WM_CLASS`; `icon_png` is raw PNG bytes (`len 0` = none). |
+| `73` | `C_WINDOW_CLOSE` | Buffered | `u64 wh` | *(empty)* | Closes the window. |
+| `74` | `C_WINDOW_SET_TITLE` | Buffered | `u64 wh, str title` | *(empty)* | Updates OS window title. |
+| `75` | `C_WINDOW_ACTIVATE` | Buffered | `u64 wh` | *(empty)* | Brings window to foreground and focuses it. |
+| `76` | `C_ON_WINDOW_CLOSED` | Immediate | `u64 wh, u32 slot, u32 gen` | `u64 sub` (`HK_SUB`) | Fires `SHAPE_WINDOW` once after `wh` closes. |
+| `77` | `C_WINDOW_INFO` | Immediate | `u64 wh` | `str title, f32 x, f32 y, f32 w, f32 h, u8 active` | Reads window geometry and active state. |
+| `80` | `C_WINDOWS` | Immediate | *(empty)* | `list<u64 wh>` | All open window handles in open order. |
+| `81` | `C_QUIT_ON_LAST_WINDOW` | Buffered | `u8 enable` (default `1`) | *(empty)* | Controls whether closing the last window exits `gk_run`. |
+| `96` | `C_ON_WINDOW_SHOULD_CLOSE` | Immediate | `u64 wh` (`0` = turn's window), `u32 slot, u32 gen` | `u64 sub` (`HK_SUB`) | Fires `SHAPE_UNIT_BOOL` when user clicks close; returning `false` vetoes close. |
+| `97` | `C_ON_APP_QUIT` | Immediate | `u32 slot, u32 gen` | `u64 sub` (`HK_SUB`) | Fires `SHAPE_UNIT` once with no window as the app quits. |
+| `78` | `C_CLIPBOARD_WRITE` | Buffered | `str text` | *(empty)* | Copies plain UTF-8 text to the OS clipboard. |
+| `79` | `C_CLIPBOARD_READ` | Immediate | *(empty)* | `opt<str>` | Reads plain UTF-8 text from the OS clipboard. |
+| `98` | `C_REDUCE_MOTION` | Immediate (view-safe) | *(empty)* | `u8` (`0`/`1`) | Reads OS / app reduced-motion preference. |
+| `99` | `C_SET_REDUCE_MOTION` | Buffered | `u8 reduce` | *(empty)* | Overrides reduced-motion preference and redraws every window. |
+
+### 11.5 Native File Dialogs, Prompts, App Menus, URLs, and Platform Assets (`core/src/platform.rs`)
+
+Async dialogs return a `HK_TASK` completion handle and deliver their result later via a `K_DONE` turn. Releasing the `HK_TASK` handle before completion discards the result cleanly.
+
+| Op | Constant | Mode | Request | Response |
+|---:|---|---|---|---|
+| `82` | `C_PROMPT_PATHS` | Immediate | `u8 files, u8 dirs, u8 multiple, opt<str> prompt, u32 slot, u32 gen` | `u64 task` (`HK_TASK`, delivers `SHAPE_PATHS`) |
+| `83` | `C_PROMPT_NEW_PATH` | Immediate | `str dir, opt<str> suggested_name, u32 slot, u32 gen` | `u64 task` (`HK_TASK`, delivers `SHAPE_PATHS`) |
+| `84` | `C_WINDOW_PROMPT` | Immediate | `u64 wh` (`0` = turn's), `u8 level` (`0` info, `1` warn, `2` critical), `str msg, opt<str> detail, u32 n_btns, n_btns * (u8 kind [0 other, 1 ok, 2 cancel], str label), u32 slot, u32 gen` | `u64 task` (`HK_TASK`, delivers `SHAPE_PROMPT`) |
+| `85` | `C_OPEN_URL` | Buffered | `str url` | *(empty; recorded in scripted mode)* |
+| `86` | `C_SET_MENUS` | Buffered | `u32 n, n * Menu` (recursive layout below) | *(empty; updates both OS menu bar and `AppMenuBar`)* |
+| `87` | `C_MENUS_GET` | Immediate | *(empty)* | `u32 n, n * Menu` |
+| `88` | `C_PLATFORM_ANSWER` | Immediate | `u8 kind` (`1` paths, `2` new_path, `3` prompt), `u8 status`, then `(list<str> paths, str err)` or `u32 answer` | `u8 delivered_immediately` (`0`/`1`) |
+| `89` | `C_PLATFORM_LOG` | Immediate | *(empty)* | `list<str> urls, u64 requests, u64 delivered, u64 discarded, u32 waiting, u8 scripted` |
+| `90` | `C_IMAGE_CACHE_NEW` | Immediate | *(empty)* | `u64 obj` (`HK_OBJ`, `RetainAllImageCache`) |
+| `100` | `C_RENDER_IMAGE_NEW` | Immediate | `u32 width, u32 height, bytes rgba_pixels` | `u64 obj` (`HK_OBJ`, `RenderImage`, converted RGBA -> BGRA) |
+| `91` | `C_SCROLL_ANCHOR_NEW` | Immediate | `u64 scroll_handle` (`HK_OBJ`) | `u64 obj` (`HK_OBJ`, `ScrollAnchor`) |
+| `92` | `C_SCROLL_ANCHOR_TO` | Immediate | `u64 scroll_anchor` | *(empty; scrolls in turn's window)* |
+| `93` | `C_TEXT_SCOPE_NEW` | Immediate | *(empty)* | `u64 obj` (`HK_OBJ`, `TextSelectionScopeId`) |
+| `94` | `C_PLATFORM_TEST` | Immediate | `u8 what, <args>` | Test-specific |
+
+#### `Menu` Wire Layout (`C_SET_MENUS` / `C_MENUS_GET`)
+
+- `Menu`: `str name, u8 disabled, u32 n_items, n_items * MenuItem`
+- `MenuItem`: `u8 kind`, followed by:
+  - `0` (Separator): *(no payload)*
+  - `1` (Action): `str name, u32 action_id, u8 os_action` (`0` none, `1` cut, `2` copy, `3` paste, `4` select_all, `5` undo, `6` redo), `u8 checked, u8 disabled`
+  - `2` (Submenu): recursive `Menu`
+  - `3` (OS Services menu): `str name`
+
+#### Scripted Platform & Headless Harness (`gk_headless_run`, `core/meter/src/headless.rs`)
+
+When running under `gk_headless_run` (requires `GK_FEAT_DIAG`, or `GK_SCRIPTED_PLATFORM=1` in a `diag` build):
+
+- Native file dialogs (`C_PROMPT_PATHS`, `C_PROMPT_NEW_PATH`) and alert prompts (`C_WINDOW_PROMPT`) do not block on OS UI; they wait on per-kind FIFO queues fed by `C_PLATFORM_ANSWER (88)` or by `answer ...` lines in the headless script.
+- `C_OPEN_URL (85)` does not spawn a browser; it appends the URL to the platform log returned by `C_PLATFORM_LOG (89)`.
+- `C_RENDER_IMAGE_NEW (100)` converts caller-supplied RGBA8 rows into GPUI's BGRA8 `RenderImage` format (`width * height * 4` bytes). Calling `C_RELEASE` on that `HK_OBJ` invokes `Window::drop_image` on every open window so GPU texture atlas memory is reclaimed immediately.
+- If a script command closes the driven window while another window remains open, the harness automatically switches to open window `0` and logs a notice; if no window remains, the script terminates cleanly.
+
+#### Headless Script Commands (One Command Per Line)
+
+| Command | Effect |
+|---|---|
+| `size W H` | Sets offscreen window dimensions in pixels (must appear first; default `640 480`). |
+| `frame` | Runs pending foreground tasks, pre-frame hooks, and draws one frame. |
+| `shot FILE.png` | Writes the last drawn frame to `FILE.png` (exact wgpu render output). |
+| `click X Y` | Injects a left click at `(X, Y)` followed by a frame. |
+| `dblclick X Y` | Injects a double click at `(X, Y)` followed by a frame. |
+| `rclick X Y` | Moves, presses right button, and releases in separate updates (matching a real window), then draws a frame. |
+| `move X Y` | Moves pointer to `(X, Y)` (hover), then draws a frame. |
+| `scroll X Y DY` | Injects vertical wheel scroll of `DY` pixels at `(X, Y)` (negative scrolls content up), then draws a frame. |
+| `drag X1 Y1 X2 Y2` | Presses at `(X1, Y1)`, performs 4 intermediate moves (one frame each) to `(X2, Y2)`, releases, then draws a frame. |
+| `type TEXT` | Sends one keystroke per character to the focused element, drawing a frame after each. |
+| `key NAME` | Sends one named GPUI keystroke (`enter`, `escape`, `ctrl-a`, `tab`, etc.), then draws a frame. |
+| `sleep MS` | Sleeps `MS` milliseconds so background threads (`gk_post`) can complete work. |
+| `answer WHAT` | Answers the oldest waiting scripted platform dialog (`paths P..`, `new-path P`, `prompt N`, `cancel paths|new-path|prompt`), then draws a frame. |
+| `stat` | Prints `gk-meter` boundary counters (`callbacks`, `calls`, `tapes`, `rows_missing`, etc.). |
+
+---
+
+## 12. Docks (`core/src/dock.rs`)
+
+### 12.1 Panels and Skinned Dock Areas
+
+A dock panel (`GkPanel`) wraps an app `GkView` inside a GPUI entity (`HK_STATE`) implementing GPUI-kit's `Panel` and `PanelView` traits.
+
+- **`PanelData` wire layout** (used in `C_PANEL_NEW`, `C_PANEL_SET`, `C_PANEL_FILL`):
+  - `str name` (interned `&'static str` in Rust; identifies panel type for saved layouts)
+  - `opt<str> tab_name`
+  - `str title`
+  - `u8 flags`: bit 0 = not closable, bit 1 = not zoomable, bit 2 = hidden, bit 3 = no inner padding, bit 4 = no title bar
+  - `u64 suffix_view` (`0` = none)
+  - `u64 toolbar_view` (`0` = none)
+  - `u64 menu_view` (`0` = none; root describes a `PopupMenu`)
+  - `str info` (arbitrary JSON string serialized into `PanelInfo::Panel`)
+
+| Op | Constant | Mode | Request | Response |
+|---:|---|---|---|---|
+| `144` | `C_PANEL_NEW` | Immediate | `u64 view, PanelData, u32 slot, u32 gen` (`0, 0` = no events) | `u64 panel` (`HK_STATE`) |
+| `145` | `C_PANEL_SET` | Buffered | `u64 panel, PanelData` | *(empty)* |
+| `146` | `C_PANEL_EMIT` | Buffered | `u64 panel, u8 event` (`0` ZoomIn, `1` ZoomOut, `2` LayoutChanged) | *(empty)* |
+| `147` | `C_DOCK_AREA_SKINNED` | Immediate | `str id, u8 has_version, u64 version` | `u64 dock_area` (`HK_STATE`, pairs `DockArea` with its `DockSkin`) |
+| `148` | `C_PANEL_GROUP` | Immediate | `u64 panel` | `u64 tab_group` (`HK_STATE`, or `0` if not in a group) |
+| `149` | `C_PANEL_ID` | Immediate | `u64 panel` | `u64 panel_id` (raw `EntityId`) |
+| `158` | `C_DOCK_SKIN` | Immediate/Buffered | `u64 dock_area, u8 what, [arg]` | See table below |
+| `163` | `C_DOCK_TOGGLE_SUBSCRIBE` | Immediate | `u64 dock_area, u32 slot, u32 gen` | `u64 sub` (`HK_SUB`, fires `SHAPE_DOCK_TOGGLE`) |
+
+#### `C_DOCK_SKIN (158)` Sub-Operations (`u8 what`)
+
+| `what` | Arg | Response | Meaning |
+|---:|---|---|---|
+| `0` | none | `u16` (`0` Auto, `1` TabBar) | Read `DockSkin::panel_style` |
+| `1` | `u16 style` | none | Set `DockSkin::set_panel_style` |
+| `2` | none | `u8` | Read `is_toggle_button_visible` |
+| `3` | `u8 visible` | none | Set `set_toggle_button_visible` |
+| `4` | `u8 visible` | none | Set `set_close_button_visible` |
+| `5` | none | `u8` | Read `is_collapsed_tab_bar_visible` |
+| `6` | `u8 visible` | none | Set `set_collapsed_tab_bar_visible` |
+| `7` | none | `u8` | Read `is_split_divider_line_visible` |
+| `8` | `u8 visible` | none | Set `set_split_divider_line_visible` |
+
+#### Dock Elements
+
+- **`N_DOCK_VIEW (33)`**: `u64 dock_area` -> renders the `DockArea` entity.
+- **`N_DOCK_SLOT (37)`**: *(no args)* -> inside a custom dock renderer view, renders the upstream child element handed to the hook.
+
+### 12.2 Saved Layouts, `PanelRegistry`, Entity Deduplication, and Pane Trees
+
+- **`PanelInfo` wire layout**:
+  - `u16 0` (Stack): `list<f32> sizes_px, u64 axis`
+  - `u16 1` (Tabs): `u64 active_index`
+  - `u16 2` (Panel): `str json` (empty = JSON `null`; non-JSON strings fall back to `serde_json::Value::String`)
+- **`PanelState` wire layout**: `str panel_name, list<PanelState> children, PanelInfo info`.
+- **`DockAreaState` wire layout**: `opt<u64> version, PanelState center, opt<DockState> left_dock, opt<DockState> right_dock, opt<DockState> bottom_dock` (where `DockState` encodes placement, open/size state, and its `PanelState`).
+- **`NODE_IDS` table**: GPUI-kit's `NodeId` has no public constructor. `core/src/dock.rs` maps every `NodeId` returned by dock reads to a `u64` in a thread-local `NODE_IDS` map. Passing an unknown `NodeId` in a call op returns `GK_ERR_BAD_OP`, and in a tape triggers `rt::app_stop`.
+- **`HANDED` entity deduplication & `VIEWS` reverse map**:
+  - Whenever Rust hands a GPUI `Entity<T>` back to the front end (such as a `TabGroup`, `DockArea`, `GkPanel`, or `AppMenuBar`), `dock::entity_handle(&entity)` checks `HANDED: HashMap<EntityId, u64>`. If the entity already has a live `HK_STATE` handle, the exact same handle is returned rather than creating duplicates.
+  - Reading an `AnyView` back checks `VIEWS: HashMap<EntityId, u64>` and returns its `HK_VIEW` handle (or `0` for an internal kit placeholder).
+
+| Op | Constant | Mode | Request | Response |
+|---:|---|---|---|---|
+| `150` | `C_PANEL_REGISTER` | Immediate | `str name, u32 slot, u32 gen` | *(empty; registers `SHAPE_PANEL_BUILD` callback for `name`)* |
+| `151` | `C_PANEL_FILL` | Buffered | `u64 panel, u64 view, PanelData, u32 slot, u32 gen` | *(empty; fills a placeholder panel requested by `SHAPE_PANEL_BUILD`)* |
+| `152` | `C_PANEL_BUILD_NOW` | Immediate | `u64 dock_area, PanelState` | `opt<u64 panel>` |
+| `153` | `C_PANE_TREE_TO_STATE` | Immediate | `u64 pane_tree, u64 dock_area` | `PanelState` |
+| `154` | `C_PANE_TREE_FROM_STATE` | Immediate | `u64 dock_area, PanelState, u16 root_kind` | `u64 pane_tree` |
+| `156` | `C_PANE_NODE_KIND` | Immediate | `u64 pane_node` | `PaneNodeKind` value |
+| `157` | `C_PANE_NODE_WALK` | Immediate | `u64 pane_node` | `list<u64 pane_node>` |
+
+### 12.3 Custom Dock Renderers (`GkRenderer`)
+
+- **`C_DOCK_RENDERER_NEW (160)` (immediate)**: `u32 hooks_mask` (bit `h` = hook `h` answered by app), `u32 slot, u32 gen` (kept handler of `SHAPE_DOCK_RENDER = 38`) -> `u64 renderer` (`HK_OBJ`).
+- **Hook indices (`0..=11`)**: `0` Frame, `1` CenterFrame, `2` SplitFrame, `3` SplitHandle, `4` Dock, `5` Placeholder, `6` TabFrame, `7` TabContentFrame, `8` TabBar, `9` TabActivePanel, `10` TabDropIndicator, `11` TabEmpty.
+- **`RenderBook` deduplication & `SLOT`**:
+  - When GPUI invokes an enabled hook, `GkRenderer` computes a context snapshot hash for `(renderer, hook, key)`.
+  - If an answer view is stored in `RenderBook::answers[(renderer, hook, key)]`, `GkRenderer` places upstream's child element into the thread-local `SLOT` cell, renders the answer view (which consumes `SLOT` via `N_DOCK_SLOT = 37`), and clears `SLOT`.
+  - If the context snapshot differs from `RenderBook::asked[(renderer, hook, key)]`, `GkRenderer` releases any prior context objects for that key, queues one `SHAPE_DOCK_RENDER` event with fresh `dock_ctx` / `group_ctx` handles, and records the new snapshot.
+- **`C_DOCK_RENDER_ANSWER (161)` (buffered)**: `u64 renderer, u8 hook, u64 key, u64 view` (`0` restores upstream default).
+- **`C_DOCK_RENDER_TEST (162)` (immediate)**: `u64 renderer` -> `u32 requests_sent, u32 answers_kept, u32 hooks_drawn_from_answer`.
+
+---
+
+## 13. Data Tables and Described Plots
+
+### 13.1 Columnar `Datum` Table Wire Format (`core/src/data.rs`)
+
+Generic GPUI-kit charts (`LineChart`, `AreaChart`, `BarChart`, `PieChart`, `CandlestickChart`, `RadarChart`, `SankeyChart`) and scales are instantiated in Rust over `data::Datum`, a lightweight `(Rc<Table>, u32 row)` handle. A data table is encoded inline inside a tape node or value argument as:
+
+```text
+u16 n_cols
+n_cols * (u8 col_kind, str col_name)
+u32 n_rows
+n_rows * [value for each col 0..n_cols in order]
+```
+
+| `col_kind` | Constant | Cell Wire Encoding | Notes |
+|---:|---|---|---|
+| `0` | `NUM` | `f64` | General numeric column |
+| `1` | `TEXT` | `str` | String label / category column |
+| `2` | `COLOR` | `Color` (`COLOR_HSLA` or `COLOR_THEME`) | Resolved against active theme during decode (transparent in plain/no-context constructor chains) |
+| `3` | `OPT` | `u8 has, f64 val` | Optional float (`has == 0` -> `None`; `val` still occupies 8 bytes) |
+| `4` | `NUM32` | `f32` | 32-bit float (formatted as `f32`) |
+
+### 13.2 `Field` and `Format` Operands
+
+- **`Field`**: encoded simply as `str column_name`.
+  - An empty name `""` resolves against `Datum::key` (set by `Datum::keyed(key)` for multi-series closures like `Stack::value(Fn(&T, &str))`).
+  - Column index lookup is cached on first access per `Field`; naming a column that does not exist in the table triggers `rt::app_stop` with the available column names.
+  - `Datum::index()` returns the 0-based row index (used when correlating chart rows with a row source or selection).
+- **`Format`**: encoded as `str template`:
+  - `{}` formats the first numeric argument passed by upstream (e.g., axis tick value).
+  - `{0}`, `{1}`, ... format positional arguments passed by upstream.
+  - `{col}` formats column `col` of the current `Datum` row (numeric columns format as `f64`/`f32`, text columns verbatim).
+  - Format specifiers after `:` support `,` (ASCII thousands grouping, e.g., `{:,}`) and `.P` (fixed decimal precision `P`, e.g., `{:.2}` or `{:,.2}`).
+  - `{{` and `}}` emit literal `{` and `}`.
+
+### 13.3 Described Plots (`core/src/plot.rs`)
+
+| Node | Op | Args Layout | Description |
+|---|---:|---|---|
+| `N_PLOT` | `28` | `u32 n_parts, n_parts * u32 value_node` | Composes an arbitrary list of paintable plot parts (generated chart shapes, grids, axes, or `N_PLOT_PATH` / `N_PLOT_QUAD`), painted directly in Rust without callbacks during paint. |
+| `N_PLOT_PATH` | `29` | `u8 kind` (`0` stroked polyline, `1` filled closed polygon), `f32 stroke_width, u32 n_pts, n_pts * (f32 x_px, f32 y_px), Fill` | Paints a path in pixel coordinates relative to the plot's top-left corner (`COLOR_HSLA`, `COLOR_THEME`, or `COLOR_GRADIENT`). |
+| `N_PLOT_QUAD` | `30` | `f32 x, f32 y, f32 w, f32 h, f32 corner_radius, Fill, f32 border_width, Color border` | Paints a rounded rectangle quad in plot-local pixel coordinates. |
+
+#### Worked Byte Example: `N_PLOT` Containing One `N_PLOT_QUAD`
+
+A `100 x 40` rounded quad at `(10, 20)` with radius `6`, filled with `theme` token `12` (`0x000C`), 1 px border of `theme` token `18` (`0x0012`):
+
+```text
+Node 0 (N_PLOT_QUAD = 30, args at ops[4..39]):
+  00 00 20 41       x = 10.0f32
+  00 00 A0 41       y = 20.0f32
+  00 00 C8 42       w = 100.0f32
+  00 00 20 42       h = 40.0f32
+  00 00 C0 40       corner_radius = 6.0f32
+  01  0C 00         Fill = COLOR_THEME(1), token = 12
+  00 00 80 3F       border_width = 1.0f32
+  01  12 00         border = COLOR_THEME(1), token = 18
+
+Node 1 (N_PLOT = 28, root, args at ops[39..47]):
+  01 00 00 00       n_parts = 1
+  00 00 00 00       part[0] = node 0
+```
+
+---
+
+## 14. Motion, Value Cells, and Declarative Rules
+
+### 14.1 `N_ANIMATED` (`48`, `core/src/motion.rs`)
+
+Wraps a child element with GPUI animations, motion values, a focus trap, or a text selection scope.
+
+**Header**: `u32 child_node, u8 kind`, followed by kind-specific fields:
+
+| `kind` | Name | Fields After `u8 kind` |
+|---:|---|---|
+| `1` | `Anim` | `str id, u32 n_anims, n_anims * (u32 duration_ms, u8 flags [1 repeat, 2 repeat_synced], Easing, f32 max_fps), u32 n_tracks, n_tracks * (u16 anim_idx [0xffff = all], u8 prop, Val from, Val to)` |
+| `2` | `Effect` | `str id, u32 EffectTransition_node` |
+| `3` | `Values` | `u32 n_vals, n_vals * (u8 prop, MotionSource)` |
+| `4` | `FocusTrap` | `str id, u64 focus_handle` (wraps a parent + styled element) |
+| `5` | `TextSelectionScope` | `u64 text_scope_handle` (wraps a parent element) |
+
+#### Animatable Properties (`u8 prop`)
+
+| Code | Property | Value Type (`Val`) |
+|---:|---|---|
+| `0` | `Opacity` | `f32` |
+| `1` | `Top` | `f32` (px) |
+| `2` | `Left` | `f32` (px) |
+| `3` | `Right` | `f32` (px) |
+| `4` | `Bottom` | `f32` (px) |
+| `5` | `Width` | `f32` (px) |
+| `6` | `Height` | `f32` (px) |
+| `7` | `Bg` | `Color` (`COLOR_HSLA` or `COLOR_THEME`) |
+| `8` | `TextColor` | `Color` |
+| `9` | `BorderColor` | `Color` |
+| `10` | `Size` | `f32` (px, sets both width and height) |
+
+#### Easings (`u8 easing`)
+
+`0` = Linear, `1` = Quadratic, `2` = EaseInOut, `3` = EaseOutQuint, `4` = EaseOutCubic, `5` = EaseInCubic, `6` = EaseInOutCubic, `7` = CubicBezier (`4 * f32`), `8` = Bounce (followed by one non-bounce `Easing`; bounce-of-bounce is refused), `9` = PulsatingBetween (`f32 lo, f32 hi`).
+
+#### Motion Sources (`u8 src`, for `kind == 3`)
+
+| `src` | Name | Fields After `u8 src` | Restrictions |
+|---:|---|---|---|
+| `1` | Transition | `str id, Val target, u32 Transition_node` | Numeric or color properties |
+| `2` | Spring | `str id, f32 target, u32 Spring_node` | Numeric properties only |
+| `3` | Keyframes | `str id, u64 Keyframes_f32_obj, u32 Timing_node` | Numeric properties only |
+| `4` | Presence | `u32 Presence_node, Val at_0, Val at_1` | Numeric or color properties |
+| `5` | TransitionState | `u64 TransitionState_f32_obj, f32 target, u32 Transition_node` | Numeric properties only |
+
+### 14.2 Value Cells, Calendar Matchers, Settings Fields, and Questionnaire Rules (`core/src/values.rs`)
+
+- **Value cells** (back `Fn(&App) -> T` read closures used by settings fields while drawing):
+  - `C_CELL_NEW (211)` (immediate): `bytes value` -> `u64 cell` (`HK_OBJ`, kept).
+  - `C_CELL_SET (212)` (buffered): `u64 cell, bytes value` (updates stored bytes and redraws every window).
+  - `C_CELL_GET (213)` (immediate, view-safe): `u64 cell` -> `bytes value`.
+  - When a generated closure reads a cell (`values::cell_read`), Rust clones the stored bytes, appends 64 zero bytes of safety padding, and decodes via `R::new(&b)`, so a cell holding a mismatched shorter type reads zeros rather than panicking out of bounds.
+- **Calendar `Matcher::Custom`**: encoded as `list<Date>` (a value set); Rust builds a membership predicate and remembers the encoded bytes in `VALUE_SETS` keyed by the boxed closure pointer so reading the matcher back round-trips the exact list (`u32 0` if a predicate was not created by the binding).
+- **`AnySettingField`**: generated setting field nodes wrap their concrete `AnySettingField` in `values::AnyField` (`Rc<dyn AnySettingField>`) so upstream `as_any()` and `type_id()` downcasts see the concrete field type.
+- **`QuestionnaireRules`** (declarative synchronous validation for `QuestionnaireItemDefinition::with_validator`):
+  - `u32 min_choices, u32 max_choices, u32 min_length, u32 max_length` (`0` = no limit; lengths count Unicode scalar characters `chars().count()` on the freeform answer)
+  - `list<str> one_of, list<str> not_one_of` (exact match against freeform text; empty = unrestricted)
+  - `str same_as, str differs_from` (`""` = none; compares against another item's answer in `ctx.answers()`)
+  - `str message` (`""` = default per-rule message; `"{item}"` is substituted with `ctx.item()`)
+  - Reading back `QuestionnaireItemDefinition::validator` (`Option<&QuestionnaireValidator>`) writes `u8 0` or `u8 1` with zero payload bytes (a closure has no readable state beyond presence).
+- **Test ops**:
+  - `C_OBJ_TEST_TEMPS (113)` -> `u32 temps, u32 live`
+  - `C_VALUES_TEST (210)` -> `u32 pinned, u32 pending_sweep`
+  - `C_HANDLES_TEST (214)` -> `u64 values_h, u64 dock_h, u64 again_h, u64 count` (verifies `Wire for Entity` and `dock::entity_handle` share one deduplicated `HANDED` table).
+
+#### Worked Byte Example: `N_ANIMATED` (Kind 1: Pulse Opacity From 0.3 to 1.0 Over 800 ms, Repeating)
+
+Assume child element is node `0`, `N_ANIMATED = 48` (`0x0030`), id `"pulse"`, 1 animation (`800 ms`, repeat bit `1`, easing `2` = `EaseInOut`, `max_fps = 0.0`), 1 track (`anim_idx = 0`, `prop = 0` = `Opacity`, `from = 0.3f32`, `to = 1.0f32`):
+
+```text
+Offset  Hex Bytes                       Meaning
+------  ------------------------------  ----------------------------------------
+0x00    00 00 00 00                     child_node = 0
+0x04    01                              kind = 1 (Anim)
+0x05    05 00 00 00 70 75 6C 73 65      id = "pulse" (len=5)
+0x0E    01 00 00 00                     n_anims = 1
+0x12    20 03 00 00                     duration_ms = 800 (0x0320)
+0x16    01                              flags = 1 (repeat)
+0x17    02                              easing = 2 (EaseInOut)
+0x18    00 00 00 00                     max_fps = 0.0 (unlimited)
+0x1C    01 00 00 00                     n_tracks = 1
+0x20    00 00                           anim_idx = 0
+0x22    00                              prop = 0 (Opacity)
+0x23    9A 99 99 3E                     from = 0.3f32
+0x27    00 00 80 3F                     to = 1.0f32
+```
+
+#### Worked Byte Example: `C_WINDOW_OPEN` (Open 640x480 Window With Kit Title Bar and `app_id`)
+
+```text
+Offset  Hex Bytes                       Meaning
+------  ------------------------------  ----------------------------------------
+0x00    48 00                           call op = 72 (C_WINDOW_OPEN)
+0x02    00 00 20 44                     width = 640.0f32
+0x06    00 00 F0 43                     height = 480.0f32
+0x0A    01 00 00 00 01 00 00 01         root_view = HK_VIEW (slot 1, gen 1)
+0x12    05 00 00 00 4E 6F 74 65 73      title = "Notes"
+0x1B    20                              flags = 32 (kit title bar)
+0x1C    00 00 48 43                     min_w = 200.0f32
+0x20    00 00 16 43                     min_h = 150.0f32
+0x24    00                              kind = 0 (Normal)
+0x25    00                              has_pos = 0 (OS / centered)
+0x26    00 00 00 00  00 00 00 00        x = 0.0, y = 0.0 (ignored)
+0x2E    05 00 00 00 6E 6F 74 65 73      app_id = "notes"
+0x37    00 00 00 00                     icon_png len = 0 (none)
+```
+
+---
+
+## 15. Complete Wire Type Mapping for Generated Descriptors
+
+Front-end code generators targeting `libgpuikit` consume the intermediate model produced by `gen/gk_model.py`. Every wire descriptor in that model maps deterministically to the following byte encoding on both sides of the boundary:
+
+| Model Descriptor | In Tape / Call Args (Front End -> Library) | In Call Results / Events (Library -> Front End) |
+|---|---|---|
+| `bool`, `u8`..`u64`, `i8`..`i64`, `f32`, `f64`, `usize`, `isize`, `char` | Fixed-width LE primitive (`usize`/`isize` widened to 8 bytes) | Identical |
+| `str` / `SharedString` / `String` | `u32 len` + UTF-8 bytes | Identical |
+| `bytes` / `Vec<u8>` | `u32 len` + raw bytes | Identical |
+| `px` / `rems` | `f32` | `f32` |
+| `length` / `def_length` | `u8 kind (0..3)` + `f32 value` | `u8 kind` + `f32 value` |
+| `color` | `u8 0 + 4*f32` or `u8 1 + u16 token` | `4*f32` (`Hsla`) or `u16 0 + 4*f32` (color field in bidirectional record) |
+| `fill` | `color` or `u8 2 + f32 angle + u8 oklab + color + f32 + color + f32` | `Background` read-back (Section 3.2) |
+| `elid` (`ElementId`) | `u8 0+str` \| `u8 1+u64` \| `u8 2+str+u64` | `str` (display text) |
+| `range` (`Range<usize>`) | `u64 start, u64 end` | `u64 start, u64 end` |
+| `duration` | `i64 nanos` (or `u32 ms` in `TIMER_NEW`/`ANIMATED`) | `i64 nanos` |
+| `instant` | `i64 nanos` since library clock epoch | `i64 nanos` |
+| `date` / `time` / `datetime` / `weekday` | Civil date/time structs (Section 3.2) | Identical |
+| `font` | `str family, f32 weight, u16 style` | Identical |
+| `drag` | `u64 id, str text` | Identical |
+| `opt<T>` | `u8 0` or `u8 1 + T` | Identical |
+| `list<T>` | `u32 n + n * T` | Identical |
+| `map<K, V>` | `u32 n + n * (K, V)` | `u32 n + n * (K, V)` sorted by encoded `K` bytes |
+| `enum` | `u16 variant_num` | `u16 variant_num` |
+| `denum` | `u16 variant_num + variant fields` | Identical |
+| `record` | Declared fields concatenated | Identical |
+| `into` | `u8 arm_idx + chosen arm` | N/A (input-only) |
+| `state` (`Entity<T>`) | `u64` (`HK_STATE`) | `u64` (`HK_STATE`, deduplicated via `HANDED`) |
+| `obj` (`Clone` / non-entity object) | `u64` (`HK_OBJ`) | `u64` (`HK_OBJ`: kept from ctor, temporary from read/call/event) |
+| `view` / `viewany` | `u64` (`HK_VIEW`) | `u64` (`HK_VIEW` or `0` if internal) |
+| `focus` | `u64` (`HK_FOCUS`) | `u64` (`HK_FOCUS`, new handle per read) |
+| `source` | `u64` (`HK_SOURCE`) | `u64` (`HK_SOURCE`) |
+| `action` | `u32 action_id` | `u32 action_id` |
+| `handler` (view-scoped) | `u32 handler_id` | Fired via `K_EVENT(view, gen, handler_id, shape, payload)` |
+| `kept_handler` | `u32 slot, u32 gen` | Fired via `K_EVENT(0, gen, slot, shape, payload)` |
+| `node` (child element or value in tape) | `u32 node_index` | N/A |
+| `vtape` (builder value in call op) | `u32 byte_len + GKT1 tape` | N/A |
+| `datum_table` | Columnar `Datum` table (Section 13.1) | N/A |
+| `field` / `format` / `expr` | `str` | N/A |
+| `fallible<T>` | N/A | `u8 ok, u8 has_val, [T], str err` |
+| `outcome` (`Result<(), E>`) | N/A | `opt<str>` |
+| `viewbuild` (`ViewBuild`) | `u64 view_handle` (`HK_VIEW`) | N/A |
+| `cell` (`ValueCell`) | `u64 cell_handle` (`HK_OBJ`) | N/A |
+| `value_set<K>` | `list<K>` | `list<K>` |
+| `questionnaire_rules` | `QuestionnaireRules` (Section 14.2) | `u8` presence (`0`/`1`) |
+
+---
+
+## 16. Error Codes and Front-End Responsibilities
+
+Every C function returning `int32_t` uses these codes from `core/wire/ops.txt`:
+
+| Code | Constant | Meaning | Required Front-End Action |
+|---:|---|---|---|
+| `0` | `GK_ERR_OK` | Success. | Proceed normally. |
+| `1` | `GK_ERR_BAD_OP` | Unknown call opcode, invalid sub-op, or malformed call arguments (such as an unknown dock `NodeId`). | Treat as a binding/caller bug: read `gk_last_error`, stop the app cleanly (`C_QUIT`), and surface the error with the caller's source location. |
+| `2` | `GK_ERR_STALE_HANDLE` | Handle was already released, never existed, or has the wrong kind (`HK_*`). | Report as a use-after-release / misuse error, request `C_QUIT`, and return an error from `Run`. |
+| `3` | `GK_ERR_BUSY` | `gk_run` / `gk_headless_run` called while another run is already active in this process. | Return an error immediately without disturbing the active run. |
+| `4` | `GK_ERR_NO_CONTEXT` | `gk_call` called outside a callback, `gk_reply` called with a non-current `cb`, `gk_post` called outside `gk_run`, or a window-requiring op called when no window is open. | For `gk_post`: drop or return false (app is shutting down). For `gk_call`/`gk_reply`: treat as a misuse error (stale `Cx` or wrong turn). |
+| `5` | `GK_ERR_WRONG_THREAD` | `gk_call` or `gk_reply` called from a thread other than the UI thread that entered `gk_run`. | Report an off-thread UI call misuse error. Front ends should also check thread/goroutine identity in host code before calling C. |
+| `6` | `GK_ERR_POISONED` | The Rust library previously caught a panic and marked the session poisoned. Only `C_QUIT` is accepted. | Stop issuing further calls, call `C_QUIT` if not already quitting, and return a library-error type from `Run` once `gk_run` exits. |
+| `7` | `GK_ERR_BAD_TAPE` | Tape failed `Tape::parse` (wrong magic, truncated buffer, `root >= node_count`, out-of-bounds offset). | Indicates a front-end tape encoder bug; stop and surface `gk_last_error`. |
+| `8` | `GK_ERR_VERSION` | `gk_app` failed size, `abi_major`, `abi_minor`, `api_hash`, or non-NULL callback validation. | Refuse startup and tell the user to match the library and front-end package versions. |
+| `9` | `GK_ERR_UNSUPPORTED` | Feature not compiled into this library build (for example, `gk_headless_run` on a `ship` build without `GK_FEAT_DIAG`). | Return an unsupported-build error telling the user to use a `diag` library build. |
+| `10` | `GK_ERR_BAD_ENUM` | An enum discriminant on the wire did not match any known variant of that enum. | Treat as a caller/binding bug, read `gk_last_error`, stop cleanly, and surface the error. |
+
+### 16.1 Session State Machine and Fault Recovery
+
+A front end interacts with `libgpuikit` through five lifecycle states:
+
+1. **Unstarted**: Only `gk_info_get()` and `gk_use_all()` (or `gk_use_<family>()`) are valid. `gk_call`, `gk_reply`, and `gk_post` return `GK_ERR_NO_CONTEXT`.
+2. **Starting (`gk_run` / `gk_headless_run` handshake)**: Validates `gk_app` (`size`, `abi_major`, `abi_minor`, `api_hash`, non-NULL `callback`). Any mismatch returns `GK_ERR_VERSION` immediately without entering GPUI. Re-entrant `gk_run` returns `GK_ERR_BUSY`.
+3. **Running**: UI thread enters GPUI's run loop, fires `K_INIT`, then dispatches turns (`WINDOW_INIT`, `FRAME`, `ROWS`, `VIEWS`, `EVENT`, `WAKE`, `DONE`). Background threads may call `gk_post`.
+4. **Stopping / Poisoned**:
+   - **Normal stop**: App calls `C_QUIT` (or last window closes with `QUIT_ON_LAST_WINDOW == 1`). `C_ON_APP_QUIT` fires `K_EVENT(SHAPE_UNIT)` with `wh == 0`, then `gk_run` returns `GK_ERR_OK`.
+   - **App stop (`app_stop`)**: Library detects a drawing-time misuse (such as rendering a released handle or mismatched `ViewBuild` root), fires `K_PANIC` with trailing `u8 1`, calls `quit_soon()`, and unwinds the offending draw via `AppStop`. Front end records a caller error (`*gk.Error`), returns `0`, lets `gk_run` finish, and returns that error to `main`.
+   - **Library fault (`POISONED`)**: A Rust panic inside `gk_call` sets `POISONED = true` and returns `GK_ERR_POISONED`; a Rust panic outside `gk_call` sets `POISONED = true`, fires `K_PANIC` with no trailing `u8 1`, and calls `quit_soon()`. While poisoned, every `gk_call` except `C_QUIT` returns `GK_ERR_POISONED`. Front end records a library fault (`*gk.LibraryError`), issues `C_QUIT` if needed, and returns it once `gk_run` exits.
+5. **Exited**: Session is cleared and `gk_post` returns `GK_ERR_NO_CONTEXT`.
+
+### 16.2 New Front-End Implementation Checklist
+
+To bring up a new language front end against `libgpuikit`:
+
+1. **Generate constants** from `core/wire/ops.txt` and `api/opcodes.lock` (matching `API_HASH` with FNV-1a 64-bit).
+2. **Load and verify**: resolve the 7 C functions (+ `gk_use_all` for dynamic builds), check `gk_info_get()` magic/ABI/hash, lock the UI OS thread, and enter `gk_run`.
+3. **Implement the turn stack**: dispatch all 10 `K_*` kinds, support nested turns, honor `GK_FEAT_INLINE_REPLY`, flush deferred writes before any synchronous `gk_call`, and implement inline view description for outermost `EVENT` (`flags & 1`) and `FRAME` (`n_deferred == 0`).
+4. **Implement the tape builder**: reserve `ops[0..4] = 0`, emit linked op records and 10-byte node table entries, track `deps` during view reads and `slots` for `OP_CHILD_VIEW`, diff completed tapes against each view's previous bytes, and free retired `(view, gen)` handler tables.
+5. **Enforce safety invariants**: reject stale turn contexts, off-thread UI calls, writes inside view builds, duplicate/cross-build element attachment, invalid UTF-8, and double/stale handle releases; catch host panics/exceptions at the callback boundary and translate them to `C_QUIT`.
+6. **Verify against the conformance suite**: pass `gates/proto.sh` (every turn kind, shape, handle tier, and protocol family) and `gates/go-misuse.sh` equivalents before claiming parity.
+
+---
+
+## 17. End-to-End Wire Trace Reference
+
+This section walks through complete multi-turn byte exchanges so a front-end author can unit-test their serializer and turn dispatcher against concrete byte sequences.
+
+### 17.1 Startup Sequence (`K_INIT` -> `K_WINDOW_INIT` -> `K_VIEWS`)
+
+1. **Turn 1: `K_INIT` (`kind = 1`, `len = 0`)**
+   - Front end calls `gk_call` with `C_VIEW_NEW (1)`:
+     - Request (2 bytes): `01 00`
+     - Response (8 bytes): `01 00 00 00 01 00 00 01` (`root_view = 0x0100_0001_0000_0001`)
+   - Front end calls `gk_call` with `C_OPEN_WINDOW (2)` for `"App"` (`480 x 320`):
+     - Request (25 bytes):
+       ```text
+       02 00                           op = C_OPEN_WINDOW (2)
+       00 00 F0 43                     width = 480.0f32
+       00 00 A0 43                     height = 320.0f32
+       01 00 00 00 01 00 00 01         root_view
+       03 00 00 00 41 70 70            title = "App"
+       ```
+     - Response (8 bytes): `01 00 00 00 01 00 00 02` (`wh = 0x0200_0001_0000_0001`)
+   - Callback returns `0` with empty reply (`0` bytes).
+
+2. **Turn 2: `K_WINDOW_INIT` (`kind = 2`, `len = 16`)**
+   - Request:
+     ```text
+     01 00 00 00 01 00 00 02           wh
+     01 00 00 00 01 00 00 01           root_view
+     ```
+   - Front end runs `root_view`'s `init` callback (creating window-backed states via `gk_call`), then returns `0` with any deferred setup writes in Section 3.
+
+3. **Turn 3: `K_VIEWS` (`kind = 4`, `len = 24`)**
+   - Request:
+     ```text
+     01 00 00 00 01 00 00 02           wh
+     01 00 00 00                       n_views = 1
+     01 00 00 00 01 00 00 01           view[0] = root_view
+     00 00 00 00                       n_retired = 0
+     ```
+   - Front end runs `root_view`'s view function, emits a `GKT1` tape (generation `1`), and returns Section 4 with `n_tapes = 1`, `(root_view, gen=1, tape_len, tape_bytes)`.
+
+### 17.2 Async Provider Request & Answer (`SHAPE_PROVIDER` -> `C_SOURCE_ANSWER`)
+
+1. **Incoming `K_EVENT` (`kind = 5`, `SHAPE_PROVIDER = 14`, Hover variant `1` at offset `4` of `"let x"`)**:
+   ```text
+   01 00 00 00 01 00 00 02             wh
+   00                                  flags = 0 (queued event)
+   00 00 00 00                         n_retired = 0
+   00 00 00 00 00 00 00 00             view = 0 (kept handler)
+   01 00 00 00                         gen = 1
+   02 00 00 00                         slot = 2
+   0E 00                               shape = 14 (SHAPE_PROVIDER)
+   07 00 00 00 00 00 00 00             req_id = 7
+   01 00                               variant = 1 (Hover)
+   05 00 00 00 6C 65 74 20 78          text = "let x"
+   04 00 00 00 00 00 00 00             offset = 4
+   ```
+2. **Immediate `gk_call` with `C_SOURCE_ANSWER (23)`** answering `req_id = 7` with Markdown `"i32"` and range `4..5`:
+   ```text
+   17 00                               op = C_SOURCE_ANSWER (23)
+   07 00 00 00 00 00 00 00             req_id = 7
+   19 00 00 00                         answer_len = 25 bytes
+   01                                  has_hover = 1
+   03 00 00 00 69 33 32                markdown = "i32"
+   01                                  has_range = 1
+   04 00 00 00 00 00 00 00             start = 4
+   05 00 00 00 00 00 00 00             end = 5
+   ```
+
+### 17.3 Async File Dialog Completion (`C_PROMPT_PATHS` -> `K_DONE` -> `C_RELEASE`)
+
+1. **Request `C_PROMPT_PATHS (82)`** (files only, single selection, button `"Open"`, kept slot `5`, gen `1`):
+   ```text
+   52 00                               op = C_PROMPT_PATHS (82)
+   01 00 00                            files=1, dirs=0, multiple=0
+   01 04 00 00 00 4F 70 65 6E          opt<str> = Some("Open")
+   05 00 00 00                         slot = 5
+   01 00 00 00                         gen = 1
+   ```
+   Response: `u64 task_handle` (`HK_TASK = 9`).
+2. **Later `K_DONE` (`kind = 8`, `SHAPE_PATHS = 22`)** when user selects `"/a.txt"`:
+   ```text
+   00 00 00 00 00 00 00 00             view = 0
+   01 00 00 00                         gen = 1
+   05 00 00 00                         slot = 5
+   16 00                               shape = 22 (SHAPE_PATHS)
+   00                                  status = 0 (DoneAnswered)
+   01 00 00 00                         n_paths = 1
+   06 00 00 00 2F 61 2E 74 78 74       path[0] = "/a.txt"
+   00 00 00 00                         error = ""
+   ```
+3. **Front-end reply to `K_DONE`**: removes kept slot `5`, marks dirtied views in Section 2, and appends a buffered `C_RELEASE (12)` for `task_handle` (`0C 00` + 8-byte `task_handle`, `op_len = 10`) in Section 3.
+
+### 17.4 `SHAPE_LIST_EVENT` and `SHAPE_TABLE_EVENT` Byte Layouts
+
+- **`SHAPE_LIST_EVENT (16)`** confirming row `3` in section `0` (not secondary):
+  ```text
+  00 00 00 00 00 00 00 00             req_id = 0 (non-request event)
+  02 00                               kind = 2 (LE_CONFIRM)
+  01                                  has_index = 1
+  00 00 00 00 00 00 00 00             section = 0
+  03 00 00 00 00 00 00 00             row = 3
+  00 00 00 00 00 00 00 00             col = 0
+  00                                  secondary = false
+  00 00 00 00                         query = ""
   ```
-  u64 window, u32 n_sources, per source: u64 source,
-      u32 n_new, (u64 key, u64 view) each, u32 n_evicted, (u64 view) each,
-  u32 n_dirty, u64 view each,
-  u32 n_retired, (u64 view, u32 generation) each
+- **`SHAPE_TABLE_EVENT (17)`** sorting column ID `2` ascending:
+  ```text
+  00 00 00 00 00 00 00 00             req_id = 0
+  00 00                               kind = 0 (TE_SORT)
+  00 00 00 00 00 00 00 00             row = 0
+  02 00 00 00 00 00 00 00             col = 2
+  00 00 00 00 00 00 00 00             to = 0
+  01 00                               sort = 1 (Ascending)
   ```
 
-  The binding binds each new view to its key (a view record whose procedure is the source's
-  row procedure for that key), forgets the evicted ones, retires the listed handler tables,
-  and describes both the already-dirty views and the newly bound row views in the same reply;
-  a write in it is refused as in `VIEWS`. The library then releases the evicted views, accepts
-  the reply's tapes, and notifies every entity that drew the source (`source::watch`), so
-  **the same frame shows them** in one crossing instead of two (`ROWS` + `VIEWS`). A far jump
-  therefore shows placeholders for exactly one frame; scrolling within the overscan shows none.
-- **The first rows** come with the source: `C_SOURCE_NEW` binds rows `0 ..< initial` at once
-  and marks them dirty, so the first frame that draws the source is complete.
-- **Counts and changes.** `gk.set_count(cx, src, n, section)` drops rows at and past `n`
-  (the binding forgets them at once; the library releases their views when the write is
-  applied). `gk.invalidate(cx, src, lo, hi, section)` marks bound rows dirty; unbound rows
-  are described when they are drawn. Releasing the source releases all its rows. A section
-  holds at most `MAX_ROWS` (4,294,967,294) rows, a table at most that many cells (rows times
-  columns): a row's number is 32 bits and the two highest are the header and footer. A larger
-  count stops in the binding (and is `GK_ERR_BAD_OP` in the library).
-
-Cost: 0 crossings per frame while scrolling through bound rows; one ROWS turn per frame that
-drew placeholders (it describes the new rows inline); each row is described once per change.
-
-### 9.2 Events and requests
-
-- **Events** (selection, confirm, cancel, sort, column moved, load more, visible range): the
-  shim calls `source::event(src, SHAPE_X, &payload, cx)`. It is delivered to the handler given
-  to the source, as a *queued* event (section 4, `fire_queued`): after the kit's own update
-  has ended and before the next draw. Each family has its own shape and union (9.5, 9.6); a
-  source without a handler drops its events.
-- **Requests** (a trait method that returns a `Task`): `source::request(src, SHAPE_X,
-  &payload, cx)` fires the event with a new request id first, `(u64 id, payload..)`, and
-  returns a `oneshot::Receiver<Vec<u8>>`. The app answers whenever it likes with
-  `gk.answer(cx, src, id, value)`, a buffered write (`C_SOURCE_ANSWER`) whose bytes are
-  `value` in the wire type the family fixed (section 2, written by reflection); the shim's
-  task decodes them with `Unwire`. A request answered twice, or never asked, is
-  `GK_ERR_BAD_OP`; an answer whose receiver has gone is dropped. Tasks are spawned with
-  `cx.foreground_executor().spawn(async move { rx.await ... })` or returned as upstream's
-  `Task` type directly.
-- **Data the kit asks for synchronously** (counts, column definitions, `loading`, `has_more`,
-  trigger characters, a provider's `id`): pushed by the app with buffered writes and kept in
-  the shim; never a turn.
-
-### 9.3 Wire
-
-| number | what |
-|---|---|
-| `kind ROWS 6` | the ROWS turn above |
-| `hkind SOURCE 7` | a row source |
-| `call SOURCE_NEW 20` | `u64 count, u32 initial, u32 capacity, u8 has_events, u32 slot, u32 generation` (a kept handler, section 5) -> `u64 source, u32 n, (u64 key, u64 view) each`. Needs the turn's window |
-| `call SOURCE_SET_COUNT 21` | `u64 source, u32 section, u64 count` (buffered) |
-| `call SOURCE_SCROLL_TO 22` | `u64 source, u64 row` (buffered): the core list's scroll handle |
-| `call SOURCE_ANSWER 23` | `u64 source, u64 id, u32 len, bytes` (buffered) |
-| `call TEST_SOURCE_REQUEST 24`, `TEST_SOURCE_TAKE 25` | the runtime's tests |
-| `node SOURCE_LIST 9` | the core's own list element: `str id, u64 source, f32 row height`, styled ops |
-| `shape SOURCE_TEST 13` | `Source_Test {u64 id, str text}`, the tests' request |
-
-Reserved for the two delegate families, so each can add numbers without touching the
-other's lines of `core/wire/ops.txt` (each appends its block at the end of the class):
-
-| class | input family | rows family |
-|---|---|---|
-| `call` | 32 to 47 | 48 to 63 |
-| `shape` | 14, 15 | 16 to 19 |
-| `node` | 10, 11 | 12 to 15 |
-
-`ABI_MINOR` is 4 from this section on (6 after `FRAME`, `EVENT` and `ROWS` began carrying
-retired tables and returning changed tapes inline); a family that adds a turn kind or changes
-a reply raises it again.
-
-### 9.4 The shared core's API
-
-Rust (`core/src/source.rs`; shims are hand-written library code, not generated, and may use
-it directly):
-
-```rust
-pub fn key(section: u32, row: u32) -> u64;
-pub enum Row { View(AnyView), Missing }
-pub fn row(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Row;    // never calls the app
-pub fn count(src: u64, section: u32) -> GkResult<usize>;
-pub fn watch(src: u64, entity: EntityId);                 // notified when rows it drew arrive
-pub fn event<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App);
-pub fn request<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App)
-    -> GkResult<oneshot::Receiver<Vec<u8>>>;
-pub fn scroll_handle(src: u64) -> GkResult<UniformListScrollHandle>;     // the core list's
-// genapi: released_shown(msg, what) -> !    a released source a view still draws stops the app (rt::app_stop)
-```
-
-Go (`go/gk/internal/rt/rt_source.go`): `gk.RowAt{Section, Row int}`, `gk.RowSource`,
-`gk.NewRowSource(cx, count, row func(cx *gk.Cx, at gk.RowAt) gk.Element, opts...)` (options
-`gk.Initial`, `gk.Capacity`, `gk.CountFunc`), `gk.SetCount`, `gk.SetSectionCount`,
-`gk.Invalidate`, `gk.Answer`, `gk.ScrollTo`, `gk.Release`.
-
-A row function is a view function with the key: it may read kit state and models (the row
-is described again when they change), may not write, and registers handlers.
-`gk.NewRowSource` needs a window (init or a handler), like kit state.
-
-### 9.5 Rows family: lists, tables, searchable lists, trees
-
-- **`ListDelegate`** → `GkListDelegate { src: u64 }` with `type Item = GkRow`, a small element
-  that wraps `Row::View` in the kit's `ListItem` (so selection styling stays the kit's) or a
-  skeleton placeholder, and implements `Selectable`. `sections_count` and `items_count` read
-  the source's counts; `render_item(ix)` is `source::row(src, key(ix.section, ix.row))`;
-  section headers and footers are rows of their own with the key `section << 32 |
-  0xffff_fffe` and `0xffff_ffff` (the row procedure is told by `Row_At.row` being
-  `gk.HEADER` or `gk.FOOTER`); `render_empty`, `render_loading` and `render_initial` show a
-  `gk.View` the app set (data), or upstream's default when none. `set_selected_index`,
-  `set_right_clicked_index`, `confirm`, `cancel`, `load_more` are `List_Event` variants
-  (shape 16). `perform_search(query)` is a request (shape 16, `List_Search{id, query}`); its
-  task completes when the app answers, after it has set the new counts. `loading`,
-  `has_more`, `load_more_threshold` are data.
-- **`TableDelegate`** → `GkTableDelegate { src }`: `columns_count` and `column(ix)` are data
-  (the kit's `Column` is plain data: `gk.set_columns(cx, table, []table.Column)`), `rows_count`
-  is the source's count. A row's view describes the whole row: its root is a
-  `gk.table_row()` node whose children are the cells in column order; `render_tr(row)` gives
-  the row view and `render_td(row, col)` decodes child `col` of that row's tape with the row
-  view's handle (so cell handlers are the row's). `cell_text`/`cell_label`/`row_label` are
-  data (an optional text column the app sets) or empty. `perform_sort`, `move_column`,
-  `visible_rows_changed`, `visible_columns_changed`, `load_more` are `Table_Event` variants
-  (shape 17); `render_th` shows the column's name (upstream default) unless a header view is
-  set; `context_menu` is a menu the app describes as data, with the row in its events.
-- **`SearchableListDelegate`** → `GkSearchableDelegate`: as the list delegate, with
-  `perform_search` as a request; `SearchableListItem` values are rows (title as data for
-  `matches`, the rendering as the row's view).
-- **Tree**: `tree(&state, render_item)` gets a render closure over a source whose keys are
-  the tree's flat indices; the row procedure reads the entry it draws through the
-  `TreeState` handle (`gk.entry(tree, cx, at.row)`: a state read in a view build, so every
-  bound row is described again when the tree state changes, e.g. on expand).
-- **States.** `ListState<GkListDelegate>`, `TableState<GkTableDelegate>`: instantiated by the
-  generator rule of 9.6 (`"ListState<crate::shim_rows::GkListDelegate> as ListState"`), so
-  their 17 + 34 methods (scroll, select, column widths) are generated. Go:
-  `table.NewListState(cx, src)` makes the state over a row source; `table.List(state)` is the element.
-
-### 9.6 Input family: InputState, EditorState, providers
-
-- **Instantiating the generic state.** Upstream declares `InputBaseState<M>`, with `type
-  InputState = InputBaseState<InputMode>` and `type EditorState = InputBaseState<EditorMode>`
-  (155 functions, "state types generic over a delegate or mode"). Decision: the generator
-  instantiates a generic entity state for a fixed argument list, named by a new list in
-  `api/overrides.toml`:
-
-  ```toml
-  [instantiate]
-  types = ["Stateful<Div>"]
-  # Generic entity states, one state type per line: "Generic<Arg> as Name". Arg is an upstream
-  # type or a shim type of the library (crate::...). Owned by the family that adds the line.
-  states = ["InputBaseState<InputMode> as InputState", "InputBaseState<EditorMode> as EditorState"]
-  ```
-
-  Each line makes one state type (`InputState`, `EditorState` in Go, the alias's name):
-  every method of a generic impl (`impl<M: InputModeKind> InputBaseState<M>`) whose bounds
-  the argument meets, every method of the impl for exactly that argument
-  (`impl InputBaseState<EditorMode>`), `Self` and `M` substituted; a method whose
-  where-clause the argument does not meet is skipped with the reason `generic-bound`.
-  Constructors and the `self -> Self` builder chain are one constructor op, as section 5
-  says. The rule lives in `gen/gk_model.py` (`classify_state`, `add_node` for states) and
-  the emitters; the rows family only adds its lines.
-  The Rust type is `gpui_kit::base::input::InputBaseState<gpui_kit::base::input::InputMode>`,
-  the same `TypeId` as the alias, so handles stay compatible, and the generated names give
-  the calls (`editor.NewInputState(cx).Placeholder(..).Build()`, `s.Value(cx)`, `s.SetValue`, ...)
-  working.
-- **Providers.** The `Lsp` of an input holds `Rc<dyn CompletionProvider>` and the like. Each
-  provider is a shim over a row source used only for its request channel (count 0):
-  `GkCompletionProvider { src }`, `GkHoverProvider`, `GkCodeActionProvider`,
-  `GkDefinitionProvider`, `GkDocumentColorProvider`. Installing one is a call op of the
-  family: `editor->set_completions(cx, src)` sets `lsp_mut().completion_provider`.
-  - `completions(text, offset, trigger)` is a request (shape 14, `Provider_Request` union,
-    variant `Completions{id, text: str, offset: usize, trigger_kind: u8, trigger: opt<str>}`;
-    the text of the rope is copied, DESIGN.md section 12). The answer is
-    `Completion_Response{items: []Completion_Item, incomplete: bool}`, the LSP fields as
-    plain records and JSON text where LSP has open shapes. `hover`, `code_actions`,
-    `perform_code_action`, `definitions`, `document_colors` the same, one variant each.
-  - `is_completion_trigger(offset, new_text)` is data: the trigger characters the app set,
-    plus word characters when the app asked for them. `inline_completion_debounce` and `id`
-    are data. `resolve_completions` and `inline_completion` keep upstream's defaults until
-    asked for.
-  - The `Task` returned is `cx.foreground_executor().spawn(async move { decode(rx.await) })`;
-    a request the app never answers leaves the menu empty, which is what upstream does for a
-    provider that returns nothing.
-
-### 9.7 Where each family's code lives
-
-The shared row-source core is `core/src/source.rs`, the ROWS hook in `core/src/rt.rs`, and
-`go/gk/internal/rt/rt_source.go`, with the numbers of 9.3 and the test mode `rows`. The library's
-dispatch already asks both families (`calls.rs` asks `shim_input::call` and
-`shim_rows::call`, `hand.rs` asks their `node`), so adding to a family doesn't mean editing a
-dispatch file.
-
-| | input family | rows family |
-|---|---|---|
-| Rust | `core/src/shim_input.rs` | `core/src/shim_rows.rs` |
-| Go | `go/gk/editor/rt_editor.go` | `go/gk/table/rt_rows.go`, `go/gk/table/rt_table.go` |
-| generator | the `[instantiate] states` rule in `gen/gk_model.py`, `gen/gk_rust.py`, `gen/gk_go.py` | its lines in `states` and its `[traits.role]` lines in `api/overrides.toml` |
-| numbers (`core/wire/ops.txt`) | call 32-47, shape 14-15, node 10-11 | call 48-63, shape 16-19, node 12-15 |
-| tests | `core/tests/go/input/`, `core/tests/go/run-input.sh` | `core/tests/go/rows/`, `core/tests/go/run-rows.sh` |
-| example | the editor pages of `examples/go/gallery` | `examples/go/table` |
-
-`core/tests/go/run.sh` sources every `core/tests/go/run-*.sh`: a family script builds its app
-with `build NAME DIR` and checks its modes.
-`api/opcodes.lock` is append-only; when two branches both add numbers, a merge keeps both
-sides.
-
-### 9.8 What a delegate family is tested for
-
-- Gallery pages that are byte-identical to the same page drawn by the pure Rust kit (a list,
-  a table of 10,000 rows, a tree, an input and an editor with the providers' menus open).
-- Protocol tests: the first frame is complete; a far jump shows one placeholder frame
-  (`placeholder_frames` in the meter's `stat`); every delegate event is delivered after the
-  kit's update; a request is answered and its menu drawn; a released source or provider
-  that a view still draws stops the app (rt::app_stop).
-- A frame-cost scene: a large table scrolled every frame, measured against the same table on
-  a Rust delegate, within 1.03 of Rust plus the Rust-to-Rust noise of the run (DESIGN.md
-  section 0, decision 8), with 0 crossings per frame while the rows are bound.
-
-### 9.9 Searchable lists: Select and Combobox over a search delegate
-
-Upstream's `SelectState<D>`, `ComboboxState<D>`, `Select<D>` and
-`Combobox<D>` are generic over a `SearchableListDelegate` whose `Item: SearchableListItem` the app
-implements. The library implements both once (`core/src/shim_select.rs`):
-
-- `GkSearchDelegate` over a row source, instantiated by the generator (`[instantiate] types` and
-  `states`: `Select<crate::shim_select::GkSearchDelegate> as Select`, `SelectState<..>`,
-  `Combobox<..>`, `ComboboxState<..>`); its `from_source` takes the items the app pushed for the
-  source. Every method of the four types is generated (the states' reads, writes, calls, builders
-  and events, the elements' builders).
-- `GkItem` (`gk.SearchItem` in Go: `Value`, `Title`, `Display`, `Keywords`, `Disabled`), the
-  item, a **library value** that travels both ways (`selection()`, events): the generator's
-  `libval` descriptor, `[lists] values` in `api/overrides.toml`; Rust reads and writes it with its
-  `Unwire` and `Wire` impls. `Value` is `SharedString`, so a selected value is
-  a string.
-- Associated types of a shim (`D::Item`, `<D::Item as SearchableListItem>::Value`) are read from
-  `[lists] assoc` (`qualified` in `gen/gk_lists.py`, hooked into `desc`, `rtype` and `borrowed`).
-- The items are data: `gk.search_source(cx, state, items, row = nil, requests = {})` or
-  `gk.search_source_groups(cx, state, groups, row = nil, headers = false, requests = {})` (call op
-  `SEARCH_ITEMS 176`: `u64 source, u8 flags (1 rows, 2 requests, 4 headers), u32 n, (opt<str>
-  group title, u32 n, item each) each`), then `gk.select_state(cx, src, nil)->build()`;
-  `gk.search_items` / `gk.search_groups` replace them (buffered) and the state's generated
-  `set_items(cx, src)` takes the new ones.
-- Searching filters in the library exactly as upstream's `SearchableVec` does (the title or the
-  keywords contain the query, ignoring case; a group stays while one of its items or its title
-  matches). A source made with `requests` asks the app instead: `Search_Request {id, query}`
-  (shape `SEARCH_EVENT 44`); the app pushes what it found, sets it, and answers with `gk.answer`;
-  the kit's search task ends then.
-- Rows: with a row procedure, item `(group, index)` is row `section << 32 | index` of the source
-  (its index among all of the group's items, so its view stays while the filter changes) and the
-  kit draws that view instead of the title; `headers` makes row `HEADER` of each group its
-  header. A row without a view yet is drawn as upstream's row for one frame.
-- `display_title` is the item's `display`; `is_item_enabled` is `!disabled`; `is_item_checked`
-  compares values; `section` (upstream's default header) is the group's title.
-- Not bound: `SearchableListDelegate::on_confirm` and `on_will_change` (called without a context:
-  the states' own `Confirm` and `Change` events carry the same), `Combobox::render_trigger` (an
-  element closure over a context, skipped as `item-render-closure`, so `ComboboxTriggerContext`'s 5
-  reads are reachable by nothing), `SearchableListState` (the core a new searchable component is
-  built on in Rust, in the parent's `Context<P>`) and `SearchableVec` (a delegate for Rust apps),
-  skipped as `rust-only-extension`.
-- An element closure that gets `&App` instead of `&mut App` and draws an element
-  (`Select::empty(Fn(&mut Window, &App) -> E)`) takes a `gk.View` (`viewfn`): a fragment cannot be
-  decoded without `&mut App`.
-
-### 9.10 A table delegate's texts and looks
-
-`GkTableDelegate` (9.5) answers the rest of `TableDelegate` from data the app pushes (buffered
-writes; columns are the app's column ids):
-
-| upstream | binding | call op |
-|---|---|---|
-| `cell_text`, `cell_label` | `gk.table_texts(cx, t, first_row, [][]string, replace)` | `TABLE_TEXTS 177` |
-| `row_label` | `gk.table_row_labels(cx, t, []Table_Row_Label)`, else upstream's join of the cells' labels | `TABLE_ROW_LABELS 178` |
-| `fit_column`, `group_headers`, `render_group_th`, `render_header`, `render_tr`, `render_last_empty_col` | `gk.table_look(cx, t, Table_Look{fit, groups, group_views, last_column, header_style, row_style})`: widths, group header levels, a view per group label, a view for the filler, described styles (13.6 values) over upstream's header and body rows | `TABLE_LOOK 179` |
-
-A static table's parts take `impl ChildElement` (`Table::child`, `TableBody::children`): one of
-the trait's node types (a union the kit file declares, `[lists] unions` in `api/overrides.toml`); the library picks the decoder by the child node's type (`rust_arm`).
-
-`TableState::dump_range` reads the texts back (it calls `cell_text`). `ListState::delegate`,
-`delegate_mut` and `TableState::delegate`, `delegate_mut` hand out the delegate's row source
-(`Row_Source`; the shims' `Wire` impls write its handle). `TableDelegate::context_menu` waits for
-the menus of 11.6 as a `PopupMenu` the delegate is handed.
-
-### 9.11 The editor: fonts, texts, objects in events
-
-- `gpui::Font` is `gk.Font {family, weight, style}` (`gk.font("Inter", 700)`; the descriptor
-  `font`, Rust `shim_editor::font` and a `Wire` impl): `DisplayMap::new` and `set_font` and
-  `InputBaseState::prewrap` take one, so `DisplayMap` is made by the app and its 24 reads and writes
-  are the object rule's (13).
-- An editor's text read back (`text() -> &Rope`, `selected_text() -> RopeSlice`) is a string
-  (`Wire` impls for ropey's types in `shim_editor.rs`).
-- An event payload that is a library object and Clone (`InlineTokenClickEvent`,
-  `InlineTokenHoverEvent`) is a copy behind a temporary handle, as a read's result is (13.2), so the
-  handler can call its reads (`payload_object`).
-- `History<SharedString>` and `UndoHistory<SharedString>` are objects (the
-  `[values] objects` rule): the app keeps its entries as strings. An iterator read back
-  (`History::entries`, `impl Iterator<Item = X>`) is a list.
-- The editor's other providers ask the app through the input shims' request channel (9.6):
-  `Provider_Definitions`, `Provider_Colors`, `Provider_Code_Actions`, `Provider_Perform`,
-  `Provider_Tokens`, `Provider_Inline` (variants 2 to 7 of `Provider_Request`), installed with
-  `gk.editor_providers(..., which = {.Definitions, .Document_Colors, .Code_Actions,
-  .Semantic_Tokens, .Inline_Completions}, code_action_id, inline_debounce_ms, token_types,
-  token_modifiers)`; the code action provider's id, the inline debounce and the semantic tokens'
-  legend are data.
-- `InputModeKind` and `InputExtras` are the hooks a new input mode implements in Rust; the binding
-  instantiates the kit's three modes, whose implementations are upstream's: skipped as
-  `rust-only-extension`.
-
-### 9.12 Options the binding could not give, and handlers given to calls
-
-- A `char` travels as its u32 (`rune` in Go): `MaskPattern::Number { separator: Option<char> }`
-  and every other char argument or field.
-- `impl From<&str> for T` (not `&'static str`) is a member of T's Into set: `set_mask_pattern`
-  takes upstream's string pattern (`"999-999"`, upstream's `Pattern` variant, whose tokens are
-  private) as well as `None` and `Number`.
-- A handler given to a call op (a state's or an object's method, or a builder of its constructor:
-  `InputState::validate`, `set_validator`) is a **kept handler**, as a subscription's is
-  (`putKeptHandler` in `rt_handler.go`, `shim_editor::kept`): the library fires it whenever upstream
-  calls the closure, between frames (on input, on a click), with the window when the closure has
-  one. It lives until the app ends; giving the state another one keeps both.
-
-Wire numbers: call 176-207, shape 44-51, node 40-47, hkind 12 (`core/wire/ops.txt`).
-Tests: `core/tests/go/lists2` (`run-lists2.sh`), gallery pages `lists2-*`.
-### 9.13 Objects made by Default, and handlers given to calls dropped with their state
-
-- A library object (13.1) with no constructor of its own that implements `Default` gets a
-  synthetic constructor `<Type as Default>::default` (`gk_lists.default_ctor`, hooked at the end of
-  `classify_object`): a kept handle, `gk.status_colors_default(cx)`, not counted as an upstream
-  function. Its reads, writes and calls become reachable (13.4): `StatusColors` (18 reads, each a
-  theme colour unless the theme set its own), `SyntaxColors` (`style`, `style_for_index`),
-  `TableVisibleRange`, `ImageNode` and 15 more across the kit. The generated `states` test makes,
-  reads and releases each one.
-- A handler given to a call op (9.12: `validate`, `set_validator`, a notification's `on_click`)
-  belongs to the handle the call is made on, or makes: `putKeptHandler` (rt_handler.go) notes
-  its slot; `state_make` gives the noted slots to the new handle, `state_set` and `state_call` to
-  the handle the request names after its op; `gk.release` of that handle drops them
-  (`kept_release`). `gk.test_kept_count()` counts
-  the kept handlers alive (test mode `kept`).
-
-### 9.14 Data closures answered between frames: asks
-
-A closure upstream calls while it lays out or draws and that returns a value which is not a
-number or a bool (9.12 covers numbers), with arguments the app can read and a result the app can
-write, is an **ask** (descriptor `["ask", key, result, wrap, ptypes, params, rust type]`,
-`gk_lists.ask_closure`, hooked into `closure_desc` before "a closure that returns a value"):
-
-- Go: `a.hl = gk.NewAsk(cx, func(cx *gk.Cx, key K) V {..})` in init or a handler; the builder takes
-  `gk.Ask[K, V]`, so a function of other types does not compile. K is the closure's argument; V is
-  the answer.
-- Wire: the ask is a row source used for its request channel (9.2), made an ask by call
-  `ASK_NEW 180` (`u64 source`, immediate: the library's cache and, once, its main-thread task).
-  An element op or a call op carries its `u64` handle. The request is shape `ASK_EVENT 45`:
-  `u64 id, u64 ask, key bytes` (the closure's arguments in their wire form); the answer is
-  `C_SOURCE_ANSWER` with V's bytes. `ASK_TEST 181` returns the tests' counts (gets, keys asked,
-  answers cached).
-- Rust (`core/src/shim_text.rs`): the closure looks the key (`shim_text::key`, the arguments'
-  `Wire` bytes) up in the ask's cache. A key not there returns V's default (an image source: an
-  empty path) and is sent once to the task, which, between frames, asks the app
-  (`source::request`, a queued event); when the answer arrives it is decoded with the app context
-  and the first window (`genapi::with_root` over an empty tape, so colours resolve against the
-  theme), cached, and every window is redrawn (`refresh_windows`: the tapes are decoded again and
-  upstream gets a new closure, now answered from the cache). One or two frames show the default.
-- Arguments: values with no handles (a key is their bytes): strings, numbers, records, enums,
-  `&SharedUri` (a string; `Wire` in shim_text.rs), `&CodeBlock` (`gk.Code_Block {lang, code,
-  meta}`, a library value). Results: values with no nodes or handles, and `ImageSource` as a path
-  or a URL (`"https://..."`; `shim_text::image_source`).
-- Bound: `TextView::code_block_highlighter` (base), `TextViewDefaults::with_code_block_highlighter`,
-  `RenderContext::with_code_block_highlighter` and `with_image_source`, `TextView::image_source`
-  (base and component), `DiffState::with_syntax_highlighter` and `set_syntax_highlighter`,
-  `Calendar::label`, and the ambient `set_icon_resolver`.
-- Not bound: closures whose result is an element or view (`link_tooltip -> AnyView`,
-  `block_surface -> Div`), a style (`with_heading -> StyleRefinement`), a menu (`Tree::context_menu`),
-  or that take a library object as their argument (a key must be bytes).
-
-### 9.15 Values a static makes several of
-
-A static of a value type (a node that is not an element) that returns `Vec<Self>` or
-`Result<Vec<Self>, E>` (`DiffFile::parse(patch)`, `parse_with(patch, options)`) is bound as two
-synthetic functions (`gk_lists.list_ctor`, hooked before "a static function that is not a
-constructor"): `gk.diff_file_parse_count(cx, patch) -> gk.Fallible(int)` (an ambient call, 11.5:
-how many values it made, or the error's text) and the constructor `gk.diff_file_parse_at(patch,
-index)`, whose value is the static's value at that index (the library runs the static where the
-value is decoded; an index past the count, or a failed static, stops the app). The static
-itself is also bound as an ambient call whose values come back as read-only `X_Read` objects (13.15: `gk.parse(cx, patch)` gives `[]gk.Diff_File_Read`); only the `_at` values can
-be given to the kit (`gk.diff_state(cx, files)`). When no other rule binds it, the upstream
-function counts as bridged by this one.
-
-Tests: modes `drive`, `kept`, `status-colors`, `ask`, `diff` of `core/tests/go/lists2`; gallery
-pages `text-highlight` and `diff-view`.
-### 9.16 Element closures over a context
-
-Upstream draws parts of some elements through a closure it hands values it made: a token's
-context (`Input::token(Fn(&InlineTokenContext, &mut Window, &mut App) -> R)`), a diff file
-(`Diff::render_header_suffix(Fn(&DiffFile, ..) -> E)`), an editor's scrollbar geometry
-(`set_scrollbar_renderer(Option<Rc<dyn Fn(EditorScrollbarContext, ..) -> AnyElement>>)`, a type
-alias the rule reads through), a scroller's item index, a questionnaire choice's state. They were
-skipped as `item-render-closure`, and the contexts' reads were not attempted (no bound function
-handed one out). General rule (`gk_lists.ctx_rows`, hooked into `closure_desc` before that skip):
-an element closure that gets the window, the app and one to three values the app can read
-(plain values, or library objects that are Clone) is `["ctxrows", wrap, ptypes, params, descs]`.
-
-- The app passes a `gk.RowSource` (made in init or a handler, count 0); its row function
-  reads the values with `gk.row_context(cx, src, at, T)` (T the closure's value, or a struct of
-  its values in order). A library object comes as a copy behind a temporary handle, valid while
-  the row is described, so the row can call its reads (`gk.is_selected(t, cx)`) or give it to an
-  element (`gk.input_token(t)`: pinned to the row's build, 13.12).
-- Rows: each call of the closure in a frame is a row, in the order of the calls (the count starts
-  again at the next frame: `window.on_next_frame`), or the index itself when the closure's only
-  value is an integer. The library keeps, per row, the identity of the values it was handed (the
-  plain values' bytes; an object's reads that take nothing and return plain values, generated
-  per type) and a writer of the values. A bound row whose values changed is marked dirty: the next
-  frame describes it again, and this frame shows the old row. A row without a view is drawn as
-  nothing for one frame, as any row (9.1). Nothing calls the app while upstream draws.
-- Objects handed to such a closure are reachable (`gk_lists.handed_out`, hooked into
-  `reach_objects`), so their reads and the functions that take them are bound by the object rule
-  (13): `InlineTokenContext` (7), `EditorScrollbarContext` (2), `InputToken::new(&InlineTokenContext)`.
-- Wire: call `CTX_GET 182` (`u64 source, u32 section, u32 row` -> the values; immediate, allowed in
-  a view procedure). A row no closure drew stops: "row N of this row source was never drawn by an
-  element closure over a context (gk.row_context)" (a stop).
-
-### 9.17 Objects lent by kit state
-
-A state method `fn x_mut(&mut self) -> &mut T` or `-> Option<&mut T>`, T a library object that is
-Clone (`InputBaseState::diagnostics_mut`), was "an update that returns a value" (a borrow). It is
-now a **lend** (`gk_lists.lend`, hooked into `state_method`; descriptor `["lent", T, state, opt]`):
-a call (run at once, after the turn's buffered writes have been sent) that returns a temporary
-handle to a copy of the object, of T's own Go type, so every generated method of T works on it.
-The app writes to it with the turn's buffered writes; the library gives the copy back to the state
-through the same method when the turn's writes have landed (`shim_editor::lend`: deferred twice,
-after `rt::process_reply`'s deferral of the writes), notifies the state (its views redraw), and
-releases the handle. Using it after its turn stops ("was released"). The copy is taken when
-the call runs, after the writes buffered before it, so they are in it. Call `LEND_TEST 183` (tests:
-objects lent, given back). Not lent: `lsp_mut` (`Lsp` is a builder value, not an object the app can
-hold) and `display_map` (`&DisplayMap`, which is neither Clone nor lent through `&mut`).
-
-### 9.18 Delegates answered between frames
-
-A trait upstream calls while it draws or edits and the app implements is implemented once by the
-library over procedures of the app, each an ask (9.14): asked between frames for a question the
-cache has not got, upstream's default (or nothing) meanwhile, the answer cached, every window
-redrawn. `[lists] delegates` in `api/overrides.toml` names the library function that makes the
-upstream value from the handle the app passes, by type alias or by `"dyn Trait"` for `Rc`, `Arc` or
-`Box` of it (`gk_lists.alias`): the argument is the descriptor `rows` (a `gk.Row_Source`), which a
-call op can decode (`gk_lists.CALL_SAFE`). The trait methods count as bridged through `[shims]`.
-
-| upstream | the binding's call | the app answers |
-|---|---|---|
-| `InputHighlighterFactory` (`set_highlighter_factory`, `ensure_highlighter_factory`) | `hl := gk.highlighter(cx, a, styles, folds = nil, languages = nil)`, then `gk.set_highlighter_factory(ed, cx, hl.src)` | `styles(q: gk.Highlight_Query{language, text, range}) -> []gk.Highlight_Run{range, name}`: named runs, resolved by the editor's resolver (the kit's editor: the theme's syntax colours), the gaps unstyled; `folds(gk.Fold_Query) -> []gk.Fold_Range` |
-| `Rc<dyn LanguageProvider>` (`set_language_provider`) | `p := gk.language_provider(cx, a, aliases, syntax = nil)`, `gk.base_set_language_provider(cx, p)` | aliases as data (`language_name`); `syntax(gk.Syntax_Query{language, text, offset}) -> gk.Syntax_Context` (`SyntaxContextProvider::context_at`, Code until answered); `config` is upstream's default (an app's configs go through `set_language_config`, which takes precedence) |
-
-`InputHighlighter::update` keeps the editor's text and drops the answers about the old text;
-`update_batch` and `fold_ranges_for_edit` are upstream's defaults over `update` and `fold_ranges`.
-Calls `HIGHLIGHTER_NEW 184` (`u64 styles ask, u64 folds ask (0 none), u32 n, str language each`) and
-`LANGUAGES_NEW 185` (`u64 handle, u8 has syntax, u32 n, (str alias, str name) each`), immediate.
-
-### 9.19 Small rules of
-
-- A static that makes several values and can fail (`DiffFile::parse`, 9.15) also gets
-  `<type>_<name>_error`, an ambient call that returns the error as the kit's own value when the
-  error type is a library object that is Clone (`gk.diff_file_parse_error(cx, patch) ->
-  Maybe(gk.Diff_Parse_Error)`, with `line` and `message`).
-- gpui's `UniformListScrollHandle` read back (`TreeState::scroll_handle`) is the gpui ScrollHandle it
-  scrolls by, the scroll-handle object (13.14): `gk.set_offset(gk.tree_state_scroll_handle(tree, cx), cx, ..)`.
-- Third-party types these rules carry (`gk_lists.THIRD_PARTY`, hooked into `rtype`): ropey's
-  `Rope` inside a tuple (an editor's text, 9.11), and LSP's `CompletionItem` going in as
-  `gk.Completion_Item` (label, kind, detail, insert text; `Unwire` in shim_input.rs), so the
-  completion highlighters are ambient calls: `gk.base_highlight_prefix(cx, "ma", item) -> []gk.Range`
-  (and `highlight_contains`, `highlight_characters`).
-
-Tests: modes `ctx-token`, `lend`, `highlight`, `languages`, `bad-lend`, `bad-ctx` of
-`core/tests/go/lists2`; gallery pages `text-token`, `diff-header`, `editor-diagnostics`.
-### 9.20 Typed fragments
-
-A closure upstream calls while it draws that gets the window and the app, no values, and returns
-one element type rather than `impl IntoElement` (`MarkdownExtensions::block_surface(name,
-Fn(&mut Window, &mut App) -> Div + Send + Sync)`) is a fragment of the app's view, as any render
-closure without an item is (DESIGN.md 12), whose root is decoded as that type: descriptor
-`["tfrag", node, params, wrap, ptypes]` (`gen/gk_editor.py`). The app passes an element of the type
-(`gk.Div(s.P2).Bg(..).Child(..)`: Go's type is the node's, so another element does not compile);
-the library replays the fragment whenever upstream calls the closure and decodes its root with the
-type's generated `make_` function. The fragment holds the view's tape in an `Rc`, so the closure is
-wrapped in `editor_text::MainThread`, which refuses any thread but the main one (upstream calls it
-while it draws). A root of another type (only a hand-written tape can make one) stops the app.
-
-### 9.21 Predicates as key sets, tables by index
-
-Two data closures with no window and no app, which upstream calls synchronously, are data the app
-gives once:
-
-- `FnMut(&T) -> bool` over a string or an integer (`History::retain`): `["keyset", key]`, a
-  `[]T`: the keys for which the predicate holds (`gk.history_retain(h, cx, []string{"b", "d"})`).
-- `Fn(u8) -> V` (`TextViewStyle::with_heading`, a heading level): `["table", V, .., rust V]`, a
-  `[]V`: the value at index k; an index past the end is V's default (`StyleRefinement::default()`).
-
-### 9.22 Element and view closures over values without a window
-
-Two kinds of closures over values the kit hands them, beside the element closures over a context of
-9.16, served by the same row sources (`gk.row_context` reads the values):
-
-- **Without a window** (`ctxlazy`): upstream gives the closure no window and no app
-  (`FoldPlaceholderRenderer = Rc<dyn Fn(usize) -> AnyElement>`, `FoldIconRenderer = Rc<dyn Fn(usize,
-  bool) -> AnyElement>`; through their type aliases, `gk_editor.alias`). The closure returns a library
-  element (`editor_text::lazy_row`) that becomes the row of the source when it is laid out
-  (`request_layout`, where the window and the app are), by `source::ctx_row`; rows are keyed as in
-  9.16 (the value itself when it is the only one and an integer: a fold's line).
-- **Views** (`viewrows`): a closure over plain values that returns an `AnyView` with the window and
-  the app (`TextView::link_tooltip(Fn(&SharedString, &mut Window, &mut App) -> AnyView)`): the row
-  view of one row per distinct value (`editor_text::ctx_view` keeps, per source, the row of each
-  value's bytes), so the same link shows the same view; a row not described yet is an empty view for
-  one frame.
-
-Both take a `gk.RowSource`; the row function reads `int` (a fold's line), a string (a URL) or a
-struct of the values in order.
-
-### 9.23 Markdown plugins
-
-`MarkdownExtensions::plugin<P: MarkdownPlugin>` and `TextView::plugin<P: TextViewPlugin>` (base and
-component; TextViewPlugin is implemented for every MarkdownPlugin) take `gk.Markdown_Plugin_Any`, a
-union of the kit's plugins (node types that implement MarkdownPlugin: `gk.frontmatter_plugin()`) and
-the library's **data plugin** `gk.Markdown_Plugin {name, match, lang, rows, baseline}`
-(`["mdplug", "crate::editor_text::DataPlugin", ["node", kit plugin]...]`; the generator stops when the
-kit's set of plugins changes, so the library's `GkPlugin` enum is kept in step). Upstream parses on a
-background task and must not call the app (decision 3), so the data plugin claims nodes by a rule
-given as data:
-
-| `gk.Markdown_Match` | the Markdown node | `lang` matches |
-|---|---|---|
-| `Code`, `Math`, `Yaml`, `Toml`, `Html`, `Mdx_Element` (blocks) | fenced code, `$$` math, front matter, raw HTML, a JSX element | Code: the fence's language; Mdx: the element's name; "" any |
-| `Inline_Code`, `Inline_Math`, `Inline_Html`, `Mdx_Inline_Element` (inline) | the same in a line | as above |
-
-A claimed node is the kit's `MarkdownNode` with the plugin's name, the node's text (its value: the
-code, the math, the YAML; for a JSX element its source) and its Markdown source. Drawing it is a row of
-`rows`, described between frames like any row (one frame of nothing at first; again when the node
-changes): a block's row reads the node (`gk.row_context(cx, rows, at, gk.Markdown_Node_Read)`: name,
-text, Markdown, source range); an inline node's row reads `gk.Markdown_Inline {node, typography}`, `typography`
-being the kit's `InlineRenderContext` (the inherited text style, font size, line height, rem
-size; reachable through this rule, `gk_editor.handed_out`), and is placed in the line as an
-`InlineElement` with `baseline` pixels from its top (0: upstream's). The kit's plugins run as
-upstream wrote them. Not bound: a parser written in Rust (`MarkdownParseContext`, `MarkdownNode::new`
-with typed data, `InlineElement`), skipped as `rust-only-extension`.
-
-### 9.24 Small values
-
-- An `ElementId` read back is its text (`DiffAnnotation::id`; `Wire for ElementId` in
-  `core/src/editor_text.rs`).
-- A `gpui::EntityId` argument (`InputBase::semantic_owner`) is the entity behind an input, textarea or
-  editor handle: `gk.EntityIDOf(a.editor)` (a `gk.EntityID`). Any other handle stops the app ("is not an
-  input, a textarea or an editor"); a released one stops with the release's own message.
-
-### 9.25 Objects a read-back value hands out
-
-An object returned by a `&self` read of a value that is read back (13.15) is reachable: the
-read-back value's reads are classified after the reachability pass
-(`readback_reads`), which therefore found nothing handing the object out. `gk_editor.before_reach`
-keeps every object's lists and statuses, and `gk_editor.revive` gives back those of an object such a
-read returns (by value, a list or an option of it, Clone) before the reads are classified:
-`DiffFile::conflicts() -> &[DiffConflict]` makes `DiffConflict`'s seven reads bound (`gk.parse_conflicts(cx,
-path, text)`, then `gk.conflicts(file, cx)`).
-
-### 9.26 Records with colours in call ops; one-method data delegates
-
-- **Records with colours.** A call op has the app context, but the records' `_c` codecs do not (DESIGN
-  13, `call_bad`), so a record holding a colour at depth was refused in call ops. Now such an argument
-  (`Vec<TextDecoration>`: a range and a `HighlightStyle` with colours; `InputEditorStyle`) is decoded in
-  place, field by field, in the op itself, every record inside it too, its colours resolved against the
-  theme (`gk_editor.call_bad` before the general check, `rust_inline_rec`). Not inside a builder chain
-  (no app context there). Binds `create_decorations_collection` (its `TextDecorationCollection` is an
-  object the app keeps: `set`, `append`, `clear`, `get_ranges`) and `set_editor_style` of the three input
-  states.
-- **One-method data delegates.** `Arc<dyn Trait>` (also through a type alias,
-  `SharedHighlightStyleResolver`) of a trait whose one method maps a plain value to a value is served by
-  an ask (9.14): `["askdyn", key, result, shim, trait]`, a `gk.Ask[K, V]`; the shim per trait is one
-  bridge (`gk_editor.ASK_TRAITS`): `HighlightStyleResolver::style(name) -> Option<HighlightStyle>` is
-  `editor_text::GkStyles`, the app's procedure asked once per name, unstyled until answered. Note that
-  the kit's component inputs set their own editor style on every render; `set_editor_style` is for the
-  base elements (`gk.base_editor`, `gk.base_input`, `gk.base_textarea`).
-
-- **Actions in call ops.** A `Box<dyn Action>` argument (`EditorState::route_overlay_action`) is the
-  action's id (`gk.action(cx, name)`, `gk.action_of(cx, value)`), which a call op reads as a tape does
-  (`genapi::action`); not inside a builder chain.
-
-### 9.27 Reads through a borrow
-
-A state read `fn x(&self) -> &T` where T is a library object that cannot be copied out of the borrow
-(not Clone: `InputState::display_map() -> &DisplayMap`) was refused. Its object's reads become reads
-of the state, each a synthetic state read that calls the object's read on the borrow in place
-(`gk_editor.project`): `gk.input_state_display_map_folded_ranges(ed, cx)`, `display_map_buffer_line_to_display_row(cx,
-line)`, `display_map_text(cx)`, 17 per state; a read that returns a borrow returns an owned copy
-(`ToOwned`). The upstream function counts as bridged by them (also on the generic state's row). The
-same rule reaches `TableState::visible_range() -> &TableVisibleRange` (its `rows`, `cols`).
-
-### 9.28 What the editor family still waits for
-
-22 functions of the family are not attempted (`gen/gk_editor.py` `LEFT` gives each its reason), and
-five value types (21 functions) are taken by nothing (`gates/accept.py`):
-
-- **The editor host** (14 functions; `CodeBlock`, `FlowPosition`, `InlineNode`, `RenderContext`
-  unaccepted). `gpui_kit::base::text::editor_host` is for an editor written outside the kit: it renders a
-  `BlockNode` tree (`BlockNode::render`, skipped as a data value's method) and, in the host's own
-  element, wraps the blocks' prepaint in `collect_leaf_geometry`, which returns a `LeafGeometry` per keyed
-  text leaf (10 reads: hit testing, carets, IME bounds). Plan: block nodes as library objects
-  (`parse_markdown` by the count-and-index rule of 9.15, or built by the app through `Paragraph::push`,
-  today a builder-mutator); a library element `gk.block_host(id, blocks, render_context, decorations,
-  rows)` that renders them and collects the geometry in its prepaint, then hands the app `(key,
-  LeafGeometry)` pairs after the frame (a queued event; the objects temporary handles, as 13.2). App
-  code still never runs mid-frame; the geometry is one frame old, as any measurement the app reads.
-- **Builder chains of call ops** (2: `TextViewDefaults::with_style`, `TextViewState::motion`): a value
-  node inside a state's or an object's builder chain needs the app context, which the chain decoder
-  (`sb_*`) has not got; passing the call's context into it would bind every such builder.
-- **Build closures kept for later** (2: `NumberInput::decrement_button`, `increment_button`): a
-  `'static FnOnce(Button) -> Button` NumberInput calls while it renders, with no window: the fragment
-  would have to be applied inside the element's own layout (as 9.22's rows are).
-- **An edit of a builder value lent by `&mut`** (2: `EditorState::lsp_mut`, `Lsp::with_completion_highlighter`):
-  the app's builder ops applied to the value in place (the ops of a value tape without its constructor).
-- **A record holding a value node in a call op** (1: `present_diagnostic(DiagnosticEntry)`), **an answer
-  needed at once** (1: `set_overlay_action_handler`, whether the app handled an overlay's action; data
-  as for 9.21's key sets would do), **an event payload that is neither state nor object** (1:
-  `InputEditsEvent::edits`).
-
-### 9.29 Variants made by a constructor
-
-A variant of an enum with data that the binding cannot build field by field, because its other
-fields are private types (`MaskPattern::Pattern { pattern, tokens: Vec<MaskToken> }`), is made by the
-enum's constructor whose parameters are named as some of its fields, when `[editor] variants` in
-`api/overrides.toml` names the pair (`"MaskPattern::Pattern" = "new"`; `gk_editor.variant_ctors`): the
-variant's fields are the constructor's parameters (Go `editor.MaskPatternPattern{Pattern: "999-999"}`),
-and the decoder calls the constructor (`<MaskPattern>::new(&*pattern)`). Every variant of `MaskPattern`
-is now reachable (`set_mask_pattern`, `mask_pattern` of the three input states: None, Pattern,
-Number; before, Pattern only through the `&str` member of the Into set), and the function leaves the
-partial-options table of STATUS.md.
-
-Wire numbers: call `EDITOR_TEST 186` (tests: nodes the data plugins claimed, view rows made).
-Tests: `core/tests/go/editor2` (`run-editor2.sh`), misuse `examples/go/misuse_editor`, gallery pages
-`editor5-*`.
-### 9.30 The editor host
-
-`gpui_kit::base::text::editor_host` serves an editor written outside the kit: it renders a `BlockNode`
-tree and, around the blocks' prepaint, collects each keyed text leaf's geometry. The library's element
-does both, as one protocol:
-
-```
-editor.BlockHost(id string, blocks []editor.BlockNode, flows []gk.Option[editor.FlowPosition],
-             renderContext gk.Option[editor.RenderContext], decorations []editor.LeafDecoration,
-             onGeometry func(cx *gk.Cx, e editor.LeafGeometryEvent)) gk.Element
-```
-
-- **Rendering.** Each block is drawn as TextView draws it (`BlockNode::render`) inside a `div` with the
-  host's id: with its flow when the app gives one (`gk.flow_position_at(blocks, ix, last)->first(true)`, a
-  chunk of a long document), else its place among the blocks (`FlowPosition::at`); with the render context
-  when the app gives one, else the one TextView would start from (`RenderContext::from_app`).
-- **Geometry.** The host runs `collect_leaf_geometry(decorations, || prepaint)`: the decorations (a leaf
-  key and byte ranges with colours: the app's selection, find matches) are painted behind the keyed
-  leaves, and the leaves' geometry is handed to `on_geometry` **after the frame** (app code never runs
-  mid-frame), as `gk.Leaf_Geometry_Event{leaves: []gk.Leaf_Entry{key, geometry}}`; `geometry` is a
-  temporary library object (13.2; `gk.retain` keeps it) whose ten reads are upstream's: `bounds`,
-  `len_`, `is_empty`, `line_height`, `caret_height`, `position_for_index`, `index_for_position`,
-  `caret_for_position`, `position_for_caret`, `atom_at`. The event comes again only when the leaves' keys,
-  bounds, lengths or heights change (a fingerprint per view and handler), so describing the view again
-  does not keep the app drawing; the geometry is one frame old, as any measurement the app reads.
-- **Values the app builds.** Block nodes are the generated `gk.Block_Node` union. Variants that hold
-  blocks (`Root`, `Blockquote`, `Surface`, `List`, `ListItem`) are built like any variant: a recursive data
-  enum (`gk_editor.recursive`) is its own decoder's argument, and its variant holds a slice of itself. A
-  paragraph's inline nodes are added in place (`gk.paragraph_default()->push(gk.inline_node("x"))`:
-  `fn push(&mut self, x)` of a value the host takes is an op applied in place, `gk_editor.mutator`;
-  also `TextMark::merge`).
-- **Held values.** A data enum the app builds that a bound function also returns, whose variants cannot
-  all be read back (`parse_markdown -> Result<Vec<BlockNode>, SharedString>`; a parsed `Custom` node holds
-  the parser's `MarkdownNode`): read back, each value is a library object (`["held", rt]`, a
-  temporary handle, `gk.retain` keeps it), and the enum's union gets one member
-  more, the held value (variant `0xfffe`, copied out of its handle where it is decoded, pinned to the view
-  that places it as any object, 13.12). `gk.base_parse_markdown(cx, source, gk.markdown_extensions_arc(cx,
-  ext)) -> gk.Fallible([]gk.Block_Node_Held)`; the blocks go into `block_host` beside the app's own.
-- **Late objects.** `RenderContext::with_markdown_extensions(Arc<MarkdownExtensions>)` and `parse_markdown`
-  take an `Arc` object that the values rules make constructible after the reachability pass
-  (`gk_values.pointer_ctors`); `gk_editor.after_values` gives such items back their status. An iterator of
-  iterators read back is collected at each level (`editor_host::Table::rows -> [][]gk.Paragraph_Read`).
-
-Wire: node `EDITOR_HOST 40` (str id; u32 n, BlockNode each; u32 n, (u8 has, u32 FlowPosition value node)
-each; u8 has, u32 RenderContext value node; u32 n, (u64 key, ranges) each; u8 has, u32 handler), shape
-`LEAF_GEOMETRY 46` (u32 n, (u64 key, u64 LeafGeometry) each), call `EDITOR_HOST_TEST 187` (tests: hosts
-decoded, leaves collected, events delivered, decorators run, lent values edited). The element's procedure
-and its decoders are generated from one list of descriptors (`gk_editor.host_args`:
-`core/src/gen/n_editor_host.rs`); the element is `core/src/editor_text.rs` `BlockHost`. Binds
-`collect_leaf_geometry` (bridged by the element), LeafGeometry's 10 reads, `parse_markdown`,
-`RenderContext::with_markdown_extensions` and `Table::rows`, and accepts CodeBlock, FlowPosition,
-InlineNode and RenderContext.
-
-### 9.31 Values in a builder chain of a call op
-
-A builder of a state's or an object's constructor chain whose argument the chain decoder (`sb_*`, no
-context) cannot decode but a call op can (a value node the app builds, 13.6: `TextViewState::motion(
-TextViewMotion)`, `TextViewDefaults::with_style(TextViewStyle)`) is bound (`gk_editor.chain_cx`): the
-constructor's call op decodes the whole chain first into closures (`sbp_*`, with the call's context and
-window), then applies them to the new value. `gk.text_view_state_markdown(cx, md)->motion(
-gk.text_view_motion_default()->with_stream_fade(200 * time.Millisecond))->build()`. The rule is general and binds such builders in every family (9.38), for example
-`ColorPickerState::default_value`.
-
-### 9.32 Decorators kept for later
-
-`impl FnOnce(X) -> X + 'static` with no window, X an element that is Styled and a ParentElement
-(`NumberInput::increment_button(Button)`, `decrement_button`, `MessageScroller::with_jump_button_renderer`):
-upstream keeps the closure and calls it while it renders, where no app code may run and no decode context
-is left. The app gives as data what it would add (`gk.Decorate{style, content}`): `style`, a
-`gk.Style_Refinement` decoded where the closure is decoded (its colours resolved then), refines the
-element's own style, and `content`, a row source (zero: none), adds its row 0 as the element's child, laid
-out where the window is (`editor_text::lazy_row`, as the fold placeholder's rows, 9.22). Descriptor
-`["decorate", node, wrap, ptypes]` (`gk_editor.decorate`, hooked where the model refused a build closure
-without a window).
-
-### 9.33 Edits of a value lent by &mut
-
-`fn x(&mut self) -> &mut V` of kit state, V a value the app builds that has a Default
-(`EditorState::lsp_mut -> &mut Lsp`): a state write that takes a value of V (a tape of its own, 13.6) and
-applies its builder ops, not its constructor, to the state's own V in place (`editor_text::LentEdit`:
-the value is taken, the ops applied with the update's window and app, the result put back):
-`gk.lsp_mut(ed, cx, gk.lsp_default()->with_completion_highlighter(ask))`. `Rc<CompletionHighlighter>`, an alias
-of `dyn Fn(&str, &CompletionItem) -> Vec<Range<usize>>`, is the closure behind the pointer (`gk_editor.alias`),
-answered by an ask (9.14) keyed by the query and the item (`Wire for CompletionItem`, shim_input.rs).
-
-### 9.34 A record holding a value node in a call op
-
-A state call whose argument is a struct with public fields, one of them a value node the app builds
-(`present_diagnostic(DiagnosticEntry { range, diagnostic: Diagnostic })`), was refused as an opaque object
-(the struct is a record only read back elsewhere). Its fields become the call's arguments and the callee
-builds the struct (`gk_editor.flat_records`): `gk.present_diagnostic(ed, cx, {0, 3}, gk.diagnostic(range,
-"unused")->with_severity(.Warning))`.
-
-### 9.35 Event payloads made of their reads
-
-`EventEmitter<E>` of kit state where E has no public field and is no object the binding holds, but has
-`&self` reads that take nothing (`InputEditsEvent::edits() -> &[(InputEdit, Rope)]`): the payload is a
-record of the reads' results, copied when the event is raised (`gk.Input_Edits_Event{edits = []{edit,
-text after it}}`, subscribed with `gk.on_input_edits_event(inp, cx, gk.on(..))`); the reads count as bridged
-by it (`gk_editor.event_reads`, its Wire impl calls the reads). This applies to every event (9.38).
-
-### 9.36 Answers given in advance
-
-`set_x(handler: impl Fn(E, Box<dyn Action>, &mut Window, &mut Context<..>) -> bool)` with E an enum the
-binding reads (`EditorState::set_overlay_action_handler(InputOverlayKind, action)`): upstream needs the
-answer at once, while it dispatches a key, so the app gives it in advance: the pairs (E, action name) it
-takes (`gk.set_overlay_action_handler(ed, cx, {{.Completion, "input::Tab"}})`). The handler answers true for
-those, so the overlay leaves them alone (and closes for Enter and Escape); the app handles them with its own
-key bindings (`gk_editor.answer_sets`).
-
-### 9.37 Actions read back
-
-`Box<dyn Action>` read back (`NativeMenuItem::Action { label, disabled, action }`, the context menu upstream
-would show, handed to `on_context_menu`) is the action's id as the app knows actions (`gk.Action`, 11.1; a
-kit action gets an id the first time it is seen, `app::id_of`), compared with `gk.action(cx, "input::Copy")`;
-`on_context_menu` of the three input states leaves the partial-options table. Upstream hands the handler an
-empty `NativeMenu::new()` (the app builds its items with `NativeMenu::menu(label, gk.Action)`), so the
-read-back is the type's completeness, not a menu upstream filled; under the offscreen driver the handler did
-not fire after a right click (mode `context-menu`, not in run-editor2.sh). The rule is general
-(9.38).
-
-Tests: modes `host`, `chain`, `decorate`, `lsp`, `diagnostic`, `overlay-keys`, `edits` of
-`core/tests/go/editor2`; misuse `ed6-*` of `examples/go/misuse_editor`
-(held values and leaves kept past their frame, a decorator's freed row source, a lent edit in a view);
-gallery page `editor6-host` (Rust twin in `ref/src/bin/gallery/editor_pages.rs`).
-### 9.38 The rules of 9.31 to 9.37 serve every family
-
-The rules of 9.31 to 9.37 are general: they bind any function whose shape they match, in any family,
-with no per-family test and no list of admitted functions:
-
-- **Builders of a constructor's chain with the call's context (9.31, 11.27)** bind every builder the chain
-  decoder cannot decode but a call op can; an `impl Into<Hsla>` argument is named `Hsla` there (what
-  `gk_comp6.ADMIT` did for `ColorPickerState::default_value`).
-- **Records holding a value node in a call op (9.34)** and **answers given in advance (9.36)** apply to any
-  kit state.
-- **Event payloads made of their reads (9.35)** apply to any event. A payload whose event no state the
-  binding keeps raises loses its record and its shape (`gk_editor.event_read_statuses`): the kit's
-  `DockArea` raises `DockToggleEvent`, which the dock runtime already delivers (`gk.on_dock_toggle`,
-  `Dock_Toggle`), so no `gk.Dock_Toggle_Event` type and no handler shape is generated that nothing hands
-  the app (without this the wider rule made both).
-- **Actions read back (9.37)** apply to any type holding a `Box<dyn Action>` (`gk_editor.ACTION_OUT` is
-  gone). A value that holds an action and also goes into the library is decoded in a call op by the
-  action's id, nested in records and variants too (`gk_editor.call_bad`; before, only at the top level):
-  gpui's `OwnedMenuItem` gains its `Action` variant (`gk.Owned_Menu_Item_Action{name, action, os_action,
-  checked, disabled}`) in both directions. `GlobalState::set_app_menus` and `app_menus` stay replaced by
-  the platform runtime's calls (11.30), which carry every variant, so no generated function takes or
-  returns `OwnedMenu` and the new variant's codecs are compiled but run by no test.
-
-### 9.39 Held values reach every variant; a parsed Custom block
-
-`BlockNode::Custom { node: MarkdownNode, state }` cannot be built by the app (`MarkdownNode`'s builders
-are skipped: it wraps a parser plugin's typed data), but it is a held value (9.30): `gk.base_parse_markdown`
-with an extension whose block parser claims a node (the kit's `FrontmatterPlugin` claims the front matter)
-returns it as a `gk.Block_Node_Held`, and every function that takes a `BlockNode` takes a held one (the
-union's member `Block_Node_Held`, variant `0xfffe`). So `gk_values.partials` counts a data enum read back as
-held values as fully given in the in direction when a usable function returns it held (`m._held_from`):
-`FlowPosition::at` and `collect_leaf_geometry` leave the partial-options table (2 -> 0).
-
-Test: mode `custom` of `core/tests/go/editor2` parses front matter, places the held Custom block
-between two keyed paragraphs of the app in `editor.BlockHost`, with flows from `gk.flow_position_at` over that
-list, and reads the leaves' geometry: the paragraph after it lies lower than in a host without it. Misuse:
-`ed7-ok` (kept by `gk.retain`) and `ed7-custom-unretained` (not kept, placed a frame later: stops).
-
-### 9.40 Tests that run the bindings of 9.31 to 9.37
-
-These bindings are exercised by running them, not only by checking that the calls are taken:
-
-- **Decorators (9.32)**: gallery pages `editor7-number` (a number input's increment button with a style and
-  a row, its decrement button with a row; the state made in init, the Rust twin's in its view's first
-  render, where the window is) and `editor7-scroller` (a message scroller scrolled up: its jump button with
-  a style and a row, after its 200 ms entrance).
-- **The Lsp's completion highlighter (9.33)**: protocol mode `lsp-ask` (the menu the app presents asks the
-  app's highlighter for each label, through the ask) and gallery page `editor7-lsp` (the labels highlighted
-  where the app says, the menu presented by a click). The ask is answered between frames (9.14): the frame
-  that first draws the menu shows no highlight, the next one does; a gallery step is followed by a second
-  frame before its shot.
-- **Answers given in advance (9.36)**, fired by a key: protocol modes `overlay-fire` and `overlay-control`.
-  The completion menu is open (the app presents it with `present_completion_items` from its
-  InputEditsEvent handler, so the editor has the focus) and Enter is pressed: with `{.Completion,
-  "input::Enter"}` the overlay closes and the editor does nothing with the key (the action is the app's;
-  text `"abx"`); without the key set Enter is the editor's (a new line, `"abx\n"`). Upstream offers the
-  handler only Enter and Escape (and what `route_overlay_action` routes): Tab is the editor's
-  `IndentInline`, never offered. **The key set is for an editor drawn with the base `gk.editor`**: the kit's
-  code editor (`gk.code_editor`, `component::input::Editor`) installs its own overlay handler each time it
-  renders (`install_action_handler`: its completion menu takes the menu's actions, Enter accepts the item),
-  replacing the app's. Measured: under `gk.code_editor` both modes gave `"abxfirst\n"` and
-  `has_overlay_action_handler` true.
-- **A presented diagnostic (9.34)**: protocol mode `diagnostic-shown` (read back as the editor's popover,
-  then cleared) and gallery page `editor7-diagnostic` (the popover after a click).
-
-### 9.41 Item procedures: closures that draw one item, given as typed procedures
-
-33 functions were skipped as `item-render-closure`: closures upstream calls while it draws one item of
-a component, handing it something 9.16 could not read. They are bound by one rule (`gen/gk_items.py`,
-hooked into `closure_desc` where 9.16's rule refuses a closure with values, and where no other rule took
-a closure that returns a value); the runtime is `core/src/items.rs` and `go/gk/internal/rt/rt_gen_items.go`.
-
-**What the app writes.** One function per kind of item, whose parameters are the values upstream hands,
-typed, given with `overlay.Items(cx, f)` (`go/gk/internal/rt/rt_gen_items.go` shows a calendar's day). `overlay.Items` takes
-only a function of a kind some closure of the kit calls (checked by the compiler). It makes the row
-source of a function on first use and gives the same one after, so it may be called in a view function.
-The builder still takes a `gk.RowSource`; a source `overlay.Items` made for one kind and given to a closure
-of another stops where it is given.
-
-**Rows.** As 9.16: each call of the closure in a frame is a row, keyed by its order in the frame, or by
-the first value when it is an integer (a tree entry's index: `ctx_key`); the row is described between
-frames by the procedure (its trampoline reads the values with `row_context` and passes them), described
-again when upstream hands it other values, and the frame that first draws it shows upstream's own
-drawing (the handed element as it came, or the type's plain value). Nothing calls the app while
-upstream draws.
-
-**The values** (descriptor `["items", wrap, ptypes, params, vals, out]`, one entry of `vals` per value):
-
-| entry | what | parameter |
-|---|---|---|
-| `["val", d]` | what 9.16 reads: plain values, a library object (a temporary handle) | its type |
-| `["reads", rt]` | a record of the value's reads, for a value 9.16 could not read: a Clone value whose methods are reads (`fn x(self)` or `fn x(&self)`), constructors and builders; kit state handed by reference (`&mut PopoverState`, `&CommandState`, `&mut Self` of a closure over the value itself); a generic context with the closure's type argument (`ComboboxTriggerContext<'_, GkSearchDelegate>`). Reads that take arguments or return an object, an element or a view are left out; a data enum whose read would change its Go type is left out (`ComboboxTriggerContext::size`, `gk.Size`); a state with no read left passes nothing | `gk.Base_Calendar_Item_State`, `gk.Time_Field_Segment_State`, `gk.Base_Tree_Entry_State`, `gk.Tree_Entry_Reads`, `gk.Popover_State_Reads`, `gk.Hover_Card_State_Reads`, `gk.Command_State_Reads`, `gk.Combobox_Trigger_Context`, `gk.Nav_Page_Reads` (named `X_Reads` when X is already a state or an object the app holds) |
-| `["handed", node, rt]` | an element upstream built for the item, to decorate (`CalendarItem`, `TimeFieldSegment`, `NavPage`) | the node (`gk.Calendar_Item`), then the record of its own reads when it has some not given otherwise (`gk.Nav_Page_Reads{index, phase, operation, progress}`) |
-| `["view"]` | a view upstream hands (a tooltip's content) | `gk.Kit_View`, a node to place |
-
-The record's `Wire` impl calls the reads (`gk_items.field_put`; a `self` read on a copy), so its bytes are
-the row's identity and what the procedure reads. The reads count bridged ("a field of the record ..").
-
-**Handed elements.** The procedure gets the element as a node of the row's own tape: the node's synthetic,
-private constructor `handed` (`calendar_item_handed(0)`, one per handed node type, numbered in
-`opcodes.lock`; not counted, not in the sample or the gallery) carries the value's position; the
-`Kit_View` node is the library's `KIT_VIEW 41` (u8 position). The procedure styles it, gives it children
-and handlers, returns it or places it inside its own elements. Rust: such a row is decoded inside
-upstream's closure (`items::row`: the source is a decoded one, `source::row_tape` and `genapi::with_tape`,
-as a delegate shim decodes its rows; the drawing view watches the source), with the handed values in a
-thread-local slot that the `handed` constructors take from (`items::handed::<T>(i)`); placing one twice,
-or outside its row, stops: "the .. an item procedure is handed was placed twice, or outside its own row"
-(a stop). Rows without a handed value are the row's view, as 9.16 (`source::ctx_row`).
-
-**Typed results.** A closure that returns one element type (`Notification::action -> Button`, the base
-`HoverCard::content -> Stateful<Div>`) takes a procedure returning that type; the row's root is decoded
-as it (`build_<node>`), and before its first description the closure returns the type's plain value
-(`Button::new("gk-item")`, `div().id("gk-item")`; `gk_items._fallback`, no rule binds a type without one).
-
-**FnOnce(X) -> E without a window**, X an element node (`DialogClose::trigger(FnOnce(Button) -> E)`, both
-crates): the build closure of DESIGN.md 12 with E taken as X: `gk.base_dialog_close()->trigger(
-gk.base_button(gk.Id("x"))->child(gk.text("Close")))` (the ops are applied to the button upstream makes).
-
-Bound: `base::Calendar::item`, `TimeField::render_segment`, `NavStack::item`, `Tree::item`,
-`TooltipOverlay::render_with` (a state builder: `gk.tooltip_overlay(cx)->render_with(..)->build()`),
-`Popover::content` and `HoverCard::content` (both crates), `DialogClose::trigger` (both),
-`component::Combobox::render_trigger`, `Command::empty`, `header`, `footer`, `Notification::content` and
-`action`; the reads of `ComboboxTriggerContext` (but `size`, skipped as builder-getter),
-`TimeFieldSegmentState`, `HoverCardState`, `CalendarItemState`, `TreeEntryState` and `NavPage` (`view`
-stays skipped: the page draws its view itself). `CalendarItemState::new` and its five setters are value
-helpers: no kit function takes a `CalendarItemState`, the app reads the record.
-
-Tests: `core/tests/go/items` (`run-items.sh`): `items-calendar` (a handed day decorated, rows described in
-the first frames and none after), `items-time-field` (a handed segment placed inside the app's element),
-`items-tree` (an index key, a record of an object's reads, a record of a value's `self` reads),
-`items-popover` (state by reference with its own context), `items-command` (with the app's context),
-`items-hover` (a typed result, opened by the pointer), `items-close` (FnOnce(Button) -> E), misuse
-`items-wrong-kind`. Gallery pages `text-token` and `diff-header` now give their 9.16 closures with
-`gk.items`.
-
-
-
-## 11. App protocols: actions, key bindings, timers, windows, the clipboard
-
-Runtime: `core/src/app.rs`, `go/gk/internal/rt/rt_app.go`;
-generator rules: `gen/gk_app.py` (hooked into `gen/gk_model.py` at two points); numbers: the
-app block of `core/wire/ops.txt` (call 64-111, shape 20-27, node 16-23, hkind 9-10); tests:
-`core/tests/go/app`, `core/tests/go/run-app.sh`.
-
-### 11.1 Actions
-
-An action is a u32 id. `C_ACTION_NEW` (`str name, str data`) names one, immediately:
-
-- a name GPUI's action registry knows (`ui::Cancel`, `dock::ToggleZoom`, any kit or gpui
-  action) is that **built-in** action, built with `App::build_action(name, data)` (`data` is
-  JSON, empty for none); its id has bit 31 set (`gk.ACTION_BUILTIN`, `gk.is_builtin`);
-- any other name is an **app action**: `GkAction { id }`, one Rust type for every app action,
-  whose `partial_eq` compares ids and whose `name()` is the name the app gave.
-
-The same name and data always give the same id. An action that travels to the app (a menu's,
-a listener's payload) is its id (`impl Wire for dyn Action`): a built-in action the app never
-named is entered in the table under its own name then. `genapi::action(r)` reads an id and gives
-the boxed action; generated code takes actions anywhere upstream takes `Box<dyn Action>` or
-`&dyn Action` (menus, tooltips, `Kbd`, key bindings).
-
-| call | wire | when |
-|---|---|---|
-| `ACTION_NEW 64` | `str name, str data` -> `u32 id` | immediate |
-| `BIND_KEYS 65` | `u32 n, (str keystrokes, u32 action, str context)` | buffered; `KeyBinding::load` with the platform's keystroke parser; a keystroke or a context predicate that does not parse is `GK_ERR_BAD_OP` |
-| `ON_ACTION 66` | `u32 action, u32 slot, u32 generation` -> `u64 listener` (kind SUB) | an app-wide listener (`App::on_action::<GkAction>`, installed once, at the end of the bubble phase); app actions only; release ends it |
-| `DISPATCH_ACTION 67` | `u32 action` | buffered; `Window::dispatch_action` on the turn's window (to the focused element, as a key binding would), else `App::dispatch_action` |
-| `ACTION_AVAILABLE 68` | `u32 action` -> `u8` | GPUI's availability: by type, so for app actions it is true when any app-action listener is on the path (DESIGN.md section 8) |
-| `ACTION_KEYSTROKES 69` | `u32 action, str context` -> `opt<str>` | the highest-precedence binding's keystrokes as GPUI displays them |
-| `CLEAR_KEY_BINDINGS 70` | | buffered |
-
-Shape `ACTION 20`: payload `Action` (u32 id). Every action listener has it; a handler may take
-the `gk.Action` or nothing.
-
-**Element listeners, by generator rule** (`gen/gk_app.py`, `action_listener`):
-
-- a method generic over the action type whose closure takes it, `fn on_action<A: Action>(self,
-  listener: impl Fn(&A, &mut Window, &mut App))` and `capture_action`: A is `GkAction`; the op
-  takes `u32 action, u32 handler` (descriptor `["action", "listener"]`; made with
-  `gk.Act(action, handler)`); the library's listener (`genapi::action_listener`)
-  fires the handler for that action and calls `cx.propagate()` for every other app action, so
-  several listeners on one element each get their own. The runtime refuses a built-in
-  action here at the app's line.
-- a listener over a boxed action, `on_boxed_action(&dyn Action, Fn(&dyn Action, ..))`: an
-  ordinary handler of shape ACTION. GPUI registers it by the action's type, so it is the way to
-  listen to a built-in action on an element.
-- `key_context<C: TryInto<KeyContext, Error = E>>` takes a string (`bounded`), and a generic
-  parameter named only as another bound's associated type (`E`) does not block a method
-  (`bound_only`).
-
-Go: `gk.NewAction(cx, "editor::Save")`, `gk.BindKeys(cx, ..)`, `.OnAction(gk.Act(save, f))` on an
-element, `gk.OnAppAction(cx, open, f)` (release the listener with `gk.Release`),
-`gk.DispatchAction(cx, save)`, `gk.Keystrokes(cx, save, keyContext)`.
-
-### 11.2 Timers
-
-`TIMER_NEW 71` (`u32 ms, u8 repeat, u32 slot, u32 generation` -> `u64 timer`, kind `TASK 9`): a
-foreground task that awaits `BackgroundExecutor::timer` and fires the kept handler as an EVENT
-turn (shape UNIT) on the main loop, so never during a draw; the turn's window, if it had one, is
-in scope when it is free. Releasing the handle drops the task, which cancels it. A one-shot timer
-releases itself after it has fired, and the runtime forgets its handler then; releasing it
-afterwards does nothing. Go: `gk.After(cx, d, f)`, `gk.Every(cx, d, f)` -> `gk.Timer`; a handler marks its view dirty as any handler does.
-Offscreen the dispatcher's clock is simulated: the gk-meter script command `advance MS` moves it
-on (timers due fire), `sleep` does not.
-
-A handler kept in a view's init or handlers (a timer, an
-app-wide or window listener, a subscription, panel events) goes with that view: `gk.release` of
-the view cancels its timers and drops the rest (`rt_handler.go`), so none runs
-again with the state of a view that is gone (test `timer-after-view`, `core/tests/go/run-review3.sh`).
-The app may still release those handles afterwards; that does nothing more.
-
-### 11.3 Windows
-
-| call | wire |
-|---|---|
-| `WINDOW_OPEN 72` | `f32 w, f32 h, u64 root, str title, u8 flags, f32 min_w, f32 min_h, u8 kind, u8 has_pos, f32 x, f32 y, str app_id, u32 n, n bytes icon` -> `u64 window` (flags: 1 not resizable, 2 not minimizable, 4 not movable, 8 no focus, 16 hidden, 32 the kit's title bar; kind: 0 normal, 1 popup, 2 floating; app_id "" none, icon a PNG, 0 bytes none: 11.38) |
-| `WINDOW_CLOSE 73`, `WINDOW_SET_TITLE 74`, `WINDOW_ACTIVATE 75` | `u64 window` (0: the turn's), title; buffered |
-| `ON_WINDOW_CLOSED 76` | `u64 window, u32 slot, u32 generation` -> `u64 listener`; shape `WINDOW 21` (payload the window's handle) |
-| `WINDOW_INFO 77` | `u64 window` -> `str title, f32 x, y, w, h, u8 active` |
-| `WINDOWS 80` | -> `u32 n, u64 window` each, in the order opened |
-| `QUIT_ON_LAST_WINDOW 81` | `u8` (default 1); buffered |
-| `ON_WINDOW_SHOULD_CLOSE 96`, `ON_APP_QUIT 97`, `REDUCE_MOTION 98`, `SET_REDUCE_MOTION 99` | a window's close asked of the app, the app's quit, reduced motion: 11.38 |
-
-`WINDOW_OPEN` builds on the same options as `OPEN_WINDOW` (offscreen, the meter's size wins) and
-the same `WINDOW_INIT` turn. When a window closes (`App::on_window_closed`, installed at start)
-its listeners fire, its handle is released (stale from then on) and, when it was the last window
-and the app did not say otherwise, the app quits. Go: `gk.OpenWindowWith(cx,
-gk.WindowConfig{..}, view)`, `gk.CloseWindow`, `gk.SetWindowTitle`, `gk.ActivateWindow`,
-`gk.OnWindowClosed`, `gk.Windows`, `gk.QuitOnLastWindow`. The gk-meter
-script drives several windows with `window N` (the N-th open window from then on) and counts
-them with `windows`.
-
-A window op given 0 (`gk.close_window(cx)`: the turn's window) and every other buffered write of an
-EVENT turn is applied with the window its turn had (`rt::apply_deferred`), so `close_window(cx)` in a
-key or click handler closes that handler's window (test `close-own-window`).
-
-### 11.4 The clipboard
-
-`CLIPBOARD_WRITE 78` (`str`, buffered) and `CLIPBOARD_READ 79` (-> `opt<str>`): GPUI's
-`write_to_clipboard` / `read_from_clipboard` with text. Go `gk.ClipboardWrite`,
-`gk.ClipboardRead`.
-
-### 11.5 Ambient calls (generator rule)
-
-A function of the ambient context is one call op, generated (`gen/gk_app.py`, `ambient`, hooked
-into `classify_free` and the `[traits.role]` branch of `classify_trait`):
-
-- a free function of the kit that builds no element: the palette scales (`amber(500)`), `hsl`,
-  `oklch`, `set_locale`, `try_parse_color`, `window_paddings`, the easing curves, `step_value`;
-- a method of a trait the kit implements on `Window` whose role in `api/overrides.toml` is
-  `calls (ambient context: methods on Window and App)`: `WindowExt::close_dialog`,
-  `close_all_dialogs`, `close_sheet`, `has_active_dialog`, `has_active_sheet`,
-  `has_focused_input`, `push_notification`, `clear_notifications`.
-
-Rules: every argument is one a call op can carry (`call_bad` of the state rule); `&mut Window`,
-`&Window`, `&mut App`, `&App` are the turn's (`c.window()?`, `c.cx`); the return value, if any,
-travels back in its descriptor's wire type; a generic parameter the caller would choose stops
-the rule; `init` (run by the library at start) is left out. Rust: `fn c_N(r, c)` beside the
-state calls, `<gpui_kit::Window as WindowExt>::close_dialog(window, cx)`. Go: `gk.<Name>(cx,
-args..) -> value`, run at once through `ambientCall`; one that returns nothing may not run in a
-view function, one that returns a value may (`gk.Blue(cx, 500)` in a view). base's names that
-collide get `Base`. The test is generated with them: the app test's mode `ambient`
-(`core/tests/go/app`) calls every ambient function once with the conformance sample's arguments.
-
-Not ambient (left for the next round, with their reasons kept): `open_dialog`, `open_sheet`,
-`open_sheet_at`, `open_alert_dialog` (their argument is a build closure that outlives the call:
-it needs the view-built closure of section 11.6, not built yet), `notifications` and
-`focused_input` (results the binding cannot carry), `remove_notification<T>` (a type the caller
-chooses), `ActiveTheme::theme` (the theme global, an object by the rule of section 13).
-
-### 11.6 View-built closures, described values, fallible calls
-
-Runtime: `core/src/overlay.rs`, `go/gk/internal/rt/rt_built.go`; rules: `gen/gk_overlay.py` (hooked into
-`gen/gk_model.py` at `scan_types`, after classification, `closure_desc`, `resolved`, `state_method`
-and `call_bad`, and into the two emitters' `dec`/`put_ret`, `otype`/`put`); numbers: the overlays
-block of `core/wire/ops.txt` (call 144-175, shape 36-43, node 32-39, hkind 11); tests:
-`core/tests/go/overlay`, `core/tests/go/run-overlay.sh`; gallery: `overlay_pages.go` / `.rs`.
-
-**View-built closures.** A closure upstream keeps and calls later, `Fn(T, &mut Window, &mut App) ->
-T + 'static`, given to a **call op** is view-built (descriptor `viewbuild`; in an element op the
-same closure stays a `build` over a fragment of the view's own tape, section 12 of DESIGN.md):
-
-- Go: `gk.NewBuilt(cx, render func(cx *gk.Cx) T) gk.Built[T]` (`go/gk/internal/rt/rt_built.go`): a view, kept
-  until the app releases it. Its root is the node render returns (`overlay.Dialog().Title(..)`). The
-  call takes it typed: `overlay.OpenDialog(cx, b)` takes a `gk.Built[overlay.DialogEl]`, so a function
-  returning another type does not compile. Not in a view function (it makes a view).
-- Wire: the view's `u64` handle. Rust: `crate::overlay::ViewBuild::take(view, c, &[ctor node
-  types], "T")?` checks the handle, mounts the view in the turn's window (the first open window for
-  a write applied later) and marks it dirty, so the frame that first calls the closure has its
-  tape. `vb.apply(v, window, cx, apply_<node>)` reads the view entity's current tape (so the drawing
-  view, the kit's dialog layer, depends on it and draws again when it is described again), checks
-  the root's node type (another type stops: "the function given for a Dialog returned a
-  node of type N, not a Dialog", a stop) and applies the root's ops to the value upstream hands in
-  with the generated `apply_<node>` (`genapi::with_root`). Before the first description it returns
-  upstream's value unchanged (one frame at most). A released view stops at the next build with
-  `genapi::released_shown` (a stop).
-- The view is an ordinary view: its handlers (`on_ok`, `on_cancel`, children's `on_click`) run
-  with its state between frames and mark it dirty, so the dialog's content changes while open.
-- Bound by rule: `WindowExt::open_dialog`, `open_alert_dialog`, `open_sheet`, `open_sheet_at` (the
-  kit's `Sheet` is a value node, `[node] types` in `api/overrides.toml`, so `Sheet::title`,
-  `footer` and `on_close` bind as its ops).
-
-**Build closures with the entity's context.** `Fn(PopupMenu, &mut Window, &mut Context<PopupMenu>)
--> PopupMenu` in an element op is a `build` closure like one with `&mut App` (the context derefs to
-it). This binds `ContextMenuExt::context_menu` on `Div` (the wrapper `ContextMenu<Div>` instantiated
-for one element type by its full path, `gk_overlay.OVERLAY_INSTANCES`; the blanket trait entered in
-Div's tables), `SidebarMenuItem::context_menu` and the other menus' builders.
-
-**Described values.** An entity type upstream builds itself and hands to such a closure is a value
-node (`[node] types = ["Sheet", "PopupMenu"]`): its `self -> Self` methods are its ops (`menu(label,
-action)` with an action of 11.1, `separator`, `label`, `link`, `menu_with_check`, `menu_element`
-with a fragment, `item`, `min_w`..). It has no public constructor: Go starts it with
-`kit.NewPopupMenu()`, a constructor the library never runs on its own (`overlay::described`, not
-counted). `PopupMenu::submenu(label, window, cx: &mut Context<Self>, f)` is
-`overlay::submenu(menu, label, window, cx: &mut App, f)`: the child is built at once with
-`PopupMenu::build` and attached with `item(PopupMenuItem::submenu(..))`, which upstream wires to its
-parent when the menu draws. `PopupMenu::rebuild` (needs the menu entity) is skipped as a builder
-mutator, `is_empty` as a builder read.
-
-**The dropdown button.** `DropdownMenu::dropdown_menu` on the kit's Button returns
-`DropdownMenuPopover<Button>`, which has no public path, so generated Rust cannot name it: node
-`DROPDOWN_BUTTON 32` of the library (`u32 button node, u32 menu node`), Go
-`kit.DropdownMenu(kit.Button(..).Label(..), kit.NewPopupMenu().Menu(..))`; counted bridged by
-`gk_overlay.LIBRARY_NODES`.
-
-**Fallible calls.** `Result<(), E>` as a call's result is `opt<str>` on the wire (the
-error's `Debug` text, none for Ok; `overlay::outcome`). A state
-constructor or builder that returns `Result<Self, E>` is bound like one that returns `Self`; an Err
-stops the app with the error's text (`overlay::Fallible(..).callN`, a stop): a schema the app wrote
-wrongly. A `&self` method that takes the window is a call op run at once with the turn's window
-(`state_call`), like an update that returns a value. This binds `QuestionnaireState` (constructor,
-`with_current_item`, `choose`, `set_answer`, `go_next`, the focus calls) and the other states' calls
-that return `Result<(), E>`.
-
-Not bound yet, with their reasons: `PopupMenu::build` as a call op (it returns the menu entity;
-nothing takes one), the `*_with_icon` items (`Icon` is entity state: "a state object by value"),
-`Notification` (an `id::<T>()` the caller chooses, closures that return a value),
-`ToastManager<T>` (generic), `Tooltip::new` / `key_binding` (a node given to a static call),
-`Kbd::binding_for_action` (statics returning an element type).
-
-### 11.7 Dock panels as views of the app
-
-Runtime: `core/src/dock.rs`, `go/gk/dock/rt_dock.go`; rules: `gen/gk_overlay.py` (`panel_entity`,
-`panel_view`, `mark_panel_traits`, hooked into `Model.resolved` and the emitters); tests: mode
-`dock` of `core/tests/go/overlay`; gallery: page `dock-panels`.
-
-`GkPanel { view: Entity<GkView>, focus, data, events }` implements gpui-base's `Panel` and the
-component layer's `Panel` once, an entity behind a state handle (Go `dock.Panel`):
-
-- its render is the app's view (`dock.NewPanel(cx, view, dock.PanelData{..}, opts...)`; the view is mounted
-  in the turn's window and described like any view, its handlers and dependencies its own);
-- `panel_name`, `tab_name`, `title`, `closable`, `zoomable`, `visible`, `inner_padding`,
-  `title_bar` answer from `Panel_Data` the app pushed (`gk.panel_set`, buffered; the panel entity
-  is notified so the dock draws the new data), never by calling the app while the dock draws;
-  names are interned (`panel_name` is `&'static str` upstream);
-- `set_active`, `set_zoomed`, `on_added_to`, `on_removed` reach the app's handler as a queued
-  `gk.Panel_Event{kind, flag}` (shape `PANEL_EVENT 36`); `gk.panel_emit` emits upstream's
-  `PanelEvent` (zoom in, zoom out, layout changed). The kit (0.9.1 to 0.11.0) zooms tab groups, never a panel,
-  so a panel's ZoomIn is delivered and ignored (tested);
-- **by rule**: a generic `P: Panel` is GkPanel (descriptor `entity crate::dock::GkPanel`, Go
-  `dock.Panel`), and `Arc<dyn PanelView>` given to the kit is made from a panel handle
-  (descriptor `panelview base|kit`: gpui-base and the component layer each have a `PanelView`).
-  This binds `DockArea::add_panel`, `add_panel_view`, `remove_panel`, `DockLayout::panel`,
-  `panel_view`, `PanelHandle::new`, `from_view`; the trait methods of both `Panel`s and both
-  `PanelView`s count bridged (GkPanel's own, or upstream's blanket impl over `Entity<GkPanel>`).
-- `gk.dock_area_skinned(cx, id)` is the kit's styled dock (`DockSkin::dock_area`, whose result
-  pairs the area with its skin, which a call cannot carry), call `DOCK_AREA_SKINNED 147`; its
-  settings are `gk.dock_skin_panel_style`, `dock_skin_toggle_button_visible`,
-  `dock_skin_collapsed_tab_bar_visible`, `dock_skin_split_divider_line_visible` and their `set_`
-  forms (call `DOCK_SKIN`);
-  `gk.dock_view(dock)` draws a dock area in a view (node `DOCK_VIEW 33`).
-
-| number | what |
-|---|---|
-| `call PANEL_NEW 144` | `u64 view, str name, opt<str> tab name, str title, u8 flags (1 not closable, 2 not zoomable, 4 hidden, 8 no padding, 16 no title bar), u32 slot, u32 generation` -> `u64 panel`; needs a window |
-| `call PANEL_SET 145` | `u64 panel`, the same data; buffered |
-| `call PANEL_EMIT 146` | `u64 panel, u8 event`; buffered |
-| `call DOCK_AREA_SKINNED 147` | `str id, u8 has version, u64 version` -> `u64 dock area` |
-| `node DOCK_VIEW 33` | `u64 dock area` |
-| `shape PANEL_EVENT 36` | `Panel_Event {u8 kind (0 active, 1 zoomed, 2 added, 3 removed), bool flag}` |
-
-Not built yet: restoring a saved layout (`DockArea::load`, `PanelRegistry`, `PanelSource`: a
-recursive `PanelState` and a request to the app per panel through 9.2), `Panel::dropdown_menu`,
-`title_suffix` and `toolbar_buttons` (upstream's defaults: a view-built menu and elements per
-panel would be the next step), `DockAreaRenderer` / `TabGroupRenderer` (the skin is the kit's),
-the objects the dock hands to renderers (`TabGroupContext`, `DockContext`, `DropIndicator`,
-`DragPanel`), `NodeId`-addressed calls (`split_at`, `set_split_sizes`, `set_zoomed_in`), and
-`ResizableState` / `NavStackState`.
-
-**A real window.** Mode `window-real` runs the test app with the real platform
-on a display `gates/display.sh` provides (a private Xvfb or compositor): the size the app gave comes back through
-`gk.window_info` (420 x 300), and the X server holds the title the app gave and the one it set
-later (`xwininfo` while the app runs). `gk.window_info`'s title is empty on Linux: gpui-fast reads
-a window's title back on macOS only (`PlatformWindow::get_title`).
-
-### 11.8 What the dock hands out, saved layouts, a panel's own title bar
-
-Runtime: `core/src/dock.rs`, `core/src/overlay.rs`, `go/gk/dock/rt_dock.go`;
-rules: `gen/gk_overlay.py` (`resolved`, `mark_handed`, `LIBRARY_CALLS`,
-hooked into `Model.resolved`, the settle step's state filter, `uses_protocol`, and the two emitters'
-`dec`, `put_ret`, `otype`, `put` and state emission at one line each); numbers: the dock lines of
-the overlays block of `core/wire/ops.txt`; tests: modes `dock-ids`, `dock-bad-node`, `dock-layout`,
-`nav` of `core/tests/go/overlay`; gallery pages `dock-split`, `dock-hooks`, `dock-restore`, `menu-kbd`,
-`menu-dropdown-anchor`.
-
-**One descriptor family for what the kit hands out and takes back**, `["dock", what, ..]`, call-safe,
-`bridged` (each needs the library's tables):
-
-| what | upstream | wire |
-|---|---|---|
-| `node_id` | gpui-base's `NodeId` (no public constructor) | u64 |
-| `panel_id` | `PanelId` | u64 |
-| `view` | gpui's `AnyView`, `impl Into<AnyView>` | u64 view handle |
-| `panel` (read back) | `Arc<dyn PanelView>` (base or kit) | u64 panel handle, 0 for the kit's own placeholders |
-| `entity` (read back) | `Entity<T>`, `WeakEntity<T>`, T a state type | u64 state handle |
-| `ms` (read back) | `Duration` | i64 nanoseconds |
-| `area_state`, `panel_state`, `panel_info` | `DockAreaState`, `PanelState`, `PanelInfo` | a tree, below |
-
-- A `NodeId` the library writes is remembered (`crate::dock::node_id`); one it never handed out is
-  `GK_ERR_BAD_OP` in a call op ("node id N was never handed out by the dock"), which stops the app at
-  the buffered write as any failed write does (mode `dock-bad-node`, a stop). Node ids come from the
-  reads: `dock->zoomed_group`, `tree->node_ids`, `tree->find_panel_node`, `node->id`, `group->node`,
-  `ctx->node`, `drag->source`. They make `split_at`, `set_split_sizes`, `set_zoomed_in`,
-  `PaneTree::split`, `set_active`, `set_sizes` and `InsertTarget` (`move_panel`, `insert_panel`) usable.
-- An app view taken by a call op is drawn in the turn's window and marked dirty (as 11.6's views
-  are); read back, a view the library was given is its handle, any other 0 (`NavStackState::push`,
-  `current`, `views`, `pop`, `Root::new`, `Root::view`, `FieldBuilder::View`).
-- An entity read back gets one state handle per entity while it lives (`crate::dock::entity_handle`),
-  with the app's first window as its window.
-- **States the library hands out** (`gk_overlay.HANDED`): an entity state with no public constructor
-  whose methods are the state rule's once something hands one out: `TabGroup` (`gk.panel_group(cx,
-  panel)`: the group the dock told the panel it was added to, call `PANEL_GROUP 148`) and
-  `AppMenuBar` (`gk.app_menu_bar(cx)`, call `APP_MENU_BAR_NEW 155`, drawn by `gk.app_menu_bar_view`,
-  node `APP_MENU_BAR 36`). `TabGroup::context` then hands out `TabGroupContext`, whose reads and calls
-  the object rule binds (13), and through it `DropIndicator` and `DragPanel`.
-- **Default constructors** (`gk_overlay.DEFAULT_CTORS`): a state with only `impl Default`
-  (`ResizableState`) is made by `T::default()` (`gk.resizable_state(cx)`; not an upstream function of
-  its own, no coverage row).
-
-**Saved layouts.** `DockArea::dump` and `load` are generated calls over the tree:
-
-```
-PanelState:  str panel_name, u32 n, PanelState each, PanelInfo
-PanelInfo:   u16 variant: 0 Stack {u32 n, f32 each, u64 axis}, 1 Tabs {u64 active index}, 2 Panel {str JSON, "" for null}
-DockAreaState: opt<u64> version, PanelState center, then left, right, bottom: u8 present, PanelState, u16 placement, f32 size, u8 open
-```
-
-A load rebuilds panels through upstream's registry: `gk.register_panel(cx, name,
-handler)` (call `PANEL_REGISTER 150`: `str name, u32 slot, u32 generation`) registers a builder that
-makes a GkPanel with no view yet and asks the app with a queued `gk.Panel_Build {panel, name, state,
-dock_handle}` (shape `PANEL_BUILD 37`), delivered after the load's update and before the next frame;
-the app answers with `gk.panel_fill(cx, panel, view, data, events)` (call `PANEL_FILL 151`, buffered).
-A restored panel therefore draws nothing for at most one frame. `Panel_Data.info` is the panel's own
-JSON, written back by `Panel::dump` (a GkPanel's dump is its name and that info). Also bridged by
-library calls: `gk.build_panel(cx, dock, state)` (`PanelRegistry::build_panel` with a
-`PanelBuildContext` made of the dock and the state, call `PANEL_BUILD_NOW 152`),
-`gk.pane_tree_to_state(cx, tree, dock)` (`PaneTree::to_state` over a `PanelSource` the library fills
-from the dock's panels before the call: upstream's methods get no context, call 153),
-`gk.pane_tree_from_state(cx, dock, state, root)` (`PaneTree::from_state` with a `PanelBuilder` over
-the registry, call 154; the built panels are kept alive by the library), and
-`gk.pane_node_kind` / `gk.pane_node_walk` (`PaneRef` as a `gk.Pane_Kind` value, the walk's nodes as
-a list; calls 156, 157). `PanelBuildContext`'s reads are the `Panel_Build` request's fields.
-
-**A panel's own title bar** (`Panel::title_suffix`, `toolbar_buttons`, `dropdown_menu`): three more
-fields of `gk.Panel_Data`, pushed as all of its data is: `suffix` (a view drawn at the end of the title
-bar), `toolbar` (a view whose root's `gk.button` children are the toolbar's buttons: the library
-decodes them from the view's tape each time the bar draws) and `menu` (a `gk.Built(gk.Popup_Menu)`,
-applied to the bar's menu as 11.6's view-built closures are). The wire of `PANEL_NEW`, `PANEL_SET` and
-`PANEL_FILL` ends with `u64 suffix, u64 toolbar, u64 menu view, str info`.
-
-**Menus.** Node `KBD_FOR_ACTION 35` (`u32 action, u8 how, opt<str> context, u64 focus`) is the kit's
-Kbd for an action's binding, or nothing when it has none: `gk.kbd_for_action(action, context)`,
-`gk.kbd_for_action_in(action, focus)`, `gk.kbd_global_for_action(action)` (the three `Kbd` statics,
-which return `Option<Kbd>`: an element no call op can return). Node `DROPDOWN_ANCHOR 34`
-(`gk.dropdown_menu_anchored(button, anchor, menu)`) is 11.6's dropdown button with
-`dropdown_menu_with_anchor`.
-
-Not built (reasons in `docs/STATUS.md`): the renderers (`DockAreaRenderer`, `TabGroupRenderer`, and
-`DockContext`, which only they receive), `DockSkin` (its result pairs the area with an `Rc<Self>`),
-`DragPanel` by value (`drop_panel`, `drag_panel`: a type that renders, classified as state),
-`AnyDrag`, `DockToggleEvent` (emitted by the component crate's impl on DockArea, which the extract
-does not list), the toast manager and tooltip families.
-
-### 11.9 Dock renderers over app views keyed by node
-
-Runtime: `core/src/dock.rs` (`GkRenderer`), `go/gk/dock/rt_dock.go`; rules: `gen/gk_overlay.py`
-(`resolved4`, `after_classify4`, `LIBRARY_HANDOUTS`); tests: mode `render` of `core/tests/go/overlay`;
-gallery page `dock-renderer`.
-
-A Rust app gives a dock its look by implementing `DockAreaRenderer` and `TabGroupRenderer`, whose
-hooks upstream calls while it lays the dock out. App code never runs then (decision 3), so the
-binding implements both traits once, `GkRenderer` (a library object, `gk.Dock_Renderer`), and
-answers each hook from an app view the app gave for that hook and a key, between frames:
-
-- `gk.dock_renderer(cx, hooks, handler)` makes it (call `DOCK_RENDERER_NEW 160`: `u32 hooks, u32
-  slot, u32 generation` -> `u64`, kind OBJ); `hooks` is a `bit_set[gk.Dock_Hook]` of the hooks the app
-  answers (the others keep upstream's defaults). `Rc<dyn DockAreaRenderer>` and `Rc<dyn
-  TabGroupRenderer>` given to the kit (`DockArea::with_renderer`, `TabGroup::with_renderer`) are this
-  object by rule (descriptor `["dock", "renderer"]`), so `gk.dock_area(cx, id, nil)->with_renderer(r)->
-  build()`. `tab_group_renderer` hands upstream the same renderer.
-- A hook in `hooks` looks its (hook, key) up. The key is the hook's subject: a dock's placement, a
-  split's or a tab group's node id (`Node_Id`), a divider's axis + 2 * dragging, 0 for the area's
-  frames and the drop indicator. With no answer for the context upstream draws with (a hash of the
-  context's reads: open, size, panels, active tab, zoom..), the hook sends one queued request, shape
-  `DOCK_RENDER 38`, `gk.Dock_Render {renderer, hook, key, node, placement, axis, flags, size, dock,
-  group, panel, panel_name}`, and draws upstream's default (or the older answer) this frame. The
-  app answers with `gk.dock_render_answer(cx, r, hook, key, view)` (call `DOCK_RENDER_ANSWER 161`,
-  buffered: the view is mounted and every window drawn again; view 0 gives upstream's default back).
-  One frame of the default at most, as for a restored panel (11.8).
-- The contexts upstream hands the hooks reach the app in the request: `dock: gk.Dock_Context` (the
-  dock hook) and `group: gk.Tab_Group_Context` (the tab group hooks), library objects whose reads and
-  calls are bound by the object rule (13), `gk.dock_context_toggle(dock, cx)`, `gk.select_tab(group, cx, i)`. They are kept
-  by the library until the next request for the same key (so a click handler of the chrome can call
-  them), then released. Because the library hands them out, `DockContext` is reachable
-  (`gk_overlay.LIBRARY_HANDOUTS`, a synthetic hand-out item that is not counted).
-- Drawing an answer: an element hook (`render_dock`, `render_tab_bar`, `render_active_panel`,
-  `render_split_handle`, `render_empty`) decodes the app view's current tape where upstream wants the
-  element (`genapi::root`), so its handlers are the view's own and it is drawn again when the view is
-  described again. The element upstream hands the hook (a dock's content, the active panel's view) is
-  drawn where the app's view put `gk.dock_slot()` (node `DOCK_SLOT 37`; nothing when the view has no
-  slot). A frame hook (`frame`, `center_frame`, `split_frame`, the tab group's `frame` and
-  `content_frame`, which return `Stateful<Div>`) takes the app view's root, which must be a `gk.div()`,
-  `gk.h_flex()` or `gk.v_flex()` (another node stops the app), and gives it upstream's id: that div
-  with its styles, handlers and children is upstream's frame. The drop indicator's view is drawn in
-  the rectangle the drop would fill (`DropIndicator::to`).
-- `build_placeholder` (a panel no registered builder makes, in `hooks` as `.Placeholder`) makes an
-  empty panel and asks the app with the request's `panel` and `panel_name`; the app fills it with
-  `gk.panel_fill` (11.8).
-- A dock upstream does not draw (closed) calls no hook, so it asks nothing until it is drawn again.
-- `gk.test_dock_render(cx, r)` (call `DOCK_RENDER_TEST 162`): requests sent, answers kept, hooks drawn
-  from an answer.
-
-Counted bridged: the 13 methods of the two renderer traits (`GkRenderer`), `DockArea::with_renderer`,
-`TabGroup::with_renderer`; bound by the object rule now that something hands one out: the 7 methods of
-`DockContext`.
-
-### 11.10 The library clock; the toast manager
-
-`std::time::Instant` has no number of its own. Both ways it is the time since the library's clock
-began (the first time anything read it), i64 nanoseconds on the wire, `time.Duration` in Go
-(descriptor `["dock", "instant"]`; `crate::overlay::instant`, `put_instant`); `kit.ClockNow(cx)` reads
-the clock (call `CLOCK_NOW 159`). The offscreen runner's simulated clock does not move it: it is the
-process's monotonic clock.
-
-`ToastManager<I, T>`, the kit's bookkeeping of a toast stack (which toasts are entering, present,
-ending, and when a timeout ends one), is a generic calculator the app calls, so it is a library
-object instantiated by `[values] objects` (13.8) as `ToastManager<u64, u64>`: ids and values are the
-app's own numbers (an index into its toasts, a view handle). Its 10 methods are bound: `new` from a
-`gk.Toast_Motion`, `push(id, value, gk.Toast_Options, now)` (the replaced value back), `dismiss`,
-`dismiss_all`, `advance(now, paused)` (a `gk.Toast_Advance_U64_U64`: presented, ending, removed),
-`iter` and `visible` (lists of `(id, value, status)`), `get`, `len`, `is_empty`. The app draws its toasts
-itself (a timer calls `advance`). Test: mode `toast`.
-
-Also bound by the clock: `HorizontalScrollClaim::at` (values family).
-
-### 11.11 Generic elements bounded by a kit trait: Popover::trigger
-
-`Popover::trigger<T: Selectable + IntoElement>` (the kit's and gpui-base's) takes an element that
-also shows a selected state. A kit trait whose implementors are node types is one of them (`[lists]
-unions`, the rule of 9.12): `"Selectable" = "Selectable_Element"`, a union of the kit's
-eleven Selectable elements (`kit.Button(..)`, `kit.Tab(..)`, `table.ListItem(..)`, ..). Upstream's popover sets the trigger's selected state from its own.
-
-### 11.12 Popovers, dialogs and menus driven from code
-
-- A popover is open while the app says so: `gk.popover(id)->open(a.open)->on_open_change(h)` (upstream's
-  controlled popover). The app opens and closes it from any handler by changing its state; a click
-  outside or escape reports through `on_open_change`. Test: mode `popover`.
-- Dialogs, alerts and sheets open and close from handlers through the view-built closures of 11.6
-  (modes `dialog`, `alert`, `sheet`); menus open from their trigger (11.6, 11.8).
-
-### 11.13 A dock the user toggled
-
-The kit's skin reports a dock the user opened or closed with its buttons as `DockToggleEvent` (an
-`EventEmitter` impl of the component crate that the extract does not list). `gk.on_dock_toggle(cx,
-dock, handler)` subscribes (call `DOCK_TOGGLE_SUBSCRIBE 163` -> a subscription), the handler gets
-`gk.Dock_Toggle {placement, open}` (shape `DOCK_TOGGLE 39`): `DockToggleEvent::placement` and
-`is_open` are its fields (counted bridged). The app's own `toggle_dock` and a renderer's
-`DockContext::toggle` report nothing, as upstream (tested in mode `render`).
-
-### 11.14 Observations: closures upstream calls while it lays out
-
-A closure that gets values and no window, app or entity context and returns nothing, `impl Fn(..)`
-(`Popover::on_position(Fn(ResolvedPosition, Bounds<Pixels>))`, `Popup::on_position`,
-`Positioner::on_position(Fn(ResolvedPosition))`), is called by upstream while it lays out a frame,
-where app code may not run (DESIGN.md section 0, decision 3). It is a handler of the payload's shape
-(the app passes `gk.on(proc(a, cx, p: gk.Resolved_Position))`, two values as `gk.Event_117`), and the
-library's closure only records: `crate::views_after::observe` encodes the values as that handler's
-EVENT request and keeps it when they differ from the last values the same view's handler id was given.
-One main-thread task (spawned through the app's `AsyncApp`, kept when the app starts, because no
-context is in scope where upstream calls the closure) hands the kept requests to the queue of events
-raised outside an update (`rt::queue_event`): each is delivered after the frame with its view's window.
-The handler marks its view for redraw; the view lays out the same values again, which are not delivered
-again, so an observation does not keep the app drawing. The comparison is per view and handler id, not
-per tape generation. Generator rule: `gk_overlay.observed` (a hook in `Model.closure_desc`) and
-`gk_overlay.rust_observe` (in `Rust.handler`). Tested by core/tests/go/run-overlay.sh mode `observe`.
-
-### 11.15 Value calls: computations over a value the app builds
-
-A `&self` method of a value node (not an element) that takes arguments besides `self` and returns an
-owned value (`DockSizing::clamp(size)`, `size_from_pointer(point)`, `Sankey::layout(node_count,
-links) -> Result<SankeyGraph, SankeyError>`, `topology`, `layout_from`, `Timing::sample(elapsed)`)
-computes something from the value: it is an ambient call (11.5) whose first argument is the value,
-which travels as a tape of its own (13.6) and is built in the call op by its constructor and
-builders: `gk.base_dock_sizing_clamp(cx, gk.dock_sizing(.Left)->with_area_width(1000), 5000)`. The
-Go name is the type's and the method's (`Base` for the base crate). A method without arguments
-reads back what the app wrote and stays skipped (builder-getter); one with a type parameter, a
-context argument or a result that borrows the value is not a value call. Generator rule:
-`gk_overlay.value_read` (a hook in `Model.classify_method`). The generated ambient test
-calls every value call it can sample (core/tests/go/app, mode `ambient`); core/tests/go/run-overlay.sh mode
-`values` checks results (a clamp, a pointer's size, a sankey's layers, a refused layout's error).
-
-### 11.16 Skips, described menu ops, menu items as values, generic sidebars
-
-- **Skips with a reason** (`gk_overlay.SKIPS5`, merged into `[skip]` so the model's own rule applies
-  them and a key that matches nothing stops generation): a Rust plot's paint-time caches, paths, hover
-  and appear hooks (PathCaches, PathCache, ShapeKey, polygon, origin_point, sankey_link_path, PlotHover,
-  Plot::appear/hover/prepaint/tooltip/tooltip_state, PlotElement::new, ArcData::new, shape::Arc,
-  TooltipState::new); objects handed only to closures skipped as item-render-closure
-  (ComboboxTriggerContext, TimeFieldSegmentState, HoverCardState, CalendarItemState, base
-  HoverCard::content, Notification::action); values upstream never takes (AnyChildElement,
-  ListSeparatorItem, ContextMenuState, RenderOptions, TabGroupConstraints, PanelId::from_u64,
-  SankeyNodeLayout); Rust's own typing or contexts (AnyDrag, Notification::id/id1, DockSkin::new,
-  AutoScroll::set, PopupMenu::build, ContextMenu::new, CalendarState::set_disabled_matcher_shared,
-  DialogFooterButton, a trait nothing implements); IndexPath's builders (value-helper: the record
-  `gk.Base_Index_Path` is what calls take).
-- **A described menu's op made without the menu's context**: `PopupMenu::submenu_with_icon` as
-  `crate::views_menu::submenu_with_icon` (as `submenu` is, 11.6); a context op's `Option<Icon>` is
-  the `Icon` its Into set makes from an `IconName` (`gk.Option[gk.IconName]` in Go).
-- **Menu items as values**: `PopupMenuItem` is an enum built like a builder (`[values] enum_nodes`,
-  13.19), so `PopupMenu::item` takes one: `gk.popup_menu_item("Copy")->icon(.Copy)->action(a)`,
-  `popup_menu_item_separator`, `_label`, `_element` (a fragment), `_link`, `checked`, `disabled`,
-  `on_click`. `PopupMenuItem::submenu` takes a menu entity only `PopupMenu::build` makes (skipped).
-- **Generic sidebars**: `SidebarGroup<SidebarMenu> as SidebarGroup` and
-  `Sidebar<SidebarGroup<SidebarMenu>> as GroupedSidebar` (`gk.grouped_sidebar`) in `[instantiate]
-  types`. Sidebar has two instances, so its conformance pages are named `component::Sidebar.*`
-  and draw the grouped one; `gk.sidebar` is unchanged.
-- **Bridged by the library's own code**: `SearchableListDelegate::on_confirm` keeps upstream's default
-  in `GkSearchDelegate` (the same final selection reaches the app as the state's `Confirm` event, which
-  upstream emits beside the call); `DockSkin::dock_area` (gk.dock_area_skinned) is kept by the pruning
-  (its upstream arguments are on no wire).
-
-### 11.17 Tooltip values in view closures
-
-A closure that returns a view (`Fn(&mut Window, &mut App) -> AnyView`, `["viewany"]`, 13.18:
-`StatefulInteractiveElement::tooltip`, `hoverable_tooltip`, `TextView::link_tooltip`) also takes the
-kit's own Tooltip (`gpui_kit::component::tooltip::Tooltip`), which is a value node (`[node]
-types`): its constructors `new(impl Into<Text>)` and `element(Fn(&mut Window, &mut App) -> E)` (a
-fragment of the view) and its builders `key_binding(Option<Kbd>)`, `action(&dyn Action, Option<&str>)`
-and the Styled ones are ops of the view's tape, decoded in the view build. Go: the argument is
-`gk.ViewOrTooltip`: a `gk.View`, `overlay.NewKitTooltip(text)` or `overlay.NewKitTooltipElement(el)`. Wire:
-`u8 kind`, then `u64 view` (kind 0; 0 = an empty view) or `u32 node` (kind 1). Rust
-(`crate::views_after::tooltip_view`): the node is kept with the view's tape (`Frag`) and built each
-time upstream asks for the tooltip (the pointer rests on the element), then `Tooltip::build(window,
-cx)`, as a Rust app does in its closure. `Tooltip::build` itself stays skipped (rust-only-extension).
-Generator: `gk_comp6.viewany_tooltips` (the descriptor becomes `["viewany", ["node", key]]`, so
-gates/accept.py sees the Tooltip taken). Gallery page `comp6-tooltip`.
-
-### 11.18 Snapshots: an object copied out as the values of its reads
-
-An object upstream hands a closure that cannot be copied (not Clone, so 13.4's temporary handle cannot
-hold it) and whose public methods are all `&self` reads that take nothing (`ResizeHandleContext`: `axis`,
-`edge`, `is_active`, `state`) is copied out where the closure is called as a **record of its reads**:
-one field per read, named as the read, in the read's wire type (`gk.Resize_Handle_Context {axis,
-edge: Maybe(Handle_Edge), is_active, state}`). The record is out only; its generated `Wire` impl calls
-the reads (`gk_comp6.snap_field_put`), so the record is exactly what the reads return at the call.
-The reads count bridged ("a field of the snapshot record"). Rule: `gk_comp6.snapshot`
-(gk_values.resolved's hook, only while a closure's payload is read). A row of 9.16 compares the
-record's bytes, so a row is described again when a read changes (the handle hovered, pressed,
-dragged).
-
-### 11.19 Optional element closures over a context
-
-`Fn(values.., &mut Window, &mut App) -> Option<AnyElement>` (and `Option<impl IntoElement>`) is 9.16's
-row source (`["ctxrows", .., "opt"]`): the closure returns `Some(the row)`; a row with no view yet is
-drawn as nothing for one frame, as any row. Returning `None` (upstream's own drawing, where upstream
-has one) is the kit's function of 11.20, not a row.
-
-### 11.20 Closure types the kit also makes
-
-A type alias of a closure (`ResizeHandleRenderer = Rc<dyn Fn(&ResizeHandleContext, &mut Window, &mut
-App) -> Option<AnyElement>>`) that a kit function with no arguments returns (`resize_handle_appearance()`,
-the kit's divider) is either the app's rows (9.16, 11.19) or that function: `["kitfn", alias, name,
-[functions], rows]` (generated). Wire: `u8 kind` (0 rows: `u64 source`; 1 the kit's: `u16` function).
-The library calls the function where the value is decoded, so it counts bridged. Binds
-`ResizablePanelGroup::with_handle_appearance`, `ResizeHandle::with_appearance`,
-`resize_handle_appearance` (`gk_comp6.kitfn`, gk_lists.alias's hook). The app's row procedure reads
-`gk.row_context(cx, src, at, gk.Resize_Handle_Context)` (11.18) and draws the visible part of the
-handle; the hit area, cursor and drag stay upstream's.
-
-### 11.21 Sets of values; a calendar matcher's parts
-
-- `Fn(&X) -> bool` with no window or app, X a plain value (a string, a number, a record, a chrono date),
-  is the **set** of values for which it holds (`["valset", X, wrap, ptypes]`, a `[]X`): the closure
-  answers whether its argument is in the set. Call-safe (no app context needed). In `Box<dyn Fn(&X) ->
-  bool + Send + Sync>` the library's closure keeps the set's bytes (`crate::values::value_set`), so a
-  value holding it reads back as the set (`impl Wire for Box<dyn Fn(&K) -> bool + ..>`). A variant of an
-  enum with data whose field is such a set is buildable even when the enum was first met read back
-  (`gk_comp6.set_variants`): `Matcher::Custom` is `gk.Matcher_Custom{v0 = []gk.Civil_Date}`.
-- `Matcher::Interval(IntervalMatcher)` and `Range(RangeMatcher)`: their parts have private fields and
-  no reads; they are library values both ways (`gk.IntervalMatcher`, `gk.RangeMatcher`), made by the enum's own constructors
-  (`Matcher::interval`, `range`), and read back through a struct with the same two
-  `Option<civil::Date>` fields, checked once against parts made with known dates (a matcher's days cannot be recovered through `Matcher::matched`: the
-  days it leaves out may be a single day anywhere). With this every variant of Matcher is reachable both
-  ways: `CalendarState::disabled_matcher`, `set_disabled_matcher`, `disabled_matcher_ref` and
-  `DatePickerState::disabled_matcher` leave the partial-options table. jiff's civil::Date is nameable in
-  closure types (`gk_lists.THIRD_PARTY`).
-
-### 11.22 Boxed values
-
-`Box<T>` of a value node or element in a variant (`Text::TextView(Box<TextView>)`) is T, boxed where it
-is decoded (`["boxed", T]`). The `Text::TextView` variant is reachable: `gk.Kit_Text_Text_View{v0 =
-gk.text_view(..)}` for `Alert::new`, `info`, `success`, `warning`, `error`, `Checkbox::label`,
-`Radio::label`, `Switch::label`, `SettingItem::description` and `DescriptionList::child`, `children`,
-`item`, which leave the partial-options table. Not in a call op (a node there would need a value tape).
-
-### 11.23 gpui's Background read back
-
-`Background` as a result is the library value `gk.BackgroundValue {Kind, ColorSpace, Solid,
-AngleOrHeight, Stops}` (`impl Wire for
-gpui_kit::Background` in core/src/values.rs: its fields are private, so the kind, colour space, angle
-and percentages come from its serde form and the colours, at full precision, from its Debug form). This
-binds `try_parse_background(text) -> gk.Fallible(gk.Background_Value)` (an ambient call, 11.5): a
-colour (`"#ff0000"`) is a solid background, `"linear-gradient(90deg, #f00 0%, #00f 100%)"` a gradient.
-
-### 11.24 Per-row menus described ahead of the right-click
-
-`TableDelegate::context_menu(row, menu, ..) -> PopupMenu` and `Tree::context_menu(Fn(usize,
-&TreeEntry, PopupMenu, ..) -> PopupMenu)` build a row's menu when the row is right-clicked. App code
-does not run then, so the menu is described with the row, ahead of the click: the row (a table's
-cell in any column; a tree's or a list's item) wraps its element in `gk.row_menu(el, gk.popup_menu()->
-menu(..)..)`, library node `ROW_MENU 38` (`u32 child node, u32 menu node`), drawn as its child. The
-library (`crate::shim_rows::row_menu`) finds the first of the row's views whose root is a ROW_MENU and
-applies the menu node's ops to the menu upstream hands in (as 11.6's view-built menus are applied), so
-the menu's handlers are the row view's own. A row with no view yet, or no menu, opens nothing
-(upstream's empty menu). `GkTableDelegate::context_menu` counts bridged (`[shims]`); `Tree::context_menu`
-takes the tree's row source (`[rows]`: `crate::shim_rows::tree_menu`, Go
-`table.Tree(..).ContextMenu(rows)`). `kit.RowMenu(el, menu)` wraps a tree's or list's row (call it last). Gallery pages `comp6-table-menu`, `comp6-tree-menu`.
-
-### 11.25 Rules for a selection change
-
-`SearchableListDelegate::on_will_change(&mut self, selection: &mut Vec<..>, changes)` is called
-synchronously while the list handles a click, with no context: the library's delegate
-(`GkSearchDelegate`) applies upstream's default (each change in order) and then the rules the app gave
-the source in advance: `gk.search_will_change(cx, src, gk.Search_Rules{min, max, locked, blocked})`
-(call `SEARCH_RULES 164`, buffered: `u64 source, u32 min, u32 max, u32 n, str locked each, u32 n, str
-blocked each`). `blocked` values are never added, `locked` values never taken out once selected, and a
-change that would leave fewer than `min` or more than `max` values (0: no limit) is refused whole
-(upstream's veto: the selection is left as it was). Counted bridged (`[shims]`). Test: mode
-`will-change` of core/tests/go/lists2.
-
-### 11.26 A questionnaire item's validator as rules
-
-`QuestionnaireItemDefinition::with_validator(Fn(&QuestionnaireValidationContext) -> Result<(),
-SharedString>)` is called while the questionnaire updates (an answer set, Next, Submit). It takes
-`gk.QuestionnaireRules {MinChoices, MaxChoices, MinLength, MaxLength, OneOf, NotOneOf, SameAs,
-DiffersFrom, Message}` (`["qrules"]`), checked by the library
-(`crate::values::QuestionnaireRules`): limits of 0 are none, a length counts the free answer's
-characters, `one_of`/`not_one_of` the free answer, `same_as`/`differs_from` name another item whose
-answer this one must equal or differ from, `message` replaces the error (`{item}`: the item's name).
-The library's check calls `QuestionnaireValidationContext::item`, `answer` and `answers`, which count
-bridged. The read of a definition's validator (`QuestionnaireItemDefinition_Read::validator`) is
-`Maybe(gk.Questionnaire_Validator)`: present when the item has one (a closure has nothing else to
-read). Test: mode `q-rules` of core/tests/go/values.
-
-### 11.27 Values and colours in a constructor's builder chain
-
-`ColorPickerState::default_value(impl Into<Hsla>)`, `GridLayoutState::default_areas(GridArea..)`,
-`TreeState::items(Vec<TreeItem>)` and `ScaleOrdinal<SharedString, Hsla>::range` and `unknown` are
-builders of a constructor's chain whose argument (a colour, a value node) the chain's decoder (`sb_*`)
-cannot decode: it has no app context. They take the rule of 9.31 (`gk_editor.chain_cx`
-and `chain_body`: the constructor's call op decodes the whole chain first, with the call's context,
-into closures `sbp_*`, a value node as a tape of its own (13.6), a colour against the theme, then
-applies them to the new value), the one shared helper (see 9.38). Their states have a builder form:
-`gk.color_picker_state(cx)->default_value(c)->build()`, `gk.tree_state(cx)->items({..})->build()`. Test: mode
-`c6-chains` of core/tests/go/values (each value read back from the state or object its chain made).
-
-### 11.28 Left unbound in the components
-
-- `read: ScrollbarTheme::styles` (the read of a read-back ScrollbarTheme): skipped as builder-getter.
-  ScrollbarStyles has six private styles and no public read; a copy would show the app nothing.
-
-Wire numbers: node `ROW_MENU 38`, call `SEARCH_RULES 164` (the overlays block of
-core/wire/ops.txt). Tests: core/tests/go/values (modes `c6-background`, `c6-matcher`, `c6-q-rules`, `c6-resize`,
-`c6-chains`), core/tests/go/lists2 (mode `will-change`); misuse
-examples/go/misuse_values (cases `c6-rules-source`, `c6-rules-limits`, `c6-tooltip-kept`); gallery
-pages `comp6-*` (values_pages and chart_pages, .go and .rs).
-
-### 11.30 Requests that answer later; file dialogs, prompts, the menu bar, URLs
-
-DESIGN.md section 11's "requests that answer later", built. Runtime: `core/src/platform.rs`,
-`go/gk/internal/rt/rt_platform.go` (platform-neutral; nothing Linux-only crosses the C interface); numbers:
-the end of `core/wire/ops.txt` (call 82-89, shape 22-23 of the app block); tests:
-`core/tests/go/platform`, `core/tests/go/run-platform.sh`.
-
-**Completions (general).** A request op takes a kept handler (`u32 slot, u32 generation`, as a timer
-does) and returns at once a handle of kind `TASK`: the *completion*. The library awaits the answer on
-the main thread (a foreground task over upstream's oneshot receiver or `Task`) and delivers it as one
-`DONE 8` turn: the request bytes of an event (`u64 view 0, u32 generation, u32 slot, u16 shape`, the
-payload), with the window the request was made in, never inside a draw. Its buffered writes are
-applied when the turn returns (a `DONE` turn runs outside every update, section 3). The runtime
-runs the handler as for an event (the view that made the request is marked for redraw), then marks the
-completion done, forgets the handler and sends `RELEASE` for it itself. Rules:
-
-- the library never releases a completion: only the app's runtime does, after the `DONE` turn or when
-  the app releases it. So an answer racing the app's release cannot make that release fail (test
-  `race`: released and answered in the same turn; the answer arrives first, the handler, dropped with
-  the release, does not run, and the release lands);
-- `gk.release(cx, c)` before the answer cancels: the task is dropped (a platform dialog left open
-  answers into nothing), a scripted request leaves the queue, a late answer is discarded (counted);
-  after the answer it does nothing; a second release before the answer stops (`release-twice`);
-- a completion started in a view's init or handlers goes with the view (`drop_kept_of`), as a timer
-  does: releasing the view cancels it (test `view-released`);
-- a view procedure may not start a request (`request-in-view`).
-
-Any upstream call returning a oneshot receiver or a `Task` is bound this way: one call op that starts
-it and a payload shape for its answer.
-
-| call | wire | upstream |
-|---|---|---|
-| `PROMPT_PATHS 82` | `u8 files, u8 directories, u8 multiple, opt<str> prompt, slot, gen` -> `u64` | `App::prompt_for_paths(PathPromptOptions)` |
-| `PROMPT_NEW_PATH 83` | `str directory, opt<str> suggested name, slot, gen` -> `u64` | `App::prompt_for_new_path` |
-| `WINDOW_PROMPT 84` | `u64 window (0: the turn's), u8 level, str message, opt<str> detail, u32 n, (u8 kind, str label) each, slot, gen` -> `u64` | `Window::prompt` (the platform's dialog, else gpui's own) |
-| `OPEN_URL 85` | `str url`, buffered | `App::open_url` |
-| `SET_MENUS 86` | `u32 n, menus`, buffered (a menu: `str name, u8 disabled, u32 n, items`; an item: `u8 kind`: 0 separator, 1 action `str name, u32 action, u8 os action, u8 checked, u8 disabled`, 2 submenu, 3 the OS's Services menu `str name`) | `App::set_menus`, and the kit's `GlobalState::set_app_menus` so its `AppMenuBar` draws the same menus where the platform has no menu bar (Linux) |
-| `MENUS_GET 87` | -> `u32 n, menus` | the menus as `AppMenuBar` draws them |
-| `PLATFORM_ANSWER 88` | `u8 kind (1 paths, 2 new path, 3 prompt), u8 status, paths or u32 answer` -> `u8 taken` | scripted answers |
-| `PLATFORM_LOG 89` | -> URLs opened, requests, delivered, discarded, waiting, scripted | scripted mode's record |
-
-Shapes: `PATHS 22` (`Paths_Done {status: Done_Status, paths: []string, error: string}`; a save dialog
-answers one path or none), `PROMPT 23` (`Prompt_Done {status, answer: u32}`, the button's index).
-`Done_Status`: `.Answered`, `.Cancelled` (the user dismissed it), `.Failed` (the platform could not
-show it; `error` says why).
-
-**Scripted answers.** Under the offscreen driver (`gk_headless_run`, the diag library) or with
-`GK_SCRIPTED_PLATFORM=1`, the platform is not asked: a request waits for `gk.platform_answer_paths` /
-`gk.platform_answer_prompt` (oldest request of the kind first) or takes an answer given before it;
-`open_url` is recorded (`gk.platform_log`). Otherwise `PLATFORM_ANSWER` is refused
-(`GK_ERR_UNSUPPORTED`). The app's code is the same either way.
-
-Go: `gk.PromptForPaths(cx, gk.PathPrompt{..}, f)`, `gk.PromptForNewPath(cx, dir, "notes.txt", f)`,
-`gk.Prompt(cx, level, message, detail, answers, f)`, `gk.SetMenus(cx, menus...)`,
-`gk.OpenURL(cx, "https://example.com")`; each request returns a `gk.Completion`, and
-`gk.Release(cx, completion)` cancels while it waits.
-
-Tests (`core/tests/go/run-platform.sh`): `dialogs` (a dialog answered later, a save dialog answered
-before it was asked, a prompt, a dismissed dialog: four DONE turns with their payloads, the view
-redrawn), `cancel`, `race`, `view-released`, `menus` (set from app actions and read back, open_url
-recorded), and the misuse modes `release-twice`, `request-in-view`, `wrong-payload`, `menu-no-action`.
-
-### 11.31 Requests from a turn without a window; dialogs answered by the offscreen script
-
-- **A request's window.** A request made in a turn that has no window (an app-wide action from the menu
-  bar or a key binding: `gk.on_app_action`; an app timer) belongs to the app's active window, else its
-  first (`platform::request_window`). Its `DONE` turn runs with that window, and `gk.prompt(cx, ..)` asks in
-  it, so `gk.prompt` works from a menu item's action. A prompt for another window than the turn's, or from a turn without one, is shown once the turn is
-  over (the dispatching window is in use while an app-wide action runs).
-- **Frames.** The change a `DONE` turn's handler makes is drawn in the frame after its answer, as in a Rust
-  app (11.32).
-- **`answer WHAT` in a gk-meter script** (`core/meter/src/headless.rs`, `on_answer`): offscreen, the
-  script answers the oldest waiting request of a kind, `answer paths P..`, `answer new-path P`, `answer
-  prompt N`, `answer cancel paths|new-path|prompt` (then a frame). The library registers its scripted
-  platform (`platform::answer_line`, the same queue as `PLATFORM_ANSWER`); a Rust twin registers its own
-  (`ref/src/bin/files.rs`). So an app's dialogs are part of its pixel gate: `gates/pixels.sh files`
-  (`examples/go/files` against `ref-files`, `gates/files.script`: the kit's AppMenuBar and its menus,
-  Open… answered with a file, Save as… with a new path, Quit's prompt answered Stay, Help > Website's
-  open_url recorded, ctrl-o's dialog dismissed, and the status line's entrance animation).
-
-### 11.32 The real platform; a DONE turn's frame; a right click
-
-- **A `DONE` turn's change is in the frame after its answer, as in Rust.** `HeadlessAppContext::update`
-  runs its closure without ending an app update, so the offscreen driver's `answer` line runs inside an update of the driven window
-  (`core/meter/src/headless.rs`), as a platform answer arrives in an update of the app (the request's
-  foreground task, `cx.update(|cx| cx.defer(deliver))`): the `DONE` turn runs when that update ends, and
-  its change is described by the next pre-frame hook and drawn in that frame. No app code runs mid-frame.
-- **The real platform (Linux, gpui-fast-linux 0.1.14; modes `real-*`, `GK_SCRIPTED_PLATFORM` unset).**
-  `bin/platform-real` runs the test app on a real window inside `gates/display.sh` (a private display and
-  a private D-Bus session bus with no service files, so no portal answers), with a fake `xdg-open` first
-  on `PATH`.
-  - `prompt_for_paths`, `prompt_for_new_path`: gpui asks the xdg-desktop-portal FileChooser through ashpd;
-    with no portal on the bus the request fails at once and both `DONE` turns come with `.Failed` and
-    gpui's reason (`Portal request failed: org.freedesktop.zbus.Error: The name
-    org.freedesktop.portal.Desktop was not provided by any .service files`; where ashpd finds no portal
-    implementation gpui says "Couldn't open file picker due to missing xdg-desktop-portal
-    implementation."). A dialog the user dismisses answers `.Cancelled`. Nothing hangs (both in time).
-  - `open_url`: gpui runs the `open` crate's openers on its background executor, `xdg-open` first (then
-    gio, gnome-open, kde-open, wslview), and the OpenURI portal only if none succeeded. The fake opener got
-    the URL as its one argument; nothing is recorded in `PLATFORM_LOG` (that is the scripted mode's).
-  - `set_menus`: the Linux platform keeps the menus (gpui's `get_menus` returns them) and shows no menu
-    bar; the kit's `AppMenuBar` draws them from its `GlobalState`: laid out in a real window's frame
-    (more than 100 by 10 px) with the two menus set.
-  Nothing Linux-only crosses the C interface: no op or shape was added.
-- **A right click under the offscreen driver.** `rclick X Y` is a move, a press and a release, each in its
-  own update of the window with pending tasks run between, as a real window delivers them (gpui's
-  `on_input`: one `handle.update` per platform input). Each update's end runs what it deferred and
-  gpui's test-support flush draws a window it dirtied, as a real window draws frames during a click.
-  Note that `InputState::on_context_menu` (the base state's
-  handler, upstream hands it an empty `NativeMenu`, the capabilities and the position) fires when the
-  state is drawn by the base element `gk.base_input`, and never when it is drawn by the kit's `gk.input`,
-  because gpui-component's `Input::render` installs its own handler on the state each time it draws (its
-  Cut/Copy/Paste/Select All menu, or `Input::context_menu`'s). A handler set between two draws is
-  replaced at the next, which comes between a press and its release. Rust behaves the same. The app's own
-  menu on a kit input is `gk.input(s)->context_menu(menu)` (data).
-
-Tests (`core/tests/go/run-platform.sh`): `real-dialogs`, `real-url`, `real-menus` (through
-`bin/platform-real`), `context-menu` (gk.base_input: fired, items 0, at the click, editable, the cursor
-moved) and `context-menu-kit` (gk.input: not fired, the cursor moved). `GK_PLATFORM_SCRIPT=FILE` runs the
-test app under another script (shots of what a mode draws).
-
-### 11.33 Stopping an event; shortcuts; refreshing everything
-
-What writing the todo example needed.
-
-- **`gk.StopPropagation(cx)`**, call op `STOP_PROPAGATION` (95, app block): immediate, with no
-  arguments and no answer; the library calls GPUI's `App::stop_propagation`, so an element further
-  out than the one whose listener runs gets no listener call for this event (a click on a checkbox in
-  a list row does not also confirm the row). Called in a handler of a mouse or key event it does what
-  `cx.stop_propagation()` does in Rust; in any other turn it does nothing. It is a sync call (the
-  buffered writes before it are sent first), so it acts before the listener returns to GPUI.
-- **`gk.Shortcut(cx, keys, handler, opts...)`** (runtime only, rt_app.go): `gk.NewAction` with a
-  name of the function's own, `gk.BindKeys` and `gk.OnAppAction`
-  (11.4) in one call. It returns the action, for menus. One action per procedure: a second call with
-  the same procedure only binds more keys. Being app-wide, the listener hears the keys wherever the
-  focus is (after a dialog closed with nothing focused, too); an element's `on_action` still takes the
-  action first when it is on the focus path.
-- **An app-wide action listener (`gk.on_app_action`, so `gk.shortcut`) runs with a window.** GPUI calls
-  global action listeners inside the window's dispatch, where `&mut Window` is taken, so the handler ran
-  in a turn without one. So the library queues the event (section 4's `fire_queued`): it runs when
-  the dispatch has ended and before the next draw, in an update of the window of the view whose init
-  registered the listener (the app's first window for one registered elsewhere), and its change is in
-  the same frame.
-- **A posted procedure runs with a window.** The library runs the `WAKE` turn (section 6) inside an
-  update of the app's first window (the window a queued event without a view gets), so a call that needs
-  a window, such as `gk.push_notification`, works in a procedure a thread posted. Before any window is
-  open, the turn runs without one.
-- **`gk.Refresh(cx)`** (runtime only, rt_source.go): marks every live view dirty, and every bound row
-  of every row source (the same marks `gk.notify` and `gk.invalidate` make; nothing new crosses), after
-  setting the count of each source made with a count procedure whose procedure now answers another
-  number. `gk.list_source` is a procedure group: the count is an `int` or a `proc(s: ^S) -> int`. A
-  view not drawn in a window is described when it is drawn next (5.2's rule), so a closed dialog's view
-  is not described by a refresh.
-- `table.SelectRow(cx, list, row)` (rt_rows.go) is `List_State::set_selected_index` with a row, or
-  none for a negative row.
-
-### 11.34 Icons, posted lists, early posts
-
-What writing the reader example needed.
-
-- **`[into] stand_in`** (api/overrides.toml, `Model.stand_in` in gen/gk_model.py): an `impl Into<X>`
-  whose X has no public path in the extract (a type in a private module of the kit) is bound as `impl
-  Into<Y>` for the public type Y named there, which converts into X upstream. One entry:
-  `ButtonIcon = "gpui_kit::component::Icon"`, so `Button::icon` takes a `gk.Icon_Name` (op 276, decoded
-  as `Icon::from(IconName)`, which is Into<ButtonIcon> through ButtonIconVariant). Library change: one
-  decoder arm.
-- **`Icon` is a node type** (`[node] types`): `gk.icon(name, flags..)` (node 887), `gk.icon_empty()`,
-  `gk.icon_default()`, with the styled builders and `path`, `data`, `rotate`, `transform`; it is no
-  not kit state (the call ops it once had keep their opcodes in the lock). Into sets: a set made of an element and the one enum it is made from keeps the enum alone
-  (`Into<Icon>`: `gk.IconName`); a larger set keeps the element as a member (`Tab_Into` gained `Icon`). An `Option<Icon>`
-  takes `Maybe(gk.Icon)` (`PopupMenu::submenu_with_icon`).
-- **The INIT turn runs only the posts made before it** (rt_turn.go): the posts queued
-  when the turn starts (made before `gk.Run`, when no wake could be asked for) run after the start
-  procedure as before; a post made while it runs (a thread started by a view's init that posts at once)
-  waits for its WAKE turn, which has the app's first window (11.33). If the INIT turn leaves posts in
-  the queue, it asks for a wake.
-- `table.SelectRow` with scrolling also calls `List_State::scroll_to_item(row, Nearest)`;
-  `kit.SliderNumber(e)` is the number of a `Slider_Event` or `Slider_Value` (a range's
-  start), upstream's `SliderValue::start`.
-- Not bound yet: pushing a notification built with `gk.notification(cx)`. The way
-  proposed is an Into set member made of a kit state's builder chain, decoded into a value where the
-  kit takes one (`push_notification`, `NotificationList::push`).
-
-### 11.35 GK_SCRIPT in gk.run; where a stop inside a builder points
-
-- `gk.run(state, start)` reads `GK_SCRIPT` first: when it is set, the file it names is read and the
-  app runs as `gk.run_headless(state, script, start)` would (the diagnostic library only; with the
-  ship library the start fails with the library's message and a line saying to put the diagnostic
-  `lib/` first). An unreadable script is gk.Run's error, before the library is entered.
-- A stop inside a generated builder (an element taken, attached or changed out of turn, a negative
-  `usize`, a length of the wrong kind, a kept value) has no caller location. It ends with the context
-  the runtime holds: the line of the `gk.NewView` whose function was
-  running, or the row a list's row procedure was drawing, and with `GK_DEBUG=1` the line that made
-  the element: `Build.locs` records each node's constructor location while `GK_DEBUG` is set (nothing
-  is recorded otherwise). `View_Rec.loc` is where `gk.view` made the view.
-- A call the library refuses stops with its message and one line of advice by error kind
-  (`stop_call`): a zero handle ("never made", `ERR_STALE_HANDLE` whose message says so), another
-  released handle, no window (`ERR_NO_CONTEXT`), another thread, and for a bare refusal of an op or
-  tape a package and library from different downloads. The error number is not printed.
-- The library: a zero handle is "a zero handle (one that was never made)"; a view that shows one
-  stops with advice to make it in init instead of the advice about releasing; the type a view shows
-  is printed without module paths (`genapi::app_type_name`); a buffered write that fails is "a change
-  a handler asked for could not be made".
-
-### 11.36 A record as one field; the kit's style helpers as tokens; a window's title
-
-- **A record taken as one field.** `[shorthand]` of `api/overrides.toml` maps a record to one of its
-  integer fields (`"gpui_kit::base::IndexPath" = "row"`); the model checks the record is one an app
-  writes and the field an integer, and the description carries it as `records[path].shorthand`. An
-  emitter offers the field alone wherever a parameter is the record, an option of it or a list of it,
-  and writes the record (the field set, the others zero), so the wire is the record's and the
-  library is unchanged. Reads and events still hand back the record. 11 calls take it
-  (`List_State`'s `set_selected_index`, `scroll_to_item`, `set_right_clicked_index` and
-  `set_item_to_measure_index`; `select_state` and `Select_State.set_selected_index`;
-  `combobox_state`, `add_selected_index`, `remove_selected_index` and `set_selected_indices`;
-  `Command_State.set_selected_index`).
-- **Style helpers as tokens.** A nullary method (`fn m(self) -> Self`) of a trait in `[traits]
-  via_style` other than `Styled`, with no extra bound, is also a style token: a second entry in the
-  token table (`style` numbers 3133 to 3148 in `api/opcodes.lock`: `StyledExt`'s `debug_*`, `font_*`,
-  `h_flex`, `v_flex`), decoded in `style_token` as `gpui_kit::base::StyledExt::font_bold(s)` on the
-  same `W(style)` as gpui's (`core/src/gen/style.rs`). The method keeps its trait op, so
-  `->font_bold()` still compiles; the description gives the method its token number (`token`).
-  `ThemeStyled`'s methods take `cx` and stay methods. This is a library change: `API_HASH` moves.
-- **A window's title.** `gk.OpenWindow(cx, title, w, h, root)` opens through `WINDOW_OPEN 72`
-  (`OpenWindowWith` with the title and size set, the rest zero); `OPEN_WINDOW 2` stays in the
-  library but the Go package doesn't use it.
-
-### 11.37 The Go front end: the same protocols
-
-No change to the wire or the library. The Go package (`go/gk`, docs/GO.md) speaks every protocol of
-this file through the same seven C functions; its emitter interface is `go/gk/internal/rt/rt_emit.go` (the Go
-column of section 7). Differences in the binding only:
-
-- **Handlers** are Go functions of the shape's type, stored in the view's handler table as values;
-  the shape table (`shapes[n]`, generated in `gen_types.go`) decodes the payload with generated
-  readers (no reflection) and calls the function. A kept handler that takes no event (`func(*gk.Cx)`)
-  fits every shape. An index in a payload (Rust `usize`) is a Go `int`.
-- **Requests and replies** are Go byte slices lent for one C call; `gk_call`'s result is copied out
-  at once; the `gk_app` and the offscreen script are C memory. The library keeps no Go pointer.
-- **View-built closures** (11.6): `gk.NewBuilt(cx, render)` makes the view once; the generated call
-  that opens the overlay marks it dirty, so it is described again before the kit builds it.
-- **`ref-panels --script FILE`**: the Rust panels reference runs offscreen under a gk-meter script (the
-  diag build), for the pixel comparison in `gates/go.sh` (`gates/panels.script`).
-
-### 11.38 Asking before a window closes, the app's quit, reduced motion, a window's icon, gradients; the Go ports
-
-What porting a real desktop app from Rust to Go needed from both front ends. These are wire additions
-(`core/wire/ops.txt`, so the interface hash covers them); the C interface itself is unchanged.
-
-**A window's close asked of the app** (`Window::on_window_should_close`). `ON_WINDOW_SHOULD_CLOSE 96`: `u64
-window` (0: the turn's), a kept handler of shape `UNIT_BOOL` -> `u64 listener` (kind SUB). The library
-installs one gpui callback per window the first time (`core/src/app.rs`); when the user closes the window
-(its close button, Alt-F4, the taskbar, Cmd-W) it asks the app's handlers in the order given, each in a
-synchronous EVENT turn with the window in scope, and the first that returns false keeps the window open. A
-handler whose listener was released, or that returns nothing (a reply without a value), does not hold the
-window. The app closes it later with `WINDOW_CLOSE`, which does not ask. Go `gk.OnWindowShouldClose(cx, w,
-func(cx *gk.Cx) bool)`; `gk.release` ends it. Offscreen there is no close button: `PLATFORM_TEST` 6 (`u64
-window` -> `u8`) asks the handlers as the platform does, through the same function (`ask_should_close`).
-
-**The app's quit** (`App::on_app_quit`). `ON_APP_QUIT 97`: a kept handler of shape `UNIT` -> `u64 listener`.
-The library registers one quit observer at start; as the app shuts down (`gk.quit`, the last window closed,
-the platform's quit) it fires each hook once with no window, before it lets go of the app's state. gpui
-gives quit observers a moment (its shutdown timeout) and then exits: a hook starts what must outlive the app
-(an updater, say) and returns. Offscreen the hook runs when the driver's context is dropped at
-the end of the script, inside `gk.RunHeadless`. Go
-`gk.OnAppQuit(cx, f)`.
-
-**Reduced motion.** `REDUCE_MOTION 98` -> `u8` (immediate; a view may read it): `App::reduce_motion`, which
-the kit's `apply_system_reduce_motion` (bound: `gk.base_apply_system_reduce_motion`) keeps in step with the
-system's setting. `SET_REDUCE_MOTION 99`: `u8` (buffered): `App::set_reduce_motion`. Go
-`gk.ReduceMotion(cx)`, `gk.SetReduceMotion`.
-
-**A window's icon and app id.** `WINDOW_OPEN 72` ends with `str app_id` and `u32 n, n bytes`, a PNG decoded
-by the library (the `image` crate's PNG decoder, which gpui already links) into `WindowOptions::icon`; the
-app id is `WindowOptions::app_id` (Wayland's app_id, X11's WM_CLASS: the desktop matches the window to the
-app's desktop entry and its icon by it). Bytes that are not a PNG stop the call with the decoder's reason.
-Go `gk.WindowConfig{.., AppID: "myapp", Icon:
-png}`. gpui shows the icon on X11 (and takes it on Windows); Wayland takes the desktop entry's.
-
-**Gradients** (a `Fill`). `Styled::bg` takes `impl Into<Fill>`, which gpui's `Background` (a colour, a
-linear gradient, a pattern) is; the binding gave it a colour only. Colour encoding `GRADIENT 2`: `f32 angle`
-(degrees; 0 up, 90 left to right, clockwise), `u8` colour space (0 sRGB, 1 Oklab), then two stops, each a
-colour (`HSLA` or `THEME`, so a theme colour in a gradient follows the theme) and `f32 percentage`.
-`genapi::background` reads a colour or a gradient into a `Background` and serves every Fill the generator
-meets (`gk_model.is_fill`: today `Styled::bg`, so every styled element and `StyleRefinement`, hover and
-drag-over styles included) and the plot's paths and quads (12.17). The package types it so a gradient fits
-only there: Go `gk.Fill`, an interface that
-`gk.Color` and `gk.LinearGradient` satisfy: `gk.NewLinearGradient(angle, gk.NewLinearColorStop(c, 0),
-gk.NewLinearColorStop(d, 1)).InOklab()`. A gradient given where only a colour goes does not compile (Go
-misuse case `gradient_color`); should one reach `genapi::color` anyway, the library reads past it, draws its
-first stop and says so.
-
-**Hand-written families of the Go package** (no wire change; the Go emitter, `gen/gk_go.py`, and
-`go/gk/internal/rt/rt_platform.go`, `rt_data.go`):
-
-| family | Go |
-|---|---|
-| described plots (12.6, 12.14) | `chart.Plot(parts...)`, `chart.PlotWith(chart.PlotOptions{ID: "x", NotInteractive: true, Appear: 2}, parts...)`; `gk.PlotPart`, generated in `gen_plot.go` |
-| drag and drop (13.20) | `.OnDrag(gk.DragValue{ID: 7, Text: ".."}, preview)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.NewStyleRefinementDefault().Bg(..))`, `.CanDrop(gk.DropAccept{IDs: []uint64{7}})` (descriptors `libval` `Drag_Value`, `dragview`, `dragstyle`, `dropaccept`) |
-| an element's tooltip (11.17) | `.Tooltip(v)` with `gk.ViewOrTooltip`: a `gk.View`, `overlay.NewKitTooltip(text)` or `overlay.NewKitTooltipElement(el)` (descriptor `viewany`) |
-| image sources (13.31) | `gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}}`, `gk.ImageSourceRender{Value: img}` of `img := gk.NewRenderImage(cx, gk.PixelImage{..})`, `gk.ImageSourceCustom`, `gk.ResourceURI`, `gk.ResourcePath` (descriptors `imagebytes`, `pixelimage`, `customimage`, `uri`, `arcpath`); a `gk.PixelImage` whose bytes are not width x height x 4 stops, and so does an image made in a view function |
-| the menu bar (11.30) | `gk.SetMenus(cx, gk.Menu{Name: .., Items: []gk.MenuItem{gk.MenuAction{..}, gk.MenuSeparator{}, gk.MenuSubmenu{..}, gk.MenuServices{..}}})`, `gk.Menus(cx)` |
-
-Tests: `core/tests/go/run-app.sh` modes `close-veto`, `quit-hook`, `reduce-motion`, `window-icon`, `bad-icon`;
-`gates/go-proto.sh` runs the same five and `drag`, `menus`, `menu-no-action`, `images`, `bad-pixels`, `image-in-view`,
-`tooltip`, `plot`, `fill-nil` of `examples/go/port`; `gates/pixels.sh paint` (gradients and plot parts,
-Rust against Go, 12.17); `gates/go-misuse.sh` cases `fill_token` and `gradient_color`.
-
-
-## 12. Data tables, generic types and described plots
-
-Upstream's charts, plot shapes and many
-other types are generic over the type of the app's data (`LineChart<T, X, Y>`,
-`Bar<T>`), and they take closures over a datum that upstream calls while it draws
-(`x(|d| d.month.clone())`). App code never runs in the middle of a frame (decision 3), so the
-binding instantiates each generic type once, for a row of a table of the app's own data that
-the library keeps, and answers every such closure from that row. Code: `core/src/data.rs`,
-`core/src/plot.rs`, `go/gk/chart/rt_data.go`; generator rules in `gen/gk_model.py`
-(`instantiate_many`, `data_closure`, `datum_arg`, `ret_kind`, `paints`), `gen/gk_rust.py`
-(`data_closure`, `paint_part`), `gen/gk_go.py`.
-
-### 12.1 Generic types instantiated for an argument list
-
-`[instantiate] types` in `api/overrides.toml` takes `Base<A, B, ..> as Name` with any number of
-arguments. An argument is a library type (`crate::...`), a primitive (`f64`, `usize`, ..), a
-gpui value type (`SharedString`, `Hsla`, `Pixels`) or an upstream type by name. The line makes
-one node type `Name` (`LineChartEl` in Go) whose methods are every method of an impl that
-holds for the arguments (an impl for concrete arguments only when they are the line's), `Self`
-and every type parameter substituted. Constructors, builders and type-changing methods are then
-classified exactly as for any node type. The one-argument forms of section 9.5 are unchanged.
-Lines today: the seven charts, `LineChart<crate::data::Datum, SharedString,
-f64>`, `AreaChart<..same..>`, `BarChart<..same..>`, `CandlestickChart<..same..>`,
-`PieChart<crate::data::Datum>`, `RadarChart<crate::data::Datum, f64>`,
-`SankeyChart<crate::data::Datum>`, and the four plot shapes `Line`, `Area`, `Bar`, `RadialLine`
-over `crate::data::Datum` as `LineShape`, `AreaShape`, `BarShape`, `RadialLineShape`, and
-`Sidebar<SidebarMenu>` (an element generic over its children's type). A one-argument line with
-`as Name` and an upstream type takes this rule too (taking the first type of that name instead
-would pick the wrong `Sidebar`, which is not the generic one). Labels
-are `SharedString` and values `f64` because those are what an app's columns hold; upstream's
-`PlotValue` is `f32`, `f64` (and `Decimal`, a feature the library does not build).
-
-A parameter named only in the bounds of another parameter that is named (`fill<F, B>(f: F)
-where F: Fn(&T, ..) -> B`) is chosen by the closure's return type and counts as named.
-
-### 12.2 Rows of the app's data
-
-`[instantiate] data` names the library types that stand for one row: `crate::data::Datum`. A
-parameter that takes rows (`impl IntoIterator<Item = T>`, `Vec<T>`, `&[T]`) is the descriptor
-`data`. In Go it is a `chart.Data`, made by `chart.NewData(rows)` from a slice of structs; each exported
-field is a column:
-
-| Go field | column kind | wire |
-|---|---|---|
-| any integer, `bool` (0 or 1), `float64` | `Num` 0 | f64 |
-| `float32` | `Num32` 4 | f32 (shown as text as an f32 prints) |
-| `string`, a type with a `String` method | `Text` 1 | str |
-| `gk.Color` (a theme colour is resolved when the view is decoded), `gk.Hsla` | `Color` 2 | colour (section 2) |
-| `gk.Option` or a pointer of a number | `Opt` 3 | u8 presence, f64 |
-
-Wire: `u16 columns, (u8 kind, str name) each, u32 rows`, then the rows one after the other, each
-column in its kind. A field of any other type stops at the `chart.NewData` line. The library keeps the
-rows in columns (`data::Table`) and hands upstream one `Datum` per row (the table and the row's
-index). The rows are copied into the tape each time the view is described, as a Rust app clones
-its rows into the chart it builds in `render`.
-
-### 12.3 Closures over a row: `field` and `format`
-
-A closure parameter that gets no window or app, takes a row (`&T`, or a borrowed wrapper with a
-public field `&T`, `&ArcData<T>` through `data`) and numbers, and returns text, a number or a
-colour, is answered from the row (`data_closure`):
-
-- **`field`**: a column. `Fn(&T) -> X` for any of those results, and a colour or number from a
-  row with other arguments too (`tooltip_value_color(Fn(&T, usize, f64) -> H)`,
-  `Bar::fill(Fn(&T, Bounds<f32>, BarAlignment) -> B)`), whose other arguments are not used: the
-  app writes into the row what it would have computed from them. Go: a `string`, the column's
-  name (`.X("Month")`); wire: str. Text from a number column is the number as upstream prints a
-  raw value (`format!("{}")`); a number from an `Opt` column without a value is 0, and
-  `Option<f32>` results get `None`.
-- **`format`**: a template, for a closure that returns text from numbers it is handed
-  (`y_tick_format(Fn(f64) -> S)`, `tooltip_value(Fn(&T, f64) -> SharedString)`, `Fn(&T, f32,
-  f32)`): `{}` the next number, `{1}` the second, `{:.2}` two decimals, `{:,}` thousands
-  separated by commas, `{month}` a column of the row (when the closure has one), `{{` and `}}`
-  braces. Each number keeps its type (an f32 prints as an f32). Go: a `string`; wire: str.
-
-The return type is upstream's or the one its bound names (`S: Into<SharedString>` is
-`SharedString`, `H: Into<Hsla>` is `Hsla`, `Bg: Into<Background>` is `Background`, `L:
-Into<RadarLabel>` is `RadarLabel` through `From<SharedString>`); the generated Rust closure
-names it, so upstream's own type parameter is inferred from it.
-
-Checks, at the builder's line, when the node was given its
-rows first (every chart: they are the constructor's argument): the column exists, its kind fits
-(text from anything but a colour, a number from `Num`, `Num32` or `Opt`, a colour from `Color`),
-a template's braces close, its numbers are ones the closure is handed and its columns exist.
-Each stops with the column names of the row type. A plot shape given its rows after a field
-builder is checked only by the library, which answers a missing column with an empty value.
-
-### 12.4 Element closures over a row: a row source keyed by the row
-
-`Fn(&T, &mut Window, &mut App) -> impl IntoElement` over a row (a chart's `tooltip_content`) is
-the descriptor `datum_rows`: the app passes a `gk.Row_Source` (section 9.1) whose rows are the
-data's rows, and the closure draws the source's view for the row's index (`data::row_element`):
-the row is bound and described between frames like any row, and the first frame it is asked for
-draws nothing in its place. The view drawing it is told when the row arrives.
-
-### 12.5 Keys only hashed
-
-`impl Hash` with no other bound (`appear_key`: draw in again when the key changes) is a string.
-
-### 12.6 Described plots
-
-A Rust app draws a custom plot by implementing the kit's `Plot` trait, whose `paint` calls the
-`paint(&self, &Bounds<Pixels>, &mut Window[, &mut App])` of an axis, a grid and shapes. The
-binding implements `Plot` once (`plot::GkPlot`) for a plot the app describes as a list of parts,
-`gk.plot(parts: ..gk.Plot_Part)`, painted in that order in the plot's bounds (it fills its
-parent). A part is any value type with such a `paint` (`paints` in the model): `Plot_Axis`,
-`Grid`, `Line_Shape`, `Area_Shape`, `Bar_Shape`, `Radial_Line_Shape` today; the generator lists
-them in `PlotPart` (Go) and `generated::paint_part` (Rust) and counts their `paint` as
-bridged. The shapes' position closures (`Fn(&T) -> Option<f32>`) are fields holding pixels in
-the plot's bounds: the app computes them, as upstream's `paint` computes them from its scales.
-
-| number | what |
-|---|---|
-| `node PLOT 28` | `u32 n, u32 value node each`; no ops |
-| reserved | call 128-143, shape 32-35, node 28-31 |
-
-### 12.7 What generated code may use, beyond section 7
-
-Rust: `crate::data::{rows, Field, Format, Arg, Datum, row_element}` and
-`generated::{PaintFn, paint_part}` (written by the generator, used by `core/src/plot.rs`).
-
-### 12.8 Not bound, and why
-
-- `SankeyChart::labels(Fn(&T, f64) -> Vec<SankeyLabel>)`: a closure that returns a list of
-  builder values per row; a field cannot hold one. `Bar::label(Fn(&T, Point<Pixels>) ->
-  Vec<Text>)` the same.
-- `BarChart::fill_gradient`: the closure is handed `&dyn Fn(f32) -> f32`, a remap the app would
-  call; no data closure can.
-- `Pie<T>`, `Stack<T>`, `ArcData`, `Arc::paint`, the scales (`ScaleLinear`, `ScaleBand`,
-  `ScalePoint`, `ScaleOrdinal`): calculators an app calls from its `paint` and whose results it
-  reads (`arcs`, `series`, `tick`); they need a value behind a handle that the app can call
-  between frames (the protocol of section 13) and an instantiation from 12.1.
-- Upstream's `PlotHover`, `PlotAppear`, `PlotLabel`, `TooltipState` and the other `Plot`
-  methods: `GkPlot` keeps upstream's defaults (no id, so no hover and no appear motion).
-
-### 12.9 Tests
-
-- Gallery pages, each byte-identical to a Rust page that writes the same chart with its own row
-  types and closures (`ref/src/bin/gallery/chart_pages.rs`, `examples/go/gallery/chart_pages.go`):
-  `chart-line`, `chart-line-more`, `chart-area`, `chart-bar`, `chart-candlestick`, `chart-pie`,
-  `chart-pie-fn`, `chart-radar`, `chart-sankey`, the hover pages `chart-tooltip-line`,
-  `chart-tooltip-bar` (the tooltip content over a row source) and `chart-tooltip-pie`,
-  `plot-custom` (a `Plot` impl against `gk.plot` with an axis, a grid and the four shapes), and
-  `generic-sidebar` (`Sidebar<SidebarMenu>`).
-- The generated sample (`core/tests/go/gensample`) calls every chart and shape builder with rows of
-  its own (`Sample_Row`: a text, a number, a gap and a colour column).
-- Misuse cases (`examples/go/misuse_data`, in `gates/go-misuse.sh`): a column the rows do not
-  have, a column of the wrong kind, a template that asks for a number the closure is not handed,
-  a template with an unclosed brace, a field of a type a data table cannot carry.
-
-### 12.14 Plot options: the Plot trait answered from data
-
-`gk.plot_with(opts, parts..)` is `gk.plot` with the answers the library's `GkPlot` gives the kit's
-`Plot` trait (core/src/plot.rs): `id` (`Plot::id`: keeps the plot's state across frames and opts in
-to appear motion and hover), `not_interactive` (`Plot::interactive`), `appear` (`Plot::appear_generation`,
-0 none). Node `PLOT 28` gets them after its parts: u8 has id, the id; u8 interactive; u64 appear
-generation. `gk.plot(parts..)` sends the trait's defaults. The trait's `prepaint`, `hover`,
-`appear`, `tooltip_state` and `tooltip` stay not attempted: upstream calls them while it lays out
-and paints the frame, and app code never runs mid-frame (decision 3); answering them from data
-would need a description of the tooltip and of the hover targets, which no part has yet.
-
-### 12.15 The pie and stack layouts over the app's rows
-
-`Pie<T>` and `Stack<T>` are calculators a Rust app calls from its own plot code. They are library
-objects instantiated by `[values] objects` (13.8) for a row of a data table (12.2), `Pie<Datum>` and
-`Stack<Datum>`, and their closures over a row are answered from the row (12.3):
-
-- Rows and row closures in a call op: a `chart.Data` argument (`Pie::arcs(&[T])`, `Stack::data`) and
-  `field` / `format` closures are call-safe (gk_overlay.view_built). In a builder chain of an
-  object's constructor, which has no app context, the rows are read without one (`data::rows_plain`:
-  a theme colour in them is transparent). The checks of a column run in a view only.
-- A field closure handed a `&str` key (`Stack::value(Fn(&T, &str) -> Option<f32>)`) reads the column
-  the key names when the field is `""` (`Datum::keyed`); a named field reads that column for every key.
-- Results that hold rows come back as library values with each row as its index in the rows the app
-  passed: `[]gk.Arc_Data {row, index, value, start_angle, end_angle, pad_angle}` (`Pie::arcs`, whose
-  `'a` borrows the argument, not the object: `gk_overlay.borrows_arg`) and `[]gk.Stack_Series {key,
-  index, points: []gk.Stack_Point {y0, y1, row}}` (`Stack::series`). Wire impls in `core/src/data.rs`.
-- `Stack::keys<I, S>` is bound now that a parameter named in the where clause of a named one counts as
-  named in the object and state classifiers too (`gk_overlay.named_text`), as it did for node methods.
-
-Not bound: `ArcData::new` (an ArcData borrows its row; the app has `ArcData` values from `Arcs`), so
-`shape::Arc::paint` stays without an accepter. Tests: modes `pie`, `stack` of `core/tests/go/charts`.
-
-### 12.16 Lists per row: closures over a row that return a list
-
-A closure over a row of a data table (12.2) with no window or app that returns a list or a fixed array
-of values the binding builds, not a number, text or a colour that 12.3's `field` answers:
-`SankeyChart::labels(Fn(&T, f64) -> Vec<SankeyLabel>)`, `Bar::label(Fn(&T, Point<Pixels>) ->
-Vec<Text>)`, `BarChart::fill_gradient(Fn(&T, RangeInclusive<f32>, &dyn Fn(f32) -> f32) ->
-[LinearColorStop; 2])`. The app gives the list for each row in advance, row i's at index i (Go
-`[][]chart.SankeyLabel`, `[][]gk.Text`, `[][2]gk.LinearColorStop`; `["rowvals", out, wrap, ptypes,
-accessor, at]`), decoded where the chart is (value nodes in the view's tape, colours against the
-theme); the closure answers with a clone of the row's list (`crate::plot::row_value`; past the end, the
-type's default). The closure's other arguments (the node's throughput, the bar's position, the value
-range and its remap) are not used: the app writes into each row's list what it would have computed
-from them. Rules: `gk_comp6.rowvals` (gk_values.closure's hook) and, for a closure whose other
-parameters name a type no closure rule can (`&dyn Fn(f32) -> f32`), `gk_comp6.bounded` (gk_lists'
-bounded hook), whose generated closure names that parameter's type itself. SankeyLabel is accepted now
-(gates/accept.py). Gallery pages `comp6-sankey-labels`, `comp6-bar-labels`, `comp6-bar-gradient`.
-
-### 12.17 The binding's own plot parts: paths and quads
-
-A Rust plot's `paint` calls the kit's parts and also gpui's own drawing: `PathBuilder::stroke(px(w))` or
-`PathBuilder::fill()`, `move_to`, `line_to`, `close`, `window.paint_path(path, background)`, and
-`window.paint_quad(quad(bounds, radius, background, border, border_color, BorderStyle::Solid))`, with a
-colour or a gradient (gpui's `Background`). An app that draws curves, filled areas or glowing lines in a
-gradient needs these, because the kit's shapes cannot take a gradient (their strokes are an `Hsla`). Two value nodes of the binding's own
-are plot parts beside the kit's (`PlotPart` in Go lists them with the generated
-ones; `core/src/plot.rs` `part` decodes them before `generated::paint_part`):
-
-| node | wire | Go |
-|---|---|---|
-| `PLOT_PATH 29` | `u8 kind` (0 a stroked polyline, 1 a filled polygon, closed), `f32 width`, `u32 n`, `(f32 x, f32 y)` each, a fill (11.38) | `chart.NewPlotLine(points, width, fill)`, `chart.NewPlotArea(points, fill)` -> `chart.PlotPath` |
-| `PLOT_QUAD 30` | `f32 x, y, w, h, f32 corner radius`, a fill, `f32 border width`, a colour | `chart.NewPlotQuad(x, y, w, h, fill, chart.QuadStyle{..})` -> `chart.PlotQuad` |
-
-Points are `[][2]float32`, pixels from the plot's top left; the library adds the plot's
-`bounds.origin`, as a Rust paint does. A path of fewer than two points paints nothing. The colours (theme
-colours too) are resolved when the view's tape is decoded, so a theme switch needs no new description.
-The parts paint in the order given, interleaved with the kit's (a grid under an area under a line). Test:
-`gates/pixels.sh paint` draws `ref-paint` (a `Plot` impl that paints a grid, an area, three gradient
-strokes and two quads) and `examples/go/paint` under `gates/paint.script` and
-compares the images byte for byte; mode `plot` of `examples/go/port` (options, theme colours, a one-point
-line).
-
-## 13. Library objects behind handles, and values made outside a view
-
-Two general protocols that the generator binds whole families
-through: kit values that are not entities, held by the library behind a handle (13.1 to 13.5),
-and builder values made in a handler or in init, given to a call op (13.6). Runtime:
-`core/src/objects.rs`, `go/gk/internal/rt/rt_state.go`; generator: `classify_object`,
-`object_method`, `reach_objects`, `call_desc` in `gen/gk_model.py`, `obj_calls` in
-`gen/gk_rust.py`, `gen/gk_go.py`. Tests: `core/tests/go/handles`
-(`run-handles.sh`), and every object type with a constructor is made, read, written and
-called by the generated `states` test (`core/tests/go/gen`).
-
-### 13.1 What an object is
-
-A struct of the kit crates that is not an entity, not an element or builder (a node type),
-not a plain record and not generic, has no lifetime parameter, and has reads or calls
-(`&self`, `&mut self`) or is a kit global (`impl Global`) (`Model.is_obj`). Examples:
-`DialogHandle`, `VirtualListScrollHandle`, `SearchMatcher`, `DisplayMap`, `DiagnosticSet`,
-`PaneTree`, `TreeEntry`, `InputPresentation`, `Theme` and `ThemeRegistry` (globals). In Go an
-object type is a struct holding the handle, like kit state, with methods.
-
-### 13.2 Handles and lifetimes
-
-| how the app gets one | lifetime | example |
-|---|---|---|
-| a constructor (`new`, any static returning `Self`), with its `self -> Self` chain as builder ops, one crossing | **kept**: until `gk.release` | `gk.dialog_handle(cx, false)`, `gk.tooltip_defaults(cx)->with_show_delay(d)->build()` |
-| a read, a call or an event that hands one out (by value, or a copy of a borrowed one) | **temporary**: until the next frame begins (the pre-frame hook sweeps it), after the buffered writes of the turn that got it; `gk.retain(cx, x)` keeps it | `gk.list_state_scroll_handle(list, cx)`, `gk.presentation(input, cx)`, `gk.entry(tree, cx, i)` |
-| a kit global's accessor (`fn global(cx) -> &Self`, `global_mut`) | one interned handle per type, reads and updates the global in place (`cx.global`, `cx.update_global`); never temporary | `gk.theme_global(cx)` |
-
-A temporary handle used after its frame stops with the library's message ("... was released
-(a library object a read, a call or an event hands out is temporary ...)") and the app's line
-(a stop). An object does not notify: a view that shows an object's value is described again when
-something marks it (a handler marks its own view), not when the object changes.
-
-### 13.3 Calls
-
-| upstream method | kind | wire | when |
-|---|---|---|---|
-| `fn new(..) -> Self` and other statics returning `Self` | `obj-ctor` | call op -> u64 handle | at once (flushes writes first); not in a view procedure |
-| `fn x(self, ..) -> Self` | `obj-builder` | a builder op of the constructor | in the constructor's crossing |
-| `fn global(cx: &App) -> &Self` | `obj-global` | call op -> u64 handle | at once; allowed in a view procedure |
-| `&self` -> value, no `&mut` context | `obj-read` | call op u64 handle, args -> result | at once; allowed in a view procedure |
-| `&mut self`, or `&self` with `&mut App`/`&mut Window`, or `self`, returning `()` | `obj-write` | call op, buffered | with the turn's writes |
-| the same returning a value | `obj-call` | call op -> result | at once; not in a view procedure |
-| a static returning `()` / a value | `obj-static` / `obj-scall` | call op without a handle | buffered / at once |
-
-A method that needs the window gets the turn's, or the app's first open window for a write
-applied after its turn (`genapi::with_window`); none open is `GK_ERR_NO_CONTEXT`. An owned
-object is an `Rc<RefCell<T>>` cloned out of the handle table before kit code runs; a method that
-re-enters the binding and touches the same object meets a borrowed cell: `GK_ERR_BUSY`, never a
-panic. `self` by value: a copy when the type is Clone (the handle stays good), else the object
-itself, and the handle is released.
-
-### 13.4 Objects as arguments and results
-
-- `&T` in a call op is borrowed in place (`genapi::obj_rc`), `&mut T` likewise (`refmut`); `T`
-  by value is a copy (Clone) or given away. In an element's tape an object argument is copied
-  out of its handle each time the tape is decoded, so only a Clone type can be one there
-  (`Dialog::handle(DialogHandle)`), and a released handle there stops (`genapi::obj_shown`).
-- Not yet: an object inside a record, an enum variant or an `Into` set (their codecs have no
-  call context), and `Option<&Object>`.
-- A result by value is moved into a new temporary handle (`genapi::Owned`); a borrowed one, or
-  one inside an option or a list, is copied, so its type must be Clone. Which kit types are
-  Clone is not in the reduced extract (it drops std-trait impls): `api/clone.json`, read from the
-  pinned sources by `tools/clone_scan.py` (a wrong entry would be refused by rustc). A result
-  that borrows from its object (`PaneRef<'_>`) is not bound.
-- Unreachable objects: an object type that no bound constructor, global accessor, result or
-  event hands out is not emitted, and functions that take one are `not yet` with the reason
-  "protocol: object (no constructor, global or bound function hands one out)" (`reach_objects`).
-  Most of these are the contexts the kit passes to render closures and delegates
-  (`TabGroupContext`, `InlineTokenContext`, `DockContext`, `ResizeHandleContext`): they become
-  reachable with the dock and closure protocols, without a change here.
-
-### 13.5 Wire
-
-| number | what |
-|---|---|
-| `hkind OBJ 8` | a library object |
-| `call OBJ_RETAIN 112` | `u64 object` (immediate): a temporary handle becomes kept |
-| `call OBJ_TEST_TEMPS 113` | tests: -> `u32` temporary handles waiting, `u32` live objects, then `u32` live kit states, views and focus handles (the Go runtime's lifetime tests) |
-| `call TABLE_COLUMN_VALUES 114` | `u64 source, u64 table state` (0: the state about to be made over the source), `u32 n`, n values as tapes (13.6): a table's columns as the kit's own `Column` values; immediate for 0, buffered otherwise |
-| generated call ops | numbered from `api/opcodes.lock` like state call ops: `u64 handle` (none for globals and statics), the arguments; results as in section 2, an object as `u64` |
-
-Reserved: call 112-127, shape 28-31, node 24-27.
-
-### 13.6 Builder values made outside a view
-
-A builder value that is not an element (a grid area, a tree item, an editor decoration, a diff
-file) could only be made inside a view build, so no call op could take one: the review counted
-at least 172 usable functions building values nothing accepted. Now `new_value` outside a view
-build puts the value into the turn's **value build** (`vbuild`), and a call
-op argument of a value type is written by `put_vtape`: `u32 length`, then a tape of its own
-(header as section 6 of DESIGN.md, root = the value, no handlers, dependencies or slots). The
-library decodes it with the value's generated decoder (`genapi::value_arg`, with the turn's or
-the first window). A value lives for the outermost turn that made it; one kept longer stops
-where it is used ("a value can only be used in the turn that made it"). A value made in a view
-procedure cannot be given to a call (a view may not write anyway). A handler inside a value
-made outside a view stops at `gk.on`'s registration, as before.
-
-A builder type that is also a plain record with public fields (`IndexPath`) travels as the
-record instead (`call_desc`): `gk.set_selected_index(list, cx, gk.Base_Index_Path{row = 120})`.
-This is what makes a list selectable and scrollable from code (`set_selected_index`,
-`scroll_to_item`, `scroll_handle()->scroll_to_item`).
-
-A table's columns can be the kit's own `Column` values (its 18 builders and `new`), which until
-now nothing took (the table delegate's shim takes `gk.Table_Column` records):
-`gk.table_columns(cx, src, {gk.column("size", "Size")->width(60)->text_right()}, t = {})`, before
-the table state is made or replacing the columns of state `t` (`rt_table.go`,
-`shim_rows::source_columns` and `state_columns`).
-
-### 13.7 What generated code may use (added to section 7)
-
-Rust (`genapi`, re-exported from `objects.rs`): `obj_new`, `obj_temp`, `obj_global`,
-`obj_rc`, `obj_clone`, `obj_take`, `obj_shown`, `obj_by_value`, `obj_read`, `obj_read_global`,
-`obj_update`, `obj_update_global`, `obj_update_w`, `obj_update_w_global`, `with_window`,
-`value_arg`, `Owned`. Go: `objGet` (a read that records no dependency), `putVtape`, `newValue`,
-`op`, `takeValue` and `nodeArgs`.
-
-### 13.8 Generic objects instantiated for an argument list
-
-Code: `gen/gk_values.py` (hooked into `gen/gk_model.py`,
-`gk_rust.py`, `gk_go.py` and `gkgen.py` at one line each), `core/src/values.rs`,
-`go/gk/internal/rt/rt_gen_values.go`; numbers: the values block of `core/wire/ops.txt` (call 208-239, shape
-52-59, node 48-55, hkind 13); tests: `core/tests/go/values` (`run-values.sh`), the gallery's
-`values-*` pages, `examples/go/misuse_values`.
-
-A generic kit type an app *calls* rather than describes (a calculator: the plot scales, the
-motion values) is a library object (13.1) once its parameters are fixed. `[values] objects` in
-`api/overrides.toml` takes `Base<A, B, ..> as Name` (arguments as in 12.1: a primitive, a gpui
-value type, an upstream type by name, a library type); each line is one object type `Name`
-whose methods are those of every inherent impl generic over the parameters, classified as in
-13.3 with `Self` and the parameters substituted. A generic trait the type implements for its own
-parameter (`impl<T> Scale<T> for ScaleBand<T>`) gives its methods to the instance, called
-through the trait (`<ScaleBand<SharedString> as Scale<SharedString>>::tick`); the trait's row
-counts them as bridged. A method of one instance may hand out another (`Sequence::sample` gives
-a `SequenceSample`): every line's type is known before any is classified. A static that makes
-its own type fallibly (`Keyframes::try_new -> Result<Self, E>`) makes the object reachable.
-
-Lines today: `ScaleBand<SharedString>`, `ScalePoint<SharedString>`, `ScaleLinear<f64>`,
-`ScaleOrdinal<SharedString, Hsla>`, and over `f32` `Sequence`, `SequenceStep`, `SequenceSample`,
-`Keyframes`, `Discrete`.
-
-### 13.9 Results read back: Result<T, E>, maps
-
-| upstream result | descriptor | wire | Go |
-|---|---|---|---|
-| `Result<T, E>`, T not `()` | `["fallible", T]` | u8 ok, opt<T>, str error (its Debug form) | `gk.Fallible[T]` |
-| `Result<(), E>` | `["result", "unit"]` (section 11.6) | opt<str> | the error |
-| `HashMap<K, V>` | `["list", ["tuple", [K, V]], "map"]` | u32 n, (K, V) each, in the order of their bytes | a slice of tuples |
-
-`crate::values::Fallible` writes the first; a `Result<Self, E>` of an object moves the value
-into a new handle (`.map(genapi::Owned::new)`). The error's text is its Debug form because some
-kit errors (`DiscreteError`) have no Display. A map's order is fixed by sorting the encoded
-pairs, so the same map always reads the same.
-
-### 13.10 Arguments: fixed arrays, Option<&mut Window>, Rc and Arc of a kit struct
-
-- `[T; N]` (N up to 16) is `["array", T, N]`: N values of T both ways; Go `[N]T`
-  (`[2]float32` of the scales' ranges).
-- `Option<&mut Window>` (`Theme::change(mode, Option<&mut Window>, cx)`) is `["ctx",
-  "window_opt"]`: the turn's window, or the app's first one for a write applied after its turn.
-- `Rc<X>` / `Arc<X>` of a non-generic kit struct is a library object of its own, named `XRc` /
-  `XArc` in Go (`ThemeConfigRc`, `ThemeColorArc`), always copied (a clone of the pointer):
-  handed out by results (`ThemeRegistry::default_light_theme`, `ThemeColor::dark()`), taken by
-  reference (`Theme::apply_config(&Rc<ThemeConfig>)`), and made from a value the app built
-  (`gk.theme_config_rc(cx, gk.theme_config_default())`, a synthetic `Rc::new`, kept).
-- A static function of a node type that returns a value or nothing (`ThemeColor::light()`,
-  `Img::extensions()`, `Popup::resolved_corner`) is an ambient call (11.5) of that type.
-
-### 13.11 Values the package accepted nowhere (item e)
-
-A value type (a node type that is not an element, with a usable constructor or builder) is
-*accepted* when a usable function takes it at any depth (through records, enums with data and
-Into sets), a usable conversion returns it, or a runtime procedure takes it. `gates/accept.py`
-counts the rest after every `make gen` and fails `--check` when one has no stated reason (its
-`REASONS` table). Rules added for it:
-
-- **Kit action values** (`gk.cancel_default()`, `gk.close_panel_default()`, every type that
-  implements Action): `gk.action_of(cx, value) -> gk.Action` (call op `VALUE_ACTION 208`: the
-  value's tape, decoded by the generated `value_action` dispatcher, boxed, entered in the action
-  table of 11.1, its id returned). The same value always gives the same id. Not in a view.
-- **Generic From impls in Into sets**: `impl<T: IconNamed> From<T> for Icon` makes the kit's own
-  implementors of the trait members (`impl Into<Icon>` takes every `IconName`): 10 functions.
-- **Self-generic builder traits**: `trait StyleSized<T: Styled>`, implemented for every `T:
-  Styled`, is a builder trait bound as `E: StyleSized<E> + Styled`: 13 functions.
-- **Public fields of a kit global** (the two `Theme`s): a read and a write each, synthetic items
-  (not upstream functions, not counted in the coverage table): `gk.font_size(th, cx)`,
-  `gk.set_font_size(th, cx, 17)`, `gk.set_list(th, cx, gk.list_settings_default()->..)`,
-  `gk.colors(th, cx)`. A write runs with the turn's writes and redraws every window
-  (`cx.refresh_windows()`); like any write it may not run in a view procedure.
-
-Count (gates/accept.py, the same definition before and after): 138 types with 251 usable
-functions at 23f6cb1 -> 53 types with 147 functions, every one with a stated reason.
-
-### 13.12 Objects inside records, variants and Into sets; Option<&Object>; pinned temporaries
-
-- A record, a variant of an enum with data or an Into set an app writes may hold a library
-  object (by value or by reference, of a Clone type): it is copied out of its handle where the
-  value is decoded (a call op's codec, a builder chain, a tape). A record read back keeps the
-  older reading (its own fields).
-- `Option<&Object>` in a call op is lent in place (`a.as_ref().map(|x| x.borrow()).as_deref()`).
-- **Temporary handles placed in a view**: an object argument of an element written by a view
-  procedure goes through `putObj` (rt_emit.go), which pins the handle to that view's build
-  (call op `OBJ_PIN 209`: u64 view, u32 build number, u64 handle; immediate, allowed in a view).
-  A pinned temporary is not swept when the next frame begins: it lives while a build of
-  the view names it, so a redraw of the same tape frames later (a theme change redraws every
-  window without describing the view again) finds it. The handles a view's earlier build pinned
-  are released at the first sweep after a newer build pinned its own. A kept handle or a global
-  is left alone. `gk.test_value_pins` (call `VALUES_TEST 210`) counts both for the tests.
-- **A value given to its own builder** (`t->child(t)`) stops at once, in a view build (as before)
-  and now in the value build of a handler too ("a value was given as an argument to its own
-  builder"); the library would otherwise decode the value inside itself until its stack ran out.
-
-Not bound here, and why: `Theme::update(cx, FnOnce(&mut Theme) -> R)` (a closure over the
-theme; the field writes above do the same), `ThemeRegistry::watch_dir` (a kept handler in a call
-op: no call op carries a handler yet), `Sequence::with_step(T, Transition)` and
-`ScaleOrdinal::range/unknown` (a node or a colour in a builder chain: `sb_*` has no Call),
-`SequenceStep::transition` (a node read back), `Pie<T>`, `Stack<T>`, `ArcData`, `Arc::paint`
-(they borrow the rows: `arcs(&self, &'a [T]) -> Vec<ArcData<'a, T>>`), `SettingField<T>` (its
-value closures are called while the settings page draws: app code never runs mid-frame), the
-motion free functions (`transition<T>`, `spring<T>`, `animate_keyframes<T>`: T chosen by the
-caller).
-
-### 13.13 Calendar values, durations read back
-
-jiff's `civil::Date`, `civil::Time`, `civil::DateTime` and `civil::Weekday` (gpui-kit 0.11 moved
-its date family from chrono to jiff) are plain records both ways (`["civil", Name]`,
-gen/gk_values.py): Go `gk.CivilDate`, `gk.CivilTime`, `gk.CivilDateTime`, `gk.Weekday` (Mon = 0); wire: i32 year, u32 month,
-u32 day; u32 hour, minute, second, nanosecond; a weekday a u8. The package's writers stop on a date or time that does not exist or that jiff cannot hold
-(years -9999 to 9999) ("the date 2026-02-30 does not exist"); the library's `Unwire` impls
-(core/src/values.rs) take what a raw C client sends anyway as jiff's zero date (0000-01-01) or
-midnight, never a panic. This makes upstream's `Date` and `DateTime` enums buildable: a calendar's,
-a date picker's and a time field's dates and times are written and read
-(`gk.set_date(cal, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})`, `gk.days(cal, cx)`,
-`gk.date_time(picker, cx)`, `gk.time(field, cx)`, `gk.date_range_preset_date_time`). core/Cargo.toml
-names jiff at the version gpui-base already links (no new crate).
-
-A `std::time::Duration` read back (a result or a payload) is i64 nanoseconds, Go's
-`time.Duration` (it was written as milliseconds in a u32 only).
-
-### 13.14 gpui's ScrollHandle as a library object; a generic bounded by a kit trait
-
-`gpui::ScrollHandle` is a library object (`gk.Scroll_Handle`, made by `gk.scroll_handle(cx)`, a
-kept handle, always copied: it is an Rc inside, and every copy names the same scroll position).
-Taken by every `&ScrollHandle` argument (`div->id("l")->overflow_y_scroll()->track_scroll(h)`,
-`TabBar::track_scroll`, `AttachmentGroup::track_scroll`) and, as the one implementor the binding
-holds, by a generic parameter bounded by the kit trait `ScrollbarHandle` (`Scrollbar::new<H>`,
-`ScrollableElement::scrollbar<H>`, `ScrollBounce::new<H>`; `GPUI_OBJECTS` in gen/gk_values.py,
-the rule in gk_app.bounded). The trait's methods (`offset`, `set_offset`, `content_size`,
-`viewport_bounds`, `start_drag`, `end_drag`) are the object's reads and writes, called through the
-trait; the trait's row counts them as bridged. gpui's own methods of ScrollHandle are not in the
-coverage table and not bound. A released handle a view still tracks stops where it is drawn.
-
-### 13.15 Kit values read back with their reads; objects inside a state's events
-
-A kit value type the app builds (a node that is not an element) and that has no public fields
-cannot travel out as a record. Read back (`QuestionnaireState::answer -> Option<QuestionnaireAnswer>`,
-`item_definition -> Option<&QuestionnaireItemDefinition>`), it is a copy behind a temporary handle,
-a library object of its own named `X_Read` (`gk.Questionnaire_Answer_Read`), whose methods are
-the type's `&self` reads (`gk.choices(answer, cx)`, `gk.choices(def, cx)` handing out more read-back
-values). Only a Clone type can be one. The reads are synthetic items: upstream's functions keep
-their row (a read of a builder the app is writing, skipped).
-
-An object inside a state's event (`QuestionnaireEvent::AnswerChanged(QuestionnaireAnswerChange)`,
-`Submit(QuestionnaireSubmission)`) is handed out by that event: the reachability of objects now
-follows enums with data, records and Into sets (`gk_values.walk_tables`), so these objects and
-their reads are bound.
-
-### 13.16 Kit state a read hands out
-
-A read, a call or an event that hands out `Entity<S>` (`HslaSliders::hue -> &Entity<SliderState>`,
-`NotificationList::notifications`) gives the app a state handle of S, one per entity: the same
-entity read twice gives the same handle (core/src/values.rs `entity_handle`). It is kept like a
-handle the app made (gk.release frees it; a later read makes a new one); its writes run with the
-window of the call that makes them. Only for state types the binding holds (a constructor of S is
-bound); the others stay not attempted.
-
-### 13.17 Ambient calls
-
-- A trait implemented for App (`ActiveTheme`) gives its `&self` methods as ambient reads:
-  `gk.kit_theme(cx)` is `cx.theme()`, a copy of the theme (a temporary handle).
-- `impl Deref<Target = str>` read back is its text (`gk.locale(cx)`).
-- `box_shadow` stays not attempted: its BoxShadow read back would need an Hsla where the package's record
-  holds a gk.Color (what an app writes).
-- `init` of each crate is skipped: the library runs it at start, and a second call registers
-  everything twice. Rust's reflection, profiling and plugin points are skipped with their reason in
-  `api/overrides.toml` (`measure`, `AnySettingField::type_id`, `Root::register_plugin`, ..).
-
-### 13.18 Closures that return a view
-
-`Fn(&mut Window, &mut App) -> AnyView` (`StatefulInteractiveElement::tooltip`, `hoverable_tooltip`,
-`TextView::link_tooltip`, `TooltipRequest::new`) is `["viewany"]` (gk_app.view_closure): the app
-passes a `gk.View`, described like any child view, and the closure hands it back each time upstream
-asks (when the pointer rests on the element); a zero View draws an empty one. Element decoders only
-(a call op has no view build to mount the view in): `DEC_ONLY` in gen/gk_values.py.
-
-### 13.19 Value cells and settings fields
-
-A closure upstream calls **while it draws** to read a value, `Fn(&App) -> T` (a settings field's
-`value`, its `is_dirty` test), cannot call the app (decision 3). It is a **value cell** instead
-(`["cell", T]`, gen/gk_values.py `closure`): a library object (kind OBJ, kept until `gk.release`)
-holding the value's bytes in its wire type. The generated closure decodes the cell's current bytes
-each time upstream calls it; the app writes the cell between frames.
-
-| call | wire | when |
-|---|---|---|
-| `CELL_NEW 211` | `u32 n, bytes` -> `u64 cell` | immediate; not in a view procedure |
-| `CELL_SET 212` | `u64 cell, u32 n, bytes` | buffered (with the turn's writes); every window redraws |
-| `CELL_GET 213` | `u64 cell` -> `u32 n, bytes` | immediate; allowed in a view procedure |
-
-Go (`rt_gen_values.go`): `gk.Cell[T]`; `c := gk.NewCell(cx, false)`,
-`gk.CellSet(cx, c, true)`, `gk.CellGet(cx, c)`. T is the type the closure returns (`bool`,
-`string` for SharedString, `float64`); the bytes are read by the generated decoder, so both sides follow section 2. A released cell named in a tape stops where it is drawn.
-
-**Settings fields.** `SettingField<T>` is instantiated three times (`[instantiate] types`:
-`SettingFieldBool`, `SettingFieldText`, `SettingFieldNumber`): a builder instantiated more than once
-is classified per instance (`gk_values.multi_inst`, one coverage row per upstream function, bound
-when an instance binds it). A field's `value` is a cell, its `set_value` an ordinary handler
-(`Fn(bool, &mut App)` is shape BOOL through `fire_app`, `SharedString` STR, `f64` F64), so the field
-draws the cell and the app's handler writes it.
-
-`on_reset(is_dirty, reset)` takes a cell and a handler. `SettingField::render`, `element` and
-`SettingItem::render` take a **fragment** of the view (an `Element`); their `&RenderOptions` payload
-is not passed on (`FRAGMENT_PAYLOADS`): the app wrote the options it would read. A generic parameter
-bounded by `SettingFieldElement` is that fragment closure. `SettingItem` is an enum built by
-constructors and builders: a value node (`[values] enum_nodes`). `SettingItem::new(title, F:
-AnySettingField)` takes one of the field instances (`["traitval", trait, node keys]`: Go
-`gk.AnySettingField`, generated; Rust
-`generated::traitval_any_setting_field` builds the node and wraps it in `crate::values::AnyField`,
-which implements AnySettingField by handing every method to the field, `as_any` and `type_id`
-included, so upstream's downcasts see the field itself). The trait's methods upstream calls
-(`field_type`, `style`, `is_resettable`, `reset`) and `SettingFieldElement::render_field` count as
-bridged (`[shims]`). `Settings::sidebar_size_range` takes `Range<Pixels>` (`["rangeof", px]`, two
-f32).
-
-Tests: modes `val-cells` (made, read, written, read in the next turn, released) of
-`core/tests/go/values`; gallery page `values-settings` (a switch, a checkbox, an input, a dropdown, a
-number input and a rendered item over cells, against a Rust app keeping the same values).
-
-### 13.20 Drag and drop, parameters the binding fixes, colours read back
-
-**Parameters fixed by rule** (`gk_values.fn_ctx`, hooked into `Model.fn_ctx`):
-
-- gpui's drag methods are generic over the dragged value (`on_drag<T, W>`, `on_drop<T>`,
-  `drag_over<S>`, `on_drag_move<T>`, the kit's `resize_handle<T, E>`): T is the library's
-  `crate::values::Drag` (Go `gk.DragValue{ID uint64; Text string}`, a plain value both ways,
-  `[lists] values`), the view type W or E the library's view (`crate::rt::GkView`). The app passes
-  the value and a `gk.View` for the preview: `div->id("row")->on_drag(gk.Drag_Value{7, "row 7"},
-  preview_view)`. `on_drop` is a handler whose payload is the value; `drag_over` takes a style
-  (`gk.style_refinement_default()->bg(..)`), applied while a dragged value is over the element
-  (`["dragstyle", style node]`: the described style refined over upstream's, never app code while
-  drawing); the preview closure hands back the app's view (`["dragview"]`, an empty library view when
-  the app gave none). `gk_app.bound_only` treats the fixed parameters as not chosen by the caller.
-- a parameter bounded only by `Into<X>` and derive traits (`L: Into<DefiniteLength> + Clone +
-  Default + Debug + PartialEq` of `StyledExt::margins`, `paddings`) is X; a length is Pixels, the type
-  the wrapper's `From` impls are for (`Edges<Pixels>: From<f32>`).
-
-**Wrappers for one element type** (`VALUES_INSTANCES`, as for ContextMenu<Div>):
-`Scrollable<Div>` (`div->overflow_y_scrollbar()` and the x and both forms, then the wrapper's own
-`id`, `scroll_bounce`), with ScrollableElement entered in Div's tables (`VALUES_BLANKETS`: its impl
-for gpui's Div is in the kit crate). `ResizeHandle<Drag, GkView>` is instantiated
-(`[instantiate] types`; a generic type given an instantiated argument list is that node,
-`gk_values.resolved`), and `ResizablePanelGroup`, an element that also implements EventEmitter, is a
-node (`[node] types`), so `h_resizable`, `v_resizable` (base and component) and the group's `child`,
-`children`, `size`, `axis`, `with_state` are element builders.
-
-**Toolbar children** (`Toolbar::child(impl Sizable + IntoElement)`): one of the element nodes
-implementing Sizable, through the union rule (`[lists] unions`, `"Sizable" =
-"Sizable_Element"`); the union is generated (`GENERATED_UNIONS`).
-
-**Colours read back in a record the app also writes** (`box_shadow -> BoxShadow`): the record's
-Go field is a `gk.Color`, so the library writes that layout (u16 theme 0, then h, s, l, a:
-`crate::values::put_color_field`, `gk_values.rust_field_put`); a record only read keeps Hsla. The
-ambient rule accepts such a result (`gk_values.ret_readable`). `gk.base_box_shadow(cx, 4, 6, 12, 2,
-gk.hsla(..))` may run in a view procedure (it returns a value) and its result goes to `shadow()`.
-
-**One table of handed-out entities.** Entities read back by value reads (13.16, `Wire for Entity<T>`)
-and by the dock (`crate::dock::entity_handle`, which also holds the panels and dock areas the app made)
-share one table: `values::entity_handle` hands every entity to the dock's table, so an entity read back
-through both paths gets one handle. Test: call op `HANDLES_TEST 214`
-(an entity read back through both paths and again: one distinct handle), mode `val-one-handle`.
-
-Skipped with their reason: `AxisExt::is_horizontal`, `is_vertical` (value helpers on gpui's Axis,
-`skip:value-helper`: compare with `.Horizontal`). Not attempted, and why: `FocusTrapElement::focus_trap`
-(returns `FocusTrapContainer<Self>`, which has no public path), `ElementExt::text_selection_scope`
-(returns an opaque `impl IntoElement`), `group_drag_over<S>` (S named by no argument: the callee
-needs a turbofish the emitters do not write), `can_drop` and `external_drag_payload` (closures over
-`&dyn Any` and a gpui payload called while dragging), `on_drag_move` (`DragMoveEvent<T>` has no
-encodable fields), `ResizeHandleContext` and `with_appearance` (a renderer closure upstream calls while
-it draws, with a context object).
-
-Tests: modes `val-drag` (a drag from a source onto a target runs the drop handler with the value),
-`val-box-shadow`, `val-one-handle` of `core/tests/go/values`; gallery pages `values-drag`,
-`values-shadow`, `values-resizable`, `values-scrollbar-div`, `values-toolbar`.
-
-### 13.21 The window's own state, focus handles and aliased states read back, the kit's title bar
-
-- **The window's own Root.** `Root::read(window, cx) -> &Root` hands out the state handle of the
-  kit's Root the library makes around the app's view in every window (`WINDOW_ROOTS` in
-  gen/gk_values.py; Rust `crate::values::window_root::<Root>`, an ambient call): none when
-  the window's root is not one. Its reads follow
-  (`gk.root_view(root, cx)`, the app's root view back as a `gk.View`). `Root::update` (a closure given the
-  Root by `&mut`) and `Theme::update` (the theme by `&mut`) are skipped as Rust-only: the app changes
-  them through the state's calls and the theme's fields.
-- **Focus handles read back** (`QuestionnaireState::focus_handle`, `item_focus_handle`,
-  `choice_focus_handle`): a handle of kind FOCUS (`Wire for FocusHandle` in core/src/values.rs), kept
-  until `gk.release` like one the app made with `gk.focus_handle`; each read makes a new handle.
-- **Kit state an alias names** (`ColorPickerState::hex_input -> &Entity<InputState>`, where
-  `InputState = InputBaseState<InputMode>` is an `[instantiate] states` line): the state handle of
-  13.16, whatever order the generator met the types in.
-- **The kit's title bar.** `TitleBar::window_options()` is what `gk.Window_Config{kit_title_bar =
-  true}` opens the window with (flag 32 of `WINDOW_OPEN`, section 11.3: the kit's titlebar, its
-  decorations and title-bar drag over the meter's bounds; the app's title is kept). Counted bridged
-  (`RUNTIME_ITEMS`). Test: the second window of `core/tests/go/app` mode `windows`.
-
-### 13.30 Animations and motion values; accessibility roles; type-changing wrappers
-
-Runtime: `core/src/motion.rs`, `go/gk/motion/rt_motion.go`; generator: `gen/gk_values.py`
-(`animatable`, `motion_wrappers`, `MOTION_ITEMS`, `access_role`); node `ANIMATED 48`.
-
-App code never runs while a frame is drawn (DESIGN.md decision 3), and upstream's animators are
-closures it calls while it lays out. So an animation is **described as data** and the library
-evaluates it while it draws: no turn per frame, no crossing per frame. A moving value asks gpui for
-the next frame itself, which re-renders only the view that drew it (its tape is decoded again).
-
-**Type-changing wrappers, by rule.** `with_animation` returns `AnimationElement<E>`, `focus_trap`
-`FocusTrapContainer<E>`, `EffectTransition::apply` `AnimationElement<E>`: types the tape cannot name.
-The generator writes one arm per element type (`generated::motion_wrap`, `motion_trap`: the element
-node's constructors, then the wrapper, then `into_any_element`) and the Go interfaces
-`gk.AnimatableElement` (every styled element node) and the focus trap's (parents that are a gpui
-`Element`); the Go functions take any of them (checked by the compiler) and return an `Element`,
-which `Child` takes. The same rule serves any wrapper whose result only becomes a child.
-
-Node `ANIMATED`: `u32 child node, u8 kind`, then
-
-- 1 **animations** (gpui's `with_animations`; `with_animation` is a chain of one): `str id, u32 n, n x
-  (u32 ms, u8 flags (1 repeat, 2 repeat synced), easing, f32 max fps)`, `u32 n, n x track (u16
-  animation (0xffff every one), u8 property, value from, value to)`. The animator sets each track's
-  property to `from + (to - from) * delta` (colours: the kit's `Lerp for Hsla`). An easing is `u8`:
-  0 linear, 1 quadratic, 2 ease in-out, 3 ease-out quint, 8 bounce of another (gpui's), 4 ease-out
-  cubic, 5 ease-in cubic, 6 ease in-out cubic, 7 cubic Bézier `f32 x1, y1, x2, y2` (the kit's
-  `base::animation`), 9 pulsating between `f32 min, max` (gpui's);
-- 2 **effect**: `str id, u32 node of the kit's EffectTransition` (`EffectTransition::apply`);
-- 3 **motion values**: `u32 n, n x (u8 property, u8 source, ...)`, each sampled while drawing:
-  1 `transition(str id, target, u32 Transition)`, 2 `spring(str id, f32 target, u32 Spring)`,
-  3 `animate_keyframes(str id, u64 Keyframes<f32>, u32 Timing)`, 4 `Presence::sample(u32 Presence,
-  value at 0, value at 1)` (its progress between two values), 5 `TransitionState<f32>::sample(u64
-  state, f32 target, u32 Transition)`;
-- 4 **focus trap**: `str id, u64 focus handle` (`FocusTrapElement::focus_trap`).
-
-Properties (`gk.Motion_Prop`): opacity, top, left, right, bottom, width, height, size (numbers, pixels)
-and bg, text colour, border colour (colours: a value is a `gk.Color`, theme colours resolved as the tape
-is decoded). The package refuses at the app's line a colour for a number, a number for a colour, a
-spring or keyframes on a colour, a bounce of a bounce, an animation of 0 ms, a track's step past the
-chain. Go: `motion.WithAnimation(el, id, motion.Animation{..}, motion.Track{..})`, `kit.Effect(el,
-motion.NewEffectTransition(d).Fade(0, 1), key)`, `motion.Motion(el, motion.Value{..})`, `motion.FocusTrap`
-(`go/gk/motion/rt_motion.go`).
-
-Counted bridged where the runtime calls upstream (`MOTION_ITEMS`): `transition`, `spring`,
-`animate_keyframes`, `Presence::sample`, `TransitionState::sample` (also a call of its object, made by
-`Default`), `EffectTransition::apply`, `base::animation::cubic_bezier`, `FocusTrapElement::focus_trap`.
-So `Presence`, `Timing`, `EffectTransition` and `TransitionState<f32>` are accepted. Not bound:
-`transition_with_status` (its status would have to reach app code while drawing; `transition` gives the
-value).
-
-**Accessibility roles.** accesskit's `Role` (gpui re-exports it, `RoleOverride::Role` holds one) is a
-third-party enum outside the API extract: its 182 variants are read from the crate source Cargo.lock
-pins (`api/accesskit-role.json`, with the source's sha256) and it is an ordinary enum both ways
-(`gk.Role`), so every `role()` takes every role: `gk.Role_Override_Role{.Button}`.
-
-Tests: the gallery pages `motion-*` (motion_pages.go against ref/src/bin/gallery/motion_pages.rs,
-fixed-time frames: the offscreen clock moves only on `advance`), byte-identical to Rust.
-
-### 13.31 gpui's element leftovers: closures given as data, objects the library makes, image sources as bytes
-
-Runtime: `core/src/platform.rs`, `core/src/source.rs` (`virtual_list`), `core/src/motion.rs`
-(kind 5); Go: `go/gk/internal/rt/rt_platform.go`, `rt_source.go`, `rt_motion.go`; generator: `gen/gk_app.py`
-(hooked from gk_model `closure_desc`, gk_values `resolved` and `runtime_items`, gk_rust
-`dec`, the handler payload and trait ops, and gk_go); wire: the end of `core/wire/ops.txt`
-(call 90-94, node 16 of the app block); tests: `core/tests/go/platform` modes `elements`, `drag`, `vlist`,
-`cache-in-view`, `scope-zero`; gallery pages `elem-drop`, `elem-image`, `elem-scope`, `elem-vlist`
-(`motion_pages.go` against `motion_pages.rs`).
-
-**Closures upstream calls while it draws or drags become data the app gives beforehand** (decision 3).
-The rule, general: a closure whose answer depends only on what the app knew when it described the element
-is that answer, decoded once and handed back each time upstream asks. Bound this way, by signature
-(`gk_app.platform_closure`):
-
-| closure | descriptor | what the library answers |
-|---|---|---|
-| `Fn(&dyn Any, &mut Window, &mut App) -> bool` (`can_drop`) | `dropaccept` | true for the library's drag value (every one, or those whose id is in `ids`), and for files dragged in from outside when `paths` |
-| `Fn(&Drag, &mut Window, &mut App) -> Option<ExternalDragPayload>` (`external_drag_payload`) | `dragpayload` | `Files(FileDragPaths)` of the files, none when empty |
-| `Fn(&mut Window, &mut App) -> SmallVec<[usize; N]>` (`with_dynamic_prepaint_order`) | `prepaintorder` | the list |
-| `FnOnce(&mut A11ySubtreeBuilder)` (`a11y_synthetic_children`) | `a11ychildren` | one synthetic leaf per child, its id from the key (`synthetic_node_id`), `accesskit::Node::new(role)` with the label |
-
-**The drag protocol, completed** (13.20's Drag is the one dragged type): `group_drag_over<S>` and
-`external_drag_payload<T>` have their parameter fixed to `crate::values::Drag` (`gk_values.DRAG_FNS`); a fixed
-parameter no argument names is written as a turbofish (`gk_app.turbofish`). `on_drag_move<T>`'s
-`DragMoveEvent<Drag>` is an event leaf (`EVENT_LEAF`) whose payload the library copies before the handler fires
-(`platform::DragMove::of`: `drag(cx)` borrows the app): `gk.Drag_Move_Event{using event: Mouse_Event, bounds,
-value: Drag_Value}`. The dock's `DragPanel` is held as a **library object, not an entity** (`[state] objects`
-in overrides.toml: a Render type that is a value passed and returned by value; base renders it as Empty), so
-`TabGroupContext::drag_panel` hands out a temporary `gk.Drag_Panel`, `drop_panel` takes one by value, and its
-`&self` setters `set_drag_offset` / `set_preview_size` are object writes (Rc<Cell> inside: every copy sees them).
-The dock renderers of 11.9 get it from the TabGroupContext they are handed (11.9).
-
-**Objects the library makes** (call ops of the app block; each a kept object handle until `gk.release`):
-
-| call | upstream | taken by |
-|---|---|---|
-| `IMAGE_CACHE_NEW 90` | `RetainAllImageCache::new` | `Img::image_cache(&Entity<I: ImageCache>)` (`imagecacheref`), `Div::image_cache(impl ImageCacheProvider)` (`imagecache`: the closed set `gk.Image_Cache_Provider = union{gk.Image_Cache, gk.Retain_All_Images{id}}`, the latter gpui's `retain_all(id)`) |
-| `SCROLL_ANCHOR_NEW 91` | `ScrollAnchor::for_handle` | `anchor_scroll(Option<ScrollAnchor>)` (`scrollanchor`) |
-| `SCROLL_ANCHOR_TO 92` | `ScrollAnchor::scroll_to` (immediate, the turn's window) | |
-| `TEXT_SCOPE_NEW 93` | `TextSelectionScopeId::new` | `gk.text_selection_scope(el, scope)` |
-| `RENDER_IMAGE_NEW 100` | `RenderImage::new` of one BGRA frame | `ImageSource::Render` and `ImageSource::Custom` (`pixelimage`, `customimage`); `gk.release` calls `Window::drop_image` in every window |
-| `PLATFORM_TEST 94` | the decoders above run on the package's bytes | tests only |
-
-A view procedure may not make one (`cache-in-view`). `ElementExt::text_selection_scope` (a type-changing
-wrapper over a ParentElement) is node `ANIMATED` kind 5 (`u64 scope`), one generated arm per parent element
-type (`generated::motion_scope`, the rule of 13.30).
-
-**Virtual lists** (node `VIRTUAL_LIST 16`: `str id, u64 source, u8 axis, u32 n, (f32 w, f32 h) each`, then
-style ops): the rows protocol of section 9 with a size per row. `gk.v_virtual_list(id, src, sizes)` (each row
-`sizes[i].y` high) and `gk.h_virtual_list` (`sizes[i].x` wide) call upstream's `v_virtual_list` /
-`h_virtual_list` with the drawing view's own entity; the closure upstream calls while it lays out hands back
-each row's view, or a gap of the row's size for a row without one yet (asked for before the next frame, so app
-code never runs mid-frame; one frame of gaps after a far jump). Sizes past the source's count are dropped.
-
-**Image sources as bytes and pixels** (`gk_app.resolved`): every variant of `ImageSource` and `Resource` is
-built, so `img`, `Avatar::src`, `AvatarImage::new` and `AttachmentMedia::src` take all of them:
-`Resource::Uri` (`uri`: a string), `Resource::Path` (`arcpath`), `ImageSource::Image` (`imagebytes`:
-`gk.Image_Bytes{format, bytes}`, gpui's `Image::from_bytes`), `ImageSource::Render` (`pixelimage`: a
-`gk.Render_Image`, `u64` on the wire) and `ImageSource::Custom` (`customimage`: the loader upstream calls while it
-draws is data: the same `gk.Render_Image`, handed back each time).
-
-**An image of pixels is an object, not a value.** gpui gives each `RenderImage` a unique id and keeps its texture
-in each window's sprite atlas, by that id, until `Window::drop_image`; an `Image` (encoded bytes) is cached by its
-content instead. Pixels carried by value would be decoded into a new `RenderImage` on every describe, so a view
-showing one would add a texture on every frame, never freed (the binding cannot keep upstream's `Arc` or call
-`drop_image`). So `gk.render_image` (`RENDER_IMAGE_NEW`) turns the pixels into one BGRA `RenderImage` once and
-hands out a kept object handle; a view names it frame after frame (one id, one texture); `gk.release` drops it from
-every window's atlas (`platform::released`); a view naming it after that stops the app
-with `released_shown`'s message. Made in a view procedure, it stops. New pixels are a new image: make it, show it,
-release the old one. `core/tests/go/run-platform.sh elements` and `gates/go-proto.sh images` check it: the image
-named on every redraw is handed to gpui as one image, one id however often it is drawn (`PLATFORM_TEST` 7,
-the diagnostic library's count of the images views handed gpui and of the `drop_image` calls; gpui's own
-`has_image_atlas_entry` cannot tell, since its wgpu atlas answers false for every key), and released, its
-texture is dropped from the window.
-`FileDropEvent::Entered`'s `ExternalPaths` is read back as `[]string` (`Wire for ExternalPaths`).
-
-**Menus.** `GlobalState::set_app_menus` and `GlobalState::app_menus` are bound through the runtime's
-`gk.set_menus` / `gk.menus` (calls 86, 87 of 11.30, which call them with every `OwnedMenuItem` variant:
-separator, action with its OS action and flags, submenu, the OS's Services menu); the generated calls that
-reached only two variants are left out (`gk_app.PLATFORM_REPLACES`).
-
-**Skipped with their upstream reason** (`builder-getter`): `SequenceStep<f32>::transition` and the reads
-`PlotMotion::pointer`, `enter`, `exit`, `appear` (also of a PlotMotion read back): Transition and Spring have
-no public reads (their getters are `pub(crate)`), so the value read back is the one the app gave.
-
-## 14. Conventions the generator and the runtime share
-
-Rules that don't belong to one section but that every emitter and the runtime follow.
-
-**Numbers** (`api/opcodes.lock`, append-only). Node types start at 256, one per constructor. A
-type's own element ops start at 256 and are numbered per type, so an op number only means
-something for the node type it is applied to. Builder-trait ops are
-`0x4000 + (trait number << 7) + index`, the same number for every type that implements the
-trait. Generated shapes start at 64; the built-in shapes 1 to 10 are used as section 4 lists
-them (an `f32` payload gets a generated shape rather than being widened to `F64 10`). Style
-tokens, enum variants, theme colours and palette colours each count from their own start.
-
-**The runtime's four element ops** (section 1) are decoded by generated arms, not by a
-function of the runtime: every node type that implements `ParentElement` decodes `CHILD`,
-`CHILD_VIEW` and `TEXT`, and every `Styled` type decodes `STYLE` through the generated
-`style_tokens`.
-
-**Integers and enums.** Integers are as wide as upstream declares them (`usize` and `isize`
-are 8 bytes, Go `int`). The generator gives every enum without data a `u16`, numbered from
-`opcodes.lock`. An enum with data that only the app builds is a
-union of one `<T>_Kind` enum (the variants without data) and one struct per variant with
-data, written by generated code. One that an event carries has the form of section 2,
-one struct per variant in number order.
-
-**`Wire` impls.** Generated code implements `genapi::Wire` for every record and enum an event
-carries. The runtime implements it for exactly `u8 u16 u32 u64 i8 i16 i32 i64 usize isize
-f32 f64 bool () str String SharedString Pixels Hsla`, `&T`, `Option<T>`, `[T]`, `Vec<T>`,
-tuples of 2 to 4, and the six built-in event types (`ClickEvent`, `KeyDownEvent`,
-`KeyUpEvent`, `MouseDownEvent`, `MouseUpEvent`, `MouseMoveEvent`). An impl on both sides for
-the same type is a duplicate-impl error at compile time, which is how a clash shows up. A
-payload of several arguments is `&(&a, &b)`. `Unwire` covers the scalars, `String`,
-`SharedString`, `Option` and `Vec`.
-
-**Names.** A kit type keeps its name in CamelCase (docs/GO.md section 2). Where gpui-base and
-gpui-component both have a type of the same name (`Button`, `Checkbox`), the component's keeps
-the name and the base type is `Base<Name>`. A name the runtime already owns gets `Kit`
-(`KitTooltip`). Each generated type starts with a comment naming its upstream path
-(`// Button is gpui_kit::component::button::Button.`); tools that pair Go functions with
-upstream functions (`gates/conformance.py`) rely on it.
-
-**Stops.** A buffered write that fails with `GK_ERR_STALE_HANDLE` or `GK_ERR_BAD_OP` stops the
-app with the message and a hint to run with `GK_DEBUG=1`, which sends every
-write at once and so stops at the line that made it. Other failures of a buffered write (a
-window that has closed) are printed and the program goes on. A generated decoder that meets a
-released kit-state or focus handle reads it with `genapi::shown` / `genapi::shown_focus` and
-stops the program (`genapi::released_shown`) instead of drawing nothing.
-
-**Handler values and lengths.** A `Handler` made with a value belongs to one builder or
-subscription: giving it to a second one, or after the turn or view build that made it has
-ended, stops at its line. Length arguments are checked against the builder's type
-(`gk.auto()` where upstream takes a `DefiniteLength`; `gk.relative` or `gk.auto` where it
-takes an `AbsoluteLength` stops). A duration travels as whole milliseconds, rounded, with a
-negative one sent as 0 (`put_ms`).
-
-**Rows drawn by the kit.** A table's cells are views, keyed `row * columns + id` with `id` the
-column's index in the columns the app gave (it stays the same when the user moves a column).
-The runtime keeps each row view's tape in its session (`Session::row_tapes`), so a shim never
-reads a row's entity while the kit draws. That matters: in gpui-fast an entity read during a
-draw makes the drawing view depend on that entity, and a table would come to depend on every
-cell it had drawn.
-
-**Tape writers.** The tape writers and `op` of `rt_wire.go` are what generated code calls.
-
-**Conformance pages.** `gates/conformance.py` writes one gallery page per bound function for
-both languages, with the Rust side calling the kit directly, from the description
-`api/gk.api.json.gz` (its keys stay; new ones are only added). `gates/verified.json`, written
-by `gates/gallery.sh --record` from a passing run, lists the pages that are byte-identical to
-Rust and the functions they show; `gates/coverage-ratchet.py` refuses a later drop in that
-count. The Rust reference `ref-gallery` must be rebuilt whenever `gates/conformance.py`
-changes `ref/src/bin/gallery/conf.rs`; until then `gates/conformance.py --check` reports
-"behind the description" without failing.

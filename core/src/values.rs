@@ -1,14 +1,27 @@
-//! The values family's runtime (docs/PROTOCOLS.md sections 13.8 to 13.12):
+//! Hand-written `Wire`/`Unwire` codecs, view-scoped temporary handle pins, mutable value cells,
+//! drag payloads, date-matcher layout bridging, value-set predicates, and questionnaire validators.
 //!
-//! - results that travel to the app: `Result<T, E>` (`Fallible`), a `HashMap` (its pairs);
-//! - a kit action value made like any value (`gk.move_down()`) as an action id (`VALUE_ACTION`):
-//!   the kit's own action types are taken wherever an action is (menus, key bindings, `Kbd`);
-//! - temporary handles placed in a view (`OBJ_PIN`): a library object a read hands out lives until
-//!   the next frame begins (section 13.2); one the app put into a view's elements is kept for as
-//!   long as a build of that view names it, so a later redraw of the same tape finds it.
+//! # Key Protocols and Invariants
 //!
-//! Generated code reaches the first through `genapi::Wire` impls and `crate::values::Fallible`
-//! (written by gen/gk_values.py); the call ops are the runtime's own.
+//! - **Wire codecs**: covers upstream and standard types that the generator cannot synthesize
+//!   struct-field codecs for (`Result` via [`Fallible`], deterministically sorted `HashMap`,
+//!   `Duration` as clamped `i64` nanoseconds, `Entity<T>` via canonical `HK_STATE` handles,
+//!   `jiff::civil::{Date, Time, DateTime, Weekday}`, `Drag`, `FocusHandle`, `Background`, and
+//!   `IntervalMatcher`/`RangeMatcher`).
+//! - **Build-scoped pins (`C_OBJ_PIN`)**: views that store a temporary `HK_OBJ` handle across
+//!   frames pin it to `(view, build_id)`. Pinning promotes the handle out of `objects::TEMPS`
+//!   (or rescues it from `LATER` if re-pinned in a new build), while handles from superseded
+//!   builds move to `LATER` and are released on the next `objects::sweep()`.
+//! - **Value cells (`C_CELL_*`)**: mutable byte-buffer objects (`ValueCell`) backing reactive
+//!   closures like `SettingField`. [`cell_read`] pads the cloned bytes with 64 zero bytes so
+//!   decoders reading from an uninitialized or shorter cell observe typed defaults safely.
+//! - **Private-field matchers (`Part`)**: upstream `IntervalMatcher` and `RangeMatcher` hold two
+//!   private `Option<jiff::civil::Date>` fields. Compile-time size/align/`!needs_drop` assertions
+//!   paired with the one-time runtime canary [`parts_readable`] guard the raw `ptr::read` before
+//!   any production matcher is serialized.
+//! - **Value-set readback (`VALUE_SETS`)**: predicate closures created by [`value_set`] register
+//!   their original serialized list under the boxed closure's heap address so reading the
+//!   predicate back across the wire recovers the exact set of elements.
 
 use crate::genapi::Wire;
 use crate::ops::*;
@@ -18,9 +31,10 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// `Result<T, E>` as it travels out: u8 ok, then opt<T> (the value when ok), then str (the
-/// error's text when not ok, else empty: its Debug form, which every error type of the kit has;
-/// some, `DiscreteError`, have no Display). Go `gk.Fallible[T]`.
+/// Wire adapter encoding a `Result<T, E>` as `[ok: u8][has_val: u8][val?][err_str]`.
+///
+/// The duplicate `ok`/`has_val` bytes match the generated optional-result envelope expected by
+/// Go callers (`(value, ok, err)`).
 pub struct Fallible<T, E>(pub Result<T, E>);
 
 impl<T: Wire, E: std::fmt::Debug> Wire for Fallible<T, E> {
@@ -41,10 +55,11 @@ impl<T: Wire, E: std::fmt::Debug> Wire for Fallible<T, E> {
     }
 }
 
-/// A map as it travels out: u32 n, then (key, value) pairs in the order of their bytes, so the
-/// same map always reads the same (a HashMap's own order changes between runs).
+/// Encodes `HashMap<K, V>` as `[count: u32][(key, value)*]` sorted lexicographically by encoded
+/// bytes so wire snapshots and tests remain deterministic across Rust's randomized hash seeds.
 impl<K: Wire, V: Wire, S> Wire for HashMap<K, V, S> {
     fn put(&self, out: &mut Vec<u8>) {
+        // Sort serialized key-value entries for deterministic wire output across hash seeds.
         let mut pairs: Vec<Vec<u8>> = self
             .iter()
             .map(|(k, v)| {
@@ -62,35 +77,27 @@ impl<K: Wire, V: Wire, S> Wire for HashMap<K, V, S> {
     }
 }
 
-// jiff's calendar values (PROTOCOLS.md 13.13): a date is i32 year, u32 month, u32 day; a time
-// u32 hour, minute, second, nanosecond; a date and time both; a weekday a u8 from Monday = 0.
-// Go's writers (putCivilDate and the rest) stop on a date or time that does not exist
-// or that jiff cannot hold (years -9999 to 9999), so what arrives here is valid; a raw C client that
-// sends one anyway gets jiff's zero date (0000-01-01) or midnight instead (never a panic).
-/// A duration read back: i64 nanoseconds (Go's `time.Duration`), at most about 292 years.
+/// Encodes `Duration` as signed little-endian nanoseconds (`i64`, matching Go's `time.Duration`),
+/// saturating at `i64::MAX` for durations longer than ~292 years.
 impl Wire for std::time::Duration {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_i64(i64::try_from(self.as_nanos()).unwrap_or(i64::MAX));
     }
 }
 
-/// Kit state a read or an event hands out (`HslaSliders::hue`, `ColorPickerState::hex_input`):
-/// a state handle, one per entity, kept like one the app made (gk.release frees it; the next read
-/// makes a new one). Its mutators run with the window of the call that uses it.
+/// Encodes any GPUI `Entity<T>` as its canonical deduplicated `HK_STATE` `u64` handle.
 impl<T: 'static> Wire for gpui_kit::Entity<T> {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u64(entity_handle(self));
     }
 }
 
-/// The state handle of an entity the library hands out. One table for the whole library
-/// (the values family's reads and the dock's reads used to keep one each, so the same entity read
-/// back by both got two handles): the dock's, `crate::dock::entity_handle`, which also holds the
-/// panels and dock areas the app made, so a read of one of those gives the app's own handle.
+/// Returns or creates the canonical `HK_STATE` handle for a GPUI `Entity<T>`.
 pub fn entity_handle<T: 'static>(e: &gpui_kit::Entity<T>) -> u64 {
     crate::dock::entity_handle(e)
 }
 
+/// Wire layout for `jiff::civil::Date`: `[year: i32][month: u32][day: u32]`.
 impl Wire for jiff::civil::Date {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_i32(self.year().into());
@@ -110,6 +117,7 @@ impl crate::genapi::Unwire for jiff::civil::Date {
     }
 }
 
+/// Wire layout for `jiff::civil::Time`: `[hour: u32][minute: u32][second: u32][subsec_ns: u32]`.
 impl Wire for jiff::civil::Time {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u32(self.hour() as u32);
@@ -131,6 +139,7 @@ impl crate::genapi::Unwire for jiff::civil::Time {
     }
 }
 
+/// Wire layout for `jiff::civil::DateTime`: `Date` immediately followed by `Time`.
 impl Wire for jiff::civil::DateTime {
     fn put(&self, out: &mut Vec<u8>) {
         self.date().put(out);
@@ -145,6 +154,7 @@ impl crate::genapi::Unwire for jiff::civil::DateTime {
     }
 }
 
+/// Wire layout for `jiff::civil::Weekday`: `u8` zero-based offset from Monday (`0 = Monday .. 6 = Sunday`).
 impl Wire for jiff::civil::Weekday {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u8(self.to_monday_zero_offset() as u8);
@@ -158,15 +168,19 @@ impl crate::genapi::Unwire for jiff::civil::Weekday {
 }
 
 thread_local! {
-    /// Temporary handles a view's build placed in its elements: view -> (build number, handles).
+    /// Maps each view handle to `(current_build_id, pinned_temp_handles)` kept alive while that
+    /// view build still references those temporary objects.
     static PINS: RefCell<HashMap<u64, (u32, Vec<u64>)>> = RefCell::new(HashMap::new());
-    /// Handles a view's earlier build pinned, released at the next sweep unless pinned again.
+    /// Previously pinned handles superseded by a newer view build, awaiting the next frame sweep.
     static LATER: RefCell<Vec<u64>> = const { RefCell::new(Vec::new()) };
 }
 
-/// Pins `h` to the build `build` of `view`: a temporary handle stops being temporary and lives
-/// while a build of the view names it. The handles of the view's earlier build go to the next
-/// sweep (a redraw of the new tape names only its own). A kept handle or a global is left alone.
+/// Pins temporary object handle `h` to `(view, build)` so it survives across frames while `build`
+/// remains current; older builds' pins move to `LATER` for release on the next sweep.
+///
+/// Handles that are re-pinned during a rebuild are rescued from `LATER` before `objects::sweep`
+/// runs; brand-new handles are removed from `objects::TEMPS` via `untemp`. Permanent handles
+/// (not in `LATER` and not in `TEMPS`) are ignored so pinning never takes ownership of retained objects.
 fn pin(view: u64, build: u32, h: u64) {
     let old = PINS.with(|p| {
         let mut p = p.borrow_mut();
@@ -208,7 +222,7 @@ fn pin(view: u64, build: u32, h: u64) {
 
 static HAS_PINS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
-/// The handles earlier builds pinned and no build names now (called by `objects::sweep`).
+/// Drains expired pinned handles for [`crate::objects::sweep`].
 pub fn sweep_pins() -> Vec<u64> {
     if !HAS_PINS.swap(false, std::sync::atomic::Ordering::Relaxed) {
         return Vec::new();
@@ -216,13 +230,19 @@ pub fn sweep_pins() -> Vec<u64> {
     LATER.with(|l| std::mem::take(&mut *l.borrow_mut()))
 }
 
-/// Whether any retired view-pinned handles are waiting for the next frame's sweep.
 #[inline]
 pub fn has_pending_pins() -> bool {
     HAS_PINS.load(std::sync::atomic::Ordering::Relaxed)
 }
 
-/// The runtime's own call ops of the values family.
+/// Handles value-family wire calls:
+/// - `C_VALUE_ACTION`: `[len: u32][mini_tape...]` -> `[action_id: u32]` (resolves an action value's ID)
+/// - `C_OBJ_PIN`: `[view: u64][build: u32][obj: u64]` (pins a temp handle to `(view, build)`)
+/// - `C_CELL_NEW`: `[len: u32][bytes...]` -> `[cell_handle: u64]`
+/// - `C_CELL_SET`: `[cell: u64][len: u32][bytes...]` (replaces bytes and refreshes windows)
+/// - `C_CELL_GET`: `[cell: u64]` -> `[len: u32][bytes...]`
+/// - `C_HANDLES_TEST`: allocates one dummy entity and checks `Wire` vs `dock::put_entity` dedup
+/// - `C_VALUES_TEST`: returns `(pinned_count: u32, later_count: u32)` for pin-sweep tests
 pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<()>> {
     match op {
         C_VALUE_ACTION => Some((|| {
@@ -244,15 +264,12 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             pin(view, build, h);
             Some(Ok(()))
         }
-        // u32 length, bytes -> u64 cell (PROTOCOLS.md 13.19)
         C_CELL_NEW => {
             let n = r.u32() as usize;
             let bytes = r.bytes(n).to_vec();
             c.out.put_u64(crate::objects::obj_new(ValueCell(bytes)));
             Some(Ok(()))
         }
-        // u64 cell, u32 length, bytes (buffered): every window redraws, so a page that reads the
-        // cell while it draws shows the new value in the next frame
         C_CELL_SET => Some((|| {
             let h = r.u64();
             let n = r.u32() as usize;
@@ -264,7 +281,6 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             c.cx.refresh_windows();
             Ok(())
         })()),
-        // u64 cell -> u32 length, bytes
         C_CELL_GET => Some((|| {
             let rc = cell(r.u64())?;
             let b = rc.try_borrow().map_err(|_| rt::GkErr(ERR_BUSY, "the value cell is being written".into()))?;
@@ -272,7 +288,6 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             c.out.extend_from_slice(&b.0);
             Ok(())
         })()),
-        // the tests': one entity read back by both paths of the library gets one handle (13.16)
         C_HANDLES_TEST => {
             let e = gpui_kit::AppContext::new(c.cx, |_| HandlesTestEntity);
             let mut a = Vec::new();
@@ -301,8 +316,7 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
     }
 }
 
-/// A released view's pins go to the next sweep (rt calls nothing here yet: a view lives until
-/// the app ends, DESIGN.md section 8).
+/// Moves any handles pinned by `view` into the deferred sweep list when `view` is released.
 #[allow(dead_code)]
 pub fn view_released(view: u64) {
     if let Some((_, hs)) = PINS.with(|p| p.borrow_mut().remove(&view)) {
@@ -311,20 +325,15 @@ pub fn view_released(view: u64) {
     let _ = rt::with(|_| ());
 }
 
-// ------------------------------------------------------------------ value cells (PROTOCOLS.md 13.19)
-
-/// A value the library holds for a closure upstream calls while it draws (`Fn(&App) -> T`: a
-/// settings field's value, its dirty test): the value's bytes in its wire type, written by the app
-/// between frames (call op CELL_SET) and decoded by the generated closure each time upstream asks.
-/// A library object (kind OBJ, kept until gk.release); a tape holds the cell, not a copy.
+/// Mutable byte-buffer cell (`C_CELL_*`) backing host-driven reactive values (such as setting fields).
 pub struct ValueCell(pub Vec<u8>);
 
-/// The cell behind a handle (a call op's argument).
+/// Looks up a [`ValueCell`] handle for wire calls (`C_CELL_GET`, `C_CELL_SET`).
 pub fn cell(h: u64) -> GkResult<Rc<RefCell<ValueCell>>> {
     crate::objects::obj_rc::<ValueCell>(h)
 }
 
-/// The cell behind a handle named in a tape: a released one stops the program where it is drawn.
+/// Tape-decode counterpart to [`cell`]; stops the app on a stale handle.
 pub fn cell_shown(h: u64) -> Rc<RefCell<ValueCell>> {
     match cell(h) {
         Ok(c) => c,
@@ -332,8 +341,8 @@ pub fn cell_shown(h: u64) -> Rc<RefCell<ValueCell>> {
     }
 }
 
-/// Decodes the cell's current value with the generated reader `f`. A value that is too short for
-/// its type (a cell of another type given by a raw client) reads as zeros, never a panic.
+/// Clones `c`'s bytes with 64 bytes of zero padding so callers can read default values safely
+/// even if the cell is empty, then invokes `f`.
 pub fn cell_read<T>(c: &Rc<RefCell<ValueCell>>, f: impl FnOnce(&mut R) -> T) -> T {
     let mut b = match c.try_borrow() {
         Ok(v) => v.0.clone(),
@@ -346,9 +355,7 @@ pub fn cell_read<T>(c: &Rc<RefCell<ValueCell>>, f: impl FnOnce(&mut R) -> T) -> 
 
 use gpui_kit::component::setting::{AnySettingField, SettingFieldType};
 
-/// One of the kit's settings fields (`SettingField<bool>`, `<SharedString>`, `<f64>`, each a value
-/// node of its own) as one type: `SettingItem::new` takes it. Every method is the field's own, so
-/// upstream's downcasts (`as_any`, `type_id`) see the field itself.
+/// Thin `Rc<dyn AnySettingField>` wrapper so generated setting-field builders can type-erase fields.
 pub struct AnyField(Rc<dyn AnySettingField>);
 
 impl AnyField {
@@ -381,8 +388,7 @@ impl AnySettingField for AnyField {
     }
 }
 
-/// A colour field of a record the app also writes, read back (PROTOCOLS.md 13.20): the layout of
-/// the app's gk.Color (u16 theme 0, then h, s, l, a), which is that record's field type there.
+/// Encodes an `Hsla` color in the tagged color-field format (`u16` tag 0 followed by h, s, l, a).
 pub fn put_color_field(c: &gpui_kit::Hsla, out: &mut Vec<u8>) {
     out.put_u16(0);
     out.put_f32(c.h);
@@ -391,14 +397,10 @@ pub fn put_color_field(c: &gpui_kit::Hsla, out: &mut Vec<u8>) {
     out.put_f32(c.a);
 }
 
-/// The entity HANDLES_TEST makes (any kit entity would do; this one has no window to need).
+/// Dummy entity used by `C_HANDLES_TEST` to verify entity handle deduplication.
 pub struct HandlesTestEntity;
 
-// ------------------------------------------------------------------ drag and drop (PROTOCOLS.md 13.20)
-
-/// The value an app drags (`div->on_drag(gk.Drag_Value{id = 7, text = "row 7"}, preview)`): what
-/// gpui's drag methods are generic over, fixed to one library type. A drop's handler gets it back,
-/// a drag-over style applies while it is over the element.
+/// Standard drag payload type shared by all host-initiated drag-and-drop operations.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Drag {
     pub id: u64,
@@ -419,17 +421,17 @@ impl crate::genapi::Unwire for Drag {
     }
 }
 
-/// The app's view a drag shows, taken where the element is decoded (0: none).
+/// Resolves an optional drag preview view handle (`0` means no custom preview view).
 pub fn drag_view_of(h: u64, dx: &mut crate::genapi::Dx) -> Option<gpui_kit::AnyView> {
     if h == 0 { None } else { dx.child_view(h) }
 }
 
 thread_local! {
+    /// Lazily created empty `GkView` reused whenever a drag operation provides no custom preview view.
     static EMPTY_DRAG: RefCell<Option<gpui_kit::Entity<crate::rt::GkView>>> = const { RefCell::new(None) };
 }
 
-/// The preview gpui shows under the pointer while the value is dragged: the app's view, or an
-/// empty view of the library when the app gave none.
+/// Extracts the `Entity<GkView>` from `v`, or falls back to the cached empty drag preview view.
 pub fn drag_view(v: &Option<gpui_kit::AnyView>, cx: &mut gpui_kit::App) -> gpui_kit::Entity<crate::rt::GkView> {
     if let Some(e) = v.as_ref().and_then(|v| v.clone().downcast::<crate::rt::GkView>().ok()) {
         return e;
@@ -446,18 +448,11 @@ pub fn drag_view(v: &Option<gpui_kit::AnyView>, cx: &mut gpui_kit::App) -> gpui_
     e
 }
 
-// ------------------------------------------------------------------ the window's own state (PROTOCOLS.md 13.21)
-
-/// The window's own `T` (the kit's Root, which the library makes around the app's view in every
-/// window), as a state handle: `Root::read(window, cx)` for the binding. None when the window's
-/// root is something else.
+/// Returns the root entity of `window` if its concrete type is `T`.
 pub fn window_root<T: gpui_kit::Render + 'static>(window: &gpui_kit::Window, _cx: &gpui_kit::App) -> Option<gpui_kit::Entity<T>> {
     window.root::<T>().flatten()
 }
 
-/// A focus handle a read hands out (`QuestionnaireState::focus_handle`, PROTOCOLS.md 13.21): a handle
-/// of kind FOCUS, kept until gk.release, as one the app made with gk.focus_handle; the app focuses it
-/// (gk.focus) or gives it to an element (`track_focus`). Each read makes a new handle.
 impl Wire for gpui_kit::FocusHandle {
     fn put(&self, out: &mut Vec<u8>) {
         let f = self.clone();
@@ -465,15 +460,16 @@ impl Wire for gpui_kit::FocusHandle {
     }
 }
 
-// --- the components family, docs/PROTOCOLS.md 11.21 to 11.24 ----------------------------
-
-/// gpui's Background read back (PROTOCOLS.md 11.23): u8 kind (0 solid, 1 linear gradient, 2 slash
-/// pattern, 3 checkerboard), u8 colour space (0 sRGB, 1 Oklab), the solid colour (Hsla), f32 the
-/// gradient's angle or the pattern's height, then the two stops (Hsla, f32 percentage). Go
-/// `gk.BackgroundValue`. Its fields are private: the kind, colour space, angle and
-/// percentages come from its serde form, the colours (at full precision) from its Debug form.
+/// Wire layout for `gpui_kit::Background`:
+/// `[kind: u8 (0=Solid, 1=LinearGradient, 2=PatternSlash, 3=Checkerboard)][color_space: u8 (0=sRGB, 1=Oklab)][solid: Hsla][angle_or_height: f32][(stop_color: Hsla, pct: f32) * 2]`.
+///
+/// Upstream `Background` does not expose getters for its fields, so we combine `serde_json`
+/// serialization (tag, color space, angle/height, stop percentages) with parsing `Hsla { ... }`
+/// fields out of its `Debug` representation.
 impl Wire for gpui_kit::Background {
     fn put(&self, out: &mut Vec<u8>) {
+        // `gpui_kit::Background` has private fields; inspect via Serialize + Debug to recover
+        // tag, color space, angle/height, stop percentages, and HSLA stops.
         let j = serde_json::to_value(self).unwrap_or_default();
         let kind = match j.get("tag").and_then(|t| t.as_str()) {
             Some("LinearGradient") => 1u8,
@@ -501,7 +497,7 @@ impl Wire for gpui_kit::Background {
     }
 }
 
-/// The `Hsla { h: .., s: .., l: .., a: .. }` values of a Debug text, in order.
+/// Parses every `Hsla { h: .., s: .., l: .., a: .. }` record from a `Debug` string in order.
 fn hsla_in_debug(text: &str) -> Vec<gpui_kit::Hsla> {
     let mut out = Vec::new();
     let mut rest = text;
@@ -522,14 +518,12 @@ fn hsla_in_debug(text: &str) -> Vec<gpui_kit::Hsla> {
     out
 }
 
-/// A calendar matcher's parts (PROTOCOLS.md 11.21): their fields are private and have no reads,
-/// so they are made by the enum's own constructors (`Matcher::interval`, `Matcher::range`) and read
-/// back through `Part`, a struct with the same two fields (`Option<civil::Date>` each, in the same
-/// order). (A matcher's dates cannot be found through `Matcher::matched`: the days it leaves out
-/// may be a single day anywhere.) Rust does not promise that two structs with the same fields share
-/// a layout, so the sizes are asserted here and `parts_readable` checks once, on a matcher with
-/// known dates, that the two fields are where `Part` says; if not, a read gives no dates (never a
-/// wrong one).
+/// Mirror layout for `gpui_kit::base::IntervalMatcher` and `RangeMatcher`, whose two
+/// `Option<jiff::civil::Date>` fields are private in upstream.
+///
+/// The six `const` assertions below guarantee size, alignment, and `!needs_drop` parity at
+/// compile time; [`parts_readable`] additionally probes live constructed matchers once at
+/// runtime to catch any field reordering across compiler or upstream upgrades before reading.
 #[derive(Clone, Copy)]
 struct Part {
     a: Option<jiff::civil::Date>,
@@ -543,29 +537,32 @@ const _: () = assert!(!std::mem::needs_drop::<gpui_kit::base::IntervalMatcher>()
 const _: () = assert!(!std::mem::needs_drop::<gpui_kit::base::RangeMatcher>());
 
 thread_local! {
-    /// What each set of values was made of (a `Matcher::Custom`'s closure): its address -> the list's bytes.
+    /// Side-table mapping the heap address of a [`value_set`] closure to its original serialized list
+    /// so predicates can be read back across the wire.
     static VALUE_SETS: RefCell<HashMap<usize, Vec<u8>>> = RefCell::new(HashMap::new());
 }
 
-/// A matcher part's two dates, read as `Part`.
+/// Reads the two private `Option<jiff::civil::Date>` fields out of `v`.
 ///
 /// # Safety
-/// T is IntervalMatcher or RangeMatcher (same size and alignment as Part, asserted above).
+/// `T` must be a `Copy`/non-`Drop` struct with the exact size, alignment, and bit-level field
+/// layout of [`Part`] (verified at compile time by the `const` assertions above and at runtime by
+/// [`parts_readable`]).
 unsafe fn part_of<T>(v: &T) -> Part {
-    // SAFETY: the caller's T has Part's size and alignment; `parts_readable` has checked that its
-    // two fields sit where Part's do, so this typed read sees two valid Option<Date> values.
+    // SAFETY: Caller guarantees `T` has identical layout to `Part` and contains valid `Part` bits.
     unsafe { std::ptr::read(v as *const T as *const Part) }
 }
 
-/// Whether `Part` reads a matcher part's dates in the right places: checked once, on parts made
-/// with known, distinct dates by upstream's own constructors.
+/// Runtime self-test confirming that both `IntervalMatcher` and `RangeMatcher` match [`Part`]'s
+/// exact field order before any production value is serialized.
 fn parts_readable() -> bool {
     static OK: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *OK.get_or_init(|| {
         let (x, y) = (jiff::civil::Date::constant(2001, 2, 3), jiff::civil::Date::constant(2004, 5, 6));
         let check = |m: gpui_kit::base::Matcher, a, b| {
             let p = match &m {
-                // SAFETY: an IntervalMatcher and a RangeMatcher (part_of's contract).
+                // SAFETY: `IntervalMatcher` and `RangeMatcher` have size, alignment, and `!needs_drop`
+                // asserted equal to `Part` at compile time, and both consist of two `Option<Date>` fields.
                 gpui_kit::base::Matcher::Interval(v) => unsafe { part_of(v) },
                 gpui_kit::base::Matcher::Range(v) => unsafe { part_of(v) },
                 _ => return false,
@@ -585,21 +582,23 @@ fn read_part<T>(r: &mut R, make: impl FnOnce(Option<jiff::civil::Date>, Option<j
     make(a, b)
 }
 
+/// Serializes `v` as two `Option<Date>` values if [`parts_readable`] passes; otherwise writes `(None, None)`.
+///
 /// # Safety
-/// T is IntervalMatcher or RangeMatcher (part_of's contract).
+/// Same layout precondition as [`part_of`]: `T` must be `IntervalMatcher` or `RangeMatcher`.
 unsafe fn put_part<T>(v: &T, out: &mut Vec<u8>) {
     if parts_readable() {
-        // SAFETY: the caller's contract.
+        // SAFETY: Caller passes `IntervalMatcher` or `RangeMatcher`, and `parts_readable()` verified
+        // their layout and field order match `Part`.
         let p = unsafe { part_of(v) };
         p.a.put(out);
         p.b.put(out);
     } else {
-        out.put_u8(0); // a layout this library cannot read: no dates known
+        out.put_u8(0);
         out.put_u8(0);
     }
 }
 
-/// `Interval { before, after }`: dates before `before` or after `after` are matched.
 impl crate::genapi::Unwire for gpui_kit::base::IntervalMatcher {
     fn get(r: &mut R) -> Self {
         read_part(r, |a, b| match gpui_kit::base::Matcher::interval(a, b) {
@@ -611,12 +610,11 @@ impl crate::genapi::Unwire for gpui_kit::base::IntervalMatcher {
 
 impl Wire for gpui_kit::base::IntervalMatcher {
     fn put(&self, out: &mut Vec<u8>) {
-        // SAFETY: an IntervalMatcher.
+        // SAFETY: `IntervalMatcher` satisfies `put_part`'s layout assertions and runtime probe.
         unsafe { put_part(self, out) }
     }
 }
 
-/// `Range { from, to }`: dates from `from` to `to` (both included) are matched.
 impl crate::genapi::Unwire for gpui_kit::base::RangeMatcher {
     fn get(r: &mut R) -> Self {
         read_part(r, |a, b| match gpui_kit::base::Matcher::range(a, b) {
@@ -628,14 +626,13 @@ impl crate::genapi::Unwire for gpui_kit::base::RangeMatcher {
 
 impl Wire for gpui_kit::base::RangeMatcher {
     fn put(&self, out: &mut Vec<u8>) {
-        // SAFETY: a RangeMatcher.
+        // SAFETY: `RangeMatcher` satisfies `put_part`'s layout assertions and runtime probe.
         unsafe { put_part(self, out) }
     }
 }
 
-/// A set of values as a predicate (PROTOCOLS.md 11.21: `Matcher::Custom`, the dates it holds): the
-/// closure answers whether a value is in the set, and is kept with the set's bytes so that the
-/// value it is in reads back as the set.
+/// Wraps a finite list `set` into a membership predicate closure and records its wire bytes
+/// in `VALUE_SETS` so reading the predicate back recovers the original items.
 pub fn value_set<K: Wire + PartialEq + Send + Sync + 'static>(set: Vec<K>) -> Box<dyn Fn(&K) -> bool + Send + Sync> {
     let mut bytes = Vec::new();
     set.put(&mut bytes);
@@ -650,18 +647,15 @@ impl<K: 'static> Wire for Box<dyn Fn(&K) -> bool + Send + Sync> {
         let at = &**self as *const (dyn Fn(&K) -> bool + Send + Sync) as *const () as usize;
         match VALUE_SETS.with(|m| m.borrow().get(&at).cloned()) {
             Some(b) => out.extend_from_slice(&b),
-            None => out.put_u32(0), // a predicate the binding did not make: no values known
+            None => out.put_u32(0),
         }
     }
 }
 
-/// A questionnaire item's validator as rules the app gives in advance (PROTOCOLS.md 11.26): upstream
-/// calls the validator synchronously while the questionnaire updates (an answer set, Next, Submit),
-/// where app code may not run, so the library checks the rules. `gk.QuestionnaireRules`: u32 min_choices, u32 max_choices, u32 min_length, u32 max_length
-/// (0: no limit; a length counts the free answer's characters, when there is one), u32 n, str one_of
-/// each, u32 n, str not_one_of each (the free answer must, or must not, be one of them; empty: any),
-/// str same_as, str differs_from (another item whose answer this one must equal, or differ from; ""
-/// none), str message (the error, "{item}" the item's name; "" gives one per rule).
+/// Declarative validation rules for a questionnaire item decoded from the wire.
+///
+/// Numeric bounds (`min_choices`, `max_choices`, `min_length`, `max_length`) treat `0` as disabled;
+/// `message` overrides the default error text and substitutes `{item}` with the item's key.
 pub struct QuestionnaireRules {
     min_choices: usize,
     max_choices: usize,
@@ -674,6 +668,8 @@ pub struct QuestionnaireRules {
     message: String,
 }
 
+/// Wire layout for [`QuestionnaireRules`]:
+/// `[min_choices: u32][max_choices: u32][min_length: u32][max_length: u32][one_of: Vec<str>][not_one_of: Vec<str>][same_as: str][differs_from: str][message: str]`.
 impl crate::genapi::Unwire for QuestionnaireRules {
     fn get(r: &mut R) -> Self {
         let mut n = || r.u32() as usize;
@@ -731,7 +727,7 @@ impl QuestionnaireRules {
     }
 }
 
-/// The validator closure of `QuestionnaireItemDefinition::with_validator` over the rules.
+/// Decodes [`QuestionnaireRules`] into a validation closure accepted by upstream questionnaire items.
 pub fn questionnaire_rules(
     r: &mut R,
 ) -> impl Fn(&gpui_kit::base::questionnaire::QuestionnaireValidationContext) -> Result<(), gpui_kit::SharedString> + 'static {
@@ -739,8 +735,6 @@ pub fn questionnaire_rules(
     move |ctx| rules.check(ctx)
 }
 
-/// `QuestionnaireItemDefinition::validator` read back (`Option<&QuestionnaireValidator>`): whether
-/// the item has one; a closure has nothing else to read (Go `gk.Option[gk.QuestionnaireValidator]`).
 impl Wire for Rc<dyn Fn(&gpui_kit::base::questionnaire::QuestionnaireValidationContext) -> Result<(), gpui_kit::SharedString>> {
     fn put(&self, _out: &mut Vec<u8>) {}
 }

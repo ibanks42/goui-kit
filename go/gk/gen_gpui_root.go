@@ -13,7 +13,7 @@ type DivEl struct{ rt.ElAnimatableElement }
 
 // Construct a new `DivEl` element
 //
-// Div is gpui_kit::div.
+// Div calls gpui_kit::div.
 func Div(st ...Style) DivEl {
 	n := rt.NewNode(258)
 	rt.Tokens(n, st)
@@ -24,7 +24,7 @@ func Div(st ...Style) DivEl {
 //
 // See `HFlex` for the cross-axis rule, which is not symmetric with `gk.VFlex`.
 //
-// HFlex is gpui_kit::base::h_flex.
+// HFlex calls gpui_kit::base::h_flex.
 func HFlex(st ...Style) DivEl {
 	n := rt.NewNode(256)
 	rt.Tokens(n, st)
@@ -35,7 +35,7 @@ func HFlex(st ...Style) DivEl {
 //
 // See `VFlex` for the cross-axis rule, which is not symmetric with `gk.HFlex`.
 //
-// VFlex is gpui_kit::base::v_flex.
+// VFlex calls gpui_kit::base::v_flex.
 func VFlex(st ...Style) DivEl {
 	n := rt.NewNode(257)
 	rt.Tokens(n, st)
@@ -44,7 +44,7 @@ func VFlex(st ...Style) DivEl {
 
 // Add an image cache at the location of this div in the element tree.
 //
-// ImageCache is <gpui_kit::Div>::image_cache.
+// ImageCache calls <gpui_kit::Div>::image_cache.
 func (e DivEl) ImageCache(cache ImageCacheProvider) DivEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutImageCacheProvider(o, cache)
@@ -54,7 +54,7 @@ func (e DivEl) ImageCache(cache ImageCacheProvider) DivEl {
 // Add a listener to be called when the children of this `Div` are prepainted. This allows you to
 // store the `Bounds` of the children for later use.
 //
-// OnChildrenPrepainted is <gpui_kit::Div>::on_children_prepainted.
+// OnChildrenPrepainted calls <gpui_kit::Div>::on_children_prepainted.
 func (e DivEl) OnChildrenPrepainted(listener func(cx *Cx, e []Bounds)) DivEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Register(listener, 73))
@@ -70,7 +70,7 @@ func (e DivEl) OnChildrenPrepainted(listener func(cx *Cx, e []Bounds)) DivEl {
 // example, in split editor views, the editor with an autoscroll request should be prepainted first
 // so its scroll position update is visible to the other editor.
 //
-// WithDynamicPrepaintOrder is <gpui_kit::Div>::with_dynamic_prepaint_order.
+// WithDynamicPrepaintOrder calls <gpui_kit::Div>::with_dynamic_prepaint_order.
 func (e DivEl) WithDynamicPrepaintOrder(orderFn []int) DivEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(orderFn)))
@@ -80,7 +80,7 @@ func (e DivEl) WithDynamicPrepaintOrder(orderFn []int) DivEl {
 	return e
 }
 
-// ID is <gpui_kit::Div as gpui_kit::InteractiveElement>::id: it makes a StatefulDivEl of the element.
+// ID calls <gpui_kit::Div as gpui_kit::InteractiveElement>::id and converts the element into StatefulDivEl.
 func (e DivEl) ID(id ID) StatefulDivEl {
 	src := rt.TakeNode(rt.N(e.Core), true)
 	n := rt.NewNode(803)
@@ -90,23 +90,33 @@ func (e DivEl) ID(id ID) StatefulDivEl {
 	return StatefulDivEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e DivEl) Style(st ...Style) DivEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e DivEl) AspectRatio(ratio float32) DivEl { tStyledAspectRatio(rt.N(e.Core), ratio); return e }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e DivEl) Bg(fill Fill) DivEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e DivEl) Border(length Length) DivEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e DivEl) BorderB(length Length) DivEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e DivEl) BorderColor(borderColor Color) DivEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -114,60 +124,92 @@ func (e DivEl) BorderColor(borderColor Color) DivEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e DivEl) BorderL(length Length) DivEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e DivEl) BorderR(length Length) DivEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e DivEl) BorderT(length Length) DivEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e DivEl) BorderX(length Length) DivEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e DivEl) BorderY(length Length) DivEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e DivEl) Bottom(length Length) DivEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e DivEl) ColEnd(end int16) DivEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e DivEl) ColSpan(span uint16) DivEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e DivEl) ColStart(start int16) DivEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e DivEl) Cursor(cursor CursorStyle) DivEl { tStyledCursor(rt.N(e.Core), cursor); return e }
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e DivEl) FlexBasis(basis Length) DivEl { tStyledFlexBasis(rt.N(e.Core), basis); return e }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e DivEl) FlexGrow(grow float32) DivEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e DivEl) FlexShrink(shrink float32) DivEl { tStyledFlexShrink(rt.N(e.Core), shrink); return e }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e DivEl) Font(font Font) DivEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e DivEl) FontFamily(familyName string) DivEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e DivEl) FontFeatures(features FontFeatures) DivEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -176,23 +218,35 @@ func (e DivEl) FontFeatures(features FontFeatures) DivEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e DivEl) FontWeight(weight FontWeight) DivEl { tStyledFontWeight(rt.N(e.Core), weight); return e }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e DivEl) Gap(length Length) DivEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e DivEl) GapX(length Length) DivEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e DivEl) GapY(length Length) DivEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e DivEl) GridCols(cols uint16) DivEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e DivEl) GridColsMaxContent(cols uint16) DivEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -200,15 +254,21 @@ func (e DivEl) GridColsMaxContent(cols uint16) DivEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e DivEl) GridColsMinContent(cols uint16) DivEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e DivEl) GridRows(rows uint16) DivEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e DivEl) GridRowsMaxContent(rows uint16) DivEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -216,190 +276,286 @@ func (e DivEl) GridRowsMaxContent(rows uint16) DivEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e DivEl) GridRowsMinContent(rows uint16) DivEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e DivEl) H(length Length) DivEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e DivEl) Inset(length Length) DivEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e DivEl) Left(length Length) DivEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e DivEl) LineClamp(lines int) DivEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e DivEl) LineHeight(lineHeight Length) DivEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e DivEl) M(length Length) DivEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e DivEl) MaxH(length Length) DivEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e DivEl) MaxSize(length Length) DivEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e DivEl) MaxW(length Length) DivEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e DivEl) Mb(length Length) DivEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e DivEl) MinH(length Length) DivEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e DivEl) MinSize(length Length) DivEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e DivEl) MinW(length Length) DivEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e DivEl) Ml(length Length) DivEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e DivEl) Mr(length Length) DivEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e DivEl) Mt(length Length) DivEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e DivEl) Mx(length Length) DivEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e DivEl) My(length Length) DivEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e DivEl) Opacity(opacity float32) DivEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e DivEl) P(length Length) DivEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e DivEl) Pb(length Length) DivEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e DivEl) Pl(length Length) DivEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e DivEl) Pr(length Length) DivEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e DivEl) Pt(length Length) DivEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e DivEl) Px(length Length) DivEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e DivEl) Py(length Length) DivEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e DivEl) Right(length Length) DivEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e DivEl) Rounded(length Length) DivEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e DivEl) RoundedB(length Length) DivEl { tStyledRoundedB(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e DivEl) RoundedBl(length Length) DivEl { tStyledRoundedBl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e DivEl) RoundedBr(length Length) DivEl { tStyledRoundedBr(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e DivEl) RoundedL(length Length) DivEl { tStyledRoundedL(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e DivEl) RoundedR(length Length) DivEl { tStyledRoundedR(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e DivEl) RoundedT(length Length) DivEl { tStyledRoundedT(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e DivEl) RoundedTl(length Length) DivEl { tStyledRoundedTl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e DivEl) RoundedTr(length Length) DivEl { tStyledRoundedTr(rt.N(e.Core), length); return e }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e DivEl) RowEnd(end int16) DivEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e DivEl) RowSpan(span uint16) DivEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e DivEl) RowStart(start int16) DivEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e DivEl) ScrollbarWidth(width Length) DivEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e DivEl) Shadow(shadows []BoxShadow) DivEl { tStyledShadow(rt.N(e.Core), shadows); return e }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e DivEl) Size(length Length) DivEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e DivEl) TextAlign(align TextAlign) DivEl { tStyledTextAlign(rt.N(e.Core), align); return e }
 
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e DivEl) TextBg(bg Color) DivEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e DivEl) TextColor(color Color) DivEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e DivEl) TextDecorationColor(color Color) DivEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e DivEl) TextOverflow(overflow TextOverflow) DivEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -408,19 +564,27 @@ func (e DivEl) TextOverflow(overflow TextOverflow) DivEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e DivEl) TextSize(size Length) DivEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e DivEl) Top(length Length) DivEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e DivEl) W(length Length) DivEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e DivEl) BlockMouseExceptScroll() DivEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -428,6 +592,8 @@ func (e DivEl) BlockMouseExceptScroll() DivEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e DivEl) CanDrop(predicate DropAccept) DivEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -437,6 +603,8 @@ func (e DivEl) CanDrop(predicate DropAccept) DivEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e DivEl) CaptureAction(listener ActionHandler) DivEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -446,12 +614,14 @@ func (e DivEl) CaptureAction(listener ActionHandler) DivEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e DivEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e DivEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -461,12 +631,14 @@ func (e DivEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) DivEl {
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e DivEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e DivEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -476,6 +648,8 @@ func (e DivEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) DivEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e DivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -485,6 +659,8 @@ func (e DivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e DivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -494,6 +670,8 @@ func (e DivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e DivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) DivEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -503,12 +681,16 @@ func (e DivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent))
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e DivEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) DivEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e DivEl) DragOver(f StyleRefinement) DivEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -516,37 +698,51 @@ func (e DivEl) DragOver(f StyleRefinement) DivEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e DivEl) Focus(f StyleRefinement) DivEl { tInteractiveElementFocus(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is focused via keyboard navigation. This is
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e DivEl) FocusVisible(f StyleRefinement) DivEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e DivEl) Group(group string) DivEl { tInteractiveElementGroup(rt.N(e.Core), group); return e }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e DivEl) GroupDragOver(groupName string, f StyleRefinement) DivEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e DivEl) GroupHover(groupName string, f StyleRefinement) DivEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e DivEl) Hover(f StyleRefinement) DivEl { tInteractiveElementHover(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e DivEl) InFocus(f StyleRefinement) DivEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -554,6 +750,8 @@ func (e DivEl) InFocus(f StyleRefinement) DivEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e DivEl) KeyContext(keyContext string) DivEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -561,12 +759,16 @@ func (e DivEl) KeyContext(keyContext string) DivEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e DivEl) Occlude() DivEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e DivEl) OnAction(listener ActionHandler) DivEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -576,12 +778,14 @@ func (e DivEl) OnAction(listener ActionHandler) DivEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e DivEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e DivEl) OnAnyMouseDownDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -592,6 +796,8 @@ func (e DivEl) OnAnyMouseDownDo(listener func(cx *Cx)) DivEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e DivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) DivEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -602,6 +808,8 @@ func (e DivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) DivEl {
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e DivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) DivEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -613,6 +821,8 @@ func (e DivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Div
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e DivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) DivEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -622,6 +832,8 @@ func (e DivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) DivEl {
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e DivEl) OnDrop(listener func(cx *Cx, e DragValue)) DivEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -634,6 +846,8 @@ func (e DivEl) OnDrop(listener func(cx *Cx, e DragValue)) DivEl {
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e DivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) DivEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -643,6 +857,8 @@ func (e DivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) DivEl {
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e DivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -652,6 +868,8 @@ func (e DivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e DivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -661,6 +879,8 @@ func (e DivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e DivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) DivEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -670,12 +890,14 @@ func (e DivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e DivEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e DivEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -686,12 +908,14 @@ func (e DivEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) DivEl {
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e DivEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e DivEl) OnMouseDownOutDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -701,12 +925,14 @@ func (e DivEl) OnMouseDownOutDo(listener func(cx *Cx)) DivEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e DivEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) DivEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e DivEl) OnMouseExitDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -716,12 +942,14 @@ func (e DivEl) OnMouseExitDo(listener func(cx *Cx)) DivEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e DivEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e DivEl) OnMouseMoveDo(listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -731,6 +959,8 @@ func (e DivEl) OnMouseMoveDo(listener func(cx *Cx)) DivEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e DivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) DivEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -740,12 +970,14 @@ func (e DivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) DivE
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e DivEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e DivEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -756,12 +988,14 @@ func (e DivEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) DivEl {
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e DivEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e DivEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) DivEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -771,6 +1005,8 @@ func (e DivEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) DivEl {
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e DivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) DivEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -780,6 +1016,8 @@ func (e DivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) DivEl {
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e DivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) DivEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -789,17 +1027,23 @@ func (e DivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) DivEl {
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e DivEl) TabGroup() DivEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e DivEl) TabIndex(index int) DivEl { tInteractiveElementTabIndex(rt.N(e.Core), index); return e }
 
 // Set whether this element is a tab stop.
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e DivEl) TabStop(tabStop bool) DivEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -807,6 +1051,8 @@ func (e DivEl) TabStop(tabStop bool) DivEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e DivEl) TrackFocus(focusHandle FocusHandle) DivEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -814,38 +1060,51 @@ func (e DivEl) TrackFocus(focusHandle FocusHandle) DivEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e DivEl) WindowControlArea(area WindowControlArea) DivEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e DivEl) Text(s string) DivEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e DivEl) ChildView(v View) DivEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e DivEl) Child(child Element) DivEl { tParentElementChild(rt.N(e.Core), child); return e }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e DivEl) Children(children ...Element) DivEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Adds a horizontal scrollbar to the element.
+//
+// HorizontalScrollbar calls <E as gpui_kit::component::scroll::ScrollableElement>::horizontal_scrollbar.
 func (e DivEl) HorizontalScrollbar(scrollHandle ScrollHandle) DivEl {
 	tScrollableElementHorizontalScrollbar(rt.N(e.Core), scrollHandle)
 	return e
 }
 
 // Adds a scrollbar to the element.
+//
+// Scrollbar calls <E as gpui_kit::component::scroll::ScrollableElement>::scrollbar.
 func (e DivEl) Scrollbar(scrollHandle ScrollHandle, axis ScrollbarAxisInto) DivEl {
 	tScrollableElementScrollbar(rt.N(e.Core), scrollHandle, axis)
 	return e
 }
 
 // Adds a vertical scrollbar to the element.
+//
+// VerticalScrollbar calls <E as gpui_kit::component::scroll::ScrollableElement>::vertical_scrollbar.
 func (e DivEl) VerticalScrollbar(scrollHandle ScrollHandle) DivEl {
 	tScrollableElementVerticalScrollbar(rt.N(e.Core), scrollHandle)
 	return e
@@ -856,7 +1115,7 @@ type ImgEl struct{ rt.ElAnimatableElement }
 
 // Create a new image element.
 //
-// Img is gpui_kit::img.
+// Img calls gpui_kit::img.
 func Img(source ImageSourceInto, st ...Style) ImgEl {
 	n := rt.NewNode(259)
 	o := rt.NodeArgs(n)
@@ -876,30 +1135,40 @@ func Img(source ImageSourceInto, st ...Style) ImgEl {
 // This mechanism provides a flexible way to manage image caching, allowing precise control when
 // needed, while ensuring a default behavior when no cache is explicitly specified.
 //
-// ImageCache is <gpui_kit::Img>::image_cache.
+// ImageCache calls <gpui_kit::Img>::image_cache.
 func (e ImgEl) ImageCache(imageCache ImageCache) ImgEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U64(rt.H(imageCache.HCore))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e ImgEl) Style(st ...Style) ImgEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e ImgEl) AspectRatio(ratio float32) ImgEl { tStyledAspectRatio(rt.N(e.Core), ratio); return e }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e ImgEl) Bg(fill Fill) ImgEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e ImgEl) Border(length Length) ImgEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e ImgEl) BorderB(length Length) ImgEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e ImgEl) BorderColor(borderColor Color) ImgEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -907,60 +1176,92 @@ func (e ImgEl) BorderColor(borderColor Color) ImgEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e ImgEl) BorderL(length Length) ImgEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e ImgEl) BorderR(length Length) ImgEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e ImgEl) BorderT(length Length) ImgEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e ImgEl) BorderX(length Length) ImgEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e ImgEl) BorderY(length Length) ImgEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e ImgEl) Bottom(length Length) ImgEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e ImgEl) ColEnd(end int16) ImgEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e ImgEl) ColSpan(span uint16) ImgEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e ImgEl) ColStart(start int16) ImgEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e ImgEl) Cursor(cursor CursorStyle) ImgEl { tStyledCursor(rt.N(e.Core), cursor); return e }
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e ImgEl) FlexBasis(basis Length) ImgEl { tStyledFlexBasis(rt.N(e.Core), basis); return e }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e ImgEl) FlexGrow(grow float32) ImgEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e ImgEl) FlexShrink(shrink float32) ImgEl { tStyledFlexShrink(rt.N(e.Core), shrink); return e }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e ImgEl) Font(font Font) ImgEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e ImgEl) FontFamily(familyName string) ImgEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e ImgEl) FontFeatures(features FontFeatures) ImgEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -969,23 +1270,35 @@ func (e ImgEl) FontFeatures(features FontFeatures) ImgEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e ImgEl) FontWeight(weight FontWeight) ImgEl { tStyledFontWeight(rt.N(e.Core), weight); return e }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e ImgEl) Gap(length Length) ImgEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e ImgEl) GapX(length Length) ImgEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e ImgEl) GapY(length Length) ImgEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e ImgEl) GridCols(cols uint16) ImgEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e ImgEl) GridColsMaxContent(cols uint16) ImgEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -993,15 +1306,21 @@ func (e ImgEl) GridColsMaxContent(cols uint16) ImgEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e ImgEl) GridColsMinContent(cols uint16) ImgEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e ImgEl) GridRows(rows uint16) ImgEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e ImgEl) GridRowsMaxContent(rows uint16) ImgEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1009,190 +1328,286 @@ func (e ImgEl) GridRowsMaxContent(rows uint16) ImgEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e ImgEl) GridRowsMinContent(rows uint16) ImgEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e ImgEl) H(length Length) ImgEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e ImgEl) Inset(length Length) ImgEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e ImgEl) Left(length Length) ImgEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e ImgEl) LineClamp(lines int) ImgEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e ImgEl) LineHeight(lineHeight Length) ImgEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e ImgEl) M(length Length) ImgEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e ImgEl) MaxH(length Length) ImgEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e ImgEl) MaxSize(length Length) ImgEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e ImgEl) MaxW(length Length) ImgEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e ImgEl) Mb(length Length) ImgEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e ImgEl) MinH(length Length) ImgEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e ImgEl) MinSize(length Length) ImgEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e ImgEl) MinW(length Length) ImgEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e ImgEl) Ml(length Length) ImgEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e ImgEl) Mr(length Length) ImgEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e ImgEl) Mt(length Length) ImgEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e ImgEl) Mx(length Length) ImgEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e ImgEl) My(length Length) ImgEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e ImgEl) Opacity(opacity float32) ImgEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e ImgEl) P(length Length) ImgEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e ImgEl) Pb(length Length) ImgEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e ImgEl) Pl(length Length) ImgEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e ImgEl) Pr(length Length) ImgEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e ImgEl) Pt(length Length) ImgEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e ImgEl) Px(length Length) ImgEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e ImgEl) Py(length Length) ImgEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e ImgEl) Right(length Length) ImgEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e ImgEl) Rounded(length Length) ImgEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e ImgEl) RoundedB(length Length) ImgEl { tStyledRoundedB(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e ImgEl) RoundedBl(length Length) ImgEl { tStyledRoundedBl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e ImgEl) RoundedBr(length Length) ImgEl { tStyledRoundedBr(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e ImgEl) RoundedL(length Length) ImgEl { tStyledRoundedL(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e ImgEl) RoundedR(length Length) ImgEl { tStyledRoundedR(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e ImgEl) RoundedT(length Length) ImgEl { tStyledRoundedT(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e ImgEl) RoundedTl(length Length) ImgEl { tStyledRoundedTl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e ImgEl) RoundedTr(length Length) ImgEl { tStyledRoundedTr(rt.N(e.Core), length); return e }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e ImgEl) RowEnd(end int16) ImgEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e ImgEl) RowSpan(span uint16) ImgEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e ImgEl) RowStart(start int16) ImgEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e ImgEl) ScrollbarWidth(width Length) ImgEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e ImgEl) Shadow(shadows []BoxShadow) ImgEl { tStyledShadow(rt.N(e.Core), shadows); return e }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e ImgEl) Size(length Length) ImgEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e ImgEl) TextAlign(align TextAlign) ImgEl { tStyledTextAlign(rt.N(e.Core), align); return e }
 
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e ImgEl) TextBg(bg Color) ImgEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e ImgEl) TextColor(color Color) ImgEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e ImgEl) TextDecorationColor(color Color) ImgEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e ImgEl) TextOverflow(overflow TextOverflow) ImgEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1201,19 +1616,27 @@ func (e ImgEl) TextOverflow(overflow TextOverflow) ImgEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e ImgEl) TextSize(size Length) ImgEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e ImgEl) Top(length Length) ImgEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e ImgEl) W(length Length) ImgEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e ImgEl) BlockMouseExceptScroll() ImgEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -1221,6 +1644,8 @@ func (e ImgEl) BlockMouseExceptScroll() ImgEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e ImgEl) CanDrop(predicate DropAccept) ImgEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -1230,6 +1655,8 @@ func (e ImgEl) CanDrop(predicate DropAccept) ImgEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e ImgEl) CaptureAction(listener ActionHandler) ImgEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -1239,12 +1666,14 @@ func (e ImgEl) CaptureAction(listener ActionHandler) ImgEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e ImgEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e ImgEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -1254,12 +1683,14 @@ func (e ImgEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) ImgEl {
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e ImgEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e ImgEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -1269,6 +1700,8 @@ func (e ImgEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) ImgEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e ImgEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1278,6 +1711,8 @@ func (e ImgEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e ImgEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1287,6 +1722,8 @@ func (e ImgEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e ImgEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) ImgEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -1296,12 +1733,16 @@ func (e ImgEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent))
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e ImgEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) ImgEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e ImgEl) DragOver(f StyleRefinement) ImgEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -1309,37 +1750,51 @@ func (e ImgEl) DragOver(f StyleRefinement) ImgEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e ImgEl) Focus(f StyleRefinement) ImgEl { tInteractiveElementFocus(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is focused via keyboard navigation. This is
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e ImgEl) FocusVisible(f StyleRefinement) ImgEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e ImgEl) Group(group string) ImgEl { tInteractiveElementGroup(rt.N(e.Core), group); return e }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e ImgEl) GroupDragOver(groupName string, f StyleRefinement) ImgEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e ImgEl) GroupHover(groupName string, f StyleRefinement) ImgEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e ImgEl) Hover(f StyleRefinement) ImgEl { tInteractiveElementHover(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e ImgEl) InFocus(f StyleRefinement) ImgEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -1347,6 +1802,8 @@ func (e ImgEl) InFocus(f StyleRefinement) ImgEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e ImgEl) KeyContext(keyContext string) ImgEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -1354,12 +1811,16 @@ func (e ImgEl) KeyContext(keyContext string) ImgEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e ImgEl) Occlude() ImgEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e ImgEl) OnAction(listener ActionHandler) ImgEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -1369,12 +1830,14 @@ func (e ImgEl) OnAction(listener ActionHandler) ImgEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e ImgEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e ImgEl) OnAnyMouseDownDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -1385,6 +1848,8 @@ func (e ImgEl) OnAnyMouseDownDo(listener func(cx *Cx)) ImgEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e ImgEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) ImgEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -1395,6 +1860,8 @@ func (e ImgEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) ImgEl {
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e ImgEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) ImgEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -1406,6 +1873,8 @@ func (e ImgEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Img
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e ImgEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ImgEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -1415,6 +1884,8 @@ func (e ImgEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ImgEl {
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e ImgEl) OnDrop(listener func(cx *Cx, e DragValue)) ImgEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -1427,6 +1898,8 @@ func (e ImgEl) OnDrop(listener func(cx *Cx, e DragValue)) ImgEl {
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e ImgEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) ImgEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -1436,6 +1909,8 @@ func (e ImgEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) ImgEl {
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e ImgEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -1445,6 +1920,8 @@ func (e ImgEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e ImgEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -1454,6 +1931,8 @@ func (e ImgEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e ImgEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) ImgEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -1463,12 +1942,14 @@ func (e ImgEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e ImgEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e ImgEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -1479,12 +1960,14 @@ func (e ImgEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e ImgEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e ImgEl) OnMouseDownOutDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -1494,12 +1977,14 @@ func (e ImgEl) OnMouseDownOutDo(listener func(cx *Cx)) ImgEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e ImgEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) ImgEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e ImgEl) OnMouseExitDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -1509,12 +1994,14 @@ func (e ImgEl) OnMouseExitDo(listener func(cx *Cx)) ImgEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e ImgEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e ImgEl) OnMouseMoveDo(listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -1524,6 +2011,8 @@ func (e ImgEl) OnMouseMoveDo(listener func(cx *Cx)) ImgEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e ImgEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) ImgEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -1533,12 +2022,14 @@ func (e ImgEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) ImgE
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e ImgEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e ImgEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -1549,12 +2040,14 @@ func (e ImgEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e ImgEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e ImgEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -1564,6 +2057,8 @@ func (e ImgEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) ImgEl {
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e ImgEl) OnPinch(listener func(cx *Cx, e PinchEvent)) ImgEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -1573,6 +2068,8 @@ func (e ImgEl) OnPinch(listener func(cx *Cx, e PinchEvent)) ImgEl {
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e ImgEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) ImgEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -1582,17 +2079,23 @@ func (e ImgEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) ImgEl {
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e ImgEl) TabGroup() ImgEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e ImgEl) TabIndex(index int) ImgEl { tInteractiveElementTabIndex(rt.N(e.Core), index); return e }
 
 // Set whether this element is a tab stop.
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e ImgEl) TabStop(tabStop bool) ImgEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -1600,6 +2103,8 @@ func (e ImgEl) TabStop(tabStop bool) ImgEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e ImgEl) TrackFocus(focusHandle FocusHandle) ImgEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -1607,12 +2112,14 @@ func (e ImgEl) TrackFocus(focusHandle FocusHandle) ImgEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e ImgEl) WindowControlArea(area WindowControlArea) ImgEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -1620,6 +2127,8 @@ func (e ImgEl) WindowControlArea(area WindowControlArea) ImgEl {
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e ImgEl) A11ySyntheticChildren(f []A11yChild) ImgEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -1631,25 +2140,31 @@ func (e ImgEl) A11ySyntheticChildren(f []A11yChild) ImgEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e ImgEl) AccessibilityID(id string) ImgEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e ImgEl) Active(f StyleRefinement) ImgEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e ImgEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ImgEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -1658,19 +2173,25 @@ func (e ImgEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ImgEl {
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e ImgEl) AriaActiveDescendant() ImgEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e ImgEl) AriaColumnCount(count int) ImgEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e ImgEl) AriaColumnIndex(index int) ImgEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -1679,12 +2200,16 @@ func (e ImgEl) AriaColumnIndex(index int) ImgEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e ImgEl) AriaDescription(description string) ImgEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e ImgEl) AriaExpanded(expanded bool) ImgEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -1695,36 +2220,48 @@ func (e ImgEl) AriaExpanded(expanded bool) ImgEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e ImgEl) AriaKeyshortcuts(keyshortcuts string) ImgEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e ImgEl) AriaLabel(label string) ImgEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e ImgEl) AriaLevel(level int) ImgEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e ImgEl) AriaMaxNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e ImgEl) AriaMinNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e ImgEl) AriaNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -1732,6 +2269,8 @@ func (e ImgEl) AriaNumericValue(value float64) ImgEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e ImgEl) AriaNumericValueStep(step float64) ImgEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -1739,42 +2278,56 @@ func (e ImgEl) AriaNumericValueStep(step float64) ImgEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e ImgEl) AriaPlaceholder(placeholder string) ImgEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e ImgEl) AriaPositionInSet(position int) ImgEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e ImgEl) AriaRowCount(count int) ImgEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e ImgEl) AriaRowIndex(index int) ImgEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e ImgEl) AriaSelected(selected bool) ImgEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e ImgEl) AriaSizeOfSet(size int) ImgEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e ImgEl) AriaValue(value string) ImgEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -1784,15 +2337,21 @@ func (e ImgEl) AriaValue(value string) ImgEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e ImgEl) ExternalDragPayload(resolver ExternalDragPayload) ImgEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e ImgEl) Focusable() ImgEl { tStatefulInteractiveElementFocusable(rt.N(e.Core)); return e }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e ImgEl) GroupActive(groupName string, f StyleRefinement) ImgEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -1801,6 +2360,8 @@ func (e ImgEl) GroupActive(groupName string, f StyleRefinement) ImgEl {
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e ImgEl) HoverListenerMode(mode HoverListenerMode) ImgEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -1809,6 +2370,8 @@ func (e ImgEl) HoverListenerMode(mode HoverListenerMode) ImgEl {
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e ImgEl) HoverableTooltip(buildTooltip ViewOrTooltip) ImgEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -1818,12 +2381,14 @@ func (e ImgEl) HoverableTooltip(buildTooltip ViewOrTooltip) ImgEl {
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e ImgEl) OnAuxClick(listener func(cx *Cx, e ClickEvent)) ImgEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e ImgEl) OnAuxClickDo(listener func(cx *Cx)) ImgEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -1833,12 +2398,14 @@ func (e ImgEl) OnAuxClickDo(listener func(cx *Cx)) ImgEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e ImgEl) OnClick(listener func(cx *Cx, e ClickEvent)) ImgEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e ImgEl) OnClickDo(listener func(cx *Cx)) ImgEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -1850,6 +2417,8 @@ func (e ImgEl) OnClickDo(listener func(cx *Cx)) ImgEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e ImgEl) OnDrag(value DragValue, constructor View) ImgEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -1864,24 +2433,32 @@ func (e ImgEl) OnDrag(value DragValue, constructor View) ImgEl {
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e ImgEl) OnHover(listener func(cx *Cx, e bool)) ImgEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e ImgEl) OverflowScroll() ImgEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e ImgEl) OverflowXScroll() ImgEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e ImgEl) OverflowYScroll() ImgEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -1890,6 +2467,8 @@ func (e ImgEl) OverflowYScroll() ImgEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e ImgEl) RestrictScrollToAxis() ImgEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -1898,10 +2477,14 @@ func (e ImgEl) RestrictScrollToAxis() ImgEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e ImgEl) Role(role Role) ImgEl { tStatefulInteractiveElementRole(rt.N(e.Core), role); return e }
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e ImgEl) Tooltip(buildTooltip ViewOrTooltip) ImgEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -1911,12 +2494,16 @@ func (e ImgEl) Tooltip(buildTooltip ViewOrTooltip) ImgEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e ImgEl) TooltipShowDelay(delay time.Duration) ImgEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e ImgEl) TrackScroll(scrollHandle ScrollHandle) ImgEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -1925,19 +2512,25 @@ func (e ImgEl) TrackScroll(scrollHandle ScrollHandle) ImgEl {
 // StatefulDivEl is gpui_kit::Stateful<gpui_kit::Div>.
 type StatefulDivEl struct{ rt.ElAnimatableElement }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e StatefulDivEl) Style(st ...Style) StatefulDivEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e StatefulDivEl) AspectRatio(ratio float32) StatefulDivEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e StatefulDivEl) Bg(fill Fill) StatefulDivEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e StatefulDivEl) Border(length Length) StatefulDivEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1945,12 +2538,16 @@ func (e StatefulDivEl) Border(length Length) StatefulDivEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e StatefulDivEl) BorderB(length Length) StatefulDivEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e StatefulDivEl) BorderColor(borderColor Color) StatefulDivEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1958,6 +2555,8 @@ func (e StatefulDivEl) BorderColor(borderColor Color) StatefulDivEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e StatefulDivEl) BorderL(length Length) StatefulDivEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1965,6 +2564,8 @@ func (e StatefulDivEl) BorderL(length Length) StatefulDivEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e StatefulDivEl) BorderR(length Length) StatefulDivEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1972,6 +2573,8 @@ func (e StatefulDivEl) BorderR(length Length) StatefulDivEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e StatefulDivEl) BorderT(length Length) StatefulDivEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1979,6 +2582,8 @@ func (e StatefulDivEl) BorderT(length Length) StatefulDivEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e StatefulDivEl) BorderX(length Length) StatefulDivEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1986,6 +2591,8 @@ func (e StatefulDivEl) BorderX(length Length) StatefulDivEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e StatefulDivEl) BorderY(length Length) StatefulDivEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1993,27 +2600,37 @@ func (e StatefulDivEl) BorderY(length Length) StatefulDivEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e StatefulDivEl) Bottom(length Length) StatefulDivEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e StatefulDivEl) ColEnd(end int16) StatefulDivEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e StatefulDivEl) ColSpan(span uint16) StatefulDivEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e StatefulDivEl) ColStart(start int16) StatefulDivEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e StatefulDivEl) Cursor(cursor CursorStyle) StatefulDivEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2021,33 +2638,45 @@ func (e StatefulDivEl) Cursor(cursor CursorStyle) StatefulDivEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e StatefulDivEl) FlexBasis(basis Length) StatefulDivEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e StatefulDivEl) FlexGrow(grow float32) StatefulDivEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e StatefulDivEl) FlexShrink(shrink float32) StatefulDivEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e StatefulDivEl) Font(font Font) StatefulDivEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e StatefulDivEl) FontFamily(familyName string) StatefulDivEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e StatefulDivEl) FontFeatures(features FontFeatures) StatefulDivEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2056,29 +2685,41 @@ func (e StatefulDivEl) FontFeatures(features FontFeatures) StatefulDivEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e StatefulDivEl) FontWeight(weight FontWeight) StatefulDivEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e StatefulDivEl) Gap(length Length) StatefulDivEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e StatefulDivEl) GapX(length Length) StatefulDivEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e StatefulDivEl) GapY(length Length) StatefulDivEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e StatefulDivEl) GridCols(cols uint16) StatefulDivEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e StatefulDivEl) GridColsMaxContent(cols uint16) StatefulDivEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2086,18 +2727,24 @@ func (e StatefulDivEl) GridColsMaxContent(cols uint16) StatefulDivEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e StatefulDivEl) GridColsMinContent(cols uint16) StatefulDivEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e StatefulDivEl) GridRows(rows uint16) StatefulDivEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e StatefulDivEl) GridRowsMaxContent(rows uint16) StatefulDivEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2105,16 +2752,22 @@ func (e StatefulDivEl) GridRowsMaxContent(rows uint16) StatefulDivEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e StatefulDivEl) GridRowsMinContent(rows uint16) StatefulDivEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e StatefulDivEl) H(length Length) StatefulDivEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e StatefulDivEl) Inset(length Length) StatefulDivEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2122,113 +2775,165 @@ func (e StatefulDivEl) Inset(length Length) StatefulDivEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e StatefulDivEl) Left(length Length) StatefulDivEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e StatefulDivEl) LineClamp(lines int) StatefulDivEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e StatefulDivEl) LineHeight(lineHeight Length) StatefulDivEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e StatefulDivEl) M(length Length) StatefulDivEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e StatefulDivEl) MaxH(length Length) StatefulDivEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e StatefulDivEl) MaxSize(length Length) StatefulDivEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e StatefulDivEl) MaxW(length Length) StatefulDivEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e StatefulDivEl) Mb(length Length) StatefulDivEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e StatefulDivEl) MinH(length Length) StatefulDivEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e StatefulDivEl) MinSize(length Length) StatefulDivEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e StatefulDivEl) MinW(length Length) StatefulDivEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e StatefulDivEl) Ml(length Length) StatefulDivEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e StatefulDivEl) Mr(length Length) StatefulDivEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e StatefulDivEl) Mt(length Length) StatefulDivEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e StatefulDivEl) Mx(length Length) StatefulDivEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e StatefulDivEl) My(length Length) StatefulDivEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e StatefulDivEl) Opacity(opacity float32) StatefulDivEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e StatefulDivEl) P(length Length) StatefulDivEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e StatefulDivEl) Pb(length Length) StatefulDivEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e StatefulDivEl) Pl(length Length) StatefulDivEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e StatefulDivEl) Pr(length Length) StatefulDivEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e StatefulDivEl) Pt(length Length) StatefulDivEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e StatefulDivEl) Px(length Length) StatefulDivEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e StatefulDivEl) Py(length Length) StatefulDivEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e StatefulDivEl) Right(length Length) StatefulDivEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e StatefulDivEl) Rounded(length Length) StatefulDivEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2236,6 +2941,8 @@ func (e StatefulDivEl) Rounded(length Length) StatefulDivEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e StatefulDivEl) RoundedB(length Length) StatefulDivEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2243,6 +2950,8 @@ func (e StatefulDivEl) RoundedB(length Length) StatefulDivEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e StatefulDivEl) RoundedBl(length Length) StatefulDivEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2250,6 +2959,8 @@ func (e StatefulDivEl) RoundedBl(length Length) StatefulDivEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e StatefulDivEl) RoundedBr(length Length) StatefulDivEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2257,6 +2968,8 @@ func (e StatefulDivEl) RoundedBr(length Length) StatefulDivEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e StatefulDivEl) RoundedL(length Length) StatefulDivEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2264,6 +2977,8 @@ func (e StatefulDivEl) RoundedL(length Length) StatefulDivEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e StatefulDivEl) RoundedR(length Length) StatefulDivEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2271,6 +2986,8 @@ func (e StatefulDivEl) RoundedR(length Length) StatefulDivEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e StatefulDivEl) RoundedT(length Length) StatefulDivEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2278,6 +2995,8 @@ func (e StatefulDivEl) RoundedT(length Length) StatefulDivEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e StatefulDivEl) RoundedTl(length Length) StatefulDivEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2285,21 +3004,29 @@ func (e StatefulDivEl) RoundedTl(length Length) StatefulDivEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e StatefulDivEl) RoundedTr(length Length) StatefulDivEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e StatefulDivEl) RowEnd(end int16) StatefulDivEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e StatefulDivEl) RowSpan(span uint16) StatefulDivEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e StatefulDivEl) RowStart(start int16) StatefulDivEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2309,21 +3036,29 @@ func (e StatefulDivEl) RowStart(start int16) StatefulDivEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e StatefulDivEl) ScrollbarWidth(width Length) StatefulDivEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e StatefulDivEl) Shadow(shadows []BoxShadow) StatefulDivEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e StatefulDivEl) Size(length Length) StatefulDivEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e StatefulDivEl) TextAlign(align TextAlign) StatefulDivEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2332,23 +3067,31 @@ func (e StatefulDivEl) TextAlign(align TextAlign) StatefulDivEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e StatefulDivEl) TextBg(bg Color) StatefulDivEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e StatefulDivEl) TextColor(color Color) StatefulDivEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e StatefulDivEl) TextDecorationColor(color Color) StatefulDivEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e StatefulDivEl) TextOverflow(overflow TextOverflow) StatefulDivEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2357,6 +3100,8 @@ func (e StatefulDivEl) TextOverflow(overflow TextOverflow) StatefulDivEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e StatefulDivEl) TextSize(size Length) StatefulDivEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2364,12 +3109,16 @@ func (e StatefulDivEl) TextSize(size Length) StatefulDivEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e StatefulDivEl) Top(length Length) StatefulDivEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e StatefulDivEl) W(length Length) StatefulDivEl { tStyledW(rt.N(e.Core), length); return e }
 
-// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// Contribute synthetic accessibility nodes - nodes that don't correspond to any element - as
 // children of this element's a11y node. For example, text runs describing an editor's text
 // content.
 //
@@ -2377,6 +3126,8 @@ func (e StatefulDivEl) W(length Length) StatefulDivEl { tStyledW(rt.N(e.Core), l
 // accessibility tree (i.e. it has an id and a `Role`).
 //
 // See `a11y_synthetic_children` for details.
+//
+// A11ySyntheticChildren calls <E as gpui_kit::StatefulInteractiveElement>::a11y_synthetic_children.
 func (e StatefulDivEl) A11ySyntheticChildren(f []A11yChild) StatefulDivEl {
 	tStatefulInteractiveElementA11ySyntheticChildren(rt.N(e.Core), f)
 	return e
@@ -2388,25 +3139,31 @@ func (e StatefulDivEl) A11ySyntheticChildren(f []A11yChild) StatefulDivEl {
 // within its accessibility tree. AccessKit maps it to platform identifiers where supported,
 // including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
 // Linux stacks whose deployed adapter exposes it.
+//
+// AccessibilityID calls <E as gpui_kit::StatefulInteractiveElement>::accessibility_id.
 func (e StatefulDivEl) AccessibilityID(id string) StatefulDivEl {
 	tStatefulInteractiveElementAccessibilityID(rt.N(e.Core), id)
 	return e
 }
 
 // Set the given styles to be applied when this element is active.
+//
+// Active calls <E as gpui_kit::StatefulInteractiveElement>::active.
 func (e StatefulDivEl) Active(f StyleRefinement) StatefulDivEl {
 	tStatefulInteractiveElementActive(rt.N(e.Core), f)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// AnchorScroll calls <E as gpui_kit::StatefulInteractiveElement>::anchor_scroll.
 func (e StatefulDivEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) StatefulDivEl {
 	tStatefulInteractiveElementAnchorScroll(rt.N(e.Core), scrollAnchor)
 	return e
 }
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
-// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+// holds real keyboard focus - but only while one of its ancestors actually holds focus.
 //
 // This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
 // focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
@@ -2415,19 +3172,25 @@ func (e StatefulDivEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) StatefulD
 // The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
 // web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
 // when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
-// selected child — if the container isn't focused, the claim is ignored.
+// selected child - if the container isn't focused, the claim is ignored.
+//
+// AriaActiveDescendant calls <E as gpui_kit::StatefulInteractiveElement>::aria_active_descendant.
 func (e StatefulDivEl) AriaActiveDescendant() StatefulDivEl {
 	tStatefulInteractiveElementAriaActiveDescendant(rt.N(e.Core))
 	return e
 }
 
 // Set the column count for this element.
+//
+// AriaColumnCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_count.
 func (e StatefulDivEl) AriaColumnCount(count int) StatefulDivEl {
 	tStatefulInteractiveElementAriaColumnCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the column index for this element.
+//
+// AriaColumnIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_column_index.
 func (e StatefulDivEl) AriaColumnIndex(index int) StatefulDivEl {
 	tStatefulInteractiveElementAriaColumnIndex(rt.N(e.Core), index)
 	return e
@@ -2436,12 +3199,16 @@ func (e StatefulDivEl) AriaColumnIndex(index int) StatefulDivEl {
 // Set the accessible description for this element. Unlike the label (which names the element), the
 // description provides supplementary information that assistive technology announces after the
 // name, role, and value - for example a settings subtitle or a hint.
+//
+// AriaDescription calls <E as gpui_kit::StatefulInteractiveElement>::aria_description.
 func (e StatefulDivEl) AriaDescription(description string) StatefulDivEl {
 	tStatefulInteractiveElementAriaDescription(rt.N(e.Core), description)
 	return e
 }
 
 // Set the expanded state for this element.
+//
+// AriaExpanded calls <E as gpui_kit::StatefulInteractiveElement>::aria_expanded.
 func (e StatefulDivEl) AriaExpanded(expanded bool) StatefulDivEl {
 	tStatefulInteractiveElementAriaExpanded(rt.N(e.Core), expanded)
 	return e
@@ -2452,36 +3219,48 @@ func (e StatefulDivEl) AriaExpanded(expanded bool) StatefulDivEl {
 //
 // Note that this does not create a keymap. It simply instructs assistive technology what the
 // keymap is.
+//
+// AriaKeyshortcuts calls <E as gpui_kit::StatefulInteractiveElement>::aria_keyshortcuts.
 func (e StatefulDivEl) AriaKeyshortcuts(keyshortcuts string) StatefulDivEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(rt.N(e.Core), keyshortcuts)
 	return e
 }
 
 // Set the accessible label for this element.
+//
+// AriaLabel calls <E as gpui_kit::StatefulInteractiveElement>::aria_label.
 func (e StatefulDivEl) AriaLabel(label string) StatefulDivEl {
 	tStatefulInteractiveElementAriaLabel(rt.N(e.Core), label)
 	return e
 }
 
 // Set the heading level of this element.
+//
+// AriaLevel calls <E as gpui_kit::StatefulInteractiveElement>::aria_level.
 func (e StatefulDivEl) AriaLevel(level int) StatefulDivEl {
 	tStatefulInteractiveElementAriaLevel(rt.N(e.Core), level)
 	return e
 }
 
 // Set the maximum numeric value for this element.
+//
+// AriaMaxNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_max_numeric_value.
 func (e StatefulDivEl) AriaMaxNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the minimum numeric value for this element.
+//
+// AriaMinNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_min_numeric_value.
 func (e StatefulDivEl) AriaMinNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaMinNumericValue(rt.N(e.Core), value)
 	return e
 }
 
 // Set the numeric value for this element.
+//
+// AriaNumericValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value.
 func (e StatefulDivEl) AriaNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaNumericValue(rt.N(e.Core), value)
 	return e
@@ -2489,6 +3268,8 @@ func (e StatefulDivEl) AriaNumericValue(value float64) StatefulDivEl {
 
 // Set the step by which assistive technology should expect the numeric value of this element to
 // change (e.g. when incrementing a spin button).
+//
+// AriaNumericValueStep calls <E as gpui_kit::StatefulInteractiveElement>::aria_numeric_value_step.
 func (e StatefulDivEl) AriaNumericValueStep(step float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaNumericValueStep(rt.N(e.Core), step)
 	return e
@@ -2496,42 +3277,56 @@ func (e StatefulDivEl) AriaNumericValueStep(step float64) StatefulDivEl {
 
 // Set the placeholder text reported to assistive technology for this element, shown when a text
 // input is empty.
+//
+// AriaPlaceholder calls <E as gpui_kit::StatefulInteractiveElement>::aria_placeholder.
 func (e StatefulDivEl) AriaPlaceholder(placeholder string) StatefulDivEl {
 	tStatefulInteractiveElementAriaPlaceholder(rt.N(e.Core), placeholder)
 	return e
 }
 
 // Set the position in set of this element.
+//
+// AriaPositionInSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_position_in_set.
 func (e StatefulDivEl) AriaPositionInSet(position int) StatefulDivEl {
 	tStatefulInteractiveElementAriaPositionInSet(rt.N(e.Core), position)
 	return e
 }
 
 // Set the row count for this element.
+//
+// AriaRowCount calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_count.
 func (e StatefulDivEl) AriaRowCount(count int) StatefulDivEl {
 	tStatefulInteractiveElementAriaRowCount(rt.N(e.Core), count)
 	return e
 }
 
 // Set the row index for this element.
+//
+// AriaRowIndex calls <E as gpui_kit::StatefulInteractiveElement>::aria_row_index.
 func (e StatefulDivEl) AriaRowIndex(index int) StatefulDivEl {
 	tStatefulInteractiveElementAriaRowIndex(rt.N(e.Core), index)
 	return e
 }
 
 // Set the selected state for this element.
+//
+// AriaSelected calls <E as gpui_kit::StatefulInteractiveElement>::aria_selected.
 func (e StatefulDivEl) AriaSelected(selected bool) StatefulDivEl {
 	tStatefulInteractiveElementAriaSelected(rt.N(e.Core), selected)
 	return e
 }
 
 // Set the size of set for this element.
+//
+// AriaSizeOfSet calls <E as gpui_kit::StatefulInteractiveElement>::aria_size_of_set.
 func (e StatefulDivEl) AriaSizeOfSet(size int) StatefulDivEl {
 	tStatefulInteractiveElementAriaSizeOfSet(rt.N(e.Core), size)
 	return e
 }
 
 // Set the string value of this element, e.g. the text content of a simple text input.
+//
+// AriaValue calls <E as gpui_kit::StatefulInteractiveElement>::aria_value.
 func (e StatefulDivEl) AriaValue(value string) StatefulDivEl {
 	tStatefulInteractiveElementAriaValue(rt.N(e.Core), value)
 	return e
@@ -2541,18 +3336,24 @@ func (e StatefulDivEl) AriaValue(value string) StatefulDivEl {
 // leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
 // viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
 // equivalent to `external_drag_payload`.
+//
+// ExternalDragPayload calls <E as gpui_kit::StatefulInteractiveElement>::external_drag_payload.
 func (e StatefulDivEl) ExternalDragPayload(resolver ExternalDragPayload) StatefulDivEl {
 	tStatefulInteractiveElementExternalDragPayload(rt.N(e.Core), resolver)
 	return e
 }
 
 // Set this element to focusable.
+//
+// Focusable calls <E as gpui_kit::StatefulInteractiveElement>::focusable.
 func (e StatefulDivEl) Focusable() StatefulDivEl {
 	tStatefulInteractiveElementFocusable(rt.N(e.Core))
 	return e
 }
 
 // Set the given styles to be applied when this element's group is active.
+//
+// GroupActive calls <E as gpui_kit::StatefulInteractiveElement>::group_active.
 func (e StatefulDivEl) GroupActive(groupName string, f StyleRefinement) StatefulDivEl {
 	tStatefulInteractiveElementGroupActive(rt.N(e.Core), groupName, f)
 	return e
@@ -2561,6 +3362,8 @@ func (e StatefulDivEl) GroupActive(groupName string, f StyleRefinement) Stateful
 // Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
 // hover listener, not hover styles or tooltips. The fluent API equivalent to
 // `hover_listener_mode`.
+//
+// HoverListenerMode calls <E as gpui_kit::StatefulInteractiveElement>::hover_listener_mode.
 func (e StatefulDivEl) HoverListenerMode(mode HoverListenerMode) StatefulDivEl {
 	tStatefulInteractiveElementHoverListenerMode(rt.N(e.Core), mode)
 	return e
@@ -2569,6 +3372,8 @@ func (e StatefulDivEl) HoverListenerMode(mode HoverListenerMode) StatefulDivEl {
 // Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
 // hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
 // equivalent to `hoverable_tooltip`.
+//
+// HoverableTooltip calls <E as gpui_kit::StatefulInteractiveElement>::hoverable_tooltip.
 func (e StatefulDivEl) HoverableTooltip(buildTooltip ViewOrTooltip) StatefulDivEl {
 	tStatefulInteractiveElementHoverableTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -2578,12 +3383,14 @@ func (e StatefulDivEl) HoverableTooltip(buildTooltip ViewOrTooltip) StatefulDivE
 // to `on_aux_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAuxClick calls <E as gpui_kit::StatefulInteractiveElement>::on_aux_click.
 func (e StatefulDivEl) OnAuxClick(listener func(cx *Cx, e ClickEvent)) StatefulDivEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+// OnAuxClickDo is the event-free convenience variant of OnAuxClick.
 func (e StatefulDivEl) OnAuxClickDo(listener func(cx *Cx)) StatefulDivEl {
 	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
@@ -2593,12 +3400,14 @@ func (e StatefulDivEl) OnAuxClickDo(listener func(cx *Cx)) StatefulDivEl {
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnClick calls <E as gpui_kit::StatefulInteractiveElement>::on_click.
 func (e StatefulDivEl) OnClick(listener func(cx *Cx, e ClickEvent)) StatefulDivEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e StatefulDivEl) OnClickDo(listener func(cx *Cx)) StatefulDivEl {
 	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
@@ -2610,6 +3419,8 @@ func (e StatefulDivEl) OnClickDo(listener func(cx *Cx)) StatefulDivEl {
 // the origin of parent element. The fluent API equivalent to `on_drag`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrag calls <E as gpui_kit::StatefulInteractiveElement>::on_drag.
 func (e StatefulDivEl) OnDrag(value DragValue, constructor View) StatefulDivEl {
 	tStatefulInteractiveElementOnDrag(rt.N(e.Core), value, constructor)
 	return e
@@ -2624,24 +3435,32 @@ func (e StatefulDivEl) OnDrag(value DragValue, constructor View) StatefulDivEl {
 // input. The fluent API equivalent to `on_hover`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnHover calls <E as gpui_kit::StatefulInteractiveElement>::on_hover.
 func (e StatefulDivEl) OnHover(listener func(cx *Cx, e bool)) StatefulDivEl {
 	tStatefulInteractiveElementOnHover(rt.N(e.Core), listener)
 	return e
 }
 
 // Set the overflow x and y to scroll.
+//
+// OverflowScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_scroll.
 func (e StatefulDivEl) OverflowScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow x to scroll.
+//
+// OverflowXScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_x_scroll.
 func (e StatefulDivEl) OverflowXScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowXScroll(rt.N(e.Core))
 	return e
 }
 
 // Set the overflow y to scroll.
+//
+// OverflowYScroll calls <E as gpui_kit::StatefulInteractiveElement>::overflow_y_scroll.
 func (e StatefulDivEl) OverflowYScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowYScroll(rt.N(e.Core))
 	return e
@@ -2650,6 +3469,8 @@ func (e StatefulDivEl) OverflowYScroll() StatefulDivEl {
 // Restrict scrolling of this element to the axis of the input gesture.
 //
 // See `restrict_scroll_to_axis` for details.
+//
+// RestrictScrollToAxis calls <E as gpui_kit::StatefulInteractiveElement>::restrict_scroll_to_axis.
 func (e StatefulDivEl) RestrictScrollToAxis() StatefulDivEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(rt.N(e.Core))
 	return e
@@ -2658,6 +3479,8 @@ func (e StatefulDivEl) RestrictScrollToAxis() StatefulDivEl {
 // Set the accessible role for this element.
 //
 // See the accessibility guide for an overview.
+//
+// Role calls <E as gpui_kit::StatefulInteractiveElement>::role.
 func (e StatefulDivEl) Role(role Role) StatefulDivEl {
 	tStatefulInteractiveElementRole(rt.N(e.Core), role)
 	return e
@@ -2665,6 +3488,8 @@ func (e StatefulDivEl) Role(role Role) StatefulDivEl {
 
 // Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
 // `tooltip`.
+//
+// Tooltip calls <E as gpui_kit::StatefulInteractiveElement>::tooltip.
 func (e StatefulDivEl) Tooltip(buildTooltip ViewOrTooltip) StatefulDivEl {
 	tStatefulInteractiveElementTooltip(rt.N(e.Core), buildTooltip)
 	return e
@@ -2674,12 +3499,16 @@ func (e StatefulDivEl) Tooltip(buildTooltip ViewOrTooltip) StatefulDivEl {
 //
 // Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
 // equivalent to `tooltip_show_delay`.
+//
+// TooltipShowDelay calls <E as gpui_kit::StatefulInteractiveElement>::tooltip_show_delay.
 func (e StatefulDivEl) TooltipShowDelay(delay time.Duration) StatefulDivEl {
 	tStatefulInteractiveElementTooltipShowDelay(rt.N(e.Core), delay)
 	return e
 }
 
 // Track the scroll state of this element with the given handle.
+//
+// TrackScroll calls <E as gpui_kit::StatefulInteractiveElement>::track_scroll.
 func (e StatefulDivEl) TrackScroll(scrollHandle ScrollHandle) StatefulDivEl {
 	tStatefulInteractiveElementTrackScroll(rt.N(e.Core), scrollHandle)
 	return e
@@ -2689,6 +3518,8 @@ func (e StatefulDivEl) TrackScroll(scrollHandle ScrollHandle) StatefulDivEl {
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e StatefulDivEl) BlockMouseExceptScroll() StatefulDivEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -2696,6 +3527,8 @@ func (e StatefulDivEl) BlockMouseExceptScroll() StatefulDivEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e StatefulDivEl) CanDrop(predicate DropAccept) StatefulDivEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -2705,6 +3538,8 @@ func (e StatefulDivEl) CanDrop(predicate DropAccept) StatefulDivEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e StatefulDivEl) CaptureAction(listener ActionHandler) StatefulDivEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -2714,12 +3549,14 @@ func (e StatefulDivEl) CaptureAction(listener ActionHandler) StatefulDivEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e StatefulDivEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e StatefulDivEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2729,12 +3566,14 @@ func (e StatefulDivEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) StatefulDivE
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e StatefulDivEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e StatefulDivEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -2744,6 +3583,8 @@ func (e StatefulDivEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) StatefulDivEl 
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e StatefulDivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2753,6 +3594,8 @@ func (e StatefulDivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) Statefu
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e StatefulDivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2762,6 +3605,8 @@ func (e StatefulDivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulD
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e StatefulDivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) StatefulDivEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -2771,12 +3616,16 @@ func (e StatefulDivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressur
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e StatefulDivEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) StatefulDivEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e StatefulDivEl) DragOver(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -2784,6 +3633,8 @@ func (e StatefulDivEl) DragOver(f StyleRefinement) StatefulDivEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e StatefulDivEl) Focus(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementFocus(rt.N(e.Core), f)
 	return e
@@ -2793,30 +3644,40 @@ func (e StatefulDivEl) Focus(f StyleRefinement) StatefulDivEl {
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e StatefulDivEl) FocusVisible(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e StatefulDivEl) Group(group string) StatefulDivEl {
 	tInteractiveElementGroup(rt.N(e.Core), group)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e StatefulDivEl) GroupDragOver(groupName string, f StyleRefinement) StatefulDivEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e StatefulDivEl) GroupHover(groupName string, f StyleRefinement) StatefulDivEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e StatefulDivEl) Hover(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementHover(rt.N(e.Core), f)
 	return e
@@ -2824,6 +3685,8 @@ func (e StatefulDivEl) Hover(f StyleRefinement) StatefulDivEl {
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e StatefulDivEl) InFocus(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -2831,6 +3694,8 @@ func (e StatefulDivEl) InFocus(f StyleRefinement) StatefulDivEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e StatefulDivEl) KeyContext(keyContext string) StatefulDivEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -2838,12 +3703,16 @@ func (e StatefulDivEl) KeyContext(keyContext string) StatefulDivEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e StatefulDivEl) Occlude() StatefulDivEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e StatefulDivEl) OnAction(listener ActionHandler) StatefulDivEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -2853,12 +3722,14 @@ func (e StatefulDivEl) OnAction(listener ActionHandler) StatefulDivEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e StatefulDivEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e StatefulDivEl) OnAnyMouseDownDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -2869,6 +3740,8 @@ func (e StatefulDivEl) OnAnyMouseDownDo(listener func(cx *Cx)) StatefulDivEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e StatefulDivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) StatefulDivEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -2879,6 +3752,8 @@ func (e StatefulDivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) 
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e StatefulDivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) StatefulDivEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -2890,6 +3765,8 @@ func (e StatefulDivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e StatefulDivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) StatefulDivEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -2899,6 +3776,8 @@ func (e StatefulDivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) Statef
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e StatefulDivEl) OnDrop(listener func(cx *Cx, e DragValue)) StatefulDivEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -2911,6 +3790,8 @@ func (e StatefulDivEl) OnDrop(listener func(cx *Cx, e DragValue)) StatefulDivEl 
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e StatefulDivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) StatefulDivEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -2920,6 +3801,8 @@ func (e StatefulDivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) St
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e StatefulDivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -2929,6 +3812,8 @@ func (e StatefulDivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) StatefulDivE
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e StatefulDivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -2938,6 +3823,8 @@ func (e StatefulDivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulDivEl 
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e StatefulDivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) StatefulDivEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -2947,12 +3834,14 @@ func (e StatefulDivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChang
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e StatefulDivEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e StatefulDivEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -2963,12 +3852,14 @@ func (e StatefulDivEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) 
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e StatefulDivEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e StatefulDivEl) OnMouseDownOutDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -2978,12 +3869,14 @@ func (e StatefulDivEl) OnMouseDownOutDo(listener func(cx *Cx)) StatefulDivEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e StatefulDivEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e StatefulDivEl) OnMouseExitDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -2993,12 +3886,14 @@ func (e StatefulDivEl) OnMouseExitDo(listener func(cx *Cx)) StatefulDivEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e StatefulDivEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e StatefulDivEl) OnMouseMoveDo(listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -3008,6 +3903,8 @@ func (e StatefulDivEl) OnMouseMoveDo(listener func(cx *Cx)) StatefulDivEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e StatefulDivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) StatefulDivEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -3017,12 +3914,14 @@ func (e StatefulDivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEven
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e StatefulDivEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e StatefulDivEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -3033,12 +3932,14 @@ func (e StatefulDivEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) St
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e StatefulDivEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e StatefulDivEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) StatefulDivEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -3048,6 +3949,8 @@ func (e StatefulDivEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx))
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e StatefulDivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) StatefulDivEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -3057,6 +3960,8 @@ func (e StatefulDivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) StatefulDivE
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e StatefulDivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) StatefulDivEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -3066,11 +3971,15 @@ func (e StatefulDivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) StatefulDi
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e StatefulDivEl) TabGroup() StatefulDivEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e StatefulDivEl) TabIndex(index int) StatefulDivEl {
 	tInteractiveElementTabIndex(rt.N(e.Core), index)
 	return e
@@ -3080,6 +3989,8 @@ func (e StatefulDivEl) TabIndex(index int) StatefulDivEl {
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e StatefulDivEl) TabStop(tabStop bool) StatefulDivEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -3087,6 +3998,8 @@ func (e StatefulDivEl) TabStop(tabStop bool) StatefulDivEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e StatefulDivEl) TrackFocus(focusHandle FocusHandle) StatefulDivEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -3094,23 +4007,30 @@ func (e StatefulDivEl) TrackFocus(focusHandle FocusHandle) StatefulDivEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e StatefulDivEl) WindowControlArea(area WindowControlArea) StatefulDivEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e StatefulDivEl) Text(s string) StatefulDivEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e StatefulDivEl) ChildView(v View) StatefulDivEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e StatefulDivEl) Child(child Element) StatefulDivEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e StatefulDivEl) Children(children ...Element) StatefulDivEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -3119,26 +4039,32 @@ func (e StatefulDivEl) Children(children ...Element) StatefulDivEl {
 // StyleRefinement is gpui_kit::StyleRefinement.
 type StyleRefinement struct{ rt.Val }
 
-// NewStyleRefinementDefault is <gpui_kit::StyleRefinement as Default>::default.
+// NewStyleRefinementDefault calls <gpui_kit::StyleRefinement as Default>::default.
 func NewStyleRefinementDefault(st ...Style) StyleRefinement {
 	n := rt.NewValue(261)
 	rt.Tokens(n, st)
 	return StyleRefinement{Val: rt.MkVal(n)}
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e StyleRefinement) Style(st ...Style) StyleRefinement { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e StyleRefinement) AspectRatio(ratio float32) StyleRefinement {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e StyleRefinement) Bg(fill Fill) StyleRefinement { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e StyleRefinement) Border(length Length) StyleRefinement {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3146,12 +4072,16 @@ func (e StyleRefinement) Border(length Length) StyleRefinement {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e StyleRefinement) BorderB(length Length) StyleRefinement {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e StyleRefinement) BorderColor(borderColor Color) StyleRefinement {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3159,6 +4089,8 @@ func (e StyleRefinement) BorderColor(borderColor Color) StyleRefinement {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e StyleRefinement) BorderL(length Length) StyleRefinement {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3166,6 +4098,8 @@ func (e StyleRefinement) BorderL(length Length) StyleRefinement {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e StyleRefinement) BorderR(length Length) StyleRefinement {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3173,6 +4107,8 @@ func (e StyleRefinement) BorderR(length Length) StyleRefinement {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e StyleRefinement) BorderT(length Length) StyleRefinement {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3180,6 +4116,8 @@ func (e StyleRefinement) BorderT(length Length) StyleRefinement {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e StyleRefinement) BorderX(length Length) StyleRefinement {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3187,6 +4125,8 @@ func (e StyleRefinement) BorderX(length Length) StyleRefinement {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e StyleRefinement) BorderY(length Length) StyleRefinement {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3194,30 +4134,40 @@ func (e StyleRefinement) BorderY(length Length) StyleRefinement {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e StyleRefinement) Bottom(length Length) StyleRefinement {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e StyleRefinement) ColEnd(end int16) StyleRefinement {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e StyleRefinement) ColSpan(span uint16) StyleRefinement {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e StyleRefinement) ColStart(start int16) StyleRefinement {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e StyleRefinement) Cursor(cursor CursorStyle) StyleRefinement {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3225,33 +4175,45 @@ func (e StyleRefinement) Cursor(cursor CursorStyle) StyleRefinement {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e StyleRefinement) FlexBasis(basis Length) StyleRefinement {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e StyleRefinement) FlexGrow(grow float32) StyleRefinement {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e StyleRefinement) FlexShrink(shrink float32) StyleRefinement {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e StyleRefinement) Font(font Font) StyleRefinement { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e StyleRefinement) FontFamily(familyName string) StyleRefinement {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e StyleRefinement) FontFeatures(features FontFeatures) StyleRefinement {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3260,12 +4222,16 @@ func (e StyleRefinement) FontFeatures(features FontFeatures) StyleRefinement {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e StyleRefinement) FontWeight(weight FontWeight) StyleRefinement {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e StyleRefinement) Gap(length Length) StyleRefinement {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3273,6 +4239,8 @@ func (e StyleRefinement) Gap(length Length) StyleRefinement {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e StyleRefinement) GapX(length Length) StyleRefinement {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3280,18 +4248,24 @@ func (e StyleRefinement) GapX(length Length) StyleRefinement {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e StyleRefinement) GapY(length Length) StyleRefinement {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e StyleRefinement) GridCols(cols uint16) StyleRefinement {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e StyleRefinement) GridColsMaxContent(cols uint16) StyleRefinement {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3299,18 +4273,24 @@ func (e StyleRefinement) GridColsMaxContent(cols uint16) StyleRefinement {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e StyleRefinement) GridColsMinContent(cols uint16) StyleRefinement {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e StyleRefinement) GridRows(rows uint16) StyleRefinement {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e StyleRefinement) GridRowsMaxContent(rows uint16) StyleRefinement {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3318,16 +4298,22 @@ func (e StyleRefinement) GridRowsMaxContent(rows uint16) StyleRefinement {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e StyleRefinement) GridRowsMinContent(rows uint16) StyleRefinement {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e StyleRefinement) H(length Length) StyleRefinement { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e StyleRefinement) Inset(length Length) StyleRefinement {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3335,6 +4321,8 @@ func (e StyleRefinement) Inset(length Length) StyleRefinement {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e StyleRefinement) Left(length Length) StyleRefinement {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3342,33 +4330,45 @@ func (e StyleRefinement) Left(length Length) StyleRefinement {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e StyleRefinement) LineClamp(lines int) StyleRefinement {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e StyleRefinement) LineHeight(lineHeight Length) StyleRefinement {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e StyleRefinement) M(length Length) StyleRefinement { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e StyleRefinement) MaxH(length Length) StyleRefinement {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e StyleRefinement) MaxSize(length Length) StyleRefinement {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e StyleRefinement) MaxW(length Length) StyleRefinement {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3376,21 +4376,29 @@ func (e StyleRefinement) MaxW(length Length) StyleRefinement {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e StyleRefinement) Mb(length Length) StyleRefinement { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e StyleRefinement) MinH(length Length) StyleRefinement {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e StyleRefinement) MinSize(length Length) StyleRefinement {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e StyleRefinement) MinW(length Length) StyleRefinement {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3398,65 +4406,95 @@ func (e StyleRefinement) MinW(length Length) StyleRefinement {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e StyleRefinement) Ml(length Length) StyleRefinement { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e StyleRefinement) Mr(length Length) StyleRefinement { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e StyleRefinement) Mt(length Length) StyleRefinement { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e StyleRefinement) Mx(length Length) StyleRefinement { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e StyleRefinement) My(length Length) StyleRefinement { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e StyleRefinement) Opacity(opacity float32) StyleRefinement {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e StyleRefinement) P(length Length) StyleRefinement { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e StyleRefinement) Pb(length Length) StyleRefinement { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e StyleRefinement) Pl(length Length) StyleRefinement { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e StyleRefinement) Pr(length Length) StyleRefinement { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e StyleRefinement) Pt(length Length) StyleRefinement { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e StyleRefinement) Px(length Length) StyleRefinement { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e StyleRefinement) Py(length Length) StyleRefinement { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e StyleRefinement) Right(length Length) StyleRefinement {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e StyleRefinement) Rounded(length Length) StyleRefinement {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3464,6 +4502,8 @@ func (e StyleRefinement) Rounded(length Length) StyleRefinement {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e StyleRefinement) RoundedB(length Length) StyleRefinement {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3471,6 +4511,8 @@ func (e StyleRefinement) RoundedB(length Length) StyleRefinement {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e StyleRefinement) RoundedBl(length Length) StyleRefinement {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3478,6 +4520,8 @@ func (e StyleRefinement) RoundedBl(length Length) StyleRefinement {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e StyleRefinement) RoundedBr(length Length) StyleRefinement {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3485,6 +4529,8 @@ func (e StyleRefinement) RoundedBr(length Length) StyleRefinement {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e StyleRefinement) RoundedL(length Length) StyleRefinement {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3492,6 +4538,8 @@ func (e StyleRefinement) RoundedL(length Length) StyleRefinement {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e StyleRefinement) RoundedR(length Length) StyleRefinement {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3499,6 +4547,8 @@ func (e StyleRefinement) RoundedR(length Length) StyleRefinement {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e StyleRefinement) RoundedT(length Length) StyleRefinement {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3506,6 +4556,8 @@ func (e StyleRefinement) RoundedT(length Length) StyleRefinement {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e StyleRefinement) RoundedTl(length Length) StyleRefinement {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3513,24 +4565,32 @@ func (e StyleRefinement) RoundedTl(length Length) StyleRefinement {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e StyleRefinement) RoundedTr(length Length) StyleRefinement {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e StyleRefinement) RowEnd(end int16) StyleRefinement {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e StyleRefinement) RowSpan(span uint16) StyleRefinement {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e StyleRefinement) RowStart(start int16) StyleRefinement {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3540,24 +4600,32 @@ func (e StyleRefinement) RowStart(start int16) StyleRefinement {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e StyleRefinement) ScrollbarWidth(width Length) StyleRefinement {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e StyleRefinement) Shadow(shadows []BoxShadow) StyleRefinement {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e StyleRefinement) Size(length Length) StyleRefinement {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e StyleRefinement) TextAlign(align TextAlign) StyleRefinement {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3566,23 +4634,31 @@ func (e StyleRefinement) TextAlign(align TextAlign) StyleRefinement {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e StyleRefinement) TextBg(bg Color) StyleRefinement { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e StyleRefinement) TextColor(color Color) StyleRefinement {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e StyleRefinement) TextDecorationColor(color Color) StyleRefinement {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e StyleRefinement) TextOverflow(overflow TextOverflow) StyleRefinement {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3591,6 +4667,8 @@ func (e StyleRefinement) TextOverflow(overflow TextOverflow) StyleRefinement {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e StyleRefinement) TextSize(size Length) StyleRefinement {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3598,12 +4676,16 @@ func (e StyleRefinement) TextSize(size Length) StyleRefinement {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e StyleRefinement) Top(length Length) StyleRefinement {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e StyleRefinement) W(length Length) StyleRefinement { tStyledW(rt.N(e.Core), length); return e }
 
 // SVGEl is gpui_kit::Svg.
@@ -3611,7 +4693,7 @@ type SVGEl struct{ rt.ElAnimatableElement }
 
 // Create a new SVG element.
 //
-// SVG is gpui_kit::svg.
+// SVG calls gpui_kit::svg.
 func SVG(st ...Style) SVGEl {
 	n := rt.NewNode(262)
 	rt.Tokens(n, st)
@@ -3621,7 +4703,7 @@ func SVG(st ...Style) SVGEl {
 // Set the raw SVG data for this element. The SVG will be rendered directly from the provided
 // bytes.
 //
-// Data is <gpui_kit::Svg>::data.
+// Data calls <gpui_kit::Svg>::data.
 func (e SVGEl) Data(data []uint8) SVGEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(uint32(len(data)))
@@ -3633,7 +4715,7 @@ func (e SVGEl) Data(data []uint8) SVGEl {
 
 // Set the path to the SVG file for this element.
 //
-// ExternalPath is <gpui_kit::Svg>::external_path.
+// ExternalPath calls <gpui_kit::Svg>::external_path.
 func (e SVGEl) ExternalPath(path string) SVGEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(path)
@@ -3642,7 +4724,7 @@ func (e SVGEl) ExternalPath(path string) SVGEl {
 
 // Set the path to the SVG file for this element.
 //
-// Path is <gpui_kit::Svg>::path.
+// Path calls <gpui_kit::Svg>::path.
 func (e SVGEl) Path(path string) SVGEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Str(path)
@@ -3659,7 +4741,7 @@ func (e SVGEl) Path(path string) SVGEl {
 // still clipped and ordered by the bounds of its starting transformation, so keep its motion close
 // to them.
 //
-// WithTimedTransformation is <gpui_kit::Svg>::with_timed_transformation.
+// WithTimedTransformation calls <gpui_kit::Svg>::with_timed_transformation.
 func (e SVGEl) WithTimedTransformation(transformation TimedTransformation) SVGEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	rt.PutTimedTransformation(o, transformation)
@@ -3669,30 +4751,40 @@ func (e SVGEl) WithTimedTransformation(transformation TimedTransformation) SVGEl
 // Transform the SVG element with the given transformation. Note that this won't effect the hitbox
 // or layout of the element, only the rendering.
 //
-// WithTransformation is <gpui_kit::Svg>::with_transformation.
+// WithTransformation calls <gpui_kit::Svg>::with_transformation.
 func (e SVGEl) WithTransformation(transformation Transformation) SVGEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutTransformation(o, transformation)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SVGEl) Style(st ...Style) SVGEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SVGEl) AspectRatio(ratio float32) SVGEl { tStyledAspectRatio(rt.N(e.Core), ratio); return e }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SVGEl) Bg(fill Fill) SVGEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SVGEl) Border(length Length) SVGEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SVGEl) BorderB(length Length) SVGEl { tStyledBorderB(rt.N(e.Core), length); return e }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SVGEl) BorderColor(borderColor Color) SVGEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3700,60 +4792,92 @@ func (e SVGEl) BorderColor(borderColor Color) SVGEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SVGEl) BorderL(length Length) SVGEl { tStyledBorderL(rt.N(e.Core), length); return e }
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SVGEl) BorderR(length Length) SVGEl { tStyledBorderR(rt.N(e.Core), length); return e }
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SVGEl) BorderT(length Length) SVGEl { tStyledBorderT(rt.N(e.Core), length); return e }
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SVGEl) BorderX(length Length) SVGEl { tStyledBorderX(rt.N(e.Core), length); return e }
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SVGEl) BorderY(length Length) SVGEl { tStyledBorderY(rt.N(e.Core), length); return e }
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SVGEl) Bottom(length Length) SVGEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SVGEl) ColEnd(end int16) SVGEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SVGEl) ColSpan(span uint16) SVGEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SVGEl) ColStart(start int16) SVGEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SVGEl) Cursor(cursor CursorStyle) SVGEl { tStyledCursor(rt.N(e.Core), cursor); return e }
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SVGEl) FlexBasis(basis Length) SVGEl { tStyledFlexBasis(rt.N(e.Core), basis); return e }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SVGEl) FlexGrow(grow float32) SVGEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SVGEl) FlexShrink(shrink float32) SVGEl { tStyledFlexShrink(rt.N(e.Core), shrink); return e }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SVGEl) Font(font Font) SVGEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SVGEl) FontFamily(familyName string) SVGEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SVGEl) FontFeatures(features FontFeatures) SVGEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3762,23 +4886,35 @@ func (e SVGEl) FontFeatures(features FontFeatures) SVGEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SVGEl) FontWeight(weight FontWeight) SVGEl { tStyledFontWeight(rt.N(e.Core), weight); return e }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SVGEl) Gap(length Length) SVGEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SVGEl) GapX(length Length) SVGEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SVGEl) GapY(length Length) SVGEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SVGEl) GridCols(cols uint16) SVGEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SVGEl) GridColsMaxContent(cols uint16) SVGEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3786,15 +4922,21 @@ func (e SVGEl) GridColsMaxContent(cols uint16) SVGEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SVGEl) GridColsMinContent(cols uint16) SVGEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SVGEl) GridRows(rows uint16) SVGEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SVGEl) GridRowsMaxContent(rows uint16) SVGEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3802,190 +4944,286 @@ func (e SVGEl) GridRowsMaxContent(rows uint16) SVGEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SVGEl) GridRowsMinContent(rows uint16) SVGEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SVGEl) H(length Length) SVGEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SVGEl) Inset(length Length) SVGEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SVGEl) Left(length Length) SVGEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SVGEl) LineClamp(lines int) SVGEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SVGEl) LineHeight(lineHeight Length) SVGEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SVGEl) M(length Length) SVGEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SVGEl) MaxH(length Length) SVGEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SVGEl) MaxSize(length Length) SVGEl { tStyledMaxSize(rt.N(e.Core), length); return e }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SVGEl) MaxW(length Length) SVGEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SVGEl) Mb(length Length) SVGEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SVGEl) MinH(length Length) SVGEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SVGEl) MinSize(length Length) SVGEl { tStyledMinSize(rt.N(e.Core), length); return e }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SVGEl) MinW(length Length) SVGEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SVGEl) Ml(length Length) SVGEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SVGEl) Mr(length Length) SVGEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SVGEl) Mt(length Length) SVGEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SVGEl) Mx(length Length) SVGEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SVGEl) My(length Length) SVGEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SVGEl) Opacity(opacity float32) SVGEl { tStyledOpacity(rt.N(e.Core), opacity); return e }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SVGEl) P(length Length) SVGEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SVGEl) Pb(length Length) SVGEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SVGEl) Pl(length Length) SVGEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SVGEl) Pr(length Length) SVGEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SVGEl) Pt(length Length) SVGEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SVGEl) Px(length Length) SVGEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SVGEl) Py(length Length) SVGEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SVGEl) Right(length Length) SVGEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SVGEl) Rounded(length Length) SVGEl { tStyledRounded(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SVGEl) RoundedB(length Length) SVGEl { tStyledRoundedB(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SVGEl) RoundedBl(length Length) SVGEl { tStyledRoundedBl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SVGEl) RoundedBr(length Length) SVGEl { tStyledRoundedBr(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SVGEl) RoundedL(length Length) SVGEl { tStyledRoundedL(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SVGEl) RoundedR(length Length) SVGEl { tStyledRoundedR(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SVGEl) RoundedT(length Length) SVGEl { tStyledRoundedT(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SVGEl) RoundedTl(length Length) SVGEl { tStyledRoundedTl(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SVGEl) RoundedTr(length Length) SVGEl { tStyledRoundedTr(rt.N(e.Core), length); return e }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SVGEl) RowEnd(end int16) SVGEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SVGEl) RowSpan(span uint16) SVGEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SVGEl) RowStart(start int16) SVGEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SVGEl) ScrollbarWidth(width Length) SVGEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SVGEl) Shadow(shadows []BoxShadow) SVGEl { tStyledShadow(rt.N(e.Core), shadows); return e }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SVGEl) Size(length Length) SVGEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SVGEl) TextAlign(align TextAlign) SVGEl { tStyledTextAlign(rt.N(e.Core), align); return e }
 
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SVGEl) TextBg(bg Color) SVGEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SVGEl) TextColor(color Color) SVGEl { tStyledTextColor(rt.N(e.Core), color); return e }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SVGEl) TextDecorationColor(color Color) SVGEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SVGEl) TextOverflow(overflow TextOverflow) SVGEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3994,19 +5232,27 @@ func (e SVGEl) TextOverflow(overflow TextOverflow) SVGEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SVGEl) TextSize(size Length) SVGEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SVGEl) Top(length Length) SVGEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SVGEl) W(length Length) SVGEl { tStyledW(rt.N(e.Core), length); return e }
 
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
 // See `is_hovered` for details.
+//
+// BlockMouseExceptScroll calls <E as gpui_kit::InteractiveElement>::block_mouse_except_scroll.
 func (e SVGEl) BlockMouseExceptScroll() SVGEl {
 	tInteractiveElementBlockMouseExceptScroll(rt.N(e.Core))
 	return e
@@ -4014,6 +5260,8 @@ func (e SVGEl) BlockMouseExceptScroll() SVGEl {
 
 // Use the given predicate to determine whether or not a drop event should be dispatched to this
 // element. The fluent API equivalent to `can_drop`.
+//
+// CanDrop calls <E as gpui_kit::InteractiveElement>::can_drop.
 func (e SVGEl) CanDrop(predicate DropAccept) SVGEl {
 	tInteractiveElementCanDrop(rt.N(e.Core), predicate)
 	return e
@@ -4023,6 +5271,8 @@ func (e SVGEl) CanDrop(predicate DropAccept) SVGEl {
 // `capture_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAction calls <E as gpui_kit::InteractiveElement>::capture_action.
 func (e SVGEl) CaptureAction(listener ActionHandler) SVGEl {
 	tInteractiveElementCaptureAction(rt.N(e.Core), listener)
 	return e
@@ -4032,12 +5282,14 @@ func (e SVGEl) CaptureAction(listener ActionHandler) SVGEl {
 // fluent API equivalent to `capture_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseDown calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_down.
 func (e SVGEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementCaptureAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseDownDo is the event-free convenience variant of CaptureAnyMouseDown.
 func (e SVGEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -4047,12 +5299,14 @@ func (e SVGEl) CaptureAnyMouseDownDo(listener func(cx *Cx)) SVGEl {
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureAnyMouseUp calls <E as gpui_kit::InteractiveElement>::capture_any_mouse_up.
 func (e SVGEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
 	return e
 }
 
-// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+// CaptureAnyMouseUpDo is the event-free convenience variant of CaptureAnyMouseUp.
 func (e SVGEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
@@ -4062,6 +5316,8 @@ func (e SVGEl) CaptureAnyMouseUpDo(listener func(cx *Cx)) SVGEl {
 // to `capture_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyDown calls <E as gpui_kit::InteractiveElement>::capture_key_down.
 func (e SVGEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementCaptureKeyDown(rt.N(e.Core), listener)
 	return e
@@ -4071,6 +5327,8 @@ func (e SVGEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 // `capture_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureKeyUp calls <E as gpui_kit::InteractiveElement>::capture_key_up.
 func (e SVGEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementCaptureKeyUp(rt.N(e.Core), listener)
 	return e
@@ -4080,6 +5338,8 @@ func (e SVGEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CaptureMousePressure calls <E as gpui_kit::InteractiveElement>::capture_mouse_pressure.
 func (e SVGEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) SVGEl {
 	tInteractiveElementCaptureMousePressure(rt.N(e.Core), listener)
 	return e
@@ -4089,12 +5349,16 @@ func (e SVGEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent))
 // equivalent to `capture_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// CapturePinch calls <E as gpui_kit::InteractiveElement>::capture_pinch.
 func (e SVGEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) SVGEl {
 	tInteractiveElementCapturePinch(rt.N(e.Core), listener)
 	return e
 }
 
 // Apply the given style when the given data type is dragged over this element
+//
+// DragOver calls <E as gpui_kit::InteractiveElement>::drag_over.
 func (e SVGEl) DragOver(f StyleRefinement) SVGEl {
 	tInteractiveElementDragOver(rt.N(e.Core), f)
 	return e
@@ -4102,37 +5366,51 @@ func (e SVGEl) DragOver(f StyleRefinement) SVGEl {
 
 // Set the given styles to be applied when this element, specifically, is focused. Requires that
 // the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// Focus calls <E as gpui_kit::InteractiveElement>::focus.
 func (e SVGEl) Focus(f StyleRefinement) SVGEl { tInteractiveElementFocus(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is focused via keyboard navigation. This is
 // similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
 // the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
 // Elements can be made focusable using `TrackFocus`.
+//
+// FocusVisible calls <E as gpui_kit::InteractiveElement>::focus_visible.
 func (e SVGEl) FocusVisible(f StyleRefinement) SVGEl {
 	tInteractiveElementFocusVisible(rt.N(e.Core), f)
 	return e
 }
 
 // Assign this element to a group of elements that can be styled together
+//
+// Group calls <E as gpui_kit::InteractiveElement>::group.
 func (e SVGEl) Group(group string) SVGEl { tInteractiveElementGroup(rt.N(e.Core), group); return e }
 
 // Apply the given style when the given data type is dragged over this element's group
+//
+// GroupDragOver calls <E as gpui_kit::InteractiveElement>::group_drag_over.
 func (e SVGEl) GroupDragOver(groupName string, f StyleRefinement) SVGEl {
 	tInteractiveElementGroupDragOver(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over a group member
+//
+// GroupHover calls <E as gpui_kit::InteractiveElement>::group_hover.
 func (e SVGEl) GroupHover(groupName string, f StyleRefinement) SVGEl {
 	tInteractiveElementGroupHover(rt.N(e.Core), groupName, f)
 	return e
 }
 
 // Apply the given style to this element when the mouse hovers over it
+//
+// Hover calls <E as gpui_kit::InteractiveElement>::hover.
 func (e SVGEl) Hover(f StyleRefinement) SVGEl { tInteractiveElementHover(rt.N(e.Core), f); return e }
 
 // Set the given styles to be applied when this element is inside another element that is focused.
 // Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
+//
+// InFocus calls <E as gpui_kit::InteractiveElement>::in_focus.
 func (e SVGEl) InFocus(f StyleRefinement) SVGEl {
 	tInteractiveElementInFocus(rt.N(e.Core), f)
 	return e
@@ -4140,6 +5418,8 @@ func (e SVGEl) InFocus(f StyleRefinement) SVGEl {
 
 // Set the keymap context for this element. This will be used to determine which action to dispatch
 // from the keymap.
+//
+// KeyContext calls <E as gpui_kit::InteractiveElement>::key_context.
 func (e SVGEl) KeyContext(keyContext string) SVGEl {
 	tInteractiveElementKeyContext(rt.N(e.Core), keyContext)
 	return e
@@ -4147,12 +5427,16 @@ func (e SVGEl) KeyContext(keyContext string) SVGEl {
 
 // Block the mouse from all interactions with elements behind this element's hitbox. Typically
 // `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
+//
+// Occlude calls <E as gpui_kit::InteractiveElement>::occlude.
 func (e SVGEl) Occlude() SVGEl { tInteractiveElementOcclude(rt.N(e.Core)); return e }
 
 // Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
 // to `on_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAction calls <E as gpui_kit::InteractiveElement>::on_action.
 func (e SVGEl) OnAction(listener ActionHandler) SVGEl {
 	tInteractiveElementOnAction(rt.N(e.Core), listener)
 	return e
@@ -4162,12 +5446,14 @@ func (e SVGEl) OnAction(listener ActionHandler) SVGEl {
 // fluent API equivalent to `on_any_mouse_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnAnyMouseDown calls <E as gpui_kit::InteractiveElement>::on_any_mouse_down.
 func (e SVGEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnAnyMouseDown(rt.N(e.Core), listener)
 	return e
 }
 
-// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnAnyMouseDownDo is the event-free convenience variant of OnAnyMouseDown.
 func (e SVGEl) OnAnyMouseDownDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
 	return e
@@ -4178,6 +5464,8 @@ func (e SVGEl) OnAnyMouseDownDo(listener func(cx *Cx)) SVGEl {
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBackGesture calls <E as gpui_kit::InteractiveElement>::on_back_gesture.
 func (e SVGEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SVGEl {
 	tInteractiveElementOnBackGesture(rt.N(e.Core), listener)
 	return e
@@ -4188,6 +5476,8 @@ func (e SVGEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SVGEl {
 // users. The fluent API equivalent to `on_boxed_action`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnBoxedAction calls <E as gpui_kit::InteractiveElement>::on_boxed_action.
 func (e SVGEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SVGEl {
 	tInteractiveElementOnBoxedAction(rt.N(e.Core), action, listener)
 	return e
@@ -4199,6 +5489,8 @@ func (e SVGEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SVG
 // and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDragMove calls <E as gpui_kit::InteractiveElement>::on_drag_move.
 func (e SVGEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SVGEl {
 	tInteractiveElementOnDragMove(rt.N(e.Core), listener)
 	return e
@@ -4208,6 +5500,8 @@ func (e SVGEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SVGEl {
 // this element. The fluent API equivalent to `on_drop`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnDrop calls <E as gpui_kit::InteractiveElement>::on_drop.
 func (e SVGEl) OnDrop(listener func(cx *Cx, e DragValue)) SVGEl {
 	tInteractiveElementOnDrop(rt.N(e.Core), listener)
 	return e
@@ -4220,6 +5514,8 @@ func (e SVGEl) OnDrop(listener func(cx *Cx, e DragValue)) SVGEl {
 // fluent API equivalent to `on_file_drop_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnFileDropExit calls <E as gpui_kit::InteractiveElement>::on_file_drop_exit.
 func (e SVGEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) SVGEl {
 	tInteractiveElementOnFileDropExit(rt.N(e.Core), listener)
 	return e
@@ -4229,6 +5525,8 @@ func (e SVGEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) SVGEl {
 // `on_key_down`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyDown calls <E as gpui_kit::InteractiveElement>::on_key_down.
 func (e SVGEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementOnKeyDown(rt.N(e.Core), listener)
 	return e
@@ -4238,6 +5536,8 @@ func (e SVGEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 // `on_key_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnKeyUp calls <E as gpui_kit::InteractiveElement>::on_key_up.
 func (e SVGEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementOnKeyUp(rt.N(e.Core), listener)
 	return e
@@ -4247,6 +5547,8 @@ func (e SVGEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 // `on_modifiers_changed`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnModifiersChanged calls <E as gpui_kit::InteractiveElement>::on_modifiers_changed.
 func (e SVGEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) SVGEl {
 	tInteractiveElementOnModifiersChanged(rt.N(e.Core), listener)
 	return e
@@ -4256,12 +5558,14 @@ func (e SVGEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)
 // equivalent to `on_mouse_down`.
 //
 // See `listener` to get access to the view state from this callback.
+//
+// OnMouseDown calls <E as gpui_kit::InteractiveElement>::on_mouse_down.
 func (e SVGEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseDown(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownDo is the event-free convenience variant of OnMouseDown.
 func (e SVGEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
 	return e
@@ -4272,12 +5576,14 @@ func (e SVGEl) OnMouseDownDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 // `on_mouse_down_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseDownOut calls <E as gpui_kit::InteractiveElement>::on_mouse_down_out.
 func (e SVGEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseDownOutDo is the event-free convenience variant of OnMouseDownOut.
 func (e SVGEl) OnMouseDownOutDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
@@ -4287,12 +5593,14 @@ func (e SVGEl) OnMouseDownOutDo(listener func(cx *Cx)) SVGEl {
 // equivalent to `on_mouse_exit`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseExit calls <E as gpui_kit::InteractiveElement>::on_mouse_exit.
 func (e SVGEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) SVGEl {
 	tInteractiveElementOnMouseExit(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+// OnMouseExitDo is the event-free convenience variant of OnMouseExit.
 func (e SVGEl) OnMouseExitDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
 	return e
@@ -4302,12 +5610,14 @@ func (e SVGEl) OnMouseExitDo(listener func(cx *Cx)) SVGEl {
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseMove calls <E as gpui_kit::InteractiveElement>::on_mouse_move.
 func (e SVGEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
 	return e
 }
 
-// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+// OnMouseMoveDo is the event-free convenience variant of OnMouseMove.
 func (e SVGEl) OnMouseMoveDo(listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
@@ -4317,6 +5627,8 @@ func (e SVGEl) OnMouseMoveDo(listener func(cx *Cx)) SVGEl {
 // equivalent to `on_mouse_pressure`
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMousePressure calls <E as gpui_kit::InteractiveElement>::on_mouse_pressure.
 func (e SVGEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) SVGEl {
 	tInteractiveElementOnMousePressure(rt.N(e.Core), listener)
 	return e
@@ -4326,12 +5638,14 @@ func (e SVGEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) SVGE
 // fluent API equivalent to `on_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUp calls <E as gpui_kit::InteractiveElement>::on_mouse_up.
 func (e SVGEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseUp(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpDo is the event-free convenience variant of OnMouseUp.
 func (e SVGEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
 	return e
@@ -4342,12 +5656,14 @@ func (e SVGEl) OnMouseUpDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 // `on_mouse_up_out`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnMouseUpOut calls <E as gpui_kit::InteractiveElement>::on_mouse_up_out.
 func (e SVGEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
 	return e
 }
 
-// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+// OnMouseUpOutDo is the event-free convenience variant of OnMouseUpOut.
 func (e SVGEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
@@ -4357,6 +5673,8 @@ func (e SVGEl) OnMouseUpOutDo(button MouseButton, listener func(cx *Cx)) SVGEl {
 // equivalent to `on_pinch`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnPinch calls <E as gpui_kit::InteractiveElement>::on_pinch.
 func (e SVGEl) OnPinch(listener func(cx *Cx, e PinchEvent)) SVGEl {
 	tInteractiveElementOnPinch(rt.N(e.Core), listener)
 	return e
@@ -4366,6 +5684,8 @@ func (e SVGEl) OnPinch(listener func(cx *Cx, e PinchEvent)) SVGEl {
 // `on_scroll`.
 //
 // See `listener` to get access to a view's state from this callback.
+//
+// OnScroll calls <E as gpui_kit::InteractiveElement>::on_scroll.
 func (e SVGEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) SVGEl {
 	tInteractiveElementOnScroll(rt.N(e.Core), listener)
 	return e
@@ -4375,17 +5695,23 @@ func (e SVGEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) SVGEl {
 // but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
 // the order of tab stops within the group, without having to renumber all the tab stops in the
 // whole application.
+//
+// TabGroup calls <E as gpui_kit::InteractiveElement>::tab_group.
 func (e SVGEl) TabGroup() SVGEl { tInteractiveElementTabGroup(rt.N(e.Core)); return e }
 
 // Set index of the tab stop order, and set this node as a tab stop. This will default the element
 // to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
 // with `tab_group` in order to not interfere with the tab index of other elements.
+//
+// TabIndex calls <E as gpui_kit::InteractiveElement>::tab_index.
 func (e SVGEl) TabIndex(index int) SVGEl { tInteractiveElementTabIndex(rt.N(e.Core), index); return e }
 
 // Set whether this element is a tab stop.
 //
 // When false, the element remains in tab-index order but cannot be reached via keyboard
 // navigation. Should only be used with `tab_index`.
+//
+// TabStop calls <E as gpui_kit::InteractiveElement>::tab_stop.
 func (e SVGEl) TabStop(tabStop bool) SVGEl {
 	tInteractiveElementTabStop(rt.N(e.Core), tabStop)
 	return e
@@ -4393,6 +5719,8 @@ func (e SVGEl) TabStop(tabStop bool) SVGEl {
 
 // Track the focus state of the given focus handle on this element. If the focus handle is focused
 // by the application, this element will apply its focused styles.
+//
+// TrackFocus calls <E as gpui_kit::InteractiveElement>::track_focus.
 func (e SVGEl) TrackFocus(focusHandle FocusHandle) SVGEl {
 	tInteractiveElementTrackFocus(rt.N(e.Core), focusHandle)
 	return e
@@ -4400,6 +5728,8 @@ func (e SVGEl) TrackFocus(focusHandle FocusHandle) SVGEl {
 
 // Set the bounds of this element as a window control area for the platform window. The fluent API
 // equivalent to `window_control_area`.
+//
+// WindowControlArea calls <E as gpui_kit::InteractiveElement>::window_control_area.
 func (e SVGEl) WindowControlArea(area WindowControlArea) SVGEl {
 	tInteractiveElementWindowControlArea(rt.N(e.Core), area)
 	return e

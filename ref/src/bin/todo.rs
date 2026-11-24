@@ -1,13 +1,8 @@
-//! ref-todo: the Rust reference for examples/go/todo, written the way a
-//! Rust GPUI-kit app is written, call for call with the Go app: projects in a resizable sidebar, a
-//! task list per project with custom rows (ListDelegates), add/edit/delete through a dialog and an
-//! alert dialog opened with closures, filters and search, keyboard shortcuts heard app-wide, a File
-//! menu of actions, light and dark themes (`Theme::change`), state saved to a JSON file, and a
-//! thread that pretends to sync and posts what it did to the UI thread through a channel.
-//!
-//!   ref-todo                  a real window
-//!   ref-todo --script FILE    offscreen, driven by a gk-meter script (diag build)
-//!   TODO_FILE=path            where the state is kept (default todo.json in the current directory)
+//! Pure-Rust multi-project task manager reference app with JSON persistence
+//! (`TODO_FILE`, defaulting to `todo.json`), priority/due-date tags, filter
+//! pills, search, edit/delete dialogs, keyboard shortcuts, and a simulated
+//! background sync worker.
+
 use futures::StreamExt;
 use futures::channel::mpsc;
 use gpui_kit::base::{h_flex, h_resizable, resizable_panel, v_flex};
@@ -31,8 +26,7 @@ use std::rc::Rc;
 
 gpui_kit::actions!(todo, [NewTask, DeleteTask, Find, ToggleTheme]);
 
-/// An app-wide listener for action A: it runs `f` on the app in its window once the key's dispatch
-/// is over (as the Go app's gk.Shortcut does).
+/// Registers an application action handler that defers updating `TodoApp` in `wh`.
 fn shortcut<A: Action>(cx: &mut App, app: WeakEntity<TodoApp>, wh: AnyWindowHandle, f: fn(&mut TodoApp, &mut Window, &mut Context<TodoApp>)) {
     cx.on_action(move |_: &A, cx: &mut App| {
         let app = app.clone();
@@ -74,7 +68,7 @@ impl Priority {
 struct Task {
     title: String,
     done: bool,
-    due: String, // "2026-11-20" or ""
+    due: String,
     priority: Priority,
 }
 
@@ -104,11 +98,10 @@ struct Saved {
     dark: bool,
 }
 
-/// What the app and its two lists' delegates share.
 struct Model {
     projects: Vec<Project>,
     current: usize,
-    visible: Vec<usize>, // the current project's tasks that pass the filter and the search
+    visible: Vec<usize>,
 }
 
 impl Model {
@@ -125,8 +118,6 @@ type Shared = Rc<RefCell<Model>>;
 fn open_count(p: &Project) -> usize {
     p.tasks.iter().filter(|t| !t.done).count()
 }
-
-// --- the two lists --------------------------------------------------------------------------------
 
 struct ProjectRows {
     model: Shared,
@@ -168,8 +159,6 @@ impl ListDelegate for TaskRows {
         self.model.borrow().visible.len()
     }
 
-    /// One task: a checkbox, the priority's color, the title (a double click edits it) and the due
-    /// date as a tag, red when overdue and amber when due today.
     fn render_item(&mut self, ix: IndexPath, _: &mut Window, cx: &mut Context<ListState<Self>>) -> Option<ListItem> {
         let m = self.model.borrow();
         let i = *m.visible.get(ix.row)?;
@@ -185,7 +174,7 @@ impl ListDelegate for TaskRows {
             .gap_2()
             .items_center()
             .child(Checkbox::new(("done", i)).checked(t.done).on_click(move |done, window, cx| {
-                cx.stop_propagation(); // the row is not selected by the click
+                cx.stop_propagation();
                 let done = *done;
                 app.update(cx, |app, cx| {
                     app.model.borrow_mut().tasks_mut()[i].done = done;
@@ -216,9 +205,12 @@ impl ListDelegate for TaskRows {
     fn set_selected_index(&mut self, _: Option<IndexPath>, _: &mut Window, _: &mut Context<ListState<Self>>) {}
 }
 
-/// Today's date in the local time zone, as the Go app's time.Now().Format(time.DateOnly).
+/// Returns today's local calendar date formatted as `YYYY-MM-DD` for comparing
+/// against ISO due-date strings.
 fn today() -> String {
-    // SAFETY: time and localtime_r write only into the values given them.
+    // SAFETY: `libc::time` accepts a null pointer, `tm` is a plain C struct
+    // valid when zero-initialized, and `localtime_r` writes into our stack
+    // local `tm` without using shared static storage.
     unsafe {
         let now = libc::time(std::ptr::null_mut());
         let mut tm: libc::tm = std::mem::zeroed();
@@ -227,18 +219,16 @@ fn today() -> String {
     }
 }
 
-// --- the app ----------------------------------------------------------------------------------------
-
 struct TodoApp {
     model: Shared,
     filter: Filter,
-    selected: Option<usize>, // a task of the current project
-    editing: Option<usize>,  // the task the dialog edits, None a new one
+    selected: Option<usize>,
+    editing: Option<usize>,
     edit_prio: Priority,
     path: String,
     dark: bool,
     status: String,
-    dirty: usize, // changes not yet "synced"
+    dirty: usize,
     search: Entity<InputState>,
     new_project: Entity<InputState>,
     edit_title: Entity<InputState>,
@@ -341,14 +331,12 @@ impl TodoApp {
         }
     }
 
-    /// Every view and list drawn again (the Go app's gk.Refresh).
     fn refresh(&mut self, cx: &mut Context<Self>) {
         self.project_list.update(cx, |_, cx| cx.notify());
         self.task_list.update(cx, |_, cx| cx.notify());
         cx.notify();
     }
 
-    /// After every edit of the tasks or projects.
     fn changed(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.dirty += 1;
         self.save();
@@ -376,7 +364,7 @@ impl TodoApp {
             }
             m.visible = visible;
         }
-        // a task added at the end is shown
+
         self.task_list.update(cx, |l, cx| match row {
             Some(r) => {
                 l.set_selected_index(Some(IndexPath::default().row(r)), window, cx);
@@ -385,8 +373,6 @@ impl TodoApp {
             None => l.set_selected_index(None, window, cx),
         });
     }
-
-    // --- the views ----------------------------------------------------------------------------------
 
     fn projects_pane(&self, cx: &App) -> impl IntoElement {
         v_flex()
@@ -448,8 +434,6 @@ impl TodoApp {
             .child(div().flex_1().min_h_0().child(body))
     }
 
-    // --- the edit dialog ------------------------------------------------------------------------------
-
     fn open_editor(&mut self, task: Option<usize>, window: &mut Window, cx: &mut Context<Self>) {
         self.editing = task;
         let t = match task {
@@ -505,7 +489,7 @@ impl TodoApp {
     fn save_edit(&mut self, window: &mut Window, cx: &mut Context<Self>) -> bool {
         let title = self.edit_title.read(cx).value().trim().to_string();
         if title.is_empty() {
-            return false; // keep the dialog open
+            return false;
         }
         let due = self.edit_due.read(cx).value().trim().to_string();
         {
@@ -528,8 +512,6 @@ impl TodoApp {
         self.changed(window, cx);
         true
     }
-
-    // --- what the app does ----------------------------------------------------------------------------
 
     fn add_project(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let name = self.new_project.read(cx).value().trim().to_string();
@@ -585,14 +567,12 @@ impl TodoApp {
         cx.notify();
     }
 
-    // --- the pretend sync: a thread that posts to the UI thread ------------------------------------------
-
     fn start_sync(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let (tx, mut rx) = mpsc::unbounded::<(usize, String)>();
         std::thread::spawn(move || {
             for rev in 1.. {
                 std::thread::sleep(std::time::Duration::from_secs(2));
-                // a task another device added
+
                 let remote = if rev == 2 { "Reply to the sync survey".to_string() } else { String::new() };
                 if tx.unbounded_send((rev, remote)).is_err() {
                     return;

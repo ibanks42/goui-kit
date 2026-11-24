@@ -7,7 +7,7 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// DivContextMenu is <gpui_kit::Div as gpui_kit::component::menu::ContextMenuExt>::context_menu: it makes a ContextMenuDivEl of the element.
+// DivContextMenu calls <gpui_kit::Div as gpui_kit::component::menu::ContextMenuExt>::context_menu and converts the element into ContextMenuDivEl.
 func DivContextMenu(e gk.DivEl, f PopupMenu) ContextMenuDivEl {
 	rt.UseComponentMenu()
 	src := rt.TakeNode(rt.N(e.Core), true)
@@ -18,7 +18,7 @@ func DivContextMenu(e gk.DivEl, f PopupMenu) ContextMenuDivEl {
 	return ContextMenuDivEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// DivOverflowScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_scrollbar: it makes a ScrollableDivEl of the element.
+// DivOverflowScrollbar calls <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_scrollbar and converts the element into ScrollableDivEl.
 func DivOverflowScrollbar(e gk.DivEl) ScrollableDivEl {
 	rt.UseComponentScroll()
 	src := rt.TakeNode(rt.N(e.Core), true)
@@ -28,7 +28,7 @@ func DivOverflowScrollbar(e gk.DivEl) ScrollableDivEl {
 	return ScrollableDivEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// DivOverflowXScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_x_scrollbar: it makes a ScrollableDivEl of the element.
+// DivOverflowXScrollbar calls <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_x_scrollbar and converts the element into ScrollableDivEl.
 func DivOverflowXScrollbar(e gk.DivEl) ScrollableDivEl {
 	rt.UseComponentScroll()
 	src := rt.TakeNode(rt.N(e.Core), true)
@@ -38,7 +38,7 @@ func DivOverflowXScrollbar(e gk.DivEl) ScrollableDivEl {
 	return ScrollableDivEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// DivOverflowYScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_y_scrollbar: it makes a ScrollableDivEl of the element.
+// DivOverflowYScrollbar calls <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_y_scrollbar and converts the element into ScrollableDivEl.
 func DivOverflowYScrollbar(e gk.DivEl) ScrollableDivEl {
 	rt.UseComponentScroll()
 	src := rt.TakeNode(rt.N(e.Core), true)

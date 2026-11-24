@@ -4,382 +4,382 @@
 
 package rt
 
-// Without gkstatic the shared library holds every component family (docs/GO.md section 8).
+// In dynamic builds the shared library registers all component families at startup.
 
-// UseBaseAccordion does nothing: the shared library holds GPUI-kit's base/accordion family.
+// UseBaseAccordion is a no-op in dynamic builds because the shared library includes base/accordion.
 func UseBaseAccordion() {}
 
-// UseBaseActions does nothing: the shared library holds GPUI-kit's base/actions family.
+// UseBaseActions is a no-op in dynamic builds because the shared library includes base/actions.
 func UseBaseActions() {}
 
-// UseBaseAlertDialog does nothing: the shared library holds GPUI-kit's base/alert_dialog family.
+// UseBaseAlertDialog is a no-op in dynamic builds because the shared library includes base/alert_dialog.
 func UseBaseAlertDialog() {}
 
-// UseBaseAnimation does nothing: the shared library holds GPUI-kit's base/animation family.
+// UseBaseAnimation is a no-op in dynamic builds because the shared library includes base/animation.
 func UseBaseAnimation() {}
 
-// UseBaseAutoScroll does nothing: the shared library holds GPUI-kit's base/auto_scroll family.
+// UseBaseAutoScroll is a no-op in dynamic builds because the shared library includes base/auto_scroll.
 func UseBaseAutoScroll() {}
 
-// UseBaseAvatar does nothing: the shared library holds GPUI-kit's base/avatar family.
+// UseBaseAvatar is a no-op in dynamic builds because the shared library includes base/avatar.
 func UseBaseAvatar() {}
 
-// UseBaseButton does nothing: the shared library holds GPUI-kit's base/button family.
+// UseBaseButton is a no-op in dynamic builds because the shared library includes base/button.
 func UseBaseButton() {}
 
-// UseBaseCalendar does nothing: the shared library holds GPUI-kit's base/calendar family.
+// UseBaseCalendar is a no-op in dynamic builds because the shared library includes base/calendar.
 func UseBaseCalendar() {}
 
-// UseBaseCheckbox does nothing: the shared library holds GPUI-kit's base/checkbox family.
+// UseBaseCheckbox is a no-op in dynamic builds because the shared library includes base/checkbox.
 func UseBaseCheckbox() {}
 
-// UseBaseCollapsible does nothing: the shared library holds GPUI-kit's base/collapsible family.
+// UseBaseCollapsible is a no-op in dynamic builds because the shared library includes base/collapsible.
 func UseBaseCollapsible() {}
 
-// UseBaseColorPicker does nothing: the shared library holds GPUI-kit's base/color_picker family.
+// UseBaseColorPicker is a no-op in dynamic builds because the shared library includes base/color_picker.
 func UseBaseColorPicker() {}
 
-// UseBaseCombobox does nothing: the shared library holds GPUI-kit's base/combobox family.
+// UseBaseCombobox is a no-op in dynamic builds because the shared library includes base/combobox.
 func UseBaseCombobox() {}
 
-// UseBaseDatePicker does nothing: the shared library holds GPUI-kit's base/date_picker family.
+// UseBaseDatePicker is a no-op in dynamic builds because the shared library includes base/date_picker.
 func UseBaseDatePicker() {}
 
-// UseBaseDialog does nothing: the shared library holds GPUI-kit's base/dialog family.
+// UseBaseDialog is a no-op in dynamic builds because the shared library includes base/dialog.
 func UseBaseDialog() {}
 
-// UseBaseDock does nothing: the shared library holds GPUI-kit's base/dock family.
+// UseBaseDock is a no-op in dynamic builds because the shared library includes base/dock.
 func UseBaseDock() {}
 
-// UseBaseGlobalState does nothing: the shared library holds GPUI-kit's base/global_state family.
+// UseBaseGlobalState is a no-op in dynamic builds because the shared library includes base/global_state.
 func UseBaseGlobalState() {}
 
-// UseBaseGridLayout does nothing: the shared library holds GPUI-kit's base/grid_layout family.
+// UseBaseGridLayout is a no-op in dynamic builds because the shared library includes base/grid_layout.
 func UseBaseGridLayout() {}
 
-// UseBaseHoverCard does nothing: the shared library holds GPUI-kit's base/hover_card family.
+// UseBaseHoverCard is a no-op in dynamic builds because the shared library includes base/hover_card.
 func UseBaseHoverCard() {}
 
-// UseBaseInput does nothing: the shared library holds GPUI-kit's base/input family.
+// UseBaseInput is a no-op in dynamic builds because the shared library includes base/input.
 func UseBaseInput() {}
 
-// UseBaseLink does nothing: the shared library holds GPUI-kit's base/link family.
+// UseBaseLink is a no-op in dynamic builds because the shared library includes base/link.
 func UseBaseLink() {}
 
-// UseBaseMotion does nothing: the shared library holds GPUI-kit's base/motion family.
+// UseBaseMotion is a no-op in dynamic builds because the shared library includes base/motion.
 func UseBaseMotion() {}
 
-// UseBaseNavStack does nothing: the shared library holds GPUI-kit's base/nav_stack family.
+// UseBaseNavStack is a no-op in dynamic builds because the shared library includes base/nav_stack.
 func UseBaseNavStack() {}
 
-// UseBaseNumberInput does nothing: the shared library holds GPUI-kit's base/number_input family.
+// UseBaseNumberInput is a no-op in dynamic builds because the shared library includes base/number_input.
 func UseBaseNumberInput() {}
 
-// UseBaseOtpInput does nothing: the shared library holds GPUI-kit's base/otp_input family.
+// UseBaseOtpInput is a no-op in dynamic builds because the shared library includes base/otp_input.
 func UseBaseOtpInput() {}
 
-// UseBasePagination does nothing: the shared library holds GPUI-kit's base/pagination family.
+// UseBasePagination is a no-op in dynamic builds because the shared library includes base/pagination.
 func UseBasePagination() {}
 
-// UseBasePlot does nothing: the shared library holds GPUI-kit's base/plot family.
+// UseBasePlot is a no-op in dynamic builds because the shared library includes base/plot.
 func UseBasePlot() {}
 
-// UseBasePopover does nothing: the shared library holds GPUI-kit's base/popover family.
+// UseBasePopover is a no-op in dynamic builds because the shared library includes base/popover.
 func UseBasePopover() {}
 
-// UseBasePopup does nothing: the shared library holds GPUI-kit's base/popup family.
+// UseBasePopup is a no-op in dynamic builds because the shared library includes base/popup.
 func UseBasePopup() {}
 
-// UseBasePositioner does nothing: the shared library holds GPUI-kit's base/positioner family.
+// UseBasePositioner is a no-op in dynamic builds because the shared library includes base/positioner.
 func UseBasePositioner() {}
 
-// UseBaseProgress does nothing: the shared library holds GPUI-kit's base/progress family.
+// UseBaseProgress is a no-op in dynamic builds because the shared library includes base/progress.
 func UseBaseProgress() {}
 
-// UseBaseQuestionnaire does nothing: the shared library holds GPUI-kit's base/questionnaire family.
+// UseBaseQuestionnaire is a no-op in dynamic builds because the shared library includes base/questionnaire.
 func UseBaseQuestionnaire() {}
 
-// UseBaseRadio does nothing: the shared library holds GPUI-kit's base/radio family.
+// UseBaseRadio is a no-op in dynamic builds because the shared library includes base/radio.
 func UseBaseRadio() {}
 
-// UseBaseRadioGroup does nothing: the shared library holds GPUI-kit's base/radio_group family.
+// UseBaseRadioGroup is a no-op in dynamic builds because the shared library includes base/radio_group.
 func UseBaseRadioGroup() {}
 
-// UseBaseResizable does nothing: the shared library holds GPUI-kit's base/resizable family.
+// UseBaseResizable is a no-op in dynamic builds because the shared library includes base/resizable.
 func UseBaseResizable() {}
 
-// UseBaseRoot does nothing: the shared library holds GPUI-kit's base/root family.
+// UseBaseRoot is a no-op in dynamic builds because the shared library includes base/root.
 func UseBaseRoot() {}
 
-// UseBaseScrollBounce does nothing: the shared library holds GPUI-kit's base/scroll_bounce family.
+// UseBaseScrollBounce is a no-op in dynamic builds because the shared library includes base/scroll_bounce.
 func UseBaseScrollBounce() {}
 
-// UseBaseScrollableMask does nothing: the shared library holds GPUI-kit's base/scrollable_mask family.
+// UseBaseScrollableMask is a no-op in dynamic builds because the shared library includes base/scrollable_mask.
 func UseBaseScrollableMask() {}
 
-// UseBaseScrollbar does nothing: the shared library holds GPUI-kit's base/scrollbar family.
+// UseBaseScrollbar is a no-op in dynamic builds because the shared library includes base/scrollbar.
 func UseBaseScrollbar() {}
 
-// UseBaseSelect does nothing: the shared library holds GPUI-kit's base/select family.
+// UseBaseSelect is a no-op in dynamic builds because the shared library includes base/select.
 func UseBaseSelect() {}
 
-// UseBaseSelectableText does nothing: the shared library holds GPUI-kit's base/selectable_text family.
+// UseBaseSelectableText is a no-op in dynamic builds because the shared library includes base/selectable_text.
 func UseBaseSelectableText() {}
 
-// UseBaseSheet does nothing: the shared library holds GPUI-kit's base/sheet family.
+// UseBaseSheet is a no-op in dynamic builds because the shared library includes base/sheet.
 func UseBaseSheet() {}
 
-// UseBaseSlider does nothing: the shared library holds GPUI-kit's base/slider family.
+// UseBaseSlider is a no-op in dynamic builds because the shared library includes base/slider.
 func UseBaseSlider() {}
 
-// UseBaseSwitch does nothing: the shared library holds GPUI-kit's base/switch family.
+// UseBaseSwitch is a no-op in dynamic builds because the shared library includes base/switch.
 func UseBaseSwitch() {}
 
-// UseBaseTable does nothing: the shared library holds GPUI-kit's base/table family.
+// UseBaseTable is a no-op in dynamic builds because the shared library includes base/table.
 func UseBaseTable() {}
 
-// UseBaseTabs does nothing: the shared library holds GPUI-kit's base/tabs family.
+// UseBaseTabs is a no-op in dynamic builds because the shared library includes base/tabs.
 func UseBaseTabs() {}
 
-// UseBaseText does nothing: the shared library holds GPUI-kit's base/text family.
+// UseBaseText is a no-op in dynamic builds because the shared library includes base/text.
 func UseBaseText() {}
 
-// UseBaseTextSelection does nothing: the shared library holds GPUI-kit's base/text_selection family.
+// UseBaseTextSelection is a no-op in dynamic builds because the shared library includes base/text_selection.
 func UseBaseTextSelection() {}
 
-// UseBaseTheme does nothing: the shared library holds GPUI-kit's base/theme family.
+// UseBaseTheme is a no-op in dynamic builds because the shared library includes base/theme.
 func UseBaseTheme() {}
 
-// UseBaseTimeField does nothing: the shared library holds GPUI-kit's base/time_field family.
+// UseBaseTimeField is a no-op in dynamic builds because the shared library includes base/time_field.
 func UseBaseTimeField() {}
 
-// UseBaseToast does nothing: the shared library holds GPUI-kit's base/toast family.
+// UseBaseToast is a no-op in dynamic builds because the shared library includes base/toast.
 func UseBaseToast() {}
 
-// UseBaseToggle does nothing: the shared library holds GPUI-kit's base/toggle family.
+// UseBaseToggle is a no-op in dynamic builds because the shared library includes base/toggle.
 func UseBaseToggle() {}
 
-// UseBaseToggleGroup does nothing: the shared library holds GPUI-kit's base/toggle_group family.
+// UseBaseToggleGroup is a no-op in dynamic builds because the shared library includes base/toggle_group.
 func UseBaseToggleGroup() {}
 
-// UseBaseToolbar does nothing: the shared library holds GPUI-kit's base/toolbar family.
+// UseBaseToolbar is a no-op in dynamic builds because the shared library includes base/toolbar.
 func UseBaseToolbar() {}
 
-// UseBaseTooltip does nothing: the shared library holds GPUI-kit's base/tooltip family.
+// UseBaseTooltip is a no-op in dynamic builds because the shared library includes base/tooltip.
 func UseBaseTooltip() {}
 
-// UseBaseTouchSelection does nothing: the shared library holds GPUI-kit's base/touch_selection family.
+// UseBaseTouchSelection is a no-op in dynamic builds because the shared library includes base/touch_selection.
 func UseBaseTouchSelection() {}
 
-// UseBaseTree does nothing: the shared library holds GPUI-kit's base/tree family.
+// UseBaseTree is a no-op in dynamic builds because the shared library includes base/tree.
 func UseBaseTree() {}
 
-// UseBaseVirtualList does nothing: the shared library holds GPUI-kit's base/virtual_list family.
+// UseBaseVirtualList is a no-op in dynamic builds because the shared library includes base/virtual_list.
 func UseBaseVirtualList() {}
 
-// UseComponentAccordion does nothing: the shared library holds GPUI-kit's component/accordion family.
+// UseComponentAccordion is a no-op in dynamic builds because the shared library includes component/accordion.
 func UseComponentAccordion() {}
 
-// UseComponentAlert does nothing: the shared library holds GPUI-kit's component/alert family.
+// UseComponentAlert is a no-op in dynamic builds because the shared library includes component/alert.
 func UseComponentAlert() {}
 
-// UseComponentAttachment does nothing: the shared library holds GPUI-kit's component/attachment family.
+// UseComponentAttachment is a no-op in dynamic builds because the shared library includes component/attachment.
 func UseComponentAttachment() {}
 
-// UseComponentAvatar does nothing: the shared library holds GPUI-kit's component/avatar family.
+// UseComponentAvatar is a no-op in dynamic builds because the shared library includes component/avatar.
 func UseComponentAvatar() {}
 
-// UseComponentBadge does nothing: the shared library holds GPUI-kit's component/badge family.
+// UseComponentBadge is a no-op in dynamic builds because the shared library includes component/badge.
 func UseComponentBadge() {}
 
-// UseComponentBreadcrumb does nothing: the shared library holds GPUI-kit's component/breadcrumb family.
+// UseComponentBreadcrumb is a no-op in dynamic builds because the shared library includes component/breadcrumb.
 func UseComponentBreadcrumb() {}
 
-// UseComponentBubble does nothing: the shared library holds GPUI-kit's component/bubble family.
+// UseComponentBubble is a no-op in dynamic builds because the shared library includes component/bubble.
 func UseComponentBubble() {}
 
-// UseComponentButton does nothing: the shared library holds GPUI-kit's component/button family.
+// UseComponentButton is a no-op in dynamic builds because the shared library includes component/button.
 func UseComponentButton() {}
 
-// UseComponentCarousel does nothing: the shared library holds GPUI-kit's component/carousel family.
+// UseComponentCarousel is a no-op in dynamic builds because the shared library includes component/carousel.
 func UseComponentCarousel() {}
 
-// UseComponentChart does nothing: the shared library holds GPUI-kit's component/chart family.
+// UseComponentChart is a no-op in dynamic builds because the shared library includes component/chart.
 func UseComponentChart() {}
 
-// UseComponentCheckbox does nothing: the shared library holds GPUI-kit's component/checkbox family.
+// UseComponentCheckbox is a no-op in dynamic builds because the shared library includes component/checkbox.
 func UseComponentCheckbox() {}
 
-// UseComponentClipboard does nothing: the shared library holds GPUI-kit's component/clipboard family.
+// UseComponentClipboard is a no-op in dynamic builds because the shared library includes component/clipboard.
 func UseComponentClipboard() {}
 
-// UseComponentCollapsible does nothing: the shared library holds GPUI-kit's component/collapsible family.
+// UseComponentCollapsible is a no-op in dynamic builds because the shared library includes component/collapsible.
 func UseComponentCollapsible() {}
 
-// UseComponentColorPicker does nothing: the shared library holds GPUI-kit's component/color_picker family.
+// UseComponentColorPicker is a no-op in dynamic builds because the shared library includes component/color_picker.
 func UseComponentColorPicker() {}
 
-// UseComponentCombobox does nothing: the shared library holds GPUI-kit's component/combobox family.
+// UseComponentCombobox is a no-op in dynamic builds because the shared library includes component/combobox.
 func UseComponentCombobox() {}
 
-// UseComponentCommand does nothing: the shared library holds GPUI-kit's component/command family.
+// UseComponentCommand is a no-op in dynamic builds because the shared library includes component/command.
 func UseComponentCommand() {}
 
-// UseComponentDescriptionList does nothing: the shared library holds GPUI-kit's component/description_list family.
+// UseComponentDescriptionList is a no-op in dynamic builds because the shared library includes component/description_list.
 func UseComponentDescriptionList() {}
 
-// UseComponentDialog does nothing: the shared library holds GPUI-kit's component/dialog family.
+// UseComponentDialog is a no-op in dynamic builds because the shared library includes component/dialog.
 func UseComponentDialog() {}
 
-// UseComponentDiff does nothing: the shared library holds GPUI-kit's component/diff family.
+// UseComponentDiff is a no-op in dynamic builds because the shared library includes component/diff.
 func UseComponentDiff() {}
 
-// UseComponentDock does nothing: the shared library holds GPUI-kit's component/dock family.
+// UseComponentDock is a no-op in dynamic builds because the shared library includes component/dock.
 func UseComponentDock() {}
 
-// UseComponentEmpty does nothing: the shared library holds GPUI-kit's component/empty family.
+// UseComponentEmpty is a no-op in dynamic builds because the shared library includes component/empty.
 func UseComponentEmpty() {}
 
-// UseComponentForm does nothing: the shared library holds GPUI-kit's component/form family.
+// UseComponentForm is a no-op in dynamic builds because the shared library includes component/form.
 func UseComponentForm() {}
 
-// UseComponentGroupBox does nothing: the shared library holds GPUI-kit's component/group_box family.
+// UseComponentGroupBox is a no-op in dynamic builds because the shared library includes component/group_box.
 func UseComponentGroupBox() {}
 
-// UseComponentHighlighter does nothing: the shared library holds GPUI-kit's component/highlighter family.
+// UseComponentHighlighter is a no-op in dynamic builds because the shared library includes component/highlighter.
 func UseComponentHighlighter() {}
 
-// UseComponentHoverCard does nothing: the shared library holds GPUI-kit's component/hover_card family.
+// UseComponentHoverCard is a no-op in dynamic builds because the shared library includes component/hover_card.
 func UseComponentHoverCard() {}
 
-// UseComponentIcon does nothing: the shared library holds GPUI-kit's component/icon family.
+// UseComponentIcon is a no-op in dynamic builds because the shared library includes component/icon.
 func UseComponentIcon() {}
 
-// UseComponentInput does nothing: the shared library holds GPUI-kit's component/input family.
+// UseComponentInput is a no-op in dynamic builds because the shared library includes component/input.
 func UseComponentInput() {}
 
-// UseComponentKbd does nothing: the shared library holds GPUI-kit's component/kbd family.
+// UseComponentKbd is a no-op in dynamic builds because the shared library includes component/kbd.
 func UseComponentKbd() {}
 
-// UseComponentLabel does nothing: the shared library holds GPUI-kit's component/label family.
+// UseComponentLabel is a no-op in dynamic builds because the shared library includes component/label.
 func UseComponentLabel() {}
 
-// UseComponentLink does nothing: the shared library holds GPUI-kit's component/link family.
+// UseComponentLink is a no-op in dynamic builds because the shared library includes component/link.
 func UseComponentLink() {}
 
-// UseComponentList does nothing: the shared library holds GPUI-kit's component/list family.
+// UseComponentList is a no-op in dynamic builds because the shared library includes component/list.
 func UseComponentList() {}
 
-// UseComponentMarker does nothing: the shared library holds GPUI-kit's component/marker family.
+// UseComponentMarker is a no-op in dynamic builds because the shared library includes component/marker.
 func UseComponentMarker() {}
 
-// UseComponentMenu does nothing: the shared library holds GPUI-kit's component/menu family.
+// UseComponentMenu is a no-op in dynamic builds because the shared library includes component/menu.
 func UseComponentMenu() {}
 
-// UseComponentMessage does nothing: the shared library holds GPUI-kit's component/message family.
+// UseComponentMessage is a no-op in dynamic builds because the shared library includes component/message.
 func UseComponentMessage() {}
 
-// UseComponentMessageScroller does nothing: the shared library holds GPUI-kit's component/message_scroller family.
+// UseComponentMessageScroller is a no-op in dynamic builds because the shared library includes component/message_scroller.
 func UseComponentMessageScroller() {}
 
-// UseComponentNotification does nothing: the shared library holds GPUI-kit's component/notification family.
+// UseComponentNotification is a no-op in dynamic builds because the shared library includes component/notification.
 func UseComponentNotification() {}
 
-// UseComponentPagination does nothing: the shared library holds GPUI-kit's component/pagination family.
+// UseComponentPagination is a no-op in dynamic builds because the shared library includes component/pagination.
 func UseComponentPagination() {}
 
-// UseComponentPlot does nothing: the shared library holds GPUI-kit's component/plot family.
+// UseComponentPlot is a no-op in dynamic builds because the shared library includes component/plot.
 func UseComponentPlot() {}
 
-// UseComponentPopover does nothing: the shared library holds GPUI-kit's component/popover family.
+// UseComponentPopover is a no-op in dynamic builds because the shared library includes component/popover.
 func UseComponentPopover() {}
 
-// UseComponentProgress does nothing: the shared library holds GPUI-kit's component/progress family.
+// UseComponentProgress is a no-op in dynamic builds because the shared library includes component/progress.
 func UseComponentProgress() {}
 
-// UseComponentQuestionnaire does nothing: the shared library holds GPUI-kit's component/questionnaire family.
+// UseComponentQuestionnaire is a no-op in dynamic builds because the shared library includes component/questionnaire.
 func UseComponentQuestionnaire() {}
 
-// UseComponentRadio does nothing: the shared library holds GPUI-kit's component/radio family.
+// UseComponentRadio is a no-op in dynamic builds because the shared library includes component/radio.
 func UseComponentRadio() {}
 
-// UseComponentRating does nothing: the shared library holds GPUI-kit's component/rating family.
+// UseComponentRating is a no-op in dynamic builds because the shared library includes component/rating.
 func UseComponentRating() {}
 
-// UseComponentRoot does nothing: the shared library holds GPUI-kit's component/root family.
+// UseComponentRoot is a no-op in dynamic builds because the shared library includes component/root.
 func UseComponentRoot() {}
 
-// UseComponentScroll does nothing: the shared library holds GPUI-kit's component/scroll family.
+// UseComponentScroll is a no-op in dynamic builds because the shared library includes component/scroll.
 func UseComponentScroll() {}
 
-// UseComponentSearchableList does nothing: the shared library holds GPUI-kit's component/searchable_list family.
+// UseComponentSearchableList is a no-op in dynamic builds because the shared library includes component/searchable_list.
 func UseComponentSearchableList() {}
 
-// UseComponentSelect does nothing: the shared library holds GPUI-kit's component/select family.
+// UseComponentSelect is a no-op in dynamic builds because the shared library includes component/select.
 func UseComponentSelect() {}
 
-// UseComponentSeparator does nothing: the shared library holds GPUI-kit's component/separator family.
+// UseComponentSeparator is a no-op in dynamic builds because the shared library includes component/separator.
 func UseComponentSeparator() {}
 
-// UseComponentSetting does nothing: the shared library holds GPUI-kit's component/setting family.
+// UseComponentSetting is a no-op in dynamic builds because the shared library includes component/setting.
 func UseComponentSetting() {}
 
-// UseComponentSheet does nothing: the shared library holds GPUI-kit's component/sheet family.
+// UseComponentSheet is a no-op in dynamic builds because the shared library includes component/sheet.
 func UseComponentSheet() {}
 
-// UseComponentShimmer does nothing: the shared library holds GPUI-kit's component/shimmer family.
+// UseComponentShimmer is a no-op in dynamic builds because the shared library includes component/shimmer.
 func UseComponentShimmer() {}
 
-// UseComponentSidebar does nothing: the shared library holds GPUI-kit's component/sidebar family.
+// UseComponentSidebar is a no-op in dynamic builds because the shared library includes component/sidebar.
 func UseComponentSidebar() {}
 
-// UseComponentSkeleton does nothing: the shared library holds GPUI-kit's component/skeleton family.
+// UseComponentSkeleton is a no-op in dynamic builds because the shared library includes component/skeleton.
 func UseComponentSkeleton() {}
 
-// UseComponentSlider does nothing: the shared library holds GPUI-kit's component/slider family.
+// UseComponentSlider is a no-op in dynamic builds because the shared library includes component/slider.
 func UseComponentSlider() {}
 
-// UseComponentSpeech does nothing: the shared library holds GPUI-kit's component/speech family.
+// UseComponentSpeech is a no-op in dynamic builds because the shared library includes component/speech.
 func UseComponentSpeech() {}
 
-// UseComponentSpinner does nothing: the shared library holds GPUI-kit's component/spinner family.
+// UseComponentSpinner is a no-op in dynamic builds because the shared library includes component/spinner.
 func UseComponentSpinner() {}
 
-// UseComponentStatusBar does nothing: the shared library holds GPUI-kit's component/status_bar family.
+// UseComponentStatusBar is a no-op in dynamic builds because the shared library includes component/status_bar.
 func UseComponentStatusBar() {}
 
-// UseComponentStepper does nothing: the shared library holds GPUI-kit's component/stepper family.
+// UseComponentStepper is a no-op in dynamic builds because the shared library includes component/stepper.
 func UseComponentStepper() {}
 
-// UseComponentSwitch does nothing: the shared library holds GPUI-kit's component/switch family.
+// UseComponentSwitch is a no-op in dynamic builds because the shared library includes component/switch.
 func UseComponentSwitch() {}
 
-// UseComponentTab does nothing: the shared library holds GPUI-kit's component/tab family.
+// UseComponentTab is a no-op in dynamic builds because the shared library includes component/tab.
 func UseComponentTab() {}
 
-// UseComponentTable does nothing: the shared library holds GPUI-kit's component/table family.
+// UseComponentTable is a no-op in dynamic builds because the shared library includes component/table.
 func UseComponentTable() {}
 
-// UseComponentTag does nothing: the shared library holds GPUI-kit's component/tag family.
+// UseComponentTag is a no-op in dynamic builds because the shared library includes component/tag.
 func UseComponentTag() {}
 
-// UseComponentTheme does nothing: the shared library holds GPUI-kit's component/theme family.
+// UseComponentTheme is a no-op in dynamic builds because the shared library includes component/theme.
 func UseComponentTheme() {}
 
-// UseComponentTime does nothing: the shared library holds GPUI-kit's component/time family.
+// UseComponentTime is a no-op in dynamic builds because the shared library includes component/time.
 func UseComponentTime() {}
 
-// UseComponentTitleBar does nothing: the shared library holds GPUI-kit's component/title_bar family.
+// UseComponentTitleBar is a no-op in dynamic builds because the shared library includes component/title_bar.
 func UseComponentTitleBar() {}
 
-// UseComponentToolbar does nothing: the shared library holds GPUI-kit's component/toolbar family.
+// UseComponentToolbar is a no-op in dynamic builds because the shared library includes component/toolbar.
 func UseComponentToolbar() {}
 
-// UseComponentTree does nothing: the shared library holds GPUI-kit's component/tree family.
+// UseComponentTree is a no-op in dynamic builds because the shared library includes component/tree.
 func UseComponentTree() {}
 
-// UseComponentWindowBorder does nothing: the shared library holds GPUI-kit's component/window_border family.
+// UseComponentWindowBorder is a no-op in dynamic builds because the shared library includes component/window_border.
 func UseComponentWindowBorder() {}
 
-// UseComponentWindowExt does nothing: the shared library holds GPUI-kit's component/window_ext family.
+// UseComponentWindowExt is a no-op in dynamic builds because the shared library includes component/window_ext.
 func UseComponentWindowExt() {}

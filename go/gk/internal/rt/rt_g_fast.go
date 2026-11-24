@@ -4,4 +4,6 @@ package rt
 
 import "gpuikit.dev/gk/internal/goid"
 
+// curG returns the current goroutine's g pointer via assembly so UI-thread
+// assertions avoid making an OS syscall on every call.
 func curG() uintptr { return goid.Current() }

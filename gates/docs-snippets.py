@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""docs-snippets.py DOC...: every Go snippet of the guides is code that compiles.
+"""Verify that Go code blocks and inline API call spans in Markdown guides match real programs.
 
-Each ```go block of a guide must follow a line `<!-- from: PATH -->` naming a program
-(gates/docs-go.sh builds and runs every one of them). The block is that file's text: in order, with
-lines `// ...` standing for lines left out (a block need not start at the top). Exact lines, tabs
-and all, so a snippet cannot drift from the program it was cut from. Prints one line per guide;
-exit 1 on the first snippet that is not in its program.
+Gates: every fenced ```go block and inline backticked API call in the given Markdown files.
+Method:
+- Each ```go fence must be preceded within 1-2 lines by `<!-- from: PATH -->`. Chunks split by
+  `// ...` must appear verbatim and in order inside PATH.
+- If a file contains `<!-- spans: PATH -->`, every inline backticked call matching `gk.`, `a.`, or
+  `.Capitalized(` before `<!-- index:begin` (excluding `..` and ellipsis) must occur in PATH.
+PASS: every code block and inline span is found in its source program (exit 0).
 """
 import os
 import re
@@ -16,7 +18,6 @@ FROM = re.compile(r"^<!-- from: (\S+) -->$")
 SPANS = re.compile(r"^<!-- spans: (\S+) -->$", re.M)
 SPAN = re.compile(r"`([^`\n]+)`")
 INDEX = "<!-- index:begin"
-
 
 def chunks(block):
     out, cur = [], []
@@ -31,14 +32,12 @@ def chunks(block):
         out.append(cur)
     return out
 
-
 def find(lines, chunk, start):
     n = len(chunk)
     for i in range(start, len(lines) - n + 1):
         if lines[i:i + n] == chunk:
             return i + n
     return -1
-
 
 def check(doc):
     text = open(doc).read().split("\n")
@@ -74,12 +73,7 @@ def check(doc):
         i += 1
     return blocks, bad
 
-
 def check_spans(doc):
-    """A guide with `<!-- spans: PATH -->` names a program in which every inline code span that is
-    a call must appear as text: one that starts with gk., a. or a method's dot (`.OnClick(`) and
-    has a parenthesis, without a `..` placeholder. The table
-    cells escape | as \\|; the generated index (after its marker) is not checked here."""
     text = open(doc).read()
     m = SPANS.search(text)
     if not m:
@@ -90,12 +84,11 @@ def check_spans(doc):
     for span in SPAN.findall(text):
         span = span.replace("\\|", "|")
         if not re.match(r"(gk\.|a\.|\.[A-Z])", span) or "(" not in span or ".." in span or "…" in span:
-            continue  # not a call, or one with placeholders (`.Style(..)`)
+            continue
         n += 1
         if span not in prog:
             bad.append(f"{os.path.relpath(doc, REPO)}: `{span}` is not text of {m.group(1)}")
     return n, bad
-
 
 def main(docs):
     rc = 0
@@ -113,7 +106,6 @@ def main(docs):
                 print("docs-snippets: " + b)
             print(f"docs-snippets: {os.path.relpath(d, REPO)}: {n} calls in the text, {n - len(bad)} found in the program")
     return rc
-
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

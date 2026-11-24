@@ -1,33 +1,36 @@
+// Platform integration types and codecs: drag-and-drop values, tooltip unions,
+// uploaded RGBA render images, and native application menus.
+
 package rt
 
-// DragValue is what an app drags: an element's OnDrag takes it with the view drawn under the
-// pointer while it is dragged, a drop's handler gets it back, and DragOver's style applies while
-// one is over the element. One type for every drag of the app: tell kinds apart by ID (say, the kind
-// in the top 32 bits and an index below).
+// DragValue carries an application-defined drag identifier and display text
+// across in-app drag-and-drop gestures.
 type DragValue struct {
 	ID   uint64
 	Text string
 }
 
+// PutDragValue encodes v onto o.
 func PutDragValue(o *Tape, v DragValue) {
 	o.U64(v.ID)
 	o.Str(v.Text)
 }
 
+// RdDragValue decodes a DragValue from r.
 func RdDragValue(r *Reader) DragValue {
 	id := r.U64()
 	return DragValue{ID: id, Text: r.Str()}
 }
 
-// DropAccept is what an element's CanDrop takes, as data (the closure gpui calls while a drag
-// moves cannot run app code): the app's drag values (every one, or only those whose ID is in IDs)
-// and files dragged in from outside the app. The zero value takes nothing.
+// DropAccept specifies which drag payloads (in-app values, specific IDs, or
+// external file paths) a drop target accepts.
 type DropAccept struct {
 	Values bool
 	IDs    []uint64
 	Paths  bool
 }
 
+// PutDropAccept encodes a onto o.
 func PutDropAccept(o *Tape, a DropAccept) {
 	o.Bool(a.Values || len(a.IDs) > 0)
 	o.U32(uint32(len(a.IDs)))
@@ -37,56 +40,48 @@ func PutDropAccept(o *Tape, a DropAccept) {
 	o.Bool(a.Paths)
 }
 
-// ViewOrTooltip is what an element's Tooltip and HoverableTooltip take: a view of the app's (any
-// gk.View, drawn as the tooltip), or the kit's tooltip, overlay.NewKitTooltip(text) or
-// overlay.NewKitTooltipElement(element) with its builders (KeyBinding, Action, the styles). The kit's
-// value is described again each time the tooltip shows, from the view that gave it.
+// ViewOrTooltip accepts either a View handle or a generated kit tooltip value.
 type ViewOrTooltip interface{ isViewOrTooltip() }
 
 func (View) isViewOrTooltip() {}
 
+// PutViewOrTooltip encodes a View or kit tooltip value onto o.
 func PutViewOrTooltip(o *Tape, v ViewOrTooltip) {
 	switch x := v.(type) {
 	case View:
 		o.U8(0)
 		PutViewArg(o, x)
-	case value: // the kit's Tooltip (package overlay; the only value that is a ViewOrTooltip)
+	case value:
 		o.U8(1)
 		o.U32(TakeValue(x.valueNode()))
 	case nil:
 		o.U8(0)
 		o.U64(0)
 	default:
-		// Unreachable from outside the package (isViewOrTooltip is unexported); no %T, so v does not escape.
 		Stop("an unknown tooltip was given: give a gk.View, or overlay.NewKitTooltip(text) or overlay.NewKitTooltipElement(el)")
 	}
 }
 
-// ImageBytes is an encoded image (a PNG, a JPEG, ..., gpui's Image) for gk.ImageSourceImage:
-//
-//	gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: data}})
+// ImageBytes pairs an encoded image format with its raw bytes.
 type ImageBytes struct {
 	Format ImageFormat
 	Bytes  []byte
 }
 
-// PixelImage is an image as pixels, for gk.NewRenderImage: Width x Height pixels of 4 bytes each,
-// red, green, blue, alpha, row by row.
+// PixelImage holds raw RGBA pixel data (Width * Height * 4 bytes) for uploading
+// as a RenderImage.
 type PixelImage struct {
 	Width, Height uint32
 	RGBA          []byte
 }
 
-// RenderImage is an image the library made from pixels (gpui's RenderImage), shown by
-// gk.ImageSourceRender and gk.ImageSourceCustom. Make it once, with gk.NewRenderImage, and keep it
-// while a view shows it: gpui keeps each image's texture on the graphics card until the image is
-// released, so pixels made into a new image on every frame would be a new texture on every frame.
-// gk.Release frees it in every window; a view that names it after that stops with a message. New
-// pixels are a new image: make it, show it, release the old one.
+// RenderImage is a handle to an uploaded GPU-ready raster image.
 type RenderImage struct{ HCore }
 
+// PutBytes encodes raw byte slice b onto o.
 func PutBytes(o *Tape, b []byte) { o.Bytes(b) }
 
+// PutRenderImage validates that i is non-zero and encodes its handle onto o.
 func PutRenderImage(o *Tape, i RenderImage) {
 	if i.h == 0 {
 		Stop("a zero gk.RenderImage: make one with gk.NewRenderImage(cx, gk.PixelImage{..}) and keep it")
@@ -94,8 +89,7 @@ func PutRenderImage(o *Tape, i RenderImage) {
 	o.U64(i.h)
 }
 
-// NewRenderImage makes an image of p's pixels, converted once to the format gpui draws. Make it
-// in init or in a handler, not in a view function; gk.Release frees it.
+// NewRenderImage creates a RenderImage from RGBA pixel data outside a view function.
 func NewRenderImage(cx *Cx, p PixelImage) RenderImage {
 	t := CheckCx(cx)
 	if Vb.Active {
@@ -113,9 +107,7 @@ func NewRenderImage(cx *Cx, p PixelImage) RenderImage {
 	return RenderImage{MkH(r.U64())}
 }
 
-// TestRenderImage gives the library's image behind i (custom: through ImageSourceCustom's loader):
-// its size, its first pixel as gpui keeps it (BGRA, a little-endian uint32) and gpui's id of it,
-// the same for as long as i is kept. For tests.
+// TestRenderImage queries image dimensions, first pixel, and ID in diagnostic tests.
 func TestRenderImage(cx *Cx, i RenderImage, custom bool) (w, h, first uint32, id uint64) {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -126,10 +118,7 @@ func TestRenderImage(cx *Cx, i RenderImage, custom bool) (w, h, first uint32, id
 	return r.U32(), r.U32(), r.U32(), r.U64()
 }
 
-// TestImagesShown tells how many times views have handed gpui an image (gk.ImageSourceRender or
-// gk.ImageSourceCustom), how many distinct images (gpui's ids, one texture each) those were, and
-// how many times a release dropped an image's texture from a window. For tests; the diagnostic
-// library only.
+// TestImagesShown returns diagnostic render counters for displayed images.
 func TestImagesShown(cx *Cx) (times uint64, images uint32, dropped uint64) {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -138,8 +127,7 @@ func TestImagesShown(cx *Cx) (times uint64, images uint32, dropped uint64) {
 	return r.U64(), r.U32(), r.U64()
 }
 
-// TestDropAccept tells what a DropAccept takes, as the library decodes it: the app's drag value of
-// that id, and files from outside. For tests.
+// TestDropAccept evaluates a DropAccept filter against id in diagnostic tests.
 func TestDropAccept(cx *Cx, a DropAccept, id uint64) (takesValue, takesFiles bool) {
 	CheckCx(cx).Flush()
 	o := NewReq(CPlatformTest)
@@ -150,9 +138,10 @@ func TestDropAccept(cx *Cx, a DropAccept, id uint64) (takesValue, takesFiles boo
 	return r.Bool(), r.Bool()
 }
 
-// OsAction is the operating system's own meaning of a menu item (macOS fills the item in).
+// OsAction tags a native menu item with a standard platform editing role.
 type OsAction uint8
 
+// Standard platform roles for MenuAction.OsAction.
 const (
 	OsActionNone      OsAction = 0
 	OsActionCut       OsAction = 1
@@ -163,21 +152,21 @@ const (
 	OsActionRedo      OsAction = 6
 )
 
-// Menu is a menu of the menu bar, or a submenu.
+// Menu describes one top-level or nested native application menu.
 type Menu struct {
 	Name     string
 	Items    []MenuItem
 	Disabled bool
 }
 
-// MenuItem is one of MenuSeparator, MenuAction, MenuSubmenu, MenuServices.
+// MenuItem is implemented by MenuSeparator, MenuAction, MenuSubmenu, and
+// MenuServices.
 type MenuItem interface{ isMenuItem() }
 
-// MenuSeparator is a line between items.
+// MenuSeparator inserts a visual divider between menu items.
 type MenuSeparator struct{}
 
-// MenuAction is an item that dispatches an action (gk.NewAction or gk.Shortcut's); the menu shows
-// its key binding.
+// MenuAction is a clickable menu item bound to an Action.
 type MenuAction struct {
 	Name     string
 	Action   Action
@@ -186,10 +175,10 @@ type MenuAction struct {
 	Disabled bool
 }
 
-// MenuSubmenu is an item that opens another menu.
+// MenuSubmenu nests a child Menu inside a parent menu.
 type MenuSubmenu struct{ Menu Menu }
 
-// MenuServices is the operating system's Services menu (macOS; elsewhere nothing).
+// MenuServices marks the platform services submenu (used on macOS).
 type MenuServices struct{ Name string }
 
 func (MenuSeparator) isMenuItem() {}
@@ -233,12 +222,7 @@ func putMenu(o *Tape, m Menu, depth int) {
 	}
 }
 
-// SetMenus sets the app's menu bar (App::set_menus): the platform's where it has one (macOS), and
-// always the kit's AppMenuBar. Items dispatch their action to the focused element, as its key
-// binding would. It runs after the handler.
-//
-//	quit := gk.Shortcut(cx, "cmd-q", a.quit)
-//	gk.SetMenus(cx, gk.Menu{Name: "My App", Items: []gk.MenuItem{gk.MenuAction{Name: "Quit", Action: quit}}})
+// SetMenus installs the application's native menu bar.
 func SetMenus(cx *Cx, menus ...Menu) {
 	t := CheckCx(cx)
 	o := NewReq(CSetMenus)
@@ -276,7 +260,7 @@ func rdMenu(r *Reader) Menu {
 	return m
 }
 
-// Menus gives the menu bar as the platform holds it (App::get_menus).
+// Menus returns the currently installed application menus.
 func Menus(cx *Cx) []Menu {
 	CheckCx(cx).Flush()
 	r := Reader{B: MustCall(*NewReq(CMenusGet))}

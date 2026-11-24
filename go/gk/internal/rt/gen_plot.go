@@ -2,7 +2,7 @@
 
 package rt
 
-// PlotPart is a value gk.Plot paints, in the order given: one of AreaShape, BarShape, Grid, LineShape, PlotAxis, PlotPath, PlotQuad, RadialLineShape.
+// PlotPart marks a value accepted by Plot for painting in order: AreaShape, BarShape, Grid, LineShape, PlotAxis, PlotPath, PlotQuad, RadialLineShape.
 type PlotPart interface {
 	valueNode() *Node
 	isPlotPart()

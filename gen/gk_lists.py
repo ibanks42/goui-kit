@@ -1,32 +1,46 @@
-"""The lists and editor families' generator rules (docs/PROTOCOLS.md sections 9.9 to 9.12).
+"""List, table, delegate, ask-closure, expression, and iterator descriptor rules.
 
-Hooked into gk_model.py, gk_rust.py and gk_go.py at a few points each (search for
-`gk_lists.`); everything else of the family's rules lives here.
+Extends `gen/gk_model.py` and `gen/gk_rust.py` with the type/closure rules needed for
+virtualized lists, tables, comboboxes, select dropdowns, charts, and editor text helpers:
 
-- **Associated types of a shim** (`qualified`). A state or element generic over a delegate
-  names the delegate's associated types in its methods: `selection(&self) -> &[(IndexPath,
-  D::Item)]`, `selected_value(&self) -> Option<<D::Item as SearchableListItem>::Value>`. With D
-  instantiated for a library shim (`crate::shim_select::GkSearchDelegate`), the projection is
-  the shim's own type, read from `[lists] assoc` in api/overrides.toml:
-  `"crate::shim_select::GkSearchDelegate::Item" = "crate::shim_select::GkItem"`. The value is a
-  library type (`crate::...`), a primitive, or an upstream or gpui type by name.
-- **Library values** (`libval`). A library type that travels both ways as a plain value (the
-  shim's item: `gk.SearchItem` in Go) is `["libval", rust path, stem]`: Rust reads it
-  with its `genapi::Unwire` impl and writes it with its `genapi::Wire` impl (both hand-written
-  beside the type), the Go runtime declares the struct and its put and rd functions
-  (gen/gk_go_kinds.py LIBVALS), field for field in wire order. `[lists] values` names
-  them: `"crate::shim_select::GkItem" = "Search_Item"`.
+1. **Override-driven resolution (`table`, `libval`, `resolve`, `qualified`, `check_used`)**:
+   Reads `[lists]` sub-tables from `api/overrides.toml`:
+   - `assoc`: maps `<Shim>::Assoc` qualified paths (like `GkListDelegate::Item`) to concrete types.
+   - `values`: maps third-party/kit struct paths to `["libval", rust_path, stem]` codecs.
+   - `unions`: maps element marker traits (`impl Trait` parameters) to closed `["oneof", trait, [nodes]]` unions.
+   - `delegates`: registers delegate traits bridged by hand-written Rust shims (`SHIMS_OUT`).
+   `check_used()` asserts every configured entry was exercised during classification so stale
+   overrides fail generation, and disables `out` codecs on lifetime-bearing data enums.
+2. **Closures converted to data (`expr_closure`, `ask_closure`, `ctx_rows`, `view_closure`)**:
+   - `expr`: pure numeric/bool/unit-enum -> numeric/bool/px closures compiled into
+     `crate::shim_editor::Expr` strings evaluated synchronously on the Rust thread (zero IPC).
+   - `ask`: key -> value closures backed by `crate::shim_text::Ask` (async lookup table;
+     caches Go answers by serialized key and returns `Default::default()` until populated).
+   - `ctxrows`: 1..3-arg `(&..., &mut Window, &mut App) -> impl IntoElement` closures backed
+     by `crate::source::ctx_row`, fingerprinting argument values (`_ctx_print`) to avoid
+     re-requesting unchanged rows.
+   - `viewfn`: closures returning a child `AnyView` backed by `crate::shim_select::view_element`.
+3. **Standard wrappers and `Vec<Self>` factories (`resolved`, `bounded_out`, `list_ctor`, `rust_arm`)**:
+   - Handles `Arc<[T]>`/`Rc<[T]>`/`Box<[T]>` (`arcslice`), `NonZero*` (`nonzero`, clamping 0
+     to `MIN`), `Range<impl Into<T>>` (`rangeof`), `Rc<Vec<T>>`/`Arc<Vec<T>>` (`rcvec`),
+     `impl Iterator<Item = T>` (`iter`, collected into `Vec<T>` on wire write), and
+     `UniformListScrollHandle` (`uscroll`, projected to its inner `ScrollHandle`).
+   - `list_ctor()` splits static `Vec<Self>` / `Result<Vec<Self>, E>` factories into
+     `*_count`, indexed `*_at(index)`, and optional `*_error` items so tape nodes can construct
+     one element at a time.
+   - `rust_arm()` emits opcode-dispatched match arms for builders taking `oneof` or `Vec<oneof>`.
 """
-import gk_comp6  # the components family's rules (PROTOCOLS.md 11.17 to 11.23, 12.16)
-import gk_items  # item procedures (PROTOCOLS.md 9.41)
+import gk_comp6
+import gk_items
 
 
 def table(m, name):
+    """Return a sub-table under `[lists]` in `api/overrides.toml` (`assoc`, `values`, `unions`, `delegates`)."""
     return m.ov.get("lists", {}).get(name, {})
 
 
 def libval(m, path, out):
-    """The descriptor of a library value type, or None when `path` is not one."""
+    """Look up a runtime value struct in `[lists].values` and return `["libval", path, stem]`."""
     stem = table(m, "values").get(path)
     if stem is None:
         return None
@@ -35,8 +49,7 @@ def libval(m, path, out):
 
 
 def resolve(m, ctx, t):
-    """A type reference with generic parameters of the context and projections on library shims
-    replaced: (crate, ref) or None when nothing is known about it."""
+    """Substitute generic parameters, `Self`, or overridden associated types in a rustdoc type node."""
     if "generic" in t:
         g = t["generic"]
         if g in ctx.subst:
@@ -50,8 +63,12 @@ def resolve(m, ctx, t):
 
 
 def qualified(m, ctx, t):
-    """`D::Item`, `<D::Item as Trait>::Value`: the type `[lists] assoc` gives for the shim D was
-    instantiated with, as (crate, type ref); None when D is not a library shim with that entry."""
+    """Resolve `T::Assoc` against `[lists].assoc` when `T` resolves to a runtime shim verbatim path.
+
+    Used when a generic state method references an associated type of a delegate shim
+    (for example `<GkTableDelegate as TableDelegate>::Column`), which rustdoc does not
+    monomorphize automatically.
+    """
     q = t["qualified_path"]
     base = resolve(m, ctx, q["self_type"])
     if base is None or "verbatim" not in base[1]:
@@ -66,9 +83,12 @@ def qualified(m, ctx, t):
 
 
 def check_used(m):
-    """Every key of the family's override tables matched something (as overrides.toml asks). Also
-    drops the out codec of an enum with a lifetime parameter (`PaneRef<'a>`, met as the result of
-    a read the object rule then refuses): its Wire impl cannot be written without the lifetime."""
+    """Disable outbound emission on lifetime-bearing data enums and assert every `[lists]` override was used.
+
+    Lifetime-bearing data enums cannot implement `'static` outbound `Wire` helpers safely,
+    so their `out` flag is cleared before codegen. Failing on unused `[lists]` entries keeps
+    `api/overrides.toml` clean when upstream APIs change.
+    """
     for e in m.denums.values():
         if e.get("out") and _has_lifetime(m, e):
             e["out"] = False
@@ -79,26 +99,29 @@ def check_used(m):
 
 
 def view_closure(params, wrap, ptypes):
-    """An element closure without a payload that gets `&App`, not `&mut App` (`empty(Fn(&mut
-    Window, &App) -> E)`): a fragment cannot be decoded without `&mut App`, so the app passes a
-    `gk.View` and the closure draws it: `["viewfn", params, wrap, ptypes]`. Element decoders only
-    (the view is mounted where the element is decoded, as a CHILD_VIEW)."""
+    """Build a `viewfn` descriptor for a closure returning a child view element."""
     return ["viewfn", params, wrap, ptypes]
 
 
 def rust_dec(rs, d):
-    """The Rust expression for the family's descriptors, or None (gk_rust.Rust.dec's hook)."""
+    """Emit Rust decoder code for descriptors handled by `gk_lists`, `gk_items`, or `gk_comp6`.
+
+    Key subtlety: when a `handler` descriptor appears inside a call op (`rs.call` is set,
+    such as registering a callback on an entity state rather than on a single-frame view
+    node), the closure outlives any single render tape. It therefore rewrites `dx.handler(r)`
+    to `crate::shim_editor::kept(r)` and drops the frame pin (`dx.pin()`).
+    """
     k = d[0]
     ip = gk_items.rust_dec(rs, d)
     if ip is not None:
-        return ip  # an item procedure (PROTOCOLS.md 9.41)
+        return ip
     c6 = gk_comp6.rust_dec(rs, d)
     if c6 is not None:
-        return c6  # the components family's PROTOCOLS.md 11.19 to 11.22, 12.16
+        return c6
     if k == "handler" and rs.call:
-        # A handler in a call op: a kept handler (slot, generation), fired like a subscription's.
+        # Call-site handlers outlive any single render tape, so keep them in the editor handler table.
         return (rs.handler(d).replace("dx.handler(r)", "crate::shim_editor::kept(r)")
-                .replace("let k = dx.pin(); ", "").replace("let _ = &k; ", ""))  # a kept handler: no tape
+                .replace("let k = dx.pin(); ", "").replace("let _ = &k; ", ""))
     if k == "libval":
         return f"<{d[1]} as genapi::Unwire>::get(r)"
     if k == "char":
@@ -110,9 +133,9 @@ def rust_dec(rs, d):
     if k == "font":
         return "crate::shim_editor::font(r)"
     if k == "ask":
-        return rust_ask(rs, d)  # a data closure (PROTOCOLS.md 9.14)
+        return rust_ask(rs, d)
     if k == "ctxrows":
-        return rust_ctxrows(rs, d)  # an element closure over a context (PROTOCOLS.md 9.16)
+        return rust_ctxrows(rs, d)
     if k == "rangeof":
         return "{ let a = %s; a..%s }" % (rs.dec(d[1]), rs.dec(d[1]))
     if k == "rcvec":
@@ -124,20 +147,19 @@ def rust_dec(rs, d):
     return None
 
 
+# Hand-written delegate shims whose `&D` return values are skipped as direct object handles
+# because Go interacts with their data through the runtime's delegate protocol instead.
 SHIMS_OUT = {"crate::shim_rows::GkListDelegate", "crate::shim_rows::GkTableDelegate",
              "crate::shim_select::GkSearchDelegate"}
 
 
 def shim_out(m, path):
-    """Whether a library delegate shim travels out (a state's `delegate()` read back): as the row
-    source it is made over (its Wire impl writes the source's handle; Go: a `RowSource`)."""
+    """Return True if `path` is one of the hand-written delegate shims in `SHIMS_OUT`."""
     return path in SHIMS_OUT
 
 
 def shim_result(m, ctx, out, out_s):
-    """A state method returning `&D` or `&mut D` for a delegate shim D (`ListState::delegate`,
-    `delegate_mut`): the result is the shim by value as the wire sees it (its row source), so the
-    method is a read or a call like any other. Anything else is returned unchanged."""
+    """Unwrap `&D` return types when `D` resolves to a runtime delegate shim in `SHIMS_OUT`."""
     if out is None or "borrowed_ref" not in out:
         return out, out_s
     inner = out["borrowed_ref"]["type"]
@@ -148,71 +170,62 @@ def shim_result(m, ctx, out, out_s):
 
 
 def from_str_ref(t):
-    """`impl From<&str> for T` (not `&'static str`, which a string read from a request is not):
-    the Into set of T gets a string member (`MaskPattern::from("999-999")` is upstream's Pattern
-    variant, whose tokens are private), PROTOCOLS.md 9.12."""
+    """Return True if rustdoc type `t` is an elided `&str` reference (`&str` or `&'_ str`)."""
     b = t.get("borrowed_ref")
     return bool(b) and not b["is_mutable"] and b["type"].get("primitive") == "str" and b.get("lifetime") in (None, "'_")
 
 
 def from_arg(src, e):
-    """The argument of `From<src>::from` for a decoded member: a `&str` source takes `&*e` (the
-    member is decoded as a String in call ops and as &str in tapes)."""
+    """Re-borrow an owned decoded `String` expression as `&*e` when a `From<&str>` impl expects `&str`."""
     return f"&*{e}" if src == "&str" else e
 
 
 def gpui_value(m, hc, name, args, out):
-    """gpui's `Font` (a family, a weight and a style; its features and fallbacks are the
-    defaults `gpui::font` gives) as `["font"]`: Go's `gk.Font`;
-    Rust `crate::shim_editor::font` and its Wire impl (PROTOCOLS.md 9.11). None for other types."""
-    from gk_model import GPUI_HOMES  # noqa: PLC0415 (gk_model imports this module)
+    """Classify third-party and GPUI types wired through dedicated codecs or runtime shims.
+
+    Handles `gpui::Font`, `lsp_types::Position` and `CompletionItem`, `SharedUri`,
+    `ImageSource` (inside `Ask` returns), `CodeBlock`, `ropey::Rope`/`RopeSlice`, and
+    `UniformListScrollHandle` (projected to its underlying `ScrollHandle`).
+    """
+    from gk_model import GPUI_HOMES
     if name == "Font" and not args and hc in GPUI_HOMES:
         return ["font"]
     if name == "Position" and not args and hc == "lsp_types":
-        return ["libval", "lsp_types::Position", "Lsp_Position"]  # a cursor position (9.13; Wire in shim_text.rs)
+        return ["libval", "lsp_types::Position", "Lsp_Position"]
     if name == "SharedUri" and out and not args and hc in GPUI_HOMES:
-        return ["str", "SharedUri"]  # a URI an ask is given (PROTOCOLS.md 9.14; Wire in shim_text.rs)
+        return ["str", "SharedUri"]
     if name == "ImageSource" and not out and not args and hc in GPUI_HOMES and getattr(m, "_ask", False):
-        return ["imgsrc"]  # what an ask answers for an image: a path or a URL (9.14)
+        return ["imgsrc"]
     if name == "CodeBlock" and out and not args and hc not in GPUI_HOMES:
-        return ["libval", "gpui_kit::base::text::CodeBlock", "Code_Block"]  # Wire in shim_text.rs
+        return ["libval", "gpui_kit::base::text::CodeBlock", "Code_Block"]
     if name == "CompletionItem" and not args and hc == "lsp_types":
-        # An LSP completion item, as the editor's completion provider answers one (gk.Completion_Item:
-        # label, kind, detail, insert text; Unwire in shim_input.rs), PROTOCOLS.md 9.19.
         return ["libval", "lsp_types::CompletionItem", "Completion_Item"]
     if out and hc == "ropey" and name in ("Rope", "RopeSlice"):
-        return ["str", name]  # an editor's text read back: the whole text (Wire impls in shim_editor.rs)
+        return ["str", name]
     if out and name == "UniformListScrollHandle" and not args and hc in GPUI_HOMES:
-        # A uniform list's scroll handle read back (`TreeState::scroll_handle`): the gpui ScrollHandle
-        # it scrolls by, the values family's object (PROTOCOLS.md 13.14), so the app scrolls and reads
-        # it as any gk.Scroll_Handle (9.19).
-        import gk_values  # noqa: PLC0415
+        import gk_values
         return ["uscroll", gk_values.gpui_object(m, "ScrollHandle")]
     return None
 
 
-# Third-party types the library carries (PROTOCOLS.md 9.19): (crate, name) -> the Rust path.
+# Fully-qualified Rust paths for non-kit third-party types re-exported or referenced in signatures.
 THIRD_PARTY = {("ropey", "Rope"): "ropey::Rope", ("ropey", "RopeSlice"): "ropey::RopeSlice",
                ("lsp_types", "CompletionItem"): "lsp_types::CompletionItem",
-               ("jiff", "Date"): "jiff::civil::Date"}  # a set of dates (Matcher::Custom, PROTOCOLS.md 11.21)
+               ("jiff", "Date"): "jiff::civil::Date"}
 
 
 def third_party_path(hc, name):
-    """The Rust path of a third-party type the family's rules carry (gk_model.rtype's hook): an
-    editor's text read back inside a tuple (`InputEditsEvent::edits`), an LSP completion item given
-    to the completion highlighters (`highlight_prefix`). None for any other type."""
+    """Look up the Rust path for a known third-party type `(home_crate, name)`."""
     return THIRD_PARTY.get((hc, name))
 
 
 def payload_object(m, hc, hid, f):
-    """A library object that is an event's payload (`InlineTokenClickEvent`, `DiffLinePosition`):
-    a copy behind a temporary handle, as a read's result is (PROTOCOLS.md 13.2), so its reads are
-    the handler's to call. Only a Clone type can be copied out of the borrow upstream hands the
-    closure."""
+    """Return True if a kit type can be cloned and passed out of a closure as an object handle."""
     return bool(f.get("clone")) and m.is_obj(hc, hid)
 
 
 def _has_lifetime(m, e):
+    """Return True if data enum `e` declares any lifetime generic parameters in rustdoc."""
     name = e["path"].rsplit("::", 1)[-1]
     for cr in m.api.walks:
         for iid, (_, it) in m.api.walks[cr].types.items():
@@ -221,10 +234,8 @@ def _has_lifetime(m, e):
     return False
 
 
-# ---------------------------------------------------------------- expression closures (9.12)
-
 def _num_kind(m, d):
-    """How a value of descriptor d becomes a number of an expression, or None."""
+    """Map a scalar, `Pixels`, unit enum, or shared reference descriptor to its `expr` coercion key."""
     k = d[0]
     if k in ("f32", "f64", "bool"):
         return k
@@ -241,16 +252,17 @@ def _num_kind(m, d):
 
 
 def expr_closure(m, ctx, inputs, output, wrap, params, ptypes, payload):
-    """A closure that maps numbers to a number (arguments numbers, Pixels, bools or fieldless
-    enums; the result a number, Pixels or a bool; at most the app as context): an expression the
-    library evaluates (`["expr", result kind, argument kinds, wrap, ptypes, params]`, Go a
-    `string`, PROTOCOLS.md 9.12). None for any other closure."""
+    """Match a pure numeric/boolean/enum-to-scalar closure encoded as an `Expr` formula string.
+
+    Go passes a compact arithmetic/conditional expression string evaluated on the Rust
+    thread via `crate::shim_editor::Expr` with all numeric inputs widened to `f64`.
+    """
     if output is None or not payload or any(p not in ("arg", "app", "app_ref") for p in params):
         return None
     try:
         rk = _num_kind(m, m.desc(ctx, output))
         kinds = [_num_kind(m, m.desc(ctx, t)) for t in payload]
-    except Exception:  # noqa: BLE001 (an Unsup: not an expression closure)
+    except Exception:
         return None
     if rk is None or rk.startswith(("enum", "ref")) or None in kinds:
         return None
@@ -258,6 +270,7 @@ def expr_closure(m, ctx, inputs, output, wrap, params, ptypes, payload):
 
 
 def _to_f64(m, k, v):
+    """Generate a Rust expression converting an `expr` closure input `v` of kind `k` to `f64`."""
     if k.startswith("ref:"):
         return _to_f64(m, k[4:], f"(*{v})")
     if k in ("f32", "f64") or k.startswith("int:"):
@@ -272,6 +285,7 @@ def _to_f64(m, k, v):
 
 
 def _from_f64(k, v):
+    """Generate a Rust expression narrowing an `Expr::eval` `f64` result back to return kind `k`."""
     if k == "f64":
         return v
     if k == "f32":
@@ -280,10 +294,11 @@ def _from_f64(k, v):
         return f"({v} as {k[4:]})"
     if k == "bool":
         return f"({v} != 0.0)"
-    return f"gpui_kit::px({v} as f32)"  # px
+    return f"gpui_kit::px({v} as f32)"
 
 
 def rust_expr(rs, d):
+    """Emit Rust decoder for an `expr` descriptor wrapping `crate::shim_editor::Expr`."""
     _, rk, kinds, wrap, ptypes, params = d
     ps, conv, n = [], [], 0
     for p, t in zip(params, ptypes):
@@ -297,34 +312,27 @@ def rust_expr(rs, d):
     return rs.wrap(wrap, "{ let e = crate::shim_editor::Expr::new(r.str()); move |%s| { %s } }" % (", ".join(ps), body))
 
 
-# ---------------------------------------------------------------- std shapes of options (9.12)
-
 def resolved(m, ctx, t, out):
-    """`Arc<[T]>`, `Rc<[T]>`, `Box<[T]>` (a list: `Easing::LinearStops`) and `NonZeroU32` and
-    its kin (`Easing::Steps { count }`), both ways (Wire impls in shim_editor.rs). None for any
-    other type."""
+    """Classify standard wrapper types (`Arc<[T]>`, `NonZero*`, `Range<impl Into<T>>`, `Rc<Vec<T>>`) and aliases."""
     rp = t["resolved_path"]
     name = rp["path"].rsplit("::", 1)[-1]
-    al = alias(m, ctx, t, out)  # a delegate or an element closure behind a type alias (9.16, 9.18)
+    al = alias(m, ctx, t, out)
     if al is not None:
         return al
-    from gk_model import path_args  # noqa: PLC0415 (gk_model imports this module)
+    from gk_model import path_args
     args = path_args(rp)
     if name in ("Arc", "Rc", "Box") and len(args) == 1 and "slice" in args[0]:
         return ["arcslice", m.desc(ctx, args[0]["slice"], out), name]
     if name in NONZERO and not args:
         return ["nonzero", NONZERO[name]]
     if name == "Range" and len(args) == 1 and not out and "impl_trait" in args[0]:
-        # Range<impl Into<X>> (`Diagnostic::new(Range<impl Into<Position>>, ..)`): a range of X,
-        # `[2]X` in Go (PROTOCOLS.md 9.13).
-        from gk_model import bound_parts  # noqa: PLC0415
+        from gk_model import bound_parts
         for n, tr in bound_parts(args[0]["impl_trait"]):
             ga = ((tr.get("args") or {}).get("angle_bracketed") or {}).get("args", [])
             if n == "Into" and len(ga) == 1 and "type" in ga[0]:
                 return ["rangeof", m.desc(ctx, ga[0]["type"], out)]
     if name in ("Rc", "Arc") and len(args) == 1 and "resolved_path" in args[0] \
             and args[0]["resolved_path"]["path"].rsplit("::", 1)[-1] == "Vec":
-        # Rc<Vec<T>>, Arc<Vec<T>>: the list, both ways (Wire in shim_text.rs, PROTOCOLS.md 9.13)
         return ["rcvec", m.desc(ctx, args[0], out), name]
     return None
 
@@ -333,30 +341,27 @@ NONZERO = {"NonZeroU8": "u8", "NonZeroU16": "u16", "NonZeroU32": "u32", "NonZero
 
 
 def rust_std(rs, d):
+    """Emit Rust decoder for `arcslice` (`Arc`/`Rc`/`Box<[T]>`) and `nonzero` (`std::num::NonZero*`)."""
     if d[0] == "arcslice":
         ctor = {"Arc": "std::sync::Arc::from", "Rc": "std::rc::Rc::from", "Box": "Box::from"}[d[2]]
         return "{ let v: Vec<_> = %s; %s(v) }" % (rs.dec(["list", d[1], "vec"]), ctor)
     if d[0] == "nonzero":
         t = {"u8": "U8", "u16": "U16", "u32": "U32", "u64": "U64", "usize": "Usize"}[d[1]]
         get = "r.u64() as usize" if d[1] == "usize" else f"r.{d[1]}()"
+        # Clamp 0 to MIN so malformed zero values never panic during tape decode.
         return f"std::num::NonZero{t}::new({get}).unwrap_or(std::num::NonZero{t}::MIN)"
     return None
 
-
-# ---------------------------------------------------------------- iterators read back (9.11)
 
 ITERS = ("Iterator", "DoubleEndedIterator", "ExactSizeIterator")
 
 
 def bounded_out(m, ctx, bounds, out):
-    """`impl Iterator<Item = X>` (with DoubleEndedIterator, ExactSizeIterator) as a result: the
-    items collected into a list (`History::entries`, `DiagnosticSet::iter`). Going in, a trait
-    of `[lists] unions` whose implementors are node types (`impl ChildElement`): one of them, an
-    interface in Go (`["oneof", trait, node keys]`). None otherwise."""
-    from gk_model import Unsup, bound_parts  # noqa: PLC0415 (gk_model imports this module)
+    """Classify `impl Trait` bounds into `oneof` element unions (input) or `iter` descriptors (output)."""
+    from gk_model import Unsup, bound_parts
     b6 = gk_comp6.bounded(m, ctx, bounds, out)
     if b6 is not None:
-        return b6  # a list per row of a data table (PROTOCOLS.md 12.16)
+        return b6
     if not out:
         for n, _ in bound_parts(bounds):
             if n in table(m, "unions"):
@@ -368,7 +373,6 @@ def bounded_out(m, ctx, bounds, out):
         return None
     for n, tr in bound_parts(bounds):
         if n in ("Fn", "FnMut", "FnOnce"):
-            # A closure handed out (`cubic_bezier(..) -> impl Fn(f32) -> f32`): nothing can carry it.
             raise Unsup("todo:protocol: data (a closure read back)", n)
         if n in ITERS:
             for cst in ((tr.get("args") or {}).get("angle_bracketed") or {}).get("constraints", []):
@@ -379,21 +383,22 @@ def bounded_out(m, ctx, bounds, out):
 
 
 def put_ret(ret, expr):
-    """A call op's result written by the Rust emitter, for the family's descriptors; None
-    otherwise (gk_rust.Rust.put_ret's hook)."""
+    """Emit Rust wire serialization for `iter`, `lent`, and `uscroll` return descriptors."""
     if ret[0] == "iter":
         return f"genapi::Wire::put(&({expr}).collect::<Vec<_>>(), &mut out)"
     if ret[0] == "lent":
-        return rust_lent(ret, expr)  # an object lent by kit state (PROTOCOLS.md 9.17)
+        return rust_lent(ret, expr)
     if ret[0] == "uscroll" or ret[0] == "ref" and ret[1][0] == "uscroll":
-        return f"genapi::Wire::put(&({expr}).0.borrow().base_handle.clone(), &mut out)"  # 9.19
+        return f"genapi::Wire::put(&({expr}).0.borrow().base_handle.clone(), &mut out)"
     return None
 
 
 def rust_arm(rs, it, call, bail):
-    """A node op whose argument is one of a trait's node types (`child(impl ChildElement)`), or a
-    list of them (`children`): the node's type picks the decoder, and the op is called per child.
-    None for any other op (gk_rust.Rust.arm's hook)."""
+    """Emit a Rust match arm for ops accepting a single `oneof` element union or `Vec<oneof>`.
+
+    Dispatches on each child tape node's constructor opcode to build the concrete Rust
+    type (`make_<fn>`) and apply `call` before folding back into the parent element.
+    """
     args = [a for a in it["args"] if a["desc"][0] != "ctx"]
     if len(args) != 1:
         return None
@@ -402,7 +407,7 @@ def rust_arm(rs, it, call, bail):
     if not many and d[0] != "oneof":
         return None
     keys = (d[1] if many else d)[2]
-    bail = bail if bail is not None else "return None"  # a constructor's arm: no value without the child
+    bail = bail if bail is not None else "return None"
     arms = []
     for k in keys:
         nd = rs.m.nodes[k]
@@ -419,13 +424,8 @@ def rust_arm(rs, it, call, bail):
             % (body, bail))
 
 
-# ---------------------------------------------------------------- Default as a constructor (9.13)
-
 def default_ctor(m, st, f, crate):
-    """A library object with no constructor of its own that implements Default (`StatusColors`,
-    `SyntaxColors`: a theme's colours with every value left to the theme) is made by
-    `Default::default`: a synthetic constructor (kept handle, not counted as an upstream function),
-    so its reads become reachable (PROTOCOLS.md 9.13)."""
+    """Synthesize a `Default::default` constructor item for a library object with no inherent ctor."""
     if not f.get("default") or f.get("ctor") or st["glob"]:
         return
     key = st["key"]
@@ -436,21 +436,18 @@ def default_ctor(m, st, f, crate):
     m.items.append(it)
 
 
-# ---------------------------------------------------------------- data closures (9.14)
-
+# Allowed descriptor tags for Ask closure keys (serialized to Go) and returns (decoded from Go).
 ASK_KEY = {"bool", "int", "f32", "f64", "str", "leaf", "enum", "opt", "list", "tuple", "rec", "ref", "libval", "denum"}
 ASK_RET = {"bool", "int", "f32", "f64", "str", "leaf", "enum", "opt", "list", "tuple", "rec", "denum", "imgsrc"}
 
 
 def ask_closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
-    """A closure that returns a value which is not a number (`code_block_highlighter(Fn(&CodeBlock)
-    -> Vec<(Range<usize>, HighlightStyle)>)`, `image_source(Fn(&SharedUri) -> ImageSource)`): the
-    library answers it from a cache keyed by the arguments' bytes and asks the app between frames
-    for a key it has not got (the result type's default meanwhile), PROTOCOLS.md 9.14:
-    `["ask", key, result, wrap, ptypes, params, rust result type]`. The arguments are values the
-    app reads (no objects or handles: a key is their bytes); the result is a value the app writes
-    (no nodes or handles), or an image source (a path or URL). None for any other closure."""
-    from gk_model import Unsup  # noqa: PLC0415
+    """Match a value-returning closure that can be served by an async key->value `Ask` table.
+
+    At paint time Rust looks up the serialized key in `crate::shim_text::Ask`; on a cache
+    miss it enqueues a request for Go and returns `Default::default()` until answered.
+    """
+    from gk_model import Unsup
     if output is None or not payload or any(p not in ("arg", "window", "app", "app_ref", "window_ref") for p in params):
         return None
     try:
@@ -458,24 +455,25 @@ def ask_closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
         if out_s in ("bool", "()"):
             return None
         keys = [m.desc(ctx, t, out=True) for t in payload]
-        m._ask = True  # an image source answered by the app is a path or a URL (gpui_value)
+        m._ask = True
         try:
             ret = m.desc(ctx, output)
         finally:
             m._ask = False
     except Unsup:
         return None
-    from gk_model import walk_desc  # noqa: PLC0415
+    from gk_model import walk_desc
     if any(x[0] not in ASK_KEY or (x[0] == "leaf" and x[1] not in ("px", "range", "color")) for k in keys for x in walk_desc(k)):
         return None
     if any(x[0] not in ASK_RET or (x[0] == "leaf" and x[1] in ("child", "id")) for x in walk_desc(ret)):
         return None
     key = keys[0] if len(keys) == 1 else ["tuple", keys]
-    out_s = out_s.replace("std::ops::range::Range", "std::ops::Range")  # the private module rustdoc names
+    out_s = out_s.replace("std::ops::range::Range", "std::ops::Range")
     return ["ask", key, ret, wrap, ptypes, params, out_s]
 
 
 def rust_ask(rs, d):
+    """Emit Rust decoder for an `ask` closure backed by `crate::shim_text::Ask`."""
     _, key, ret, wrap, ptypes, params, rt = d
     ps, names, n = [], [], 0
     for p, t in zip(params, ptypes):
@@ -491,7 +489,7 @@ def rust_ask(rs, d):
             "|| crate::shim_text::image_source(String::new())"
     else:
         was = rs.call
-        rs.call = None  # an answer is decoded as a tape's value is, with a context over no tape (dx)
+        rs.call = None
         try:
             dec = rs.dec(ret)
         finally:
@@ -502,20 +500,15 @@ def rust_ask(rs, d):
     return rs.wrap(wrap, "{ let a = crate::shim_text::Ask::take(r.u64()); move |%s| -> %s { %s } }" % (", ".join(ps), rt, body))
 
 
-# ---------------------------------------------------------------- values a static makes several of (9.15)
-
-
-
 def list_ctor(m, node, it, crate, fn, fctx):
-    """A static of a value type that returns several of it (`DiffFile::parse(patch) ->
-    Result<Vec<Self>, DiffParseError>`, `parse_with`): two synthetic functions (PROTOCOLS.md 9.15),
-    `<type>_<name>_count`, an ambient call that runs the static and returns how many values it made
-    (a `gk.Fallible(int)`: the error's text when it fails), and the constructor `<type>_<name>_at`
-    with the same arguments and an index, whose value is the static's value at that index (the
-    library runs the static again where the value is decoded, keeping its last result by its
-    arguments' bytes). The upstream function counts as bridged. True when bound."""
-    import re as _re  # noqa: PLC0415
-    from gk_model import Unsup, path_args  # noqa: PLC0415
+    """Split a static constructor returning `Vec<Self>` or `Result<Vec<Self>, E>` into count/at/error items.
+
+    Because tape node constructors always build a single `Self`, a vector-returning factory
+    (like CSV/JSON table row parsers) becomes an ambient `*_count` query, an indexed
+    `*_at(index)` node constructor, and (when `E` is a Clone object) an ambient `*_error` query.
+    """
+    import re as _re
+    from gk_model import Unsup, path_args
     out = fn["sig"].get("output")
     out_s = rdj_ty(out) if out else "()"
     mt = _re.fullmatch(r"(Result<)?Vec<Self>(, [\w:<>]+>)?", out_s)
@@ -533,7 +526,6 @@ def list_ctor(m, node, it, crate, fn, fctx):
     names = [a["name"] for a in args]
     ps = ", ".join(names)
     snake = _re.sub(r"(?<!^)(?=[A-Z])", "_", node["name"]).lower()
-    # the count: an ambient call (PROTOCOLS.md 11.5) of the node type
     run = f"<{tp}>::{it['name']}({ps})"
     count = {"row": None, "owner": it["owner"], "trait": None, "crate": crate, "synthetic": True,
              "name": f"{snake}_{it['name']}_count", "id": f"{it['id']}#count", "kind": "ambient", "status": "bound",
@@ -545,7 +537,6 @@ def list_ctor(m, node, it, crate, fn, fctx):
         m.ambient = []
     m.ambient.append(count)
     m.items.append(count)
-    # the value at an index: a constructor of the node type
     at = {"row": None, "owner": it["owner"], "trait": None, "crate": crate, "synthetic": True,
           "name": f"{it['name']}_at", "id": f"{it['id']}#at", "kind": "ctor", "status": "bridged", "reason": "",
           "args": [dict(a) for a in args] + [{"name": "index", "desc": ["int", "usize"]}], "node": key,
@@ -555,9 +546,6 @@ def list_ctor(m, node, it, crate, fn, fctx):
     m.items.append(at)
     names = f"{count['name']} and {it['name']}_at"
     if fallible:
-        # The static's error as the kit's own value (`DiffParseError`: its line and message), when
-        # it is a library object: `<type>_<name>_error`, an ambient call returning it or nothing
-        # (PROTOCOLS.md 9.19).
         try:
             ed = m.desc(fctx, path_args(out["resolved_path"])[1], out=True)
         except Unsup:
@@ -575,27 +563,16 @@ def list_ctor(m, node, it, crate, fn, fctx):
 
 
 def rdj_ty(t):
-    import rdj  # noqa: PLC0415
+    import rdj
     return rdj.ty(t)
 
 
-# ---------------------------------------------------------------- element closures over a context (9.16)
-
-# Descriptors of these families a call op can decode (gk_model.call_bad's hook): a row source handle.
-CALL_SAFE = {"ctxrows", "rows", "items"} | gk_comp6.CALL_SAFE  # items: an item procedure's rows (PROTOCOLS.md 9.41)
+CALL_SAFE = {"ctxrows", "rows", "items"} | gk_comp6.CALL_SAFE
 
 
 def ctx_rows(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
-    """An element closure that gets the window, the app and one to three values the kit hands it
-    (`Input::token(Fn(&InlineTokenContext, &mut Window, &mut App) -> R)`, `Diff::render_header(Fn(
-    &DiffFile, ..) -> E)`, an editor's scrollbar renderer `Fn(EditorScrollbarContext, ..)`): a row
-    source the app passes (PROTOCOLS.md 9.16). Each call of the closure in a frame is a row of the
-    source, keyed by its order in the frame; the row's view reads the values with
-    `gk.row_context`: plain values as they are, a library object as a copy behind a temporary
-    handle (so its type must be Clone). The row is described again when the values change
-    (compared by their bytes; an object by the bytes of its reads that take nothing).
-    `["ctxrows", wrap, ptypes, params, descs]`; None for any other closure."""
-    from gk_model import Unsup, walk_desc  # noqa: PLC0415
+    """Match an element-rendering closure carrying wire-encodable context arguments."""
+    from gk_model import Unsup, walk_desc
     if not payload or len(payload) > 3 or "context" in params or "window" not in params or "app" not in params:
         return None
     try:
@@ -614,12 +591,11 @@ def ctx_rows(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
 
 
 def handed_out(it):
-    """Library objects an item hands the app besides its result: the values of an element closure
-    over a context (9.16), which make those objects reachable (gk_model.reach_objects' hook)."""
-    from gk_model import walk_desc  # noqa: PLC0415
+    """Yield every library object key handed out through `ctxrows` or `gk_items` closure arguments."""
+    from gk_model import walk_desc
     for a in it.get("args", []):
         for x in walk_desc(a["desc"]):
-            yield from gk_items.handed_out(x)  # an item procedure's objects (PROTOCOLS.md 9.41)
+            yield from gk_items.handed_out(x)
             if x[0] == "ctxrows":
                 for d in x[4]:
                     for y in walk_desc(d):
@@ -628,9 +604,13 @@ def handed_out(it):
 
 
 def _ctx_print(rs, d, v):
-    """Statements that add the identity of one closure value to `p` (9.16): a plain value's bytes;
-    an object's reads that take nothing and return plain values."""
-    from gk_model import walk_desc  # noqa: PLC0415
+    """Build Rust statements that serialize a stable fingerprint of row argument `v` into `p`.
+
+    For primitive/record values this wires `v` directly; for object handles it hashes all
+    zero-arg pure value getters so `ctx_row` can detect when an object's content changed
+    between renders without allocating a fresh handle on every frame.
+    """
+    from gk_model import walk_desc
     base = d[1] if d[0] == "ref" else d
     if base[0] != "obj":
         return [f"genapi::Wire::put(&{v}, &mut p);"]
@@ -647,8 +627,14 @@ def _ctx_print(rs, d, v):
 
 
 def rust_ctxrows(rs, d):
+    """Emit Rust decoder for a `ctxrows` row-source closure.
+
+    Captures a row-source handle from the tape, fingerprints the closure's payload
+    arguments into `p`, and calls `crate::source::ctx_row` so Go renders the row on demand
+    with lazily serialized argument payloads (`o`).
+    """
     wrap, ptypes, params, descs = d[1:5]
-    opt = len(d) > 5 and d[5] == "opt"  # -> Option<AnyElement>: Some(the row) (PROTOCOLS.md 11.19)
+    opt = len(d) > 5 and d[5] == "opt"
     ps, lets, puts, n = [], [], [], 0
     for p, t in zip(params, ptypes):
         if p == "arg":
@@ -657,7 +643,7 @@ def rust_ctxrows(rs, d):
             lets += _ctx_print(rs, dd, v)
             base = dd[1] if dd[0] == "ref" else dd
             if base[0] == "obj":
-                lets.append(f"let c{n} = {v}.clone();")  # copied out at read time: a temporary handle
+                lets.append(f"let c{n} = {v}.clone();")
                 puts.append(f"genapi::Wire::put(&c{n}, o);")
             else:
                 lets.append(f"let b{n} = {{ let mut b = Vec::new(); genapi::Wire::put(&{v}, &mut b); b }};")
@@ -669,7 +655,6 @@ def rust_ctxrows(rs, d):
             ps.append(f"cx: {t}")
         else:
             ps.append(f"_{p}: {t}")
-    # The only value an index (a scroller's item): the row is keyed by it, not by the call's order.
     deref = "*" if ptypes[params.index("arg")].startswith("&") else ""
     by = f"Some(({deref}k0) as u64)" if len(descs) == 1 and descs[0][0] == "int" else "None"
     ret = "Option<gpui_kit::AnyElement>" if opt else "gpui_kit::AnyElement"
@@ -677,7 +662,6 @@ def rust_ctxrows(rs, d):
             "%s(crate::source::ctx_row(src, %s, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { %s }), window, cx)) } }"
             % (", ".join(ps), ret, " ".join(lets), "Some" if opt else "", by, " ".join(puts)))
     if wrap in ("rc", "box", "arc"):
-        # Named as the trait object, so that an Option of it (`Option<EditorScrollbarRenderer>`) has its type.
         ptr = {"rc": "std::rc::Rc", "box": "Box", "arc": "std::sync::Arc"}[wrap]
         dyn = f"dyn Fn({', '.join(ptypes)}) -> {ret}"
         return f"{{ let f: {ptr}<{dyn}> = {rs.wrap(wrap, body)}; f }}"
@@ -685,17 +669,12 @@ def rust_ctxrows(rs, d):
 
 
 def alias(m, ctx, t, out):
-    """A use of a type alias (`EditorScrollbarRenderer`, `InputHighlighterFactory`): a delegate the
-    library makes over a row source when `[lists] delegates` names the alias (PROTOCOLS.md 9.18:
-    `["rows", shim]`), an element closure over a context when the alias's type is one (9.16), else
-    None (the alias stays what it was)."""
-    from gk_model import Ctx, Unsup  # noqa: PLC0415
+    """Resolve delegate trait objects and type aliases (`[lists].delegates` or `ctxrows` -> `kitfn`)."""
+    from gk_model import Ctx, Unsup
     rp = t["resolved_path"]
-    from gk_model import path_args  # noqa: PLC0415
+    from gk_model import path_args
     args = path_args(rp)
     if rp["path"].rsplit("::", 1)[-1] in ("Rc", "Arc", "Box") and len(args) == 1 and "dyn_trait" in args[0] and not out:
-        # `Rc<dyn LanguageProvider>`: a delegate the library makes when `[lists] delegates` names
-        # "dyn Trait" (PROTOCOLS.md 9.18).
         names = [x["trait"]["path"].rsplit("::", 1)[-1] for x in args[0]["dyn_trait"]["traits"]]
         shim = table(m, "delegates").get("dyn " + names[0]) if len(names) == 1 else None
         if shim:
@@ -704,7 +683,7 @@ def alias(m, ctx, t, out):
         return None
     try:
         hc, hid, it = m.api.item(ctx.crate, rp["id"])
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
     if it is None or "type_alias" not in it.get("inner", {}):
         return None
@@ -718,18 +697,17 @@ def alias(m, ctx, t, out):
         d = m.desc(Ctx(hc), it["inner"]["type_alias"]["type"], out)
     except Unsup:
         return None
-    return gk_comp6.kitfn(m, hc, hid, it, d) if d[0] == "ctxrows" else None  # or a kit function's (11.20)
+    return gk_comp6.kitfn(m, hc, hid, it, d) if d[0] == "ctxrows" else None
 
-
-# ---------------------------------------------------------------- objects lent by kit state (9.17)
 
 def lend(m, ctx, st, out):
-    """A state method `fn x_mut(&mut self) -> &mut T` or `-> Option<&mut T>` where T is a library
-    object that is Clone (`InputBaseState::diagnostics_mut`): a call that lends the object
-    (PROTOCOLS.md 9.17). The app gets a temporary handle to a copy, writes to it with the turn's
-    buffered writes, and the library gives the copy back to the state when the turn's writes have
-    landed (then the state redraws). `["lent", obj desc, state path, optional]`; None otherwise."""
-    from gk_model import last, path_args  # noqa: PLC0415
+    """Match a `&mut T` or `Option<&mut T>` return that lends a Clone library object for editing.
+
+    Because Rust borrows cannot cross the FFI boundary, `crate::shim_editor::lend` clones
+    the borrowed field into a temporary handle and records a write-back accessor closure
+    that writes mutations back into the owning entity when committed.
+    """
+    from gk_model import last, path_args
     if out is None:
         return None
     t, opt = out, False
@@ -748,6 +726,7 @@ def lend(m, ctx, st, out):
 
 
 def rust_lent(ret, expr):
+    """Emit Rust serialization for a `lent` handle returned from `crate::shim_editor::lend`."""
     _, d, sp, opt = ret
     T = d[1]
     got = f"({expr}).map(|v| v.clone())" if opt else f"Some(({expr}).clone())"

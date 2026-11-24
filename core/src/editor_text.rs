@@ -1,24 +1,27 @@
-//! The editor family's runtime (docs/PROTOCOLS.md sections 9.20 to 9.26): what the
-//! generated decoders of gen/gk_editor.py call.
+//! Runtime support for rich-text, markdown plugins, highlight style resolvers, and the block editor host.
 //!
-//! - **Typed fragments** (9.20): `MainThread` keeps a fragment of the app's view (a `genapi::Frag`,
-//!   which holds the view's tape in an `Rc`) inside a closure upstream wants `Send + Sync`
-//!   (`MarkdownExtensions::block_surface`); upstream calls it while it draws, on the main thread,
-//!   and `get` checks that it is.
-//! - **Rows without a window** (9.22): `lazy_row` is the element an element closure over values
-//!   returns when upstream gives the closure no window (`FoldPlaceholderRenderer`); it becomes the
-//!   row of the app's row source when it is laid out (`source::ctx_row`), where the window is.
-//! - **View rows** (9.22): `ctx_view` gives a closure over values that returns an `AnyView`
-//!   (`TextView::link_tooltip`) the row view of one value, a row per distinct value.
-//! - **Markdown plugins** (9.23): `GkPlugin` is the one `MarkdownPlugin` the library hands
-//!   upstream: one of the kit's own plugins (`FrontmatterPlugin`), or `DataPlugin`, which claims the
-//!   Markdown nodes of one kind by the app's rule (a fenced code block's language, a JSX element's
-//!   name), without calling the app (upstream parses on a background task), and draws each node
-//!   as a row of the app's row source: a block as the row, an inline node as the row inside an
-//!   `InlineElement`. The row reads the node (and, inline, the `InlineRenderContext`) with
-//!   `gk.row_context`.
-//! - **Small values** (9.24): `entity_id` (a `gpui::EntityId` argument: the entity behind an input,
-//!   textarea or editor handle), `Wire for ElementId` (an id read back: its text).
+//! # Components and Protocols
+//!
+//! - **Thread-affinity bridge ([`MainThread`])**: upstream markdown plugin and highlight traits
+//!   require `Send + Sync`, while tape fragments (`Frag`) hold `!Send` `Rc<Tape>`. `MainThread<T>`
+//!   implements `Send + Sync` and verifies at runtime that `get()` is only ever called on the
+//!   creating UI thread (terminating with exit code 70 otherwise).
+//! - **Deferred and stable row adapters ([`LazyRow`], [`ctx_view`])**: `LazyRow` defers
+//!   `source::ctx_row` until `Element::request_layout` when upstream constructs elements without
+//!   `&mut Window`. `ctx_view` caches `(row_index, AnyView)` per `(source, context_fingerprint)`
+//!   in `VIEW_ROWS` so upstream APIs expecting a persistent `AnyView` (like markdown link tooltips)
+//!   keep stable GPUI view identities across frames.
+//! - **Markdown plugins ([`DataPlugin`], [`GkPlugin`])**: matches one `markdown_ast::Node` kind
+//!   plus optional language/JSX tag filter and renders block or inline nodes through a host row
+//!   source (`source::ctx_row`).
+//! - **Block editor host (`N_EDITOR_HOST`, [`BlockHost`])**: lays out decoded `BlockNode`s with
+//!   optional `FlowPosition`s and `RenderContext`, runs `editor_host::collect_leaf_geometry`
+//!   around `prepaint` with host decoration ranges, fingerprints the sorted leaf geometries in
+//!   `HOST_LAST`, and coalesces changed batches in `HOST_PENDING` for async delivery under
+//!   `SHAPE_LEAF_GEOMETRY` (each `LeafGeometry` encoded as a temporary `HK_OBJ` handle).
+//! - **In-place lent edits ([`LentEdit`])**: lets the host mutate a borrowed upstream value
+//!   (`&mut V` where `V: Default`) via a mini-tape by moving the value out with `mem::take`,
+//!   replaying generated builder ops, and writing the updated value back.
 
 use crate::genapi::{self, Unwire, Wire, R};
 use crate::source;
@@ -31,17 +34,18 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-// ---------------------------------------------------------------- 9.20 typed fragments
-
-/// A value only the main thread touches, inside a closure upstream wants `Send + Sync`.
+/// Wrapper asserting at runtime that a `!Send` value is only ever dereferenced on the thread that
+/// created it (required by upstream plugin traits bounded by `Send + Sync`).
 pub struct MainThread<T> {
     v: T,
     thread: std::thread::ThreadId,
 }
 
-// SAFETY: `get` is the only access to the value and it refuses any thread but the one that made
-// it (the main thread: decoders run there), so the value is never shared across threads.
+// SAFETY: `MainThread<T>` exposes `&T` exclusively through `get()`, which verifies
+// `std::thread::current().id() == self.thread` and terminates the process otherwise.
+// Thus `T` is never accessed concurrently or from any thread other than its creator.
 unsafe impl<T> Send for MainThread<T> {}
+// SAFETY: Same invariant as `Send`: `get()` restricts all shared access to `self.thread`.
 unsafe impl<T> Sync for MainThread<T> {}
 
 impl<T> MainThread<T> {
@@ -49,6 +53,7 @@ impl<T> MainThread<T> {
         MainThread { v, thread: std::thread::current().id() }
     }
 
+    /// Returns a reference to the inner value, exiting the process if called off the creating thread.
     pub fn get(&self) -> &T {
         if std::thread::current().id() != self.thread {
             eprintln!("gk: a fragment of the app's view was called off the main thread; the library stops");
@@ -58,16 +63,13 @@ impl<T> MainThread<T> {
     }
 }
 
-/// A typed fragment whose root is not of the type upstream asked for: a mistake in app code (the
-/// Go type of the argument prevents it; a tape written by hand could do it). Exit 2.
+/// Stops the app when a tape fragment fails to decode as the expected upstream type `what`.
 pub fn bad_fragment(what: &str) -> ! {
     crate::rt::app_stop(format!("a fragment given where upstream wants a {what} is not a {what}"))
 }
 
-// ---------------------------------------------------------------- 9.22 rows without a window
-
-/// The row of an element closure over values that upstream calls without a window: an element
-/// that becomes the row of `src` (`source::ctx_row`) when it is laid out.
+/// Returns an element that defers [`source::ctx_row`] resolution until `request_layout` runs
+/// (needed when upstream builds elements outside a `Window` / `App` render context).
 pub fn lazy_row(src: u64, by: Option<u64>, print: Vec<u8>, write: Rc<dyn Fn(&mut Vec<u8>)>) -> AnyElement {
     LazyRow { src, by, row: Some((print, write)) }.into_any_element()
 }
@@ -78,7 +80,6 @@ struct LazyRow {
     row: Option<(Vec<u8>, Rc<dyn Fn(&mut Vec<u8>)>)>,
 }
 
-// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
 #[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for LazyRow {
     type Element = Self;
@@ -139,17 +140,12 @@ impl Element for LazyRow {
     }
 }
 
-// ---------------------------------------------------------------- 9.22 view rows
-
 thread_local! {
-    /// Per row source, the row of each distinct value a view closure was called with, and the view
-    /// handed upstream for it.
+    /// Caches `(row_index, AnyView)` per `(source_handle, context_fingerprint)` so upstream APIs
+    /// returning `AnyView` keep stable GPUI view identities across frames.
     static VIEW_ROWS: RefCell<HashMap<u64, HashMap<Vec<u8>, (u32, AnyView)>>> = RefCell::new(HashMap::new());
 }
 
-/// The view handed upstream for a row of a view closure: the row's own view once it is described
-/// (one frame of nothing before), so a view upstream keeps (a link's tooltip, cached per URL) shows
-/// the row when it arrives: it watches the source, which notifies it then.
 struct RowView {
     src: u64,
     row: u32,
@@ -165,8 +161,7 @@ impl Render for RowView {
     }
 }
 
-/// The view of the row of `src` for these values (`print`: their bytes): the same row and view each
-/// time the same values come, a new row for new ones.
+/// Returns a stable `AnyView` backed by a row in `src` keyed by fingerprint `print`.
 pub fn ctx_view(src: u64, print: Vec<u8>, write: Rc<dyn Fn(&mut Vec<u8>)>, window: &mut Window, cx: &mut App) -> AnyView {
     let known = VIEW_ROWS.with(|m| m.borrow().get(&src).and_then(|rows| rows.get(&print).cloned()));
     let (row, view) = match known {
@@ -178,14 +173,11 @@ pub fn ctx_view(src: u64, print: Vec<u8>, write: Rc<dyn Fn(&mut Vec<u8>)>, windo
             (row, view)
         }
     };
-    // Keeps the row's values (gk.row_context) and binds the row; its element is not used here.
     let _ = source::ctx_row(src, Some(row as u64), print, write, window, cx);
     view
 }
 
-// ---------------------------------------------------------------- 9.23 Markdown plugins
-
-/// The Markdown nodes a data plugin claims (Go `gk.MarkdownMatch`, in this order).
+/// Markdown AST node classes that a host-defined [`DataPlugin`] can intercept.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Match {
     Code,
@@ -214,9 +206,8 @@ impl Match {
     }
 }
 
-/// The library's data plugin (Go `gk.MarkdownPlugin`): its name, the nodes it claims (a kind
-/// and, for a fenced code block, its language, for a JSX element, its name; empty: every one),
-/// the row source that draws its nodes, and an inline node's baseline (0: upstream's).
+/// Data-driven `MarkdownPlugin` that matches one AST node kind (and optional language/tag name)
+/// and delegates rendering to a host row source `src`.
 #[derive(Clone, Debug)]
 pub struct DataPlugin {
     name: String,
@@ -238,7 +229,8 @@ impl Unwire for DataPlugin {
 }
 
 impl DataPlugin {
-    /// The node's text and its language or name when it is of the claimed kind.
+    /// Checks whether `node` matches this plugin's AST kind and optional `lang`/JSX tag filter,
+    /// returning `(text_value, optional_lang_or_tag)`.
     fn claims(&self, node: &markdown_ast::Node) -> Option<(String, Option<String>)> {
         use markdown_ast::Node;
         let (value, name) = match (self.kind, node) {
@@ -259,6 +251,7 @@ impl DataPlugin {
         Some((value, name))
     }
 
+    /// Converts a claimed markdown AST node into a `MarkdownNode` carrying extracted text and raw source.
     fn parse(&self, node: &markdown_ast::Node, cx: &MarkdownParseContext<'_>) -> Option<MarkdownNode> {
         let (value, _) = self.claims(node)?;
         let source = cx.node_source(node).unwrap_or("").to_string();
@@ -267,8 +260,8 @@ impl DataPlugin {
         Some(MarkdownNode::new(SharedString::from(self.name.clone()), ()).text(text).markdown(source))
     }
 
-    /// The row of a node: its identity is its name, text and Markdown, so a node that changes is
-    /// described again.
+    /// Encodes the node (and optional inline font/line metrics) as a row fingerprint and context
+    /// writer for [`source::ctx_row`].
     fn row(&self, node: &MarkdownNode, context: Option<&InlineRenderContext>, window: &mut Window, cx: &mut App) -> AnyElement {
         let mut p: Vec<u8> = Vec::new();
         Wire::put(node.name(), &mut p);
@@ -290,10 +283,9 @@ impl DataPlugin {
     }
 }
 
-/// Nodes the data plugins claimed (tests); upstream parses on a background task.
 static PARSED: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
 
-/// The one plugin the library gives upstream: a kit plugin or the library's data plugin.
+/// Polymorphic `MarkdownPlugin` combining built-in `FrontmatterPlugin` and host [`DataPlugin`].
 pub enum GkPlugin {
     Frontmatter(gpui_kit::component::text::FrontmatterPlugin),
     Data(DataPlugin),
@@ -345,10 +337,7 @@ impl MarkdownPlugin for GkPlugin {
     }
 }
 
-// ---------------------------------------------------------------- 9.26 one-method data delegates
-
-/// The editor's highlight resolver over the app's procedure (an ask, PROTOCOLS.md 9.14): a name
-/// asked between frames, unstyled until the answer is in, then cached.
+/// `HighlightStyleResolver` backed by a host request-reply [`crate::shim_text::Ask`] source.
 pub struct GkStyles {
     ask: crate::shim_text::Ask,
     dec: fn(&mut R, &mut crate::genapi::Dx) -> Option<Option<gpui_kit::HighlightStyle>>,
@@ -360,7 +349,7 @@ impl gpui_kit::base::input::HighlightStyleResolver for GkStyles {
     }
 }
 
-/// `SharedHighlightStyleResolver` from the ask the app passes (its row source handle).
+/// Creates an `Arc<dyn HighlightStyleResolver>` querying row source `src`.
 pub fn style_resolver(
     src: u64,
     dec: fn(&mut R, &mut crate::genapi::Dx) -> Option<Option<gpui_kit::HighlightStyle>>,
@@ -368,18 +357,13 @@ pub fn style_resolver(
     std::sync::Arc::new(GkStyles { ask: crate::shim_text::Ask::take(src), dec })
 }
 
-// ---------------------------------------------------------------- 9.24 small values
-
-/// An ElementId read back: its text (`DiffAnnotation::id`).
 impl Wire for ElementId {
     fn put(&self, out: &mut Vec<u8>) {
         Wire::put(&self.to_string(), out);
     }
 }
 
-/// The entity behind an input, textarea or editor handle, as a `gpui::EntityId` argument
-/// (`InputBase::semantic_owner`). Any other handle stops the program (exit 2), as a released
-/// handle a tape names does.
+/// Resolves an `InputState`, `EditorState`, or `TextareaState` handle to its GPUI `EntityId`.
 pub fn entity_id(handle: u64) -> gpui_kit::EntityId {
     use gpui_kit::base::input::{EditorState, InputState, TextareaState};
     let first = match genapi::state::<InputState>(handle) {
@@ -392,7 +376,6 @@ pub fn entity_id(handle: u64) -> gpui_kit::EntityId {
     if let Ok(e) = genapi::state::<TextareaState>(handle) {
         return e.entity_id();
     }
-    // A handle of another type says "is a X, not a Y"; a released or unknown one says why itself.
     let why = if first.contains(", not a ") {
         format!("handle {handle:#x} is not an input, a textarea or an editor (gk.EntityIDOf takes one of those)")
     } else {
@@ -401,14 +384,14 @@ pub fn entity_id(handle: u64) -> gpui_kit::EntityId {
     genapi::released_shown(&why, "kit state (as an entity id)")
 }
 
-/// Tests (call `EDITOR_TEST`): the nodes the data plugins claimed, the view rows made.
+/// Returns diagnostic counts `(markdown_nodes_parsed, cached_ctx_views)`.
 pub fn test_counts() -> (u64, u64) {
     let parsed = PARSED.load(std::sync::atomic::Ordering::Relaxed);
     let rows = VIEW_ROWS.with(|m| m.borrow().values().map(|r| r.len() as u64).sum());
     (parsed, rows)
 }
 
-/// The editor family's call ops (asked from shim_editor::call, so the shared dispatch needs no line).
+/// Handles `C_EDITOR_TEST` and `C_EDITOR_HOST_TEST` diagnostic counter queries.
 pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {
     use crate::genapi::Put as _;
     Some(match op {
@@ -431,15 +414,8 @@ pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResul
     })
 }
 
-// ---------------------------------------------------------------- 9.30 the editor host
-
-/// The editor host (node `EDITOR_HOST`): renders the app's blocks as
-/// TextView does (`BlockNode::render` with the block's `FlowPosition`, or its place among the
-/// blocks, and the `RenderContext`, or the one TextView would start from), runs upstream's
-/// `collect_leaf_geometry` around their prepaint with the app's decorations, and hands the keyed
-/// leaves to the app after the frame: an event of shape `LEAF_GEOMETRY` (u32 n, (u64 key, u64
-/// temporary handle of a `LeafGeometry`) each), only when the leaves' keys or geometry changed since
-/// the handler's last event, so describing the view again does not keep the app drawing.
+/// Element implementing `N_EDITOR_HOST`: lays out `BlockNode` children, collects leaf geometry
+/// around prepaint, and asynchronously sends changed `LeafGeometry` handles to the host.
 pub struct BlockHost {
     id: ElementId,
     blocks: Vec<gpui_kit::base::text::editor_host::BlockNode>,
@@ -450,9 +426,8 @@ pub struct BlockHost {
     _keep: genapi::TapePin,
 }
 
-/// Node `EDITOR_HOST`: str id; u32 n, block each; u32 n, (u8 has, u32 FlowPosition value node)
-/// each; u8 has, u32 RenderContext value node; u32 n, (u64 key, ranges) each; u8 has, u32 handler.
-/// The decoders of the values are generated (`generated::editor_host_*`, gen/gk_editor.py).
+/// Decodes an `N_EDITOR_HOST` node (id, blocks, optional flow positions, render context,
+/// decoration ranges, and optional leaf-geometry callback).
 pub fn host_node(dx: &mut genapi::Dx, args: u32, _first: u32) -> Option<AnyElement> {
     use crate::generated as g;
     let r = &mut dx.args(args);
@@ -480,7 +455,6 @@ pub fn host_node(dx: &mut genapi::Dx, args: u32, _first: u32) -> Option<AnyEleme
     Some(BlockHost { id, blocks, flows, context, decorations, handler, _keep: dx.pin() }.into_any_element())
 }
 
-// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
 #[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for BlockHost {
     type Element = Self;
@@ -557,9 +531,9 @@ impl Element for BlockHost {
 }
 
 thread_local! {
-    /// The last leaves' fingerprint delivered per (view, handler id).
+    /// Last leaf-geometry fingerprint sent per `(view, handler)` to suppress duplicate events.
     static HOST_LAST: RefCell<HashMap<(u64, u32), Vec<u8>>> = RefCell::new(HashMap::new());
-    /// Leaves waiting for the task that delivers them, per (view, handler id): the newest wins.
+    /// Coalesced leaf-geometry batches queued during prepaint for delivery after the frame.
     static HOST_PENDING: RefCell<Vec<(genapi::HandlerRef, Vec<(u64, gpui_kit::base::text::editor_host::LeafGeometry)>)>> =
         const { RefCell::new(Vec::new()) };
     static HOST_SCHEDULED: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
@@ -568,8 +542,8 @@ thread_local! {
     static DELIVERED: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
 }
 
-/// What decides whether the app hears of the leaves again: their keys and what the app reads
-/// first (bounds, length, line and caret heights).
+/// Packs each leaf's key, bounds, line/caret height, and character length into a compact
+/// comparison key so unchanged layout passes do not trigger redundant `SHAPE_LEAF_GEOMETRY` events.
 fn fingerprint(leaves: &[(u64, gpui_kit::base::text::editor_host::LeafGeometry)]) -> Vec<u8> {
     let mut b = Vec::with_capacity(leaves.len() * 36);
     for (key, g) in leaves {
@@ -583,6 +557,8 @@ fn fingerprint(leaves: &[(u64, gpui_kit::base::text::editor_host::LeafGeometry)]
     b
 }
 
+/// Coalesces changed leaf geometry batches per `(view, handler)` during prepaint and schedules a
+/// single async [`deliver_leaves`] pass after layout finishes.
 fn leaves_after(
     h: genapi::HandlerRef,
     leaves: HashMap<u64, gpui_kit::base::text::editor_host::LeafGeometry>,
@@ -616,8 +592,8 @@ fn leaves_after(
     .detach();
 }
 
-/// After the frame: each handler's leaves as temporary handles (13.2), one EVENT turn per handler
-/// with its view's window.
+/// Encodes each pending leaf-geometry batch as temporary `HK_OBJ` handles under
+/// `SHAPE_LEAF_GEOMETRY` and queues them via `rt::queue_event`.
 fn deliver_leaves(cx: &mut App) {
     use crate::genapi::Put as _;
     HOST_SCHEDULED.with(|s| s.set(false));
@@ -644,17 +620,12 @@ fn deliver_leaves(cx: &mut App) {
     });
 }
 
-/// Tests (call `EDITOR_HOST_TEST`): host elements decoded, leaves collected, events delivered.
+/// Returns diagnostic counters `(block_hosts_built, leaf_geometries_collected, batches_delivered)`.
 pub fn host_counts() -> (u64, u64, u64) {
     (HOSTS.with(|h| h.get()), LEAVES.with(|l| l.get()), DELIVERED.with(|d| d.get()))
 }
 
-// ---------------------------------------------------------------- 9.32 decorators kept for later
-
-/// A decorator upstream keeps and calls while it renders, without a window
-/// (`NumberInput::increment_button(FnOnce(Button) -> Button)`): the app's style, decoded where the
-/// closure was decoded, refines the element's own, and the app's content is a row of `src` (0:
-/// none), laid out where the window is (`lazy_row`, as the fold placeholder's).
+/// Refines `el`'s style and optionally appends a lazy row from `src` (used by editor decorator hooks).
 pub fn decorate<E: gpui_kit::Styled + gpui_kit::ParentElement>(
     mut el: E,
     style: Option<gpui_kit::StyleRefinement>,
@@ -675,23 +646,22 @@ thread_local! {
     static DECORATED: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
 }
 
-// ---------------------------------------------------------------- 9.33 edits of a value lent by &mut
-
-/// An edit of a value kit state lends by `&mut` (`EditorState::lsp_mut -> &mut Lsp`): the app's
-/// value of the type, a tape of its own (13.6), whose builder ops (not its constructor) are applied
-/// to the state's own value in place, with the window and app of the state's update.
+/// Mini-tape edit that temporarily takes ownership of a `&mut V` (via `Default::default`),
+/// applies builder ops from the tape, and writes the updated value back.
 pub struct LentEdit<V> {
     tape: Rc<crate::tape::Tape>,
     apply: fn(&mut genapi::Dx, V, u32) -> V,
 }
 
 impl<V: Default> LentEdit<V> {
+    /// Parses a length-prefixed mini-tape from `r` and pairs it with builder-op applier `apply`.
     pub fn read(r: &mut R, apply: fn(&mut genapi::Dx, V, u32) -> V) -> genapi::GkResult<Self> {
         let n = r.u32() as usize;
         let tape = Rc::new(crate::tape::Tape::parse(r.bytes(n).to_vec(), 0)?);
         Ok(LentEdit { tape, apply })
     }
 
+    /// Replays the mini-tape's ops onto `lent` in place and increments `LENT_EDITS`.
     pub fn apply(self, lent: &mut V, window: &mut Window, cx: &mut App) {
         let taken = std::mem::take(lent);
         let apply = self.apply;
@@ -707,10 +677,6 @@ thread_local! {
     static LENT_EDITS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
 }
 
-// ---------------------------------------------------------------- 9.37 actions read back
-
-/// A boxed action read back (`NativeMenuItem::Action`'s action): its id as the app knows actions
-/// (`app::id_of`: an app action's own id, a kit action's id the first time it is seen).
 impl Wire for Box<dyn gpui_kit::Action> {
     fn put(&self, out: &mut Vec<u8>) {
         Wire::put(&**self, out);

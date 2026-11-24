@@ -13,7 +13,7 @@ type SettingFieldBool struct{ rt.ValAnySettingField }
 
 // Create a new Checkbox field.
 //
-// NewSettingFieldBoolCheckbox is <gpui_kit::component::setting::SettingField<bool>>::checkbox.
+// NewSettingFieldBoolCheckbox calls <gpui_kit::component::setting::SettingField<bool>>::checkbox.
 func NewSettingFieldBoolCheckbox(value gk.Cell[bool], setValue func(cx *gk.Cx, e bool), st ...gk.Style) SettingFieldBool {
 	rt.UseComponentSetting()
 	n := rt.NewValue(850)
@@ -26,7 +26,7 @@ func NewSettingFieldBoolCheckbox(value gk.Cell[bool], setValue func(cx *gk.Cx, e
 
 // Create a new Switch field.
 //
-// NewSettingFieldBoolSwitch is <gpui_kit::component::setting::SettingField<bool>>::switch.
+// NewSettingFieldBoolSwitch calls <gpui_kit::component::setting::SettingField<bool>>::switch.
 func NewSettingFieldBoolSwitch(value gk.Cell[bool], setValue func(cx *gk.Cx, e bool), st ...gk.Style) SettingFieldBool {
 	rt.UseComponentSetting()
 	n := rt.NewValue(851)
@@ -42,7 +42,7 @@ func NewSettingFieldBoolSwitch(value gk.Cell[bool], setValue func(cx *gk.Cx, e b
 // If set, this value can be used to reset the setting to its default state. If not set, the
 // setting cannot be reset.
 //
-// DefaultValue is <gpui_kit::component::setting::SettingField<bool>>::default_value.
+// DefaultValue calls <gpui_kit::component::setting::SettingField<bool>>::default_value.
 func (e SettingFieldBool) DefaultValue(defaultValue bool) SettingFieldBool {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(defaultValue)
@@ -61,7 +61,7 @@ func (e SettingFieldBool) DefaultValue(defaultValue bool) SettingFieldBool {
 //
 // When set, this takes precedence over the `default_value` based reset.
 //
-// OnReset is <gpui_kit::component::setting::SettingField<bool>>::on_reset.
+// OnReset calls <gpui_kit::component::setting::SettingField<bool>>::on_reset.
 func (e SettingFieldBool) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) SettingFieldBool {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U64(rt.H(isDirty.HCore))
@@ -71,32 +71,40 @@ func (e SettingFieldBool) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) 
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SettingFieldBool) PopoverStyle() SettingFieldBool {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SettingFieldBool) RoundedFullStyle() SettingFieldBool {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SettingFieldBool) BorderE(width gk.Length) SettingFieldBool {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SettingFieldBool) BorderS(width gk.Length) SettingFieldBool {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -104,142 +112,184 @@ func (e SettingFieldBool) BorderS(width gk.Length) SettingFieldBool {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SettingFieldBool) FlexRowDir() SettingFieldBool {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SettingFieldBool) InsetE(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SettingFieldBool) InsetS(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SettingFieldBool) JustifyFlexEnd() SettingFieldBool {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SettingFieldBool) JustifyFlexStart() SettingFieldBool {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SettingFieldBool) Me(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SettingFieldBool) Ms(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SettingFieldBool) Pe(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SettingFieldBool) Ps(length gk.Length) SettingFieldBool {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SettingFieldBool) RoundedE(radius gk.Length) SettingFieldBool {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SettingFieldBool) RoundedS(radius gk.Length) SettingFieldBool {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SettingFieldBool) TextEnd() SettingFieldBool {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SettingFieldBool) TextStart() SettingFieldBool {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SettingFieldBool) CornerRadii(radius gk.Corners) SettingFieldBool {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SettingFieldBool) DebugBlue() SettingFieldBool { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SettingFieldBool) DebugFocused(focusHandle gk.FocusHandle) SettingFieldBool {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SettingFieldBool) DebugGreen() SettingFieldBool { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SettingFieldBool) DebugPink() SettingFieldBool { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SettingFieldBool) DebugRed() SettingFieldBool { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SettingFieldBool) DebugYellow() SettingFieldBool {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SettingFieldBool) FontBlack() SettingFieldBool { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SettingFieldBool) FontBold() SettingFieldBool { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SettingFieldBool) FontExtrabold() SettingFieldBool {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SettingFieldBool) FontExtralight() SettingFieldBool {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SettingFieldBool) FontLight() SettingFieldBool { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SettingFieldBool) FontMedium() SettingFieldBool { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SettingFieldBool) FontNormal() SettingFieldBool { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SettingFieldBool) FontSemibold() SettingFieldBool {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SettingFieldBool) FontThin() SettingFieldBool { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -248,18 +298,23 @@ func (e SettingFieldBool) FontThin() SettingFieldBool { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SettingFieldBool) HFlex() SettingFieldBool { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SettingFieldBool) Margins(margins gk.EdgesInto) SettingFieldBool {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SettingFieldBool) Paddings(paddings gk.EdgesInto) SettingFieldBool {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SettingFieldBool) RefineStyle(style gk.StyleRefinement) SettingFieldBool {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -269,24 +324,32 @@ func (e SettingFieldBool) RefineStyle(style gk.StyleRefinement) SettingFieldBool
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SettingFieldBool) VFlex() SettingFieldBool { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SettingFieldBool) Style(st ...gk.Style) SettingFieldBool {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SettingFieldBool) AspectRatio(ratio float32) SettingFieldBool {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SettingFieldBool) Bg(fill gk.Fill) SettingFieldBool { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SettingFieldBool) Border(length gk.Length) SettingFieldBool {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -294,12 +357,16 @@ func (e SettingFieldBool) Border(length gk.Length) SettingFieldBool {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SettingFieldBool) BorderB(length gk.Length) SettingFieldBool {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SettingFieldBool) BorderColor(borderColor gk.Color) SettingFieldBool {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -307,6 +374,8 @@ func (e SettingFieldBool) BorderColor(borderColor gk.Color) SettingFieldBool {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SettingFieldBool) BorderL(length gk.Length) SettingFieldBool {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -314,6 +383,8 @@ func (e SettingFieldBool) BorderL(length gk.Length) SettingFieldBool {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SettingFieldBool) BorderR(length gk.Length) SettingFieldBool {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -321,6 +392,8 @@ func (e SettingFieldBool) BorderR(length gk.Length) SettingFieldBool {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SettingFieldBool) BorderT(length gk.Length) SettingFieldBool {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -328,6 +401,8 @@ func (e SettingFieldBool) BorderT(length gk.Length) SettingFieldBool {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SettingFieldBool) BorderX(length gk.Length) SettingFieldBool {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -335,6 +410,8 @@ func (e SettingFieldBool) BorderX(length gk.Length) SettingFieldBool {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SettingFieldBool) BorderY(length gk.Length) SettingFieldBool {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -342,30 +419,40 @@ func (e SettingFieldBool) BorderY(length gk.Length) SettingFieldBool {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SettingFieldBool) Bottom(length gk.Length) SettingFieldBool {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SettingFieldBool) ColEnd(end int16) SettingFieldBool {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SettingFieldBool) ColSpan(span uint16) SettingFieldBool {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SettingFieldBool) ColStart(start int16) SettingFieldBool {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SettingFieldBool) Cursor(cursor gk.CursorStyle) SettingFieldBool {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -373,36 +460,48 @@ func (e SettingFieldBool) Cursor(cursor gk.CursorStyle) SettingFieldBool {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SettingFieldBool) FlexBasis(basis gk.Length) SettingFieldBool {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SettingFieldBool) FlexGrow(grow float32) SettingFieldBool {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SettingFieldBool) FlexShrink(shrink float32) SettingFieldBool {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SettingFieldBool) Font(font gk.Font) SettingFieldBool {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SettingFieldBool) FontFamily(familyName string) SettingFieldBool {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SettingFieldBool) FontFeatures(features gk.FontFeatures) SettingFieldBool {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -411,12 +510,16 @@ func (e SettingFieldBool) FontFeatures(features gk.FontFeatures) SettingFieldBoo
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SettingFieldBool) FontWeight(weight gk.FontWeight) SettingFieldBool {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SettingFieldBool) Gap(length gk.Length) SettingFieldBool {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -424,6 +527,8 @@ func (e SettingFieldBool) Gap(length gk.Length) SettingFieldBool {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SettingFieldBool) GapX(length gk.Length) SettingFieldBool {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -431,18 +536,24 @@ func (e SettingFieldBool) GapX(length gk.Length) SettingFieldBool {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SettingFieldBool) GapY(length gk.Length) SettingFieldBool {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SettingFieldBool) GridCols(cols uint16) SettingFieldBool {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SettingFieldBool) GridColsMaxContent(cols uint16) SettingFieldBool {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -450,18 +561,24 @@ func (e SettingFieldBool) GridColsMaxContent(cols uint16) SettingFieldBool {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SettingFieldBool) GridColsMinContent(cols uint16) SettingFieldBool {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SettingFieldBool) GridRows(rows uint16) SettingFieldBool {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SettingFieldBool) GridRowsMaxContent(rows uint16) SettingFieldBool {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -469,12 +586,16 @@ func (e SettingFieldBool) GridRowsMaxContent(rows uint16) SettingFieldBool {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SettingFieldBool) GridRowsMinContent(rows uint16) SettingFieldBool {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SettingFieldBool) H(length gk.Length) SettingFieldBool {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -482,6 +603,8 @@ func (e SettingFieldBool) H(length gk.Length) SettingFieldBool {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SettingFieldBool) Inset(length gk.Length) SettingFieldBool {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -489,6 +612,8 @@ func (e SettingFieldBool) Inset(length gk.Length) SettingFieldBool {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SettingFieldBool) Left(length gk.Length) SettingFieldBool {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -496,36 +621,48 @@ func (e SettingFieldBool) Left(length gk.Length) SettingFieldBool {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SettingFieldBool) LineClamp(lines int) SettingFieldBool {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SettingFieldBool) LineHeight(lineHeight gk.Length) SettingFieldBool {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SettingFieldBool) M(length gk.Length) SettingFieldBool {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SettingFieldBool) MaxH(length gk.Length) SettingFieldBool {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SettingFieldBool) MaxSize(length gk.Length) SettingFieldBool {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SettingFieldBool) MaxW(length gk.Length) SettingFieldBool {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -533,24 +670,32 @@ func (e SettingFieldBool) MaxW(length gk.Length) SettingFieldBool {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SettingFieldBool) Mb(length gk.Length) SettingFieldBool {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SettingFieldBool) MinH(length gk.Length) SettingFieldBool {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SettingFieldBool) MinSize(length gk.Length) SettingFieldBool {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SettingFieldBool) MinW(length gk.Length) SettingFieldBool {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -558,6 +703,8 @@ func (e SettingFieldBool) MinW(length gk.Length) SettingFieldBool {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SettingFieldBool) Ml(length gk.Length) SettingFieldBool {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -565,6 +712,8 @@ func (e SettingFieldBool) Ml(length gk.Length) SettingFieldBool {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SettingFieldBool) Mr(length gk.Length) SettingFieldBool {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -572,6 +721,8 @@ func (e SettingFieldBool) Mr(length gk.Length) SettingFieldBool {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SettingFieldBool) Mt(length gk.Length) SettingFieldBool {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -579,6 +730,8 @@ func (e SettingFieldBool) Mt(length gk.Length) SettingFieldBool {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SettingFieldBool) Mx(length gk.Length) SettingFieldBool {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -586,18 +739,24 @@ func (e SettingFieldBool) Mx(length gk.Length) SettingFieldBool {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SettingFieldBool) My(length gk.Length) SettingFieldBool {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SettingFieldBool) Opacity(opacity float32) SettingFieldBool {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SettingFieldBool) P(length gk.Length) SettingFieldBool {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -605,6 +764,8 @@ func (e SettingFieldBool) P(length gk.Length) SettingFieldBool {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SettingFieldBool) Pb(length gk.Length) SettingFieldBool {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -612,6 +773,8 @@ func (e SettingFieldBool) Pb(length gk.Length) SettingFieldBool {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SettingFieldBool) Pl(length gk.Length) SettingFieldBool {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -619,6 +782,8 @@ func (e SettingFieldBool) Pl(length gk.Length) SettingFieldBool {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SettingFieldBool) Pr(length gk.Length) SettingFieldBool {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -626,6 +791,8 @@ func (e SettingFieldBool) Pr(length gk.Length) SettingFieldBool {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SettingFieldBool) Pt(length gk.Length) SettingFieldBool {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -633,6 +800,8 @@ func (e SettingFieldBool) Pt(length gk.Length) SettingFieldBool {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SettingFieldBool) Px(length gk.Length) SettingFieldBool {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -640,6 +809,8 @@ func (e SettingFieldBool) Px(length gk.Length) SettingFieldBool {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SettingFieldBool) Py(length gk.Length) SettingFieldBool {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -647,12 +818,16 @@ func (e SettingFieldBool) Py(length gk.Length) SettingFieldBool {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SettingFieldBool) Right(length gk.Length) SettingFieldBool {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SettingFieldBool) Rounded(length gk.Length) SettingFieldBool {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -660,6 +835,8 @@ func (e SettingFieldBool) Rounded(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SettingFieldBool) RoundedB(length gk.Length) SettingFieldBool {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -667,6 +844,8 @@ func (e SettingFieldBool) RoundedB(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SettingFieldBool) RoundedBl(length gk.Length) SettingFieldBool {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -674,6 +853,8 @@ func (e SettingFieldBool) RoundedBl(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SettingFieldBool) RoundedBr(length gk.Length) SettingFieldBool {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -681,6 +862,8 @@ func (e SettingFieldBool) RoundedBr(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SettingFieldBool) RoundedL(length gk.Length) SettingFieldBool {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -688,6 +871,8 @@ func (e SettingFieldBool) RoundedL(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SettingFieldBool) RoundedR(length gk.Length) SettingFieldBool {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -695,6 +880,8 @@ func (e SettingFieldBool) RoundedR(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SettingFieldBool) RoundedT(length gk.Length) SettingFieldBool {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -702,6 +889,8 @@ func (e SettingFieldBool) RoundedT(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SettingFieldBool) RoundedTl(length gk.Length) SettingFieldBool {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -709,24 +898,32 @@ func (e SettingFieldBool) RoundedTl(length gk.Length) SettingFieldBool {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SettingFieldBool) RoundedTr(length gk.Length) SettingFieldBool {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SettingFieldBool) RowEnd(end int16) SettingFieldBool {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SettingFieldBool) RowSpan(span uint16) SettingFieldBool {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SettingFieldBool) RowStart(start int16) SettingFieldBool {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -736,24 +933,32 @@ func (e SettingFieldBool) RowStart(start int16) SettingFieldBool {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SettingFieldBool) ScrollbarWidth(width gk.Length) SettingFieldBool {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SettingFieldBool) Shadow(shadows []gk.BoxShadow) SettingFieldBool {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SettingFieldBool) Size(length gk.Length) SettingFieldBool {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SettingFieldBool) TextAlign(align gk.TextAlign) SettingFieldBool {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -762,6 +967,8 @@ func (e SettingFieldBool) TextAlign(align gk.TextAlign) SettingFieldBool {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SettingFieldBool) TextBg(bg gk.Color) SettingFieldBool {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -770,18 +977,24 @@ func (e SettingFieldBool) TextBg(bg gk.Color) SettingFieldBool {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SettingFieldBool) TextColor(color gk.Color) SettingFieldBool {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SettingFieldBool) TextDecorationColor(color gk.Color) SettingFieldBool {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SettingFieldBool) TextOverflow(overflow gk.TextOverflow) SettingFieldBool {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -790,6 +1003,8 @@ func (e SettingFieldBool) TextOverflow(overflow gk.TextOverflow) SettingFieldBoo
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SettingFieldBool) TextSize(size gk.Length) SettingFieldBool {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -797,12 +1012,16 @@ func (e SettingFieldBool) TextSize(size gk.Length) SettingFieldBool {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SettingFieldBool) Top(length gk.Length) SettingFieldBool {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SettingFieldBool) W(length gk.Length) SettingFieldBool {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -813,7 +1032,7 @@ type SettingFieldNumber struct{ rt.ValAnySettingField }
 
 // Create a new Number Input field with the given options.
 //
-// NewSettingFieldNumberNumberInput is <gpui_kit::component::setting::SettingField<f64>>::number_input.
+// NewSettingFieldNumberNumberInput calls <gpui_kit::component::setting::SettingField<f64>>::number_input.
 func NewSettingFieldNumberNumberInput(options NumberFieldOptions, value gk.Cell[float64], setValue func(cx *gk.Cx, e float64), st ...gk.Style) SettingFieldNumber {
 	rt.UseComponentSetting()
 	n := rt.NewValue(852)
@@ -830,7 +1049,7 @@ func NewSettingFieldNumberNumberInput(options NumberFieldOptions, value gk.Cell[
 // If set, this value can be used to reset the setting to its default state. If not set, the
 // setting cannot be reset.
 //
-// DefaultValue is <gpui_kit::component::setting::SettingField<f64>>::default_value.
+// DefaultValue calls <gpui_kit::component::setting::SettingField<f64>>::default_value.
 func (e SettingFieldNumber) DefaultValue(defaultValue float64) SettingFieldNumber {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F64(defaultValue)
@@ -849,7 +1068,7 @@ func (e SettingFieldNumber) DefaultValue(defaultValue float64) SettingFieldNumbe
 //
 // When set, this takes precedence over the `default_value` based reset.
 //
-// OnReset is <gpui_kit::component::setting::SettingField<f64>>::on_reset.
+// OnReset calls <gpui_kit::component::setting::SettingField<f64>>::on_reset.
 func (e SettingFieldNumber) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) SettingFieldNumber {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U64(rt.H(isDirty.HCore))
@@ -859,32 +1078,40 @@ func (e SettingFieldNumber) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SettingFieldNumber) PopoverStyle() SettingFieldNumber {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SettingFieldNumber) RoundedFullStyle() SettingFieldNumber {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SettingFieldNumber) BorderE(width gk.Length) SettingFieldNumber {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SettingFieldNumber) BorderS(width gk.Length) SettingFieldNumber {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -892,163 +1119,205 @@ func (e SettingFieldNumber) BorderS(width gk.Length) SettingFieldNumber {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SettingFieldNumber) FlexRowDir() SettingFieldNumber {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SettingFieldNumber) InsetE(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SettingFieldNumber) InsetS(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SettingFieldNumber) JustifyFlexEnd() SettingFieldNumber {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SettingFieldNumber) JustifyFlexStart() SettingFieldNumber {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SettingFieldNumber) Me(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SettingFieldNumber) Ms(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SettingFieldNumber) Pe(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SettingFieldNumber) Ps(length gk.Length) SettingFieldNumber {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SettingFieldNumber) RoundedE(radius gk.Length) SettingFieldNumber {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SettingFieldNumber) RoundedS(radius gk.Length) SettingFieldNumber {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SettingFieldNumber) TextEnd() SettingFieldNumber {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SettingFieldNumber) TextStart() SettingFieldNumber {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SettingFieldNumber) CornerRadii(radius gk.Corners) SettingFieldNumber {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SettingFieldNumber) DebugBlue() SettingFieldNumber {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SettingFieldNumber) DebugFocused(focusHandle gk.FocusHandle) SettingFieldNumber {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SettingFieldNumber) DebugGreen() SettingFieldNumber {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SettingFieldNumber) DebugPink() SettingFieldNumber {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SettingFieldNumber) DebugRed() SettingFieldNumber { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SettingFieldNumber) DebugYellow() SettingFieldNumber {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SettingFieldNumber) FontBlack() SettingFieldNumber {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SettingFieldNumber) FontBold() SettingFieldNumber { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SettingFieldNumber) FontExtrabold() SettingFieldNumber {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SettingFieldNumber) FontExtralight() SettingFieldNumber {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SettingFieldNumber) FontLight() SettingFieldNumber {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SettingFieldNumber) FontMedium() SettingFieldNumber {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SettingFieldNumber) FontNormal() SettingFieldNumber {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SettingFieldNumber) FontSemibold() SettingFieldNumber {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SettingFieldNumber) FontThin() SettingFieldNumber { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1057,18 +1326,23 @@ func (e SettingFieldNumber) FontThin() SettingFieldNumber { tStyledExtFontThin(r
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SettingFieldNumber) HFlex() SettingFieldNumber { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SettingFieldNumber) Margins(margins gk.EdgesInto) SettingFieldNumber {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SettingFieldNumber) Paddings(paddings gk.EdgesInto) SettingFieldNumber {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SettingFieldNumber) RefineStyle(style gk.StyleRefinement) SettingFieldNumber {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1078,27 +1352,35 @@ func (e SettingFieldNumber) RefineStyle(style gk.StyleRefinement) SettingFieldNu
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SettingFieldNumber) VFlex() SettingFieldNumber { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SettingFieldNumber) Style(st ...gk.Style) SettingFieldNumber {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SettingFieldNumber) AspectRatio(ratio float32) SettingFieldNumber {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SettingFieldNumber) Bg(fill gk.Fill) SettingFieldNumber {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SettingFieldNumber) Border(length gk.Length) SettingFieldNumber {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1106,12 +1388,16 @@ func (e SettingFieldNumber) Border(length gk.Length) SettingFieldNumber {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SettingFieldNumber) BorderB(length gk.Length) SettingFieldNumber {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SettingFieldNumber) BorderColor(borderColor gk.Color) SettingFieldNumber {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1119,6 +1405,8 @@ func (e SettingFieldNumber) BorderColor(borderColor gk.Color) SettingFieldNumber
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SettingFieldNumber) BorderL(length gk.Length) SettingFieldNumber {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1126,6 +1414,8 @@ func (e SettingFieldNumber) BorderL(length gk.Length) SettingFieldNumber {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SettingFieldNumber) BorderR(length gk.Length) SettingFieldNumber {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1133,6 +1423,8 @@ func (e SettingFieldNumber) BorderR(length gk.Length) SettingFieldNumber {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SettingFieldNumber) BorderT(length gk.Length) SettingFieldNumber {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1140,6 +1432,8 @@ func (e SettingFieldNumber) BorderT(length gk.Length) SettingFieldNumber {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SettingFieldNumber) BorderX(length gk.Length) SettingFieldNumber {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1147,6 +1441,8 @@ func (e SettingFieldNumber) BorderX(length gk.Length) SettingFieldNumber {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SettingFieldNumber) BorderY(length gk.Length) SettingFieldNumber {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1154,30 +1450,40 @@ func (e SettingFieldNumber) BorderY(length gk.Length) SettingFieldNumber {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SettingFieldNumber) Bottom(length gk.Length) SettingFieldNumber {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SettingFieldNumber) ColEnd(end int16) SettingFieldNumber {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SettingFieldNumber) ColSpan(span uint16) SettingFieldNumber {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SettingFieldNumber) ColStart(start int16) SettingFieldNumber {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SettingFieldNumber) Cursor(cursor gk.CursorStyle) SettingFieldNumber {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1185,36 +1491,48 @@ func (e SettingFieldNumber) Cursor(cursor gk.CursorStyle) SettingFieldNumber {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SettingFieldNumber) FlexBasis(basis gk.Length) SettingFieldNumber {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SettingFieldNumber) FlexGrow(grow float32) SettingFieldNumber {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SettingFieldNumber) FlexShrink(shrink float32) SettingFieldNumber {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SettingFieldNumber) Font(font gk.Font) SettingFieldNumber {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SettingFieldNumber) FontFamily(familyName string) SettingFieldNumber {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SettingFieldNumber) FontFeatures(features gk.FontFeatures) SettingFieldNumber {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1223,12 +1541,16 @@ func (e SettingFieldNumber) FontFeatures(features gk.FontFeatures) SettingFieldN
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SettingFieldNumber) FontWeight(weight gk.FontWeight) SettingFieldNumber {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SettingFieldNumber) Gap(length gk.Length) SettingFieldNumber {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1236,6 +1558,8 @@ func (e SettingFieldNumber) Gap(length gk.Length) SettingFieldNumber {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SettingFieldNumber) GapX(length gk.Length) SettingFieldNumber {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1243,18 +1567,24 @@ func (e SettingFieldNumber) GapX(length gk.Length) SettingFieldNumber {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SettingFieldNumber) GapY(length gk.Length) SettingFieldNumber {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SettingFieldNumber) GridCols(cols uint16) SettingFieldNumber {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SettingFieldNumber) GridColsMaxContent(cols uint16) SettingFieldNumber {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1262,18 +1592,24 @@ func (e SettingFieldNumber) GridColsMaxContent(cols uint16) SettingFieldNumber {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SettingFieldNumber) GridColsMinContent(cols uint16) SettingFieldNumber {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SettingFieldNumber) GridRows(rows uint16) SettingFieldNumber {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SettingFieldNumber) GridRowsMaxContent(rows uint16) SettingFieldNumber {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1281,12 +1617,16 @@ func (e SettingFieldNumber) GridRowsMaxContent(rows uint16) SettingFieldNumber {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SettingFieldNumber) GridRowsMinContent(rows uint16) SettingFieldNumber {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SettingFieldNumber) H(length gk.Length) SettingFieldNumber {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1294,6 +1634,8 @@ func (e SettingFieldNumber) H(length gk.Length) SettingFieldNumber {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SettingFieldNumber) Inset(length gk.Length) SettingFieldNumber {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1301,6 +1643,8 @@ func (e SettingFieldNumber) Inset(length gk.Length) SettingFieldNumber {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SettingFieldNumber) Left(length gk.Length) SettingFieldNumber {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1308,36 +1652,48 @@ func (e SettingFieldNumber) Left(length gk.Length) SettingFieldNumber {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SettingFieldNumber) LineClamp(lines int) SettingFieldNumber {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SettingFieldNumber) LineHeight(lineHeight gk.Length) SettingFieldNumber {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SettingFieldNumber) M(length gk.Length) SettingFieldNumber {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SettingFieldNumber) MaxH(length gk.Length) SettingFieldNumber {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SettingFieldNumber) MaxSize(length gk.Length) SettingFieldNumber {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SettingFieldNumber) MaxW(length gk.Length) SettingFieldNumber {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1345,24 +1701,32 @@ func (e SettingFieldNumber) MaxW(length gk.Length) SettingFieldNumber {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SettingFieldNumber) Mb(length gk.Length) SettingFieldNumber {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SettingFieldNumber) MinH(length gk.Length) SettingFieldNumber {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SettingFieldNumber) MinSize(length gk.Length) SettingFieldNumber {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SettingFieldNumber) MinW(length gk.Length) SettingFieldNumber {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1370,6 +1734,8 @@ func (e SettingFieldNumber) MinW(length gk.Length) SettingFieldNumber {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SettingFieldNumber) Ml(length gk.Length) SettingFieldNumber {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1377,6 +1743,8 @@ func (e SettingFieldNumber) Ml(length gk.Length) SettingFieldNumber {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SettingFieldNumber) Mr(length gk.Length) SettingFieldNumber {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1384,6 +1752,8 @@ func (e SettingFieldNumber) Mr(length gk.Length) SettingFieldNumber {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SettingFieldNumber) Mt(length gk.Length) SettingFieldNumber {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1391,6 +1761,8 @@ func (e SettingFieldNumber) Mt(length gk.Length) SettingFieldNumber {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SettingFieldNumber) Mx(length gk.Length) SettingFieldNumber {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1398,18 +1770,24 @@ func (e SettingFieldNumber) Mx(length gk.Length) SettingFieldNumber {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SettingFieldNumber) My(length gk.Length) SettingFieldNumber {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SettingFieldNumber) Opacity(opacity float32) SettingFieldNumber {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SettingFieldNumber) P(length gk.Length) SettingFieldNumber {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1417,6 +1795,8 @@ func (e SettingFieldNumber) P(length gk.Length) SettingFieldNumber {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SettingFieldNumber) Pb(length gk.Length) SettingFieldNumber {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1424,6 +1804,8 @@ func (e SettingFieldNumber) Pb(length gk.Length) SettingFieldNumber {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SettingFieldNumber) Pl(length gk.Length) SettingFieldNumber {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1431,6 +1813,8 @@ func (e SettingFieldNumber) Pl(length gk.Length) SettingFieldNumber {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SettingFieldNumber) Pr(length gk.Length) SettingFieldNumber {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1438,6 +1822,8 @@ func (e SettingFieldNumber) Pr(length gk.Length) SettingFieldNumber {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SettingFieldNumber) Pt(length gk.Length) SettingFieldNumber {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1445,6 +1831,8 @@ func (e SettingFieldNumber) Pt(length gk.Length) SettingFieldNumber {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SettingFieldNumber) Px(length gk.Length) SettingFieldNumber {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1452,6 +1840,8 @@ func (e SettingFieldNumber) Px(length gk.Length) SettingFieldNumber {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SettingFieldNumber) Py(length gk.Length) SettingFieldNumber {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1459,12 +1849,16 @@ func (e SettingFieldNumber) Py(length gk.Length) SettingFieldNumber {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SettingFieldNumber) Right(length gk.Length) SettingFieldNumber {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SettingFieldNumber) Rounded(length gk.Length) SettingFieldNumber {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1472,6 +1866,8 @@ func (e SettingFieldNumber) Rounded(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SettingFieldNumber) RoundedB(length gk.Length) SettingFieldNumber {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1479,6 +1875,8 @@ func (e SettingFieldNumber) RoundedB(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SettingFieldNumber) RoundedBl(length gk.Length) SettingFieldNumber {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1486,6 +1884,8 @@ func (e SettingFieldNumber) RoundedBl(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SettingFieldNumber) RoundedBr(length gk.Length) SettingFieldNumber {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1493,6 +1893,8 @@ func (e SettingFieldNumber) RoundedBr(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SettingFieldNumber) RoundedL(length gk.Length) SettingFieldNumber {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1500,6 +1902,8 @@ func (e SettingFieldNumber) RoundedL(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SettingFieldNumber) RoundedR(length gk.Length) SettingFieldNumber {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1507,6 +1911,8 @@ func (e SettingFieldNumber) RoundedR(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SettingFieldNumber) RoundedT(length gk.Length) SettingFieldNumber {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1514,6 +1920,8 @@ func (e SettingFieldNumber) RoundedT(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SettingFieldNumber) RoundedTl(length gk.Length) SettingFieldNumber {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1521,24 +1929,32 @@ func (e SettingFieldNumber) RoundedTl(length gk.Length) SettingFieldNumber {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SettingFieldNumber) RoundedTr(length gk.Length) SettingFieldNumber {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SettingFieldNumber) RowEnd(end int16) SettingFieldNumber {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SettingFieldNumber) RowSpan(span uint16) SettingFieldNumber {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SettingFieldNumber) RowStart(start int16) SettingFieldNumber {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1548,24 +1964,32 @@ func (e SettingFieldNumber) RowStart(start int16) SettingFieldNumber {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SettingFieldNumber) ScrollbarWidth(width gk.Length) SettingFieldNumber {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SettingFieldNumber) Shadow(shadows []gk.BoxShadow) SettingFieldNumber {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SettingFieldNumber) Size(length gk.Length) SettingFieldNumber {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SettingFieldNumber) TextAlign(align gk.TextAlign) SettingFieldNumber {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1574,6 +1998,8 @@ func (e SettingFieldNumber) TextAlign(align gk.TextAlign) SettingFieldNumber {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SettingFieldNumber) TextBg(bg gk.Color) SettingFieldNumber {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1582,18 +2008,24 @@ func (e SettingFieldNumber) TextBg(bg gk.Color) SettingFieldNumber {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SettingFieldNumber) TextColor(color gk.Color) SettingFieldNumber {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SettingFieldNumber) TextDecorationColor(color gk.Color) SettingFieldNumber {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SettingFieldNumber) TextOverflow(overflow gk.TextOverflow) SettingFieldNumber {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1602,6 +2034,8 @@ func (e SettingFieldNumber) TextOverflow(overflow gk.TextOverflow) SettingFieldN
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SettingFieldNumber) TextSize(size gk.Length) SettingFieldNumber {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1609,12 +2043,16 @@ func (e SettingFieldNumber) TextSize(size gk.Length) SettingFieldNumber {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SettingFieldNumber) Top(length gk.Length) SettingFieldNumber {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SettingFieldNumber) W(length gk.Length) SettingFieldNumber {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -1628,7 +2066,7 @@ type SettingFieldText struct{ rt.ValAnySettingField }
 // The popup menu does not scroll. For long option lists that may exceed the viewport, use
 // `gk.NewSettingFieldTextScrollableDropdown` instead.
 //
-// NewSettingFieldTextDropdown is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::dropdown.
+// NewSettingFieldTextDropdown calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::dropdown.
 func NewSettingFieldTextDropdown(options []gk.TupleStringString, value gk.Cell[string], setValue func(cx *gk.Cx, e string), st ...gk.Style) SettingFieldText {
 	rt.UseComponentSetting()
 	n := rt.NewValue(853)
@@ -1649,7 +2087,7 @@ func NewSettingFieldTextDropdown(options []gk.TupleStringString, value gk.Cell[s
 //
 // See also `gk.NewSettingFieldTextRender` for simply building with a render closure.
 //
-// NewSettingFieldTextElement is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::element.
+// NewSettingFieldTextElement calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::element.
 func NewSettingFieldTextElement(element gk.Element, st ...gk.Style) SettingFieldText {
 	rt.UseComponentSetting()
 	n := rt.NewValue(854)
@@ -1661,7 +2099,7 @@ func NewSettingFieldTextElement(element gk.Element, st ...gk.Style) SettingField
 
 // Create a new Input field.
 //
-// NewSettingFieldTextInput is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::input.
+// NewSettingFieldTextInput calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::input.
 func NewSettingFieldTextInput(value gk.Cell[string], setValue func(cx *gk.Cx, e string), st ...gk.Style) SettingFieldText {
 	rt.UseComponentSetting()
 	n := rt.NewValue(855)
@@ -1677,7 +2115,7 @@ func NewSettingFieldTextInput(value gk.Cell[string], setValue func(cx *gk.Cx, e 
 // See also `gk.NewSettingFieldTextElement` for building with a custom field for more complex
 // scenarios.
 //
-// NewSettingFieldTextRender is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::render.
+// NewSettingFieldTextRender calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::render.
 func NewSettingFieldTextRender(elementRender gk.Element, st ...gk.Style) SettingFieldText {
 	rt.UseComponentSetting()
 	n := rt.NewValue(856)
@@ -1691,7 +2129,7 @@ func NewSettingFieldTextRender(elementRender gk.Element, st ...gk.Style) Setting
 // this for long option lists where the non-scrolling `gk.NewSettingFieldTextDropdown` would push
 // items below the fold.
 //
-// NewSettingFieldTextScrollableDropdown is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::scrollable_dropdown.
+// NewSettingFieldTextScrollableDropdown calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::scrollable_dropdown.
 func NewSettingFieldTextScrollableDropdown(options []gk.TupleStringString, value gk.Cell[string], setValue func(cx *gk.Cx, e string), st ...gk.Style) SettingFieldText {
 	rt.UseComponentSetting()
 	n := rt.NewValue(857)
@@ -1712,7 +2150,7 @@ func NewSettingFieldTextScrollableDropdown(options []gk.TupleStringString, value
 // If set, this value can be used to reset the setting to its default state. If not set, the
 // setting cannot be reset.
 //
-// DefaultValue is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::default_value.
+// DefaultValue calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::default_value.
 func (e SettingFieldText) DefaultValue(defaultValue string) SettingFieldText {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(defaultValue)
@@ -1731,7 +2169,7 @@ func (e SettingFieldText) DefaultValue(defaultValue string) SettingFieldText {
 //
 // When set, this takes precedence over the `default_value` based reset.
 //
-// OnReset is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset.
+// OnReset calls <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset.
 func (e SettingFieldText) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) SettingFieldText {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U64(rt.H(isDirty.HCore))
@@ -1741,32 +2179,40 @@ func (e SettingFieldText) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) 
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SettingFieldText) PopoverStyle() SettingFieldText {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SettingFieldText) RoundedFullStyle() SettingFieldText {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SettingFieldText) BorderE(width gk.Length) SettingFieldText {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SettingFieldText) BorderS(width gk.Length) SettingFieldText {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1774,142 +2220,184 @@ func (e SettingFieldText) BorderS(width gk.Length) SettingFieldText {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SettingFieldText) FlexRowDir() SettingFieldText {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SettingFieldText) InsetE(length gk.Length) SettingFieldText {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SettingFieldText) InsetS(length gk.Length) SettingFieldText {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SettingFieldText) JustifyFlexEnd() SettingFieldText {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SettingFieldText) JustifyFlexStart() SettingFieldText {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SettingFieldText) Me(length gk.Length) SettingFieldText {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SettingFieldText) Ms(length gk.Length) SettingFieldText {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SettingFieldText) Pe(length gk.Length) SettingFieldText {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SettingFieldText) Ps(length gk.Length) SettingFieldText {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SettingFieldText) RoundedE(radius gk.Length) SettingFieldText {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SettingFieldText) RoundedS(radius gk.Length) SettingFieldText {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SettingFieldText) TextEnd() SettingFieldText {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SettingFieldText) TextStart() SettingFieldText {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SettingFieldText) CornerRadii(radius gk.Corners) SettingFieldText {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SettingFieldText) DebugBlue() SettingFieldText { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SettingFieldText) DebugFocused(focusHandle gk.FocusHandle) SettingFieldText {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SettingFieldText) DebugGreen() SettingFieldText { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SettingFieldText) DebugPink() SettingFieldText { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SettingFieldText) DebugRed() SettingFieldText { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SettingFieldText) DebugYellow() SettingFieldText {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SettingFieldText) FontBlack() SettingFieldText { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SettingFieldText) FontBold() SettingFieldText { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SettingFieldText) FontExtrabold() SettingFieldText {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SettingFieldText) FontExtralight() SettingFieldText {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SettingFieldText) FontLight() SettingFieldText { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SettingFieldText) FontMedium() SettingFieldText { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SettingFieldText) FontNormal() SettingFieldText { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SettingFieldText) FontSemibold() SettingFieldText {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SettingFieldText) FontThin() SettingFieldText { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1918,18 +2406,23 @@ func (e SettingFieldText) FontThin() SettingFieldText { tStyledExtFontThin(rt.N(
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SettingFieldText) HFlex() SettingFieldText { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SettingFieldText) Margins(margins gk.EdgesInto) SettingFieldText {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SettingFieldText) Paddings(paddings gk.EdgesInto) SettingFieldText {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SettingFieldText) RefineStyle(style gk.StyleRefinement) SettingFieldText {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1939,24 +2432,32 @@ func (e SettingFieldText) RefineStyle(style gk.StyleRefinement) SettingFieldText
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SettingFieldText) VFlex() SettingFieldText { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SettingFieldText) Style(st ...gk.Style) SettingFieldText {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SettingFieldText) AspectRatio(ratio float32) SettingFieldText {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SettingFieldText) Bg(fill gk.Fill) SettingFieldText { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SettingFieldText) Border(length gk.Length) SettingFieldText {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1964,12 +2465,16 @@ func (e SettingFieldText) Border(length gk.Length) SettingFieldText {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SettingFieldText) BorderB(length gk.Length) SettingFieldText {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SettingFieldText) BorderColor(borderColor gk.Color) SettingFieldText {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1977,6 +2482,8 @@ func (e SettingFieldText) BorderColor(borderColor gk.Color) SettingFieldText {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SettingFieldText) BorderL(length gk.Length) SettingFieldText {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1984,6 +2491,8 @@ func (e SettingFieldText) BorderL(length gk.Length) SettingFieldText {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SettingFieldText) BorderR(length gk.Length) SettingFieldText {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1991,6 +2500,8 @@ func (e SettingFieldText) BorderR(length gk.Length) SettingFieldText {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SettingFieldText) BorderT(length gk.Length) SettingFieldText {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1998,6 +2509,8 @@ func (e SettingFieldText) BorderT(length gk.Length) SettingFieldText {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SettingFieldText) BorderX(length gk.Length) SettingFieldText {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2005,6 +2518,8 @@ func (e SettingFieldText) BorderX(length gk.Length) SettingFieldText {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SettingFieldText) BorderY(length gk.Length) SettingFieldText {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2012,30 +2527,40 @@ func (e SettingFieldText) BorderY(length gk.Length) SettingFieldText {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SettingFieldText) Bottom(length gk.Length) SettingFieldText {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SettingFieldText) ColEnd(end int16) SettingFieldText {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SettingFieldText) ColSpan(span uint16) SettingFieldText {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SettingFieldText) ColStart(start int16) SettingFieldText {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SettingFieldText) Cursor(cursor gk.CursorStyle) SettingFieldText {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2043,36 +2568,48 @@ func (e SettingFieldText) Cursor(cursor gk.CursorStyle) SettingFieldText {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SettingFieldText) FlexBasis(basis gk.Length) SettingFieldText {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SettingFieldText) FlexGrow(grow float32) SettingFieldText {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SettingFieldText) FlexShrink(shrink float32) SettingFieldText {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SettingFieldText) Font(font gk.Font) SettingFieldText {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SettingFieldText) FontFamily(familyName string) SettingFieldText {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SettingFieldText) FontFeatures(features gk.FontFeatures) SettingFieldText {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2081,12 +2618,16 @@ func (e SettingFieldText) FontFeatures(features gk.FontFeatures) SettingFieldTex
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SettingFieldText) FontWeight(weight gk.FontWeight) SettingFieldText {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SettingFieldText) Gap(length gk.Length) SettingFieldText {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2094,6 +2635,8 @@ func (e SettingFieldText) Gap(length gk.Length) SettingFieldText {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SettingFieldText) GapX(length gk.Length) SettingFieldText {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2101,18 +2644,24 @@ func (e SettingFieldText) GapX(length gk.Length) SettingFieldText {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SettingFieldText) GapY(length gk.Length) SettingFieldText {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SettingFieldText) GridCols(cols uint16) SettingFieldText {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SettingFieldText) GridColsMaxContent(cols uint16) SettingFieldText {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2120,18 +2669,24 @@ func (e SettingFieldText) GridColsMaxContent(cols uint16) SettingFieldText {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SettingFieldText) GridColsMinContent(cols uint16) SettingFieldText {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SettingFieldText) GridRows(rows uint16) SettingFieldText {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SettingFieldText) GridRowsMaxContent(rows uint16) SettingFieldText {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2139,12 +2694,16 @@ func (e SettingFieldText) GridRowsMaxContent(rows uint16) SettingFieldText {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SettingFieldText) GridRowsMinContent(rows uint16) SettingFieldText {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SettingFieldText) H(length gk.Length) SettingFieldText {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2152,6 +2711,8 @@ func (e SettingFieldText) H(length gk.Length) SettingFieldText {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SettingFieldText) Inset(length gk.Length) SettingFieldText {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2159,6 +2720,8 @@ func (e SettingFieldText) Inset(length gk.Length) SettingFieldText {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SettingFieldText) Left(length gk.Length) SettingFieldText {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2166,36 +2729,48 @@ func (e SettingFieldText) Left(length gk.Length) SettingFieldText {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SettingFieldText) LineClamp(lines int) SettingFieldText {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SettingFieldText) LineHeight(lineHeight gk.Length) SettingFieldText {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SettingFieldText) M(length gk.Length) SettingFieldText {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SettingFieldText) MaxH(length gk.Length) SettingFieldText {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SettingFieldText) MaxSize(length gk.Length) SettingFieldText {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SettingFieldText) MaxW(length gk.Length) SettingFieldText {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2203,24 +2778,32 @@ func (e SettingFieldText) MaxW(length gk.Length) SettingFieldText {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SettingFieldText) Mb(length gk.Length) SettingFieldText {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SettingFieldText) MinH(length gk.Length) SettingFieldText {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SettingFieldText) MinSize(length gk.Length) SettingFieldText {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SettingFieldText) MinW(length gk.Length) SettingFieldText {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2228,6 +2811,8 @@ func (e SettingFieldText) MinW(length gk.Length) SettingFieldText {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SettingFieldText) Ml(length gk.Length) SettingFieldText {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2235,6 +2820,8 @@ func (e SettingFieldText) Ml(length gk.Length) SettingFieldText {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SettingFieldText) Mr(length gk.Length) SettingFieldText {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2242,6 +2829,8 @@ func (e SettingFieldText) Mr(length gk.Length) SettingFieldText {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SettingFieldText) Mt(length gk.Length) SettingFieldText {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2249,6 +2838,8 @@ func (e SettingFieldText) Mt(length gk.Length) SettingFieldText {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SettingFieldText) Mx(length gk.Length) SettingFieldText {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2256,18 +2847,24 @@ func (e SettingFieldText) Mx(length gk.Length) SettingFieldText {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SettingFieldText) My(length gk.Length) SettingFieldText {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SettingFieldText) Opacity(opacity float32) SettingFieldText {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SettingFieldText) P(length gk.Length) SettingFieldText {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2275,6 +2872,8 @@ func (e SettingFieldText) P(length gk.Length) SettingFieldText {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SettingFieldText) Pb(length gk.Length) SettingFieldText {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2282,6 +2881,8 @@ func (e SettingFieldText) Pb(length gk.Length) SettingFieldText {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SettingFieldText) Pl(length gk.Length) SettingFieldText {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2289,6 +2890,8 @@ func (e SettingFieldText) Pl(length gk.Length) SettingFieldText {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SettingFieldText) Pr(length gk.Length) SettingFieldText {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2296,6 +2899,8 @@ func (e SettingFieldText) Pr(length gk.Length) SettingFieldText {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SettingFieldText) Pt(length gk.Length) SettingFieldText {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2303,6 +2908,8 @@ func (e SettingFieldText) Pt(length gk.Length) SettingFieldText {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SettingFieldText) Px(length gk.Length) SettingFieldText {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2310,6 +2917,8 @@ func (e SettingFieldText) Px(length gk.Length) SettingFieldText {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SettingFieldText) Py(length gk.Length) SettingFieldText {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2317,12 +2926,16 @@ func (e SettingFieldText) Py(length gk.Length) SettingFieldText {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SettingFieldText) Right(length gk.Length) SettingFieldText {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SettingFieldText) Rounded(length gk.Length) SettingFieldText {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2330,6 +2943,8 @@ func (e SettingFieldText) Rounded(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SettingFieldText) RoundedB(length gk.Length) SettingFieldText {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2337,6 +2952,8 @@ func (e SettingFieldText) RoundedB(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SettingFieldText) RoundedBl(length gk.Length) SettingFieldText {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2344,6 +2961,8 @@ func (e SettingFieldText) RoundedBl(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SettingFieldText) RoundedBr(length gk.Length) SettingFieldText {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2351,6 +2970,8 @@ func (e SettingFieldText) RoundedBr(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SettingFieldText) RoundedL(length gk.Length) SettingFieldText {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2358,6 +2979,8 @@ func (e SettingFieldText) RoundedL(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SettingFieldText) RoundedR(length gk.Length) SettingFieldText {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2365,6 +2988,8 @@ func (e SettingFieldText) RoundedR(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SettingFieldText) RoundedT(length gk.Length) SettingFieldText {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2372,6 +2997,8 @@ func (e SettingFieldText) RoundedT(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SettingFieldText) RoundedTl(length gk.Length) SettingFieldText {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2379,24 +3006,32 @@ func (e SettingFieldText) RoundedTl(length gk.Length) SettingFieldText {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SettingFieldText) RoundedTr(length gk.Length) SettingFieldText {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SettingFieldText) RowEnd(end int16) SettingFieldText {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SettingFieldText) RowSpan(span uint16) SettingFieldText {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SettingFieldText) RowStart(start int16) SettingFieldText {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2406,24 +3041,32 @@ func (e SettingFieldText) RowStart(start int16) SettingFieldText {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SettingFieldText) ScrollbarWidth(width gk.Length) SettingFieldText {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SettingFieldText) Shadow(shadows []gk.BoxShadow) SettingFieldText {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SettingFieldText) Size(length gk.Length) SettingFieldText {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SettingFieldText) TextAlign(align gk.TextAlign) SettingFieldText {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2432,6 +3075,8 @@ func (e SettingFieldText) TextAlign(align gk.TextAlign) SettingFieldText {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SettingFieldText) TextBg(bg gk.Color) SettingFieldText {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2440,18 +3085,24 @@ func (e SettingFieldText) TextBg(bg gk.Color) SettingFieldText {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SettingFieldText) TextColor(color gk.Color) SettingFieldText {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SettingFieldText) TextDecorationColor(color gk.Color) SettingFieldText {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SettingFieldText) TextOverflow(overflow gk.TextOverflow) SettingFieldText {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2460,6 +3111,8 @@ func (e SettingFieldText) TextOverflow(overflow gk.TextOverflow) SettingFieldTex
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SettingFieldText) TextSize(size gk.Length) SettingFieldText {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2467,12 +3120,16 @@ func (e SettingFieldText) TextSize(size gk.Length) SettingFieldText {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SettingFieldText) Top(length gk.Length) SettingFieldText {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SettingFieldText) W(length gk.Length) SettingFieldText {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -2483,7 +3140,7 @@ type SettingGroup struct{ rt.Val }
 
 // Create a new setting group.
 //
-// NewSettingGroup is <gpui_kit::component::setting::SettingGroup>::new.
+// NewSettingGroup calls <gpui_kit::component::setting::SettingGroup>::new.
 func NewSettingGroup(st ...gk.Style) SettingGroup {
 	n := rt.NewValue(746)
 	rt.Tokens(n, st)
@@ -2492,7 +3149,7 @@ func NewSettingGroup(st ...gk.Style) SettingGroup {
 
 // Set the description of the setting group, default is None.
 //
-// Description is <gpui_kit::component::setting::SettingGroup>::description.
+// Description calls <gpui_kit::component::setting::SettingGroup>::description.
 func (e SettingGroup) Description(description string) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Str(description)
@@ -2505,7 +3162,7 @@ func (e SettingGroup) Description(description string) SettingGroup {
 // scrolls with the group and follows its search visibility; it does not add an independently
 // searchable item or a sidebar entry, and a group needs at least one item to be shown.
 //
-// Footer is <gpui_kit::component::setting::SettingGroup>::footer.
+// Footer calls <gpui_kit::component::setting::SettingGroup>::footer.
 func (e SettingGroup) Footer(footer gk.Element) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Take(footer))
@@ -2514,7 +3171,7 @@ func (e SettingGroup) Footer(footer gk.Element) SettingGroup {
 
 // Add a setting item to the group.
 //
-// Item is <gpui_kit::component::setting::SettingGroup>::item.
+// Item calls <gpui_kit::component::setting::SettingGroup>::item.
 func (e SettingGroup) Item(item SettingItem) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(item.Core)))
@@ -2523,7 +3180,7 @@ func (e SettingGroup) Item(item SettingItem) SettingGroup {
 
 // Add multiple setting items to the group.
 //
-// Items is <gpui_kit::component::setting::SettingGroup>::items.
+// Items calls <gpui_kit::component::setting::SettingGroup>::items.
 func (e SettingGroup) Items(items []SettingItem) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(uint32(len(items)))
@@ -2535,7 +3192,7 @@ func (e SettingGroup) Items(items []SettingItem) SettingGroup {
 
 // Set the label of the setting group, default is None.
 //
-// Title is <gpui_kit::component::setting::SettingGroup>::title.
+// Title calls <gpui_kit::component::setting::SettingGroup>::title.
 func (e SettingGroup) Title(title string) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(title)
@@ -2548,7 +3205,7 @@ func (e SettingGroup) Title(title string) SettingGroup {
 // For example, `GroupBoxVariant::Normal` presents the items directly, without the card surface a
 // global `Outline` or `Fill` default draws around the group.
 //
-// Variant is <gpui_kit::component::setting::SettingGroup>::variant.
+// Variant calls <gpui_kit::component::setting::SettingGroup>::variant.
 func (e SettingGroup) Variant(variant GroupBoxVariant) SettingGroup {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U16(uint16(variant))
@@ -2557,29 +3214,37 @@ func (e SettingGroup) Variant(variant GroupBoxVariant) SettingGroup {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e SettingGroup) PopoverStyle() SettingGroup { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e SettingGroup) RoundedFullStyle() SettingGroup {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e SettingGroup) BorderE(width gk.Length) SettingGroup {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e SettingGroup) BorderS(width gk.Length) SettingGroup {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2587,121 +3252,163 @@ func (e SettingGroup) BorderS(width gk.Length) SettingGroup {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e SettingGroup) FlexRowDir() SettingGroup { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e SettingGroup) InsetE(length gk.Length) SettingGroup {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e SettingGroup) InsetS(length gk.Length) SettingGroup {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e SettingGroup) JustifyFlexEnd() SettingGroup {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e SettingGroup) JustifyFlexStart() SettingGroup {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e SettingGroup) Me(length gk.Length) SettingGroup {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e SettingGroup) Ms(length gk.Length) SettingGroup {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e SettingGroup) Pe(length gk.Length) SettingGroup {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e SettingGroup) Ps(length gk.Length) SettingGroup {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e SettingGroup) RoundedE(radius gk.Length) SettingGroup {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e SettingGroup) RoundedS(radius gk.Length) SettingGroup {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e SettingGroup) TextEnd() SettingGroup { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e SettingGroup) TextStart() SettingGroup { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e SettingGroup) CornerRadii(radius gk.Corners) SettingGroup {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e SettingGroup) DebugBlue() SettingGroup { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e SettingGroup) DebugFocused(focusHandle gk.FocusHandle) SettingGroup {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e SettingGroup) DebugGreen() SettingGroup { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e SettingGroup) DebugPink() SettingGroup { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e SettingGroup) DebugRed() SettingGroup { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e SettingGroup) DebugYellow() SettingGroup { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e SettingGroup) FontBlack() SettingGroup { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e SettingGroup) FontBold() SettingGroup { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e SettingGroup) FontExtrabold() SettingGroup { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e SettingGroup) FontExtralight() SettingGroup { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e SettingGroup) FontLight() SettingGroup { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e SettingGroup) FontMedium() SettingGroup { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e SettingGroup) FontNormal() SettingGroup { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e SettingGroup) FontSemibold() SettingGroup { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e SettingGroup) FontThin() SettingGroup { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2710,18 +3417,23 @@ func (e SettingGroup) FontThin() SettingGroup { tStyledExtFontThin(rt.N(e.Core))
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e SettingGroup) HFlex() SettingGroup { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e SettingGroup) Margins(margins gk.EdgesInto) SettingGroup {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e SettingGroup) Paddings(paddings gk.EdgesInto) SettingGroup {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e SettingGroup) RefineStyle(style gk.StyleRefinement) SettingGroup {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2731,21 +3443,29 @@ func (e SettingGroup) RefineStyle(style gk.StyleRefinement) SettingGroup {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e SettingGroup) VFlex() SettingGroup { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e SettingGroup) Style(st ...gk.Style) SettingGroup { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e SettingGroup) AspectRatio(ratio float32) SettingGroup {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e SettingGroup) Bg(fill gk.Fill) SettingGroup { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e SettingGroup) Border(length gk.Length) SettingGroup {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2753,12 +3473,16 @@ func (e SettingGroup) Border(length gk.Length) SettingGroup {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e SettingGroup) BorderB(length gk.Length) SettingGroup {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e SettingGroup) BorderColor(borderColor gk.Color) SettingGroup {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2766,6 +3490,8 @@ func (e SettingGroup) BorderColor(borderColor gk.Color) SettingGroup {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e SettingGroup) BorderL(length gk.Length) SettingGroup {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2773,6 +3499,8 @@ func (e SettingGroup) BorderL(length gk.Length) SettingGroup {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e SettingGroup) BorderR(length gk.Length) SettingGroup {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2780,6 +3508,8 @@ func (e SettingGroup) BorderR(length gk.Length) SettingGroup {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e SettingGroup) BorderT(length gk.Length) SettingGroup {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2787,6 +3517,8 @@ func (e SettingGroup) BorderT(length gk.Length) SettingGroup {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e SettingGroup) BorderX(length gk.Length) SettingGroup {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2794,6 +3526,8 @@ func (e SettingGroup) BorderX(length gk.Length) SettingGroup {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e SettingGroup) BorderY(length gk.Length) SettingGroup {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2801,24 +3535,34 @@ func (e SettingGroup) BorderY(length gk.Length) SettingGroup {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e SettingGroup) Bottom(length gk.Length) SettingGroup {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e SettingGroup) ColEnd(end int16) SettingGroup { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e SettingGroup) ColSpan(span uint16) SettingGroup { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e SettingGroup) ColStart(start int16) SettingGroup {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e SettingGroup) Cursor(cursor gk.CursorStyle) SettingGroup {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2826,33 +3570,45 @@ func (e SettingGroup) Cursor(cursor gk.CursorStyle) SettingGroup {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e SettingGroup) FlexBasis(basis gk.Length) SettingGroup {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e SettingGroup) FlexGrow(grow float32) SettingGroup {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e SettingGroup) FlexShrink(shrink float32) SettingGroup {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e SettingGroup) Font(font gk.Font) SettingGroup { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e SettingGroup) FontFamily(familyName string) SettingGroup {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e SettingGroup) FontFeatures(features gk.FontFeatures) SettingGroup {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2861,16 +3617,22 @@ func (e SettingGroup) FontFeatures(features gk.FontFeatures) SettingGroup {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e SettingGroup) FontWeight(weight gk.FontWeight) SettingGroup {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e SettingGroup) Gap(length gk.Length) SettingGroup { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e SettingGroup) GapX(length gk.Length) SettingGroup {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2878,18 +3640,24 @@ func (e SettingGroup) GapX(length gk.Length) SettingGroup {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e SettingGroup) GapY(length gk.Length) SettingGroup {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e SettingGroup) GridCols(cols uint16) SettingGroup {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e SettingGroup) GridColsMaxContent(cols uint16) SettingGroup {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2897,18 +3665,24 @@ func (e SettingGroup) GridColsMaxContent(cols uint16) SettingGroup {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e SettingGroup) GridColsMinContent(cols uint16) SettingGroup {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e SettingGroup) GridRows(rows uint16) SettingGroup {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e SettingGroup) GridRowsMaxContent(rows uint16) SettingGroup {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2916,16 +3690,22 @@ func (e SettingGroup) GridRowsMaxContent(rows uint16) SettingGroup {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e SettingGroup) GridRowsMinContent(rows uint16) SettingGroup {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e SettingGroup) H(length gk.Length) SettingGroup { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e SettingGroup) Inset(length gk.Length) SettingGroup {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2933,6 +3713,8 @@ func (e SettingGroup) Inset(length gk.Length) SettingGroup {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e SettingGroup) Left(length gk.Length) SettingGroup {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2940,33 +3722,45 @@ func (e SettingGroup) Left(length gk.Length) SettingGroup {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e SettingGroup) LineClamp(lines int) SettingGroup {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e SettingGroup) LineHeight(lineHeight gk.Length) SettingGroup {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e SettingGroup) M(length gk.Length) SettingGroup { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e SettingGroup) MaxH(length gk.Length) SettingGroup {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e SettingGroup) MaxSize(length gk.Length) SettingGroup {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e SettingGroup) MaxW(length gk.Length) SettingGroup {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2974,21 +3768,29 @@ func (e SettingGroup) MaxW(length gk.Length) SettingGroup {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e SettingGroup) Mb(length gk.Length) SettingGroup { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e SettingGroup) MinH(length gk.Length) SettingGroup {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e SettingGroup) MinSize(length gk.Length) SettingGroup {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e SettingGroup) MinW(length gk.Length) SettingGroup {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2996,65 +3798,95 @@ func (e SettingGroup) MinW(length gk.Length) SettingGroup {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e SettingGroup) Ml(length gk.Length) SettingGroup { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e SettingGroup) Mr(length gk.Length) SettingGroup { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e SettingGroup) Mt(length gk.Length) SettingGroup { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e SettingGroup) Mx(length gk.Length) SettingGroup { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e SettingGroup) My(length gk.Length) SettingGroup { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e SettingGroup) Opacity(opacity float32) SettingGroup {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e SettingGroup) P(length gk.Length) SettingGroup { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e SettingGroup) Pb(length gk.Length) SettingGroup { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e SettingGroup) Pl(length gk.Length) SettingGroup { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e SettingGroup) Pr(length gk.Length) SettingGroup { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e SettingGroup) Pt(length gk.Length) SettingGroup { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e SettingGroup) Px(length gk.Length) SettingGroup { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e SettingGroup) Py(length gk.Length) SettingGroup { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e SettingGroup) Right(length gk.Length) SettingGroup {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e SettingGroup) Rounded(length gk.Length) SettingGroup {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3062,6 +3894,8 @@ func (e SettingGroup) Rounded(length gk.Length) SettingGroup {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e SettingGroup) RoundedB(length gk.Length) SettingGroup {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3069,6 +3903,8 @@ func (e SettingGroup) RoundedB(length gk.Length) SettingGroup {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e SettingGroup) RoundedBl(length gk.Length) SettingGroup {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3076,6 +3912,8 @@ func (e SettingGroup) RoundedBl(length gk.Length) SettingGroup {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e SettingGroup) RoundedBr(length gk.Length) SettingGroup {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3083,6 +3921,8 @@ func (e SettingGroup) RoundedBr(length gk.Length) SettingGroup {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e SettingGroup) RoundedL(length gk.Length) SettingGroup {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3090,6 +3930,8 @@ func (e SettingGroup) RoundedL(length gk.Length) SettingGroup {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e SettingGroup) RoundedR(length gk.Length) SettingGroup {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3097,6 +3939,8 @@ func (e SettingGroup) RoundedR(length gk.Length) SettingGroup {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e SettingGroup) RoundedT(length gk.Length) SettingGroup {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3104,6 +3948,8 @@ func (e SettingGroup) RoundedT(length gk.Length) SettingGroup {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e SettingGroup) RoundedTl(length gk.Length) SettingGroup {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3111,18 +3957,26 @@ func (e SettingGroup) RoundedTl(length gk.Length) SettingGroup {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e SettingGroup) RoundedTr(length gk.Length) SettingGroup {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e SettingGroup) RowEnd(end int16) SettingGroup { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e SettingGroup) RowSpan(span uint16) SettingGroup { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e SettingGroup) RowStart(start int16) SettingGroup {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3132,24 +3986,32 @@ func (e SettingGroup) RowStart(start int16) SettingGroup {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e SettingGroup) ScrollbarWidth(width gk.Length) SettingGroup {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e SettingGroup) Shadow(shadows []gk.BoxShadow) SettingGroup {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e SettingGroup) Size(length gk.Length) SettingGroup {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e SettingGroup) TextAlign(align gk.TextAlign) SettingGroup {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3158,23 +4020,31 @@ func (e SettingGroup) TextAlign(align gk.TextAlign) SettingGroup {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e SettingGroup) TextBg(bg gk.Color) SettingGroup { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e SettingGroup) TextColor(color gk.Color) SettingGroup {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e SettingGroup) TextDecorationColor(color gk.Color) SettingGroup {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e SettingGroup) TextOverflow(overflow gk.TextOverflow) SettingGroup {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3183,6 +4053,8 @@ func (e SettingGroup) TextOverflow(overflow gk.TextOverflow) SettingGroup {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e SettingGroup) TextSize(size gk.Length) SettingGroup {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3190,9 +4062,13 @@ func (e SettingGroup) TextSize(size gk.Length) SettingGroup {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e SettingGroup) Top(length gk.Length) SettingGroup { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e SettingGroup) W(length gk.Length) SettingGroup { tStyledW(rt.N(e.Core), length); return e }
 
 // SettingItem is gpui_kit::component::setting::SettingItem.
@@ -3200,7 +4076,7 @@ type SettingItem struct{ rt.Val }
 
 // Create a new setting item.
 //
-// NewSettingItem is <gpui_kit::component::setting::SettingItem>::new.
+// NewSettingItem calls <gpui_kit::component::setting::SettingItem>::new.
 func NewSettingItem(title string, field gk.AnySettingField) SettingItem {
 	n := rt.NewValue(858)
 	o := rt.NodeArgs(n)
@@ -3220,7 +4096,7 @@ func NewSettingItem(title string, field gk.AnySettingField) SettingItem {
 
 // Create a new custom element setting item with a render closure.
 //
-// NewSettingItemRender is <gpui_kit::component::setting::SettingItem>::render.
+// NewSettingItemRender calls <gpui_kit::component::setting::SettingItem>::render.
 func NewSettingItemRender(render gk.Element) SettingItem {
 	n := rt.NewValue(859)
 	o := rt.NodeArgs(n)
@@ -3232,7 +4108,7 @@ func NewSettingItemRender(render gk.Element) SettingItem {
 //
 // Only applies to `Item`.
 //
-// Description is <gpui_kit::component::setting::SettingItem>::description.
+// Description calls <gpui_kit::component::setting::SettingItem>::description.
 func (e SettingItem) Description(description editor.TextInto) SettingItem {
 	o := rt.Op(rt.N(e.Core), 256)
 	putTextInto(o, description)
@@ -3245,7 +4121,7 @@ func (e SettingItem) Description(description editor.TextInto) SettingItem {
 // rendered in a non-interactive state. For `Element` the `disabled` flag is forwarded via
 // `disabled` so the custom renderer can disable its interactive controls.
 //
-// Disabled is <gpui_kit::component::setting::SettingItem>::disabled.
+// Disabled calls <gpui_kit::component::setting::SettingItem>::disabled.
 func (e SettingItem) Disabled(disabled bool) SettingItem {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Bool(disabled)
@@ -3258,7 +4134,7 @@ func (e SettingItem) Disabled(disabled bool) SettingItem {
 // also useful for custom elements that have no title/description but should still show up in
 // search results.
 //
-// Keywords is <gpui_kit::component::setting::SettingItem>::keywords.
+// Keywords calls <gpui_kit::component::setting::SettingItem>::keywords.
 func (e SettingItem) Keywords(keywords []string) SettingItem {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(keywords)))
@@ -3272,7 +4148,7 @@ func (e SettingItem) Keywords(keywords []string) SettingItem {
 //
 // Only applies to `Item`.
 //
-// Layout is <gpui_kit::component::setting::SettingItem>::layout.
+// Layout calls <gpui_kit::component::setting::SettingItem>::layout.
 func (e SettingItem) Layout(layout gk.Axis) SettingItem {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U16(uint16(layout))
@@ -3287,7 +4163,7 @@ func (e SettingItem) Layout(layout gk.Axis) SettingItem {
 // - `is_dirty` reports whether the item differs from its default state.
 // - `reset` performs the reset.
 //
-// OnReset is <gpui_kit::component::setting::SettingItem>::on_reset.
+// OnReset calls <gpui_kit::component::setting::SettingItem>::on_reset.
 func (e SettingItem) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) SettingItem {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U64(rt.H(isDirty.HCore))
@@ -3298,7 +4174,7 @@ func (e SettingItem) OnReset(isDirty gk.Cell[bool], reset func(cx *gk.Cx)) Setti
 // SettingPage is gpui_kit::component::setting::SettingPage.
 type SettingPage struct{ rt.Val }
 
-// NewSettingPage is <gpui_kit::component::setting::SettingPage>::new.
+// NewSettingPage calls <gpui_kit::component::setting::SettingPage>::new.
 func NewSettingPage(title string) SettingPage {
 	n := rt.NewValue(747)
 	o := rt.NodeArgs(n)
@@ -3308,7 +4184,7 @@ func NewSettingPage(title string) SettingPage {
 
 // Set the default open state of the setting page, default is false.
 //
-// DefaultOpen is <gpui_kit::component::setting::SettingPage>::default_open.
+// DefaultOpen calls <gpui_kit::component::setting::SettingPage>::default_open.
 func (e SettingPage) DefaultOpen(defaultOpen bool) SettingPage {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(defaultOpen)
@@ -3317,7 +4193,7 @@ func (e SettingPage) DefaultOpen(defaultOpen bool) SettingPage {
 
 // Set the description of the setting page, default is None.
 //
-// Description is <gpui_kit::component::setting::SettingPage>::description.
+// Description calls <gpui_kit::component::setting::SettingPage>::description.
 func (e SettingPage) Description(description string) SettingPage {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.Str(description)
@@ -3326,7 +4202,7 @@ func (e SettingPage) Description(description string) SettingPage {
 
 // Add a setting group to the page.
 //
-// Group is <gpui_kit::component::setting::SettingPage>::group.
+// Group calls <gpui_kit::component::setting::SettingPage>::group.
 func (e SettingPage) Group(group SettingGroup) SettingPage {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(group.Core)))
@@ -3335,7 +4211,7 @@ func (e SettingPage) Group(group SettingGroup) SettingPage {
 
 // Add multiple setting groups to the page.
 //
-// Groups is <gpui_kit::component::setting::SettingPage>::groups.
+// Groups calls <gpui_kit::component::setting::SettingPage>::groups.
 func (e SettingPage) Groups(groups []SettingGroup) SettingPage {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(uint32(len(groups)))
@@ -3347,7 +4223,7 @@ func (e SettingPage) Groups(groups []SettingGroup) SettingPage {
 
 // Set the style refinement for the header of the setting page.
 //
-// HeaderStyle is <gpui_kit::component::setting::SettingPage>::header_style.
+// HeaderStyle calls <gpui_kit::component::setting::SettingPage>::header_style.
 func (e SettingPage) HeaderStyle(style gk.StyleRefinement) SettingPage {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -3356,7 +4232,7 @@ func (e SettingPage) HeaderStyle(style gk.StyleRefinement) SettingPage {
 
 // Set the icon of the setting page.
 //
-// Icon is <gpui_kit::component::setting::SettingPage>::icon.
+// Icon calls <gpui_kit::component::setting::SettingPage>::icon.
 func (e SettingPage) Icon(icon gk.IconName) SettingPage {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.U16(uint16(icon))
@@ -3367,7 +4243,7 @@ func (e SettingPage) Icon(icon gk.IconName) SettingPage {
 //
 // If true and the items in this page has changed, the reset button will appear.
 //
-// Resettable is <gpui_kit::component::setting::SettingPage>::resettable.
+// Resettable calls <gpui_kit::component::setting::SettingPage>::resettable.
 func (e SettingPage) Resettable(resettable bool) SettingPage {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Bool(resettable)
@@ -3376,7 +4252,7 @@ func (e SettingPage) Resettable(resettable bool) SettingPage {
 
 // Set the title of the setting page.
 //
-// Title is <gpui_kit::component::setting::SettingPage>::title.
+// Title calls <gpui_kit::component::setting::SettingPage>::title.
 func (e SettingPage) Title(title string) SettingPage {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.Str(title)
@@ -3387,7 +4263,7 @@ func (e SettingPage) Title(title string) SettingPage {
 //
 // For example, an info icon button that opens the help documentation.
 //
-// TitleSuffix is <gpui_kit::component::setting::SettingPage>::title_suffix.
+// TitleSuffix calls <gpui_kit::component::setting::SettingPage>::title_suffix.
 func (e SettingPage) TitleSuffix(suffix gk.Element) SettingPage {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Take(suffix))
@@ -3399,7 +4275,7 @@ type SettingsEl struct{ rt.ElSizableNode }
 
 // Create a new settings with the given ID.
 //
-// Settings is <gpui_kit::component::setting::Settings>::new.
+// Settings calls <gpui_kit::component::setting::Settings>::new.
 func Settings(id gk.ID) SettingsEl {
 	rt.UseComponentSetting()
 	n := rt.NewNode(748)
@@ -3410,7 +4286,7 @@ func Settings(id gk.ID) SettingsEl {
 
 // Set the default index of the page to be selected.
 //
-// DefaultSelectedIndex is <gpui_kit::component::setting::Settings>::default_selected_index.
+// DefaultSelectedIndex calls <gpui_kit::component::setting::Settings>::default_selected_index.
 func (e SettingsEl) DefaultSelectedIndex(index SelectIndex) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	putSelectIndex(o, index)
@@ -3419,7 +4295,7 @@ func (e SettingsEl) DefaultSelectedIndex(index SelectIndex) SettingsEl {
 
 // Set the style refinement for the header.
 //
-// HeaderStyle is <gpui_kit::component::setting::Settings>::header_style.
+// HeaderStyle calls <gpui_kit::component::setting::Settings>::header_style.
 func (e SettingsEl) HeaderStyle(style gk.StyleRefinement) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -3428,7 +4304,7 @@ func (e SettingsEl) HeaderStyle(style gk.StyleRefinement) SettingsEl {
 
 // Add a page to the settings.
 //
-// Page is <gpui_kit::component::setting::Settings>::page.
+// Page calls <gpui_kit::component::setting::Settings>::page.
 func (e SettingsEl) Page(page SettingPage) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(page.Core)))
@@ -3437,7 +4313,7 @@ func (e SettingsEl) Page(page SettingPage) SettingsEl {
 
 // Add pages to the settings.
 //
-// Pages is <gpui_kit::component::setting::Settings>::pages.
+// Pages calls <gpui_kit::component::setting::Settings>::pages.
 func (e SettingsEl) Pages(pages []SettingPage) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(uint32(len(pages)))
@@ -3449,7 +4325,7 @@ func (e SettingsEl) Pages(pages []SettingPage) SettingsEl {
 
 // Set the resize range of the sidebar, default is `160px..360px`.
 //
-// SidebarSizeRange is <gpui_kit::component::setting::Settings>::sidebar_size_range.
+// SidebarSizeRange calls <gpui_kit::component::setting::Settings>::sidebar_size_range.
 func (e SettingsEl) SidebarSizeRange(range_ [2]float32) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.F32(range_[0])
@@ -3459,7 +4335,7 @@ func (e SettingsEl) SidebarSizeRange(range_ [2]float32) SettingsEl {
 
 // Set the style refinement for the sidebar.
 //
-// SidebarStyle is <gpui_kit::component::setting::Settings>::sidebar_style.
+// SidebarStyle calls <gpui_kit::component::setting::Settings>::sidebar_style.
 func (e SettingsEl) SidebarStyle(style gk.StyleRefinement) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -3468,7 +4344,7 @@ func (e SettingsEl) SidebarStyle(style gk.StyleRefinement) SettingsEl {
 
 // Set the width of the sidebar, default is `250px`.
 //
-// SidebarWidth is <gpui_kit::component::setting::Settings>::sidebar_width.
+// SidebarWidth calls <gpui_kit::component::setting::Settings>::sidebar_width.
 func (e SettingsEl) SidebarWidth(width float32) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.F32(width)
@@ -3479,7 +4355,7 @@ func (e SettingsEl) SidebarWidth(width float32) SettingsEl {
 //
 // All setting groups will use this variant unless overridden individually.
 //
-// WithGroupVariant is <gpui_kit::component::setting::Settings>::with_group_variant.
+// WithGroupVariant calls <gpui_kit::component::setting::Settings>::with_group_variant.
 func (e SettingsEl) WithGroupVariant(variant GroupBoxVariant) SettingsEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U16(uint16(variant))
@@ -3487,19 +4363,27 @@ func (e SettingsEl) WithGroupVariant(variant GroupBoxVariant) SettingsEl {
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e SettingsEl) Large() SettingsEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e SettingsEl) Small() SettingsEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e SettingsEl) WithSize(size gk.SizeInto) SettingsEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e SettingsEl) Xsmall() SettingsEl { tSizableXsmall(rt.N(e.Core)); return e }

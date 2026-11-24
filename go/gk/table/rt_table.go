@@ -1,3 +1,7 @@
+// Hand-written virtualized table and tree helpers: cell-packing table sources,
+// column metadata and kit Column builders, flattened tree items, text exports,
+// row labels, and grouped-header Look overrides.
+
 package table
 
 import (
@@ -5,24 +9,26 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// TableEventKind is what a table's delegate reports.
+// EventKind identifies table delegate callbacks emitted for sorting, column
+// reordering, viewport visibility changes, and infinite-scroll pagination.
 type EventKind uint16
 
+// Event kinds reported in DelegateEvent.Kind.
 const (
-	Sort           EventKind = iota // a sortable column's sort icon was clicked: Col, Sort (sort, then gk.InvalidateTable)
-	MoveColumn                      // the user dragged column Col to position To
-	VisibleRows                     // rows Row to To are visible (only with DelegateData.VisibleEvents)
-	VisibleColumns                  // columns Col to To are visible (only with DelegateData.VisibleEvents)
-	LoadMore                        // scrolled near the end while DelegateData.HasMore is set
+	Sort EventKind = iota
+	MoveColumn
+	VisibleRows
+	VisibleColumns
+	LoadMore
 )
 
+// String returns the name of table event kind k.
 func (k EventKind) String() string {
 	return [...]string{"Sort", "MoveColumn", "VisibleRows", "VisibleColumns", "LoadMore", "?"}[min(int(k), 5)]
 }
 
-// TableDelegateEvent is the event of a table's row source. A column is named by its index in the
-// columns given to the table, which stays when the user moves it. Selections, double clicks and
-// widths are the table state's own events (TableState.OnTableEvent).
+// DelegateEvent carries a table interaction payload (sort column/direction,
+// moved column indices, visible row/column bounds, or load-more trigger).
 type DelegateEvent struct {
 	ID   uint64
 	Kind EventKind
@@ -43,18 +49,18 @@ func init() {
 	}})
 }
 
-// TableEvents gives a table's source the handler of its delegate's events.
+// Events attaches a DelegateEvent handler to a table RowSource.
 func Events(f func(cx *gk.Cx, e DelegateEvent)) gk.SourceOption {
 	return rt.SourceEvents(f, rt.ShapeTableEvent)
 }
 
-// TableColumn is one column of a table: upstream's Column as plain data. Make one with
-// gk.NewTableColumn and change the fields you need.
+// TableColumn defines a table column's key, heading, alignment, sort state,
+// width constraints, pinning, and interactive flags.
 type TableColumn struct {
 	Key, Name  string
 	Align      gk.TextAlign
-	Sort       gk.Option[ColumnSort] // none: not sortable
-	Paddings   gk.Option[[4]float32] // top, right, bottom, left
+	Sort       gk.Option[ColumnSort]
+	Paddings   gk.Option[[4]float32]
 	Width      float32
 	Fixed      gk.Option[ColumnFixed]
 	Resizable  bool
@@ -64,8 +70,8 @@ type TableColumn struct {
 	MaxWidth   float32
 }
 
-// NewTableColumn is a column with upstream's defaults (100 px wide, resizable, movable,
-// selectable, 20 to 1,200 px).
+// NewTableColumn creates a TableColumn with sensible default width (100 px),
+// min/max bounds (20..1200 px), and resizing, moving, and selection enabled.
 func NewTableColumn(key, name string) TableColumn {
 	return TableColumn{Key: key, Name: name, Width: 100, Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 1200}
 }
@@ -105,15 +111,12 @@ func putTableColumns(o *rt.Tape, columns []TableColumn) {
 	}
 }
 
-// CellAt is the cell a cell function describes: its row and its column's index in the columns
-// given to the table.
+// CellAt identifies one cell by zero-based Row and Col index in a table source.
 type CellAt struct{ Row, Col int }
 
-// NewTableSource makes the row source of a table with rows rows and columns: cell describes one
-// cell, once, and is called again only when the row is invalidated (table.InvalidateTable) or
-// what it read changed. table.Events gives it a handler; gk.Initial is the rows described before
-// the first frame (default 160), gk.Capacity the cells kept (default 4,096). Make the table's
-// state over it with table.NewState(cx, src).Build() right after. Needs a window.
+// NewSource creates a virtualized table RowSource with rows rows and columns
+// columns. Each row view packs all columns for that row into a single
+// rt.TableCells node, keeping the per-row view count independent of column count.
 func NewSource(cx *gk.Cx, rows int, columns []TableColumn, cell func(cx *gk.Cx, at CellAt) gk.Element, opts ...gk.SourceOption) gk.RowSource {
 	if cell == nil {
 		rt.Stop("table.NewSource needs a cell function")
@@ -158,8 +161,7 @@ func tableRecOf(src gk.RowSource) *rt.TableRec {
 	return rec
 }
 
-// SetTableRows changes the number of rows. Rows at and past it are dropped; rows below it keep
-// their cells (table.InvalidateTable them if their content moved).
+// SetTableRows updates the row count of a table RowSource created by NewSource.
 func SetTableRows(cx *gk.Cx, src gk.RowSource, rows int) {
 	rec := tableRecOf(src)
 	if rows < 0 {
@@ -174,15 +176,15 @@ func SetTableRows(cx *gk.Cx, src gk.RowSource, rows int) {
 	rec.Rows = rows
 }
 
-// InvalidateTable has the cells of rows lo to hi (not included) described again before the next
-// frame (after a sort, say).
+// InvalidateTable marks cached table rows in [lo, hi) dirty so they re-render.
 func InvalidateTable(cx *gk.Cx, src gk.RowSource, lo, hi int) {
 	tableRecOf(src)
 	gk.Invalidate(cx, src, max(lo, 0), max(hi, 0))
 }
 
-// SetTableColumns replaces the columns of the table state t over the row source src. With
-// another number of columns every cell is described again.
+// SetTableColumns replaces the column definitions on table State t and its
+// backing RowSource src. When the column count changes, existing row views are
+// cleared first so they re-materialize with the new column count.
 func SetTableColumns(cx *gk.Cx, t State, src gk.RowSource, columns []TableColumn) {
 	rec := tableRecOf(src)
 	n := len(columns)
@@ -201,10 +203,8 @@ func SetTableColumns(cx *gk.Cx, t State, src gk.RowSource, columns []TableColumn
 	}
 }
 
-// SetTableKitColumns gives the table over src the kit's own Column values
-// (table.NewColumn("size", "Size").Width(80).Sortable()), each sent as a value made outside a view:
-// before its state is made (no t, right after table.NewSource), or replacing the columns of the
-// table state t. With another number of columns every cell is described again.
+// SetTableKitColumns replaces the columns of src (and optionally live table
+// State t) using generated kit Column builder values instead of TableColumn structs.
 func SetTableKitColumns(cx *gk.Cx, src gk.RowSource, columns []Column, t ...State) {
 	rec := tableRecOf(src)
 	n := len(columns)
@@ -239,8 +239,8 @@ func SetTableKitColumns(cx *gk.Cx, src gk.RowSource, columns []Column, t ...Stat
 	}
 }
 
-// TreeNode is one item of a tree, depth first: an item is a folder when the next item is one
-// level deeper.
+// TreeNode describes one flattened node supplied to SetTreeItems, where Depth
+// encodes nesting level.
 type TreeNode struct {
 	ID, Label string
 	Depth     int
@@ -248,8 +248,7 @@ type TreeNode struct {
 	Disabled  bool
 }
 
-// SetTreeItems replaces the items of a tree state (made with gk.NewTreeState(cx).Build()). A
-// buffered write.
+// SetTreeItems replaces the hierarchical item list stored in TreeState t.
 func SetTreeItems(cx *gk.Cx, t TreeState, items []TreeNode) {
 	o := rt.NewReq(rt.CTreeSetItems)
 	o.U64(rt.H(t.HCore))
@@ -273,7 +272,7 @@ func SetTreeItems(cx *gk.Cx, t TreeState, items []TreeNode) {
 	rt.CheckCx(cx).DeferOp(*o)
 }
 
-// TreeEntry is a visible entry of a tree, as its row reads it.
+// TreeEntry describes one visible flattened entry read back from a TreeState.
 type TreeEntry struct {
 	ID, Label string
 	Depth     int
@@ -282,8 +281,8 @@ type TreeEntry struct {
 	Disabled  bool
 }
 
-// TreeEntryAt reads the visible entry ix of a tree; false past the last one. In a row function it
-// is a dependency: the row is described again when the tree changes (an expand, a selection).
+// TreeEntryAt reads the visible tree entry at flat index ix, returning false
+// if ix is out of range.
 func TreeEntryAt(cx *gk.Cx, t TreeState, ix int) (TreeEntry, bool) {
 	o := rt.NewReq(rt.CTreeEntry)
 	o.U64(rt.H(t.HCore))
@@ -298,54 +297,53 @@ func TreeEntryAt(cx *gk.Cx, t TreeState, ix int) (TreeEntry, bool) {
 	return e, true
 }
 
-// NewTreeSource makes the row source of a tree: row ix is the visible entry ix, described by row
-// as a gk.ListItem (the tree marks it selected and disabled). Give it to gk.Tree. Needs a window.
+// NewTreeSource creates a RowSource for a tree view whose visible row count is
+// managed by the TreeState itself.
 func NewTreeSource(cx *gk.Cx, row func(cx *gk.Cx, at gk.RowAt) ListItemEl, opts ...gk.SourceOption) gk.RowSource {
 	if row == nil {
 		rt.Stop("table.NewTreeSource needs a row function")
 	}
-	// The count follows the tree's entries, which the kit keeps: rows past the last entry are
-	// never drawn, and a row bound there reads no entry.
 	return gk.NewRowSource(cx, 1<<30, func(cx *gk.Cx, at gk.RowAt) gk.Element { return row(cx, at) }, opts...)
 }
 
-// TableRowLabel is a row's screen-reader name (empty: upstream's).
+// RowLabel overrides the text label shown for a specific row in a table.
 type RowLabel struct {
 	Row   int
 	Label string
 }
 
-// TableGroup is a group header cell spanning Span columns (upstream's ColumnGroup).
+// Group defines a grouped column header spanning Span columns.
 type Group struct {
 	Label string
 	Span  int
 }
 
-// TableGroupView draws the group header cell of Label (in place of the centered label).
+// GroupView attaches a custom header gk.View to a named column group.
 type GroupView struct {
 	Label string
 	View  gk.View
 }
 
-// TableFit is the width a double click on a column's resize handle gives it (fit_column).
+// Fit sets an explicit auto-fit pixel width for column Col.
 type Fit struct {
 	Col   int
 	Width float32
 }
 
-// TableLook is how a table draws besides its cells. Zero values keep upstream's look.
+// Look configures optional visual overrides on a table State via SetTableLook:
+// fitted column widths, multi-level column header groups, custom group views,
+// trailing column view, and header/row style refinements.
 type Look struct {
 	Fit         []Fit
-	Groups      [][]Group // group header levels from the top; nil: none
+	Groups      [][]Group
 	GroupViews  []GroupView
-	LastColumn  gk.View                       // in place of the 12 px filler after the last column
-	HeaderStyle gk.Option[gk.StyleRefinement] // refines the header row
-	RowStyle    gk.Option[gk.StyleRefinement] // refines every body row
+	LastColumn  gk.View
+	HeaderStyle gk.Option[gk.StyleRefinement]
+	RowStyle    gk.Option[gk.StyleRefinement]
 }
 
-// SetTableTexts sets the texts of the cells of rows firstRow to firstRow + len(texts): texts[i]
-// holds one string per column, in the order the columns were given (empty: none). replace drops
-// every text set before. A buffered write.
+// SetTableTexts sets plain-text cell values for copy/export/search starting at
+// firstRow; when replace is true, any previous table texts are cleared first.
 func SetTableTexts(cx *gk.Cx, t State, firstRow int, texts [][]string, replace bool) {
 	tc := rt.CheckCx(cx)
 	if firstRow < 0 {
@@ -373,7 +371,7 @@ func SetTableTexts(cx *gk.Cx, t State, firstRow int, texts [][]string, replace b
 	tc.DeferOp(*o)
 }
 
-// SetTableRowLabels sets rows' screen-reader names. A buffered write.
+// SetTableRowLabels installs custom per-row labels on table State t.
 func SetTableRowLabels(cx *gk.Cx, t State, labels []RowLabel) {
 	tc := rt.CheckCx(cx)
 	o := rt.NewReq(rt.CTableRowLabels)
@@ -389,8 +387,8 @@ func SetTableRowLabels(cx *gk.Cx, t State, labels []RowLabel) {
 	tc.DeferOp(*o)
 }
 
-// SetTableLook sets how a table draws besides its cells. A buffered write; the styles are values
-// made in this handler or init (gk.NewStyleRefinementDefault()...).
+// SetTableLook applies Look overrides (column fit widths, grouped headers,
+// trailing column view, and header/row style refinements) to table State t.
 func SetTableLook(cx *gk.Cx, t State, look Look) {
 	tc := rt.CheckCx(cx)
 	o := rt.NewReq(rt.CTableLook)

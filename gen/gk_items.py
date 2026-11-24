@@ -1,61 +1,54 @@
-"""Item procedures (docs/PROTOCOLS.md 9.41): the element closures upstream calls while it draws one
-item of a component (a calendar's day, a time field's segment, a tree's entry, a nav stack's page,
-a combobox's trigger, a command palette's header, a popover's or hover card's content, a
-notification's content and action button, a tooltip's frame), which 9.16's element closures over a
-context could not serve.
+"""Item-render closure descriptors and Rust decoder emission.
 
-The app writes one procedure per item kind, whose parameters are the values upstream hands the
-closure, typed:
+Many upstream components take per-item rendering callbacks that pass context values,
+read-only state/value structs, `AnyView` instances, or pre-built elements (such as a
+calendar day cell or tree row) along with `(&mut Window, &mut App)` and expect an
+element back. Rather than hand-writing a protocol shim for each component, this module
+generalizes them into the `items` descriptor:
 
-    day :: proc(a: ^App, cx: ^gk.Cx, item: gk.Calendar_Item, st: gk.Calendar_Item_State) -> gk.Element {
-        return item->rounded_full()->bg(st.is_active ? gk.theme(.Primary) : gk.theme(.Background))
-    }
-    gk.base_calendar(a.cal)->item(gk.items(cx, a, day))
+    ["items", wrap, ptypes, params, vals, out]
 
-`gk.items` (a procedure group generated here, one member per kind of item procedure) makes, or
-finds again, the row source of that (procedure, state) pair; it may be called in a view procedure.
-Each call of the closure in a frame is a row of it (9.16), described between frames by the
-procedure. The values arrive as:
+Where:
+- `wrap`: closure wrapper kind (`"impl"`, `"rc"`, `"box"`, `"arc"`).
+- `ptypes` / `params`: Rust parameter type strings and role tags (`"arg"`, `"window"`, `"app"`, `"context"`).
+- `vals`: one entry per `"arg"` payload, classified by `value()`:
+  - `["view"]`: an owned `AnyView` stashed in the runtime's handed-object vector and exposed to Go as `KitView`.
+  - `["handed", node_key, reads_rt]`: a pre-built element node stashed for Go to modify via its synthetic
+    `(handed)` constructor, plus an optional `Reads` snapshot record of its getters.
+  - `["reads", reads_rt]`: a synthetic `crate::items::Reads<'_, T>` record copying plain getter results out on the wire.
+  - `["val", desc]`: a directly wire-encodable value (or `Clone` object handle).
+  - `["none"]`: a borrowed state/struct with no wire-readable getters (accepted by the closure, omitted from the Go callback).
+- `out`: `"el"` for `impl IntoElement` / `AnyElement`, or `["node", node_key]` for a concrete element type.
 
-- `["val", d]`: what 9.16 already reads (plain values; a library object as a temporary handle);
-- `["reads", rt]`: a record of the value's reads (`gk.Calendar_Item_State{kind, is_active, ..}`,
-  `gk.Popover_State_Reads{is_open}`), for a value 9.16 could not read: a Clone value whose
-  methods are reads (`fn x(self)` or `fn x(&self)`) besides its constructors and builders, an
-  entity's state handed by reference, a generic context (`ComboboxTriggerContext<'_, D>` with the
-  closure's D). Reads that take arguments, return a library object, an element or a view are left
-  out; a state with no read left is not passed at all;
-- `["handed", node, rt]`: an element upstream built and hands in to be decorated (`CalendarItem`,
-  `TimeFieldSegment`, `NavPage`): the procedure gets it as a node of the row's tape (constructor
-  `handed`, synthetic and private, decoded by taking upstream's value: core/src/items.rs) and returns
-  it styled, with children, or placed inside other elements; `rt` is the record of its own reads
-  (`gk.Nav_Page_Reads{index, phase, operation, progress}`), passed after it, or None;
-- `["view"]`: a view upstream hands in (a tooltip's content): `gk.Kit_View`, a node to place.
-
-The closure returns an element (`"el"`) or one element type (`["node", key]`: `Notification::
-action -> Button`, the base HoverCard's `-> Stateful<Div>`), which the procedure returns typed.
-
-`FnOnce(X) -> E` without a window, X an element node (`DialogClose::trigger(FnOnce(Button) -> E)`),
-is the build closure of DESIGN.md 12 with E taken as X.
+During Rust codegen (`rust_dec`), the emitted closure serializes its payload values into a
+cache key `p` and a deferred writer closure, boxes any handed elements/views into `h`, and
+calls `crate::items::row` (or `crate::source::ctx_row` when nothing is handed) to request
+the rendered subtree from Go's `Items` callback.
 """
 import json
 
 import rdj
 
-N_KIT_VIEW = 41  # core/wire/ops.txt: node KIT_VIEW (a view handed to an item procedure)
+# Wire opcode for KitView (matches core/wire/ops.txt).
+N_KIT_VIEW = 41
+# Descriptor tags that cannot appear inside a plain read-only snapshot record field because
+# they carry handles, tape nodes, closures, or mutable references rather than inert data.
 _PLAIN_BAD = ("obj", "node", "handle", "entity", "shim", "lent", "rows", "build", "fragment", "child", "handler",
               "view", "dock", "ctxrows", "items")
 
 
 def _g():
-    import gk_model  # noqa: PLC0415
+    import gk_model
     return gk_model
 
 
-# ---------------------------------------------------------------- the model's hook
-
-
 def build_over_handed(m, ctx, kind, inputs, output, wrap, params, ptypes, payload, static):
-    """`FnOnce(X) -> E` with no window, X an element node: a build closure returning X."""
+    """Match a single-argument `FnOnce(El) -> El` closure that configures a handed element node.
+
+    Unlike full `items` closures (which run later during render with `&mut Window` and
+    require a round-trip to Go), a pure `FnOnce(El) -> El` runs inline while building
+    the parent node and maps to the simpler `build` descriptor (applied via a sub-tape).
+    """
     g = _g()
     if kind != "FnOnce" or wrap != "impl" or params != ["arg"] or len(payload) != 1 or static or output is None:
         return None
@@ -71,8 +64,14 @@ def build_over_handed(m, ctx, kind, inputs, output, wrap, params, ptypes, payloa
 
 
 def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload, is_el):
-    """An item closure (module doc), or None. Called by gk_model.closure_desc where 9.16's rule
-    refused a closure with values."""
+    """Classify an item-rendering closure into an `items` descriptor, or return None.
+
+    Requires 1..4 payload arguments, a `&mut Window` parameter, and either `&mut App` or
+    `&mut Context<T>`. Return type must be `impl IntoElement` / `AnyElement` (`is_el=True`)
+    or a concrete element node for which `_fallback()` can construct a placeholder element
+    before Go supplies its first frame. Records every handed element node in `m.items_handed`
+    so `post()` synthesizes its `(handed)` constructor.
+    """
     g = _g()
     if not payload or len(payload) > 4 or "window" not in params:
         return None
@@ -103,10 +102,22 @@ def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload, is_el):
 
 
 def value(m, ctx, t, payload):
+    """Classify one payload argument passed into an item closure.
+
+    Classification priority:
+    1. Owned `AnyView` -> `["view"]`.
+    2. Owned element node -> `["handed", node_key, reads_rt]` (excluding getters whose
+       return type duplicates another sibling payload argument in `payload`).
+    3. Value-like `Clone` struct with pure getters -> `["reads", reads_rt]` (or `["none"]`).
+    4. Directly wire-encodable outbound value (restricted to `gk_lists.ASK_KEY` kinds,
+       `px`/`range`/`color` leaves, and `Clone` objects so the value can be serialized
+       and cached as a key) -> `["val", desc]`.
+    5. Borrowed state or opaque context struct -> `["reads", reads_rt]` or `["none"]`.
+    """
     g = _g()
     by_ref = "borrowed_ref" in t
     inner = t["borrowed_ref"]["type"] if by_ref else t
-    if "generic" in inner:  # `&mut Self` of a closure over the value itself (Notification::content)
+    if "generic" in inner:
         try:
             cr, inner = m.resolve_arg(ctx, inner)
         except g.Unsup:
@@ -128,7 +139,7 @@ def value(m, ctx, t, payload):
         return ["reads", rec] if rec else ["none"]
     try:
         d = m.desc(ctx, t, out=True)
-        import gk_lists  # noqa: PLC0415
+        import gk_lists
         ok = True
         for x in g.walk_desc(d):
             if x[0] == "obj":
@@ -146,7 +157,7 @@ def value(m, ctx, t, payload):
 
 
 def _methods(m, hc, hid):
-    """(name, inputs, output, generics) of every public inherent method of a struct."""
+    """Collect public inherent methods `(name, inputs, output, generics)` on a struct, ignoring trait and synthetic impls."""
     c = m.api.crates[hc]
     it = c.item(hid)
     out = []
@@ -165,18 +176,28 @@ def _methods(m, hc, hid):
 
 
 def reads_record(m, ctx, t, mode, skip_types=()):
-    """The key of a record of a type's reads (module doc), "" when it has none, or None when the
-    type is not one this rule reads. mode: "value" (a Clone value: every method a read, a
-    constructor or a builder), "state" (kit state handed by reference: its reads, other methods
-    ignored), "node" (an element handed in: its reads), "none" (a generic context: every method a
-    read)."""
+    """Synthesize a `crate::items::Reads<'_, T>` output record from T's zero-arg getter methods.
+
+    `mode` controls eligibility:
+    - `"value"`: `Clone`, non-state, non-record, non-generic structs whose inherent methods
+      are exclusively zero-arg getters or `Self`-returning builders.
+    - `"node"`: element nodes handed into an item closure (skips getters returning sibling
+      payload types listed in `skip_types` to avoid duplicate data on the wire).
+    - `"state"` / `"none"`: state structs borrowed by reference; returns `""` when no plain
+      getters exist so the caller can still treat the argument as `["none"]`.
+
+    Invariant: inspecting a getter's return type with `out=True` must not flip an
+    input-only data enum's `out` flag (which would change that enum's generated Go
+    representation for every caller). Any flipped `denum` is rolled back and recorded
+    in `rc["left"]` so `post()` can mark that getter as `skipped: builder-getter`.
+    """
     g = _g()
     if "resolved_path" not in t:
         return None
     rp = t["resolved_path"]
     try:
         hc, hid, it = m.api.item(ctx.crate, rp["id"])
-    except Exception:  # noqa: BLE001 (an id outside the extract)
+    except Exception:
         return None
     if it is None or hc not in m.api.crates or "struct" not in it.get("inner", {}):
         return None
@@ -200,8 +221,9 @@ def reads_record(m, ctx, t, mode, skip_types=()):
         if is_read:
             reads.append((name, outp, recv == "Self"))
             continue
+        # In "value" mode, reject structs that have mutating or non-builder methods.
         if mode == "value" and not (recv in (None, "Self") and outs in ("Self", f["name"])):
-            return None  # a method that is neither a read, a constructor nor a builder
+            return None
         if mode == "none" and not f["state"]:
             return None
     fields, left = [], {}
@@ -210,6 +232,7 @@ def reads_record(m, ctx, t, mode, skip_types=()):
             continue
         was_out = {k: e.get("out") for k, e in m.denums.items()}
         try:
+            # Clear closure nesting depth so m.desc() treats the getter return as a normal outbound type.
             sv = m._closure
             m._closure = 0
             try:
@@ -218,10 +241,9 @@ def reads_record(m, ctx, t, mode, skip_types=()):
                 m._closure = sv
         except g.Unsup:
             continue
+        # Roll back any input-only data enum that m.desc(..., out=True) would have promoted to outbound.
         flipped = [k for k, e in m.denums.items() if e.get("out") and not was_out.get(k)]
         if flipped:
-            # A data enum read back changes its Go type (gk.Size's kind becomes unit structs): the
-            # read is left out rather than every app's `WithSize(gk.SizeSmall)` changed.
             for k in flipped:
                 m.denums[k]["out"] = was_out.get(k, False)
             left[name] = f"{flipped[0].rsplit('::', 1)[-1]}, a data enum the app only writes"
@@ -241,8 +263,6 @@ def reads_record(m, ctx, t, mode, skip_types=()):
     if None in targs:
         return None
     gargs = (["'_"] if lifetimes else []) + targs
-    # The record's Wire impl is on a borrow of the value (crate::items::Reads), never on the type:
-    # a library object the app holds is written as a handle by its own Wire path (13.4).
     rt = "crate::items::Reads<'_, " + path + (f"<{', '.join(gargs)}>" if gargs else "") + ">"
     named = f["name"] + ("Reads" if mode in ("state", "node") or f["state"] else "")
     if rt in m.records:
@@ -254,7 +274,10 @@ def reads_record(m, ctx, t, mode, skip_types=()):
 
 
 def field_put(rc, f):
-    """A field of a record of reads: its read, called on the value (gk_values.rust_field_put)."""
+    """Emit `Wire::put` for one field of a `crate::items::Reads` wrapper record.
+
+    Getters that take `self` by value clone `self.0` first because `Reads` only borrows `&T`.
+    """
     if not rc.get("item_reads"):
         return None
     if f.get("by_value"):
@@ -262,17 +285,21 @@ def field_put(rc, f):
     return f"genapi::Wire::put(&self.0.{f['name']}(), out);"
 
 
-# ---------------------------------------------------------------- statuses
-
-
 def post(m):
-    """Statuses once every rule has run: reads read into a record are bridged; a value's own
-    makers are value helpers; the handed nodes get their private constructor."""
-    from gk_model import ada  # noqa: PLC0415
+    """Finalize `Reads` records and synthesize `(handed)` constructors after classification.
+
+    1. Disambiguate `Reads` record names when the underlying type is also a reachable state
+       or object handle (appending `Reads` so the snapshot struct does not collide in Go).
+    2. Mark upstream getter methods whose values are copied into a `Reads` record as `bridged`
+       (and mark rolled-back data-enum getters from `rc["left"]` as `skipped: builder-getter`).
+    3. Append a synthetic `(handed)` constructor taking a `u8` slot index to every node in
+       `m.items_handed` so Go callbacks can claim the pre-built element handed by Rust.
+    """
+    from gk_model import ada
     for rc in m.records.values():
         st = m.states.get(rc["path"]) if rc.get("item_reads") else None
         if st and not rc["name"].endswith("Reads") and (not st.get("obj") or st.get("reachable")):
-            rc["name"] += "Reads"  # the type's own name is the object's the app holds (gk.Base_Tree_Entry)
+            rc["name"] += "Reads"
     recs = {rc["path"]: (rt, rc) for rt, rc in m.records.items() if rc.get("item_reads") and rc.get("out")}
     for it in m.all_items():
         owner = it["id"].rsplit("::", 1)[0]
@@ -300,7 +327,11 @@ def post(m):
 
 
 def handed_out(d):
-    """Library objects an item closure hands the app (gk_lists.handed_out's hook)."""
+    """Yield every library object key passed out through a `val` payload in an `items` closure.
+
+    Called by reachability passes so objects only ever introduced via item callbacks are
+    marked reachable and have their methods generated.
+    """
     g = _g()
     if d[0] != "items":
         return
@@ -311,12 +342,14 @@ def handed_out(d):
                     yield y[2]
 
 
-# ---------------------------------------------------------------- Rust
-
-
 def _fallback(m, key):
-    """What the closure returns, for one frame, while a typed row has no tape: the type's plain
-    value (a button with an id, a div with an id), or None when the binding knows none."""
+    """Build a placeholder Rust element expression used before Go renders a typed item closure's first frame.
+
+    When an upstream closure returns a concrete element type (rather than `AnyElement`),
+    `crate::items::row` still needs a valid value of that type if the Go reply has not
+    populated the cache yet. Supports `Stateful<Div>` directly and any element with a
+    single-ID `new("gk-item")` constructor.
+    """
     node = m.nodes[key]
     if node["path"].replace(" ", "") in ("gpui_kit::Stateful<gpui_kit::Div>",):
         return 'gpui_kit::InteractiveElement::id(gpui_kit::div(), "gk-item")'
@@ -328,6 +361,19 @@ def _fallback(m, key):
 
 
 def rust_dec(rs, d):
+    """Emit Rust decoder expression for an `items` closure descriptor.
+
+    The emitted closure reads the Go `RowSource` handle (`src = r.u64()`) when decoding the
+    parent node, then on each invocation:
+    1. Builds a cache fingerprint `p: Vec<u8>` and an `Rc<dyn Fn(&mut Vec<u8>)>` writer
+       that serializes the payload arguments for Go's `rowContext()` reader (cloning `obj`
+       handles so the deferred writer stays `'static`).
+    2. Captures the first integer payload (if any) as `by: Option<u64>` so index-keyed rows
+       can be matched directly.
+    3. Boxes any handed elements or `AnyView` arguments into `h: Vec<Box<dyn Any>>`.
+    4. Dispatches to `crate::source::ctx_row` (when `out == "el"` and nothing is handed)
+       or `crate::items::row` with a typed decoder and fallback closure.
+    """
     if d[0] != "items":
         return None
     m = rs.m
@@ -340,10 +386,11 @@ def rust_dec(rs, d):
             ps.append(f"{k}: {t}")
             ref = "&*" + k if t.startswith("&mut ") else (k if t.startswith("&") else "&" + k)
             if v[0] == "val":
-                import gk_lists  # noqa: PLC0415
-                lets += gk_lists._ctx_print(rs, v[1], k)  # as 9.16 does
+                import gk_lists
+                lets += gk_lists._ctx_print(rs, v[1], k)
                 base = v[1][1] if v[1][0] == "ref" else v[1]
                 if base[0] == "obj":
+                    # Clone the object handle into the deferred wire-writer closure so it is 'static.
                     lets.append(f"let c{n} = {k}.clone();")
                     puts.append(f"genapi::Wire::put(&c{n}, o);")
                 else:
@@ -372,12 +419,13 @@ def rust_dec(rs, d):
         ret = "gpui_kit::AnyElement"
         decode = "|dx, n| Some(dx.child(n))"
         if fb:
+            # When the closure received a handed element or AnyView, fall back to rendering it
+            # untouched rather than an empty div if Go has not replied yet.
             fallback = ("|h| match crate::items::first::<%s>(h) { Some(v) => gpui_kit::IntoElement::into_any_element(v), "
                         "None => gpui_kit::IntoElement::into_any_element(gpui_kit::div()) }" % fb)
         else:
             fallback = "|_| gpui_kit::IntoElement::into_any_element(gpui_kit::div())"
         if not handed:
-            # No element handed in: the row's view itself, retained like any row (9.16).
             call = f"crate::source::ctx_row(src, {by}, p, {write}, window, cx)"
             body = f"{{ let src = r.u64(); move |{', '.join(ps)}| -> {ret} {{ {body_pre} {call} }} }}"
             return _wrapped(rs, wrap, ptypes, ret, body)
@@ -393,6 +441,11 @@ def rust_dec(rs, d):
 
 
 def _wrapped(rs, wrap, ptypes, ret, body):
+    """Wrap an emitted closure in `Rc<dyn Fn(...)>` / `Box<dyn Fn(...)>` / `Arc<dyn Fn(...)>` when required.
+
+    Explicit trait-object type ascription prevents Rust type-inference ambiguity when passing
+    the wrapped closure into generic builder arguments.
+    """
     if wrap in ("rc", "box", "arc"):
         ptr = {"rc": "std::rc::Rc", "box": "Box", "arc": "std::sync::Arc"}[wrap]
         return f"{{ let f: {ptr}<dyn Fn({', '.join(ptypes)}) -> {ret}> = {rs.wrap(wrap, body)}; f }}"

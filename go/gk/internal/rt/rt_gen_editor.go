@@ -4,26 +4,27 @@ import (
 	"fmt"
 )
 
-// Font is gpui's Font as the binding carries it: a family, a weight (0: normal, 400) and a style;
-// its features and fallbacks are gpui's defaults. DisplayMap and Prewrap take one.
+// Font describes a font family, numeric weight, and slant style encoded onto
+// builder tapes for text and editor components.
 type Font struct {
 	Family string
 	Weight float32
 	Style  FontStyle
 }
 
-// NewFont is a font of family at the normal weight and style.
+// NewFont returns a Font with the given family name and default weight and style.
 func NewFont(family string) Font { return Font{Family: family} }
 
+// PutFont encodes f onto o.
 func PutFont(o *Tape, f Font) {
 	o.Str(f.Family)
 	o.F32(f.Weight)
 	o.U16(uint16(f.Style))
 }
 
-// putExpr writes an expression closure (PROTOCOLS.md 9.12): a closure that maps numbers to a
-// number, given as an expression the library evaluates ("x < 10 ? 1 : 10"), checked here: its
-// syntax, its functions and its arguments (x y z or a0 a1 .., at most nargs).
+// PutExpr validates arithmetic/boolean expression text against nargs closure
+// parameters before encoding it onto o, catching syntax, arity, and unknown
+// identifier mistakes on the Go side at the exact call site.
 func PutExpr(o *Tape, text string, nargs int) {
 	if msg := ExprCheck(text, nargs); msg != "" {
 		Stop("the expression %q %s", text, msg)
@@ -31,6 +32,8 @@ func PutExpr(o *Tape, text string, nargs int) {
 	o.Str(text)
 }
 
+// exprP is a small recursive-descent validator matching the expression language
+// evaluated by the Rust core for data/numeric closures.
 type exprP struct {
 	s     string
 	i     int
@@ -38,13 +41,17 @@ type exprP struct {
 	err   string
 }
 
+// Built-in math functions supported by the Rust expression evaluator and their
+// required argument counts.
 var exprFuncs = []struct {
 	name string
 	n    int
 }{{"min", 2}, {"max", 2}, {"abs", 1}, {"floor", 1}, {"ceil", 1}, {"round", 1}, {"sqrt", 1}, {"pow", 2},
 	{"sin", 1}, {"cos", 1}, {"exp", 1}, {"ln", 1}, {"clamp", 3}}
 
-// ExprCheck returns "" when text is an expression of at most nargs arguments, else what is wrong.
+// ExprCheck parses text for an expression receiving nargs arguments (x, y, z or
+// a0..a9) and returns an empty string if valid, or a diagnostic description of
+// the first syntax or arity error.
 func ExprCheck(text string, nargs int) string {
 	p := &exprP{s: text, nargs: nargs}
 	p.expr()
@@ -76,6 +83,7 @@ func (p *exprP) fail(what string) {
 	}
 }
 
+// expr parses a ternary conditional expression: cond ? thenExpr : elseExpr.
 func (p *exprP) expr() {
 	p.bin(0)
 	if p.eat("?") {
@@ -88,9 +96,10 @@ func (p *exprP) expr() {
 	}
 }
 
+// Operator precedence table from lowest (||) to highest (* / %). Level 2
+// (comparisons) is non-associative.
 var exprOps = [5][]string{{"||"}, {"&&"}, {"<=", ">=", "==", "!=", "<", ">"}, {"+", "-"}, {"*", "/", "%"}}
 
-// bin: binary levels || && comparisons + - * / %, each a chain of the next.
 func (p *exprP) bin(level int) {
 	if level == len(exprOps) {
 		p.unary()
@@ -110,11 +119,12 @@ func (p *exprP) bin(level int) {
 		}
 		p.bin(level + 1)
 		if level == 2 {
-			return // one comparison, as the library reads it
+			return
 		}
 	}
 }
 
+// unary parses prefix negation/logical-not and right-associative ^ exponentiation.
 func (p *exprP) unary() {
 	p.ws()
 	if p.i < len(p.s) && (p.s[p.i] == '-' || (p.s[p.i] == '!' && (p.i+1 >= len(p.s) || p.s[p.i+1] != '='))) {
@@ -211,11 +221,11 @@ func (p *exprP) atom() {
 	}
 }
 
-// MarkdownMatch is the kind of Markdown node a data plugin claims. The first six are blocks, the
-// rest inline. Code and the JSX elements also match on Lang: a fenced code block's language, an
-// element's name ("" matches every one).
+// MarkdownMatch selects which markdown block or inline construct a
+// MarkdownPlugin intercepts.
 type MarkdownMatch uint8
 
+// Markdown construct matchers for MarkdownPlugin.Match.
 const (
 	MarkdownMatchCode MarkdownMatch = iota
 	MarkdownMatchMath
@@ -229,11 +239,8 @@ const (
 	MarkdownMatchMdxInlineElement
 )
 
-// MarkdownPlugin is a data plugin: its name (the node's name), the nodes it claims, the row source
-// that draws them, and an inline node's baseline in pixels from its top (0: upstream's). The library
-// claims the nodes of the rule while upstream parses and draws each node as a row of Rows: a block's
-// row reads a gk.MarkdownNodeRead, an inline node's a gk.MarkdownNodeRead and a
-// gk.InlineRenderContext (make Rows with gk.Items).
+// MarkdownPlugin registers a custom renderer backed by a RowSource for a
+// matched markdown block or inline construct.
 type MarkdownPlugin struct {
 	Name     string
 	Match    MarkdownMatch
@@ -242,12 +249,12 @@ type MarkdownPlugin struct {
 	Baseline float32
 }
 
-// MarkdownPluginAny is what Plugin takes: one of the kit's plugins (gk.NewFrontmatterPlugin()) or
-// a data plugin (gk.MarkdownPlugin).
+// MarkdownPluginAny is the marker interface satisfied by MarkdownPlugin.
 type MarkdownPluginAny interface{ isMarkdownPluginAny() }
 
 func (MarkdownPlugin) isMarkdownPluginAny() {}
 
+// PutMarkdownPlugin encodes p onto o.
 func PutMarkdownPlugin(o *Tape, p MarkdownPlugin) {
 	o.Str(p.Name)
 	o.U8(uint8(p.Match))
@@ -256,14 +263,15 @@ func PutMarkdownPlugin(o *Tape, p MarkdownPlugin) {
 	o.F32(p.Baseline)
 }
 
-// EntityID is the entity behind an input, textarea or editor handle, where upstream takes a
-// gpui::EntityId (InputBase's SemanticOwner): gk.EntityIDOf(a.editor).
+// EntityID identifies a GPUI entity (such as an input, textarea, or editor
+// state) passed to text/editor APIs that accept an entity reference.
 type EntityID uint64
 
-// EntityIDOf is the entity of a state handle.
+// EntityIDOf extracts the EntityID corresponding to a Handled state value.
 func EntityIDOf(state Handled) EntityID { return EntityID(state.handle()) }
 
-// PutDecorate writes a gk.Decorate (package gk): its style refinement, if any, and its content.
+// PutDecorate encodes an optional style value node and a decoration content
+// RowSource handle onto o.
 func PutDecorate[V value](o *Tape, style Option[V], content RowSource) {
 	if s, ok := style.Get(); ok {
 		o.U8(1)

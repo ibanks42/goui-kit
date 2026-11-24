@@ -1,13 +1,12 @@
-// sampler.c: a sampling profiler of a process's main thread, loaded with LD_PRELOAD, for a
-// machine where perf may not be used (kernel.perf_event_paranoid above 2 and no root). A timer on the main thread's own CPU clock (CLOCK_THREAD_CPUTIME_ID, the clock the
-// frame-cost gate measures) sends SIGPROF to that thread every GK_PROF_US microseconds of its
-// CPU time (default 50; the kernel checks CPU timers at its tick, so in practice about once a
-// millisecond of CPU); the handler records the interrupted instruction address, the monotonic
-// time and the thread's CPU clock, so each sample is weighted by the CPU time since the one
-// before. At exit the samples go to $GK_PROF_OUT.samples (u64 address, u64 ns since start,
-// u64 thread CPU ns; little-endian) and the process's mappings to $GK_PROF_OUT.maps, for
-// tools/profile/symbolize.py. Without GK_PROF_OUT it does nothing.
-//   zig cc -shared -fPIC -O2 -o sampler.so tools/profile/sampler.c
+/*
+ * LD_PRELOAD main-thread CPU sampling profiler for Linux x86_64.
+ *
+ * Activated when GK_PROF_OUT is set. Installs a per-thread POSIX timer on
+ * CLOCK_THREAD_CPUTIME_ID (default period 50 us, overridden by GK_PROF_US)
+ * that records (RIP, monotonic ns, thread CPU ns) tuples into an anonymous
+ * mmap ring. On process exit, writes <GK_PROF_OUT>.samples and copies
+ * /proc/self/maps to <GK_PROF_OUT>.maps for tools/profile/symbolize.py.
+ */
 #define _GNU_SOURCE
 #include <fcntl.h>
 #include <signal.h>
@@ -21,6 +20,7 @@
 #include <ucontext.h>
 #include <unistd.h>
 
+/* Maximum recorded samples (~50 MB anonymous mmap at 24 bytes per sample). */
 #define MAX_SAMPLES (1u << 21)
 
 struct sample { uint64_t ip, ns, cpu; };
@@ -37,6 +37,7 @@ static uint64_t clock_ns(clockid_t c) {
 }
 static uint64_t now_ns(void) { return clock_ns(CLOCK_MONOTONIC); }
 
+/* Async-signal-safe SIGPROF handler: records RIP, elapsed wall ns, and thread CPU ns. */
 static void handler(int sig, siginfo_t *si, void *ctx) {
     (void)sig; (void)si;
     ucontext_t *uc = ctx;
@@ -66,7 +67,7 @@ __attribute__((constructor)) static void start(void) {
     memset(&sev, 0, sizeof sev);
     sev.sigev_notify = SIGEV_THREAD_ID;
     sev.sigev_signo = SIGPROF;
-    sev._sigev_un._tid = (pid_t)syscall(SYS_gettid);  // the constructor runs on the main thread
+    sev._sigev_un._tid = (pid_t)syscall(SYS_gettid);
     if (timer_create(CLOCK_THREAD_CPUTIME_ID, &sev, &timer) != 0) return;
     struct itimerspec its = {{0, period}, {0, period}};
     t0 = now_ns();
@@ -94,7 +95,6 @@ __attribute__((destructor)) static void stop(void) {
     char path[4096];
     snprintf(path, sizeof path, "%s.samples", out);
     dump(path, buf, sizeof(struct sample) * n);
-    // the mappings, copied as they are
     int in = open("/proc/self/maps", O_RDONLY);
     if (in < 0) return;
     snprintf(path, sizeof path, "%s.maps", out);

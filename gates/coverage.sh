@@ -1,13 +1,16 @@
 #!/bin/bash
-# coverage.sh [--accept]: the coverage gate, two verdicts.
-#   GATE coverage all       api/coverage.json (written by the generator; format in
-#                           tools/status.py) is consistent: every function has a status, every
-#                           row adds up, and the table in docs/STATUS.md is the current one
-#   GATE coverage ratchet   nothing went backwards against gates/coverage-baseline.json: no
-#                           component lost, none with less bound + bridged or less verified,
-#                           none with more failed (gates/coverage-ratchet.py)
-# --accept records the present state as the new baseline (commit it with its reason).
-# The gallery's own ratchet (a page that was byte-identical must stay so) is in gallery.sh.
+# Upstream API coverage gate (`gates/coverage.sh [--accept]`).
+#
+# What it gates:
+#   1. Keeps the generated coverage table in `docs/STATUS.md` in sync with `api/coverage.json`
+#      via `tools/status.py --check`.
+#   2. Prevents coverage regressions against `gates/coverage-baseline.json` via
+#      `gates/coverage-ratchet.py` (per-component and per-group bound+bridged, verified, failed).
+#
+# Usage:
+#   Pass `--accept` after intentional coverage changes to rewrite `gates/coverage-baseline.json`.
+# What PASS means (exit 0): both `tools/status.py --check` and `gates/coverage-ratchet.py` exit 0.
+
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 if [ "${1:-}" = --accept ]; then exec python3 "$here/coverage-ratchet.py" --accept; fi
 fail=0

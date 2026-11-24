@@ -1,6 +1,6 @@
-// Every Go call that docs/API-GO.md shows, collected into one program that compiles, so the guide
-// cannot drift from the package (the docs tests check that each call in API-GO.md is text of this
-// file). Not an app to read for itself: the tutorial in docs/tutorial-go is.
+// Compilable snippet host for docs/API-GO.md.
+// gates/docs-snippets.py checks every code block and inline API call span in docs/API-GO.md
+// against this file.
 package main
 
 import (
@@ -28,18 +28,16 @@ type App struct {
 	savedAt string
 	ask     gk.Built[overlay.AlertDialogEl]
 	count   gk.Model[int]
-	preview gk.View        // a drag's preview (docs/GO.md section 10)
-	tipView gk.View        // a view as a tooltip
-	pic     gk.RenderImage // an image made once from pixels (docs/GO.md section 7)
+	preview gk.View
+	tipView gk.View
+	pic     gk.RenderImage
 }
 
 func (a *App) init(cx *gk.Cx) {
-	// Kit state: Rust's cx.new(|cx| InputState::new(window, cx).placeholder("Name"))
 	a.name = editor.NewInputState(cx).Placeholder("Name").Build()
 	a.name.OnInputEvent(cx, a.nameEvent)
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
-	// actions!, KeyBinding::new and on_action, in one call
 	a.save = gk.Shortcut(cx, "ctrl-s", a.saveNow)
 	a.ask = gk.NewBuilt(cx, a.confirm)
 	w, h, px := uint32(1), uint32(1), []byte{255, 0, 0, 255}
@@ -94,7 +92,7 @@ func (a *App) remove(cx *gk.Cx, row int) {
 func (a *App) nameEvent(cx *gk.Cx, e editor.InputEvent) {
 	switch e.(type) {
 	case editor.InputEventPressEnter:
-		text := a.name.Value(cx) // a Go string: a copy, the app's to keep
+		text := a.name.Value(cx)
 		a.items = append(a.items, text)
 		a.name.SetValue(cx, "")
 		gk.Refresh(cx)
@@ -121,7 +119,7 @@ func (a *App) forget(cx *gk.Cx) {
 }
 
 func (a *App) pick(cx *gk.Cx) {
-	a.list.SetSelectedIndex(cx, gk.Some(table.Row(4))) // an IndexPath: gk.Row(n), or gk.BaseIndexPath{Section: 1, Row: 4}
+	a.list.SetSelectedIndex(cx, gk.Some(table.Row(4)))
 	a.list.ScrollToItem(cx, table.Row(4), gk.ScrollStrategyTop)
 	a.list.SetSelectedIndex(cx, table.NoRow)
 	if at, chosen := a.list.SelectedIndex(cx).Get(); chosen {
@@ -151,9 +149,9 @@ func (a *App) confirmed(cx *gk.Cx, _ gk.ClickEvent) bool {
 
 func (a *App) load(cx *gk.Cx) {
 	gk.Go(cx, func() []string {
-		time.Sleep(10 * time.Millisecond) // on a goroutine
+		time.Sleep(10 * time.Millisecond)
 		return []string{"a", "b"}
-	}, func(cx *gk.Cx, names []string) { // on the UI thread
+	}, func(cx *gk.Cx, names []string) {
 		a.items = append(a.items, names...)
 		gk.Refresh(cx)
 	})
@@ -167,10 +165,8 @@ func (a *App) stream() {
 	}()
 }
 
-// --- windows and drawing: a window's icon and app id, the quit, reduced motion, gradients, drag
-// and drop, tooltips, the menu bar, images
 
-var pngBytes []byte // the app's icon, a PNG (go:embed in an app)
+var pngBytes []byte
 
 func (a *App) mainWindow(cx *gk.Cx, root gk.View) {
 	gk.OpenWindowWith(cx, gk.WindowConfig{Title: "Notes", AppID: "notes", Icon: pngBytes}, root)

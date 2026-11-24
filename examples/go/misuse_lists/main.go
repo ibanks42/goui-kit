@@ -1,16 +1,5 @@
-// misuse_lists: mistakes against the lists and editor families' protocols (docs/PROTOCOLS.md
-// sections 9.9 to 9.12) that must stop with a message, never draw wrong content with exit 0. Run
-// offscreen with the diag library by
-// gates/go-misuse.sh, one mode per case:
-//
-//	GK_NEG=sel-ok      a select over items, its value set and read back: correct (exit 0)
-//	GK_NEG=sel-foreign gk.SetSearchItems on a row source that is not a select's: must stop
-//	GK_NEG=sel-view    gk.SetSearchItems in a view function (a write): must stop
-//	GK_NEG=nonzero     Easing's step count given 0 (upstream's NonZeroU32): must stop
-//	GK_NEG=kept-view   a validator given to InputState.SetValidator in a view function (it
-//	                   would be kept per build): must stop
-//
-// expr-syntax, expr-arg and expr-func (an expression closure given to StepBy) are in expr.go.
+// Runtime misuse cases for searchable lists, selects, zero-disallowed counts,
+// and writes or kept callbacks triggered inside view functions (GK_NEG).
 package main
 
 import (
@@ -38,7 +27,6 @@ type App struct {
 
 var items = []gk.SearchItem{{Value: "a", Title: "A"}, {Value: "b", Title: "B"}}
 
-// The modes of expr.go add their steps here.
 var pendingInit = map[string]func(a *App, cx *gk.Cx){}
 
 func (a *App) init(cx *gk.Cx) {

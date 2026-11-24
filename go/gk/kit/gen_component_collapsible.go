@@ -12,7 +12,7 @@ type CollapsibleEl struct{ rt.ElAnimatableElement }
 
 // Creates a new `Collapsible` instance.
 //
-// Collapsible is <gpui_kit::component::collapsible::Collapsible>::new.
+// Collapsible calls <gpui_kit::component::collapsible::Collapsible>::new.
 func Collapsible(st ...gk.Style) CollapsibleEl {
 	rt.UseComponentCollapsible()
 	n := rt.NewNode(622)
@@ -24,7 +24,7 @@ func Collapsible(st ...gk.Style) CollapsibleEl {
 //
 // If `open` is false, content will be hidden.
 //
-// Content is <gpui_kit::component::collapsible::Collapsible>::content.
+// Content calls <gpui_kit::component::collapsible::Collapsible>::content.
 func (e CollapsibleEl) Content(content gk.Element) CollapsibleEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Take(content))
@@ -33,7 +33,7 @@ func (e CollapsibleEl) Content(content gk.Element) CollapsibleEl {
 
 // Enables a reversible measured reveal under a stable identity.
 //
-// MotionID is <gpui_kit::component::collapsible::Collapsible>::motion_id.
+// MotionID calls <gpui_kit::component::collapsible::Collapsible>::motion_id.
 func (e CollapsibleEl) MotionID(id gk.ID) CollapsibleEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutID(o, id)
@@ -42,7 +42,7 @@ func (e CollapsibleEl) MotionID(id gk.ID) CollapsibleEl {
 
 // Sets whether the collapsible is open. default is false.
 //
-// Open is <gpui_kit::component::collapsible::Collapsible>::open.
+// Open calls <gpui_kit::component::collapsible::Collapsible>::open.
 func (e CollapsibleEl) Open(open bool) CollapsibleEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.Bool(open)
@@ -51,17 +51,21 @@ func (e CollapsibleEl) Open(open bool) CollapsibleEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e CollapsibleEl) PopoverStyle() CollapsibleEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e CollapsibleEl) RoundedFullStyle() CollapsibleEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -70,16 +74,18 @@ func (e CollapsibleEl) RoundedFullStyle() CollapsibleEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e CollapsibleEl) FocusRingStyle() CollapsibleEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -92,24 +98,32 @@ func (e CollapsibleEl) FocusRingStyle() CollapsibleEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e CollapsibleEl) KeepTextSelection(id gk.ID) CollapsibleEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e CollapsibleEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) CollapsibleEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e CollapsibleEl) BorderE(width gk.Length) CollapsibleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e CollapsibleEl) BorderS(width gk.Length) CollapsibleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -117,127 +131,169 @@ func (e CollapsibleEl) BorderS(width gk.Length) CollapsibleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e CollapsibleEl) FlexRowDir() CollapsibleEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e CollapsibleEl) InsetE(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e CollapsibleEl) InsetS(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e CollapsibleEl) JustifyFlexEnd() CollapsibleEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e CollapsibleEl) JustifyFlexStart() CollapsibleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e CollapsibleEl) Me(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e CollapsibleEl) Ms(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e CollapsibleEl) Pe(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e CollapsibleEl) Ps(length gk.Length) CollapsibleEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e CollapsibleEl) RoundedE(radius gk.Length) CollapsibleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e CollapsibleEl) RoundedS(radius gk.Length) CollapsibleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e CollapsibleEl) TextEnd() CollapsibleEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e CollapsibleEl) TextStart() CollapsibleEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e CollapsibleEl) CornerRadii(radius gk.Corners) CollapsibleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e CollapsibleEl) DebugBlue() CollapsibleEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e CollapsibleEl) DebugFocused(focusHandle gk.FocusHandle) CollapsibleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e CollapsibleEl) DebugGreen() CollapsibleEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e CollapsibleEl) DebugPink() CollapsibleEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e CollapsibleEl) DebugRed() CollapsibleEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e CollapsibleEl) DebugYellow() CollapsibleEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e CollapsibleEl) FontBlack() CollapsibleEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e CollapsibleEl) FontBold() CollapsibleEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e CollapsibleEl) FontExtrabold() CollapsibleEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e CollapsibleEl) FontExtralight() CollapsibleEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e CollapsibleEl) FontLight() CollapsibleEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e CollapsibleEl) FontMedium() CollapsibleEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e CollapsibleEl) FontNormal() CollapsibleEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e CollapsibleEl) FontSemibold() CollapsibleEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e CollapsibleEl) FontThin() CollapsibleEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -246,18 +302,23 @@ func (e CollapsibleEl) FontThin() CollapsibleEl { tStyledExtFontThin(rt.N(e.Core
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e CollapsibleEl) HFlex() CollapsibleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e CollapsibleEl) Margins(margins gk.EdgesInto) CollapsibleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e CollapsibleEl) Paddings(paddings gk.EdgesInto) CollapsibleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e CollapsibleEl) RefineStyle(style gk.StyleRefinement) CollapsibleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -267,21 +328,29 @@ func (e CollapsibleEl) RefineStyle(style gk.StyleRefinement) CollapsibleEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e CollapsibleEl) VFlex() CollapsibleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e CollapsibleEl) Style(st ...gk.Style) CollapsibleEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e CollapsibleEl) AspectRatio(ratio float32) CollapsibleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e CollapsibleEl) Bg(fill gk.Fill) CollapsibleEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e CollapsibleEl) Border(length gk.Length) CollapsibleEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -289,12 +358,16 @@ func (e CollapsibleEl) Border(length gk.Length) CollapsibleEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e CollapsibleEl) BorderB(length gk.Length) CollapsibleEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e CollapsibleEl) BorderColor(borderColor gk.Color) CollapsibleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -302,6 +375,8 @@ func (e CollapsibleEl) BorderColor(borderColor gk.Color) CollapsibleEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e CollapsibleEl) BorderL(length gk.Length) CollapsibleEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -309,6 +384,8 @@ func (e CollapsibleEl) BorderL(length gk.Length) CollapsibleEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e CollapsibleEl) BorderR(length gk.Length) CollapsibleEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -316,6 +393,8 @@ func (e CollapsibleEl) BorderR(length gk.Length) CollapsibleEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e CollapsibleEl) BorderT(length gk.Length) CollapsibleEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -323,6 +402,8 @@ func (e CollapsibleEl) BorderT(length gk.Length) CollapsibleEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e CollapsibleEl) BorderX(length gk.Length) CollapsibleEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -330,6 +411,8 @@ func (e CollapsibleEl) BorderX(length gk.Length) CollapsibleEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e CollapsibleEl) BorderY(length gk.Length) CollapsibleEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -337,27 +420,37 @@ func (e CollapsibleEl) BorderY(length gk.Length) CollapsibleEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e CollapsibleEl) Bottom(length gk.Length) CollapsibleEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e CollapsibleEl) ColEnd(end int16) CollapsibleEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e CollapsibleEl) ColSpan(span uint16) CollapsibleEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e CollapsibleEl) ColStart(start int16) CollapsibleEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e CollapsibleEl) Cursor(cursor gk.CursorStyle) CollapsibleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -365,33 +458,45 @@ func (e CollapsibleEl) Cursor(cursor gk.CursorStyle) CollapsibleEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e CollapsibleEl) FlexBasis(basis gk.Length) CollapsibleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e CollapsibleEl) FlexGrow(grow float32) CollapsibleEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e CollapsibleEl) FlexShrink(shrink float32) CollapsibleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e CollapsibleEl) Font(font gk.Font) CollapsibleEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e CollapsibleEl) FontFamily(familyName string) CollapsibleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e CollapsibleEl) FontFeatures(features gk.FontFeatures) CollapsibleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -400,12 +505,16 @@ func (e CollapsibleEl) FontFeatures(features gk.FontFeatures) CollapsibleEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e CollapsibleEl) FontWeight(weight gk.FontWeight) CollapsibleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e CollapsibleEl) Gap(length gk.Length) CollapsibleEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -413,6 +522,8 @@ func (e CollapsibleEl) Gap(length gk.Length) CollapsibleEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e CollapsibleEl) GapX(length gk.Length) CollapsibleEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -420,18 +531,24 @@ func (e CollapsibleEl) GapX(length gk.Length) CollapsibleEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e CollapsibleEl) GapY(length gk.Length) CollapsibleEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e CollapsibleEl) GridCols(cols uint16) CollapsibleEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e CollapsibleEl) GridColsMaxContent(cols uint16) CollapsibleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -439,18 +556,24 @@ func (e CollapsibleEl) GridColsMaxContent(cols uint16) CollapsibleEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e CollapsibleEl) GridColsMinContent(cols uint16) CollapsibleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e CollapsibleEl) GridRows(rows uint16) CollapsibleEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e CollapsibleEl) GridRowsMaxContent(rows uint16) CollapsibleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -458,16 +581,22 @@ func (e CollapsibleEl) GridRowsMaxContent(rows uint16) CollapsibleEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e CollapsibleEl) GridRowsMinContent(rows uint16) CollapsibleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e CollapsibleEl) H(length gk.Length) CollapsibleEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e CollapsibleEl) Inset(length gk.Length) CollapsibleEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -475,6 +604,8 @@ func (e CollapsibleEl) Inset(length gk.Length) CollapsibleEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e CollapsibleEl) Left(length gk.Length) CollapsibleEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -482,33 +613,45 @@ func (e CollapsibleEl) Left(length gk.Length) CollapsibleEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e CollapsibleEl) LineClamp(lines int) CollapsibleEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e CollapsibleEl) LineHeight(lineHeight gk.Length) CollapsibleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e CollapsibleEl) M(length gk.Length) CollapsibleEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e CollapsibleEl) MaxH(length gk.Length) CollapsibleEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e CollapsibleEl) MaxSize(length gk.Length) CollapsibleEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e CollapsibleEl) MaxW(length gk.Length) CollapsibleEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -516,21 +659,29 @@ func (e CollapsibleEl) MaxW(length gk.Length) CollapsibleEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e CollapsibleEl) Mb(length gk.Length) CollapsibleEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e CollapsibleEl) MinH(length gk.Length) CollapsibleEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e CollapsibleEl) MinSize(length gk.Length) CollapsibleEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e CollapsibleEl) MinW(length gk.Length) CollapsibleEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -538,65 +689,95 @@ func (e CollapsibleEl) MinW(length gk.Length) CollapsibleEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e CollapsibleEl) Ml(length gk.Length) CollapsibleEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e CollapsibleEl) Mr(length gk.Length) CollapsibleEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e CollapsibleEl) Mt(length gk.Length) CollapsibleEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e CollapsibleEl) Mx(length gk.Length) CollapsibleEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e CollapsibleEl) My(length gk.Length) CollapsibleEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e CollapsibleEl) Opacity(opacity float32) CollapsibleEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e CollapsibleEl) P(length gk.Length) CollapsibleEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e CollapsibleEl) Pb(length gk.Length) CollapsibleEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e CollapsibleEl) Pl(length gk.Length) CollapsibleEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e CollapsibleEl) Pr(length gk.Length) CollapsibleEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e CollapsibleEl) Pt(length gk.Length) CollapsibleEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e CollapsibleEl) Px(length gk.Length) CollapsibleEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e CollapsibleEl) Py(length gk.Length) CollapsibleEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e CollapsibleEl) Right(length gk.Length) CollapsibleEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e CollapsibleEl) Rounded(length gk.Length) CollapsibleEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -604,6 +785,8 @@ func (e CollapsibleEl) Rounded(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e CollapsibleEl) RoundedB(length gk.Length) CollapsibleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -611,6 +794,8 @@ func (e CollapsibleEl) RoundedB(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e CollapsibleEl) RoundedBl(length gk.Length) CollapsibleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -618,6 +803,8 @@ func (e CollapsibleEl) RoundedBl(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e CollapsibleEl) RoundedBr(length gk.Length) CollapsibleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -625,6 +812,8 @@ func (e CollapsibleEl) RoundedBr(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e CollapsibleEl) RoundedL(length gk.Length) CollapsibleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -632,6 +821,8 @@ func (e CollapsibleEl) RoundedL(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e CollapsibleEl) RoundedR(length gk.Length) CollapsibleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -639,6 +830,8 @@ func (e CollapsibleEl) RoundedR(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e CollapsibleEl) RoundedT(length gk.Length) CollapsibleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -646,6 +839,8 @@ func (e CollapsibleEl) RoundedT(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e CollapsibleEl) RoundedTl(length gk.Length) CollapsibleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -653,21 +848,29 @@ func (e CollapsibleEl) RoundedTl(length gk.Length) CollapsibleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e CollapsibleEl) RoundedTr(length gk.Length) CollapsibleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e CollapsibleEl) RowEnd(end int16) CollapsibleEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e CollapsibleEl) RowSpan(span uint16) CollapsibleEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e CollapsibleEl) RowStart(start int16) CollapsibleEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -677,24 +880,32 @@ func (e CollapsibleEl) RowStart(start int16) CollapsibleEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e CollapsibleEl) ScrollbarWidth(width gk.Length) CollapsibleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e CollapsibleEl) Shadow(shadows []gk.BoxShadow) CollapsibleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e CollapsibleEl) Size(length gk.Length) CollapsibleEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e CollapsibleEl) TextAlign(align gk.TextAlign) CollapsibleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -703,23 +914,31 @@ func (e CollapsibleEl) TextAlign(align gk.TextAlign) CollapsibleEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e CollapsibleEl) TextBg(bg gk.Color) CollapsibleEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e CollapsibleEl) TextColor(color gk.Color) CollapsibleEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e CollapsibleEl) TextDecorationColor(color gk.Color) CollapsibleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e CollapsibleEl) TextOverflow(overflow gk.TextOverflow) CollapsibleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -728,6 +947,8 @@ func (e CollapsibleEl) TextOverflow(overflow gk.TextOverflow) CollapsibleEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e CollapsibleEl) TextSize(size gk.Length) CollapsibleEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -735,26 +956,35 @@ func (e CollapsibleEl) TextSize(size gk.Length) CollapsibleEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e CollapsibleEl) Top(length gk.Length) CollapsibleEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e CollapsibleEl) W(length gk.Length) CollapsibleEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e CollapsibleEl) Text(s string) CollapsibleEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e CollapsibleEl) ChildView(v gk.View) CollapsibleEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e CollapsibleEl) Child(child gk.Element) CollapsibleEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e CollapsibleEl) Children(children ...gk.Element) CollapsibleEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e

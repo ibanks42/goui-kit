@@ -1,17 +1,6 @@
-// values: the values family's protocol tests (docs/PROTOCOLS.md sections 13.8 to 13.12), the port of
-// core/tests/values: generic calculators instantiated as library objects (the plot scales, the motion
-// values), results read back (Result<T, E>, maps), the theme's fields, registry and mode, kit action
-// values as actions, temporary handles placed in a view, and the misuse of a value given to its own
-// builder. Each mode runs offscreen (the diag library) under a gk-meter script and prints lines that
-// core/tests/go/run-values.sh checks, with the exit code.
-//
-//	GK_PROTO=val-scales | val-motion | val-theme | val-actions | val-pins | val-self-arg | val-action-in-view |
-//	         val-clipboard | val-dates | val-bad-date | val-scroll | val-readback | val-handed | val-ambient
-//	         (the last six: PROTOCOLS.md 13.13 to 13.16) | val-cells | val-one-handle |
-//	         val-box-shadow | val-drag | val-settings | val-quest-events (13.19 and 13.20)
-//
-// The component modes c6-* are in comp6.go and the files it names; other modes are in files of
-// their own (actions.go, cells.go, dates.go, ...), which register them from init.
+// Command values runs headless protocol tests for value types, scales, themes,
+// cells, motion curves, dates/matchers, scroll handles, drag-and-drop,
+// settings, questionnaires, backgrounds, and resize-handle renderers.
 package main
 
 import (
@@ -29,23 +18,24 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
+// App holds shared view, state, and counter fields for the active GK_PROTO mode.
 type App struct {
 	mode   string
 	root   gk.View
 	child  gk.View
 	clicks int
-	// pins
+
 	diff   editor.DiffState
 	ann    editor.DiffAnnotation
 	builds int
-	// PROTOCOLS.md 13.13 to 13.16
+
 	scroll gk.ScrollHandle
 	quest  base.QuestionnaireState
 	picker base.ColorPickerState
 	events int
 	tip    gk.View
 	tips   int
-	// PROTOCOLS.md 13.19, 13.20 (the value cells are in cells.go)
+
 	preview gk.View
 	drops   int
 	shadow  gk.BoxShadow
@@ -53,9 +43,6 @@ type App struct {
 	submits int
 }
 
-// mode is what a mode adds to the app: a click's work, a view of its own, an addition to the page,
-// work before the root view is made (start), in the root view's init and after the window opened,
-// and its gk-meter script. Some modes register from their files' init.
 type mode struct {
 	click func(a *App, cx *gk.Cx)
 	view  func(a *App, cx *gk.Cx) (gk.Element, bool)
@@ -63,13 +50,12 @@ type mode struct {
 	start func(a *App, cx *gk.Cx)
 	init  func(a *App, cx *gk.Cx)
 	after func(a *App, cx *gk.Cx)
-	// script replaces the default script of four clicks on the page.
+
 	script string
 }
 
 var modes = map[string]*mode{}
 
-// once runs f at the first click only.
 func once(f func(a *App, cx *gk.Cx)) func(a *App, cx *gk.Cx) {
 	return func(a *App, cx *gk.Cx) {
 		if a.clicks == 1 {
@@ -82,7 +68,7 @@ func init() {
 	modes["val-scales"] = &mode{click: once(scales)}
 	modes["val-self-arg"] = &mode{click: once(selfArg)}
 	modes["val-clipboard"] = &mode{click: clipboardClick, body: clipboardBody,
-		// the copy button first (top left), then the page
+
 		script: "size 640 480\nframe\nclick 10 10\nframe\nframe\nclick 600 400\nframe\nframe\nstat\n"}
 	modes["val-scroll"] = &mode{click: scroll, body: scrollBody, start: func(a *App, cx *gk.Cx) { a.scroll = gk.NewScrollHandle(cx) }}
 	modes["val-readback"] = &mode{click: once(readback)}
@@ -94,12 +80,13 @@ func init() {
 	modes["val-drag"] = &mode{start: func(a *App, cx *gk.Cx) { a.preview = gk.NewView(nil, a.previewView) }, view: dragView,
 		script: "size 640 480\nframe\ndrag 50 30 350 60\nframe\nframe\nstat\n"}
 	modes["val-quest-events"] = &mode{view: questPage, after: questEventsStart,
-		// the Blue choice, then Submit (the kit's layout at 640 x 480)
+
 		script: "size 640 480\nframe\nframe\nclick 100 74\nframe\nframe\nclick 100 132\nframe\nframe\nstat\n"}
 }
 
-// The plot scales over text bands and numbers (PROTOCOLS.md 13.8): made with their builder chain in
-// one crossing, read at once; Scale::tick and nearest_index through the trait.
+// scales proves Band, Linear, Point, and Ordinal scales compute accurate
+// domain->range mappings (0->0, 50->100, 100->200; blue->hue 0.66), report
+// missing/out-of-range keys cleanly, and resolve nearest band index 2 for "c".
 func scales(a *App, cx *gk.Cx) {
 	band := gk.NewScaleBand(cx, []string{"a", "b", "c"}, [2]float32{0, 300}).PaddingInner(0.1).Build()
 	bw, st := band.BandWidth(cx), band.Step(cx)
@@ -127,7 +114,8 @@ func scales(a *App, cx *gk.Cx) {
 	gk.Release(cx, ord)
 }
 
-// Misuse: a value made in a handler given as an argument to its own builder (exit 2).
+// selfArg proves passing a transient value builder handle as an argument to
+// itself (`t.Child(t)`) is caught by the cycle guard before executing the next line.
 func selfArg(a *App, cx *gk.Cx) {
 	t := table.NewTreeItem("a", "A")
 	fmt.Println("values giving a value to its own builder")
@@ -135,8 +123,8 @@ func selfArg(a *App, cx *gk.Cx) {
 	fmt.Println("values not stopped")
 }
 
-// The clipboard's value closure: a handler that returns text, run when the copy button is clicked
-// (an event, never while the kit draws).
+// copyValue proves kit.Clipboard's lazy ValueFn runs only when the copy button
+// is clicked and writes "copied by the app" into the system clipboard.
 func (a *App) copyValue(cx *gk.Cx) string {
 	fmt.Println("values clipboard value asked")
 	return "copied by the app"
@@ -151,8 +139,8 @@ func clipboardBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 	return body.Child(kit.Clipboard("copy").ValueFn(a.copyValue))
 }
 
-// gpui's ScrollHandle as a library object (PROTOCOLS.md 13.14): tracked by a scrolling div, its
-// ScrollbarHandle methods (sizes read back, the offset written then read), a scrollbar over it.
+// scroll proves ScrollHandle reports content taller than its 256px viewport
+// (40 rows * 40px) with initial offset 0, and persists programmatic SetOffset(-200).
 func scroll(a *App, cx *gk.Cx) {
 	h := a.scroll
 	switch a.clicks {
@@ -174,8 +162,9 @@ func scrollBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 	return body.Child(list).Child(gk.ScrollbarVertical(a.scroll))
 }
 
-// Kit values read back (PROTOCOLS.md 13.15): a questionnaire's answer, its item definitions and the
-// answers object, each a copy behind a temporary handle with the type's reads.
+// readback proves SetAnswer writes choice "blue" without error, Answer/Answers
+// read back the exact chosen slice (len=1, first=blue, empty=false), and
+// ItemDefinition preserves required=true and both choice values.
 func readback(a *App, cx *gk.Cx) {
 	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").WithRequired(true).
 		WithChoice(base.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(base.NewQuestionnaireChoiceDefinition("blue", "Blue"))
@@ -216,7 +205,6 @@ func readback(a *App, cx *gk.Cx) {
 	fmt.Printf("values answers len=%d get=%v first=%s\n", all.Len(cx), gok, gfirst)
 }
 
-// The questionnaire's event: an answer change hands out a QuestionnaireAnswerChange object.
 func (a *App) questEvent(cx *gk.Cx, ev base.QuestionnaireEvent) {
 	switch e := ev.(type) {
 	case base.QuestionnaireEventAnswerChanged:
@@ -226,7 +214,8 @@ func (a *App) questEvent(cx *gk.Cx, ev base.QuestionnaireEvent) {
 	}
 }
 
-// Kit state a read hands out (PROTOCOLS.md 13.16): a colour picker's sliders, each a SliderState.
+// handed proves repeated getters for a nested GPUI entity (ColorPicker.Sliders.Hue)
+// return the same deduplicated handle (`same_handle=true`) and read live slider bounds.
 func handed(a *App, cx *gk.Cx) {
 	a.picker = base.NewColorPickerState(cx).Build()
 	sl := a.picker.Sliders(cx)
@@ -237,13 +226,15 @@ func handed(a *App, cx *gk.Cx) {
 	gk.Release(cx, hue)
 }
 
-// Ambient reads (PROTOCOLS.md 11.5): the locale, the theme through ActiveTheme.
+// ambient proves gk.Locale returns a valid locale identifier and gk.KitTheme
+// reports a positive font size.
 func ambient(a *App, cx *gk.Cx) {
 	th := gk.KitTheme(cx)
 	fmt.Printf("values ambient locale=%s theme_font=%v\n", gk.Locale(cx), th.FontSize(cx) > 0)
 }
 
-// A tooltip that is the app's view (PROTOCOLS.md 13.18): the closure hands the view back.
+// tipView proves hovering an element with Tooltip(view) describes the tooltip
+// view once after the hover delay elapses.
 func (a *App) tipView(cx *gk.Cx) gk.Element {
 	a.tips++
 	fmt.Printf("values tooltip view described n=%d\n", a.tips)
@@ -254,7 +245,8 @@ func tooltipBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 	return body.Child(gk.Div().W(gk.Px(120)).H(gk.Px(40)).ID("tip").Tooltip(a.tip).Child(gk.Text("hover me")))
 }
 
-// box_shadow read back as a record whose colour is a gk.Color (PROTOCOLS.md 13.20), then drawn.
+// boxShadow proves BaseBoxShadow encodes and round-trips theme=0, HSLA (0.5, 1, 0.25, 1),
+// offset (1, 2), blur=3, and spread=4 into the Shadow element property.
 func boxShadow(a *App, cx *gk.Cx) {
 	a.shadow = gk.BaseBoxShadow(cx, 1, 2, 3, 4, gk.HSLA(0.5, 1, 0.25, 1))
 	bs := a.shadow
@@ -270,8 +262,6 @@ func boxShadowBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 	return body.Child(gk.Div().W(gk.Px(80)).H(gk.Px(40)).Bg(theme.Background).Shadow([]gk.BoxShadow{a.shadow}))
 }
 
-// Drag and drop of the library's drag value: the drop handler gets the value, the preview is the
-// app's view.
 func (a *App) dropped(cx *gk.Cx, d gk.DragValue) {
 	a.drops++
 	fmt.Printf("values drop id=%d text=%s\n", d.ID, d.Text)
@@ -282,6 +272,8 @@ func (a *App) previewView(cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(60)).H(gk.Px(20)).Bg(theme.Primary)
 }
 
+// dragView proves dragging from src (x=50) onto dst (x=350) delivers the
+// DragValue payload (id=7, text="row 7") to OnDrop with a custom preview view.
 func dragView(a *App, cx *gk.Cx) (gk.Element, bool) {
 	src := gk.Div(s.Absolute).Left(gk.Px(10)).Top(gk.Px(10)).W(gk.Px(100)).H(gk.Px(40)).Bg(theme.Muted).
 		ID("src").OnDrag(gk.DragValue{ID: 7, Text: "row 7"}, a.preview).Child(gk.Text("drag me"))
@@ -290,13 +282,15 @@ func dragView(a *App, cx *gk.Cx) (gk.Element, bool) {
 	return gk.Div(s.SizeFull, s.Relative).Child(src).Child(dst), true
 }
 
-// The questionnaire driven by simulated input: a choice clicked (AnswerChanged), submitted (Submit).
+// questEventsStart builds a live Questionnaire widget so clicking choice "Blue"
+// then "Submit" proves QuestionnaireEventAnswerChanged ("blue") and
+// QuestionnaireEventSubmit fire in order.
 func questEventsStart(a *App, cx *gk.Cx) {
 	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").
 		WithChoice(base.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(base.NewQuestionnaireChoiceDefinition("blue", "Blue"))
 	a.quest = base.NewQuestionnaireState(cx, []base.QuestionnaireItemDefinition{color}).Build()
 	_ = a.quest.OnQuestionnaireEvent(cx, a.questEvent2)
-	gk.Notify(cx, a.root) // its state needs the window
+	gk.Notify(cx, a.root)
 }
 
 func (a *App) questEvent2(cx *gk.Cx, ev base.QuestionnaireEvent) {
@@ -318,7 +312,7 @@ func (a *App) questEvent2(cx *gk.Cx, ev base.QuestionnaireEvent) {
 func questPage(a *App, cx *gk.Cx) (gk.Element, bool) {
 	q := a.quest
 	if gk.Handle(q) == 0 {
-		return gk.Div(), true // the first description, inside OpenWindow: the state needs the window first
+		return gk.Div(), true
 	}
 	choices := kit.QuestionnaireChoices(q, "color").
 		Child(kit.QuestionnaireChoice(q, "color", "red").W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Red"))).
@@ -378,7 +372,7 @@ func main() {
 		script = m.script
 	}
 	if s, ok := os.LookupEnv("GK_VALUES_SCRIPT"); ok {
-		script = s // a mode's clicks given by run-values.sh (positions in the kit's layout)
+		script = s
 	}
 	if err := gk.RunHeadless(script, a.start); err != nil {
 		log.Fatal(err)

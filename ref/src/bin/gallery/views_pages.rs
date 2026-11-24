@@ -1,7 +1,6 @@
-//! The views family's gallery pages, written the way a Rust GPUI-kit app writes them; the
-//! Go twin is examples/go/gallery/views_pages.go, the pages' lines are in
-//! ref/gallery/pages.txt: a sidebar whose items are groups of the kit's menus, one group collapsed;
-//! a context menu whose submenu item has an icon; a context menu of items made as values.
+//! Grouped sidebar (`views-sidebar-groups`) and advanced popup-menu
+//! (`views-submenu-icon`, `views-menu-items`) gallery pages.
+
 use gpui_kit::base::Side;
 use crate::overlay_pages::{MenuZoomIn, MenuZoomOut};
 use gpui_kit::component::menu::{ContextMenuExt, PopupMenu, PopupMenuItem};
@@ -14,6 +13,7 @@ fn zoom(m: PopupMenu) -> PopupMenu {
     m.menu("Zoom in", Box::new(MenuZoomIn)).menu("Zoom out", Box::new(MenuZoomOut))
 }
 
+/// Renders one of the `views-*` gallery pages if `id` matches.
 pub fn page(id: &str) -> Option<AnyElement> {
     Some(match id {
         "views-sidebar-groups" => div()

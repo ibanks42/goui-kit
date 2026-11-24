@@ -2,12 +2,12 @@
 
 package rt
 
-// ScrollHandle is a handle to gpui_kit::ScrollHandle, a library object (PROTOCOLS.md section 13).
+// ScrollHandle is a handle to gpui_kit::ScrollHandle, a runtime-owned library object.
 type ScrollHandle struct{ HCore }
 
 // The full size of the content, including padding.
 //
-// ContentSize is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::content_size.
+// ContentSize calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::content_size.
 func (s ScrollHandle) ContentSize(cx *Cx) GpuiSize {
 	o := NewReq(1333)
 	o.U64(H(s.HCore))
@@ -17,7 +17,7 @@ func (s ScrollHandle) ContentSize(cx *Cx) GpuiSize {
 
 // Get the current offset of the scroll handle.
 //
-// Offset is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::offset.
+// Offset calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::offset.
 func (s ScrollHandle) Offset(cx *Cx) GpuiPoint {
 	o := NewReq(1336)
 	o.U64(H(s.HCore))
@@ -27,7 +27,7 @@ func (s ScrollHandle) Offset(cx *Cx) GpuiPoint {
 
 // Bounds of the viewport the scrollbar overlays.
 //
-// ViewportBounds is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::viewport_bounds.
+// ViewportBounds calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::viewport_bounds.
 func (s ScrollHandle) ViewportBounds(cx *Cx) Bounds {
 	o := NewReq(1339)
 	o.U64(H(s.HCore))
@@ -37,7 +37,7 @@ func (s ScrollHandle) ViewportBounds(cx *Cx) Bounds {
 
 // Called when end dragging the scrollbar thumb.
 //
-// EndDrag is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::end_drag.
+// EndDrag calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::end_drag.
 func (s ScrollHandle) EndDrag(cx *Cx) {
 	o := NewReq(1334)
 	o.U64(H(s.HCore))
@@ -46,7 +46,7 @@ func (s ScrollHandle) EndDrag(cx *Cx) {
 
 // Set the offset of the scroll handle.
 //
-// SetOffset is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::set_offset.
+// SetOffset calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::set_offset.
 func (s ScrollHandle) SetOffset(cx *Cx, offset GpuiPoint) {
 	o := NewReq(1337)
 	o.U64(H(s.HCore))
@@ -56,7 +56,7 @@ func (s ScrollHandle) SetOffset(cx *Cx, offset GpuiPoint) {
 
 // Called when start dragging the scrollbar thumb.
 //
-// StartDrag is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::start_drag.
+// StartDrag calls <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::start_drag.
 func (s ScrollHandle) StartDrag(cx *Cx) {
 	o := NewReq(1338)
 	o.U64(H(s.HCore))

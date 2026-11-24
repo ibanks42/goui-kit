@@ -1,4 +1,4 @@
-// A number where an element goes.
+// Compile-time misuse case: Child requires a gk.Element, rejecting arbitrary values like int.
 package main
 
 import (

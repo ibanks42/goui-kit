@@ -5,6 +5,7 @@ package rt
 // FontStyle is gpui_kit::FontStyle.
 type FontStyle uint16
 
+// FontStyle enum values.
 const (
 	FontStyleNormal  FontStyle = 0
 	FontStyleItalic  FontStyle = 1
@@ -14,6 +15,7 @@ const (
 // ImageFormat is gpui_kit::ImageFormat.
 type ImageFormat uint16
 
+// ImageFormat enum values.
 const (
 	ImageFormatPng  ImageFormat = 0
 	ImageFormatJpeg ImageFormat = 1
@@ -29,6 +31,7 @@ const (
 // Role is gpui_kit::Role.
 type Role uint16
 
+// Role enum values.
 const (
 	RoleUnknown                Role = 0
 	RoleTextRun                Role = 1
@@ -217,25 +220,26 @@ const (
 // SyntaxContext is gpui_kit::base::input::SyntaxContext.
 type SyntaxContext uint16
 
+// SyntaxContext enum values.
 const (
 	SyntaxContextCode    SyntaxContext = 0
 	SyntaxContextString  SyntaxContext = 1
 	SyntaxContextComment SyntaxContext = 2
 )
 
-// Bounds is gpui_kit::Bounds<gpui_kit::Pixels>.
+// Bounds mirrors gpui_kit::Bounds<gpui_kit::Pixels>.
 type Bounds struct {
 	Origin GpuiPoint
 	Size   GpuiSize
 }
 
-// FoldRange is gpui_kit::base::input::FoldRange.
+// FoldRange mirrors gpui_kit::base::input::FoldRange.
 type FoldRange struct {
 	StartLine int
 	EndLine   int
 }
 
-// GpuiPoint is gpui_kit::Point<gpui_kit::Pixels>.
+// GpuiPoint mirrors gpui_kit::Point<gpui_kit::Pixels>.
 type GpuiPoint struct {
 	X float32
 	Y float32
@@ -246,13 +250,13 @@ func putGpuiPoint(o *Tape, v GpuiPoint) {
 	o.F32(v.Y)
 }
 
-// GpuiSize is gpui_kit::Size<gpui_kit::Pixels>.
+// GpuiSize mirrors gpui_kit::Size<gpui_kit::Pixels>.
 type GpuiSize struct {
 	Width  float32
 	Height float32
 }
 
-// LinearColorStop is gpui_kit::LinearColorStop.
+// LinearColorStop mirrors gpui_kit::LinearColorStop.
 type LinearColorStop struct {
 	Color      Color
 	Percentage float32
@@ -280,28 +284,28 @@ func init() {
 	}})
 }
 
-// FocusHandle is a handle to gpui_kit::FocusHandle, kept by the library.
+// FocusHandle is an opaque runtime handle to gpui_kit::FocusHandle.
 type FocusHandle struct{ HCore }
 
-// AnimatableElement is a styled element an animation or effect may wrap (gk.Effect; PROTOCOLS.md 13.30).
+// AnimatableElement marks styled elements accepted by Motion and Effect wrappers.
 type AnimatableElement interface {
 	Element
 	isAnimatable()
 }
 
-// ChildElementNode is one of the node types implementing ChildElement.
+// ChildElementNode marks element nodes implementing the upstream ChildElement trait.
 type ChildElementNode interface {
 	Element
 	isChildElementNode()
 }
 
-// SelectableNode is one of the node types implementing Selectable.
+// SelectableNode marks element nodes implementing the upstream Selectable trait.
 type SelectableNode interface {
 	Element
 	isSelectableNode()
 }
 
-// SizableNode is one of the node types implementing Sizable.
+// SizableNode marks element nodes implementing the upstream Sizable trait.
 type SizableNode interface {
 	Element
 	isSizableNode()

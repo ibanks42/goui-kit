@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
-"""clone_scan.py SRC_ROOT > api/clone.json: which structs of the kit crates implement Clone.
+"""Scan pinned gpui-base and gpui-component crate sources for Clone structs.
 
-SRC_ROOT is the cargo registry's source folder (~/.cargo/registry/src/index.crates.io-*). Run it
-after every change of the pinned gpui-kit version (docs/CONTRIBUTING.md): the versions are read
-from Cargo.lock.
+Usage:
+    python3 tools/clone_scan.py CARGO_REGISTRY_SRC_DIR > api/clone.json
 
-The reduced extract in api/rustdoc drops std-trait impls (gen/gkgen.py strip), so the generator
-cannot tell which library objects can be copied (docs/PROTOCOLS.md section 13: an object handed
-out of a borrow is copied into a new handle). This reads the pinned crates' sources (in the
-build folder's cargo registry) and lists every struct with `#[derive(.. Clone ..)]` or an
-`impl Clone for` / `impl<..> Clone for`. Read-only; standard library only. A wrong entry is
-caught by rustc (the generated copy does not compile and is quarantined)."""
+Rustdoc JSON omits blanket/derived Clone details after stripping non-local trait
+impls, so this script scans the pinned source trees (matching versions in
+Cargo.lock) for `#[derive(...Clone...)] pub struct` and `impl Clone for` items.
+"""
 import json
 import os
 import re
@@ -20,7 +17,7 @@ LOCK = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 
 
 def locked(name):
-    """The version of a crate in Cargo.lock (exactly one)."""
+    """Read the exact pinned version of crate `name` from Cargo.lock."""
     found = re.findall(r'name = "%s"\nversion = "([^"]+)"' % re.escape(name), open(LOCK).read())
     if len(found) != 1:
         raise SystemExit(f"clone_scan: Cargo.lock has {len(found)} versions of {name}")
@@ -33,6 +30,7 @@ IMPL = re.compile(r"impl(?:<[^>]*>)?\s+(?:(?:std|core)::clone::)?Clone\s+for\s+(
 
 
 def scan(root):
+    """Walk src/ under each pinned crate in root and return sorted Clone struct names."""
     out = {}
     for crate, pkg in CRATES.items():
         folder = f"{pkg}-{locked(pkg)}"

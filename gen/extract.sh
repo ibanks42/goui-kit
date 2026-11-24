@@ -1,16 +1,12 @@
 #!/bin/bash
-# extract.sh [JOBS]: stage 1 of the generator, run when the pinned gpui-kit version changes. Asks
-# rustdoc for its JSON output (RUSTC_BOOTSTRAP=1: the JSON format is unstable; format 61 with the
-# Rust of rust-toolchain.toml) for the crates the binding covers, with exactly the library's
-# default feature set (gpui-fast). Two passes: the public API, and the same with
-# --document-hidden-items (the #[doc(hidden)] items rustdoc otherwise leaves out).
-# Output: gen-json/{public,hidden}/{gpui,gpui_base,gpui_component,gpui_kit}.json in the
-# repository, for `python3 gen/gkgen.py strip gen-json/public` (which writes api/rustdoc).
-# Uses the checkout's own target/ (about 3 GB) and a few GB of memory; a few minutes.
+# Extract public and hidden rustdoc JSON for gpui-fast and the gpui-kit crates into gen-json/.
+# Runs two passes: `public` (normal rustdoc JSON) and `hidden` (with --document-hidden-items,
+# needed by gkgen.py strip's GRAFTS table for hidden structs like Editor).
+# Usage: gen/extract.sh [JOBS]
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# RUSTC_BOOTSTRAP=1 enables `-Z unstable-options --output-format json` on the pinned stable toolchain.
 export RUSTC_BOOTSTRAP=1
-# gk-capi is listed so its default features (gpui-fast) apply to the kit, as in the library.
 pkgs=(-p gk-capi -p gpui-kit -p gpui-base -p gpui-component -p gpui-fast)
 for pass in public hidden; do
   flags="-Z unstable-options --output-format json --cap-lints allow"

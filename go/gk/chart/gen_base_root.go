@@ -7,7 +7,7 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// NewPlotMotionDefault is <gpui_kit::base::PlotMotion as Default>::default.
+// NewPlotMotionDefault calls <gpui_kit::base::PlotMotion as Default>::default.
 func NewPlotMotionDefault() gk.PlotMotion {
 	n := rt.NewValue(346)
 	return gk.PlotMotion{Val: rt.MkVal(n)}

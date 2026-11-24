@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""go-apps-cmp.py --labels REF,REF2,CAND DIR NAME [BOX[;BOX..]]: the reader's verdict for
-gates/go-apps.sh. DIR holds REF/, REF2/ (the reference run a second time, the session's own noise)
-and CAND/. An image passes when the candidate's is byte-identical to the reference's, or when every
-pixel that differs lies inside a BOX (x0,y0,x1,y1 in image pixels: for the reader, the load
-toast's "in N ms", a time each app measures, and the list's scrollbar, whose fade is timed by the
-wall clock, not the script's clock: two reference runs differ there now and then) or inside the
-box where the two reference runs of this session differ.
-Prints one GATE line and the reason for every image that is not byte-identical."""
+"""Compare app screenshots against Rust while masking known wall-clock and self-noise regions.
+
+Usage:
+  go-apps-cmp.py [--labels ref,ref2,cand] <dir> <name> [x0,y0,x1,y1;...]
+
+Method: compares PNGs byte-for-byte first; for differing images, decodes 8-bit RGB/RGBA PNGs in
+pure Python and checks whether every differing pixel lies inside either an explicit mask box or
+the bounding box of pixels where the two reference runs (ref and ref2) differ from each other.
+PASS: every reference PNG exists in cand and has zero differing pixels outside allowed regions.
+"""
 import os
 import struct
 import sys
 import zlib
 
 args = sys.argv[1:]
-# --labels REF,REF2,CAND: the folders compared (default rust,rust2,go, what gates/go-apps.sh
-# passes: the Go app against the Rust reference run twice).
 ref, ref2, cand = "rust", "rust2", "go"
 if "--labels" in args:
     i = args.index("--labels")
@@ -23,9 +23,8 @@ if "--labels" in args:
 d, name = args[0], args[1]
 boxes = [tuple(int(v) for v in b.split(",")) for b in args[2].split(";")] if len(args) > 2 else []
 
-
 def png(path):
-    """(width, height, rows of bytes) of an 8-bit RGB or RGBA PNG, with the standard library only."""
+    # Minimal pure-Python decoder for 8-bit RGB (color=2) and RGBA (color=6) PNGs; handles all 5 scanline filters.
     data = open(path, "rb").read()
     pos, idat, w = 8, b"", 0
     while pos < len(data):
@@ -58,9 +57,7 @@ def png(path):
         prev = line
     return w, h, bpp, rows
 
-
 def diff(a, b):
-    """None when the files are the same; else the differing pixels as a set of (x, y)."""
     if open(a, "rb").read() == open(b, "rb").read():
         return None
     wa, ha, pa, ra = png(a)
@@ -73,15 +70,12 @@ def diff(a, b):
             out |= {(i // pa, y) for i in range(len(ra[y])) if ra[y][i] != rb[y][i]}
     return out
 
-
 def bbox(px):
     xs, ys = [p[0] for p in px], [p[1] for p in px]
     return (min(xs), min(ys), max(xs) + 1, max(ys) + 1) if px else (0, 0, 0, 0)
 
-
 def inside(p, outer):
     return outer and outer[0] <= p[0] < outer[2] and outer[1] <= p[1] < outer[3]
-
 
 files = sorted(f for f in os.listdir(os.path.join(d, ref)) if f.endswith(".png"))
 same, ok, bad = 0, 0, []
@@ -96,7 +90,6 @@ for f in files:
         ok += 1
         continue
     noise = diff(os.path.join(d, ref, f), os.path.join(d, ref2, f)) or set()
-    # each differing pixel lies in the load time's text, or near where the reference differs from itself
     nb = bbox(noise)
     rest = [p for p in px if not any(inside(p, b) for b in boxes) and not (noise and inside(p, nb))]
     if not rest:

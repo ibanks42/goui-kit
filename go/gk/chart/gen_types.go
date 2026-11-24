@@ -10,6 +10,7 @@ import (
 // AxisLabelPlacement is gpui_kit::base::plot::AxisLabelPlacement.
 type AxisLabelPlacement uint16
 
+// AxisLabelPlacement enum values.
 const (
 	AxisLabelPlacementOutside AxisLabelPlacement = 0
 	AxisLabelPlacementInside  AxisLabelPlacement = 1
@@ -18,6 +19,7 @@ const (
 // AxisLabelSide is gpui_kit::base::plot::AxisLabelSide.
 type AxisLabelSide uint16
 
+// AxisLabelSide enum values.
 const (
 	AxisLabelSideEnd   AxisLabelSide = 0
 	AxisLabelSideStart AxisLabelSide = 1
@@ -26,6 +28,7 @@ const (
 // BarAlignment is gpui_kit::base::plot::shape::BarAlignment.
 type BarAlignment uint16
 
+// BarAlignment enum values.
 const (
 	BarAlignmentBottom BarAlignment = 0
 	BarAlignmentTop    BarAlignment = 1
@@ -36,6 +39,7 @@ const (
 // Curve is gpui_kit::base::plot::Curve.
 type Curve uint16
 
+// Curve enum values.
 const (
 	CurveNatural   Curve = 0
 	CurveLinear    Curve = 1
@@ -45,6 +49,7 @@ const (
 // SankeyAlign is gpui_kit::base::plot::shape::SankeyAlign.
 type SankeyAlign uint16
 
+// SankeyAlign enum values.
 const (
 	SankeyAlignLeft    SankeyAlign = 0
 	SankeyAlignRight   SankeyAlign = 1
@@ -55,6 +60,7 @@ const (
 // SankeyValueScale is gpui_kit::base::plot::shape::SankeyValueScale.
 type SankeyValueScale uint16
 
+// SankeyValueScale enum values.
 const (
 	SankeyValueScaleLinear SankeyValueScale = 0
 	SankeyValueScaleSqrt   SankeyValueScale = 1

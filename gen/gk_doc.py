@@ -1,16 +1,17 @@
-"""gk_doc: GPUI-kit's own documentation, carried into the generated Go (docs/DESIGN.md
-section 13), so an editor shows it on hover.
+"""Adapt upstream rustdoc comments from `api/rustdoc/docs.json.gz` for generated Go bindings.
 
-Reads api/rustdoc/docs.json.gz (gkgen.py strip keeps each item's doc text and intra-doc links
-there) and translates a doc comment for a binding:
-  - an intra-doc link to something the binding has becomes that thing's name in the language
-    (`[`Self::on_click`]` is `OnClick` in Go); any other link keeps its text;
-  - Rust code examples are left out (a ```-fenced block, and an Examples heading left empty);
-  - a sentence about Rust-only mechanics (`cx.notify()`, `&mut Window`, `Rc<..>`, ...) is left
-    out: a binding's handler redraws its own view and has no window or context to pass, so the
-    sentence would be wrong. Each one left out is listed in gen/out/doc-rust-only.md, which shows
-    what a new GPUI-kit version adds;
-  - the text is wrapped to 100 columns.
+`gen/gkgen.py strip` extracts raw rustdoc Markdown (`d`) and intra-doc link ID maps (`l`)
+into `api/rustdoc/docs.json.gz` so the main rustdoc JSON stays small. During Go emission,
+`Docs.comment()` transforms each item's upstream comment into clean godoc:
+1. Drops fenced Rust code blocks (` ``` ` / `~~~`) and empty `# Examples` headings.
+2. Applies targeted phrasing `REWRITES` (e.g. `cx.notify()` -> language-neutral wording).
+3. Resolves Markdown intra-doc links (`[Foo]`, `[bar](baz)`) through `resolver(m)` into
+   the corresponding Go type/method/function name (falling back to the last path segment
+   or keeping external `https?://` URLs inline).
+4. Splits paragraphs into sentences and drops any sentence matching `RUST_ONLY` (Rust
+   ownership/borrow/pointer/GPUI-context internals that do not apply to Go), recording
+   every dropped sentence in `gen/out/doc-rust-only.md` for auditability.
+5. Wraps paragraphs and bullet lists to `WIDTH` columns (`100`, leaving room for `// `).
 """
 import gzip
 import json
@@ -24,29 +25,35 @@ PATH = os.path.join(REPO, "api", "rustdoc", "docs.json.gz")
 REPORT = os.path.join(HERE, "out", "doc-rust-only.md")
 WIDTH = 100
 
-# Wording only Rust code can act on. A sentence with any of these is left out.
+# Sentences matching this pattern describe Rust-specific APIs or ownership semantics and are
+# omitted from generated Go godoc (and logged in gen/out/doc-rust-only.md).
 RUST_ONLY = re.compile(
     r"\bcx\.\w+\(|\bwindow\.\w+\(|&mut\b|\bRc<|\bArc<|\bBox<|\bdyn\b|\bimpl\s+(Fn|Into|IntoElement)\b"
     r"|\b(Entity|Context|WeakEntity)<|::new\(|\.clone\(\)|\bunsafe\b|#\[|\bClone\b|\bDrop\b|\blifetime\b"
     r"|`Self`|\bborrow(ed|s)?\b|\bmacro\b|\bcrate\b")
-# Rust-only wording with a plain equivalent, rewritten before RUST_ONLY is applied: a binding's
-# handler redraws its own view (no cx.notify()), and the theme's colours are read by name.
+# Patterns rewritten before sentence filtering so common GPUI idioms survive into Go godoc
+# instead of being dropped by RUST_ONLY.
 REWRITES = [
     (re.compile(r"\s+and call `cx\.notify\(\)` to render it"), " for it to show"),
-    (re.compile(r"`cx\.theme\(\)\.(\w+)`"), r"the theme's `\1` colour"),
+    (re.compile(r"`cx\.theme\(\)\.(\w+)`"), r"the theme's `\1` color"),
 ]
+# Markdown code fences, intra-doc links, and sentence boundaries used when cleaning rustdoc blocks.
 FENCE = re.compile(r"^\s*(```|~~~)")
 LINK = re.compile(r"\[([^\]\n]+)\](?:\(([^)\s]+)\)|\[([^\]\n]+)\])?")
+EM_DASH = re.compile("\\s*\u2014\\s*")
 SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z`(\[])")
 
 
 def rewrite(text):
+    """Apply `REWRITES` substitutions to replace common GPUI Rust phrases with language-neutral wording."""
     for pat, new in REWRITES:
         text = pat.sub(new, text)
-    return text
+    # Upstream prose uses em dashes; the project's style forbids them, so a spaced hyphen stands in.
+    return EM_DASH.sub(" - ", text)
 
 
 def _load():
+    """Load `api/rustdoc/docs.json.gz` into memory, or return `{}` if absent."""
     if not os.path.exists(PATH):
         return {}
     with gzip.open(PATH, "rt", encoding="utf-8") as f:
@@ -54,19 +61,19 @@ def _load():
 
 
 class Docs:
-    """Doc comments by rustdoc id, translated per language. names(lang, crate, id) gives the
-    binding's name for a linked item, or None."""
+    """Renders filtered, link-resolved doc comments from api/rustdoc/docs.json.gz."""
 
     def __init__(self):
         self.raw = _load()
-        self.dropped = []  # (language, owner, sentence)
-        self.asked, self.found = set(), set()  # distinct (crate, id) asked for, and those with a doc
+        self.dropped = []
+        self.asked, self.found = set(), set()
 
     def has(self, ref):
+        """Return True if upstream rustdoc text exists for (crate, item_id)."""
         return bool(ref) and str(ref[1]) in self.raw.get(ref[0], {}).get("items", {})
 
     def comment(self, ref, lang, names, owner=""):
-        """The translated doc of ref = (crate, id) as text lines without a comment marker, or []."""
+        """Return wrapped comment lines (without leading //) for a rustdoc item ref."""
         if not ref:
             return []
         crate, iid = ref[0], str(ref[1])
@@ -91,7 +98,7 @@ class Docs:
                 if name:
                     return f"`{name}`" if dest is None or text.startswith("`") else f"{text} (`{name}`)"
             plain = text.strip("`")
-            if re.fullmatch(r"[\w:]+(\(\))?", plain):  # a Rust path: its last part
+            if re.fullmatch(r"[\w:]+(\(\))?", plain):
                 plain = plain.split("::")[-1]
                 return f"`{plain}`"
             return text
@@ -114,7 +121,7 @@ class Docs:
             paras.append(cur)
         result = []
         for p in paras:
-            if p[0].startswith("#"):  # a heading: kept as "Panics:" when text follows it
+            if p[0].startswith("#"):
                 result.append(("head", p[0].lstrip("#").strip()))
                 if len(p) == 1:
                     continue
@@ -155,13 +162,13 @@ class Docs:
         return lines
 
     def _rust(self, lang, owner, sentence):
-        """Whether to leave the sentence out (Rust-only wording, after REWRITES)."""
         if RUST_ONLY.search(sentence):
             self.dropped.append((lang, owner, sentence))
             return True
         return False
 
     def report(self):
+        """Write every deduplicated Rust-only sentence omitted during emission to REPORT."""
         os.makedirs(os.path.dirname(REPORT), exist_ok=True)
         seen, rows = set(), []
         for lang, owner, s in self.dropped:
@@ -170,30 +177,28 @@ class Docs:
             seen.add((owner, s))
             rows.append(f"- `{owner}`: {s}")
         with open(REPORT, "w", encoding="utf-8") as f:
-            f.write("# Sentences of GPUI-kit's docs left out of the bindings\n\n"
-                    "Written by gen/gk_doc.py: each sentence names Rust-only mechanics (gk_doc.RUST_ONLY).\n\n")
+            f.write("# Omitted Rust-only documentation sentences\n\n"
+                    "Generated by gen/gk_doc.py. Each entry matched gk_doc.RUST_ONLY and was left out of generated comments.\n\n")
             f.write("\n".join(sorted(rows)) + "\n")
         return len(rows)
 
 
-# The binding's own notes on a type that has no upstream doc, or one the binding uses differently:
-# by upstream path, per language, lines without a comment marker. Written above the type's
-# "X is <path>" line.
+# Hand-written binding notes prepended to generated Go comments for specific upstream items.
 NOTES = {
     "gpui_kit::ImageSource::Render": {
-        "go": ["Shows an image the library made from pixels. Make the gk.RenderImage once, with",
-               "gk.NewRenderImage, keep it while a view shows it and gk.Release it when no view does:",
-               "gpui keeps its texture on the graphics card until then."],
+        "go": ["Displays a pixel image created in the runtime. Construct the gk.RenderImage once",
+               "with gk.NewRenderImage, hold it while any view displays it, and call gk.Release",
+               "when finished so GPUI can free the GPU texture."],
     },
     "gpui_kit::ImageSource::Custom": {
-        "go": ["Upstream's loader, called while gpui draws, is the image itself here: a gk.RenderImage",
-               "made once with gk.NewRenderImage, as for gk.ImageSourceRender."],
+        "go": ["In Go, upstream's draw-time loader is represented directly by a gk.RenderImage",
+               "created once with gk.NewRenderImage, matching gk.ImageSourceRender."],
     },
 }
 
 
 def note(path, lang):
-    """The binding's note on path (NOTES) as comment lines ending in a blank comment line, or []."""
+    """Return formatted Go comment lines for a binding-specific note, or an empty list."""
     lines = NOTES.get(path, {}).get(lang)
     return [f"// {x}" for x in lines] + ["//"] if lines else []
 
@@ -202,9 +207,8 @@ FACADE = {"gpui_component": "gpui_kit::component", "gpui_base": "gpui_kit::base"
 
 
 def resolver(m):
-    """names(lang, crate, id, path) for Docs.comment: the binding's name of a linked item that it
-    binds (a type, or a function or method by its name in that language), else None."""
-    import gk_go  # noqa: PLC0415
+    """Build a lookup function mapping rustdoc link targets to Go symbol names."""
+    import gk_go
     bound = ("bound", "bridged")
     by, by_path = {}, {}
     for n in m.nodes.values():
@@ -231,7 +235,7 @@ def resolver(m):
         kind, x = e
         if kind in ("type", "state"):
             return x.get(lang)
-        if x.get(lang):  # a free function or a constructor
+        if x.get(lang):
             return "gk." + x[lang]
         return gk_go.camel(x["name"])
 

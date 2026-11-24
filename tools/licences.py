@@ -1,29 +1,33 @@
 #!/usr/bin/env python3
-"""licences.py OUT_DIR: the licence texts of every crate linked into libgpuikit, for the download.
+"""Collect third-party crate license files and generate THIRD_PARTY.md.
 
-Runs in the checkout after the library was built (tools/build-lib.sh runs it), when cargo's
-registry holds every crate's sources. Standard library only.
+Usage:
+    GK_LICENCE_TARGET="target1 target2" python3 tools/licences.py [OUT_DIR]
 
-Which crates: `cargo metadata` resolves the workspace for the library's target (x86_64 Linux, or
-GK_LICENCE_TARGET: tools/build-lib.sh passes the CI runner's triple, x86_64-pc-windows-msvc, or on
-macOS both slices of the universal library, "aarch64-apple-darwin x86_64-apple-darwin"; the
-graphs differ per target), once for the shipped library (package gk-capi with the workspace's
-features) and once for the diagnostic one (feature diag), for each target, and this script walks
-gk-capi's normal dependencies. Build-script and dev dependencies are not linked and are left out;
-so are proc-macro crates (they run in the compiler and leave no code in the library). What is
-linked is the union of the walks; with more than one target, crates linked for only some of them
-are named in THIRD_PARTY.md (with Cargo.lock as committed: x86_64 macOS links
-multiversion 0.8.1 and target-features 0.1.6, which arm64 does not, and core_detect in the shipped
-variant, which arm64 links only in diag; 469 crates for the two together, 467 for arm64 alone).
+Environment variables:
+    GK_LICENCE_TARGET  Space- or comma-separated Rust target triples to audit (default:
+                       `x86_64-unknown-linux-gnu`). On macOS universal builds, `build-lib.sh`
+                       passes both `aarch64-apple-darwin` and `x86_64-apple-darwin` so
+                       architecture-specific crates are merged into one notice file.
+    GK_ENGINE          `gpui-fast` (default) or `gpui` (uses `--no-default-features` for
+                       the `ship` dependency graph).
 
-Writes:
-  OUT_DIR/THIRD_PARTY.md        one table: crate, version, licence, where its text is, source
-  OUT_DIR/texts/NAME-VERSION/   every LICENSE*, LICENCE*, COPYING*, NOTICE*, UNLICENSE*,
-                                COPYRIGHT* file the crate ships, verbatim
-A crate that ships no licence file is listed with its declared licence and authors, and the
-notice says so; the canonical texts of the licences such crates name are taken from another
-crate that ships that licence verbatim (texts/_canonical/). Copyleft licences are listed
-first in the notice.
+How the dependency graph is computed:
+- Queries `cargo metadata --locked --filter-platform <target>` separately for the `ship`
+  build and the `diag` build (`--features gk-capi/diag`), then walks only normal runtime
+  dependencies (`dep_kinds` containing `kind is None`, excluding `build`/`dev` deps)
+  reachable from `gk-capi`.
+- Excludes workspace crates (`source is None`), `gk-capi` itself, and proc-macro-only
+  crates (`kinds == {"proc-macro"}`), because proc macros run at compile time and are not
+  linked into `libgpuikit`.
+- Copies every `LICENSE*`/`LICENCE*`/`COPYING*`/`NOTICE*`/`UNLICENSE*`/`COPYRIGHT*` file
+  from each crate's Cargo source directory (plus any explicit `license_file` field) into
+  `OUT_DIR/texts/<name>-<version>/`.
+- Crates that ship no license file in their crate tarball are listed separately with their
+  SPDX expression and authors, and canonical MIT / Apache-2.0 texts harvested from sibling
+  crates are placed in `OUT_DIR/texts/_canonical/`.
+- Flags any crate whose license expression matches `COPYLEFT` so dual-licensed (`OR`)
+  copyleft choices remain auditable.
 """
 import json
 import os
@@ -34,16 +38,22 @@ import sys
 
 TARGETS = (os.environ.get("GK_LICENCE_TARGET") or "x86_64-unknown-linux-gnu").replace(",", " ").split()
 ROOT_PKG = "gk-capi"
+# Filename prefixes treated as verbatim third-party license or attribution notices.
 FILES = re.compile(r"^(LICEN[CS]E|COPYING|NOTICE|UNLICENSE|COPYRIGHT)", re.I)
+# SPDX license families highlighted in the Copyleft section of THIRD_PARTY.md.
 COPYLEFT = re.compile(r"\b(A?GPL|LGPL|MPL|EPL|CDDL|EUPL|OSL|CC-BY-SA|CECILL)", re.I)
 
 
-# GK_ENGINE=gpui: the shipped library was built on upstream GPUI (--no-default-features); the
-# diagnostic one is always on gpui-fast.
 ENGINE = os.environ.get("GK_ENGINE", "gpui-fast")
 
 
 def metadata(features, target):
+    """Run `cargo metadata --locked` for one target platform and feature set.
+
+    `features=None` passes `--no-default-features` (used when `GK_ENGINE=gpui`),
+    `features=""` uses default features (`gpui-fast`), and a non-empty string passes
+    `--features <features>` (for `gk-capi/diag`).
+    """
     cmd = ["cargo", "metadata", "--format-version", "1", "--locked", "--filter-platform", target]
     if features is None:
         cmd += ["--no-default-features"]
@@ -53,6 +63,12 @@ def metadata(features, target):
 
 
 def linked(meta):
+    """Return all non-workspace, non-proc-macro normal runtime dependencies reachable from `gk-capi`.
+
+    Performs a DFS over `meta["resolve"]["nodes"]` following only edges where at least one
+    `dep_kinds` entry has `kind is None` (normal dependency, ignoring build-dependencies and
+    dev-dependencies).
+    """
     pkgs = {p["id"]: p for p in meta["packages"]}
     nodes = {n["id"]: n for n in meta["resolve"]["nodes"]}
     root = next(p["id"] for p in meta["packages"] if p["name"] == ROOT_PKG)
@@ -70,15 +86,16 @@ def linked(meta):
         p = pkgs[pid]
         kinds = {k for t in p["targets"] for k in t["kind"]}
         if kinds == {"proc-macro"} or p["name"] == ROOT_PKG or p["source"] is None:
-            continue  # compiler plugins, and this workspace's own crates
+            continue
         out.append(p)
     return out
 
 
 def main():
+    """Collect ship and diag crate graphs across TARGETS, copy license texts, and write THIRD_PARTY.md."""
     out = sys.argv[1] if len(sys.argv) > 1 else "dist/licences"
     ship, diag = {}, {}
-    per_target = {}  # target -> ids linked for it (either variant)
+    per_target = {}
     for target in TARGETS:
         s = {p["id"]: p for p in linked(metadata(None if ENGINE == "gpui" else "", target))}
         d = {p["id"]: p for p in linked(metadata("gk-capi/diag", target))}
@@ -90,7 +107,7 @@ def main():
     shutil.rmtree(out, ignore_errors=True)
     os.makedirs(os.path.join(out, "texts"))
     rows, missing, copyleft = [], [], []
-    canonical = {}  # licence id -> a file that holds its text verbatim
+    canonical = {}
     for pid, p in sorted(allp.items(), key=lambda kv: (kv[1]["name"], kv[1]["version"])):
         name, ver = p["name"], p["version"]
         lic = (p.get("license") or "").strip() or ("see " + p["license_file"] if p.get("license_file") else "none declared")
@@ -125,11 +142,11 @@ def main():
     with open(os.path.join(out, "THIRD_PARTY.md"), "w", encoding="utf-8", newline="\n") as f:
         f.write("# Third-party software in libgpuikit\n\n")
         f.write(f"libgpuikit links {len(allp)} crates from crates.io and git ({len(ship)} in the shipped "
-                f"library, {len(diag)} in the diagnostic one). Each is listed below with the licence it "
-                "declares; the licence files each crate ships are in `texts/NAME-VERSION/`, verbatim. "
-                f"Written by tools/licences.py from Cargo.lock and the crates' sources, for "
+                f"library, {len(diag)} in the diagnostic build). Each crate is listed below with its declared "
+                "license; verbatim license files are copied into `texts/NAME-VERSION/`. "
+                f"Generated by tools/licences.py from Cargo.lock for "
                 f"{' and '.join(TARGETS)}"
-                f"{' (every slice of the universal library: the union of their crates)' if len(TARGETS) > 1 else ''}.\n\n")
+                f"{' (union across all universal slices)' if len(TARGETS) > 1 else ''}.\n\n")
         if len(TARGETS) > 1:
             f.write("## Crates linked for some targets only\n\n")
             some = [(allp[pid]["name"], allp[pid]["version"], [t for t in TARGETS if pid in per_target[t]])
@@ -142,19 +159,19 @@ def main():
                 f.write(f"None: every crate below is linked for all of {', '.join(TARGETS)}.\n\n")
         f.write("## Copyleft\n\n")
         if copyleft:
-            f.write("These crates are under a copyleft licence, alone or as one choice of an OR:\n\n")
+            f.write("These crates list a copyleft license, alone or as one alternative in an OR expression:\n\n")
             for name, ver, lic, where in copyleft:
                 f.write(f"- {name} {ver}: {lic} ({where})\n")
-            f.write("\nWhere the licence is `X OR Y`, the library uses the crate under the permissive choice.\n\n")
+            f.write("\nWhere the license is `X OR Y`, this library uses the crate under the permissive option.\n\n")
         else:
-            f.write("None: no linked crate declares a GPL, LGPL, AGPL, MPL, EPL, CDDL, EUPL, OSL or CC-BY-SA licence.\n\n")
+            f.write("None: no linked crate declares a GPL, LGPL, AGPL, MPL, EPL, CDDL, EUPL, OSL, or CC-BY-SA license.\n\n")
         if missing:
-            f.write("## Crates that ship no licence file\n\n")
-            f.write("Their declared licence applies; the canonical texts are in `texts/_canonical/`.\n\n")
+            f.write("## Crates without a bundled license file\n\n")
+            f.write("Their declared license applies; canonical license texts are provided in `texts/_canonical/`.\n\n")
             for name, ver, lic, authors in missing:
                 f.write(f"- {name} {ver}: {lic}; copyright its authors: {authors}\n")
             f.write("\n")
-        f.write("## Every crate\n\n| crate | version | licence | texts | in | source |\n|---|---|---|---|---|---|\n")
+        f.write("## Every crate\n\n| crate | version | license | texts | in | source |\n|---|---|---|---|---|---|\n")
         for r in rows:
             f.write("| " + " | ".join(r) + " |\n")
     counts = {}

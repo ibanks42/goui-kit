@@ -1,29 +1,25 @@
+# Pure-Rust reference apps built directly against gpui-kit.
+# Pixel and behavior gates compare Go apps against these binaries.
 [package]
 name = "gk-ref"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
-# Every binary is listed below.
+
 autobins = false
 
 [dependencies]
 gpui-kit.workspace = true
 gk-meter.workspace = true
-# The gallery's editor page implements the kit's CompletionProvider as a Rust app does; these
-# are the versions gpui-base already links.
+
+# Pinned to match the dependency versions exposed by gpui-kit.
 anyhow = "1"
 lsp-types = "=0.97.0"
 ropey = "=2.0.0-beta.1"
-# The calendar page (values_pages.rs) writes a date as a Rust app does: the version gpui-base links.
 jiff = { version = "=1.0.2", default-features = false }
-# The gallery's motion pages (motion_pages.rs) give an image as pixels as a Rust app does
-# (image's Frame for gpui's RenderImage) and synthetic accessibility nodes (accesskit's Node): the
-# versions gpui links.
 image = { version = "=0.25.10", default-features = false }
 accesskit = { version = "=0.24.1", default-features = false }
-# The todo twin (todo.rs) saves its state as JSON and its sync thread posts to the UI thread through
-# a channel, and reads today's local date (libc), as a Rust app does: the versions the workspace
-# already links.
+
 futures = "0.3"
 libc = "0.2"
 serde = { version = "1", features = ["derive"] }
@@ -58,13 +54,10 @@ path = "src/bin/table.rs"
 name = "ref-notes"
 path = "src/bin/notes.rs"
 
-# The files app's twin (examples/go/files, gates/pixels.sh files).
 [[bin]]
 name = "ref-files"
 path = "src/bin/files.rs"
 
-# The paint app's twin (examples/go/paint, gates/pixels.sh paint): gradient
-# backgrounds and a plot of paths and quads (PROTOCOLS.md 11.38, 12.17).
 [[bin]]
 name = "ref-paint"
 path = "src/bin/paint.rs"

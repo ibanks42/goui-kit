@@ -10,19 +10,19 @@ import (
 // FrontmatterPlugin is gpui_kit::component::text::FrontmatterPlugin.
 type FrontmatterPlugin struct{ rt.ValMarkdownPluginAny }
 
-// NewFrontmatterPlugin is <gpui_kit::component::text::FrontmatterPlugin>::new.
+// NewFrontmatterPlugin calls <gpui_kit::component::text::FrontmatterPlugin>::new.
 func NewFrontmatterPlugin() FrontmatterPlugin {
 	n := rt.NewValue(792)
 	return FrontmatterPlugin{ValMarkdownPluginAny: rt.MkValMarkdownPluginAny(n)}
 }
 
-// NewFrontmatterPluginDefault is <gpui_kit::component::text::FrontmatterPlugin as Default>::default.
+// NewFrontmatterPluginDefault calls <gpui_kit::component::text::FrontmatterPlugin as Default>::default.
 func NewFrontmatterPluginDefault() FrontmatterPlugin {
 	n := rt.NewValue(791)
 	return FrontmatterPlugin{ValMarkdownPluginAny: rt.MkValMarkdownPluginAny(n)}
 }
 
-// Setup is <gpui_kit::component::text::FrontmatterPlugin as gpui_kit::component::text::TextViewPlugin>::setup: it makes a TextViewEl of the element.
+// Setup calls <gpui_kit::component::text::FrontmatterPlugin as gpui_kit::component::text::TextViewPlugin>::setup and converts the element into TextViewEl.
 func (e FrontmatterPlugin) Setup(textView TextViewEl) TextViewEl {
 	rt.UseBaseText()
 	src := rt.TakeNode(rt.N(e.Core), true)
@@ -38,7 +38,7 @@ type TextViewEl struct{ rt.ElAnimatableElement }
 
 // Creates an HTML text view identified by the caller's code location.
 //
-// HTML is gpui_kit::component::text::html.
+// HTML calls gpui_kit::component::text::html.
 func HTML(source string, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(796)
@@ -50,7 +50,7 @@ func HTML(source string, st ...gk.Style) TextViewEl {
 
 // Creates a Markdown text view identified by the caller's code location.
 //
-// Markdown is gpui_kit::component::text::markdown.
+// Markdown calls gpui_kit::component::text::markdown.
 func Markdown(source string, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(797)
@@ -62,7 +62,7 @@ func Markdown(source string, st ...gk.Style) TextViewEl {
 
 // Creates a text view rendering an existing `TextViewState`.
 //
-// TextView is <gpui_kit::component::text::TextView>::new.
+// TextView calls <gpui_kit::component::text::TextView>::new.
 func TextView(state TextViewState, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(795)
@@ -74,7 +74,7 @@ func TextView(state TextViewState, st ...gk.Style) TextViewEl {
 
 // Creates a text view that parses `text` as HTML.
 //
-// TextViewHTML is <gpui_kit::component::text::TextView>::html.
+// TextViewHTML calls <gpui_kit::component::text::TextView>::html.
 func TextViewHTML(id gk.ID, text string, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(793)
@@ -87,7 +87,7 @@ func TextViewHTML(id gk.ID, text string, st ...gk.Style) TextViewEl {
 
 // Creates a text view that parses `text` as Markdown.
 //
-// TextViewMarkdown is <gpui_kit::component::text::TextView>::markdown.
+// TextViewMarkdown calls <gpui_kit::component::text::TextView>::markdown.
 func TextViewMarkdown(id gk.ID, text string, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(794)
@@ -101,7 +101,7 @@ func TextViewMarkdown(id gk.ID, text string, st ...gk.Style) TextViewEl {
 // Refines the blockquote container, including its left border, over the resolved theme or explicit
 // style. Unspecified properties are inherited.
 //
-// BlockquoteStyle is <gpui_kit::component::text::TextView>::blockquote_style.
+// BlockquoteStyle calls <gpui_kit::component::text::TextView>::blockquote_style.
 func (e TextViewEl) BlockquoteStyle(style gk.StyleRefinement) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -110,7 +110,7 @@ func (e TextViewEl) BlockquoteStyle(style gk.StyleRefinement) TextViewEl {
 
 // Renders an element in the corner of every fenced code block.
 //
-// CodeBlockActions is <gpui_kit::component::text::TextView>::code_block_actions.
+// CodeBlockActions calls <gpui_kit::component::text::TextView>::code_block_actions.
 func (e TextViewEl) CodeBlockActions(f gk.RowSource) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 272)
 	o.U64(rt.ItemsCheck(f, 8))
@@ -123,7 +123,7 @@ func (e TextViewEl) CodeBlockActions(f gk.RowSource) TextViewEl {
 // pending or failed loads never fall back to the document URL. Without this override, images use
 // Base's default URI and data URL handling.
 //
-// ImageSource is <gpui_kit::component::text::TextView>::image_source.
+// ImageSource calls <gpui_kit::component::text::TextView>::image_source.
 func (e TextViewEl) ImageSource(resolver gk.Ask[string, string]) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 271)
 	o.U64(rt.H(resolver.Src.HCore))
@@ -133,7 +133,7 @@ func (e TextViewEl) ImageSource(resolver gk.Ask[string, string]) TextViewEl {
 // Refines inline code typography, background, border, radius, and padding over the resolved theme
 // or explicit style. Other layout properties are ignored. Unspecified properties are inherited.
 //
-// InlineCodeStyle is <gpui_kit::component::text::TextView>::inline_code_style.
+// InlineCodeStyle calls <gpui_kit::component::text::TextView>::inline_code_style.
 func (e TextViewEl) InlineCodeStyle(style gk.StyleRefinement) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -143,7 +143,7 @@ func (e TextViewEl) InlineCodeStyle(style gk.StyleRefinement) TextViewEl {
 // Shows an application-supplied tooltip beside the pointer over a link. The tooltip is cached
 // until a different destination is shown.
 //
-// LinkTooltip is <gpui_kit::component::text::TextView>::link_tooltip.
+// LinkTooltip calls <gpui_kit::component::text::TextView>::link_tooltip.
 func (e TextViewEl) LinkTooltip(builder gk.RowSource) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 275)
 	o.U64(rt.H(builder.HCore))
@@ -153,7 +153,7 @@ func (e TextViewEl) LinkTooltip(builder gk.RowSource) TextViewEl {
 // Refines bullet and number list markers over the resolved theme or explicit style. The text color
 // also outlines unchecked task-list checkboxes. Unspecified properties are inherited.
 //
-// ListStyle is <gpui_kit::component::text::TextView>::list_style.
+// ListStyle calls <gpui_kit::component::text::TextView>::list_style.
 func (e TextViewEl) ListStyle(style gk.StyleRefinement) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -162,7 +162,7 @@ func (e TextViewEl) ListStyle(style gk.StyleRefinement) TextViewEl {
 
 // Renders the custom block nodes named `name`.
 //
-// MarkdownBlockRenderer is <gpui_kit::component::text::TextView>::markdown_block_renderer.
+// MarkdownBlockRenderer calls <gpui_kit::component::text::TextView>::markdown_block_renderer.
 func (e TextViewEl) MarkdownBlockRenderer(name string, renderer gk.RowSource) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 273)
 	o.Str(name)
@@ -172,7 +172,7 @@ func (e TextViewEl) MarkdownBlockRenderer(name string, renderer gk.RowSource) Te
 
 // Sets which Markdown extensions the parser accepts.
 //
-// MarkdownExtensions is <gpui_kit::component::text::TextView>::markdown_extensions.
+// MarkdownExtensions calls <gpui_kit::component::text::TextView>::markdown_extensions.
 func (e TextViewEl) MarkdownExtensions(value MarkdownExtensions) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(value.Core)))
@@ -181,7 +181,7 @@ func (e TextViewEl) MarkdownExtensions(value MarkdownExtensions) TextViewEl {
 
 // Enables the MDX Markdown extensions.
 //
-// MarkdownMdx is <gpui_kit::component::text::TextView>::markdown_mdx.
+// MarkdownMdx calls <gpui_kit::component::text::TextView>::markdown_mdx.
 func (e TextViewEl) MarkdownMdx() TextViewEl {
 	rt.Op(rt.N(e.Core), 260)
 	return e
@@ -189,7 +189,7 @@ func (e TextViewEl) MarkdownMdx() TextViewEl {
 
 // Clamps the rendered content to `value` lines.
 //
-// MaxLines is <gpui_kit::component::text::TextView>::max_lines.
+// MaxLines calls <gpui_kit::component::text::TextView>::max_lines.
 func (e TextViewEl) MaxLines(value int) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	rt.PutUsize(o, value)
@@ -198,7 +198,7 @@ func (e TextViewEl) MaxLines(value int) TextViewEl {
 
 // Sets the motion policy explicitly, overriding `StreamFade`'s theme timing.
 //
-// Motion is <gpui_kit::component::text::TextView>::motion.
+// Motion calls <gpui_kit::component::text::TextView>::motion.
 func (e TextViewEl) Motion(motion TextViewMotion) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.TakeValue(rt.N(motion.Core)))
@@ -207,7 +207,7 @@ func (e TextViewEl) Motion(motion TextViewMotion) TextViewEl {
 
 // Handles link clicks instead of opening the URL.
 //
-// OnLinkClick is <gpui_kit::component::text::TextView>::on_link_click.
+// OnLinkClick calls <gpui_kit::component::text::TextView>::on_link_click.
 func (e TextViewEl) OnLinkClick(f func(cx *gk.Cx, e gk.Event83)) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 269)
 	o.U32(rt.Register(f, 83))
@@ -217,7 +217,7 @@ func (e TextViewEl) OnLinkClick(f func(cx *gk.Cx, e gk.Event83)) TextViewEl {
 // Scrolls a container that ignores scroll requests to the line of `TextViewState::reveal_range`,
 // with the line's window bounds.
 //
-// OnReveal is <gpui_kit::component::text::TextView>::on_reveal.
+// OnReveal calls <gpui_kit::component::text::TextView>::on_reveal.
 func (e TextViewEl) OnReveal(f func(cx *gk.Cx, e gk.Bounds)) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(f, 75))
@@ -227,7 +227,7 @@ func (e TextViewEl) OnReveal(f func(cx *gk.Cx, e gk.Bounds)) TextViewEl {
 // Makes Markdown task list checkboxes clickable, reporting the clicked item's new checked state
 // and where it and its marker are in the source.
 //
-// OnTaskToggle is <gpui_kit::component::text::TextView>::on_task_toggle.
+// OnTaskToggle calls <gpui_kit::component::text::TextView>::on_task_toggle.
 func (e TextViewEl) OnTaskToggle(f func(cx *gk.Cx, e TaskToggleEvent)) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 270)
 	o.U32(rt.Register(f, 105))
@@ -236,7 +236,7 @@ func (e TextViewEl) OnTaskToggle(f func(cx *gk.Cx, e TaskToggleEvent)) TextViewE
 
 // Applies a plugin, which may install any of the hooks above.
 //
-// Plugin is <gpui_kit::component::text::TextView>::plugin.
+// Plugin calls <gpui_kit::component::text::TextView>::plugin.
 func (e TextViewEl) Plugin(plugin gk.MarkdownPluginAny) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 276)
 	switch x := plugin.(type) {
@@ -255,7 +255,7 @@ func (e TextViewEl) Plugin(plugin gk.MarkdownPluginAny) TextViewEl {
 
 // Sets whether the view scrolls its own content.
 //
-// Scrollable is <gpui_kit::component::text::TextView>::scrollable.
+// Scrollable calls <gpui_kit::component::text::TextView>::scrollable.
 func (e TextViewEl) Scrollable(value bool) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Bool(value)
@@ -264,7 +264,7 @@ func (e TextViewEl) Scrollable(value bool) TextViewEl {
 
 // Sets whether the text can be selected with the mouse.
 //
-// Selectable is <gpui_kit::component::text::TextView>::selectable.
+// Selectable calls <gpui_kit::component::text::TextView>::selectable.
 func (e TextViewEl) Selectable(value bool) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.Bool(value)
@@ -273,7 +273,7 @@ func (e TextViewEl) Selectable(value bool) TextViewEl {
 
 // Sets whether a copied selection carries Markdown source or plain text.
 //
-// SelectionFormat is <gpui_kit::component::text::TextView>::selection_format.
+// SelectionFormat calls <gpui_kit::component::text::TextView>::selection_format.
 func (e TextViewEl) SelectionFormat(value SelectionFormat) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U16(uint16(value))
@@ -286,7 +286,7 @@ func (e TextViewEl) SelectionFormat(value SelectionFormat) TextViewEl {
 // nobody typed it. Text that replaces rather than extends the current content shows at once, and
 // reduced motion disables the fade. Use `Motion` for other timing.
 //
-// StreamFade is <gpui_kit::component::text::TextView>::stream_fade.
+// StreamFade calls <gpui_kit::component::text::TextView>::stream_fade.
 func (e TextViewEl) StreamFade(value bool) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 267)
 	o.Bool(value)
@@ -295,7 +295,7 @@ func (e TextViewEl) StreamFade(value bool) TextViewEl {
 
 // Sets the style, folded onto the one derived from the active theme.
 //
-// Style is <gpui_kit::component::text::TextView>::style.
+// Style calls <gpui_kit::component::text::TextView>::style.
 func (e TextViewEl) Style(style TextViewStyle) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 268)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -304,7 +304,7 @@ func (e TextViewEl) Style(style TextViewStyle) TextViewEl {
 
 // Renders an element in the corner of every table.
 //
-// TableActions is <gpui_kit::component::text::TextView>::table_actions.
+// TableActions calls <gpui_kit::component::text::TextView>::table_actions.
 func (e TextViewEl) TableActions(f gk.RowSource) TextViewEl {
 	o := rt.Op(rt.N(e.Core), 274)
 	o.U64(rt.ItemsCheck(f, 10))
@@ -313,29 +313,37 @@ func (e TextViewEl) TableActions(f gk.RowSource) TextViewEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e TextViewEl) PopoverStyle() TextViewEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e TextViewEl) RoundedFullStyle() TextViewEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e TextViewEl) BorderE(width gk.Length) TextViewEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e TextViewEl) BorderS(width gk.Length) TextViewEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -343,121 +351,163 @@ func (e TextViewEl) BorderS(width gk.Length) TextViewEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e TextViewEl) FlexRowDir() TextViewEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e TextViewEl) InsetE(length gk.Length) TextViewEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e TextViewEl) InsetS(length gk.Length) TextViewEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e TextViewEl) JustifyFlexEnd() TextViewEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e TextViewEl) JustifyFlexStart() TextViewEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e TextViewEl) Me(length gk.Length) TextViewEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e TextViewEl) Ms(length gk.Length) TextViewEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e TextViewEl) Pe(length gk.Length) TextViewEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e TextViewEl) Ps(length gk.Length) TextViewEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e TextViewEl) RoundedE(radius gk.Length) TextViewEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e TextViewEl) RoundedS(radius gk.Length) TextViewEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e TextViewEl) TextEnd() TextViewEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e TextViewEl) TextStart() TextViewEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e TextViewEl) CornerRadii(radius gk.Corners) TextViewEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e TextViewEl) DebugBlue() TextViewEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e TextViewEl) DebugFocused(focusHandle gk.FocusHandle) TextViewEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e TextViewEl) DebugGreen() TextViewEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e TextViewEl) DebugPink() TextViewEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e TextViewEl) DebugRed() TextViewEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e TextViewEl) DebugYellow() TextViewEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e TextViewEl) FontBlack() TextViewEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e TextViewEl) FontBold() TextViewEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e TextViewEl) FontExtrabold() TextViewEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e TextViewEl) FontExtralight() TextViewEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e TextViewEl) FontLight() TextViewEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e TextViewEl) FontMedium() TextViewEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e TextViewEl) FontNormal() TextViewEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e TextViewEl) FontSemibold() TextViewEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e TextViewEl) FontThin() TextViewEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -466,18 +516,23 @@ func (e TextViewEl) FontThin() TextViewEl { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e TextViewEl) HFlex() TextViewEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e TextViewEl) Margins(margins gk.EdgesInto) TextViewEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e TextViewEl) Paddings(paddings gk.EdgesInto) TextViewEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e TextViewEl) RefineStyle(style gk.StyleRefinement) TextViewEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -487,18 +542,26 @@ func (e TextViewEl) RefineStyle(style gk.StyleRefinement) TextViewEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e TextViewEl) VFlex() TextViewEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e TextViewEl) AspectRatio(ratio float32) TextViewEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e TextViewEl) Bg(fill gk.Fill) TextViewEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e TextViewEl) Border(length gk.Length) TextViewEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -506,12 +569,16 @@ func (e TextViewEl) Border(length gk.Length) TextViewEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e TextViewEl) BorderB(length gk.Length) TextViewEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e TextViewEl) BorderColor(borderColor gk.Color) TextViewEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -519,6 +586,8 @@ func (e TextViewEl) BorderColor(borderColor gk.Color) TextViewEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e TextViewEl) BorderL(length gk.Length) TextViewEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -526,6 +595,8 @@ func (e TextViewEl) BorderL(length gk.Length) TextViewEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e TextViewEl) BorderR(length gk.Length) TextViewEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -533,6 +604,8 @@ func (e TextViewEl) BorderR(length gk.Length) TextViewEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e TextViewEl) BorderT(length gk.Length) TextViewEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -540,6 +613,8 @@ func (e TextViewEl) BorderT(length gk.Length) TextViewEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e TextViewEl) BorderX(length gk.Length) TextViewEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -547,6 +622,8 @@ func (e TextViewEl) BorderX(length gk.Length) TextViewEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e TextViewEl) BorderY(length gk.Length) TextViewEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -554,21 +631,31 @@ func (e TextViewEl) BorderY(length gk.Length) TextViewEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e TextViewEl) Bottom(length gk.Length) TextViewEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e TextViewEl) ColEnd(end int16) TextViewEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e TextViewEl) ColSpan(span uint16) TextViewEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e TextViewEl) ColStart(start int16) TextViewEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e TextViewEl) Cursor(cursor gk.CursorStyle) TextViewEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -576,30 +663,42 @@ func (e TextViewEl) Cursor(cursor gk.CursorStyle) TextViewEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e TextViewEl) FlexBasis(basis gk.Length) TextViewEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e TextViewEl) FlexGrow(grow float32) TextViewEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e TextViewEl) FlexShrink(shrink float32) TextViewEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e TextViewEl) Font(font gk.Font) TextViewEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e TextViewEl) FontFamily(familyName string) TextViewEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e TextViewEl) FontFeatures(features gk.FontFeatures) TextViewEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -608,26 +707,38 @@ func (e TextViewEl) FontFeatures(features gk.FontFeatures) TextViewEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e TextViewEl) FontWeight(weight gk.FontWeight) TextViewEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e TextViewEl) Gap(length gk.Length) TextViewEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e TextViewEl) GapX(length gk.Length) TextViewEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e TextViewEl) GapY(length gk.Length) TextViewEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e TextViewEl) GridCols(cols uint16) TextViewEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e TextViewEl) GridColsMaxContent(cols uint16) TextViewEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -635,15 +746,21 @@ func (e TextViewEl) GridColsMaxContent(cols uint16) TextViewEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e TextViewEl) GridColsMinContent(cols uint16) TextViewEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e TextViewEl) GridRows(rows uint16) TextViewEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e TextViewEl) GridRowsMaxContent(rows uint16) TextViewEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -651,121 +768,179 @@ func (e TextViewEl) GridRowsMaxContent(rows uint16) TextViewEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e TextViewEl) GridRowsMinContent(rows uint16) TextViewEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e TextViewEl) H(length gk.Length) TextViewEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e TextViewEl) Inset(length gk.Length) TextViewEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e TextViewEl) Left(length gk.Length) TextViewEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e TextViewEl) LineClamp(lines int) TextViewEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e TextViewEl) LineHeight(lineHeight gk.Length) TextViewEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e TextViewEl) M(length gk.Length) TextViewEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e TextViewEl) MaxH(length gk.Length) TextViewEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e TextViewEl) MaxSize(length gk.Length) TextViewEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e TextViewEl) MaxW(length gk.Length) TextViewEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e TextViewEl) Mb(length gk.Length) TextViewEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e TextViewEl) MinH(length gk.Length) TextViewEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e TextViewEl) MinSize(length gk.Length) TextViewEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e TextViewEl) MinW(length gk.Length) TextViewEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e TextViewEl) Ml(length gk.Length) TextViewEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e TextViewEl) Mr(length gk.Length) TextViewEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e TextViewEl) Mt(length gk.Length) TextViewEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e TextViewEl) Mx(length gk.Length) TextViewEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e TextViewEl) My(length gk.Length) TextViewEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e TextViewEl) Opacity(opacity float32) TextViewEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e TextViewEl) P(length gk.Length) TextViewEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e TextViewEl) Pb(length gk.Length) TextViewEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e TextViewEl) Pl(length gk.Length) TextViewEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e TextViewEl) Pr(length gk.Length) TextViewEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e TextViewEl) Pt(length gk.Length) TextViewEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e TextViewEl) Px(length gk.Length) TextViewEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e TextViewEl) Py(length gk.Length) TextViewEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e TextViewEl) Right(length gk.Length) TextViewEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e TextViewEl) Rounded(length gk.Length) TextViewEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -773,6 +948,8 @@ func (e TextViewEl) Rounded(length gk.Length) TextViewEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e TextViewEl) RoundedB(length gk.Length) TextViewEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -780,6 +957,8 @@ func (e TextViewEl) RoundedB(length gk.Length) TextViewEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e TextViewEl) RoundedBl(length gk.Length) TextViewEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -787,6 +966,8 @@ func (e TextViewEl) RoundedBl(length gk.Length) TextViewEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e TextViewEl) RoundedBr(length gk.Length) TextViewEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -794,6 +975,8 @@ func (e TextViewEl) RoundedBr(length gk.Length) TextViewEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e TextViewEl) RoundedL(length gk.Length) TextViewEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -801,6 +984,8 @@ func (e TextViewEl) RoundedL(length gk.Length) TextViewEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e TextViewEl) RoundedR(length gk.Length) TextViewEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -808,6 +993,8 @@ func (e TextViewEl) RoundedR(length gk.Length) TextViewEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e TextViewEl) RoundedT(length gk.Length) TextViewEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -815,6 +1002,8 @@ func (e TextViewEl) RoundedT(length gk.Length) TextViewEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e TextViewEl) RoundedTl(length gk.Length) TextViewEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -822,39 +1011,55 @@ func (e TextViewEl) RoundedTl(length gk.Length) TextViewEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e TextViewEl) RoundedTr(length gk.Length) TextViewEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e TextViewEl) RowEnd(end int16) TextViewEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e TextViewEl) RowSpan(span uint16) TextViewEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e TextViewEl) RowStart(start int16) TextViewEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e TextViewEl) ScrollbarWidth(width gk.Length) TextViewEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e TextViewEl) Shadow(shadows []gk.BoxShadow) TextViewEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e TextViewEl) Size(length gk.Length) TextViewEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e TextViewEl) TextAlign(align gk.TextAlign) TextViewEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -863,23 +1068,31 @@ func (e TextViewEl) TextAlign(align gk.TextAlign) TextViewEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e TextViewEl) TextBg(bg gk.Color) TextViewEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e TextViewEl) TextColor(color gk.Color) TextViewEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e TextViewEl) TextDecorationColor(color gk.Color) TextViewEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e TextViewEl) TextOverflow(overflow gk.TextOverflow) TextViewEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -888,6 +1101,8 @@ func (e TextViewEl) TextOverflow(overflow gk.TextOverflow) TextViewEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e TextViewEl) TextSize(size gk.Length) TextViewEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -895,15 +1110,19 @@ func (e TextViewEl) TextSize(size gk.Length) TextViewEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e TextViewEl) Top(length gk.Length) TextViewEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e TextViewEl) W(length gk.Length) TextViewEl { tStyledW(rt.N(e.Core), length); return e }
 
 // TextViewStyle is gpui_kit::component::text::TextViewStyle.
 type TextViewStyle struct{ rt.Val }
 
-// NewTextViewStyleDefault is <gpui_kit::component::text::TextViewStyle as Default>::default.
+// NewTextViewStyleDefault calls <gpui_kit::component::text::TextViewStyle as Default>::default.
 func NewTextViewStyleDefault() TextViewStyle {
 	n := rt.NewValue(798)
 	return TextViewStyle{Val: rt.MkVal(n)}
@@ -914,7 +1133,7 @@ func NewTextViewStyleDefault() TextViewStyle {
 // Set `overflow.y` to `Overflow::Scroll` with a max height on the refinement to scroll long code
 // inside the block instead of growing it.
 //
-// CodeBlock is <gpui_kit::component::text::TextViewStyle>::code_block.
+// CodeBlock calls <gpui_kit::component::text::TextViewStyle>::code_block.
 func (e TextViewStyle) CodeBlock(style gk.StyleRefinement) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -924,7 +1143,7 @@ func (e TextViewStyle) CodeBlock(style gk.StyleRefinement) TextViewStyle {
 // Set the function that resolves a heading's font size from its level (1-6) and
 // `heading_base_font_size`.
 //
-// HeadingFontSize is <gpui_kit::component::text::TextViewStyle>::heading_font_size.
+// HeadingFontSize calls <gpui_kit::component::text::TextViewStyle>::heading_font_size.
 func (e TextViewStyle) HeadingFontSize(f string) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 262)
 	rt.PutExpr(o, f, 2)
@@ -933,7 +1152,7 @@ func (e TextViewStyle) HeadingFontSize(f string) TextViewStyle {
 
 // Set style for inline code spans.
 //
-// InlineCode is <gpui_kit::component::text::TextViewStyle>::inline_code.
+// InlineCode calls <gpui_kit::component::text::TextViewStyle>::inline_code.
 func (e TextViewStyle) InlineCode(style gk.HighlightStyle) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 257)
 	putHighlightStyle(o, style)
@@ -942,7 +1161,7 @@ func (e TextViewStyle) InlineCode(style gk.HighlightStyle) TextViewStyle {
 
 // Set paragraph gap, default is 0.75 rem.
 //
-// ParagraphGap is <gpui_kit::component::text::TextViewStyle>::paragraph_gap.
+// ParagraphGap calls <gpui_kit::component::text::TextViewStyle>::paragraph_gap.
 func (e TextViewStyle) ParagraphGap(gap float32) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(gap)
@@ -955,7 +1174,7 @@ func (e TextViewStyle) ParagraphGap(gap float32) TextViewStyle {
 // and once columns reach their minimum width the table scrolls horizontally instead of shrinking
 // further.
 //
-// Table is <gpui_kit::component::text::TextViewStyle>::table.
+// Table calls <gpui_kit::component::text::TextViewStyle>::table.
 func (e TextViewStyle) Table(style gk.StyleRefinement) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -967,7 +1186,7 @@ func (e TextViewStyle) Table(style gk.StyleRefinement) TextViewStyle {
 // With the scroll table layout, `white_space: nowrap` here keeps cells on a single line and the
 // table scrolls whenever the content is wider than the frame.
 //
-// TableCell is <gpui_kit::component::text::TextViewStyle>::table_cell.
+// TableCell calls <gpui_kit::component::text::TextViewStyle>::table_cell.
 func (e TextViewStyle) TableCell(style gk.StyleRefinement) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -976,7 +1195,7 @@ func (e TextViewStyle) TableCell(style gk.StyleRefinement) TextViewStyle {
 
 // Set extra style for the table header row.
 //
-// TableHead is <gpui_kit::component::text::TextViewStyle>::table_head.
+// TableHead calls <gpui_kit::component::text::TextViewStyle>::table_head.
 func (e TextViewStyle) TableHead(style gk.StyleRefinement) TextViewStyle {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.TakeValue(rt.N(style.Core)))

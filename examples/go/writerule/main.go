@@ -1,13 +1,5 @@
-// writerule: the write-rule case in Go, the twin of ref/src/bin/writerule.rs (DESIGN.md
-// section 7, "When a write lands"; docs/PROTOCOLS.md section 3). A per-frame handler writes
-// the frame's number into an input's state; a second view echoes the input's value. The rule
-// says the write is in the pixels of the frame the handler ran in, so every image must show
-// the same number in the input and in the echo, as the Rust reference does.
-//
-// The handler does not notify the echo view: that view is described again only because it
-// read the state that was written. An app that notified it by hand would hide a broken rule.
-//
-//	GK_SCRIPT=file writerule-go   offscreen under a gk-meter script (the diag library)
+// Write-rule example: updates an InputState inside gk.OnFrame and echoes its value in a
+// child view, verifying that pre-frame writes become visible on the very same frame.
 package main
 
 import (
@@ -32,6 +24,8 @@ func (a *App) init(cx *gk.Cx) {
 	gk.OnFrame(cx, a.tick)
 }
 
+// tick mutates InputState during K_FRAME; because the write lands before K_VIEWS runs,
+// echoView observes the updated text on the very same frame (no one-frame lag).
 func (a *App) tick(cx *gk.Cx) {
 	a.frame++
 	a.name.SetValue(cx, fmt.Sprintf("frame %d", a.frame))
@@ -45,6 +39,7 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 		ChildView(a.echo)
 }
 
+// echoView reads a.name.Value(cx), subscribing this child view to InputState changes.
 func (a *App) echoView(cx *gk.Cx) gk.Element {
 	return gk.HFlex().Child(kit.Label("echo " + a.name.Value(cx)))
 }

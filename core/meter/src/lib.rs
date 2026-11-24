@@ -1,22 +1,7 @@
-//! gk-meter: the one measuring and driving module that is linked into the Rust reference
-//! binaries and into libgk_capi, so the three versions of an app are measured by the same code.
+//! Frame timing, runtime counters, window-option helpers, and synthetic input dispatch.
 //!
-//! Environment:
-//!   GK_FRAMES=warmup,measured   drive frames (the kit's Root is notified before every frame),
-//!                               record `measured` frames after `warmup`, then quit
-//!   GK_STATS=file.csv           one line per measured frame
-//!   GK_LABEL=name               copied into the summary line
-//!   GK_CLICK=x,y,frame[,every]  inject a left click at (x, y) 5 ms after the frame request of
-//!                               frame `frame` (counted from the first frame), that is between
-//!                               two frames as real input arrives, and then every `every` frames
-//!   GK_SIZE=w,h                 window size (default: what the app asked for)
-//!   GK_SCROLL=x,y,dy            a scroll of dy pixels at (x, y) 5 ms after every frame request,
-//!                               as a wheel or trackpad sends it between frames (the scrolled
-//!                               table scene; negative dy scrolls the content up)
-//!
-//! Per frame: main-thread CPU time (CLOCK_THREAD_CPUTIME_ID, as gpui-fast's views_frames
-//! benchmark does), the interval between frames, the boundary counters below, and with the
-//! `diag` feature gpui-fast's retention counters (Window::layout_stats).
+//! Both `libgpuikit` and the pure-Rust reference apps share this crate so automated tests and
+//! frame-cost measurements use identical window sizing, input sequences, and summary reporting.
 
 use gpui_kit::{
     App, Bounds, EntityId, Modifiers, MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent,
@@ -31,39 +16,40 @@ use std::time::{Duration, Instant};
 #[cfg(feature = "diag")]
 pub mod headless;
 
-/// What crossed the C boundary and what the library did for the app. All zero in a pure Rust
-/// binary. Bumped by gk-capi on the UI thread.
+/// Snapshot of cumulative runtime counters recorded by `libgpuikit` and sampled once per frame
+/// by [`attach`].
 #[derive(Default, Clone, Copy, Debug)]
 pub struct Counters {
-    /// Callbacks into the app (turns), all kinds.
+    /// Total FFI callback turns invoked across all turn kinds.
     pub callbacks: u64,
-    /// `gk_call`s from the app.
+    /// Total synchronous `gk_call` invocations from host callbacks.
     pub calls: u64,
-    /// Time inside callbacks, measured around the callback in Rust.
+    /// Cumulative wall nanoseconds spent inside host callbacks.
     pub callback_ns: u64,
-    /// Time decoding tapes into elements (GkView::render).
+    /// Cumulative estimated nanoseconds spent decoding tapes into GPUI elements.
     pub decode_ns: u64,
-    /// Tapes decoded (GkView::render calls).
+    /// Number of tape decode passes.
     pub decodes: u64,
-    /// Tapes accepted from the app (views re-described with a changed tape).
+    /// Number of tapes parsed and accepted.
     pub tapes: u64,
+    /// Total raw byte length of accepted tapes.
     pub tape_bytes: u64,
+    /// Counts of `K_FRAME`, `K_VIEWS`, `K_EVENT`, and `K_WAKE` callback turns.
     pub frame_turns: u64,
     pub views_turns: u64,
     pub event_turns: u64,
     pub wake_turns: u64,
-    /// Deferred call ops applied.
+    /// Number of buffered write operations executed outside the originating event handler.
     pub deferred_ops: u64,
-    /// ROWS turns (row sources: rows bound to views before a frame).
+    /// Number of `K_ROWS` row-source sync turns.
     pub rows_turns: u64,
-    /// Rows drawn as placeholders because they had no view yet.
+    /// Individual row lookups that missed the cache and rendered a placeholder.
     pub rows_missing: u64,
-    /// Frames in which a row source drew at least one placeholder.
+    /// Frames on which at least one row source rendered a placeholder.
     pub placeholder_frames: u64,
 }
 
-/// Lock-free single-writer (UI-thread) storage for `Counters`, avoiding dynamic-TLS
-/// (`__tls_get_addr`) and `RefCell` borrow checks on every `bump` in `cdylib` builds.
+/// Global atomic backing store for [`Counters`].
 pub struct CounterRefs {
     callbacks: AtomicU64,
     calls: AtomicU64,
@@ -100,6 +86,7 @@ static ATOMIC_COUNTERS: CounterRefs = CounterRefs {
     placeholder_frames: AtomicU64::new(0),
 };
 
+/// Single-writer relaxed increment used on the UI thread to avoid atomic RMW overhead.
 #[inline(always)]
 fn add_ui(a: &AtomicU64, v: u64) {
     if v != 0 {
@@ -107,23 +94,27 @@ fn add_ui(a: &AtomicU64, v: u64) {
     }
 }
 
+/// Records one tape decode pass taking `ns` nanoseconds.
 #[inline(always)]
 pub fn bump_decode(ns: u64) {
     add_ui(&ATOMIC_COUNTERS.decodes, 1);
     add_ui(&ATOMIC_COUNTERS.decode_ns, ns);
 }
 
+/// Records one submitted tape buffer of `bytes` length.
 #[inline(always)]
 pub fn bump_tape(bytes: u64) {
     add_ui(&ATOMIC_COUNTERS.tapes, 1);
     add_ui(&ATOMIC_COUNTERS.tape_bytes, bytes);
 }
 
+/// Records `n` deferred tape operations queued for later execution.
 #[inline(always)]
 pub fn bump_deferred(n: u64) {
     add_ui(&ATOMIC_COUNTERS.deferred_ops, n);
 }
 
+/// Records one host callback turn of wire kind `kind` (3=frame, 4=views, 5=event, 7=wake).
 #[inline(always)]
 pub fn bump_turn(kind: u32, ns: u64) {
     add_ui(&ATOMIC_COUNTERS.callbacks, 1);
@@ -141,6 +132,7 @@ thread_local! {
     static HEADLESS_SIZE: Cell<Option<(f32, f32)>> = const { Cell::new(None) };
 }
 
+/// Applies a batch of deltas populated by `f` to the global counters.
 #[inline]
 pub fn bump(f: impl FnOnce(&mut Counters)) {
     let mut d = Counters::default();
@@ -162,6 +154,7 @@ pub fn bump(f: impl FnOnce(&mut Counters)) {
     add_ui(&ATOMIC_COUNTERS.placeholder_frames, d.placeholder_frames);
 }
 
+/// Returns a relaxed snapshot of all global runtime counters.
 pub fn counters() -> Counters {
     Counters {
         callbacks: ATOMIC_COUNTERS.callbacks.load(Ordering::Relaxed),
@@ -182,11 +175,12 @@ pub fn counters() -> Counters {
     }
 }
 
-/// CPU time the calling thread has used so far.
+/// Returns cumulative CPU time consumed by the calling thread.
 #[cfg(unix)]
 pub fn thread_cpu() -> Duration {
     let mut t = std::mem::MaybeUninit::<libc::timespec>::uninit();
-    // SAFETY: clock_gettime fills the struct when it returns 0.
+    // SAFETY: `t.as_mut_ptr()` is a valid, aligned pointer to a writable `libc::timespec`,
+    // and `assume_init` is only called after `clock_gettime` returns 0 (success).
     let t = unsafe {
         if libc::clock_gettime(libc::CLOCK_THREAD_CPUTIME_ID, t.as_mut_ptr()) != 0 {
             return Duration::ZERO;
@@ -196,8 +190,7 @@ pub fn thread_cpu() -> Duration {
     Duration::new(t.tv_sec as u64, t.tv_nsec as u32)
 }
 
-/// CPU time the calling thread has used so far (user plus kernel, in 100 ns units). kernel32 is
-/// declared here rather than through a crate, so the lock file is the same on every platform.
+/// Returns cumulative kernel plus user CPU time consumed by the calling thread.
 #[cfg(windows)]
 pub fn thread_cpu() -> Duration {
     #[repr(C)]
@@ -206,6 +199,7 @@ pub fn thread_cpu() -> Duration {
         low: u32,
         high: u32,
     }
+    // SAFETY: Standard Win32 kernel32 signatures matching Microsoft's C ABI.
     #[link(name = "kernel32")]
     unsafe extern "system" {
         fn GetCurrentThread() -> *mut std::ffi::c_void;
@@ -219,8 +213,8 @@ pub fn thread_cpu() -> Duration {
     }
     let z = FileTime { low: 0, high: 0 };
     let (mut c, mut e, mut k, mut u) = (z, z, z, z);
-    // SAFETY: GetCurrentThread returns a pseudo handle that needs no closing; GetThreadTimes
-    // fills the four structs when it returns non-zero.
+    // SAFETY: `GetCurrentThread` returns a valid pseudo-handle and all four out-pointers
+    // refer to valid stack-allocated `FileTime` values.
     if unsafe { GetThreadTimes(GetCurrentThread(), &mut c, &mut e, &mut k, &mut u) } == 0 {
         return Duration::ZERO;
     }
@@ -233,8 +227,8 @@ fn env_nums(name: &str) -> Option<Vec<f64>> {
     v.split(',').map(|p| p.trim().parse::<f64>().ok()).collect()
 }
 
-/// The window options every measured binary uses: the size the app asked for (or GK_SIZE),
-/// and no 30 frames a second cap while unfocused. Offscreen: a hidden window at the origin.
+/// Builds `WindowOptions` using headless dimensions when active, `GK_SIZE` when set,
+/// or the caller's default `width` and `height`.
 pub fn window_options(width: f32, height: f32, cx: &App) -> WindowOptions {
     if let Some((w, h)) = HEADLESS_SIZE.with(|s| s.get()) {
         return WindowOptions {
@@ -323,8 +317,10 @@ struct Meter {
     root: Option<EntityId>,
 }
 
-/// Starts the meter for this window if GK_FRAMES is set. Call it with the window in hand,
-/// inside the closure that builds the window's root view.
+/// Attaches a per-frame timing harness to `window` when `GK_FRAMES` is set in the environment.
+///
+/// Optional environment variables: `GK_FRAMES=warmup,measured`, `GK_CLICK=x,y,at[,every]`,
+/// `GK_SCROLL=x,y,dy`, `GK_LABEL`, and `GK_STATS=<csv-path>`.
 pub fn attach(window: &mut Window, _cx: &mut App) {
     let Some(frames) = env_nums("GK_FRAMES") else {
         return;
@@ -359,7 +355,6 @@ pub fn attach(window: &mut Window, _cx: &mut App) {
     window.on_next_frame(move |window, cx| tick(meter, window, cx));
 }
 
-/// Runs before every frame, inside the platform's frame request and before the draw.
 fn tick(meter: Rc<RefCell<Meter>>, window: &mut Window, cx: &mut App) {
     let cpu = thread_cpu();
     let wall = Instant::now();
@@ -398,7 +393,7 @@ fn tick(meter: Rc<RefCell<Meter>>, window: &mut Window, cx: &mut App) {
             scroll_by = Some((point(px(x), px(y)), dy));
         }
         if m.root.is_none() {
-            // The kit's Root is the window's root view; notifying it is what makes a frame.
+            // Cache the gpui-kit Root entity ID so we can notify it directly instead of full window refresh.
             m.root = window
                 .root::<gpui_kit::base::Root>()
                 .flatten()
@@ -412,8 +407,7 @@ fn tick(meter: Rc<RefCell<Meter>>, window: &mut Window, cx: &mut App) {
         return;
     }
     if let Some(position) = click_at {
-        // Between frames, as a real input event arrives: 5 ms after this frame request, well
-        // before the next one.
+        // Defer synthetic input slightly so it arrives outside the current frame callback.
         window
             .spawn(cx, async move |cx| {
                 cx.background_executor().timer(Duration::from_millis(5)).await;
@@ -435,7 +429,7 @@ fn tick(meter: Rc<RefCell<Meter>>, window: &mut Window, cx: &mut App) {
         window.refresh();
     }
     {
-        // Taken after the meter's own work, so that work is charged to no frame.
+        // Re-sample thread CPU after bookkeeping so the meter's own work is excluded from next frame's delta.
         let mut m = meter.borrow_mut();
         m.last_cpu = thread_cpu();
         m.last_wall = wall;
@@ -465,7 +459,7 @@ fn delta(a: Counters, b: Counters) -> Counters {
     }
 }
 
-/// A left click at a window position: move, down, up, as the kit's test module sends it.
+/// Dispatches a synthetic left click (move, down, up) at `position`.
 pub fn click(window: &mut Window, position: Point<Pixels>, cx: &mut App) {
     let modifiers = Modifiers::default();
     window.dispatch_event(
@@ -508,6 +502,9 @@ fn peak_rss_kb() -> u64 {
         .unwrap_or(0)
 }
 
+/// Prints the `gk-meter ...` summary line (CPU percentiles, frame-interval deadline misses,
+/// per-frame turn/decode/layout averages, and Linux `VmHWM` peak RSS) and optionally writes
+/// per-frame CSV rows to `GK_STATS`.
 fn report(m: &Meter, window: &Window) {
     let n = m.rows.len().max(1) as f64;
     let mut cpu: Vec<u64> = m.rows.iter().map(|r| r.cpu_ns).collect();
@@ -611,7 +608,7 @@ pub(crate) fn set_headless_size(w: f32, h: f32) {
     HEADLESS_SIZE.with(|s| s.set(Some((w, h))));
 }
 
-/// A scroll of `dy` pixels at a window position, as a wheel or trackpad sends it.
+/// Dispatches a vertical pixel scroll event at `position` with delta `dy`.
 pub fn scroll(window: &mut Window, position: Point<Pixels>, dy: f32, cx: &mut App) {
     window.dispatch_event(
         gpui_kit::PlatformInput::Scroll(gpui_kit::ScrollEvent {
@@ -623,8 +620,7 @@ pub fn scroll(window: &mut Window, position: Point<Pixels>, dy: f32, cx: &mut Ap
     );
 }
 
-/// A double click at a window position: a click, then a press and release with a click count
-/// of two.
+/// Dispatches a synthetic left double-click (click count 1 followed by click count 2) at `position`.
 pub fn double_click(window: &mut Window, position: Point<Pixels>, cx: &mut App) {
     click(window, position, cx);
     let modifiers = Modifiers::default();
@@ -649,8 +645,10 @@ pub fn double_click(window: &mut Window, position: Point<Pixels>, cx: &mut App) 
     );
 }
 
-/// A press at `from`, the pointer moved to `to` with the button held in `steps` moves (the
-/// caller draws a frame after each, `step` returning), then a release at `to`.
+/// Dispatches one phase of a left-button drag from `from` to `to` over `steps` intermediate moves.
+///
+/// Phase 0 moves and presses at `from`, phases `1..=steps` interpolate pointer movement with the
+/// left button held, and any higher phase releases at `to`.
 pub fn drag(
     window: &mut Window,
     from: Point<Pixels>,
@@ -699,18 +697,14 @@ pub fn drag(
     }
 }
 
-/// A right click at a window position: move, press and release of the right button.
+/// Dispatches a synthetic right click (move, down, up) at `position`.
 pub fn right_click(window: &mut Window, position: Point<Pixels>, cx: &mut App) {
     for input in right_click_inputs(position) {
         window.dispatch_event(input, cx);
     }
 }
 
-/// What a right click is on a real window, in order: the pointer moved to `position`, the right
-/// button pressed, released. A real window (gpui window.rs, `on_input`) dispatches each in its own
-/// update of the app, so what one input's handlers defer (`cx.defer`, `window.defer`, the binding's
-/// buffered writes) runs before the next input; the offscreen driver does the same (headless.rs,
-/// `rclick`).
+/// Builds the move, right-button-down, and right-button-up events for a right click at `position`.
 pub fn right_click_inputs(position: Point<Pixels>) -> [gpui_kit::PlatformInput; 3] {
     let modifiers = Modifiers::default();
     [

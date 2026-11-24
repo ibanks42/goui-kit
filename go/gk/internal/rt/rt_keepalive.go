@@ -8,30 +8,27 @@ import (
 	"time"
 )
 
-// Slow-cadence P refresher (60 Hz and below).
+// Timing thresholds for the scheduler keep-alive goroutine.
 //
-// When the locked UI thread stays inside C (gk_run) for more than 10 ms between callbacks,
-// Go's sysmon retakes its P, pushes it onto sched.pidle, and enters deep sleep. On the next
-// frame's callback, exitsyscallTryGetP pops the top P off sched.pidle and wakes sysmon.
-// Because exitsyscall only increments P.syscalltick (never P.schedtick), sysmon wakes ~6 us
-// later while the callback is still in Go, sees pd.schedwhen + 10ms <= now, and calls
-// preemptone(P) (stackPreempt + SIGURG). That forces the locked UI thread through
-// stoplockedm() (futex_wait on the main thread, +10 to 12 us/frame and extra main-thread
-// voluntary context switches).
+// Go's background sysmon thread retakes idle Ps (logical processors) after roughly
+// 10 ms without Go execution. In an interactive GUI app running at 60 Hz (one
+// frame every ~16.6 ms), the locked UI OS thread spends most of each frame
+// blocked inside the native Rust event loop; when the next C-to-Go callback
+// arrives, Go has to wake and reacquire a P, adding jitter to frame latency.
 //
-// Waking the UI thread itself mid-frame through GPUI's foreground executor adds more
-// main-thread CPU (calloop event loop dispatch + epoll wakeup) than it saves. Instead, when
-// consecutive real turns arrive 10 to 250 ms apart, a single background goroutine wakes
-// ~1.5 ms before the next expected callback, calls runtime.Gosched() (routing through the
-// global runq so execute(..., inheritTime=false) increments P.schedtick), and parks via
-// time.Sleep (pushing that freshly ticked P onto the top of sched.pidle). The UI thread's
-// next exitsyscallTryGetP then pops a P with a fresh schedtick, avoiding preemption and
-// stoplockedm() at ~20 ns main-thread cost and zero extra main-thread wakeups.
-//
-// Fast cadences (120 Hz+, gap < 10 ms) never start the goroutine. Idle apps stop waking
-// after one post-frame check and park on a channel receive until the next slow-cadence
-// burst or until gk.Run returns.
-
+// To avoid that stall without burning CPU when idle, this file watches the
+// inter-turn gap on the UI thread:
+//   - Fast bursts (< pkaMinGapNs, 10 ms): Go never parks a P, so no goroutine runs.
+//   - Steady display cadences (pkaMinGapNs..pkaMaxGapNs, 10..250 ms): a single
+//     background goroutine wakes pkaLeadNs (550 us) before the predicted next
+//     turn and calls runtime.Gosched() to keep a P warm. For gaps >= 13.5 ms, an
+//     earlier nudge runs pkaNudgeLeadNs (2 ms) before the main wake-up.
+//   - Multiple callbacks within one frame (< pkaSameFrameNs, 2 ms, while inside
+//     the pkaSlowHoldNs 50 ms hold window): refresh lastTurn without distorting
+//     the smoothed cadence estimate.
+//   - Idle: once no new turn arrives after a refresh, the goroutine sets
+//     sleeping=true, re-checks lastTurn to close the race window, and blocks on
+//     s.wake with zero CPU usage.
 const (
 	pkaSameFrameNs = int64(2 * time.Millisecond)
 	pkaMinGapNs    = int64(10 * time.Millisecond)
@@ -45,25 +42,33 @@ const (
 	pkaMaxPostNs   = int64(14 * time.Millisecond)
 )
 
+// UI-thread-only keep-alive state for the active Run session.
+// pkaState is nil until the first turn gap in [pkaMinGapNs, pkaMaxGapNs]
+// triggers lazy creation of the keep-alive goroutine.
 var (
-	pkaActive    bool        // UI thread only: true during a windowed gk.Run (false headless or GK_NO_KEEPALIVE)
-	pkaStats     bool        // GK_KEEPALIVE_STATS=1 prints refresh count on exit
-	pkaEpoch     time.Time   // monotonic origin for pkaNowNs
-	pkaPrevNs    int64       // UI thread only: timestamp of previous real turn
-	pkaSlowUntil int64       // UI thread only: same-frame burst window after a slow gap
-	pkaState     *pkaSession // current gk.Run's background refresher session (nil until first slow gap)
+	pkaActive    bool
+	pkaStats     bool
+	pkaEpoch     time.Time
+	pkaPrevNs    int64
+	pkaSlowUntil int64
+	pkaState     *pkaSession
 )
 
+// pkaSession holds the atomic timestamps and lifecycle channels shared between
+// the UI thread (writer of lastTurn/lastGap) and the keep-alive goroutine.
 type pkaSession struct {
-	lastTurn  atomic.Int64
-	lastGap   atomic.Int64
-	sleeping  atomic.Bool
-	refreshes atomic.Uint64
+	lastTurn  atomic.Int64  // monotonic ns since pkaEpoch of the latest UI turn
+	lastGap   atomic.Int64  // smoothed inter-turn interval in ns
+	sleeping  atomic.Bool   // true while the goroutine is parked on wake
+	refreshes atomic.Uint64 // diagnostic counter printed when GK_KEEPALIVE_STATS is set
 	wake      chan struct{}
 	stop      chan struct{}
 	done      chan struct{}
 }
 
+// startPKeepAlive initializes keep-alive configuration at the start of a run.
+// Set GK_NO_KEEPALIVE to disable the goroutine or GK_KEEPALIVE_STATS to print
+// the refresh count on exit.
 func startPKeepAlive() {
 	pkaActive = os.Getenv("GK_NO_KEEPALIVE") == ""
 	pkaStats = os.Getenv("GK_KEEPALIVE_STATS") != ""
@@ -73,6 +78,8 @@ func startPKeepAlive() {
 	pkaState = nil
 }
 
+// stopPKeepAlive stops the keep-alive goroutine if it was started and waits
+// for it to exit.
 func stopPKeepAlive() {
 	pkaActive = false
 	s := pkaState
@@ -92,6 +99,10 @@ func pkaNowNs() int64 {
 	return time.Since(pkaEpoch).Nanoseconds()
 }
 
+// pkaNoteTurn records the arrival time of a UI turn on the locked UI thread.
+// Gaps in [pkaMinGapNs, pkaMaxGapNs] lazily start or wake the keep-alive
+// goroutine and update the smoothed inter-turn interval; closely spaced
+// same-frame turns refresh lastTurn without perturbing the cadence estimate.
 func pkaNoteTurn() {
 	now := pkaNowNs()
 	prev := pkaPrevNs
@@ -103,8 +114,6 @@ func pkaNoteTurn() {
 	if gap >= pkaMinGapNs && gap <= pkaMaxGapNs {
 		pkaSlowUntil = now + pkaSlowHoldNs
 	} else if gap < pkaSameFrameNs && now < pkaSlowUntil {
-		// Second turn in the same slow-cadence frame (e.g. EVENT followed by VIEWS):
-		// slide lastTurn forward without changing lastGap.
 		if s := pkaState; s != nil {
 			s.lastTurn.Store(now)
 		}
@@ -126,6 +135,7 @@ func pkaNoteTurn() {
 		go s.run()
 		return
 	}
+	// Exponentially smooth steady cadence changes (3/4 old, 1/4 new).
 	if prevGap := s.lastGap.Load(); prevGap > 0 && gap >= prevGap/2 && gap <= prevGap*2 {
 		gap = (prevGap*3 + gap) / 4
 	}
@@ -139,6 +149,7 @@ func pkaNoteTurn() {
 	}
 }
 
+// sleepUntil waits for duration d on timer t, returning false if stop closes first.
 func (s *pkaSession) sleepUntil(t *time.Timer, d time.Duration) bool {
 	if d <= 0 {
 		return true
@@ -158,6 +169,8 @@ func (s *pkaSession) sleepUntil(t *time.Timer, d time.Duration) bool {
 	}
 }
 
+// run sleeps until shortly before each expected frame callback, yields to keep
+// a scheduler P active, and parks on s.wake whenever turns stop arriving.
 func (s *pkaSession) run() {
 	defer close(s.done)
 	t := time.NewTimer(time.Hour)
@@ -184,9 +197,7 @@ func (s *pkaSession) run() {
 			if delay > pkaMaxDelayNs {
 				delay = pkaMaxDelayNs
 			}
-			// On GOMAXPROCS > 1, nudge sysmon ~2.5 ms earlier (still past the 10 ms retake
-			// threshold) so any P still attached to the UI thread in C is retaken and pushed
-			// onto sched.pidle before the final refresh just ahead of the next frame.
+			// For longer intervals, issue an early nudge before the main wake-up.
 			if delay >= pkaMinDelayNs+pkaNudgeLeadNs {
 				nudgeRem := (lt + delay - pkaNudgeLeadNs) - pkaNowNs()
 				if nudgeRem > 0 && !s.sleepUntil(t, time.Duration(nudgeRem)) {
@@ -202,14 +213,10 @@ func (s *pkaSession) run() {
 			}
 			if s.lastTurn.Load() == lt {
 				handled = lt
-				// Yield through the global runq so execute(..., inheritTime=false)
-				// increments this P's schedtick; parking on the sleep below then pushes
-				// this freshly ticked P onto the top of sched.pidle.
 				runtime.Gosched()
 				s.refreshes.Add(1)
 			}
-			// Wait past the next expected frame so steady 60 Hz needs zero channel wakes
-			// from the UI thread; if the app went idle, fall through to infinite park.
+			// Wait past the expected frame arrival before checking for another turn.
 			w := gap - delay + pkaLeadNs
 			if w < pkaMinPostNs {
 				w = pkaMinPostNs
@@ -222,6 +229,7 @@ func (s *pkaSession) run() {
 			}
 			continue
 		}
+		// Mark sleeping and re-check lastTurn to avoid missing a concurrent wake.
 		s.sleeping.Store(true)
 		if s.lastTurn.Load() != handled {
 			s.sleeping.Store(false)

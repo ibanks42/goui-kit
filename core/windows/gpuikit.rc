@@ -1,16 +1,4 @@
-/* gpuikit.rc: the resources a Windows program on libgpuikit embeds. gpui-fast leaves DPI
- * awareness and the common controls to the program's manifest (without it the window is drawn
- * at 96 dpi and scaled by Windows, blurred), and gives the window the program's icon 1.
- *
- * Go: package gk embeds it already: go/gk/gpuikit_windows_amd64.syso is this file compiled, which
- * go build links into every Go program (regenerate it after editing the manifest:
- *     windres -O coff -i core/windows/gpuikit.rc -o go/gk/gpuikit_windows_amd64.syso
- * with MinGW-w64's windres). MinGW's gcc also links a default manifest of its own (long paths,
- * asInvoker); GNU ld lets this one replace it, lld needs -Xlink=-force:multipleres and keeps the
- * first, this one. An app that wants its own icon compiles a .rc with only the icon into a .syso in
- * its main package. */
+/* Windows resource script that embeds gpuikit.manifest as resource ID 1
+ * (CREATEPROCESS_MANIFEST_RESOURCE_ID, RT_MANIFEST = 24) in host binaries. */
 #define RT_MANIFEST 24
 1 RT_MANIFEST "gpuikit.manifest"
-/* The window's icon: uncomment and give an .ico.
-1 ICON "app.ico"
-*/

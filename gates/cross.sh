@@ -1,19 +1,21 @@
 #!/bin/bash
-# cross.sh: the Go front end compiled from Linux for the other platforms, macOS (arm64 and
-# x86_64, the two slices of its universal library), Windows x86-64 and Linux arm64, in under a
-# minute and without their SDKs, so a change that breaks them is seen before CI
-# (.github/workflows/platforms.yml) builds and runs them there. Runs on Linux (make cross); prints
-# GATE lines and exits non-zero on a failure.
-#   go      examples/go/hello built the default way (CGO_ENABLED=0: the library is loaded at
-#           start-up through purego, so no C compiler and no library are needed to build) with
-#           GOOS=darwin GOARCH=arm64 and amd64, GOOS=windows GOARCH=amd64 and GOOS=linux
-#           GOARCH=arm64; each binary is checked to be its platform and architecture alone.
-#           Nothing is run; the binaries are thrown away.
-#   vet     the whole Go module type-checked for each, the default way (CGO_ENABLED=0) and the
-#           static way (-tags gkstatic, cgo run by zig cc for the target: go vet compiles the cgo
-#           files but links nothing, so no library is needed)
-# ZIG (default: the pinned zig of tools/zigbuild.sh, downloaded once into target/toolchain/).
-# Scratch (zig's caches, the binaries) goes to GK_SCRATCH and is deleted.
+# Cross-compilation and `go vet` gate from Linux (`gates/cross.sh`).
+#
+# What it gates:
+#   Verifies that the Go front end stays portable to Windows (amd64), macOS (arm64 and amd64),
+#   and Linux (arm64) without needing target hardware:
+#   - 4 executable builds of `examples/go/hello` with `CGO_ENABLED=0` (purego dynamic loader path).
+#   - 3 `go vet ./...` passes on `go/` with `CGO_ENABLED=0` for Windows and macOS.
+#   - 3 `go vet -tags gkstatic ./...` passes on `go/` with `CGO_ENABLED=1` using `zig cc` as the
+#     cross C compiler so cgo headers and link directives are checked on non-Linux targets too.
+#
+# How it verifies outputs:
+#   Checks executable magic and architecture headers directly (PE x86_64 machine 0x8664, Mach-O
+#   arm64/x86_64 via `tools/macho.py`, 64-bit ELF AArch64 machine 183) inside a scratch directory.
+#
+# What PASS means (exit 0):
+#   All 10 `GATE cross <target>` checks succeed; failures save logs under `gates/out/cross/`.
+
 set -uo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 . "$repo/go/env.sh"
@@ -25,13 +27,14 @@ mkdir -p "$base" && tmp=$(mktemp -d "$base/cross.XXXXXX") && [ -n "$tmp" ] || { 
 trap 'rm -rf "$tmp"' EXIT
 export ZIG_GLOBAL_CACHE_DIR=$tmp/zig-global ZIG_LOCAL_CACHE_DIR=$tmp/zig-local
 rc=0
-gate() { # NAME CMD...: one check, its output in gates/out/cross/NAME.log
+gate() {
   local name=$1; shift
   if "$@" > "$out/$name.log" 2>&1; then echo "GATE cross $name PASS"
   else echo "GATE cross $name FAIL (gates/out/cross/$name.log)"; tail -15 "$out/$name.log"; rc=1; fi
 }
 macho() { python3 -I "$repo/tools/macho.py" "$@"; }
-# kind FILE pe-amd64|elf-arm64: the binary's format and machine, read from its header.
+
+# Verify PE (x86_64 = 0x8664) or 64-bit ELF (AArch64 e_machine = 183) binary magic and architecture.
 kind() {
   python3 -I - "$1" "$2" <<'P'
 import struct, sys
@@ -47,7 +50,7 @@ P
 }
 
 cd "$repo/examples/go" || exit 2
-build() { # GOOS GOARCH: hello for one platform, without cgo
+build() {
   env GOOS="$1" GOARCH="$2" CGO_ENABLED=0 go build -ldflags=-w -o "$tmp/hello-$1-$2" ./hello
 }
 windows() { build windows amd64 && kind "$tmp/hello-windows-amd64" pe-amd64; }
@@ -57,7 +60,8 @@ gate go-windows-amd64 windows
 gate go-darwin-arm64 darwin arm64 arm64
 gate go-darwin-amd64 darwin amd64 x86_64
 gate go-linux-arm64 linux_arm64
-# The whole Go module type-checks for each, both ways.
+
+# Vet go/ for purego (CGO_ENABLED=0) and static cgo (-tags gkstatic using zig cc as the cross C compiler).
 cd "$repo/go" || exit 2
 gate vet-windows env GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go vet ./...
 gate vet-darwin-arm64 env GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go vet ./...

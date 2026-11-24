@@ -10,6 +10,7 @@ import (
 // ColumnFixed is gpui_kit::component::table::ColumnFixed.
 type ColumnFixed uint16
 
+// ColumnFixed enum values.
 const (
 	ColumnFixedLeft  ColumnFixed = 0
 	ColumnFixedRight ColumnFixed = 1
@@ -18,13 +19,14 @@ const (
 // ColumnSort is gpui_kit::component::table::ColumnSort.
 type ColumnSort uint16
 
+// ColumnSort enum values.
 const (
 	ColumnSortDefault    ColumnSort = 0
 	ColumnSortAscending  ColumnSort = 1
 	ColumnSortDescending ColumnSort = 2
 )
 
-// BaseIndexPath is gpui_kit::base::IndexPath.
+// BaseIndexPath mirrors gpui_kit::base::IndexPath.
 type BaseIndexPath struct {
 	Section int
 	Row     int
@@ -37,13 +39,13 @@ func putBaseIndexPath(o *rt.Tape, v BaseIndexPath) {
 	rt.PutUsize(o, v.Column)
 }
 
-// Row is a BaseIndexPath with only Row set (the other fields 0): gk.Row(4) (PROTOCOLS.md 11.36).
+// Row constructs a BaseIndexPath with Row set and all other fields zero.
 func Row(row int) BaseIndexPath { return BaseIndexPath{Row: row} }
 
-// NoRow is no BaseIndexPath, for a parameter that takes an optional one: gk.NewSelectState(cx, src, gk.NoRow).
+// NoRow represents an unset optional BaseIndexPath.
 var NoRow = gk.Option[BaseIndexPath]{}
 
-// BaseTreeItem is gpui_kit::base::TreeItem. Only the fields the binding can carry.
+// BaseTreeItem mirrors gpui_kit::base::TreeItem. Includes only wire-supported fields.
 type BaseTreeItem struct {
 	ID    string
 	Label string
@@ -88,41 +90,41 @@ func putGpuiPoint(o *rt.Tape, v gk.GpuiPoint) {
 	o.F32(v.Y)
 }
 
-// ComboboxEvent is gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate>: one struct type per variant.
+// ComboboxEvent represents gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate> with one struct type per variant.
 type ComboboxEvent interface{ isComboboxEvent() }
 
-// ComboboxEventChange is gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate>::Change.
+// ComboboxEventChange represents gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate>::Change.
 type ComboboxEventChange struct {
 	Value []string
 }
 
 func (ComboboxEventChange) isComboboxEvent() {}
 
-// ComboboxEventConfirm is gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate>::Confirm.
+// ComboboxEventConfirm represents gpui_kit::component::combobox::ComboboxEvent<crate::shim_select::GkSearchDelegate>::Confirm.
 type ComboboxEventConfirm struct {
 	Value []string
 }
 
 func (ComboboxEventConfirm) isComboboxEvent() {}
 
-// ListEvent is gpui_kit::component::list::ListEvent: one struct type per variant.
+// ListEvent represents gpui_kit::component::list::ListEvent with one struct type per variant.
 type ListEvent interface{ isListEvent() }
 
-// ListEventSelect is gpui_kit::component::list::ListEvent::Select.
+// ListEventSelect represents gpui_kit::component::list::ListEvent::Select.
 type ListEventSelect struct {
 	BaseIndexPath
 }
 
 func (ListEventSelect) isListEvent() {}
 
-// ListEventConfirm is gpui_kit::component::list::ListEvent::Confirm.
+// ListEventConfirm represents gpui_kit::component::list::ListEvent::Confirm.
 type ListEventConfirm struct {
 	BaseIndexPath
 }
 
 func (ListEventConfirm) isListEvent() {}
 
-// ListEventCancel is gpui_kit::component::list::ListEvent::Cancel.
+// ListEventCancel represents gpui_kit::component::list::ListEvent::Cancel.
 type ListEventCancel struct {
 }
 
@@ -142,10 +144,10 @@ func putMouseButton(o *rt.Tape, v gk.MouseButton) {
 	}
 }
 
-// SelectEvent is gpui_kit::component::select::SelectEvent<crate::shim_select::GkSearchDelegate>: one struct type per variant.
+// SelectEvent represents gpui_kit::component::select::SelectEvent<crate::shim_select::GkSearchDelegate> with one struct type per variant.
 type SelectEvent interface{ isSelectEvent() }
 
-// SelectEventConfirm is gpui_kit::component::select::SelectEvent<crate::shim_select::GkSearchDelegate>::Confirm.
+// SelectEventConfirm represents gpui_kit::component::select::SelectEvent<crate::shim_select::GkSearchDelegate>::Confirm.
 type SelectEventConfirm struct {
 	Value gk.Option[string]
 }
@@ -166,31 +168,31 @@ func putSize(o *rt.Tape, v gk.Size) {
 	}
 }
 
-// TableEvent is gpui_kit::component::table::TableEvent: one struct type per variant.
+// TableEvent represents gpui_kit::component::table::TableEvent with one struct type per variant.
 type Event interface{ isTableEvent() }
 
-// TableEventSelectRow is gpui_kit::component::table::TableEvent::SelectRow.
+// TableEventSelectRow represents gpui_kit::component::table::TableEvent::SelectRow.
 type EventSelectRow struct {
 	Value int
 }
 
 func (EventSelectRow) isTableEvent() {}
 
-// TableEventDoubleClickedRow is gpui_kit::component::table::TableEvent::DoubleClickedRow.
+// TableEventDoubleClickedRow represents gpui_kit::component::table::TableEvent::DoubleClickedRow.
 type EventDoubleClickedRow struct {
 	Value int
 }
 
 func (EventDoubleClickedRow) isTableEvent() {}
 
-// TableEventSelectColumn is gpui_kit::component::table::TableEvent::SelectColumn.
+// TableEventSelectColumn represents gpui_kit::component::table::TableEvent::SelectColumn.
 type EventSelectColumn struct {
 	Value int
 }
 
 func (EventSelectColumn) isTableEvent() {}
 
-// TableEventSelectCell is gpui_kit::component::table::TableEvent::SelectCell.
+// TableEventSelectCell represents gpui_kit::component::table::TableEvent::SelectCell.
 type EventSelectCell struct {
 	V0 int
 	V1 int
@@ -198,7 +200,7 @@ type EventSelectCell struct {
 
 func (EventSelectCell) isTableEvent() {}
 
-// TableEventDoubleClickedCell is gpui_kit::component::table::TableEvent::DoubleClickedCell.
+// TableEventDoubleClickedCell represents gpui_kit::component::table::TableEvent::DoubleClickedCell.
 type EventDoubleClickedCell struct {
 	V0 int
 	V1 int
@@ -206,14 +208,14 @@ type EventDoubleClickedCell struct {
 
 func (EventDoubleClickedCell) isTableEvent() {}
 
-// TableEventColumnWidthsChanged is gpui_kit::component::table::TableEvent::ColumnWidthsChanged.
+// TableEventColumnWidthsChanged represents gpui_kit::component::table::TableEvent::ColumnWidthsChanged.
 type EventColumnWidthsChanged struct {
 	Value []float32
 }
 
 func (EventColumnWidthsChanged) isTableEvent() {}
 
-// TableEventMoveColumn is gpui_kit::component::table::TableEvent::MoveColumn.
+// TableEventMoveColumn represents gpui_kit::component::table::TableEvent::MoveColumn.
 type EventMoveColumn struct {
 	V0 int
 	V1 int
@@ -221,14 +223,14 @@ type EventMoveColumn struct {
 
 func (EventMoveColumn) isTableEvent() {}
 
-// TableEventRightClickedRow is gpui_kit::component::table::TableEvent::RightClickedRow.
+// TableEventRightClickedRow represents gpui_kit::component::table::TableEvent::RightClickedRow.
 type EventRightClickedRow struct {
 	Value gk.Option[int]
 }
 
 func (EventRightClickedRow) isTableEvent() {}
 
-// TableEventRightClickedCell is gpui_kit::component::table::TableEvent::RightClickedCell.
+// TableEventRightClickedCell represents gpui_kit::component::table::TableEvent::RightClickedCell.
 type EventRightClickedCell struct {
 	V0 int
 	V1 int
@@ -236,39 +238,40 @@ type EventRightClickedCell struct {
 
 func (EventRightClickedCell) isTableEvent() {}
 
-// TableEventClearSelection is gpui_kit::component::table::TableEvent::ClearSelection.
+// TableEventClearSelection represents gpui_kit::component::table::TableEvent::ClearSelection.
 type EventClearSelection struct {
 }
 
 func (EventClearSelection) isTableEvent() {}
 
-// TableSelection is gpui_kit::component::table::TableSelection: a constant of TableSelectionKind for each variant without data, a struct type for each other one.
+// TableSelection represents gpui_kit::component::table::TableSelection: unit variants use TableSelectionKind constants and payload variants use distinct struct types.
 type Selection interface{ isTableSelection() }
 
-// TableSelectionKind is a variant of gpui_kit::component::table::TableSelection without data: gk.TableSelectionNone.
+// TableSelectionKind represents unit variants of gpui_kit::component::table::TableSelection (for example TableSelectionNone).
 type SelectionKind uint16
 
 func (SelectionKind) isTableSelection() {}
 
+// TableSelectionKind unit variant values.
 const (
 	SelectionNone SelectionKind = 0 // gpui_kit::component::table::TableSelection::None
 )
 
-// TableSelectionRow is gpui_kit::component::table::TableSelection::Row.
+// TableSelectionRow represents gpui_kit::component::table::TableSelection::Row.
 type SelectionRow struct {
 	Value int
 }
 
 func (SelectionRow) isTableSelection() {}
 
-// TableSelectionColumn is gpui_kit::component::table::TableSelection::Column.
+// TableSelectionColumn represents gpui_kit::component::table::TableSelection::Column.
 type SelectionColumn struct {
 	Value int
 }
 
 func (SelectionColumn) isTableSelection() {}
 
-// TableSelectionCell is gpui_kit::component::table::TableSelection::Cell.
+// TableSelectionCell represents gpui_kit::component::table::TableSelection::Cell.
 type SelectionCell struct {
 	V0 int
 	V1 int
@@ -318,17 +321,17 @@ func putTextOverflow(o *rt.Tape, v gk.TextOverflow) {
 	}
 }
 
-// TreeEvent is gpui_kit::base::TreeEvent: one struct type per variant.
+// TreeEvent represents gpui_kit::base::TreeEvent with one struct type per variant.
 type TreeEvent interface{ isTreeEvent() }
 
-// TreeEventExpanded is gpui_kit::base::TreeEvent::Expanded.
+// TreeEventExpanded represents gpui_kit::base::TreeEvent::Expanded.
 type TreeEventExpanded struct {
 	Value string
 }
 
 func (TreeEventExpanded) isTreeEvent() {}
 
-// TreeEventCollapsed is gpui_kit::base::TreeEvent::Collapsed.
+// TreeEventCollapsed represents gpui_kit::base::TreeEvent::Collapsed.
 type TreeEventCollapsed struct {
 	Value string
 }
@@ -431,6 +434,7 @@ func init() {
 	}})
 }
 
+// TupleBaseIndexPathSearchItem holds a 2-element tuple (BaseIndexPath, SearchItem).
 type TupleBaseIndexPathSearchItem struct {
 	V0 BaseIndexPath
 	V1 gk.SearchItem

@@ -1,16 +1,22 @@
-//! View-built closures, described values and fallible calls (docs/PROTOCOLS.md section 11.6).
+//! Overlay, popup-menu, dropdown-button, keyboard-shortcut badge, and monotonic-clock helpers.
 //!
-//! A closure upstream keeps and calls later, `Fn(T, &mut Window, &mut App) -> T + 'static`,
-//! handed over by a call op (`WindowExt::open_dialog`, `open_sheet`): the op carries the handle
-//! of an app view whose procedure describes a T (`gk.NewBuilt(cx, state, fn)` in Go). Each time
-//! upstream calls the closure, the view's current tape is read and its root node's ops are
-//! applied to the T upstream hands in (`ViewBuild::apply`). Reading the view's entity while
-//! upstream draws makes the drawing view depend on it, so the dialog draws again when the view
-//! is described again: its handlers run between frames, never during one.
+//! # Protocols and Invariants
 //!
-//! Also here: the dropdown button (the kit's `DropdownMenuPopover<Button>` has no public path,
-//! so generated code cannot name it), `PopupMenu::submenu` without the menu's own context, the
-//! constructor of a described value (never called), and the results of fallible calls.
+//! - **View-backed overlay builders ([`ViewBuild`])**: modal dialogs, alert dialogs, sheets, and
+//!   panel dropdown menus take a GPUI builder closure invoked on every frame while the overlay is
+//!   open. The host supplies a dedicated view handle (`gk.NewBuilt`); [`ViewBuild::take`] mounts
+//!   and dirties that view in the owning window, and [`ViewBuild::apply`] replays its latest tape's
+//!   root builder ops onto the upstream overlay struct while verifying that the tape's root opcode
+//!   is in `types` (stopping the app cleanly on root-type mismatch).
+//! - **Described-value guard ([`described`])**: builder-only nodes such as `PopupMenu` or `Dialog`
+//!   must only appear inside their corresponding builder closure; placing one standalone in a view
+//!   tree aborts with an actionable misuse error.
+//! - **Fallible constructor adapter ([`Fallible`])**: wraps upstream constructors returning
+//!   `Result<T, E>` (such as `QuestionnaireState` or `Keyframes`) so invalid arguments invoke
+//!   `rt::app_stop` with the debug error instead of panicking.
+//! - **Monotonic clock (`C_CLOCK_NOW`, [`instant`], [`put_instant`])**: because `std::time::Instant`
+//!   has no portable raw integer representation, all instants crossing the wire are encoded as
+//!   signed `i64` nanoseconds relative to the process-local [`EPOCH`] initialized on first use.
 
 use crate::genapi::{self, Dx, GkErr, GkResult, R};
 use crate::ops::*;
@@ -19,8 +25,7 @@ use gpui_kit::component::kbd::Kbd;
 use gpui_kit::component::menu::{AppMenuBar, DropdownMenu as _, PopupMenu, PopupMenuItem};
 use gpui_kit::{AnyElement, App, Context, IntoElement as _, SharedString, Window};
 
-/// The view behind a view-built closure, the node types its root may have, and the name of the
-/// type upstream hands in (for the message when the root is another node type).
+/// References a host view whose tape supplies builder ops to configure an upstream overlay value.
 pub struct ViewBuild {
     view: u64,
     types: &'static [u16],
@@ -28,9 +33,7 @@ pub struct ViewBuild {
 }
 
 impl ViewBuild {
-    /// Reads the view's handle, checks it names a view, and draws it in the turn's window (the
-    /// first open window for a write applied after its turn): it is marked dirty, so the frame
-    /// that first calls the closure has its tape.
+    /// Mounts `view` into the active window, marks it dirty, and binds expected root node types.
     pub fn take(view: u64, c: &mut genapi::Call, types: &'static [u16], name: &'static str) -> GkResult<ViewBuild> {
         rt::with(|s| s.view(view))?;
         let wh = match c.window_handle() {
@@ -45,8 +48,7 @@ impl ViewBuild {
         Ok(ViewBuild { view, types, name })
     }
 
-    /// Applies the root node of the view's current tape to the value upstream hands in. Before
-    /// the view's first description the value is upstream's as it is (one frame at most).
+    /// Replays the ops on `self.view`'s latest tape onto `v` via `f`.
     pub fn apply<T>(&self, v: T, window: &mut Window, cx: &mut App, f: fn(&mut Dx, T, u32) -> T) -> T {
         let entity = match rt::with(|s| s.view(self.view)) {
             Ok(e) => e,
@@ -68,8 +70,7 @@ impl ViewBuild {
     }
 }
 
-/// The constructor of a described value (`PopupMenu`): the app starts the node with it, and the
-/// library only ever applies the node's ops to the value upstream hands in.
+/// Stops the app if a menu-builder placeholder node is placed directly in the element tree.
 pub fn described<T>() -> T {
     genapi::released_shown(
         "a described value was used on its own",
@@ -77,8 +78,7 @@ pub fn described<T>() -> T {
     )
 }
 
-/// `PopupMenu::submenu` without the menu's own context: the child menu is built at once, as
-/// upstream does, and attached as an item; upstream wires it to its parent when the menu draws.
+/// Appends a child submenu built by `f` to `menu`.
 pub fn submenu(
     menu: PopupMenu,
     label: impl Into<SharedString>,
@@ -90,13 +90,13 @@ pub fn submenu(
     menu.item(PopupMenuItem::submenu(label, child))
 }
 
-/// `Result<(), E>` read back: the error's text, or nothing.
+/// Converts a `Result<(), E>` into `Option<String>` (`None` on `Ok`, debug-formatted error on `Err`).
 pub fn outcome<E: std::fmt::Debug>(r: Result<(), E>) -> Option<String> {
     r.err().map(|e| format!("{e:?}"))
 }
 
-/// A constructor or builder that returns `Result<Self, E>`: an error stops the app with its text
-/// (exit 2), as a mistake in app code does (a questionnaire with two items of one name).
+/// Wrapper used by generated decoders to invoke fallible upstream constructors and report errors
+/// via [`crate::rt::app_stop`].
 pub struct Fallible<F>(pub F);
 
 fn refused<E: std::fmt::Debug>(e: E) -> ! {
@@ -130,12 +130,13 @@ impl<F> Fallible<F> {
     }
 }
 
-/// The library's own element nodes of this protocol (hand::node asks first).
+/// Decodes hand-written overlay/menu nodes:
+/// - `N_DROPDOWN_BUTTON`: `[button_node: u32][menu_node: u32]`
+/// - `N_DROPDOWN_ANCHOR`: `[button_node: u32][menu_node: u32][anchor: u16]`
+/// - `N_KBD_FOR_ACTION`: `[action: u32][mode: u8 (0=context, 1=focus, 2=global)][has_ctx: u8][ctx?][focus: u64]`
+/// - `N_APP_MENU_BAR`: `[state_handle: u64]`
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
     match ty {
-        // u32 button node, u32 menu node (a PopupMenu described value): the kit's Button with a
-        // dropdown menu (`DropdownMenu::dropdown_menu`), whose menu is built from the node each
-        // time it opens.
         N_DROPDOWN_BUTTON => {
             let mut r: R = dx.args(args);
             let (b, m) = (r.u32(), r.u32());
@@ -149,8 +150,6 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
                     .into_any_element(),
             )
         }
-        // u32 button node, u32 menu node, u16 anchor (gk.Anchor's number): the same with the menu's
-        // corner (DropdownMenu::dropdown_menu_with_anchor)
         N_DROPDOWN_ANCHOR => {
             let mut r: R = dx.args(args);
             let (b, m, a) = (r.u32(), r.u32(), r.u16());
@@ -164,9 +163,6 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
                     .into_any_element(),
             )
         }
-        // u32 action, u8 how (0 in a key context, 1 for a focus handle, 2 global), opt<str> context,
-        // u64 focus handle: the kit's Kbd of the action's binding, or nothing when it has none
-        // (Kbd::binding_for_action, binding_for_action_in, global_binding_for_action)
         N_KBD_FOR_ACTION => {
             let mut r: R = dx.args(args);
             let action = genapi::action(&mut r).ok()?;
@@ -183,7 +179,6 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
                 None => gpui_kit::Empty.into_any_element(),
             })
         }
-        // u64 app menu bar (a state handle): the kit's AppMenuBar drawn where the view puts it
         N_APP_MENU_BAR => {
             let mut r: R = dx.args(args);
             Some(genapi::shown::<AppMenuBar>(r.u64()).into_any_element())
@@ -192,7 +187,9 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
     }
 }
 
-/// gpui's Anchor from its number on the wire (api/opcodes.lock, as gk.Anchor declares it).
+/// Maps wire anchor tags (`0..=7`) to `gpui_kit::Anchor`:
+/// `0` TopLeft (default), `1` TopRight, `2` BottomLeft, `3` BottomRight,
+/// `4` TopCenter, `5` BottomCenter, `6` LeftCenter, `7` RightCenter.
 fn anchor(n: u16) -> gpui_kit::Anchor {
     use gpui_kit::Anchor::*;
     match n {
@@ -207,16 +204,14 @@ fn anchor(n: u16) -> gpui_kit::Anchor {
     }
 }
 
-/// The overlays' library calls (core/src/dock.rs asks).
+/// Handles `C_APP_MENU_BAR_NEW` and `C_CLOCK_NOW`.
 pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
     Some(match op {
-        // -> u64 app menu bar (kind STATE): AppMenuBar::new
         C_APP_MENU_BAR_NEW => {
             let bar = AppMenuBar::new(c.cx);
             genapi::Put::put_u64(c.out, crate::dock::entity_handle(&bar));
             Ok(())
         }
-        // -> i64 nanoseconds since the library's clock began (PROTOCOLS.md 11.10)
         C_CLOCK_NOW => {
             genapi::Put::put_i64(c.out, since_epoch(std::time::Instant::now()));
             Ok(())
@@ -225,12 +220,7 @@ pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
     })
 }
 
-// ------------------------------------------------------------------ the library clock (PROTOCOLS.md 11.10)
-//
-// `std::time::Instant` has no number of its own: both ways it is the time since the library's clock
-// began (the first time anything asked), as i64 nanoseconds (Go `time.Duration`). The toast
-// manager's `push`, `dismiss`, `advance` take the app's reading of it (gk.clock_now).
-
+/// Process-local monotonic origin used to encode `std::time::Instant` values as signed nanoseconds.
 static EPOCH: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
 
 fn epoch() -> std::time::Instant {
@@ -246,14 +236,14 @@ fn since_epoch(t: std::time::Instant) -> i64 {
     }
 }
 
-/// An Instant argument: `ns` after the library's clock began (before it, for a negative `ns`).
+/// Reconstructs an `Instant` from signed nanoseconds relative to [`EPOCH`].
 pub fn instant(ns: i64) -> std::time::Instant {
     let e = epoch();
     let d = std::time::Duration::from_nanos(ns.unsigned_abs());
     if ns >= 0 { e + d } else { e.checked_sub(d).unwrap_or(e) }
 }
 
-/// An Instant read back.
+/// Encodes `t` as signed nanoseconds since [`EPOCH`] onto `out`.
 pub fn put_instant(t: &std::time::Instant, out: &mut Vec<u8>) {
     genapi::Put::put_i64(out, since_epoch(*t));
 }

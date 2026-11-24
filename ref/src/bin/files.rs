@@ -1,13 +1,10 @@
-//! ref-files: the Rust reference for examples/go/files, written the way a Rust GPUI-kit app is
-//! written: the menu bar (gpui's `set_menus`, and the kit's `GlobalState::set_app_menus` so its
-//! `AppMenuBar` draws the same menus where the platform has none), the platform's file dialogs and a
-//! window prompt awaited on the main thread, `open_url`, and a status line that slides and fades in
-//! with the kit's `EffectTransition` each time it changes.
+//! Pure-Rust text file viewer reference app exercising native menu bars,
+//! keyboard shortcuts, file open/save prompts, confirmation prompts, URL
+//! opening, and animated status transitions.
 //!
-//!   ref-files                  a real window
-//!   ref-files --script FILE    offscreen, driven by a gk-meter script (diag build); the platform is
-//!                              not asked: the script's `answer ..` lines answer the dialogs, as they
-//!                              do the library's scripted platform for the Go app (PROTOCOLS.md 11.31)
+//! In headless `--script` mode, native OS dialogs are bypassed via a
+//! thread-local `WAITING` queue answered by `answer` commands from the script.
+
 use gpui_kit::base::animation::EffectTransition;
 use gpui_kit::base::{GlobalState, v_flex};
 use gpui_kit::component::ActiveTheme;
@@ -24,7 +21,7 @@ use std::time::Duration;
 
 gpui_kit::actions!(files, [Open, SaveAs, Quit, Website]);
 
-/// What a dialog or a prompt answered.
+/// Synthetic or native response delivered to a pending dialog callback.
 enum Answer {
     Paths(Option<Vec<PathBuf>>),
     Prompt(Option<usize>),
@@ -33,12 +30,15 @@ enum Answer {
 type Then = Box<dyn FnOnce(Answer, &mut App)>;
 
 thread_local! {
-    /// Offscreen: the platform is not asked; requests wait here for the script's `answer` lines.
+    /// True while running under `--script`, causing prompts to enqueue on `WAITING`
+    /// instead of opening native OS dialogs.
     static SCRIPTED: Cell<bool> = const { Cell::new(false) };
+    /// Pending scripted dialog continuations tagged by prompt kind (`paths`, `new-path`, `prompt`).
     static WAITING: RefCell<VecDeque<(&'static str, Then)>> = const { RefCell::new(VecDeque::new()) };
 }
 
-/// The script's `answer paths P..`, `new-path P`, `prompt N`, `cancel KIND` (gk-meter's on_answer).
+/// Parses a headless script `answer ...` line and resolves the first matching
+/// queued prompt continuation.
 #[cfg(feature = "diag")]
 fn answer_line(line: &str, cx: &mut App) -> anyhow::Result<()> {
     let mut words = line.split_whitespace();
@@ -65,12 +65,15 @@ fn answer_line(line: &str, cx: &mut App) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Root file-viewer view state.
 struct Files {
     menubar: Entity<AppMenuBar>,
     path: String,
     text: String,
     status: String,
+    /// Monotonic counter used as the `EffectTransition` key whenever `status` changes.
     changes: usize,
+    /// Guards against opening overlapping quit confirmation prompts.
     asking: bool,
 }
 
@@ -110,13 +113,12 @@ impl Files {
     }
 }
 
-/// Asks the platform (or, offscreen, waits for the script) and hands the answer to `then`.
 fn ask(kind: &'static str, cx: &mut App, then: impl FnOnce(Answer, &mut App) + 'static) {
     if SCRIPTED.with(|s| s.get()) {
         WAITING.with(|w| w.borrow_mut().push_back((kind, Box::new(then))));
         return;
     }
-    let _ = (kind, cx, then); // the real platform: see do_open, do_save, do_quit
+    let _ = (kind, cx, then);
 }
 
 fn do_open(this: WeakEntity<Files>, cx: &mut App) {
@@ -175,7 +177,7 @@ fn do_save(this: WeakEntity<Files>, cx: &mut App) {
 fn do_quit(this: WeakEntity<Files>, cx: &mut App) {
     let Some(f) = this.upgrade() else { return };
     if f.read(cx).asking {
-        return; // one question at a time
+        return;
     }
     f.update(cx, |f, _| f.asking = true);
     let then = move |a: Answer, cx: &mut App| {
@@ -270,7 +272,7 @@ fn build(window: &mut Window, cx: &mut App) -> Entity<Files> {
         KeyBinding::new("ctrl-shift-s", SaveAs, None),
         KeyBinding::new("ctrl-q", Quit, None),
     ]);
-    // gpui's menu bar, and the same menus for the kit's AppMenuBar (the library's SET_MENUS does both)
+
     cx.set_menus(menus());
     GlobalState::global_mut(cx).set_app_menus(menus().into_iter().map(Menu::owned).collect());
     let menubar = AppMenuBar::new(cx);

@@ -9,10 +9,10 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// Discrete is a handle to gpui_kit::base::Discrete<f32>, a library object (PROTOCOLS.md section 13).
+// Discrete is a handle to gpui_kit::base::Discrete<f32>, a runtime-owned library object.
 type Discrete struct{ rt.HCore }
 
-// Sample is <gpui_kit::base::Discrete<f32>>::sample.
+// Sample calls <gpui_kit::base::Discrete<f32>>::sample.
 func (s Discrete) Sample(cx *gk.Cx, progress float32) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1129)
@@ -22,7 +22,7 @@ func (s Discrete) Sample(cx *gk.Cx, progress float32) float32 {
 	return r.F32()
 }
 
-// SwitchAt is <gpui_kit::base::Discrete<f32>>::switch_at.
+// SwitchAt calls <gpui_kit::base::Discrete<f32>>::switch_at.
 func (s Discrete) SwitchAt(cx *gk.Cx, progress float32) gk.Fallible[Discrete] {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1130)
@@ -32,20 +32,20 @@ func (s Discrete) SwitchAt(cx *gk.Cx, progress float32) gk.Fallible[Discrete] {
 	return rt.RdFallible(r, func(r *rt.Reader) Discrete { return Discrete{HCore: rt.MkH(r.U64())} })
 }
 
-// NewDiscrete is <gpui_kit::base::Discrete<f32>>::new.
+// NewDiscrete calls <gpui_kit::base::Discrete<f32>>::new.
 func NewDiscrete(cx *gk.Cx, from float32, to float32) Discrete {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1128)
 	o.F32(from)
 	o.F32(to)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return Discrete{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// Keyframes is a handle to gpui_kit::base::Keyframes<f32>, a library object (PROTOCOLS.md section 13).
+// Keyframes is a handle to gpui_kit::base::Keyframes<f32>, a runtime-owned library object.
 type Keyframes struct{ rt.HCore }
 
-// IsEmpty is <gpui_kit::base::Keyframes<f32>>::is_empty.
+// IsEmpty calls <gpui_kit::base::Keyframes<f32>>::is_empty.
 func (s Keyframes) IsEmpty(cx *gk.Cx) bool {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1238)
@@ -54,7 +54,7 @@ func (s Keyframes) IsEmpty(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Len is <gpui_kit::base::Keyframes<f32>>::len.
+// Len calls <gpui_kit::base::Keyframes<f32>>::len.
 func (s Keyframes) Len(cx *gk.Cx) int {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1239)
@@ -63,7 +63,7 @@ func (s Keyframes) Len(cx *gk.Cx) int {
 	return int(r.U64())
 }
 
-// Sample is <gpui_kit::base::Keyframes<f32>>::sample.
+// Sample calls <gpui_kit::base::Keyframes<f32>>::sample.
 func (s Keyframes) Sample(cx *gk.Cx, progress float32) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1240)
@@ -73,7 +73,7 @@ func (s Keyframes) Sample(cx *gk.Cx, progress float32) float32 {
 	return r.F32()
 }
 
-// KeyframesTryNew is <gpui_kit::base::Keyframes<f32>>::try_new.
+// KeyframesTryNew calls <gpui_kit::base::Keyframes<f32>>::try_new.
 func KeyframesTryNew(cx *gk.Cx, frames []gk.KeyframeF32) gk.Fallible[Keyframes] {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1241)
@@ -85,10 +85,10 @@ func KeyframesTryNew(cx *gk.Cx, frames []gk.KeyframeF32) gk.Fallible[Keyframes] 
 	return rt.RdFallible(r, func(r *rt.Reader) Keyframes { return Keyframes{HCore: rt.MkH(r.U64())} })
 }
 
-// Sequence is a handle to gpui_kit::base::Sequence<f32>, a library object (PROTOCOLS.md section 13).
+// Sequence is a handle to gpui_kit::base::Sequence<f32>, a runtime-owned library object.
 type Sequence struct{ rt.HCore }
 
-// From is <gpui_kit::base::Sequence<f32>>::from.
+// From calls <gpui_kit::base::Sequence<f32>>::from.
 func (s Sequence) From(cx *gk.Cx) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1131)
@@ -97,7 +97,7 @@ func (s Sequence) From(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// Steps is <gpui_kit::base::Sequence<f32>>::steps.
+// Steps calls <gpui_kit::base::Sequence<f32>>::steps.
 func (s Sequence) Steps(cx *gk.Cx) []SequenceStep {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1134)
@@ -108,7 +108,7 @@ func (s Sequence) Steps(cx *gk.Cx) []SequenceStep {
 
 // Samples the sequence and requests a frame while a step is active.
 //
-// Sample is <gpui_kit::base::Sequence<f32>>::sample.
+// Sample calls <gpui_kit::base::Sequence<f32>>::sample.
 func (s Sequence) Sample(cx *gk.Cx) SequenceSample {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1133)
@@ -117,9 +117,12 @@ func (s Sequence) Sample(cx *gk.Cx) SequenceSample {
 	return SequenceSample{HCore: rt.MkH(r.U64())}
 }
 
-// SequenceBuilder is the chain of Sequence's `self -> Self` methods; Build makes it, in one crossing.
+// SequenceBuilder accumulates chained Sequence builder options before creating the handle in Build.
 type SequenceBuilder struct{ sb *rt.StateBuilder }
 
+// Appends a step that transitions to `target` once the previous step ends.
+//
+// WithStep calls <gpui_kit::base::Sequence<f32>>::with_step.
 func (b SequenceBuilder) WithStep(target float32, transition gk.Transition) SequenceBuilder {
 	o := b.sb.Op(2)
 	o.F32(target)
@@ -127,6 +130,9 @@ func (b SequenceBuilder) WithStep(target float32, transition gk.Transition) Sequ
 	return b
 }
 
+// Appends steps built elsewhere, in order.
+//
+// WithSteps calls <gpui_kit::base::Sequence<f32>>::with_steps.
 func (b SequenceBuilder) WithSteps(steps []SequenceStep) SequenceBuilder {
 	o := b.sb.Op(1)
 	o.U32(uint32(len(steps)))
@@ -136,12 +142,12 @@ func (b SequenceBuilder) WithSteps(steps []SequenceStep) SequenceBuilder {
 	return b
 }
 
-// Build makes the Sequence.
+// Build commits the queued options and returns the new Sequence handle.
 func (b SequenceBuilder) Build() Sequence { return Sequence{HCore: rt.MkH(b.sb.Build())} }
 
 // Starts a sequence at `from`, with no steps yet.
 //
-// NewSequence is <gpui_kit::base::Sequence<f32>>::new.
+// NewSequence calls <gpui_kit::base::Sequence<f32>>::new.
 func NewSequence(cx *gk.Cx, id gk.TransitionIDInto, from float32) SequenceBuilder {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1132)
@@ -150,10 +156,10 @@ func NewSequence(cx *gk.Cx, id gk.TransitionIDInto, from float32) SequenceBuilde
 	return SequenceBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// SequenceSample is a handle to gpui_kit::base::SequenceSample<f32>, a library object (PROTOCOLS.md section 13).
+// SequenceSample is a handle to gpui_kit::base::SequenceSample<f32>, a runtime-owned library object.
 type SequenceSample struct{ rt.HCore }
 
-// IsFinished is <gpui_kit::base::SequenceSample<f32>>::is_finished.
+// IsFinished calls <gpui_kit::base::SequenceSample<f32>>::is_finished.
 func (s SequenceSample) IsFinished(cx *gk.Cx) bool {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1136)
@@ -166,7 +172,7 @@ func (s SequenceSample) IsFinished(cx *gk.Cx) bool {
 // completed: a step that hands over to the next one reports that next step's `Delayed` or
 // `Running` instead.
 //
-// Status is <gpui_kit::base::SequenceSample<f32>>::status.
+// Status calls <gpui_kit::base::SequenceSample<f32>>::status.
 func (s SequenceSample) Status(cx *gk.Cx) gk.MotionStatus {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1137)
@@ -178,7 +184,7 @@ func (s SequenceSample) Status(cx *gk.Cx) gk.MotionStatus {
 // The index of the step being played. A finished sequence reports its last step; an empty one
 // reports `0`.
 //
-// Step is <gpui_kit::base::SequenceSample<f32>>::step.
+// Step calls <gpui_kit::base::SequenceSample<f32>>::step.
 func (s SequenceSample) Step(cx *gk.Cx) int {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1138)
@@ -189,7 +195,7 @@ func (s SequenceSample) Step(cx *gk.Cx) int {
 
 // The interpolated value for this frame.
 //
-// Value is <gpui_kit::base::SequenceSample<f32>>::value.
+// Value calls <gpui_kit::base::SequenceSample<f32>>::value.
 func (s SequenceSample) Value(cx *gk.Cx) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1139)
@@ -198,7 +204,7 @@ func (s SequenceSample) Value(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// IntoValue is <gpui_kit::base::SequenceSample<f32>>::into_value.
+// IntoValue calls <gpui_kit::base::SequenceSample<f32>>::into_value.
 func (s SequenceSample) IntoValue(cx *gk.Cx) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1135)
@@ -207,10 +213,10 @@ func (s SequenceSample) IntoValue(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// SequenceStep is a handle to gpui_kit::base::SequenceStep<f32>, a library object (PROTOCOLS.md section 13).
+// SequenceStep is a handle to gpui_kit::base::SequenceStep<f32>, a runtime-owned library object.
 type SequenceStep struct{ rt.HCore }
 
-// Target is <gpui_kit::base::SequenceStep<f32>>::target.
+// Target calls <gpui_kit::base::SequenceStep<f32>>::target.
 func (s SequenceStep) Target(cx *gk.Cx) float32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1141)
@@ -219,20 +225,20 @@ func (s SequenceStep) Target(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// NewSequenceStep is <gpui_kit::base::SequenceStep<f32>>::new.
+// NewSequenceStep calls <gpui_kit::base::SequenceStep<f32>>::new.
 func NewSequenceStep(cx *gk.Cx, target float32, transition gk.Transition) SequenceStep {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1140)
 	o.F32(target)
 	rt.PutVtape(o, rt.N(transition.Core))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return SequenceStep{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// Stagger is a handle to gpui_kit::base::Stagger, a library object (PROTOCOLS.md section 13).
+// Stagger is a handle to gpui_kit::base::Stagger, a runtime-owned library object.
 type Stagger struct{ rt.HCore }
 
-// Delay is <gpui_kit::base::Stagger>::delay.
+// Delay calls <gpui_kit::base::Stagger>::delay.
 func (s Stagger) Delay(cx *gk.Cx, index int, count int) time.Duration {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1437)
@@ -243,17 +249,17 @@ func (s Stagger) Delay(cx *gk.Cx, index int, count int) time.Duration {
 	return rt.RdDuration(r)
 }
 
-// NewStagger is <gpui_kit::base::Stagger>::new.
+// NewStagger calls <gpui_kit::base::Stagger>::new.
 func NewStagger(cx *gk.Cx, interval time.Duration, origin StaggerOrigin) Stagger {
 	rt.UseBaseMotion()
 	o := rt.NewReq(796)
 	rt.PutMs(o, interval)
 	putStaggerOrigin(o, origin)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return Stagger{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// TransitionState is a handle to gpui_kit::base::TransitionState<f32>, a library object (PROTOCOLS.md section 13).
+// TransitionState is a handle to gpui_kit::base::TransitionState<f32>, a runtime-owned library object.
 type TransitionState struct{ rt.HCore }
 
 // Returns the current value toward `target`, as `transition_with_status` does, and requests the
@@ -262,7 +268,7 @@ type TransitionState struct{ rt.HCore }
 // Call this while rendering an element. A target that changes while the element is not rendered
 // starts transitioning at the next sample.
 //
-// Sample is <gpui_kit::base::TransitionState<f32>>::sample.
+// Sample calls <gpui_kit::base::TransitionState<f32>>::sample.
 func (s TransitionState) Sample(cx *gk.Cx, target float32, policy gk.Transition) gk.MotionValueF32 {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1680)
@@ -273,10 +279,10 @@ func (s TransitionState) Sample(cx *gk.Cx, target float32, policy gk.Transition)
 	return rdMotionValueF32(r)
 }
 
-// NewTransitionStateDefault is <gpui_kit::base::TransitionState<f32> as Default>::default.
+// NewTransitionStateDefault calls <gpui_kit::base::TransitionState<f32> as Default>::default.
 func NewTransitionStateDefault(cx *gk.Cx) TransitionState {
 	rt.UseBaseMotion()
 	o := rt.NewReq(1679)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return TransitionState{HCore: rt.MkH(rt.StateMake(cx, o))}
 }

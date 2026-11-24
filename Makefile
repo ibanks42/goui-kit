@@ -1,26 +1,25 @@
-# Commands for working on the bindings themselves. `make help` lists them; docs/CONTRIBUTING.md
-# explains them. App developers don't need any of this: they use a prebuilt download.
-#
-# Two kinds of work:
-#   - Rust: the library (core/) and the Rust reference apps (ref/). `make lib` builds them with
-#     cargo into the usual target/ folder and copies the results to lib/.
-#   - Everything else: the generator (Python), the Go module, the examples and the tests. These
-#     need Go and a library in lib/ (from `make lib` or a download).
-#
-# The gates draw frames offscreen and in a private display, so they run on Linux.
+# Top-level build, code-generation, and verification targets for gpui-kit-bindings.
+# Typical workflow:
+#   1. `make gen`        regenerate Rust decoders, Go packages, conformance pages, and API audits.
+#   2. `make lib`        compile the Rust core (`lib/ship` and `lib/diag`) and Rust reference apps.
+#   3. `make gates`      run the full verification suite, or `make gates-quick` for a shorter pass.
+# Run `make help` for an interactive summary of every target.
 
-# Rendering engine of the shipped library: gpui-fast (default) or gpui (upstream GPUI).
+# Overridable build and benchmark defaults:
+#   ENGINE: GPUI backend crate (`gpui-fast` by default, or `gpui` for upstream GPUI).
+#   HZ:     virtual display refresh rate passed to `gates/fps.sh` by `make fps`.
+#   SCENE:  scene name and arguments passed to `gates/fps.sh` by `make fps`.
+#   LOGS:   directory where `make gates` and `make gates-quick` save full run logs.
 ENGINE ?= gpui-fast
-# Frame-cost run: refresh rate and scene.
 HZ    ?= 240
 SCENE ?= panels 60 64 2
-# Logs of the long runs.
 LOGS  ?= gates/out/logs
 
 .PHONY: help gen status coverage lib lib-release dist cross check-windows \
         gates gates-quick proto docs fps pixels gallery gallery-go memory misuse counter rebuild \
         go-test go-proto-all go-apps go-static go-fps clean
 
+# Print a categorized summary of all targets and current default settings.
 help:
 	@echo "Generate (Python only, a few seconds)"
 	@echo "  make gen            regenerate the bindings from the extracted API in api/rustdoc: the Rust"
@@ -55,10 +54,10 @@ help:
 	@echo ""
 	@echo "  make clean          delete bin/ and gates/out/ (keeps lib/ and target/)"
 
-# Everything generated, in one command, from the committed extract (api/rustdoc). Fails when an
-# upstream signature meets no generator rule. rustc then judges the Rust side in `make lib`
-# (or, quicker, gen/round.sh: cargo check with errors charged to items), the Go compiler in
-# `make gates`.
+# Code generation and API coverage checks (Python only, no Rust compiler needed).
+# `gen` regenerates wire opcodes, Rust decoders, Go bindings, conformance pages, and checks
+# that no reachable non-element value type is unaccepted without a stated reason.
+# `status` refreshes docs/STATUS.md; `coverage` verifies docs/STATUS.md and the coverage ratchet.
 gen:
 	python3 core/wire/gen.py
 	python3 gen/gkgen.py gen
@@ -72,6 +71,11 @@ status:
 coverage:
 	gates/coverage.sh
 
+# Rust core builds, release packaging, and cross-platform compilation checks.
+# `lib` builds both `ship` (production library) and `diag` (offscreen renderer + scripted input)
+# along with the Rust reference binaries (`GK_REFS=1`).
+# `lib-release` targets glibc 2.28 via zig for portable Linux distribution binaries.
+# `check-windows` type-checks the Rust C ABI for Windows MSVC; `cross` checks Go cross-builds.
 lib:
 	GK_REFS=1 GK_ENGINE=$(ENGINE) tools/build-lib.sh ship diag
 
@@ -81,9 +85,6 @@ lib-release:
 dist:
 	tools/dist.sh
 
-# The Windows library itself is built on Windows (its release build needs the Windows SDK's
-# fxc.exe). This checks everything else from Linux, with cargo-xwin and Microsoft's CRT and SDK
-# libraries, in the debug profile, where gpui-fast compiles its shaders at run time.
 check-windows:
 	rustup target add x86_64-pc-windows-msvc
 	cargo xwin check --locked --target x86_64-pc-windows-msvc -p gk-capi
@@ -92,6 +93,11 @@ check-windows:
 cross:
 	gates/cross.sh
 
+# Verification suites and single-gate entry points (Linux; require `lib/` from `make lib`).
+# `gates` runs the full suite and prints gates/out/summary.md while teeing full logs to $(LOGS).
+# `gates-quick` runs the shorter tier (fewer FPS rounds, 1000 Hz only, shorter memory runs).
+# Individual targets (`proto`, `docs`, `fps`, `pixels`, `gallery`, `memory`, `misuse`, `counter`,
+# `rebuild`) invoke one gate script directly for fast iteration.
 gates:
 	@mkdir -p $(LOGS)
 	gates/all.sh > $(LOGS)/gates.log 2>&1; rc=$$?; cat gates/out/summary.md; echo "log: $(LOGS)/gates.log"; exit $$rc
@@ -100,7 +106,6 @@ gates-quick:
 	@mkdir -p $(LOGS)
 	gates/all.sh quick > $(LOGS)/gates.log 2>&1; rc=$$?; cat gates/out/summary.md; echo "log: $(LOGS)/gates.log"; exit $$rc
 
-# The runtime's own tests: one per protocol of docs/PROTOCOLS.md, offscreen.
 proto: go-proto-all
 
 docs:
@@ -130,11 +135,15 @@ counter:
 rebuild:
 	gates/go-rebuild.sh
 
+# Go-focused test suites:
+#   go-test:      builds core examples and runs hello, proto, misuse, pixels, and rebuild gates.
+#   go-proto-all: runs examples/go/proto, core/tests/go family tests, and gensample together.
+#   go-apps:      tests the full Go sample apps and 9 tutorial steps against Rust twins.
+#   go-static:    same apps built statically (`GK_STATIC=1`) with section garbage collection.
+#   go-fps:       rebuilds Go examples and runs quick panels + clicking counter FPS benchmarks.
 go-test:
 	gates/go.sh build hello proto misuse pixels rebuild
 
-# The protocol tests in Go (core/tests/go/README.md): the core ones (gates/go-proto.sh, after
-# building bin/proto-go), every family's (core/tests/go/run.sh) and the sample by generation.
 go-proto-all:
 	examples/go/build.sh proto port
 	gates/go-proto.sh; a=$$?; core/tests/go/run.sh; b=$$?; gates/go-gensample.sh; c=$$?; [ $$a = 0 ] && [ $$b = 0 ] && [ $$c = 0 ]
@@ -148,5 +157,7 @@ go-static:
 go-fps:
 	gates/go.sh build fps
 
+# Remove compiled Go binaries (`bin/`) and gate run outputs (`gates/out/`).
+# Keeps `lib/` and Cargo `target/` so expensive Rust rebuilds are preserved.
 clean:
 	rm -rf bin gates/out

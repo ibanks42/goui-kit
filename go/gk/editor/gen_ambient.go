@@ -12,7 +12,7 @@ import (
 // Matching is case-insensitive. Adjacent hits merge into one range, so a contiguous match still
 // paints as a single span. A query that cannot be matched in full paints nothing.
 //
-// BaseHighlightCharacters is gpui_kit::base::input::highlight_characters.
+// BaseHighlightCharacters calls gpui_kit::base::input::highlight_characters.
 func BaseHighlightCharacters(cx *gk.Cx, query string, item gk.CompletionItem) []gk.Range {
 	rt.UseBaseInput()
 	o := rt.NewReq(1652)
@@ -26,7 +26,7 @@ func BaseHighlightCharacters(cx *gk.Cx, query string, item gk.CompletionItem) []
 //
 // An empty query, or a query that does not occur as a contiguous span, paints nothing.
 //
-// BaseHighlightContains is gpui_kit::base::input::highlight_contains.
+// BaseHighlightContains calls gpui_kit::base::input::highlight_contains.
 func BaseHighlightContains(cx *gk.Cx, query string, item gk.CompletionItem) []gk.Range {
 	rt.UseBaseInput()
 	o := rt.NewReq(1653)
@@ -41,7 +41,7 @@ func BaseHighlightContains(cx *gk.Cx, query string, item gk.CompletionItem) []gk
 // The painted length is `filter_text` when the item sets one, otherwise the query. It is shortened
 // so the range never splits a character. An empty length paints nothing.
 //
-// BaseHighlightPrefix is gpui_kit::base::input::highlight_prefix.
+// BaseHighlightPrefix calls gpui_kit::base::input::highlight_prefix.
 func BaseHighlightPrefix(cx *gk.Cx, query string, item gk.CompletionItem) []gk.Range {
 	rt.UseBaseInput()
 	o := rt.NewReq(1654)
@@ -54,7 +54,7 @@ func BaseHighlightPrefix(cx *gk.Cx, query string, item gk.CompletionItem) []gk.R
 // Parses Markdown with the parser `BaseTextViewEl` uses, including the given extensions, into the
 // block tree.
 //
-// BaseParseMarkdown is gpui_kit::base::text::editor_host::parse_markdown.
+// BaseParseMarkdown calls gpui_kit::base::text::editor_host::parse_markdown.
 func BaseParseMarkdown(cx *gk.Cx, source string, extensions MarkdownExtensionsArc) gk.Fallible[[]BlockNodeHeld] {
 	rt.UseBaseText()
 	o := rt.NewReq(1764)
@@ -71,7 +71,7 @@ func BaseParseMarkdown(cx *gk.Cx, source string, extensions MarkdownExtensionsAr
 // treats names case-insensitively. This does not change `auto_close` or `smart_indent`
 // preferences.
 //
-// BaseSetLanguageConfig is gpui_kit::base::input::set_language_config.
+// BaseSetLanguageConfig calls gpui_kit::base::input::set_language_config.
 func BaseSetLanguageConfig(cx *gk.Cx, language string, config LanguageConfig) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1030)
@@ -84,7 +84,7 @@ func BaseSetLanguageConfig(cx *gk.Cx, language string, config LanguageConfig) {
 // editing operation, without waiting for a render. Registered configurations are retained and
 // resolved through the new service.
 //
-// BaseSetLanguageProvider is gpui_kit::base::input::set_language_provider.
+// BaseSetLanguageProvider calls gpui_kit::base::input::set_language_provider.
 func BaseSetLanguageProvider(cx *gk.Cx, provider gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1624)
@@ -94,7 +94,7 @@ func BaseSetLanguageProvider(cx *gk.Cx, provider gk.RowSource) {
 
 // Step a numeric string while preserving decimal precision and range direction.
 //
-// BaseStepValue is gpui_kit::base::step_value.
+// BaseStepValue calls gpui_kit::base::step_value.
 func BaseStepValue(cx *gk.Cx, value string, action StepAction, step float64, min_ gk.Option[float64], max_ gk.Option[float64]) gk.Option[string] {
 	rt.UseBaseRoot()
 	o := rt.NewReq(734)
@@ -117,7 +117,7 @@ func BaseStepValue(cx *gk.Cx, value string, action StepAction, step float64, min
 	return rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })
 }
 
-// DiffFileParseCount is (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).map(|v| v.len())).
+// DiffFileParseCount calls (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).map(|v| v.len())).
 func DiffFileParseCount(cx *gk.Cx, patch string) gk.Fallible[int] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1516)
@@ -126,7 +126,7 @@ func DiffFileParseCount(cx *gk.Cx, patch string) gk.Fallible[int] {
 	return rt.RdFallible(r, func(r *rt.Reader) int { return int(r.U64()) })
 }
 
-// DiffFileParseError is (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).err()).
+// DiffFileParseError calls (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).err()).
 func DiffFileParseError(cx *gk.Cx, patch string) gk.Option[DiffParseError] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1643)
@@ -135,7 +135,7 @@ func DiffFileParseError(cx *gk.Cx, patch string) gk.Option[DiffParseError] {
 	return rt.RdOpt(r, func(r *rt.Reader) DiffParseError { return DiffParseError{HCore: rt.MkH(r.U64())} })
 }
 
-// DiffFileParseWithCount is (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).map(|v| v.len())).
+// DiffFileParseWithCount calls (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).map(|v| v.len())).
 func DiffFileParseWithCount(cx *gk.Cx, patch string, options DiffParseOptions) gk.Fallible[int] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1517)
@@ -145,7 +145,7 @@ func DiffFileParseWithCount(cx *gk.Cx, patch string, options DiffParseOptions) g
 	return rt.RdFallible(r, func(r *rt.Reader) int { return int(r.U64()) })
 }
 
-// DiffFileParseWithError is (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).err()).
+// DiffFileParseWithError calls (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).err()).
 func DiffFileParseWithError(cx *gk.Cx, patch string, options DiffParseOptions) gk.Option[DiffParseError] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1644)
@@ -158,7 +158,7 @@ func DiffFileParseWithError(cx *gk.Cx, patch string, options DiffParseOptions) g
 // Parses every file in a unified or Git diff, in patch order, without computing differences.
 // Syntax emphasis is prepared later by `DiffState` on a background thread.
 //
-// Parse is gpui_kit::component::diff::DiffFile::parse.
+// Parse calls gpui_kit::component::diff::DiffFile::parse.
 func Parse(cx *gk.Cx, patch string) gk.Fallible[[]DiffFileRead] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1425)
@@ -173,7 +173,7 @@ func Parse(cx *gk.Cx, patch string) gk.Fallible[[]DiffFileRead] {
 // `diff3` style. Lines keep their numbers in the working file; marker lines are shown as conflict
 // headings instead.
 //
-// ParseConflicts is gpui_kit::component::diff::DiffFile::parse_conflicts.
+// ParseConflicts calls gpui_kit::component::diff::DiffFile::parse_conflicts.
 func ParseConflicts(cx *gk.Cx, path string, text string) gk.Fallible[DiffFileRead] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1426)
@@ -186,7 +186,7 @@ func ParseConflicts(cx *gk.Cx, path string, text string) gk.Fallible[DiffFileRea
 // Parses like `gk.Parse`, applying the relaxations `options` enables. Malformed headers, invalid
 // paths and unordered hunks are still errors.
 //
-// ParseWith is gpui_kit::component::diff::DiffFile::parse_with.
+// ParseWith calls gpui_kit::component::diff::DiffFile::parse_with.
 func ParseWith(cx *gk.Cx, patch string, options DiffParseOptions) gk.Fallible[[]DiffFileRead] {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1427)
@@ -206,7 +206,7 @@ func ParseWith(cx *gk.Cx, patch string, options DiffParseOptions) gk.Fallible[[]
 // selection and drives it back through the window's input handler. Selections in plain text,
 // outside an input, keep the handles and menu drawn here.
 //
-// SetNativeTouchSelection is gpui_kit::component::input::set_native_touch_selection.
+// SetNativeTouchSelection calls gpui_kit::component::input::set_native_touch_selection.
 func SetNativeTouchSelection(cx *gk.Cx, enabled bool) {
 	rt.UseComponentInput()
 	o := rt.NewReq(753)

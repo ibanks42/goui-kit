@@ -14,7 +14,7 @@ type AttachmentEl struct {
 
 // Create an attachment in the `Complete` state.
 //
-// Attachment is <gpui_kit::component::attachment::Attachment>::new.
+// Attachment calls <gpui_kit::component::attachment::Attachment>::new.
 func Attachment(st ...gk.Style) AttachmentEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(582)
@@ -22,7 +22,7 @@ func Attachment(st ...gk.Style) AttachmentEl {
 	return AttachmentEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
 
-// AttachmentDefault is <gpui_kit::component::attachment::Attachment as Default>::default.
+// AttachmentDefault calls <gpui_kit::component::attachment::Attachment as Default>::default.
 func AttachmentDefault(st ...gk.Style) AttachmentEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(581)
@@ -32,7 +32,7 @@ func AttachmentDefault(st ...gk.Style) AttachmentEl {
 
 // Set the actions slot.
 //
-// Actions is <gpui_kit::component::attachment::Attachment>::actions.
+// Actions calls <gpui_kit::component::attachment::Attachment>::actions.
 func (e AttachmentEl) Actions(actions AttachmentActionsEl) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(actions.Core), false))
@@ -41,7 +41,7 @@ func (e AttachmentEl) Actions(actions AttachmentActionsEl) AttachmentEl {
 
 // Set the attachment layout axis.
 //
-// Axis is <gpui_kit::component::attachment::Attachment>::axis.
+// Axis calls <gpui_kit::component::attachment::Attachment>::axis.
 func (e AttachmentEl) Axis(axis gk.Axis) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U16(uint16(axis))
@@ -50,7 +50,7 @@ func (e AttachmentEl) Axis(axis gk.Axis) AttachmentEl {
 
 // Set the metadata content slot.
 //
-// Content is <gpui_kit::component::attachment::Attachment>::content.
+// Content calls <gpui_kit::component::attachment::Attachment>::content.
 func (e AttachmentEl) Content(content AttachmentContentEl) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeNode(rt.N(content.Core), false))
@@ -60,7 +60,7 @@ func (e AttachmentEl) Content(content AttachmentContentEl) AttachmentEl {
 // Set a stable identity for the built-in controls: the whole-card click layer, the remove control,
 // and the retry control.
 //
-// ID is <gpui_kit::component::attachment::Attachment>::id.
+// ID calls <gpui_kit::component::attachment::Attachment>::id.
 func (e AttachmentEl) ID(id gk.ID) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutID(o, id)
@@ -69,7 +69,7 @@ func (e AttachmentEl) ID(id gk.ID) AttachmentEl {
 
 // Set the media slot.
 //
-// Media is <gpui_kit::component::attachment::Attachment>::media.
+// Media calls <gpui_kit::component::attachment::Attachment>::media.
 func (e AttachmentEl) Media(media AttachmentMediaEl) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.TakeNode(rt.N(media.Core), false))
@@ -82,14 +82,14 @@ func (e AttachmentEl) Media(media AttachmentMediaEl) AttachmentEl {
 // clickable. Click state needs a stable identity, so the handler takes effect only together with
 // `ID`.
 //
-// OnClick is <gpui_kit::component::attachment::Attachment>::on_click.
+// OnClick calls <gpui_kit::component::attachment::Attachment>::on_click.
 func (e AttachmentEl) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(handler, 1))
 	return e
 }
 
-// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+// OnClickDo is the event-free convenience variant of OnClick.
 func (e AttachmentEl) OnClickDo(handler func(cx *gk.Cx)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.U32(rt.Register(handler, 1))
@@ -101,14 +101,14 @@ func (e AttachmentEl) OnClickDo(handler func(cx *gk.Cx)) AttachmentEl {
 // The control appears on hover on desktop and stays visible on touch platforms. It needs a stable
 // identity, so it takes effect only together with `ID`.
 //
-// OnRemove is <gpui_kit::component::attachment::Attachment>::on_remove.
+// OnRemove calls <gpui_kit::component::attachment::Attachment>::on_remove.
 func (e AttachmentEl) OnRemove(handler func(cx *gk.Cx, e gk.ClickEvent)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.Register(handler, 1))
 	return e
 }
 
-// OnRemoveDo is OnRemove with a handler that takes no event (docs/GO.md section 4).
+// OnRemoveDo is the event-free convenience variant of OnRemove.
 func (e AttachmentEl) OnRemoveDo(handler func(cx *gk.Cx)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.U32(rt.Register(handler, 1))
@@ -118,14 +118,14 @@ func (e AttachmentEl) OnRemoveDo(handler func(cx *gk.Cx)) AttachmentEl {
 // Offer a retry control while the attachment is `Failed`: a round button over an image preview, or
 // a link after the typed description. It takes effect only together with `ID`.
 //
-// OnRetry is <gpui_kit::component::attachment::Attachment>::on_retry.
+// OnRetry calls <gpui_kit::component::attachment::Attachment>::on_retry.
 func (e AttachmentEl) OnRetry(handler func(cx *gk.Cx, e gk.ClickEvent)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(handler, 1))
 	return e
 }
 
-// OnRetryDo is OnRetry with a handler that takes no event (docs/GO.md section 4).
+// OnRetryDo is the event-free convenience variant of OnRetry.
 func (e AttachmentEl) OnRetryDo(handler func(cx *gk.Cx)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(handler, 1))
@@ -137,7 +137,7 @@ func (e AttachmentEl) OnRetryDo(handler func(cx *gk.Cx)) AttachmentEl {
 // While `Uploading`, the media shows a progress ring instead of the spinner, a horizontal card
 // draws a thin bar along its bottom edge, and a typed description gains the percentage.
 //
-// Progress is <gpui_kit::component::attachment::Attachment>::progress.
+// Progress calls <gpui_kit::component::attachment::Attachment>::progress.
 func (e AttachmentEl) Progress(percent float32) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.F32(percent)
@@ -146,7 +146,7 @@ func (e AttachmentEl) Progress(percent float32) AttachmentEl {
 
 // Set the attachment lifecycle status.
 //
-// Status is <gpui_kit::component::attachment::Attachment>::status.
+// Status calls <gpui_kit::component::attachment::Attachment>::status.
 func (e AttachmentEl) Status(status AttachmentStatus) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	o.U16(uint16(status))
@@ -156,7 +156,7 @@ func (e AttachmentEl) Status(status AttachmentStatus) AttachmentEl {
 // Show a tooltip while the card is hovered, e.g. the reason an upload failed. It takes effect only
 // together with `ID`.
 //
-// Tooltip is <gpui_kit::component::attachment::Attachment>::tooltip.
+// Tooltip calls <gpui_kit::component::attachment::Attachment>::tooltip.
 func (e AttachmentEl) Tooltip(text string) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.Str(text)
@@ -165,29 +165,37 @@ func (e AttachmentEl) Tooltip(text string) AttachmentEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentEl) PopoverStyle() AttachmentEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentEl) RoundedFullStyle() AttachmentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentEl) BorderE(width gk.Length) AttachmentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentEl) BorderS(width gk.Length) AttachmentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -195,121 +203,163 @@ func (e AttachmentEl) BorderS(width gk.Length) AttachmentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentEl) FlexRowDir() AttachmentEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentEl) InsetE(length gk.Length) AttachmentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentEl) InsetS(length gk.Length) AttachmentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentEl) JustifyFlexEnd() AttachmentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentEl) JustifyFlexStart() AttachmentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentEl) Me(length gk.Length) AttachmentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentEl) Ms(length gk.Length) AttachmentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentEl) Pe(length gk.Length) AttachmentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentEl) Ps(length gk.Length) AttachmentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentEl) RoundedE(radius gk.Length) AttachmentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentEl) RoundedS(radius gk.Length) AttachmentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentEl) TextEnd() AttachmentEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentEl) TextStart() AttachmentEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentEl) CornerRadii(radius gk.Corners) AttachmentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentEl) DebugBlue() AttachmentEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentEl) DebugGreen() AttachmentEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentEl) DebugPink() AttachmentEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentEl) DebugRed() AttachmentEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentEl) DebugYellow() AttachmentEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentEl) FontBlack() AttachmentEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentEl) FontBold() AttachmentEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentEl) FontExtrabold() AttachmentEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentEl) FontExtralight() AttachmentEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentEl) FontLight() AttachmentEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentEl) FontMedium() AttachmentEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentEl) FontNormal() AttachmentEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentEl) FontSemibold() AttachmentEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentEl) FontThin() AttachmentEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -318,18 +368,23 @@ func (e AttachmentEl) FontThin() AttachmentEl { tStyledExtFontThin(rt.N(e.Core))
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentEl) HFlex() AttachmentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentEl) Margins(margins gk.EdgesInto) AttachmentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentEl) Paddings(paddings gk.EdgesInto) AttachmentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentEl) RefineStyle(style gk.StyleRefinement) AttachmentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -339,39 +394,55 @@ func (e AttachmentEl) RefineStyle(style gk.StyleRefinement) AttachmentEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentEl) VFlex() AttachmentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AttachmentEl) Large() AttachmentEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AttachmentEl) Small() AttachmentEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AttachmentEl) WithSize(size gk.SizeInto) AttachmentEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AttachmentEl) Xsmall() AttachmentEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentEl) Style(st ...gk.Style) AttachmentEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentEl) AspectRatio(ratio float32) AttachmentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentEl) Bg(fill gk.Fill) AttachmentEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentEl) Border(length gk.Length) AttachmentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -379,12 +450,16 @@ func (e AttachmentEl) Border(length gk.Length) AttachmentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentEl) BorderB(length gk.Length) AttachmentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentEl) BorderColor(borderColor gk.Color) AttachmentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -392,6 +467,8 @@ func (e AttachmentEl) BorderColor(borderColor gk.Color) AttachmentEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentEl) BorderL(length gk.Length) AttachmentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -399,6 +476,8 @@ func (e AttachmentEl) BorderL(length gk.Length) AttachmentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentEl) BorderR(length gk.Length) AttachmentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -406,6 +485,8 @@ func (e AttachmentEl) BorderR(length gk.Length) AttachmentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentEl) BorderT(length gk.Length) AttachmentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -413,6 +494,8 @@ func (e AttachmentEl) BorderT(length gk.Length) AttachmentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentEl) BorderX(length gk.Length) AttachmentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -420,6 +503,8 @@ func (e AttachmentEl) BorderX(length gk.Length) AttachmentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentEl) BorderY(length gk.Length) AttachmentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -427,24 +512,34 @@ func (e AttachmentEl) BorderY(length gk.Length) AttachmentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentEl) Bottom(length gk.Length) AttachmentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentEl) ColEnd(end int16) AttachmentEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentEl) ColSpan(span uint16) AttachmentEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentEl) ColStart(start int16) AttachmentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentEl) Cursor(cursor gk.CursorStyle) AttachmentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -452,33 +547,45 @@ func (e AttachmentEl) Cursor(cursor gk.CursorStyle) AttachmentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentEl) FlexBasis(basis gk.Length) AttachmentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentEl) FlexGrow(grow float32) AttachmentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentEl) FlexShrink(shrink float32) AttachmentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentEl) Font(font gk.Font) AttachmentEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentEl) FontFamily(familyName string) AttachmentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentEl) FontFeatures(features gk.FontFeatures) AttachmentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -487,16 +594,22 @@ func (e AttachmentEl) FontFeatures(features gk.FontFeatures) AttachmentEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentEl) FontWeight(weight gk.FontWeight) AttachmentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentEl) Gap(length gk.Length) AttachmentEl { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentEl) GapX(length gk.Length) AttachmentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -504,18 +617,24 @@ func (e AttachmentEl) GapX(length gk.Length) AttachmentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentEl) GapY(length gk.Length) AttachmentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentEl) GridCols(cols uint16) AttachmentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentEl) GridColsMaxContent(cols uint16) AttachmentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -523,18 +642,24 @@ func (e AttachmentEl) GridColsMaxContent(cols uint16) AttachmentEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentEl) GridColsMinContent(cols uint16) AttachmentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentEl) GridRows(rows uint16) AttachmentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentEl) GridRowsMaxContent(rows uint16) AttachmentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -542,16 +667,22 @@ func (e AttachmentEl) GridRowsMaxContent(rows uint16) AttachmentEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentEl) GridRowsMinContent(rows uint16) AttachmentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentEl) H(length gk.Length) AttachmentEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentEl) Inset(length gk.Length) AttachmentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -559,6 +690,8 @@ func (e AttachmentEl) Inset(length gk.Length) AttachmentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentEl) Left(length gk.Length) AttachmentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -566,33 +699,45 @@ func (e AttachmentEl) Left(length gk.Length) AttachmentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentEl) LineClamp(lines int) AttachmentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentEl) LineHeight(lineHeight gk.Length) AttachmentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentEl) M(length gk.Length) AttachmentEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentEl) MaxH(length gk.Length) AttachmentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentEl) MaxSize(length gk.Length) AttachmentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentEl) MaxW(length gk.Length) AttachmentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -600,21 +745,29 @@ func (e AttachmentEl) MaxW(length gk.Length) AttachmentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentEl) Mb(length gk.Length) AttachmentEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentEl) MinH(length gk.Length) AttachmentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentEl) MinSize(length gk.Length) AttachmentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentEl) MinW(length gk.Length) AttachmentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -622,65 +775,95 @@ func (e AttachmentEl) MinW(length gk.Length) AttachmentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentEl) Ml(length gk.Length) AttachmentEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentEl) Mr(length gk.Length) AttachmentEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentEl) Mt(length gk.Length) AttachmentEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentEl) Mx(length gk.Length) AttachmentEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentEl) My(length gk.Length) AttachmentEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentEl) Opacity(opacity float32) AttachmentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentEl) P(length gk.Length) AttachmentEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentEl) Pb(length gk.Length) AttachmentEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentEl) Pl(length gk.Length) AttachmentEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentEl) Pr(length gk.Length) AttachmentEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentEl) Pt(length gk.Length) AttachmentEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentEl) Px(length gk.Length) AttachmentEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentEl) Py(length gk.Length) AttachmentEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentEl) Right(length gk.Length) AttachmentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentEl) Rounded(length gk.Length) AttachmentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -688,6 +871,8 @@ func (e AttachmentEl) Rounded(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentEl) RoundedB(length gk.Length) AttachmentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -695,6 +880,8 @@ func (e AttachmentEl) RoundedB(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentEl) RoundedBl(length gk.Length) AttachmentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -702,6 +889,8 @@ func (e AttachmentEl) RoundedBl(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentEl) RoundedBr(length gk.Length) AttachmentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -709,6 +898,8 @@ func (e AttachmentEl) RoundedBr(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentEl) RoundedL(length gk.Length) AttachmentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -716,6 +907,8 @@ func (e AttachmentEl) RoundedL(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentEl) RoundedR(length gk.Length) AttachmentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -723,6 +916,8 @@ func (e AttachmentEl) RoundedR(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentEl) RoundedT(length gk.Length) AttachmentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -730,6 +925,8 @@ func (e AttachmentEl) RoundedT(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentEl) RoundedTl(length gk.Length) AttachmentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -737,18 +934,26 @@ func (e AttachmentEl) RoundedTl(length gk.Length) AttachmentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentEl) RoundedTr(length gk.Length) AttachmentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentEl) RowEnd(end int16) AttachmentEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentEl) RowSpan(span uint16) AttachmentEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentEl) RowStart(start int16) AttachmentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -758,24 +963,32 @@ func (e AttachmentEl) RowStart(start int16) AttachmentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentEl) ScrollbarWidth(width gk.Length) AttachmentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentEl) Shadow(shadows []gk.BoxShadow) AttachmentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentEl) Size(length gk.Length) AttachmentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentEl) TextAlign(align gk.TextAlign) AttachmentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -784,23 +997,31 @@ func (e AttachmentEl) TextAlign(align gk.TextAlign) AttachmentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentEl) TextBg(bg gk.Color) AttachmentEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentEl) TextColor(color gk.Color) AttachmentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentEl) TextDecorationColor(color gk.Color) AttachmentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentEl) TextOverflow(overflow gk.TextOverflow) AttachmentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -809,6 +1030,8 @@ func (e AttachmentEl) TextOverflow(overflow gk.TextOverflow) AttachmentEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentEl) TextSize(size gk.Length) AttachmentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -816,9 +1039,13 @@ func (e AttachmentEl) TextSize(size gk.Length) AttachmentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentEl) Top(length gk.Length) AttachmentEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentEl) W(length gk.Length) AttachmentEl { tStyledW(rt.N(e.Core), length); return e }
 
 // AttachmentActionsEl is gpui_kit::component::attachment::AttachmentActions.
@@ -826,7 +1053,7 @@ type AttachmentActionsEl struct{ rt.ElAnimatableElement }
 
 // Create an empty actions slot.
 //
-// AttachmentActions is <gpui_kit::component::attachment::AttachmentActions>::new.
+// AttachmentActions calls <gpui_kit::component::attachment::AttachmentActions>::new.
 func AttachmentActions(st ...gk.Style) AttachmentActionsEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(584)
@@ -834,7 +1061,7 @@ func AttachmentActions(st ...gk.Style) AttachmentActionsEl {
 	return AttachmentActionsEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// AttachmentActionsDefault is <gpui_kit::component::attachment::AttachmentActions as Default>::default.
+// AttachmentActionsDefault calls <gpui_kit::component::attachment::AttachmentActions as Default>::default.
 func AttachmentActionsDefault(st ...gk.Style) AttachmentActionsEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(583)
@@ -844,20 +1071,24 @@ func AttachmentActionsDefault(st ...gk.Style) AttachmentActionsEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentActionsEl) PopoverStyle() AttachmentActionsEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentActionsEl) RoundedFullStyle() AttachmentActionsEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -866,16 +1097,18 @@ func (e AttachmentActionsEl) RoundedFullStyle() AttachmentActionsEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AttachmentActionsEl) FocusRingStyle() AttachmentActionsEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -888,24 +1121,32 @@ func (e AttachmentActionsEl) FocusRingStyle() AttachmentActionsEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AttachmentActionsEl) KeepTextSelection(id gk.ID) AttachmentActionsEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AttachmentActionsEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AttachmentActionsEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentActionsEl) BorderE(width gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentActionsEl) BorderS(width gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -913,163 +1154,205 @@ func (e AttachmentActionsEl) BorderS(width gk.Length) AttachmentActionsEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentActionsEl) FlexRowDir() AttachmentActionsEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentActionsEl) InsetE(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentActionsEl) InsetS(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentActionsEl) JustifyFlexEnd() AttachmentActionsEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentActionsEl) JustifyFlexStart() AttachmentActionsEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentActionsEl) Me(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentActionsEl) Ms(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentActionsEl) Pe(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentActionsEl) Ps(length gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentActionsEl) RoundedE(radius gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentActionsEl) RoundedS(radius gk.Length) AttachmentActionsEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentActionsEl) TextEnd() AttachmentActionsEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentActionsEl) TextStart() AttachmentActionsEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentActionsEl) CornerRadii(radius gk.Corners) AttachmentActionsEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentActionsEl) DebugBlue() AttachmentActionsEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentActionsEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentActionsEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentActionsEl) DebugGreen() AttachmentActionsEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentActionsEl) DebugPink() AttachmentActionsEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentActionsEl) DebugRed() AttachmentActionsEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentActionsEl) DebugYellow() AttachmentActionsEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentActionsEl) FontBlack() AttachmentActionsEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentActionsEl) FontBold() AttachmentActionsEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentActionsEl) FontExtrabold() AttachmentActionsEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentActionsEl) FontExtralight() AttachmentActionsEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentActionsEl) FontLight() AttachmentActionsEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentActionsEl) FontMedium() AttachmentActionsEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentActionsEl) FontNormal() AttachmentActionsEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentActionsEl) FontSemibold() AttachmentActionsEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentActionsEl) FontThin() AttachmentActionsEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -1077,8 +1360,8 @@ func (e AttachmentActionsEl) FontThin() AttachmentActionsEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1087,18 +1370,23 @@ func (e AttachmentActionsEl) FontThin() AttachmentActionsEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentActionsEl) HFlex() AttachmentActionsEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentActionsEl) Margins(margins gk.EdgesInto) AttachmentActionsEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentActionsEl) Paddings(paddings gk.EdgesInto) AttachmentActionsEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentActionsEl) RefineStyle(style gk.StyleRefinement) AttachmentActionsEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1108,50 +1396,63 @@ func (e AttachmentActionsEl) RefineStyle(style gk.StyleRefinement) AttachmentAct
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentActionsEl) VFlex() AttachmentActionsEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e AttachmentActionsEl) Text(s string) AttachmentActionsEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AttachmentActionsEl) ChildView(v gk.View) AttachmentActionsEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AttachmentActionsEl) Child(child gk.Element) AttachmentActionsEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AttachmentActionsEl) Children(children ...gk.Element) AttachmentActionsEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentActionsEl) Style(st ...gk.Style) AttachmentActionsEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentActionsEl) AspectRatio(ratio float32) AttachmentActionsEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentActionsEl) Bg(fill gk.Fill) AttachmentActionsEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentActionsEl) Border(length gk.Length) AttachmentActionsEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1159,12 +1460,16 @@ func (e AttachmentActionsEl) Border(length gk.Length) AttachmentActionsEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentActionsEl) BorderB(length gk.Length) AttachmentActionsEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentActionsEl) BorderColor(borderColor gk.Color) AttachmentActionsEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1172,6 +1477,8 @@ func (e AttachmentActionsEl) BorderColor(borderColor gk.Color) AttachmentActions
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentActionsEl) BorderL(length gk.Length) AttachmentActionsEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1179,6 +1486,8 @@ func (e AttachmentActionsEl) BorderL(length gk.Length) AttachmentActionsEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentActionsEl) BorderR(length gk.Length) AttachmentActionsEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1186,6 +1495,8 @@ func (e AttachmentActionsEl) BorderR(length gk.Length) AttachmentActionsEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentActionsEl) BorderT(length gk.Length) AttachmentActionsEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1193,6 +1504,8 @@ func (e AttachmentActionsEl) BorderT(length gk.Length) AttachmentActionsEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentActionsEl) BorderX(length gk.Length) AttachmentActionsEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1200,6 +1513,8 @@ func (e AttachmentActionsEl) BorderX(length gk.Length) AttachmentActionsEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentActionsEl) BorderY(length gk.Length) AttachmentActionsEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1207,30 +1522,40 @@ func (e AttachmentActionsEl) BorderY(length gk.Length) AttachmentActionsEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentActionsEl) Bottom(length gk.Length) AttachmentActionsEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentActionsEl) ColEnd(end int16) AttachmentActionsEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentActionsEl) ColSpan(span uint16) AttachmentActionsEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentActionsEl) ColStart(start int16) AttachmentActionsEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentActionsEl) Cursor(cursor gk.CursorStyle) AttachmentActionsEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1238,36 +1563,48 @@ func (e AttachmentActionsEl) Cursor(cursor gk.CursorStyle) AttachmentActionsEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentActionsEl) FlexBasis(basis gk.Length) AttachmentActionsEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentActionsEl) FlexGrow(grow float32) AttachmentActionsEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentActionsEl) FlexShrink(shrink float32) AttachmentActionsEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentActionsEl) Font(font gk.Font) AttachmentActionsEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentActionsEl) FontFamily(familyName string) AttachmentActionsEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentActionsEl) FontFeatures(features gk.FontFeatures) AttachmentActionsEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1276,12 +1613,16 @@ func (e AttachmentActionsEl) FontFeatures(features gk.FontFeatures) AttachmentAc
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentActionsEl) FontWeight(weight gk.FontWeight) AttachmentActionsEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentActionsEl) Gap(length gk.Length) AttachmentActionsEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1289,6 +1630,8 @@ func (e AttachmentActionsEl) Gap(length gk.Length) AttachmentActionsEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentActionsEl) GapX(length gk.Length) AttachmentActionsEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1296,18 +1639,24 @@ func (e AttachmentActionsEl) GapX(length gk.Length) AttachmentActionsEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentActionsEl) GapY(length gk.Length) AttachmentActionsEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentActionsEl) GridCols(cols uint16) AttachmentActionsEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentActionsEl) GridColsMaxContent(cols uint16) AttachmentActionsEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1315,18 +1664,24 @@ func (e AttachmentActionsEl) GridColsMaxContent(cols uint16) AttachmentActionsEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentActionsEl) GridColsMinContent(cols uint16) AttachmentActionsEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentActionsEl) GridRows(rows uint16) AttachmentActionsEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentActionsEl) GridRowsMaxContent(rows uint16) AttachmentActionsEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1334,12 +1689,16 @@ func (e AttachmentActionsEl) GridRowsMaxContent(rows uint16) AttachmentActionsEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentActionsEl) GridRowsMinContent(rows uint16) AttachmentActionsEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentActionsEl) H(length gk.Length) AttachmentActionsEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1347,6 +1706,8 @@ func (e AttachmentActionsEl) H(length gk.Length) AttachmentActionsEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentActionsEl) Inset(length gk.Length) AttachmentActionsEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1354,6 +1715,8 @@ func (e AttachmentActionsEl) Inset(length gk.Length) AttachmentActionsEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentActionsEl) Left(length gk.Length) AttachmentActionsEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1361,36 +1724,48 @@ func (e AttachmentActionsEl) Left(length gk.Length) AttachmentActionsEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentActionsEl) LineClamp(lines int) AttachmentActionsEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentActionsEl) LineHeight(lineHeight gk.Length) AttachmentActionsEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentActionsEl) M(length gk.Length) AttachmentActionsEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentActionsEl) MaxH(length gk.Length) AttachmentActionsEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentActionsEl) MaxSize(length gk.Length) AttachmentActionsEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentActionsEl) MaxW(length gk.Length) AttachmentActionsEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1398,24 +1773,32 @@ func (e AttachmentActionsEl) MaxW(length gk.Length) AttachmentActionsEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentActionsEl) Mb(length gk.Length) AttachmentActionsEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentActionsEl) MinH(length gk.Length) AttachmentActionsEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentActionsEl) MinSize(length gk.Length) AttachmentActionsEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentActionsEl) MinW(length gk.Length) AttachmentActionsEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1423,6 +1806,8 @@ func (e AttachmentActionsEl) MinW(length gk.Length) AttachmentActionsEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentActionsEl) Ml(length gk.Length) AttachmentActionsEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1430,6 +1815,8 @@ func (e AttachmentActionsEl) Ml(length gk.Length) AttachmentActionsEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentActionsEl) Mr(length gk.Length) AttachmentActionsEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1437,6 +1824,8 @@ func (e AttachmentActionsEl) Mr(length gk.Length) AttachmentActionsEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentActionsEl) Mt(length gk.Length) AttachmentActionsEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1444,6 +1833,8 @@ func (e AttachmentActionsEl) Mt(length gk.Length) AttachmentActionsEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentActionsEl) Mx(length gk.Length) AttachmentActionsEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1451,18 +1842,24 @@ func (e AttachmentActionsEl) Mx(length gk.Length) AttachmentActionsEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentActionsEl) My(length gk.Length) AttachmentActionsEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentActionsEl) Opacity(opacity float32) AttachmentActionsEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentActionsEl) P(length gk.Length) AttachmentActionsEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1470,6 +1867,8 @@ func (e AttachmentActionsEl) P(length gk.Length) AttachmentActionsEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentActionsEl) Pb(length gk.Length) AttachmentActionsEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1477,6 +1876,8 @@ func (e AttachmentActionsEl) Pb(length gk.Length) AttachmentActionsEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentActionsEl) Pl(length gk.Length) AttachmentActionsEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1484,6 +1885,8 @@ func (e AttachmentActionsEl) Pl(length gk.Length) AttachmentActionsEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentActionsEl) Pr(length gk.Length) AttachmentActionsEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1491,6 +1894,8 @@ func (e AttachmentActionsEl) Pr(length gk.Length) AttachmentActionsEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentActionsEl) Pt(length gk.Length) AttachmentActionsEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1498,6 +1903,8 @@ func (e AttachmentActionsEl) Pt(length gk.Length) AttachmentActionsEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentActionsEl) Px(length gk.Length) AttachmentActionsEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1505,6 +1912,8 @@ func (e AttachmentActionsEl) Px(length gk.Length) AttachmentActionsEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentActionsEl) Py(length gk.Length) AttachmentActionsEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1512,12 +1921,16 @@ func (e AttachmentActionsEl) Py(length gk.Length) AttachmentActionsEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentActionsEl) Right(length gk.Length) AttachmentActionsEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentActionsEl) Rounded(length gk.Length) AttachmentActionsEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1525,6 +1938,8 @@ func (e AttachmentActionsEl) Rounded(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentActionsEl) RoundedB(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1532,6 +1947,8 @@ func (e AttachmentActionsEl) RoundedB(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentActionsEl) RoundedBl(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1539,6 +1956,8 @@ func (e AttachmentActionsEl) RoundedBl(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentActionsEl) RoundedBr(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1546,6 +1965,8 @@ func (e AttachmentActionsEl) RoundedBr(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentActionsEl) RoundedL(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1553,6 +1974,8 @@ func (e AttachmentActionsEl) RoundedL(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentActionsEl) RoundedR(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1560,6 +1983,8 @@ func (e AttachmentActionsEl) RoundedR(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentActionsEl) RoundedT(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1567,6 +1992,8 @@ func (e AttachmentActionsEl) RoundedT(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentActionsEl) RoundedTl(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1574,24 +2001,32 @@ func (e AttachmentActionsEl) RoundedTl(length gk.Length) AttachmentActionsEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentActionsEl) RoundedTr(length gk.Length) AttachmentActionsEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentActionsEl) RowEnd(end int16) AttachmentActionsEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentActionsEl) RowSpan(span uint16) AttachmentActionsEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentActionsEl) RowStart(start int16) AttachmentActionsEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1601,24 +2036,32 @@ func (e AttachmentActionsEl) RowStart(start int16) AttachmentActionsEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentActionsEl) ScrollbarWidth(width gk.Length) AttachmentActionsEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentActionsEl) Shadow(shadows []gk.BoxShadow) AttachmentActionsEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentActionsEl) Size(length gk.Length) AttachmentActionsEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentActionsEl) TextAlign(align gk.TextAlign) AttachmentActionsEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1627,6 +2070,8 @@ func (e AttachmentActionsEl) TextAlign(align gk.TextAlign) AttachmentActionsEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentActionsEl) TextBg(bg gk.Color) AttachmentActionsEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1635,18 +2080,24 @@ func (e AttachmentActionsEl) TextBg(bg gk.Color) AttachmentActionsEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentActionsEl) TextColor(color gk.Color) AttachmentActionsEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentActionsEl) TextDecorationColor(color gk.Color) AttachmentActionsEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentActionsEl) TextOverflow(overflow gk.TextOverflow) AttachmentActionsEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1655,6 +2106,8 @@ func (e AttachmentActionsEl) TextOverflow(overflow gk.TextOverflow) AttachmentAc
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentActionsEl) TextSize(size gk.Length) AttachmentActionsEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1662,12 +2115,16 @@ func (e AttachmentActionsEl) TextSize(size gk.Length) AttachmentActionsEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentActionsEl) Top(length gk.Length) AttachmentActionsEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentActionsEl) W(length gk.Length) AttachmentActionsEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -1678,7 +2135,7 @@ type AttachmentContentEl struct{ rt.ElAnimatableElement }
 
 // Create an empty metadata slot.
 //
-// AttachmentContent is <gpui_kit::component::attachment::AttachmentContent>::new.
+// AttachmentContent calls <gpui_kit::component::attachment::AttachmentContent>::new.
 func AttachmentContent(st ...gk.Style) AttachmentContentEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(586)
@@ -1686,7 +2143,7 @@ func AttachmentContent(st ...gk.Style) AttachmentContentEl {
 	return AttachmentContentEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
 
-// AttachmentContentDefault is <gpui_kit::component::attachment::AttachmentContent as Default>::default.
+// AttachmentContentDefault calls <gpui_kit::component::attachment::AttachmentContent as Default>::default.
 func AttachmentContentDefault(st ...gk.Style) AttachmentContentEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(585)
@@ -1696,7 +2153,7 @@ func AttachmentContentDefault(st ...gk.Style) AttachmentContentEl {
 
 // Add a status-aware single-line description.
 //
-// Description is <gpui_kit::component::attachment::AttachmentContent>::description.
+// Description calls <gpui_kit::component::attachment::AttachmentContent>::description.
 func (e AttachmentContentEl) Description(description AttachmentDescriptionEl) AttachmentContentEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeNode(rt.N(description.Core), false))
@@ -1705,7 +2162,7 @@ func (e AttachmentContentEl) Description(description AttachmentDescriptionEl) At
 
 // Add a status-aware single-line title.
 //
-// Title is <gpui_kit::component::attachment::AttachmentContent>::title.
+// Title calls <gpui_kit::component::attachment::AttachmentContent>::title.
 func (e AttachmentContentEl) Title(title AttachmentTitleEl) AttachmentContentEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeNode(rt.N(title.Core), false))
@@ -1714,20 +2171,24 @@ func (e AttachmentContentEl) Title(title AttachmentTitleEl) AttachmentContentEl 
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentContentEl) PopoverStyle() AttachmentContentEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentContentEl) RoundedFullStyle() AttachmentContentEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1736,16 +2197,18 @@ func (e AttachmentContentEl) RoundedFullStyle() AttachmentContentEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AttachmentContentEl) FocusRingStyle() AttachmentContentEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1758,24 +2221,32 @@ func (e AttachmentContentEl) FocusRingStyle() AttachmentContentEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AttachmentContentEl) KeepTextSelection(id gk.ID) AttachmentContentEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AttachmentContentEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AttachmentContentEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentContentEl) BorderE(width gk.Length) AttachmentContentEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentContentEl) BorderS(width gk.Length) AttachmentContentEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1783,163 +2254,205 @@ func (e AttachmentContentEl) BorderS(width gk.Length) AttachmentContentEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentContentEl) FlexRowDir() AttachmentContentEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentContentEl) InsetE(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentContentEl) InsetS(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentContentEl) JustifyFlexEnd() AttachmentContentEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentContentEl) JustifyFlexStart() AttachmentContentEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentContentEl) Me(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentContentEl) Ms(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentContentEl) Pe(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentContentEl) Ps(length gk.Length) AttachmentContentEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentContentEl) RoundedE(radius gk.Length) AttachmentContentEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentContentEl) RoundedS(radius gk.Length) AttachmentContentEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentContentEl) TextEnd() AttachmentContentEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentContentEl) TextStart() AttachmentContentEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentContentEl) CornerRadii(radius gk.Corners) AttachmentContentEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentContentEl) DebugBlue() AttachmentContentEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentContentEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentContentEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentContentEl) DebugGreen() AttachmentContentEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentContentEl) DebugPink() AttachmentContentEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentContentEl) DebugRed() AttachmentContentEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentContentEl) DebugYellow() AttachmentContentEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentContentEl) FontBlack() AttachmentContentEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentContentEl) FontBold() AttachmentContentEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentContentEl) FontExtrabold() AttachmentContentEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentContentEl) FontExtralight() AttachmentContentEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentContentEl) FontLight() AttachmentContentEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentContentEl) FontMedium() AttachmentContentEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentContentEl) FontNormal() AttachmentContentEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentContentEl) FontSemibold() AttachmentContentEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentContentEl) FontThin() AttachmentContentEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -1947,8 +2460,8 @@ func (e AttachmentContentEl) FontThin() AttachmentContentEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1957,18 +2470,23 @@ func (e AttachmentContentEl) FontThin() AttachmentContentEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentContentEl) HFlex() AttachmentContentEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentContentEl) Margins(margins gk.EdgesInto) AttachmentContentEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentContentEl) Paddings(paddings gk.EdgesInto) AttachmentContentEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentContentEl) RefineStyle(style gk.StyleRefinement) AttachmentContentEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1978,50 +2496,63 @@ func (e AttachmentContentEl) RefineStyle(style gk.StyleRefinement) AttachmentCon
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentContentEl) VFlex() AttachmentContentEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e AttachmentContentEl) Text(s string) AttachmentContentEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AttachmentContentEl) ChildView(v gk.View) AttachmentContentEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AttachmentContentEl) Child(child gk.Element) AttachmentContentEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AttachmentContentEl) Children(children ...gk.Element) AttachmentContentEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentContentEl) Style(st ...gk.Style) AttachmentContentEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentContentEl) AspectRatio(ratio float32) AttachmentContentEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentContentEl) Bg(fill gk.Fill) AttachmentContentEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentContentEl) Border(length gk.Length) AttachmentContentEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2029,12 +2560,16 @@ func (e AttachmentContentEl) Border(length gk.Length) AttachmentContentEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentContentEl) BorderB(length gk.Length) AttachmentContentEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentContentEl) BorderColor(borderColor gk.Color) AttachmentContentEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2042,6 +2577,8 @@ func (e AttachmentContentEl) BorderColor(borderColor gk.Color) AttachmentContent
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentContentEl) BorderL(length gk.Length) AttachmentContentEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2049,6 +2586,8 @@ func (e AttachmentContentEl) BorderL(length gk.Length) AttachmentContentEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentContentEl) BorderR(length gk.Length) AttachmentContentEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2056,6 +2595,8 @@ func (e AttachmentContentEl) BorderR(length gk.Length) AttachmentContentEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentContentEl) BorderT(length gk.Length) AttachmentContentEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2063,6 +2604,8 @@ func (e AttachmentContentEl) BorderT(length gk.Length) AttachmentContentEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentContentEl) BorderX(length gk.Length) AttachmentContentEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2070,6 +2613,8 @@ func (e AttachmentContentEl) BorderX(length gk.Length) AttachmentContentEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentContentEl) BorderY(length gk.Length) AttachmentContentEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2077,30 +2622,40 @@ func (e AttachmentContentEl) BorderY(length gk.Length) AttachmentContentEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentContentEl) Bottom(length gk.Length) AttachmentContentEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentContentEl) ColEnd(end int16) AttachmentContentEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentContentEl) ColSpan(span uint16) AttachmentContentEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentContentEl) ColStart(start int16) AttachmentContentEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentContentEl) Cursor(cursor gk.CursorStyle) AttachmentContentEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2108,36 +2663,48 @@ func (e AttachmentContentEl) Cursor(cursor gk.CursorStyle) AttachmentContentEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentContentEl) FlexBasis(basis gk.Length) AttachmentContentEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentContentEl) FlexGrow(grow float32) AttachmentContentEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentContentEl) FlexShrink(shrink float32) AttachmentContentEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentContentEl) Font(font gk.Font) AttachmentContentEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentContentEl) FontFamily(familyName string) AttachmentContentEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentContentEl) FontFeatures(features gk.FontFeatures) AttachmentContentEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2146,12 +2713,16 @@ func (e AttachmentContentEl) FontFeatures(features gk.FontFeatures) AttachmentCo
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentContentEl) FontWeight(weight gk.FontWeight) AttachmentContentEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentContentEl) Gap(length gk.Length) AttachmentContentEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2159,6 +2730,8 @@ func (e AttachmentContentEl) Gap(length gk.Length) AttachmentContentEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentContentEl) GapX(length gk.Length) AttachmentContentEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2166,18 +2739,24 @@ func (e AttachmentContentEl) GapX(length gk.Length) AttachmentContentEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentContentEl) GapY(length gk.Length) AttachmentContentEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentContentEl) GridCols(cols uint16) AttachmentContentEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentContentEl) GridColsMaxContent(cols uint16) AttachmentContentEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2185,18 +2764,24 @@ func (e AttachmentContentEl) GridColsMaxContent(cols uint16) AttachmentContentEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentContentEl) GridColsMinContent(cols uint16) AttachmentContentEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentContentEl) GridRows(rows uint16) AttachmentContentEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentContentEl) GridRowsMaxContent(rows uint16) AttachmentContentEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2204,12 +2789,16 @@ func (e AttachmentContentEl) GridRowsMaxContent(rows uint16) AttachmentContentEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentContentEl) GridRowsMinContent(rows uint16) AttachmentContentEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentContentEl) H(length gk.Length) AttachmentContentEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2217,6 +2806,8 @@ func (e AttachmentContentEl) H(length gk.Length) AttachmentContentEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentContentEl) Inset(length gk.Length) AttachmentContentEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2224,6 +2815,8 @@ func (e AttachmentContentEl) Inset(length gk.Length) AttachmentContentEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentContentEl) Left(length gk.Length) AttachmentContentEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2231,36 +2824,48 @@ func (e AttachmentContentEl) Left(length gk.Length) AttachmentContentEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentContentEl) LineClamp(lines int) AttachmentContentEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentContentEl) LineHeight(lineHeight gk.Length) AttachmentContentEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentContentEl) M(length gk.Length) AttachmentContentEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentContentEl) MaxH(length gk.Length) AttachmentContentEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentContentEl) MaxSize(length gk.Length) AttachmentContentEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentContentEl) MaxW(length gk.Length) AttachmentContentEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2268,24 +2873,32 @@ func (e AttachmentContentEl) MaxW(length gk.Length) AttachmentContentEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentContentEl) Mb(length gk.Length) AttachmentContentEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentContentEl) MinH(length gk.Length) AttachmentContentEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentContentEl) MinSize(length gk.Length) AttachmentContentEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentContentEl) MinW(length gk.Length) AttachmentContentEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2293,6 +2906,8 @@ func (e AttachmentContentEl) MinW(length gk.Length) AttachmentContentEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentContentEl) Ml(length gk.Length) AttachmentContentEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2300,6 +2915,8 @@ func (e AttachmentContentEl) Ml(length gk.Length) AttachmentContentEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentContentEl) Mr(length gk.Length) AttachmentContentEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2307,6 +2924,8 @@ func (e AttachmentContentEl) Mr(length gk.Length) AttachmentContentEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentContentEl) Mt(length gk.Length) AttachmentContentEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2314,6 +2933,8 @@ func (e AttachmentContentEl) Mt(length gk.Length) AttachmentContentEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentContentEl) Mx(length gk.Length) AttachmentContentEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2321,18 +2942,24 @@ func (e AttachmentContentEl) Mx(length gk.Length) AttachmentContentEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentContentEl) My(length gk.Length) AttachmentContentEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentContentEl) Opacity(opacity float32) AttachmentContentEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentContentEl) P(length gk.Length) AttachmentContentEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2340,6 +2967,8 @@ func (e AttachmentContentEl) P(length gk.Length) AttachmentContentEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentContentEl) Pb(length gk.Length) AttachmentContentEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2347,6 +2976,8 @@ func (e AttachmentContentEl) Pb(length gk.Length) AttachmentContentEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentContentEl) Pl(length gk.Length) AttachmentContentEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2354,6 +2985,8 @@ func (e AttachmentContentEl) Pl(length gk.Length) AttachmentContentEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentContentEl) Pr(length gk.Length) AttachmentContentEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2361,6 +2994,8 @@ func (e AttachmentContentEl) Pr(length gk.Length) AttachmentContentEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentContentEl) Pt(length gk.Length) AttachmentContentEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2368,6 +3003,8 @@ func (e AttachmentContentEl) Pt(length gk.Length) AttachmentContentEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentContentEl) Px(length gk.Length) AttachmentContentEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2375,6 +3012,8 @@ func (e AttachmentContentEl) Px(length gk.Length) AttachmentContentEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentContentEl) Py(length gk.Length) AttachmentContentEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2382,12 +3021,16 @@ func (e AttachmentContentEl) Py(length gk.Length) AttachmentContentEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentContentEl) Right(length gk.Length) AttachmentContentEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentContentEl) Rounded(length gk.Length) AttachmentContentEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2395,6 +3038,8 @@ func (e AttachmentContentEl) Rounded(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentContentEl) RoundedB(length gk.Length) AttachmentContentEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2402,6 +3047,8 @@ func (e AttachmentContentEl) RoundedB(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentContentEl) RoundedBl(length gk.Length) AttachmentContentEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2409,6 +3056,8 @@ func (e AttachmentContentEl) RoundedBl(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentContentEl) RoundedBr(length gk.Length) AttachmentContentEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2416,6 +3065,8 @@ func (e AttachmentContentEl) RoundedBr(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentContentEl) RoundedL(length gk.Length) AttachmentContentEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2423,6 +3074,8 @@ func (e AttachmentContentEl) RoundedL(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentContentEl) RoundedR(length gk.Length) AttachmentContentEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2430,6 +3083,8 @@ func (e AttachmentContentEl) RoundedR(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentContentEl) RoundedT(length gk.Length) AttachmentContentEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2437,6 +3092,8 @@ func (e AttachmentContentEl) RoundedT(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentContentEl) RoundedTl(length gk.Length) AttachmentContentEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2444,24 +3101,32 @@ func (e AttachmentContentEl) RoundedTl(length gk.Length) AttachmentContentEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentContentEl) RoundedTr(length gk.Length) AttachmentContentEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentContentEl) RowEnd(end int16) AttachmentContentEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentContentEl) RowSpan(span uint16) AttachmentContentEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentContentEl) RowStart(start int16) AttachmentContentEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2471,24 +3136,32 @@ func (e AttachmentContentEl) RowStart(start int16) AttachmentContentEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentContentEl) ScrollbarWidth(width gk.Length) AttachmentContentEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentContentEl) Shadow(shadows []gk.BoxShadow) AttachmentContentEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentContentEl) Size(length gk.Length) AttachmentContentEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentContentEl) TextAlign(align gk.TextAlign) AttachmentContentEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2497,6 +3170,8 @@ func (e AttachmentContentEl) TextAlign(align gk.TextAlign) AttachmentContentEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentContentEl) TextBg(bg gk.Color) AttachmentContentEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2505,18 +3180,24 @@ func (e AttachmentContentEl) TextBg(bg gk.Color) AttachmentContentEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentContentEl) TextColor(color gk.Color) AttachmentContentEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentContentEl) TextDecorationColor(color gk.Color) AttachmentContentEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentContentEl) TextOverflow(overflow gk.TextOverflow) AttachmentContentEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2525,6 +3206,8 @@ func (e AttachmentContentEl) TextOverflow(overflow gk.TextOverflow) AttachmentCo
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentContentEl) TextSize(size gk.Length) AttachmentContentEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2532,12 +3215,16 @@ func (e AttachmentContentEl) TextSize(size gk.Length) AttachmentContentEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentContentEl) Top(length gk.Length) AttachmentContentEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentContentEl) W(length gk.Length) AttachmentContentEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -2548,7 +3235,7 @@ type AttachmentDescriptionEl struct{ rt.ElAnimatableElement }
 
 // Create an attachment description.
 //
-// AttachmentDescription is <gpui_kit::component::attachment::AttachmentDescription>::new.
+// AttachmentDescription calls <gpui_kit::component::attachment::AttachmentDescription>::new.
 func AttachmentDescription(text string, st ...gk.Style) AttachmentDescriptionEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(587)
@@ -2560,7 +3247,7 @@ func AttachmentDescription(text string, st ...gk.Style) AttachmentDescriptionEl 
 
 // Set the status used for the semantic description color.
 //
-// Status is <gpui_kit::component::attachment::AttachmentDescription>::status.
+// Status calls <gpui_kit::component::attachment::AttachmentDescription>::status.
 func (e AttachmentDescriptionEl) Status(status AttachmentStatus) AttachmentDescriptionEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(status))
@@ -2569,32 +3256,40 @@ func (e AttachmentDescriptionEl) Status(status AttachmentStatus) AttachmentDescr
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentDescriptionEl) PopoverStyle() AttachmentDescriptionEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentDescriptionEl) RoundedFullStyle() AttachmentDescriptionEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentDescriptionEl) BorderE(width gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentDescriptionEl) BorderS(width gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2602,163 +3297,205 @@ func (e AttachmentDescriptionEl) BorderS(width gk.Length) AttachmentDescriptionE
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentDescriptionEl) FlexRowDir() AttachmentDescriptionEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentDescriptionEl) InsetE(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentDescriptionEl) InsetS(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentDescriptionEl) JustifyFlexEnd() AttachmentDescriptionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentDescriptionEl) JustifyFlexStart() AttachmentDescriptionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentDescriptionEl) Me(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentDescriptionEl) Ms(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentDescriptionEl) Pe(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentDescriptionEl) Ps(length gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentDescriptionEl) RoundedE(radius gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentDescriptionEl) RoundedS(radius gk.Length) AttachmentDescriptionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentDescriptionEl) TextEnd() AttachmentDescriptionEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentDescriptionEl) TextStart() AttachmentDescriptionEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentDescriptionEl) CornerRadii(radius gk.Corners) AttachmentDescriptionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentDescriptionEl) DebugBlue() AttachmentDescriptionEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentDescriptionEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentDescriptionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentDescriptionEl) DebugGreen() AttachmentDescriptionEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentDescriptionEl) DebugPink() AttachmentDescriptionEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentDescriptionEl) DebugRed() AttachmentDescriptionEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentDescriptionEl) DebugYellow() AttachmentDescriptionEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentDescriptionEl) FontBlack() AttachmentDescriptionEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentDescriptionEl) FontBold() AttachmentDescriptionEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentDescriptionEl) FontExtrabold() AttachmentDescriptionEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentDescriptionEl) FontExtralight() AttachmentDescriptionEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentDescriptionEl) FontLight() AttachmentDescriptionEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentDescriptionEl) FontMedium() AttachmentDescriptionEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentDescriptionEl) FontNormal() AttachmentDescriptionEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentDescriptionEl) FontSemibold() AttachmentDescriptionEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentDescriptionEl) FontThin() AttachmentDescriptionEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -2766,8 +3503,8 @@ func (e AttachmentDescriptionEl) FontThin() AttachmentDescriptionEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2776,21 +3513,26 @@ func (e AttachmentDescriptionEl) FontThin() AttachmentDescriptionEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentDescriptionEl) HFlex() AttachmentDescriptionEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentDescriptionEl) Margins(margins gk.EdgesInto) AttachmentDescriptionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentDescriptionEl) Paddings(paddings gk.EdgesInto) AttachmentDescriptionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentDescriptionEl) RefineStyle(style gk.StyleRefinement) AttachmentDescriptionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2800,30 +3542,38 @@ func (e AttachmentDescriptionEl) RefineStyle(style gk.StyleRefinement) Attachmen
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentDescriptionEl) VFlex() AttachmentDescriptionEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentDescriptionEl) Style(st ...gk.Style) AttachmentDescriptionEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentDescriptionEl) AspectRatio(ratio float32) AttachmentDescriptionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentDescriptionEl) Bg(fill gk.Fill) AttachmentDescriptionEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentDescriptionEl) Border(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2831,12 +3581,16 @@ func (e AttachmentDescriptionEl) Border(length gk.Length) AttachmentDescriptionE
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentDescriptionEl) BorderB(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentDescriptionEl) BorderColor(borderColor gk.Color) AttachmentDescriptionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2844,6 +3598,8 @@ func (e AttachmentDescriptionEl) BorderColor(borderColor gk.Color) AttachmentDes
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentDescriptionEl) BorderL(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2851,6 +3607,8 @@ func (e AttachmentDescriptionEl) BorderL(length gk.Length) AttachmentDescription
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentDescriptionEl) BorderR(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2858,6 +3616,8 @@ func (e AttachmentDescriptionEl) BorderR(length gk.Length) AttachmentDescription
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentDescriptionEl) BorderT(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2865,6 +3625,8 @@ func (e AttachmentDescriptionEl) BorderT(length gk.Length) AttachmentDescription
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentDescriptionEl) BorderX(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2872,6 +3634,8 @@ func (e AttachmentDescriptionEl) BorderX(length gk.Length) AttachmentDescription
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentDescriptionEl) BorderY(length gk.Length) AttachmentDescriptionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2879,30 +3643,40 @@ func (e AttachmentDescriptionEl) BorderY(length gk.Length) AttachmentDescription
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentDescriptionEl) Bottom(length gk.Length) AttachmentDescriptionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentDescriptionEl) ColEnd(end int16) AttachmentDescriptionEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentDescriptionEl) ColSpan(span uint16) AttachmentDescriptionEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentDescriptionEl) ColStart(start int16) AttachmentDescriptionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentDescriptionEl) Cursor(cursor gk.CursorStyle) AttachmentDescriptionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2910,36 +3684,48 @@ func (e AttachmentDescriptionEl) Cursor(cursor gk.CursorStyle) AttachmentDescrip
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentDescriptionEl) FlexBasis(basis gk.Length) AttachmentDescriptionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentDescriptionEl) FlexGrow(grow float32) AttachmentDescriptionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentDescriptionEl) FlexShrink(shrink float32) AttachmentDescriptionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentDescriptionEl) Font(font gk.Font) AttachmentDescriptionEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentDescriptionEl) FontFamily(familyName string) AttachmentDescriptionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentDescriptionEl) FontFeatures(features gk.FontFeatures) AttachmentDescriptionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2948,12 +3734,16 @@ func (e AttachmentDescriptionEl) FontFeatures(features gk.FontFeatures) Attachme
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentDescriptionEl) FontWeight(weight gk.FontWeight) AttachmentDescriptionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentDescriptionEl) Gap(length gk.Length) AttachmentDescriptionEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2961,6 +3751,8 @@ func (e AttachmentDescriptionEl) Gap(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentDescriptionEl) GapX(length gk.Length) AttachmentDescriptionEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2968,18 +3760,24 @@ func (e AttachmentDescriptionEl) GapX(length gk.Length) AttachmentDescriptionEl 
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentDescriptionEl) GapY(length gk.Length) AttachmentDescriptionEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentDescriptionEl) GridCols(cols uint16) AttachmentDescriptionEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentDescriptionEl) GridColsMaxContent(cols uint16) AttachmentDescriptionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2987,18 +3785,24 @@ func (e AttachmentDescriptionEl) GridColsMaxContent(cols uint16) AttachmentDescr
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentDescriptionEl) GridColsMinContent(cols uint16) AttachmentDescriptionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentDescriptionEl) GridRows(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentDescriptionEl) GridRowsMaxContent(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3006,12 +3810,16 @@ func (e AttachmentDescriptionEl) GridRowsMaxContent(rows uint16) AttachmentDescr
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentDescriptionEl) GridRowsMinContent(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentDescriptionEl) H(length gk.Length) AttachmentDescriptionEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3019,6 +3827,8 @@ func (e AttachmentDescriptionEl) H(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentDescriptionEl) Inset(length gk.Length) AttachmentDescriptionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3026,6 +3836,8 @@ func (e AttachmentDescriptionEl) Inset(length gk.Length) AttachmentDescriptionEl
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentDescriptionEl) Left(length gk.Length) AttachmentDescriptionEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3033,36 +3845,48 @@ func (e AttachmentDescriptionEl) Left(length gk.Length) AttachmentDescriptionEl 
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentDescriptionEl) LineClamp(lines int) AttachmentDescriptionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentDescriptionEl) LineHeight(lineHeight gk.Length) AttachmentDescriptionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentDescriptionEl) M(length gk.Length) AttachmentDescriptionEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentDescriptionEl) MaxH(length gk.Length) AttachmentDescriptionEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentDescriptionEl) MaxSize(length gk.Length) AttachmentDescriptionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentDescriptionEl) MaxW(length gk.Length) AttachmentDescriptionEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3070,24 +3894,32 @@ func (e AttachmentDescriptionEl) MaxW(length gk.Length) AttachmentDescriptionEl 
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentDescriptionEl) Mb(length gk.Length) AttachmentDescriptionEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentDescriptionEl) MinH(length gk.Length) AttachmentDescriptionEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentDescriptionEl) MinSize(length gk.Length) AttachmentDescriptionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentDescriptionEl) MinW(length gk.Length) AttachmentDescriptionEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3095,6 +3927,8 @@ func (e AttachmentDescriptionEl) MinW(length gk.Length) AttachmentDescriptionEl 
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentDescriptionEl) Ml(length gk.Length) AttachmentDescriptionEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3102,6 +3936,8 @@ func (e AttachmentDescriptionEl) Ml(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentDescriptionEl) Mr(length gk.Length) AttachmentDescriptionEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3109,6 +3945,8 @@ func (e AttachmentDescriptionEl) Mr(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentDescriptionEl) Mt(length gk.Length) AttachmentDescriptionEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3116,6 +3954,8 @@ func (e AttachmentDescriptionEl) Mt(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentDescriptionEl) Mx(length gk.Length) AttachmentDescriptionEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3123,18 +3963,24 @@ func (e AttachmentDescriptionEl) Mx(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentDescriptionEl) My(length gk.Length) AttachmentDescriptionEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentDescriptionEl) Opacity(opacity float32) AttachmentDescriptionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentDescriptionEl) P(length gk.Length) AttachmentDescriptionEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3142,6 +3988,8 @@ func (e AttachmentDescriptionEl) P(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentDescriptionEl) Pb(length gk.Length) AttachmentDescriptionEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3149,6 +3997,8 @@ func (e AttachmentDescriptionEl) Pb(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentDescriptionEl) Pl(length gk.Length) AttachmentDescriptionEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3156,6 +4006,8 @@ func (e AttachmentDescriptionEl) Pl(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentDescriptionEl) Pr(length gk.Length) AttachmentDescriptionEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3163,6 +4015,8 @@ func (e AttachmentDescriptionEl) Pr(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentDescriptionEl) Pt(length gk.Length) AttachmentDescriptionEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3170,6 +4024,8 @@ func (e AttachmentDescriptionEl) Pt(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentDescriptionEl) Px(length gk.Length) AttachmentDescriptionEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3177,6 +4033,8 @@ func (e AttachmentDescriptionEl) Px(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentDescriptionEl) Py(length gk.Length) AttachmentDescriptionEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3184,12 +4042,16 @@ func (e AttachmentDescriptionEl) Py(length gk.Length) AttachmentDescriptionEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentDescriptionEl) Right(length gk.Length) AttachmentDescriptionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentDescriptionEl) Rounded(length gk.Length) AttachmentDescriptionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3197,6 +4059,8 @@ func (e AttachmentDescriptionEl) Rounded(length gk.Length) AttachmentDescription
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentDescriptionEl) RoundedB(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3204,6 +4068,8 @@ func (e AttachmentDescriptionEl) RoundedB(length gk.Length) AttachmentDescriptio
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentDescriptionEl) RoundedBl(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3211,6 +4077,8 @@ func (e AttachmentDescriptionEl) RoundedBl(length gk.Length) AttachmentDescripti
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentDescriptionEl) RoundedBr(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3218,6 +4086,8 @@ func (e AttachmentDescriptionEl) RoundedBr(length gk.Length) AttachmentDescripti
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentDescriptionEl) RoundedL(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3225,6 +4095,8 @@ func (e AttachmentDescriptionEl) RoundedL(length gk.Length) AttachmentDescriptio
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentDescriptionEl) RoundedR(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3232,6 +4104,8 @@ func (e AttachmentDescriptionEl) RoundedR(length gk.Length) AttachmentDescriptio
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentDescriptionEl) RoundedT(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3239,6 +4113,8 @@ func (e AttachmentDescriptionEl) RoundedT(length gk.Length) AttachmentDescriptio
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentDescriptionEl) RoundedTl(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3246,24 +4122,32 @@ func (e AttachmentDescriptionEl) RoundedTl(length gk.Length) AttachmentDescripti
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentDescriptionEl) RoundedTr(length gk.Length) AttachmentDescriptionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentDescriptionEl) RowEnd(end int16) AttachmentDescriptionEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentDescriptionEl) RowSpan(span uint16) AttachmentDescriptionEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentDescriptionEl) RowStart(start int16) AttachmentDescriptionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3273,24 +4157,32 @@ func (e AttachmentDescriptionEl) RowStart(start int16) AttachmentDescriptionEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentDescriptionEl) ScrollbarWidth(width gk.Length) AttachmentDescriptionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentDescriptionEl) Shadow(shadows []gk.BoxShadow) AttachmentDescriptionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentDescriptionEl) Size(length gk.Length) AttachmentDescriptionEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentDescriptionEl) TextAlign(align gk.TextAlign) AttachmentDescriptionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3299,6 +4191,8 @@ func (e AttachmentDescriptionEl) TextAlign(align gk.TextAlign) AttachmentDescrip
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentDescriptionEl) TextBg(bg gk.Color) AttachmentDescriptionEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3307,18 +4201,24 @@ func (e AttachmentDescriptionEl) TextBg(bg gk.Color) AttachmentDescriptionEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentDescriptionEl) TextColor(color gk.Color) AttachmentDescriptionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentDescriptionEl) TextDecorationColor(color gk.Color) AttachmentDescriptionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentDescriptionEl) TextOverflow(overflow gk.TextOverflow) AttachmentDescriptionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3327,6 +4227,8 @@ func (e AttachmentDescriptionEl) TextOverflow(overflow gk.TextOverflow) Attachme
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentDescriptionEl) TextSize(size gk.Length) AttachmentDescriptionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3334,12 +4236,16 @@ func (e AttachmentDescriptionEl) TextSize(size gk.Length) AttachmentDescriptionE
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentDescriptionEl) Top(length gk.Length) AttachmentDescriptionEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentDescriptionEl) W(length gk.Length) AttachmentDescriptionEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -3350,7 +4256,7 @@ type AttachmentGroupEl struct{ rt.ElAnimatableElement }
 
 // Create an empty attachment group with a stable scroll identifier.
 //
-// AttachmentGroup is <gpui_kit::component::attachment::AttachmentGroup>::new.
+// AttachmentGroup calls <gpui_kit::component::attachment::AttachmentGroup>::new.
 func AttachmentGroup(id gk.ID, st ...gk.Style) AttachmentGroupEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(588)
@@ -3365,7 +4271,7 @@ func AttachmentGroup(id gk.ID, st ...gk.Style) AttachmentGroupEl {
 // The group keeps its own scroll state otherwise. Pass a handle when the application moves the row
 // itself, for example from paging buttons.
 //
-// TrackScroll is <gpui_kit::component::attachment::AttachmentGroup>::track_scroll.
+// TrackScroll calls <gpui_kit::component::attachment::AttachmentGroup>::track_scroll.
 func (e AttachmentGroupEl) TrackScroll(handle gk.ScrollHandle) AttachmentGroupEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	rt.PutObj(o, rt.H(handle.HCore))
@@ -3378,7 +4284,7 @@ func (e AttachmentGroupEl) TrackScroll(handle gk.ScrollHandle) AttachmentGroupEl
 // content, so a row that fits shows none; the fades sit above the attachments and do not take
 // pointer events.
 //
-// WithEdgeFade is <gpui_kit::component::attachment::AttachmentGroup>::with_edge_fade.
+// WithEdgeFade calls <gpui_kit::component::attachment::AttachmentGroup>::with_edge_fade.
 func (e AttachmentGroupEl) WithEdgeFade(color gk.Color) AttachmentGroupEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, color)
@@ -3387,20 +4293,24 @@ func (e AttachmentGroupEl) WithEdgeFade(color gk.Color) AttachmentGroupEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentGroupEl) PopoverStyle() AttachmentGroupEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentGroupEl) RoundedFullStyle() AttachmentGroupEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3409,16 +4319,18 @@ func (e AttachmentGroupEl) RoundedFullStyle() AttachmentGroupEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AttachmentGroupEl) FocusRingStyle() AttachmentGroupEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3431,24 +4343,32 @@ func (e AttachmentGroupEl) FocusRingStyle() AttachmentGroupEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AttachmentGroupEl) KeepTextSelection(id gk.ID) AttachmentGroupEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AttachmentGroupEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AttachmentGroupEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentGroupEl) BorderE(width gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentGroupEl) BorderS(width gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3456,151 +4376,193 @@ func (e AttachmentGroupEl) BorderS(width gk.Length) AttachmentGroupEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentGroupEl) FlexRowDir() AttachmentGroupEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentGroupEl) InsetE(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentGroupEl) InsetS(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentGroupEl) JustifyFlexEnd() AttachmentGroupEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentGroupEl) JustifyFlexStart() AttachmentGroupEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentGroupEl) Me(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentGroupEl) Ms(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentGroupEl) Pe(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentGroupEl) Ps(length gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentGroupEl) RoundedE(radius gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentGroupEl) RoundedS(radius gk.Length) AttachmentGroupEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentGroupEl) TextEnd() AttachmentGroupEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentGroupEl) TextStart() AttachmentGroupEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentGroupEl) CornerRadii(radius gk.Corners) AttachmentGroupEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentGroupEl) DebugBlue() AttachmentGroupEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentGroupEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentGroupEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentGroupEl) DebugGreen() AttachmentGroupEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentGroupEl) DebugPink() AttachmentGroupEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentGroupEl) DebugRed() AttachmentGroupEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentGroupEl) DebugYellow() AttachmentGroupEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentGroupEl) FontBlack() AttachmentGroupEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentGroupEl) FontBold() AttachmentGroupEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentGroupEl) FontExtrabold() AttachmentGroupEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentGroupEl) FontExtralight() AttachmentGroupEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentGroupEl) FontLight() AttachmentGroupEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentGroupEl) FontMedium() AttachmentGroupEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentGroupEl) FontNormal() AttachmentGroupEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentGroupEl) FontSemibold() AttachmentGroupEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentGroupEl) FontThin() AttachmentGroupEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3609,18 +4571,23 @@ func (e AttachmentGroupEl) FontThin() AttachmentGroupEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentGroupEl) HFlex() AttachmentGroupEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentGroupEl) Margins(margins gk.EdgesInto) AttachmentGroupEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentGroupEl) Paddings(paddings gk.EdgesInto) AttachmentGroupEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentGroupEl) RefineStyle(style gk.StyleRefinement) AttachmentGroupEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3630,47 +4597,60 @@ func (e AttachmentGroupEl) RefineStyle(style gk.StyleRefinement) AttachmentGroup
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentGroupEl) VFlex() AttachmentGroupEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e AttachmentGroupEl) Text(s string) AttachmentGroupEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AttachmentGroupEl) ChildView(v gk.View) AttachmentGroupEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AttachmentGroupEl) Child(child gk.Element) AttachmentGroupEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AttachmentGroupEl) Children(children ...gk.Element) AttachmentGroupEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentGroupEl) Style(st ...gk.Style) AttachmentGroupEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentGroupEl) AspectRatio(ratio float32) AttachmentGroupEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentGroupEl) Bg(fill gk.Fill) AttachmentGroupEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentGroupEl) Border(length gk.Length) AttachmentGroupEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3678,12 +4658,16 @@ func (e AttachmentGroupEl) Border(length gk.Length) AttachmentGroupEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentGroupEl) BorderB(length gk.Length) AttachmentGroupEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentGroupEl) BorderColor(borderColor gk.Color) AttachmentGroupEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3691,6 +4675,8 @@ func (e AttachmentGroupEl) BorderColor(borderColor gk.Color) AttachmentGroupEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentGroupEl) BorderL(length gk.Length) AttachmentGroupEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3698,6 +4684,8 @@ func (e AttachmentGroupEl) BorderL(length gk.Length) AttachmentGroupEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentGroupEl) BorderR(length gk.Length) AttachmentGroupEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3705,6 +4693,8 @@ func (e AttachmentGroupEl) BorderR(length gk.Length) AttachmentGroupEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentGroupEl) BorderT(length gk.Length) AttachmentGroupEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3712,6 +4702,8 @@ func (e AttachmentGroupEl) BorderT(length gk.Length) AttachmentGroupEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentGroupEl) BorderX(length gk.Length) AttachmentGroupEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3719,6 +4711,8 @@ func (e AttachmentGroupEl) BorderX(length gk.Length) AttachmentGroupEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentGroupEl) BorderY(length gk.Length) AttachmentGroupEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3726,30 +4720,40 @@ func (e AttachmentGroupEl) BorderY(length gk.Length) AttachmentGroupEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentGroupEl) Bottom(length gk.Length) AttachmentGroupEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentGroupEl) ColEnd(end int16) AttachmentGroupEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentGroupEl) ColSpan(span uint16) AttachmentGroupEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentGroupEl) ColStart(start int16) AttachmentGroupEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentGroupEl) Cursor(cursor gk.CursorStyle) AttachmentGroupEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3757,36 +4761,48 @@ func (e AttachmentGroupEl) Cursor(cursor gk.CursorStyle) AttachmentGroupEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentGroupEl) FlexBasis(basis gk.Length) AttachmentGroupEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentGroupEl) FlexGrow(grow float32) AttachmentGroupEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentGroupEl) FlexShrink(shrink float32) AttachmentGroupEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentGroupEl) Font(font gk.Font) AttachmentGroupEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentGroupEl) FontFamily(familyName string) AttachmentGroupEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentGroupEl) FontFeatures(features gk.FontFeatures) AttachmentGroupEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3795,12 +4811,16 @@ func (e AttachmentGroupEl) FontFeatures(features gk.FontFeatures) AttachmentGrou
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentGroupEl) FontWeight(weight gk.FontWeight) AttachmentGroupEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentGroupEl) Gap(length gk.Length) AttachmentGroupEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3808,6 +4828,8 @@ func (e AttachmentGroupEl) Gap(length gk.Length) AttachmentGroupEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentGroupEl) GapX(length gk.Length) AttachmentGroupEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3815,18 +4837,24 @@ func (e AttachmentGroupEl) GapX(length gk.Length) AttachmentGroupEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentGroupEl) GapY(length gk.Length) AttachmentGroupEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentGroupEl) GridCols(cols uint16) AttachmentGroupEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentGroupEl) GridColsMaxContent(cols uint16) AttachmentGroupEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3834,18 +4862,24 @@ func (e AttachmentGroupEl) GridColsMaxContent(cols uint16) AttachmentGroupEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentGroupEl) GridColsMinContent(cols uint16) AttachmentGroupEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentGroupEl) GridRows(rows uint16) AttachmentGroupEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentGroupEl) GridRowsMaxContent(rows uint16) AttachmentGroupEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3853,12 +4887,16 @@ func (e AttachmentGroupEl) GridRowsMaxContent(rows uint16) AttachmentGroupEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentGroupEl) GridRowsMinContent(rows uint16) AttachmentGroupEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentGroupEl) H(length gk.Length) AttachmentGroupEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3866,6 +4904,8 @@ func (e AttachmentGroupEl) H(length gk.Length) AttachmentGroupEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentGroupEl) Inset(length gk.Length) AttachmentGroupEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3873,6 +4913,8 @@ func (e AttachmentGroupEl) Inset(length gk.Length) AttachmentGroupEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentGroupEl) Left(length gk.Length) AttachmentGroupEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3880,36 +4922,48 @@ func (e AttachmentGroupEl) Left(length gk.Length) AttachmentGroupEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentGroupEl) LineClamp(lines int) AttachmentGroupEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentGroupEl) LineHeight(lineHeight gk.Length) AttachmentGroupEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentGroupEl) M(length gk.Length) AttachmentGroupEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentGroupEl) MaxH(length gk.Length) AttachmentGroupEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentGroupEl) MaxSize(length gk.Length) AttachmentGroupEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentGroupEl) MaxW(length gk.Length) AttachmentGroupEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3917,24 +4971,32 @@ func (e AttachmentGroupEl) MaxW(length gk.Length) AttachmentGroupEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentGroupEl) Mb(length gk.Length) AttachmentGroupEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentGroupEl) MinH(length gk.Length) AttachmentGroupEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentGroupEl) MinSize(length gk.Length) AttachmentGroupEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentGroupEl) MinW(length gk.Length) AttachmentGroupEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3942,6 +5004,8 @@ func (e AttachmentGroupEl) MinW(length gk.Length) AttachmentGroupEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentGroupEl) Ml(length gk.Length) AttachmentGroupEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3949,6 +5013,8 @@ func (e AttachmentGroupEl) Ml(length gk.Length) AttachmentGroupEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentGroupEl) Mr(length gk.Length) AttachmentGroupEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3956,6 +5022,8 @@ func (e AttachmentGroupEl) Mr(length gk.Length) AttachmentGroupEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentGroupEl) Mt(length gk.Length) AttachmentGroupEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3963,6 +5031,8 @@ func (e AttachmentGroupEl) Mt(length gk.Length) AttachmentGroupEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentGroupEl) Mx(length gk.Length) AttachmentGroupEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3970,18 +5040,24 @@ func (e AttachmentGroupEl) Mx(length gk.Length) AttachmentGroupEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentGroupEl) My(length gk.Length) AttachmentGroupEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentGroupEl) Opacity(opacity float32) AttachmentGroupEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentGroupEl) P(length gk.Length) AttachmentGroupEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3989,6 +5065,8 @@ func (e AttachmentGroupEl) P(length gk.Length) AttachmentGroupEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentGroupEl) Pb(length gk.Length) AttachmentGroupEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3996,6 +5074,8 @@ func (e AttachmentGroupEl) Pb(length gk.Length) AttachmentGroupEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentGroupEl) Pl(length gk.Length) AttachmentGroupEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4003,6 +5083,8 @@ func (e AttachmentGroupEl) Pl(length gk.Length) AttachmentGroupEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentGroupEl) Pr(length gk.Length) AttachmentGroupEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4010,6 +5092,8 @@ func (e AttachmentGroupEl) Pr(length gk.Length) AttachmentGroupEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentGroupEl) Pt(length gk.Length) AttachmentGroupEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4017,6 +5101,8 @@ func (e AttachmentGroupEl) Pt(length gk.Length) AttachmentGroupEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentGroupEl) Px(length gk.Length) AttachmentGroupEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4024,6 +5110,8 @@ func (e AttachmentGroupEl) Px(length gk.Length) AttachmentGroupEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentGroupEl) Py(length gk.Length) AttachmentGroupEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4031,12 +5119,16 @@ func (e AttachmentGroupEl) Py(length gk.Length) AttachmentGroupEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentGroupEl) Right(length gk.Length) AttachmentGroupEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentGroupEl) Rounded(length gk.Length) AttachmentGroupEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4044,6 +5136,8 @@ func (e AttachmentGroupEl) Rounded(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentGroupEl) RoundedB(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4051,6 +5145,8 @@ func (e AttachmentGroupEl) RoundedB(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentGroupEl) RoundedBl(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4058,6 +5154,8 @@ func (e AttachmentGroupEl) RoundedBl(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentGroupEl) RoundedBr(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4065,6 +5163,8 @@ func (e AttachmentGroupEl) RoundedBr(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentGroupEl) RoundedL(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4072,6 +5172,8 @@ func (e AttachmentGroupEl) RoundedL(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentGroupEl) RoundedR(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4079,6 +5181,8 @@ func (e AttachmentGroupEl) RoundedR(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentGroupEl) RoundedT(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4086,6 +5190,8 @@ func (e AttachmentGroupEl) RoundedT(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentGroupEl) RoundedTl(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4093,24 +5199,32 @@ func (e AttachmentGroupEl) RoundedTl(length gk.Length) AttachmentGroupEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentGroupEl) RoundedTr(length gk.Length) AttachmentGroupEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentGroupEl) RowEnd(end int16) AttachmentGroupEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentGroupEl) RowSpan(span uint16) AttachmentGroupEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentGroupEl) RowStart(start int16) AttachmentGroupEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4120,24 +5234,32 @@ func (e AttachmentGroupEl) RowStart(start int16) AttachmentGroupEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentGroupEl) ScrollbarWidth(width gk.Length) AttachmentGroupEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentGroupEl) Shadow(shadows []gk.BoxShadow) AttachmentGroupEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentGroupEl) Size(length gk.Length) AttachmentGroupEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentGroupEl) TextAlign(align gk.TextAlign) AttachmentGroupEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4146,6 +5268,8 @@ func (e AttachmentGroupEl) TextAlign(align gk.TextAlign) AttachmentGroupEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentGroupEl) TextBg(bg gk.Color) AttachmentGroupEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -4154,18 +5278,24 @@ func (e AttachmentGroupEl) TextBg(bg gk.Color) AttachmentGroupEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentGroupEl) TextColor(color gk.Color) AttachmentGroupEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentGroupEl) TextDecorationColor(color gk.Color) AttachmentGroupEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentGroupEl) TextOverflow(overflow gk.TextOverflow) AttachmentGroupEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4174,6 +5304,8 @@ func (e AttachmentGroupEl) TextOverflow(overflow gk.TextOverflow) AttachmentGrou
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentGroupEl) TextSize(size gk.Length) AttachmentGroupEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4181,12 +5313,16 @@ func (e AttachmentGroupEl) TextSize(size gk.Length) AttachmentGroupEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentGroupEl) Top(length gk.Length) AttachmentGroupEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentGroupEl) W(length gk.Length) AttachmentGroupEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -4199,7 +5335,7 @@ type AttachmentMediaEl struct {
 
 // Create an empty media slot.
 //
-// AttachmentMedia is <gpui_kit::component::attachment::AttachmentMedia>::new.
+// AttachmentMedia calls <gpui_kit::component::attachment::AttachmentMedia>::new.
 func AttachmentMedia(st ...gk.Style) AttachmentMediaEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(590)
@@ -4207,7 +5343,7 @@ func AttachmentMedia(st ...gk.Style) AttachmentMediaEl {
 	return AttachmentMediaEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
 
-// AttachmentMediaDefault is <gpui_kit::component::attachment::AttachmentMedia as Default>::default.
+// AttachmentMediaDefault calls <gpui_kit::component::attachment::AttachmentMedia as Default>::default.
 func AttachmentMediaDefault(st ...gk.Style) AttachmentMediaEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(589)
@@ -4217,7 +5353,7 @@ func AttachmentMediaDefault(st ...gk.Style) AttachmentMediaEl {
 
 // Add centered content above the preview and above the status treatment.
 //
-// Overlay is <gpui_kit::component::attachment::AttachmentMedia>::overlay.
+// Overlay calls <gpui_kit::component::attachment::AttachmentMedia>::overlay.
 func (e AttachmentMediaEl) Overlay(overlay gk.Element) AttachmentMediaEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.Take(overlay))
@@ -4226,7 +5362,7 @@ func (e AttachmentMediaEl) Overlay(overlay gk.Element) AttachmentMediaEl {
 
 // Set an image preview source.
 //
-// Src is <gpui_kit::component::attachment::AttachmentMedia>::src.
+// Src calls <gpui_kit::component::attachment::AttachmentMedia>::src.
 func (e AttachmentMediaEl) Src(source gk.ImageSourceInto) AttachmentMediaEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	putImageSourceInto(o, source)
@@ -4235,20 +5371,24 @@ func (e AttachmentMediaEl) Src(source gk.ImageSourceInto) AttachmentMediaEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentMediaEl) PopoverStyle() AttachmentMediaEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentMediaEl) RoundedFullStyle() AttachmentMediaEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -4257,16 +5397,18 @@ func (e AttachmentMediaEl) RoundedFullStyle() AttachmentMediaEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e AttachmentMediaEl) FocusRingStyle() AttachmentMediaEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -4279,24 +5421,32 @@ func (e AttachmentMediaEl) FocusRingStyle() AttachmentMediaEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e AttachmentMediaEl) KeepTextSelection(id gk.ID) AttachmentMediaEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e AttachmentMediaEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) AttachmentMediaEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentMediaEl) BorderE(width gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentMediaEl) BorderS(width gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4304,151 +5454,193 @@ func (e AttachmentMediaEl) BorderS(width gk.Length) AttachmentMediaEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentMediaEl) FlexRowDir() AttachmentMediaEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentMediaEl) InsetE(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentMediaEl) InsetS(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentMediaEl) JustifyFlexEnd() AttachmentMediaEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentMediaEl) JustifyFlexStart() AttachmentMediaEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentMediaEl) Me(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentMediaEl) Ms(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentMediaEl) Pe(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentMediaEl) Ps(length gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentMediaEl) RoundedE(radius gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentMediaEl) RoundedS(radius gk.Length) AttachmentMediaEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentMediaEl) TextEnd() AttachmentMediaEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentMediaEl) TextStart() AttachmentMediaEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentMediaEl) CornerRadii(radius gk.Corners) AttachmentMediaEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentMediaEl) DebugBlue() AttachmentMediaEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentMediaEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentMediaEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentMediaEl) DebugGreen() AttachmentMediaEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentMediaEl) DebugPink() AttachmentMediaEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentMediaEl) DebugRed() AttachmentMediaEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentMediaEl) DebugYellow() AttachmentMediaEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentMediaEl) FontBlack() AttachmentMediaEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentMediaEl) FontBold() AttachmentMediaEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentMediaEl) FontExtrabold() AttachmentMediaEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentMediaEl) FontExtralight() AttachmentMediaEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentMediaEl) FontLight() AttachmentMediaEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentMediaEl) FontMedium() AttachmentMediaEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentMediaEl) FontNormal() AttachmentMediaEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentMediaEl) FontSemibold() AttachmentMediaEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentMediaEl) FontThin() AttachmentMediaEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4457,18 +5649,23 @@ func (e AttachmentMediaEl) FontThin() AttachmentMediaEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentMediaEl) HFlex() AttachmentMediaEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentMediaEl) Margins(margins gk.EdgesInto) AttachmentMediaEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentMediaEl) Paddings(paddings gk.EdgesInto) AttachmentMediaEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentMediaEl) RefineStyle(style gk.StyleRefinement) AttachmentMediaEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4478,65 +5675,86 @@ func (e AttachmentMediaEl) RefineStyle(style gk.StyleRefinement) AttachmentMedia
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentMediaEl) VFlex() AttachmentMediaEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e AttachmentMediaEl) Text(s string) AttachmentMediaEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e AttachmentMediaEl) ChildView(v gk.View) AttachmentMediaEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e AttachmentMediaEl) Child(child gk.Element) AttachmentMediaEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e AttachmentMediaEl) Children(children ...gk.Element) AttachmentMediaEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e AttachmentMediaEl) Large() AttachmentMediaEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e AttachmentMediaEl) Small() AttachmentMediaEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e AttachmentMediaEl) WithSize(size gk.SizeInto) AttachmentMediaEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e AttachmentMediaEl) Xsmall() AttachmentMediaEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentMediaEl) Style(st ...gk.Style) AttachmentMediaEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentMediaEl) AspectRatio(ratio float32) AttachmentMediaEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentMediaEl) Bg(fill gk.Fill) AttachmentMediaEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentMediaEl) Border(length gk.Length) AttachmentMediaEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4544,12 +5762,16 @@ func (e AttachmentMediaEl) Border(length gk.Length) AttachmentMediaEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentMediaEl) BorderB(length gk.Length) AttachmentMediaEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentMediaEl) BorderColor(borderColor gk.Color) AttachmentMediaEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4557,6 +5779,8 @@ func (e AttachmentMediaEl) BorderColor(borderColor gk.Color) AttachmentMediaEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentMediaEl) BorderL(length gk.Length) AttachmentMediaEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4564,6 +5788,8 @@ func (e AttachmentMediaEl) BorderL(length gk.Length) AttachmentMediaEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentMediaEl) BorderR(length gk.Length) AttachmentMediaEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4571,6 +5797,8 @@ func (e AttachmentMediaEl) BorderR(length gk.Length) AttachmentMediaEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentMediaEl) BorderT(length gk.Length) AttachmentMediaEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4578,6 +5806,8 @@ func (e AttachmentMediaEl) BorderT(length gk.Length) AttachmentMediaEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentMediaEl) BorderX(length gk.Length) AttachmentMediaEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4585,6 +5815,8 @@ func (e AttachmentMediaEl) BorderX(length gk.Length) AttachmentMediaEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentMediaEl) BorderY(length gk.Length) AttachmentMediaEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4592,30 +5824,40 @@ func (e AttachmentMediaEl) BorderY(length gk.Length) AttachmentMediaEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentMediaEl) Bottom(length gk.Length) AttachmentMediaEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentMediaEl) ColEnd(end int16) AttachmentMediaEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentMediaEl) ColSpan(span uint16) AttachmentMediaEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentMediaEl) ColStart(start int16) AttachmentMediaEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentMediaEl) Cursor(cursor gk.CursorStyle) AttachmentMediaEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4623,36 +5865,48 @@ func (e AttachmentMediaEl) Cursor(cursor gk.CursorStyle) AttachmentMediaEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentMediaEl) FlexBasis(basis gk.Length) AttachmentMediaEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentMediaEl) FlexGrow(grow float32) AttachmentMediaEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentMediaEl) FlexShrink(shrink float32) AttachmentMediaEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentMediaEl) Font(font gk.Font) AttachmentMediaEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentMediaEl) FontFamily(familyName string) AttachmentMediaEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentMediaEl) FontFeatures(features gk.FontFeatures) AttachmentMediaEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4661,12 +5915,16 @@ func (e AttachmentMediaEl) FontFeatures(features gk.FontFeatures) AttachmentMedi
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentMediaEl) FontWeight(weight gk.FontWeight) AttachmentMediaEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentMediaEl) Gap(length gk.Length) AttachmentMediaEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4674,6 +5932,8 @@ func (e AttachmentMediaEl) Gap(length gk.Length) AttachmentMediaEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentMediaEl) GapX(length gk.Length) AttachmentMediaEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4681,18 +5941,24 @@ func (e AttachmentMediaEl) GapX(length gk.Length) AttachmentMediaEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentMediaEl) GapY(length gk.Length) AttachmentMediaEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentMediaEl) GridCols(cols uint16) AttachmentMediaEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentMediaEl) GridColsMaxContent(cols uint16) AttachmentMediaEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4700,18 +5966,24 @@ func (e AttachmentMediaEl) GridColsMaxContent(cols uint16) AttachmentMediaEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentMediaEl) GridColsMinContent(cols uint16) AttachmentMediaEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentMediaEl) GridRows(rows uint16) AttachmentMediaEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentMediaEl) GridRowsMaxContent(rows uint16) AttachmentMediaEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4719,12 +5991,16 @@ func (e AttachmentMediaEl) GridRowsMaxContent(rows uint16) AttachmentMediaEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentMediaEl) GridRowsMinContent(rows uint16) AttachmentMediaEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentMediaEl) H(length gk.Length) AttachmentMediaEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4732,6 +6008,8 @@ func (e AttachmentMediaEl) H(length gk.Length) AttachmentMediaEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentMediaEl) Inset(length gk.Length) AttachmentMediaEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4739,6 +6017,8 @@ func (e AttachmentMediaEl) Inset(length gk.Length) AttachmentMediaEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentMediaEl) Left(length gk.Length) AttachmentMediaEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4746,36 +6026,48 @@ func (e AttachmentMediaEl) Left(length gk.Length) AttachmentMediaEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentMediaEl) LineClamp(lines int) AttachmentMediaEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentMediaEl) LineHeight(lineHeight gk.Length) AttachmentMediaEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentMediaEl) M(length gk.Length) AttachmentMediaEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentMediaEl) MaxH(length gk.Length) AttachmentMediaEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentMediaEl) MaxSize(length gk.Length) AttachmentMediaEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentMediaEl) MaxW(length gk.Length) AttachmentMediaEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4783,24 +6075,32 @@ func (e AttachmentMediaEl) MaxW(length gk.Length) AttachmentMediaEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentMediaEl) Mb(length gk.Length) AttachmentMediaEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentMediaEl) MinH(length gk.Length) AttachmentMediaEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentMediaEl) MinSize(length gk.Length) AttachmentMediaEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentMediaEl) MinW(length gk.Length) AttachmentMediaEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4808,6 +6108,8 @@ func (e AttachmentMediaEl) MinW(length gk.Length) AttachmentMediaEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentMediaEl) Ml(length gk.Length) AttachmentMediaEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4815,6 +6117,8 @@ func (e AttachmentMediaEl) Ml(length gk.Length) AttachmentMediaEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentMediaEl) Mr(length gk.Length) AttachmentMediaEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4822,6 +6126,8 @@ func (e AttachmentMediaEl) Mr(length gk.Length) AttachmentMediaEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentMediaEl) Mt(length gk.Length) AttachmentMediaEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4829,6 +6135,8 @@ func (e AttachmentMediaEl) Mt(length gk.Length) AttachmentMediaEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentMediaEl) Mx(length gk.Length) AttachmentMediaEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4836,18 +6144,24 @@ func (e AttachmentMediaEl) Mx(length gk.Length) AttachmentMediaEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentMediaEl) My(length gk.Length) AttachmentMediaEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentMediaEl) Opacity(opacity float32) AttachmentMediaEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentMediaEl) P(length gk.Length) AttachmentMediaEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -4855,6 +6169,8 @@ func (e AttachmentMediaEl) P(length gk.Length) AttachmentMediaEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentMediaEl) Pb(length gk.Length) AttachmentMediaEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4862,6 +6178,8 @@ func (e AttachmentMediaEl) Pb(length gk.Length) AttachmentMediaEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentMediaEl) Pl(length gk.Length) AttachmentMediaEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4869,6 +6187,8 @@ func (e AttachmentMediaEl) Pl(length gk.Length) AttachmentMediaEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentMediaEl) Pr(length gk.Length) AttachmentMediaEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4876,6 +6196,8 @@ func (e AttachmentMediaEl) Pr(length gk.Length) AttachmentMediaEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentMediaEl) Pt(length gk.Length) AttachmentMediaEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4883,6 +6205,8 @@ func (e AttachmentMediaEl) Pt(length gk.Length) AttachmentMediaEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentMediaEl) Px(length gk.Length) AttachmentMediaEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4890,6 +6214,8 @@ func (e AttachmentMediaEl) Px(length gk.Length) AttachmentMediaEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentMediaEl) Py(length gk.Length) AttachmentMediaEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4897,12 +6223,16 @@ func (e AttachmentMediaEl) Py(length gk.Length) AttachmentMediaEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentMediaEl) Right(length gk.Length) AttachmentMediaEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentMediaEl) Rounded(length gk.Length) AttachmentMediaEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4910,6 +6240,8 @@ func (e AttachmentMediaEl) Rounded(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentMediaEl) RoundedB(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4917,6 +6249,8 @@ func (e AttachmentMediaEl) RoundedB(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentMediaEl) RoundedBl(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4924,6 +6258,8 @@ func (e AttachmentMediaEl) RoundedBl(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentMediaEl) RoundedBr(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4931,6 +6267,8 @@ func (e AttachmentMediaEl) RoundedBr(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentMediaEl) RoundedL(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4938,6 +6276,8 @@ func (e AttachmentMediaEl) RoundedL(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentMediaEl) RoundedR(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4945,6 +6285,8 @@ func (e AttachmentMediaEl) RoundedR(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentMediaEl) RoundedT(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4952,6 +6294,8 @@ func (e AttachmentMediaEl) RoundedT(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentMediaEl) RoundedTl(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4959,24 +6303,32 @@ func (e AttachmentMediaEl) RoundedTl(length gk.Length) AttachmentMediaEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentMediaEl) RoundedTr(length gk.Length) AttachmentMediaEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentMediaEl) RowEnd(end int16) AttachmentMediaEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentMediaEl) RowSpan(span uint16) AttachmentMediaEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentMediaEl) RowStart(start int16) AttachmentMediaEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4986,24 +6338,32 @@ func (e AttachmentMediaEl) RowStart(start int16) AttachmentMediaEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentMediaEl) ScrollbarWidth(width gk.Length) AttachmentMediaEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentMediaEl) Shadow(shadows []gk.BoxShadow) AttachmentMediaEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentMediaEl) Size(length gk.Length) AttachmentMediaEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentMediaEl) TextAlign(align gk.TextAlign) AttachmentMediaEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5012,6 +6372,8 @@ func (e AttachmentMediaEl) TextAlign(align gk.TextAlign) AttachmentMediaEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentMediaEl) TextBg(bg gk.Color) AttachmentMediaEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5020,18 +6382,24 @@ func (e AttachmentMediaEl) TextBg(bg gk.Color) AttachmentMediaEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentMediaEl) TextColor(color gk.Color) AttachmentMediaEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentMediaEl) TextDecorationColor(color gk.Color) AttachmentMediaEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentMediaEl) TextOverflow(overflow gk.TextOverflow) AttachmentMediaEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5040,6 +6408,8 @@ func (e AttachmentMediaEl) TextOverflow(overflow gk.TextOverflow) AttachmentMedi
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentMediaEl) TextSize(size gk.Length) AttachmentMediaEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5047,12 +6417,16 @@ func (e AttachmentMediaEl) TextSize(size gk.Length) AttachmentMediaEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentMediaEl) Top(length gk.Length) AttachmentMediaEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentMediaEl) W(length gk.Length) AttachmentMediaEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -5063,7 +6437,7 @@ type AttachmentTitleEl struct{ rt.ElAnimatableElement }
 
 // Create an attachment title.
 //
-// AttachmentTitle is <gpui_kit::component::attachment::AttachmentTitle>::new.
+// AttachmentTitle calls <gpui_kit::component::attachment::AttachmentTitle>::new.
 func AttachmentTitle(text string, st ...gk.Style) AttachmentTitleEl {
 	rt.UseComponentAttachment()
 	n := rt.NewNode(591)
@@ -5075,7 +6449,7 @@ func AttachmentTitle(text string, st ...gk.Style) AttachmentTitleEl {
 
 // Override the attachment lifecycle status used for the loading shimmer.
 //
-// Status is <gpui_kit::component::attachment::AttachmentTitle>::status.
+// Status calls <gpui_kit::component::attachment::AttachmentTitle>::status.
 func (e AttachmentTitleEl) Status(status AttachmentStatus) AttachmentTitleEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U16(uint16(status))
@@ -5084,7 +6458,7 @@ func (e AttachmentTitleEl) Status(status AttachmentStatus) AttachmentTitleEl {
 
 // Customize the shimmer used while this attachment is uploading or processing.
 //
-// WithShimmerStyle is <gpui_kit::component::attachment::AttachmentTitle>::with_shimmer_style.
+// WithShimmerStyle calls <gpui_kit::component::attachment::AttachmentTitle>::with_shimmer_style.
 func (e AttachmentTitleEl) WithShimmerStyle(style ShimmerStyle) AttachmentTitleEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -5093,32 +6467,40 @@ func (e AttachmentTitleEl) WithShimmerStyle(style ShimmerStyle) AttachmentTitleE
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e AttachmentTitleEl) PopoverStyle() AttachmentTitleEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e AttachmentTitleEl) RoundedFullStyle() AttachmentTitleEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e AttachmentTitleEl) BorderE(width gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e AttachmentTitleEl) BorderS(width gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -5126,151 +6508,193 @@ func (e AttachmentTitleEl) BorderS(width gk.Length) AttachmentTitleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e AttachmentTitleEl) FlexRowDir() AttachmentTitleEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e AttachmentTitleEl) InsetE(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e AttachmentTitleEl) InsetS(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e AttachmentTitleEl) JustifyFlexEnd() AttachmentTitleEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e AttachmentTitleEl) JustifyFlexStart() AttachmentTitleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e AttachmentTitleEl) Me(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e AttachmentTitleEl) Ms(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e AttachmentTitleEl) Pe(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e AttachmentTitleEl) Ps(length gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e AttachmentTitleEl) RoundedE(radius gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e AttachmentTitleEl) RoundedS(radius gk.Length) AttachmentTitleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e AttachmentTitleEl) TextEnd() AttachmentTitleEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e AttachmentTitleEl) TextStart() AttachmentTitleEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e AttachmentTitleEl) CornerRadii(radius gk.Corners) AttachmentTitleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e AttachmentTitleEl) DebugBlue() AttachmentTitleEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e AttachmentTitleEl) DebugFocused(focusHandle gk.FocusHandle) AttachmentTitleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e AttachmentTitleEl) DebugGreen() AttachmentTitleEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e AttachmentTitleEl) DebugPink() AttachmentTitleEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e AttachmentTitleEl) DebugRed() AttachmentTitleEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e AttachmentTitleEl) DebugYellow() AttachmentTitleEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e AttachmentTitleEl) FontBlack() AttachmentTitleEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e AttachmentTitleEl) FontBold() AttachmentTitleEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e AttachmentTitleEl) FontExtrabold() AttachmentTitleEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e AttachmentTitleEl) FontExtralight() AttachmentTitleEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e AttachmentTitleEl) FontLight() AttachmentTitleEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e AttachmentTitleEl) FontMedium() AttachmentTitleEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e AttachmentTitleEl) FontNormal() AttachmentTitleEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e AttachmentTitleEl) FontSemibold() AttachmentTitleEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e AttachmentTitleEl) FontThin() AttachmentTitleEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -5279,18 +6703,23 @@ func (e AttachmentTitleEl) FontThin() AttachmentTitleEl { tStyledExtFontThin(rt.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e AttachmentTitleEl) HFlex() AttachmentTitleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e AttachmentTitleEl) Margins(margins gk.EdgesInto) AttachmentTitleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e AttachmentTitleEl) Paddings(paddings gk.EdgesInto) AttachmentTitleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e AttachmentTitleEl) RefineStyle(style gk.StyleRefinement) AttachmentTitleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -5300,27 +6729,35 @@ func (e AttachmentTitleEl) RefineStyle(style gk.StyleRefinement) AttachmentTitle
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e AttachmentTitleEl) VFlex() AttachmentTitleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e AttachmentTitleEl) Style(st ...gk.Style) AttachmentTitleEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e AttachmentTitleEl) AspectRatio(ratio float32) AttachmentTitleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e AttachmentTitleEl) Bg(fill gk.Fill) AttachmentTitleEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e AttachmentTitleEl) Border(length gk.Length) AttachmentTitleEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -5328,12 +6765,16 @@ func (e AttachmentTitleEl) Border(length gk.Length) AttachmentTitleEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e AttachmentTitleEl) BorderB(length gk.Length) AttachmentTitleEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e AttachmentTitleEl) BorderColor(borderColor gk.Color) AttachmentTitleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -5341,6 +6782,8 @@ func (e AttachmentTitleEl) BorderColor(borderColor gk.Color) AttachmentTitleEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e AttachmentTitleEl) BorderL(length gk.Length) AttachmentTitleEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -5348,6 +6791,8 @@ func (e AttachmentTitleEl) BorderL(length gk.Length) AttachmentTitleEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e AttachmentTitleEl) BorderR(length gk.Length) AttachmentTitleEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -5355,6 +6800,8 @@ func (e AttachmentTitleEl) BorderR(length gk.Length) AttachmentTitleEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e AttachmentTitleEl) BorderT(length gk.Length) AttachmentTitleEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -5362,6 +6809,8 @@ func (e AttachmentTitleEl) BorderT(length gk.Length) AttachmentTitleEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e AttachmentTitleEl) BorderX(length gk.Length) AttachmentTitleEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -5369,6 +6818,8 @@ func (e AttachmentTitleEl) BorderX(length gk.Length) AttachmentTitleEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e AttachmentTitleEl) BorderY(length gk.Length) AttachmentTitleEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -5376,30 +6827,40 @@ func (e AttachmentTitleEl) BorderY(length gk.Length) AttachmentTitleEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e AttachmentTitleEl) Bottom(length gk.Length) AttachmentTitleEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e AttachmentTitleEl) ColEnd(end int16) AttachmentTitleEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e AttachmentTitleEl) ColSpan(span uint16) AttachmentTitleEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e AttachmentTitleEl) ColStart(start int16) AttachmentTitleEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e AttachmentTitleEl) Cursor(cursor gk.CursorStyle) AttachmentTitleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -5407,36 +6868,48 @@ func (e AttachmentTitleEl) Cursor(cursor gk.CursorStyle) AttachmentTitleEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e AttachmentTitleEl) FlexBasis(basis gk.Length) AttachmentTitleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e AttachmentTitleEl) FlexGrow(grow float32) AttachmentTitleEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e AttachmentTitleEl) FlexShrink(shrink float32) AttachmentTitleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e AttachmentTitleEl) Font(font gk.Font) AttachmentTitleEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e AttachmentTitleEl) FontFamily(familyName string) AttachmentTitleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e AttachmentTitleEl) FontFeatures(features gk.FontFeatures) AttachmentTitleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -5445,12 +6918,16 @@ func (e AttachmentTitleEl) FontFeatures(features gk.FontFeatures) AttachmentTitl
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e AttachmentTitleEl) FontWeight(weight gk.FontWeight) AttachmentTitleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e AttachmentTitleEl) Gap(length gk.Length) AttachmentTitleEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -5458,6 +6935,8 @@ func (e AttachmentTitleEl) Gap(length gk.Length) AttachmentTitleEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e AttachmentTitleEl) GapX(length gk.Length) AttachmentTitleEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -5465,18 +6944,24 @@ func (e AttachmentTitleEl) GapX(length gk.Length) AttachmentTitleEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e AttachmentTitleEl) GapY(length gk.Length) AttachmentTitleEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e AttachmentTitleEl) GridCols(cols uint16) AttachmentTitleEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e AttachmentTitleEl) GridColsMaxContent(cols uint16) AttachmentTitleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -5484,18 +6969,24 @@ func (e AttachmentTitleEl) GridColsMaxContent(cols uint16) AttachmentTitleEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e AttachmentTitleEl) GridColsMinContent(cols uint16) AttachmentTitleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e AttachmentTitleEl) GridRows(rows uint16) AttachmentTitleEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e AttachmentTitleEl) GridRowsMaxContent(rows uint16) AttachmentTitleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -5503,12 +6994,16 @@ func (e AttachmentTitleEl) GridRowsMaxContent(rows uint16) AttachmentTitleEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e AttachmentTitleEl) GridRowsMinContent(rows uint16) AttachmentTitleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e AttachmentTitleEl) H(length gk.Length) AttachmentTitleEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -5516,6 +7011,8 @@ func (e AttachmentTitleEl) H(length gk.Length) AttachmentTitleEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e AttachmentTitleEl) Inset(length gk.Length) AttachmentTitleEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -5523,6 +7020,8 @@ func (e AttachmentTitleEl) Inset(length gk.Length) AttachmentTitleEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e AttachmentTitleEl) Left(length gk.Length) AttachmentTitleEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -5530,36 +7029,48 @@ func (e AttachmentTitleEl) Left(length gk.Length) AttachmentTitleEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e AttachmentTitleEl) LineClamp(lines int) AttachmentTitleEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e AttachmentTitleEl) LineHeight(lineHeight gk.Length) AttachmentTitleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e AttachmentTitleEl) M(length gk.Length) AttachmentTitleEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e AttachmentTitleEl) MaxH(length gk.Length) AttachmentTitleEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e AttachmentTitleEl) MaxSize(length gk.Length) AttachmentTitleEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e AttachmentTitleEl) MaxW(length gk.Length) AttachmentTitleEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -5567,24 +7078,32 @@ func (e AttachmentTitleEl) MaxW(length gk.Length) AttachmentTitleEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e AttachmentTitleEl) Mb(length gk.Length) AttachmentTitleEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e AttachmentTitleEl) MinH(length gk.Length) AttachmentTitleEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e AttachmentTitleEl) MinSize(length gk.Length) AttachmentTitleEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e AttachmentTitleEl) MinW(length gk.Length) AttachmentTitleEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -5592,6 +7111,8 @@ func (e AttachmentTitleEl) MinW(length gk.Length) AttachmentTitleEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e AttachmentTitleEl) Ml(length gk.Length) AttachmentTitleEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -5599,6 +7120,8 @@ func (e AttachmentTitleEl) Ml(length gk.Length) AttachmentTitleEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e AttachmentTitleEl) Mr(length gk.Length) AttachmentTitleEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -5606,6 +7129,8 @@ func (e AttachmentTitleEl) Mr(length gk.Length) AttachmentTitleEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e AttachmentTitleEl) Mt(length gk.Length) AttachmentTitleEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -5613,6 +7138,8 @@ func (e AttachmentTitleEl) Mt(length gk.Length) AttachmentTitleEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e AttachmentTitleEl) Mx(length gk.Length) AttachmentTitleEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -5620,18 +7147,24 @@ func (e AttachmentTitleEl) Mx(length gk.Length) AttachmentTitleEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e AttachmentTitleEl) My(length gk.Length) AttachmentTitleEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e AttachmentTitleEl) Opacity(opacity float32) AttachmentTitleEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e AttachmentTitleEl) P(length gk.Length) AttachmentTitleEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5639,6 +7172,8 @@ func (e AttachmentTitleEl) P(length gk.Length) AttachmentTitleEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e AttachmentTitleEl) Pb(length gk.Length) AttachmentTitleEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5646,6 +7181,8 @@ func (e AttachmentTitleEl) Pb(length gk.Length) AttachmentTitleEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e AttachmentTitleEl) Pl(length gk.Length) AttachmentTitleEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5653,6 +7190,8 @@ func (e AttachmentTitleEl) Pl(length gk.Length) AttachmentTitleEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e AttachmentTitleEl) Pr(length gk.Length) AttachmentTitleEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5660,6 +7199,8 @@ func (e AttachmentTitleEl) Pr(length gk.Length) AttachmentTitleEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e AttachmentTitleEl) Pt(length gk.Length) AttachmentTitleEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5667,6 +7208,8 @@ func (e AttachmentTitleEl) Pt(length gk.Length) AttachmentTitleEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e AttachmentTitleEl) Px(length gk.Length) AttachmentTitleEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5674,6 +7217,8 @@ func (e AttachmentTitleEl) Px(length gk.Length) AttachmentTitleEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e AttachmentTitleEl) Py(length gk.Length) AttachmentTitleEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5681,12 +7226,16 @@ func (e AttachmentTitleEl) Py(length gk.Length) AttachmentTitleEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e AttachmentTitleEl) Right(length gk.Length) AttachmentTitleEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e AttachmentTitleEl) Rounded(length gk.Length) AttachmentTitleEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5694,6 +7243,8 @@ func (e AttachmentTitleEl) Rounded(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e AttachmentTitleEl) RoundedB(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5701,6 +7252,8 @@ func (e AttachmentTitleEl) RoundedB(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e AttachmentTitleEl) RoundedBl(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5708,6 +7261,8 @@ func (e AttachmentTitleEl) RoundedBl(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e AttachmentTitleEl) RoundedBr(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5715,6 +7270,8 @@ func (e AttachmentTitleEl) RoundedBr(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e AttachmentTitleEl) RoundedL(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5722,6 +7279,8 @@ func (e AttachmentTitleEl) RoundedL(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e AttachmentTitleEl) RoundedR(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5729,6 +7288,8 @@ func (e AttachmentTitleEl) RoundedR(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e AttachmentTitleEl) RoundedT(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5736,6 +7297,8 @@ func (e AttachmentTitleEl) RoundedT(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e AttachmentTitleEl) RoundedTl(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5743,24 +7306,32 @@ func (e AttachmentTitleEl) RoundedTl(length gk.Length) AttachmentTitleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e AttachmentTitleEl) RoundedTr(length gk.Length) AttachmentTitleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e AttachmentTitleEl) RowEnd(end int16) AttachmentTitleEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e AttachmentTitleEl) RowSpan(span uint16) AttachmentTitleEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e AttachmentTitleEl) RowStart(start int16) AttachmentTitleEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5770,24 +7341,32 @@ func (e AttachmentTitleEl) RowStart(start int16) AttachmentTitleEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e AttachmentTitleEl) ScrollbarWidth(width gk.Length) AttachmentTitleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e AttachmentTitleEl) Shadow(shadows []gk.BoxShadow) AttachmentTitleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e AttachmentTitleEl) Size(length gk.Length) AttachmentTitleEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e AttachmentTitleEl) TextAlign(align gk.TextAlign) AttachmentTitleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5796,6 +7375,8 @@ func (e AttachmentTitleEl) TextAlign(align gk.TextAlign) AttachmentTitleEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e AttachmentTitleEl) TextBg(bg gk.Color) AttachmentTitleEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5804,18 +7385,24 @@ func (e AttachmentTitleEl) TextBg(bg gk.Color) AttachmentTitleEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e AttachmentTitleEl) TextColor(color gk.Color) AttachmentTitleEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e AttachmentTitleEl) TextDecorationColor(color gk.Color) AttachmentTitleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e AttachmentTitleEl) TextOverflow(overflow gk.TextOverflow) AttachmentTitleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5824,6 +7411,8 @@ func (e AttachmentTitleEl) TextOverflow(overflow gk.TextOverflow) AttachmentTitl
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e AttachmentTitleEl) TextSize(size gk.Length) AttachmentTitleEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5831,12 +7420,16 @@ func (e AttachmentTitleEl) TextSize(size gk.Length) AttachmentTitleEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e AttachmentTitleEl) Top(length gk.Length) AttachmentTitleEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e AttachmentTitleEl) W(length gk.Length) AttachmentTitleEl {
 	tStyledW(rt.N(e.Core), length)
 	return e

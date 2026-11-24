@@ -1,27 +1,31 @@
-//! Requests that answer later, and the platform's own services (docs/PROTOCOLS.md 11.30): file
-//! dialogs (`App::prompt_for_paths`, `App::prompt_for_new_path`), a window's prompt
-//! (`Window::prompt`), the native menu bar (`App::set_menus`, also handed to the kit's
-//! `GlobalState` so its `AppMenuBar` draws the same menus where the platform has no menu bar)
-//! and `App::open_url`. Runtime of the platform and motion families; nothing here is Linux-only.
+//! Platform dialogs, application menus, URL opening, drag-and-drop predicates, image buffers,
+//! accessibility subtrees, and scripted-dialog test hooks.
 //!
-//! **Completions.** A request op returns a handle of kind TASK, a *completion*, at once. The
-//! library awaits the platform's answer on the main thread and delivers it as one `DONE` turn
-//! to the kept handler the app gave, with the window the request was made in, never inside a
-//! draw. The app's runtime frees the completion after that turn (it sends `RELEASE` itself); the
-//! app releasing it before the answer cancels it: the task is dropped, a late answer is
-//! discarded and no turn comes. The library never releases a completion on its own, so an
-//! answer racing a release cannot make the app's release fail.
+//! # Async Completion and Cancellation Protocol
 //!
-//! **Scripted answers.** Under the offscreen driver (`gk_headless_run`) or with
-//! `GK_SCRIPTED_PLATFORM=1` the platform is not asked: requests wait for an answer the app (a
-//! test) gives with `PLATFORM_ANSWER`, oldest request of the kind first, or take one given
-//! earlier; `open_url` is recorded (`PLATFORM_LOG`) instead of opening a browser. So a test of a
-//! file dialog is deterministic, and the same app code runs against the real platform.
+//! - **Dual OS / scripted mode**: `C_PROMPT_PATHS`, `C_PROMPT_NEW_PATH`, and `C_WINDOW_PROMPT`
+//!   immediately return an `HK_TASK` handle backed by a [`Completion`] drop guard and insert the
+//!   handle into thread-local `LIVE`. When `SCRIPTED` is false, [`platform_request`] spawns a
+//!   GPUI task awaiting the OS dialog future and defers [`deliver`] onto a clean UI turn. When
+//!   `SCRIPTED` is true (headless runs or `GK_SCRIPTED_PLATFORM=1`), [`script_request`] pairs
+//!   requests and `C_PLATFORM_ANSWER` / headless `answer` commands FIFO by dialog kind (`K_PATHS`,
+//!   `K_NEW_PATH`, `K_PROMPT`), supporting both early answers (`ANSWERS`) and waiting requests (`PENDING`).
+//! - **Cancellation safety**: releasing the `HK_TASK` handle via `C_RELEASE` drops [`Completion`],
+//!   which cancels any background `Task`, removes the handle from `LIVE` and `PENDING`, and
+//!   ensures [`deliver`] discards any already-queued completion (incrementing `COUNTS.2`) rather
+//!   than invoking a released host callback.
+//! - **Application menus (`C_SET_MENUS`, `C_MENUS_GET`)**: `gpui_kit::Menu` is not `Clone`, so
+//!   `C_SET_MENUS` decodes each menu twice from the wire buffer (capped at 16 levels deep): once
+//!   for OS `cx.set_menus` and once as `OwnedMenu` stored in `GlobalState` for `AppMenuBar` and
+//!   readback.
+//! - **Pixel images and GPU texture cleanup**: `C_RENDER_IMAGE_NEW` converts RGBA8 wire pixels
+//!   into BGRA8 (`px.swap(0, 2)`) for GPUI's `RenderImage`. When a `RenderImage` handle is later
+//!   released via `C_RELEASE`, [`released`] calls `window.drop_image` across every open window so
+//!   GPU atlas textures are freed promptly.
 
 use crate::genapi::{Call, HandlerRef};
 use crate::ops::*;
 use crate::rt::{self, GkResult, Item, err};
-
 use crate::wire::{Put, R};
 use gpui_kit::{
     AnyWindowHandle, App, Menu, MenuItem, OsAction, OwnedMenu, OwnedMenuItem, PathPromptOptions, PromptButton,
@@ -31,18 +35,20 @@ use std::cell::{Cell, RefCell};
 use std::collections::{HashSet, VecDeque};
 use std::path::PathBuf;
 
-/// What a completion's `DONE` turn says happened.
+/// Wire completion status: the user confirmed the dialog and provided an answer.
 pub const ANSWERED: u8 = 0;
-/// The user dismissed the dialog (or the platform dropped the request).
+
+/// Wire completion status: the user dismissed or canceled the dialog.
 pub const CANCELLED: u8 = 1;
-/// The platform could not show it (an error's text comes with it).
+
+/// Wire completion status: the OS dialog failed with an error string.
 pub const FAILED: u8 = 2;
 
-/// Kinds of request, for scripted answers.
 const K_PATHS: u8 = 1;
 const K_NEW_PATH: u8 = 2;
 const K_PROMPT: u8 = 3;
 
+/// Scripted dialog request waiting for a matching [`scripted_answer`] call.
 struct Pending {
     handle: u64,
     kind: u8,
@@ -51,20 +57,21 @@ struct Pending {
 }
 
 thread_local! {
+    /// When `true`, file dialogs, prompts, and URL opens are intercepted in-process.
     static SCRIPTED: Cell<bool> = Cell::new(std::env::var("GK_SCRIPTED_PLATFORM").is_ok_and(|v| v == "1"));
-    /// Requests waiting for a scripted answer, oldest first.
+    /// FIFO queue of scripted requests awaiting an answer.
     static PENDING: RefCell<VecDeque<Pending>> = const { RefCell::new(VecDeque::new()) };
-    /// Scripted answers given before their request: (kind, the DONE payload).
+    /// FIFO queue of pre-supplied scripted answers pushed before the matching request arrived.
     static ANSWERS: RefCell<VecDeque<(u8, Vec<u8>)>> = const { RefCell::new(VecDeque::new()) };
-    /// URLs open_url was given in scripted mode.
+    /// URLs recorded by `C_OPEN_URL` while in scripted mode.
     static OPENED: RefCell<Vec<String>> = const { RefCell::new(Vec::new()) };
-    /// Completions not yet answered nor released.
+    /// Active completion handles that have not yet been delivered or canceled via `C_RELEASE`.
     static LIVE: RefCell<HashSet<u64>> = RefCell::new(HashSet::new());
-    /// (requests made, DONE turns delivered, answers discarded because the completion was gone)
+    /// Diagnostic tuple `(requests_created, completions_delivered, completions_discarded)`.
     static COUNTS: Cell<(u64, u64, u64)> = const { Cell::new((0, 0, 0)) };
 }
 
-/// The offscreen driver answers platform requests from the script (core/src/lib.rs).
+/// Switches platform dialogs and `open_url` between live OS calls and scripted test queues.
 pub fn set_scripted(on: bool) {
     SCRIPTED.with(|s| s.set(on));
 }
@@ -81,8 +88,7 @@ fn bump(f: impl FnOnce(&mut (u64, u64, u64))) {
     });
 }
 
-/// A completion's item: dropping it (the app's release) cancels the request: a scripted one
-/// leaves the queue, a platform one's task is dropped, and a late answer finds it gone.
+/// Guard stored under `HK_TASK`; dropping it cancels the background task and suppresses delivery.
 struct Completion {
     handle: u64,
     _task: Option<gpui_kit::Task<()>>,
@@ -119,9 +125,8 @@ fn opt_str<'a>(r: &mut R<'a>) -> Option<&'a str> {
     if r.u8() != 0 { Some(r.str()) } else { None }
 }
 
-/// Delivers a completion's answer as one DONE turn, unless the app released it first.
+/// Delivers a `K_DONE` completion turn to the host if `handle` is still live (not canceled).
 fn deliver(handle: u64, h: HandlerRef, shape: u16, payload: &[u8], window: Option<AnyWindowHandle>, cx: &mut App) {
-    // Once: a completion is answered at most once, and not at all once released.
     if !LIVE.with(|l| l.borrow_mut().remove(&handle)) {
         bump(|c| c.2 += 1);
         return;
@@ -154,15 +159,12 @@ fn shape_of(kind: u8) -> u16 {
     if kind == K_PROMPT { SHAPE_PROMPT } else { SHAPE_PATHS }
 }
 
-/// The window a request belongs to: the turn's; in a turn without one (an app-wide action from the
-/// menu bar or a key binding, a timer of the app) the app's active window, else its first. Its answer's
-/// DONE turn runs with that window, when the update the answer arrived in ends, so the change it makes
-/// is drawn in the frame after the answer, as in a Rust app (PROTOCOLS.md 11.31, 11.32).
 fn request_window(c: &Call) -> Option<AnyWindowHandle> {
     c.window_handle().or_else(|| c.cx.active_window()).or_else(|| c.cx.windows().first().copied())
 }
 
-/// A request made in scripted mode: answered from an answer given earlier, else kept pending.
+/// Enqueues a scripted dialog request: if a matching pre-supplied answer is already queued in
+/// `ANSWERS`, delivers it on `cx.defer`; otherwise pushes onto `PENDING` until [`scripted_answer`] arrives.
 fn script_request(kind: u8, h: HandlerRef, c: &mut Call) -> u64 {
     let handle = rt::with(|s| s.reserve(HK_TASK));
     let window = request_window(c);
@@ -178,7 +180,7 @@ fn script_request(kind: u8, h: HandlerRef, c: &mut Call) -> u64 {
     handle
 }
 
-/// A request to the platform: a foreground task awaits its answer and delivers it.
+/// Spawns an async task awaiting OS dialog future `rx`, returning an `HK_TASK` cancellation handle.
 fn platform_request<F>(rx: F, kind: u8, h: HandlerRef, c: &mut Call) -> u64
 where
     F: std::future::Future<Output = Vec<u8>> + 'static,
@@ -187,14 +189,14 @@ where
     let window = request_window(c);
     let task = c.cx.spawn(async move |cx| {
         let payload = rx.await;
-        // From a deferred callback, not from inside this task: the DONE turn's release of the
-        // completion drops the task.
+        // Defer delivery so completion runs on a clean turn outside the async poll context.
         cx.update(|cx| cx.defer(move |cx| deliver(handle, h, shape_of(kind), &payload, window, cx)));
     });
     new_completion(Some(task), handle);
     handle
 }
 
+/// Encodes a path-dialog completion payload: `[status: u8][count: u32][path: str]*[error: str]`.
 fn paths_payload(status: u8, paths: &[PathBuf], error: &str) -> Vec<u8> {
     let mut out = Vec::new();
     out.put_u8(status);
@@ -206,14 +208,13 @@ fn paths_payload(status: u8, paths: &[PathBuf], error: &str) -> Vec<u8> {
     out
 }
 
+/// Encodes a prompt-dialog completion payload: `[status: u8][button_index: u32]`.
 fn prompt_payload(status: u8, answer: u32) -> Vec<u8> {
     let mut out = Vec::new();
     out.put_u8(status);
     out.put_u32(answer);
     out
 }
-
-// --- menus ------------------------------------------------------------------------------------
 
 fn os_action(n: u8) -> GkResult<Option<OsAction>> {
     Ok(Some(match n {
@@ -228,9 +229,7 @@ fn os_action(n: u8) -> GkResult<Option<OsAction>> {
     }))
 }
 
-/// One menu off the wire: str name, u8 disabled, u32 n, items (u8 kind: 0 separator; 1 action:
-/// str name, u32 action, u8 os action, u8 checked, u8 disabled; 2 submenu: a menu; 3 the OS's
-/// Services menu: str name).
+/// Recursively decodes a wire `Menu` tree, capping nesting at 16 levels.
 fn menu(r: &mut R, depth: u32) -> GkResult<Menu> {
     if depth > 16 {
         return err(ERR_BAD_OP, "menus nested more than 16 deep");
@@ -258,6 +257,7 @@ fn menu(r: &mut R, depth: u32) -> GkResult<Menu> {
     Ok(Menu { name: name.into(), items, disabled })
 }
 
+/// Serializes an `OwnedMenu` back into the same wire format accepted by [`menu`].
 fn put_owned(out: &mut Vec<u8>, m: &OwnedMenu) {
     out.put_str(&m.name);
     out.put_u8(m.disabled as u8);
@@ -293,8 +293,8 @@ fn put_owned(out: &mut Vec<u8>, m: &OwnedMenu) {
     }
 }
 
-// --- the call ops -------------------------------------------------------------------------------
-
+/// Dispatches platform dialogs, menus, URL opening, image caches/buffers, scroll anchors,
+/// text-selection scopes, and platform protocol test opcodes.
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     Some(match op {
         C_PROMPT_PATHS => (|| {
@@ -411,8 +411,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
                         c,
                     )
                 } else {
-                    // Another window, or a turn without one (an app-wide action, which runs while the
-                    // window that dispatched it is in use): the prompt is shown once this turn is over.
+                    // Opening a prompt on a non-current window must be deferred to avoid nested window borrows.
                     let (tx, shown) = futures::channel::oneshot::channel();
                     c.cx.defer(move |cx| {
                         if let Ok(rx) = any.update(cx, |_, window, cx| window.prompt(level, &message, detail.as_deref(), &answers, cx)) {
@@ -452,7 +451,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             let mut menus = Vec::with_capacity(n.min(64) as usize);
             let mut owned = Vec::with_capacity(n.min(64) as usize);
             for _ in 0..n {
-                // Read twice: gpui's Menu holds boxed actions and is consumed by both owners.
+                // `Menu` is not `Clone`, so decode each menu twice: once for GPUI OS menus
+                // and once as `OwnedMenu` for `GlobalState` (used by `AppMenuBar` and `C_MENUS_GET`).
                 let mut again = R::at(r.b, r.i);
                 menus.push(menu(r, 0)?);
                 owned.push(menu(&mut again, 0)?.owned());
@@ -462,8 +462,6 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             Ok(())
         })(),
         C_MENUS_GET => {
-            // As the kit's AppMenuBar draws them (set with the platform's by SET_MENUS); the
-            // platform's own copy is not readable on every platform (gpui's get_menus).
             let menus: Vec<OwnedMenu> = gpui_kit::base::GlobalState::global(c.cx).app_menus().to_vec();
             c.out.put_u32(menus.len() as u32);
             for m in &menus {
@@ -510,7 +508,6 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.put_u8(scripted() as u8);
             Ok(())
         }
-        // --- PROTOCOLS.md 13.31: objects the library makes for gpui's element leftovers
         C_IMAGE_CACHE_NEW => {
             let cache = gpui_kit::RetainAllImageCache::new(c.cx);
             c.out.put_u64(crate::genapi::obj_new(cache));
@@ -541,8 +538,8 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
     })
 }
 
-/// A scripted answer: delivered (after the current turn) to the oldest waiting request of its kind,
-/// or kept for the next one. True when a request took it.
+/// Matches a scripted answer against the oldest waiting [`Pending`] request of the same `kind`,
+/// returning `true` if delivered immediately or `false` if buffered in `ANSWERS` for a future request.
 fn scripted_answer(kind: u8, payload: Vec<u8>, cx: &mut App) -> bool {
     let waiting = PENDING.with(|p| {
         let mut p = p.borrow_mut();
@@ -560,8 +557,7 @@ fn scripted_answer(kind: u8, payload: Vec<u8>, cx: &mut App) -> bool {
     }
 }
 
-/// The offscreen driver's `answer WHAT` lines (gk-meter's `on_answer`, PROTOCOLS.md 11.31): `paths P..`,
-/// `new-path P`, `prompt N`, `cancel paths|new-path|prompt`. A Rust twin registers its own.
+/// Parses a headless script `answer <cmd>` line and routes it to [`scripted_answer`].
 pub fn answer_line(line: &str, cx: &mut App) -> anyhow::Result<()> {
     let mut words = line.split_whitespace();
     let what = words.next().unwrap_or("");
@@ -588,20 +584,14 @@ pub fn answer_line(line: &str, cx: &mut App) -> anyhow::Result<()> {
     Ok(())
 }
 
-// --- gpui's element leftovers (docs/PROTOCOLS.md 13.31) -------------------------------
-//
-// Closures upstream calls while it draws or while a drag moves are answered from data the app gave
-// when it described the element (app code never runs mid-frame); the generated decoders
-// (gen/gk_app.py, rust_dec) call these. The library's image caches, scroll anchors and text
-// selection scopes are objects the app holds by handle (calls above).
-
-/// `can_drop`'s answer, as data: the library's drag values (all, or those of some ids) and files
-/// dragged in from outside (gpui's ExternalPaths). Wire: u8 values, u32 n, u64 id each, u8 paths.
+/// Builds a `can_drop` predicate closure from a wire [`DropAccept`] descriptor.
 pub fn drop_accept(r: &mut R) -> impl Fn(&dyn std::any::Any, &mut Window, &mut App) -> bool + 'static {
     let accept = DropAccept::read(r);
     move |v, _, _| accept.accepts(v)
 }
 
+/// Wire filter specifying whether a drop target accepts internal [`crate::values::Drag`] values
+/// (optionally restricted to specific IDs) and/or OS `ExternalPaths`.
 #[derive(Clone, Debug, Default)]
 pub struct DropAccept {
     values: bool,
@@ -636,8 +626,7 @@ fn files(r: &mut R) -> Vec<(PathBuf, bool)> {
         .collect()
 }
 
-/// `external_drag_payload`'s answer: the files handed to the platform when the drag leaves the
-/// window (none: the drag stays inside the app). Wire: u32 n, (str path, u8 directory) each.
+/// Decodes a list of `(path, is_dir)` entries into an `ExternalDragPayload` callback.
 pub fn drag_payload(
     r: &mut R,
 ) -> impl Fn(&crate::values::Drag, &mut Window, &mut App) -> Option<gpui_kit::ExternalDragPayload> + 'static {
@@ -651,14 +640,13 @@ pub fn drag_payload(
     }
 }
 
-/// A list of indices (`with_dynamic_prepaint_order`): u32 n, u64 each.
+/// Reads a `u32`-prefixed list of `u64` indices as `Vec<usize>`.
 pub fn usizes(r: &mut R) -> Vec<usize> {
     let n = r.u32();
     (0..n).map(|_| r.u64() as usize).collect()
 }
 
-/// `a11y_synthetic_children`: one synthetic leaf per (key, role, label), its id derived from the
-/// key as upstream does (`synthetic_node_id`).
+/// Builds a closure that emits synthetic AccessKit child nodes `(key, role, label)`.
 pub fn a11y_children(
     nodes: Vec<(String, gpui_kit::Role, String)>,
 ) -> impl FnOnce(&mut gpui_kit::A11ySubtreeBuilder<'_>) + 'static {
@@ -674,9 +662,8 @@ pub fn a11y_children(
     }
 }
 
-/// The image cache providers the library has: a cache the app made (`gk.image_cache`, gpui's
-/// RetainAllImageCache) or gpui's retain-all cache kept by element id. Wire: u8 kind (0 the app's
-/// cache: u64 handle; 1 retain all: str id).
+/// Polymorphic `ImageCacheProvider` selecting either a host-retained cache handle or a keyed
+/// `RetainAllImageCacheProvider`.
 pub enum CacheProvider {
     Held(gpui_kit::Entity<gpui_kit::RetainAllImageCache>),
     RetainAll(gpui_kit::RetainAllImageCacheProvider),
@@ -691,6 +678,7 @@ impl gpui_kit::ImageCacheProvider for CacheProvider {
     }
 }
 
+/// Decodes a [`CacheProvider`] from the wire (`0` = handle, nonzero = keyed retain-all).
 pub fn cache_provider(r: &mut R) -> CacheProvider {
     match r.u8() {
         0 => CacheProvider::Held(image_cache_shown(r.u64())),
@@ -698,26 +686,22 @@ pub fn cache_provider(r: &mut R) -> CacheProvider {
     }
 }
 
-/// An image cache the app made, where a view shows it (a released one stops, as a released state does).
+/// Resolves an `HK_OBJ` `RetainAllImageCache` entity handle during tape decoding.
 pub fn image_cache_shown(h: u64) -> gpui_kit::Entity<gpui_kit::RetainAllImageCache> {
     crate::genapi::obj_shown::<gpui_kit::Entity<gpui_kit::RetainAllImageCache>>(h)
 }
 
-/// A scroll anchor the app made (`gk.scroll_anchor`), where a view shows it.
+/// Resolves an `HK_OBJ` `ScrollAnchor` handle during tape decoding.
 pub fn anchor_shown(h: u64) -> gpui_kit::ScrollAnchor {
     crate::genapi::obj_shown::<gpui_kit::ScrollAnchor>(h)
 }
 
-/// A text selection scope the app made (`gk.text_selection_scope_id`), where a view shows it.
+/// Resolves an `HK_OBJ` `TextSelectionScopeId` handle during tape decoding.
 pub fn scope_shown(h: u64) -> gpui_kit::base::TextSelectionScopeId {
     crate::genapi::obj_shown::<gpui_kit::base::TextSelectionScopeId>(h)
 }
 
-/// An image the app made from pixels (`gk.render_image`, RENDER_IMAGE_NEW): u32 width, u32 height,
-/// u32 n, n bytes of RGBA rows (4 bytes a pixel), turned into gpui's BGRA frame once. gpui keeps a
-/// RenderImage's texture in each window's atlas, by the image's id, until `Window::drop_image`: the
-/// image is a kept object so a view names the same one frame after frame, and `gk.release` drops it
-/// (`released`). Pixels given anew on every frame would be a new texture every frame.
+/// Decodes RGBA8 pixel bytes into a GPUI `RenderImage`, swizzling RGBA -> BGRA as GPUI expects.
 fn render_image_new(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
     let (w, h) = (r.u32(), r.u32());
     let n = r.u32() as usize;
@@ -725,13 +709,13 @@ fn render_image_new(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
     let want = w as usize * h as usize * 4;
     bytes.resize(want, 0);
     for px in bytes.chunks_exact_mut(4) {
-        px.swap(0, 2); // RGBA to BGRA, as gpui's own decoder does
+        px.swap(0, 2);
     }
     let buf = image::RgbaImage::from_raw(w, h, bytes).unwrap_or_else(|| image::RgbaImage::new(w.max(1), h.max(1)));
     std::sync::Arc::new(gpui_kit::RenderImage::new(vec![image::Frame::new(buf)]))
 }
 
-/// An image the app made (ImageSource::Render, and Custom's answer): u64 image, where a view shows it.
+/// Resolves a `RenderImage` handle referenced by an element and tracks usage under `diag`.
 pub fn pixel_image(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
     let img = crate::genapi::obj_shown::<std::sync::Arc<gpui_kit::RenderImage>>(r.u64());
     #[cfg(feature = "diag")]
@@ -745,17 +729,13 @@ pub fn pixel_image(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
 
 #[cfg(feature = "diag")]
 thread_local! {
-    /// The diagnostic library's count of the images views handed gpui (PLATFORM_TEST 7): how many
-    /// times, and gpui's distinct image ids among them. gpui keeps a texture per id, so a view
-    /// redrawn N times with one image is N times and one id; a new id each time was the leak.
+    /// Counts `(times_shown, distinct_image_ids)` for image-retention tests.
     static IMAGES_SHOWN: RefCell<(u64, HashSet<usize>)> = RefCell::new((0, HashSet::new()));
-    /// Window::drop_image calls made by releases.
+    /// Counts `window.drop_image` calls made when `RenderImage` handles are released.
     static IMAGES_DROPPED: Cell<u64> = const { Cell::new(0) };
 }
 
-/// A released object: an image the app made leaves every window's sprite atlas (gpui frees the
-/// texture's space; a texture left with no image in it is reused). No view shows it by then (one
-/// that names it again stops), so no window is asked to draw again.
+/// Releases GPU texture cache entries across all open windows when a `RenderImage` handle is freed.
 pub fn released(item: &Option<Item>, c: &mut Call) {
     let Some(Item::Obj(crate::objects::ObjItem::Owned { cell, .. })) = item else {
         return;
@@ -774,7 +754,7 @@ pub fn released(item: &Option<Item>, c: &mut Call) {
     }
 }
 
-/// ImageSource::Custom: upstream calls the loader while it draws; the image is data instead.
+/// Wraps a resolved `RenderImage` in the closure signature expected by `ImageSource::Custom`.
 pub fn custom_image(
     r: &mut R,
 ) -> std::sync::Arc<dyn Fn(&mut Window, &mut App) -> Option<Result<std::sync::Arc<gpui_kit::RenderImage>, gpui_kit::ImageCacheError>>> {
@@ -782,7 +762,6 @@ pub fn custom_image(
     std::sync::Arc::new(move |_: &mut Window, _: &mut App| Some(Ok(img.clone())))
 }
 
-/// Files dragged in from outside, read back (FileDropEvent::Entered's paths): u32 n, str each.
 impl crate::genapi::Wire for gpui_kit::ExternalPaths {
     fn put(&self, out: &mut Vec<u8>) {
         let paths = self.paths();
@@ -793,8 +772,7 @@ impl crate::genapi::Wire for gpui_kit::ExternalPaths {
     }
 }
 
-/// gpui's DragMoveEvent<Drag> as a handler's payload: the pointer (as Mouse_Event), the element's
-/// bounds and the value being dragged, copied before the handler fires (`drag(cx)` borrows the app).
+/// Snapshot of a `DragMoveEvent<Drag>` that copies the dragged value before crossing the wire.
 pub struct DragMove {
     event: gpui_kit::MouseMoveEvent,
     bounds: gpui_kit::Bounds<gpui_kit::Pixels>,
@@ -815,16 +793,14 @@ impl crate::genapi::Wire for DragMove {
     }
 }
 
-/// PLATFORM_TEST (core/tests/platform, mode elements): runs the decoders above on bytes the Go
-/// package wrote, as generated code would. u8 what, then
-///   1 drop accept: the Drop_Accept, u64 id of a library drag value -> u8 takes it, u8 takes files
-///   2 drag payload: the payload -> u32 n, (str path, u8 directory) each
-///   3 prepaint order: the list -> u32 n, u64 each
-///   4 image source: u8 kind (0 render, 1 custom), u64 image -> u32 width, u32 height, u32 first pixel as
-///     BGRA, u64 gpui's image id
-///   7 -> u64 images views handed gpui, u32 distinct gpui image ids among them, u64 Window::drop_image
-///     calls made by releases (the diagnostic library only)
-///   5 file drop -> FileDropEvent::Entered at (3, 4) with two paths, as a handler's payload is written
+/// Protocol test sub-dispatcher (`C_PLATFORM_TEST`) invoked by Go platform integration tests:
+/// - `1`: evaluates [`DropAccept`] against a synthetic `Drag{id}` and an `ExternalPaths`
+/// - `2`: runs [`drag_payload`] and echoes back the decoded `(path, is_dir)` entries
+/// - `3`: round-trips [`usizes`] dynamic prepaint order lists
+/// - `4`: resolves a `RenderImage` (direct or via [`custom_image`]) and returns `(w, h, first_px_le, id)`
+/// - `5`: encodes a synthetic `FileDropEvent::Entered` with two paths to verify wire decoding
+/// - `6`: invokes `app::ask_should_close` on window `wh` and returns the veto boolean
+/// - `7` (`diag` only): returns `(times_shown, distinct_ids, gpu_drops)` from image tracking counters
 fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     match r.u8() {
         1 => {
@@ -878,14 +854,11 @@ fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
             c.out.put_u64(img.id.0 as u64);
         }
         5 => {
-            // FileDropEvent::Entered as a handler would receive it (its ExternalPaths read back)
             let paths = gpui_kit::ExternalPaths(vec![PathBuf::from("/tmp/a.txt"), PathBuf::from("/tmp/b dir")].into());
             let ev = gpui_kit::FileDropEvent::Entered { position: gpui_kit::point(gpui_kit::px(3.), gpui_kit::px(4.)), paths };
             crate::genapi::Wire::put(&ev, c.out);
         }
         6 => {
-            // u64 window: whether the user may close it, asked of the app's handlers as the platform
-            // asks them (core/src/app.rs ask_should_close, PROTOCOLS.md 11.38), with the turn's window
             let wh = r.u64();
             let window = c.window()?;
             let yes = crate::app::ask_should_close(wh, window, c.cx);
@@ -893,7 +866,6 @@ fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
         }
         #[cfg(feature = "diag")]
         7 => {
-            // the images views handed gpui so far (times, distinct ids) and the drop_image calls
             let (times, ids) = IMAGES_SHOWN.with(|s| {
                 let s = s.borrow();
                 (s.0, s.1.len())

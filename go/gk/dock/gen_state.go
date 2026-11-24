@@ -7,13 +7,13 @@ import (
 	"gpuikit.dev/gk/internal/rt"
 )
 
-// AnyDrag is a handle to gpui_kit::base::dock::AnyDrag, a library object (PROTOCOLS.md section 13).
+// AnyDrag is a handle to gpui_kit::base::dock::AnyDrag, a runtime-owned library object.
 type AnyDrag struct{ rt.HCore }
 
-// Dock is a handle to gpui_kit::base::dock::Dock, a library object (PROTOCOLS.md section 13).
+// Dock is a handle to gpui_kit::base::dock::Dock, a runtime-owned library object.
 type Dock struct{ rt.HCore }
 
-// IsCollapsible is <gpui_kit::base::dock::Dock>::is_collapsible.
+// IsCollapsible calls <gpui_kit::base::dock::Dock>::is_collapsible.
 func (s Dock) IsCollapsible(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(848)
@@ -22,7 +22,7 @@ func (s Dock) IsCollapsible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsOpen is <gpui_kit::base::dock::Dock>::is_open.
+// IsOpen calls <gpui_kit::base::dock::Dock>::is_open.
 func (s Dock) IsOpen(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(849)
@@ -31,7 +31,7 @@ func (s Dock) IsOpen(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsResizing is <gpui_kit::base::dock::Dock>::is_resizing.
+// IsResizing calls <gpui_kit::base::dock::Dock>::is_resizing.
 func (s Dock) IsResizing(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(850)
@@ -40,7 +40,7 @@ func (s Dock) IsResizing(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Size is <gpui_kit::base::dock::Dock>::size.
+// Size calls <gpui_kit::base::dock::Dock>::size.
 func (s Dock) Size(cx *gk.Cx) float32 {
 	rt.UseBaseDock()
 	o := rt.NewReq(856)
@@ -49,7 +49,7 @@ func (s Dock) Size(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// SetCollapsible is <gpui_kit::base::dock::Dock>::set_collapsible.
+// SetCollapsible calls <gpui_kit::base::dock::Dock>::set_collapsible.
 func (s Dock) SetCollapsible(cx *gk.Cx, collapsible bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(852)
@@ -58,7 +58,7 @@ func (s Dock) SetCollapsible(cx *gk.Cx, collapsible bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetOpen is <gpui_kit::base::dock::Dock>::set_open.
+// SetOpen calls <gpui_kit::base::dock::Dock>::set_open.
 func (s Dock) SetOpen(cx *gk.Cx, open bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(853)
@@ -67,7 +67,7 @@ func (s Dock) SetOpen(cx *gk.Cx, open bool) {
 	rt.StateSet(cx, o)
 }
 
-// SetResizing is <gpui_kit::base::dock::Dock>::set_resizing.
+// SetResizing calls <gpui_kit::base::dock::Dock>::set_resizing.
 func (s Dock) SetResizing(cx *gk.Cx, resizing bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(854)
@@ -82,7 +82,7 @@ func (s Dock) SetResizing(cx *gk.Cx, resizing bool) {
 // unclamped: a smaller value would collapse the dock to nothing, the skin clips the resize handle
 // that would drag it back out, and the collapsed size persists.
 //
-// SetSize is <gpui_kit::base::dock::Dock>::set_size.
+// SetSize calls <gpui_kit::base::dock::Dock>::set_size.
 func (s Dock) SetSize(cx *gk.Cx, size float32) {
 	rt.UseBaseDock()
 	o := rt.NewReq(855)
@@ -91,21 +91,21 @@ func (s Dock) SetSize(cx *gk.Cx, size float32) {
 	rt.StateSet(cx, o)
 }
 
-// NewDock is <gpui_kit::base::dock::Dock>::new.
+// NewDock calls <gpui_kit::base::dock::Dock>::new.
 func NewDock(cx *gk.Cx, size float32) Dock {
 	rt.UseBaseDock()
 	o := rt.NewReq(851)
 	o.F32(size)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return Dock{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// DockArea is a handle to gpui_kit::base::dock::DockArea, kit state that lives in the library.
+// DockArea is a handle to gpui_kit::base::dock::DockArea, a runtime-owned kit state entity.
 type Area struct{ rt.HCore }
 
 // The area's own bounds, recorded each frame. Dock resizing measures against it.
 //
-// Bounds is <gpui_kit::base::dock::DockArea>::bounds.
+// Bounds calls <gpui_kit::base::dock::DockArea>::bounds.
 func (s Area) Bounds(cx *gk.Cx) gk.Bounds {
 	rt.UseBaseDock()
 	o := rt.NewReq(326)
@@ -116,7 +116,7 @@ func (s Area) Bounds(cx *gk.Cx) gk.Bounds {
 
 // The dock's size along its axis.
 //
-// DockSize is <gpui_kit::base::dock::DockArea>::dock_size.
+// DockSize calls <gpui_kit::base::dock::DockArea>::dock_size.
 func (s Area) DockSize(cx *gk.Cx, placement Placement) gk.Option[float32] {
 	rt.UseBaseDock()
 	o := rt.NewReq(327)
@@ -129,7 +129,7 @@ func (s Area) DockSize(cx *gk.Cx, placement Placement) gk.Option[float32] {
 // Write the layout out.
 //
 // Slot sizes are resolved to concrete pixels first. The tree represents an unconstrained slot as
-// `None` and the writer emits `0.0` for it, which *this* reader maps back to `None` — but an older
+// `None` and the writer emits `0.0` for it, which *this* reader maps back to `None` - but an older
 // build has no notion of the sentinel and would construct a real zero-pixel panel from it.
 // Preference order is the split's measured size, then the tree's own size, then `PANEL_MIN_SIZE`
 // for a slot nothing has ever measured.
@@ -143,7 +143,7 @@ func (s Area) DockSize(cx *gk.Cx, placement Placement) gk.Option[float32] {
 // neither the file nor the screen. Reading the measurement for every slot of a split writes one
 // internally consistent set, which is what the old `StackPanel::dump` did.
 //
-// Dump is <gpui_kit::base::dock::DockArea>::dump.
+// Dump calls <gpui_kit::base::dock::DockArea>::dump.
 func (s Area) Dump(cx *gk.Cx) AreaState {
 	rt.UseBaseDock()
 	o := rt.NewReq(328)
@@ -152,7 +152,7 @@ func (s Area) Dump(cx *gk.Cx) AreaState {
 	return rdDockAreaState(r)
 }
 
-// HasDock is <gpui_kit::base::dock::DockArea>::has_dock.
+// HasDock calls <gpui_kit::base::dock::DockArea>::has_dock.
 func (s Area) HasDock(cx *gk.Cx, placement Placement) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(329)
@@ -162,7 +162,7 @@ func (s Area) HasDock(cx *gk.Cx, placement Placement) bool {
 	return r.Bool()
 }
 
-// ID is <gpui_kit::base::dock::DockArea>::id.
+// ID calls <gpui_kit::base::dock::DockArea>::id.
 func (s Area) ID(cx *gk.Cx) string {
 	rt.UseBaseDock()
 	o := rt.NewReq(330)
@@ -174,7 +174,7 @@ func (s Area) ID(cx *gk.Cx) string {
 // Whether a dock may be collapsed at all. A skin drawing a collapse affordance in a tab bar reads
 // this to decide whether to offer one.
 //
-// IsDockCollapsible is <gpui_kit::base::dock::DockArea>::is_dock_collapsible.
+// IsDockCollapsible calls <gpui_kit::base::dock::DockArea>::is_dock_collapsible.
 func (s Area) IsDockCollapsible(cx *gk.Cx, placement Placement) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(331)
@@ -187,7 +187,7 @@ func (s Area) IsDockCollapsible(cx *gk.Cx, placement Placement) bool {
 // Whether a dock is on screen. A dock the area does not have is never open, so this answers the
 // question a caller usually means without a preceding `HasDock`.
 //
-// IsDockOpen is <gpui_kit::base::dock::DockArea>::is_dock_open.
+// IsDockOpen calls <gpui_kit::base::dock::DockArea>::is_dock_open.
 func (s Area) IsDockOpen(cx *gk.Cx, placement Placement) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(332)
@@ -201,9 +201,9 @@ func (s Area) IsDockOpen(cx *gk.Cx, placement Placement) bool {
 //
 // This is the question the old `DockItem::is_empty` answered, and it is the same one
 // `is_node_visible` answers per container: a region is empty when nothing in it would be drawn. A
-// region that does not exist — a dock that was never installed — is empty too.
+// region that does not exist - a dock that was never installed - is empty too.
 //
-// IsEmpty is <gpui_kit::base::dock::DockArea>::is_empty.
+// IsEmpty calls <gpui_kit::base::dock::DockArea>::is_empty.
 func (s Area) IsEmpty(cx *gk.Cx, placement Placement) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(333)
@@ -213,7 +213,7 @@ func (s Area) IsEmpty(cx *gk.Cx, placement Placement) bool {
 	return r.Bool()
 }
 
-// IsLocked is <gpui_kit::base::dock::DockArea>::is_locked.
+// IsLocked calls <gpui_kit::base::dock::DockArea>::is_locked.
 func (s Area) IsLocked(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(334)
@@ -222,7 +222,7 @@ func (s Area) IsLocked(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsZoomed is <gpui_kit::base::dock::DockArea>::is_zoomed.
+// IsZoomed calls <gpui_kit::base::dock::DockArea>::is_zoomed.
 func (s Area) IsZoomed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(335)
@@ -234,10 +234,10 @@ func (s Area) IsZoomed(cx *gk.Cx) bool {
 // The tree for one region, or `None` for a dock that does not exist.
 //
 // The `Option` is in the signature rather than hidden behind a panic because a dock is genuinely
-// optional — it is `Option<DockState>` in the persisted schema — and there is no borrowable empty
+// optional - it is `Option<DockState>` in the persisted schema - and there is no borrowable empty
 // tree to hand back for one that is absent.
 //
-// Layout is <gpui_kit::base::dock::DockArea>::layout.
+// Layout calls <gpui_kit::base::dock::DockArea>::layout.
 func (s Area) Layout(cx *gk.Cx, placement Placement) gk.Option[PaneTree] {
 	rt.UseBaseDock()
 	o := rt.NewReq(857)
@@ -249,7 +249,7 @@ func (s Area) Layout(cx *gk.Cx, placement Placement) gk.Option[PaneTree] {
 
 // The live view for a panel, if the dock still holds it.
 //
-// Panel is <gpui_kit::base::dock::DockArea>::panel.
+// Panel calls <gpui_kit::base::dock::DockArea>::panel.
 func (s Area) Panel(cx *gk.Cx, panel DockPanelID) gk.Option[Panel] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1537)
@@ -259,7 +259,7 @@ func (s Area) Panel(cx *gk.Cx, panel DockPanelID) gk.Option[Panel] {
 	return rt.RdOpt(r, func(r *rt.Reader) Panel { return Panel{HCore: rt.MkH(r.U64())} })
 }
 
-// Version is <gpui_kit::base::dock::DockArea>::version.
+// Version calls <gpui_kit::base::dock::DockArea>::version.
 func (s Area) Version(cx *gk.Cx) gk.Option[int] {
 	rt.UseBaseDock()
 	o := rt.NewReq(345)
@@ -270,7 +270,7 @@ func (s Area) Version(cx *gk.Cx) gk.Option[int] {
 
 // The tab group filling the area, if a group is what is zoomed.
 //
-// ZoomedGroup is <gpui_kit::base::dock::DockArea>::zoomed_group.
+// ZoomedGroup calls <gpui_kit::base::dock::DockArea>::zoomed_group.
 func (s Area) ZoomedGroup(cx *gk.Cx) gk.Option[NodeID] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1538)
@@ -283,7 +283,7 @@ func (s Area) ZoomedGroup(cx *gk.Cx) gk.Option[NodeID] {
 // not know about becomes a placeholder that carries the original `PanelState` forward, so the next
 // save does not erase it.
 //
-// Load is <gpui_kit::base::dock::DockArea>::load.
+// Load calls <gpui_kit::base::dock::DockArea>::load.
 func (s Area) Load(cx *gk.Cx, state AreaState) error {
 	rt.UseBaseDock()
 	o := rt.NewReq(1535)
@@ -296,7 +296,7 @@ func (s Area) Load(cx *gk.Cx, state AreaState) error {
 // Add a panel to a region, merging it into the first tab group there, or starting a group when the
 // region is empty.
 //
-// AddPanel is <gpui_kit::base::dock::DockArea>::add_panel.
+// AddPanel calls <gpui_kit::base::dock::DockArea>::add_panel.
 func (s Area) AddPanel(cx *gk.Cx, panel Panel, placement Placement, size gk.Option[float32]) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1277)
@@ -314,11 +314,11 @@ func (s Area) AddPanel(cx *gk.Cx, panel Panel, placement Placement, size gk.Opti
 
 // Add an already-wrapped panel handle to a region.
 //
-// The companion to `AddPanel`, for a layer that hands base its own concrete handle — see `AsAny` —
+// The companion to `AddPanel`, for a layer that hands base its own concrete handle - see `AsAny` -
 // rather than a bare entity. The id comes from `PanelID`, which is the only place it can come from
 // once the entity is behind the handle.
 //
-// AddPanelView is <gpui_kit::base::dock::DockArea>::add_panel_view.
+// AddPanelView calls <gpui_kit::base::dock::DockArea>::add_panel_view.
 func (s Area) AddPanelView(cx *gk.Cx, panel Panel, placement Placement, size gk.Option[float32]) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1278)
@@ -336,7 +336,7 @@ func (s Area) AddPanelView(cx *gk.Cx, panel Panel, placement Placement, size gk.
 
 // Move a panel to a new home. The panel never leaves the dock, so it is never told it was removed.
 //
-// MovePanel is <gpui_kit::base::dock::DockArea>::move_panel.
+// MovePanel calls <gpui_kit::base::dock::DockArea>::move_panel.
 func (s Area) MovePanel(cx *gk.Cx, panel DockPanelID, target InsertTarget) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1536)
@@ -349,7 +349,7 @@ func (s Area) MovePanel(cx *gk.Cx, panel DockPanelID, target InsertTarget) {
 // Take a dock away entirely, panels and all. Distinct from `ToggleDock`, which only takes it off
 // screen.
 //
-// RemoveDock is <gpui_kit::base::dock::DockArea>::remove_dock.
+// RemoveDock calls <gpui_kit::base::dock::DockArea>::remove_dock.
 func (s Area) RemoveDock(cx *gk.Cx, placement Placement) {
 	rt.UseBaseDock()
 	o := rt.NewReq(337)
@@ -360,7 +360,7 @@ func (s Area) RemoveDock(cx *gk.Cx, placement Placement) {
 
 // Remove a panel from wherever it lives, telling it that it was removed.
 //
-// RemovePanel is <gpui_kit::base::dock::DockArea>::remove_panel.
+// RemovePanel calls <gpui_kit::base::dock::DockArea>::remove_panel.
 func (s Area) RemovePanel(cx *gk.Cx, panel Panel) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1279)
@@ -376,7 +376,7 @@ func (s Area) RemovePanel(cx *gk.Cx, panel Panel) {
 // group entities are the dock's own, so this is the one way to select a panel by identity. Nothing
 // happens for a panel the dock does not hold, or one already displayed.
 //
-// SelectPanel is <gpui_kit::base::dock::DockArea>::select_panel.
+// SelectPanel calls <gpui_kit::base::dock::DockArea>::select_panel.
 func (s Area) SelectPanel(cx *gk.Cx, panel DockPanelID) {
 	rt.UseBaseDock()
 	o := rt.NewReq(858)
@@ -388,7 +388,7 @@ func (s Area) SelectPanel(cx *gk.Cx, panel DockPanelID) {
 // Replace the center region with a described layout. Whatever was there leaves the dock, so its
 // panels are told `OnRemoved`.
 //
-// SetCenter is <gpui_kit::base::dock::DockArea>::set_center.
+// SetCenter calls <gpui_kit::base::dock::DockArea>::set_center.
 func (s Area) SetCenter(cx *gk.Cx, layout Layout) {
 	rt.UseBaseDock()
 	o := rt.NewReq(859)
@@ -404,7 +404,7 @@ func (s Area) SetCenter(cx *gk.Cx, layout Layout) {
 // `Center` defers to `SetCenter`: the center is not a dock and has no size or open state of its
 // own.
 //
-// SetDock is <gpui_kit::base::dock::DockArea>::set_dock.
+// SetDock calls <gpui_kit::base::dock::DockArea>::set_dock.
 func (s Area) SetDock(cx *gk.Cx, placement Placement, layout Layout) {
 	rt.UseBaseDock()
 	o := rt.NewReq(860)
@@ -414,7 +414,7 @@ func (s Area) SetDock(cx *gk.Cx, placement Placement, layout Layout) {
 	rt.StateSet(cx, o)
 }
 
-// SetDockCollapsible is <gpui_kit::base::dock::DockArea>::set_dock_collapsible.
+// SetDockCollapsible calls <gpui_kit::base::dock::DockArea>::set_dock_collapsible.
 func (s Area) SetDockCollapsible(cx *gk.Cx, placement Placement, collapsible bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(338)
@@ -424,7 +424,7 @@ func (s Area) SetDockCollapsible(cx *gk.Cx, placement Placement, collapsible boo
 	rt.StateSet(cx, o)
 }
 
-// SetDockSize is <gpui_kit::base::dock::DockArea>::set_dock_size.
+// SetDockSize calls <gpui_kit::base::dock::DockArea>::set_dock_size.
 func (s Area) SetDockSize(cx *gk.Cx, placement Placement, size float32) {
 	rt.UseBaseDock()
 	o := rt.NewReq(339)
@@ -436,7 +436,7 @@ func (s Area) SetDockSize(cx *gk.Cx, placement Placement, size float32) {
 
 // Lock the layout against rearranging. Resizing stays available.
 //
-// SetLocked is <gpui_kit::base::dock::DockArea>::set_locked.
+// SetLocked calls <gpui_kit::base::dock::DockArea>::set_locked.
 func (s Area) SetLocked(cx *gk.Cx, locked bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(340)
@@ -447,7 +447,7 @@ func (s Area) SetLocked(cx *gk.Cx, locked bool) {
 
 // Replace the slot sizes of the split at `node` in place.
 //
-// SetSplitSizes is <gpui_kit::base::dock::DockArea>::set_split_sizes.
+// SetSplitSizes calls <gpui_kit::base::dock::DockArea>::set_split_sizes.
 func (s Area) SetSplitSizes(cx *gk.Cx, node NodeID, sizes []float32) {
 	rt.UseBaseDock()
 	o := rt.NewReq(861)
@@ -466,7 +466,7 @@ func (s Area) SetSplitSizes(cx *gk.Cx, node NodeID, sizes []float32) {
 // several preset layouts into the same area picks the version with the preset, which is after the
 // area exists.
 //
-// SetVersion is <gpui_kit::base::dock::DockArea>::set_version.
+// SetVersion calls <gpui_kit::base::dock::DockArea>::set_version.
 func (s Area) SetVersion(cx *gk.Cx, version gk.Option[int]) {
 	rt.UseBaseDock()
 	o := rt.NewReq(341)
@@ -482,10 +482,10 @@ func (s Area) SetVersion(cx *gk.Cx, version gk.Option[int]) {
 
 // Zoom the tab group at `node` in, as if its own zoom control had been used.
 //
-// Nothing happens for a node that is not a live tab group, or when the group refuses — the group
+// Nothing happens for a node that is not a live tab group, or when the group refuses - the group
 // is the one that knows.
 //
-// SetZoomedIn is <gpui_kit::base::dock::DockArea>::set_zoomed_in.
+// SetZoomedIn calls <gpui_kit::base::dock::DockArea>::set_zoomed_in.
 func (s Area) SetZoomedIn(cx *gk.Cx, node NodeID) {
 	rt.UseBaseDock()
 	o := rt.NewReq(862)
@@ -497,10 +497,10 @@ func (s Area) SetZoomedIn(cx *gk.Cx, node NodeID) {
 // Clear the zoom, putting the zoomed container's own flag back with it.
 //
 // A container toggles its zoom itself and only reports it, so an area that dropped the view
-// without telling the container would leave it believing it still fills the dock — and a zoomed
+// without telling the container would leave it believing it still fills the dock - and a zoomed
 // group refuses drops.
 //
-// SetZoomedOut is <gpui_kit::base::dock::DockArea>::set_zoomed_out.
+// SetZoomedOut calls <gpui_kit::base::dock::DockArea>::set_zoomed_out.
 func (s Area) SetZoomedOut(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(342)
@@ -510,7 +510,7 @@ func (s Area) SetZoomedOut(cx *gk.Cx) {
 
 // Put `panel` in a new tab group beside `node`.
 //
-// SplitAt is <gpui_kit::base::dock::DockArea>::split_at.
+// SplitAt calls <gpui_kit::base::dock::DockArea>::split_at.
 func (s Area) SplitAt(cx *gk.Cx, node NodeID, panel DockPanelID, placement gk.Placement) {
 	rt.UseBaseDock()
 	o := rt.NewReq(863)
@@ -524,7 +524,7 @@ func (s Area) SplitAt(cx *gk.Cx, node NodeID, panel DockPanelID, placement gk.Pl
 // Open a closed dock or close an open one. A dock that is not collapsible refuses to close; there
 // is nothing to refuse when opening.
 //
-// ToggleDock is <gpui_kit::base::dock::DockArea>::toggle_dock.
+// ToggleDock calls <gpui_kit::base::dock::DockArea>::toggle_dock.
 func (s Area) ToggleDock(cx *gk.Cx, placement Placement) {
 	rt.UseBaseDock()
 	o := rt.NewReq(344)
@@ -533,7 +533,7 @@ func (s Area) ToggleDock(cx *gk.Cx, placement Placement) {
 	rt.StateSet(cx, o)
 }
 
-// OnDockEvent subscribes a handler to the state's DockEvent events; gk.Release ends it.
+// OnDockEvent registers a listener for DockEvent events on this state; release the returned Subscription to unsubscribe.
 func (s Area) OnDockEvent(cx *gk.Cx, h func(cx *gk.Cx, e Event)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 87)
 	o := rt.NewReq(343)
@@ -544,16 +544,20 @@ func (s Area) OnDockEvent(cx *gk.Cx, h func(cx *gk.Cx, e Event)) gk.Subscription
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// DockAreaBuilder is the chain of DockArea's `self -> Self` methods; Build makes it, in one crossing.
+// DockAreaBuilder accumulates chained DockArea builder options before creating the handle in Build.
 type AreaBuilder struct{ sb *rt.StateBuilder }
 
+// Install the appearance for this area and everything under it: the renderer also supplies the
+// `TabGroupRenderer` every group it builds will use.
+//
+// WithRenderer calls <gpui_kit::base::dock::DockArea>::with_renderer.
 func (b AreaBuilder) WithRenderer(renderer Renderer) AreaBuilder {
 	o := b.sb.Op(1)
 	o.U64(rt.H(renderer.HCore))
 	return b
 }
 
-// Build makes the DockArea.
+// Build commits the queued options and returns the new DockArea handle.
 func (b AreaBuilder) Build() Area { return Area{HCore: rt.MkH(b.sb.Build())} }
 
 // An empty area that draws nothing but its panels.
@@ -563,7 +567,7 @@ func (b AreaBuilder) Build() Area { return Area{HCore: rt.MkH(b.sb.Build())} }
 //
 // Install appearance with `WithRenderer`.
 //
-// NewDockArea is <gpui_kit::base::dock::DockArea>::new.
+// NewDockArea calls <gpui_kit::base::dock::DockArea>::new.
 func NewArea(cx *gk.Cx, id string, version gk.Option[int]) AreaBuilder {
 	rt.UseBaseDock()
 	o := rt.NewReq(336)
@@ -577,10 +581,10 @@ func NewArea(cx *gk.Cx, id string, version gk.Option[int]) AreaBuilder {
 	return AreaBuilder{rt.NewStateBuilder(cx, o)}
 }
 
-// DockContext is a handle to gpui_kit::base::dock::DockContext, a library object (PROTOCOLS.md section 13).
+// DockContext is a handle to gpui_kit::base::dock::DockContext, a runtime-owned library object.
 type Context struct{ rt.HCore }
 
-// IsCollapsible is <gpui_kit::base::dock::DockContext>::is_collapsible.
+// IsCollapsible calls <gpui_kit::base::dock::DockContext>::is_collapsible.
 func (s Context) IsCollapsible(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1594)
@@ -589,7 +593,7 @@ func (s Context) IsCollapsible(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsOpen is <gpui_kit::base::dock::DockContext>::is_open.
+// IsOpen calls <gpui_kit::base::dock::DockContext>::is_open.
 func (s Context) IsOpen(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1595)
@@ -598,7 +602,7 @@ func (s Context) IsOpen(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Placement is <gpui_kit::base::dock::DockContext>::placement.
+// Placement calls <gpui_kit::base::dock::DockContext>::placement.
 func (s Context) Placement(cx *gk.Cx) Placement {
 	rt.UseBaseDock()
 	o := rt.NewReq(1596)
@@ -609,7 +613,7 @@ func (s Context) Placement(cx *gk.Cx) Placement {
 
 // The dock's extent along its own axis: width for left/right, height for bottom.
 //
-// Size is <gpui_kit::base::dock::DockContext>::size.
+// Size calls <gpui_kit::base::dock::DockContext>::size.
 func (s Context) Size(cx *gk.Cx) float32 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1598)
@@ -621,7 +625,7 @@ func (s Context) Size(cx *gk.Cx) float32 {
 // End a resize started with `ResizeTo`. A bottom dock dragged below its minimum snaps shut or to
 // the minimum, whichever is nearer.
 //
-// EndResize is <gpui_kit::base::dock::DockContext>::end_resize.
+// EndResize calls <gpui_kit::base::dock::DockContext>::end_resize.
 func (s Context) EndResize(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1593)
@@ -632,7 +636,7 @@ func (s Context) EndResize(cx *gk.Cx) {
 // Resize from a pointer position in window coordinates. Base clamps it against the area bounds and
 // the opposite dock.
 //
-// ResizeTo is <gpui_kit::base::dock::DockContext>::resize_to.
+// ResizeTo calls <gpui_kit::base::dock::DockContext>::resize_to.
 func (s Context) ResizeTo(cx *gk.Cx, pointer gk.GpuiPoint) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1597)
@@ -641,7 +645,7 @@ func (s Context) ResizeTo(cx *gk.Cx, pointer gk.GpuiPoint) {
 	rt.StateSet(cx, o)
 }
 
-// Toggle is <gpui_kit::base::dock::DockContext>::toggle.
+// Toggle calls <gpui_kit::base::dock::DockContext>::toggle.
 func (s Context) Toggle(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1599)
@@ -649,10 +653,10 @@ func (s Context) Toggle(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// DockState is a handle to gpui_kit::base::dock::DockState, a library object (PROTOCOLS.md section 13).
+// DockState is a handle to gpui_kit::base::dock::DockState, a runtime-owned library object.
 type State struct{ rt.HCore }
 
-// Open is <gpui_kit::base::dock::DockState>::open.
+// Open calls <gpui_kit::base::dock::DockState>::open.
 func (s State) Open(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1540)
@@ -661,7 +665,7 @@ func (s State) Open(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// Panel is <gpui_kit::base::dock::DockState>::panel.
+// Panel calls <gpui_kit::base::dock::DockState>::panel.
 func (s State) Panel(cx *gk.Cx) PanelState {
 	rt.UseBaseDock()
 	o := rt.NewReq(1541)
@@ -670,7 +674,7 @@ func (s State) Panel(cx *gk.Cx) PanelState {
 	return rdPanelState(r)
 }
 
-// Placement is <gpui_kit::base::dock::DockState>::placement.
+// Placement calls <gpui_kit::base::dock::DockState>::placement.
 func (s State) Placement(cx *gk.Cx) Placement {
 	rt.UseBaseDock()
 	o := rt.NewReq(1542)
@@ -679,7 +683,7 @@ func (s State) Placement(cx *gk.Cx) Placement {
 	return Placement(r.U16())
 }
 
-// Size is <gpui_kit::base::dock::DockState>::size.
+// Size calls <gpui_kit::base::dock::DockState>::size.
 func (s State) Size(cx *gk.Cx) float32 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1543)
@@ -688,7 +692,7 @@ func (s State) Size(cx *gk.Cx) float32 {
 	return r.F32()
 }
 
-// NewDockState is <gpui_kit::base::dock::DockState>::new.
+// NewDockState calls <gpui_kit::base::dock::DockState>::new.
 func NewState(cx *gk.Cx, panel PanelState, placement Placement, size float32, open bool) State {
 	rt.UseBaseDock()
 	o := rt.NewReq(1539)
@@ -696,14 +700,14 @@ func NewState(cx *gk.Cx, panel PanelState, placement Placement, size float32, op
 	o.U16(uint16(placement))
 	o.F32(size)
 	o.Bool(open)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return State{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// DragPanel is a handle to gpui_kit::base::dock::DragPanel, a library object (PROTOCOLS.md section 13).
+// DragPanel is a handle to gpui_kit::base::dock::DragPanel, a runtime-owned library object.
 type DragPanel struct{ rt.HCore }
 
-// DragOffset is <gpui_kit::base::dock::DragPanel>::drag_offset.
+// DragOffset calls <gpui_kit::base::dock::DragPanel>::drag_offset.
 func (s DragPanel) DragOffset(cx *gk.Cx) gk.GpuiPoint {
 	rt.UseBaseDock()
 	o := rt.NewReq(864)
@@ -712,7 +716,7 @@ func (s DragPanel) DragOffset(cx *gk.Cx) gk.GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
-// DragSessionID is <gpui_kit::base::dock::DragPanel>::drag_session_id.
+// DragSessionID calls <gpui_kit::base::dock::DragPanel>::drag_session_id.
 func (s DragPanel) DragSessionID(cx *gk.Cx) uint64 {
 	rt.UseBaseDock()
 	o := rt.NewReq(865)
@@ -721,7 +725,7 @@ func (s DragPanel) DragSessionID(cx *gk.Cx) uint64 {
 	return uint64(r.U64())
 }
 
-// Panel is <gpui_kit::base::dock::DragPanel>::panel.
+// Panel calls <gpui_kit::base::dock::DragPanel>::panel.
 func (s DragPanel) Panel(cx *gk.Cx) DockPanelID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1544)
@@ -737,7 +741,7 @@ func (s DragPanel) Panel(cx *gk.Cx) DockPanelID {
 // reports it here. Defaults to zero, which degrades to a placeholder that grows out of the cursor
 // rather than out of the preview.
 //
-// PreviewSize is <gpui_kit::base::dock::DragPanel>::preview_size.
+// PreviewSize calls <gpui_kit::base::dock::DragPanel>::preview_size.
 func (s DragPanel) PreviewSize(cx *gk.Cx) gk.GpuiSize {
 	rt.UseBaseDock()
 	o := rt.NewReq(867)
@@ -748,7 +752,7 @@ func (s DragPanel) PreviewSize(cx *gk.Cx) gk.GpuiSize {
 
 // The tab group this panel was dragged out of.
 //
-// Source is <gpui_kit::base::dock::DragPanel>::source.
+// Source calls <gpui_kit::base::dock::DragPanel>::source.
 func (s DragPanel) Source(cx *gk.Cx) NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1545)
@@ -760,7 +764,7 @@ func (s DragPanel) Source(cx *gk.Cx) NodeID {
 // Records where inside the panel the drag started, so a preview can be positioned relative to the
 // cursor.
 //
-// SetDragOffset is <gpui_kit::base::dock::DragPanel>::set_drag_offset.
+// SetDragOffset calls <gpui_kit::base::dock::DragPanel>::set_drag_offset.
 func (s DragPanel) SetDragOffset(cx *gk.Cx, offset gk.GpuiPoint) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1743)
@@ -769,7 +773,7 @@ func (s DragPanel) SetDragOffset(cx *gk.Cx, offset gk.GpuiPoint) {
 	rt.StateSet(cx, o)
 }
 
-// SetPreviewSize is <gpui_kit::base::dock::DragPanel>::set_preview_size.
+// SetPreviewSize calls <gpui_kit::base::dock::DragPanel>::set_preview_size.
 func (s DragPanel) SetPreviewSize(cx *gk.Cx, size gk.GpuiSize) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1744)
@@ -778,22 +782,22 @@ func (s DragPanel) SetPreviewSize(cx *gk.Cx, size gk.GpuiSize) {
 	rt.StateSet(cx, o)
 }
 
-// NewDragPanel is <gpui_kit::base::dock::DragPanel>::new.
+// NewDragPanel calls <gpui_kit::base::dock::DragPanel>::new.
 func NewDragPanel(cx *gk.Cx, panel DockPanelID, source NodeID) DragPanel {
 	rt.UseBaseDock()
 	o := rt.NewReq(866)
 	o.U64(uint64(panel))
 	o.U64(uint64(source))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return DragPanel{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// DropIndicator is a handle to gpui_kit::base::dock::DropIndicator, a library object (PROTOCOLS.md section 13).
+// DropIndicator is a handle to gpui_kit::base::dock::DropIndicator, a runtime-owned library object.
 type DropIndicator struct{ rt.HCore }
 
 // The hovered group's content bounds, in window coordinates.
 //
-// Bounds is <gpui_kit::base::dock::DropIndicator>::bounds.
+// Bounds calls <gpui_kit::base::dock::DropIndicator>::bounds.
 func (s DropIndicator) Bounds(cx *gk.Cx) gk.Bounds {
 	rt.UseBaseDock()
 	o := rt.NewReq(1546)
@@ -805,7 +809,7 @@ func (s DropIndicator) Bounds(cx *gk.Cx) gk.Bounds {
 // Which drag session this indicator belongs to. Host-owned drag items share
 // `ITEM_DRAG_SESSION_ID`.
 //
-// DragSessionID is <gpui_kit::base::dock::DropIndicator>::drag_session_id.
+// DragSessionID calls <gpui_kit::base::dock::DropIndicator>::drag_session_id.
 func (s DropIndicator) DragSessionID(cx *gk.Cx) uint64 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1547)
@@ -817,7 +821,7 @@ func (s DropIndicator) DragSessionID(cx *gk.Cx) uint64 {
 // Bumped on every restart, so an animation keyed on it replays instead of resuming when the target
 // placement changes.
 //
-// Epoch is <gpui_kit::base::dock::DropIndicator>::epoch.
+// Epoch calls <gpui_kit::base::dock::DropIndicator>::epoch.
 func (s DropIndicator) Epoch(cx *gk.Cx) uint64 {
 	rt.UseBaseDock()
 	o := rt.NewReq(1548)
@@ -828,7 +832,7 @@ func (s DropIndicator) Epoch(cx *gk.Cx) uint64 {
 
 // Where the placeholder starts, relative to `Bounds`.
 //
-// From is <gpui_kit::base::dock::DropIndicator>::from.
+// From calls <gpui_kit::base::dock::DropIndicator>::from.
 func (s DropIndicator) From(cx *gk.Cx) DropPlaceholderBounds {
 	rt.UseBaseDock()
 	o := rt.NewReq(1549)
@@ -839,7 +843,7 @@ func (s DropIndicator) From(cx *gk.Cx) DropPlaceholderBounds {
 
 // `None` means the drop merges into the tab group.
 //
-// Placement is <gpui_kit::base::dock::DropIndicator>::placement.
+// Placement calls <gpui_kit::base::dock::DropIndicator>::placement.
 func (s DropIndicator) Placement(cx *gk.Cx) gk.Option[gk.Placement] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1550)
@@ -850,7 +854,7 @@ func (s DropIndicator) Placement(cx *gk.Cx) gk.Option[gk.Placement] {
 
 // Where the placeholder settles, relative to `Bounds`.
 //
-// To is <gpui_kit::base::dock::DropIndicator>::to.
+// To calls <gpui_kit::base::dock::DropIndicator>::to.
 func (s DropIndicator) To(cx *gk.Cx) DropPlaceholderBounds {
 	rt.UseBaseDock()
 	o := rt.NewReq(1551)
@@ -859,10 +863,10 @@ func (s DropIndicator) To(cx *gk.Cx) DropPlaceholderBounds {
 	return DropPlaceholderBounds{HCore: rt.MkH(r.U64())}
 }
 
-// DropPlaceholderBounds is a handle to gpui_kit::base::dock::DropPlaceholderBounds, a library object (PROTOCOLS.md section 13).
+// DropPlaceholderBounds is a handle to gpui_kit::base::dock::DropPlaceholderBounds, a runtime-owned library object.
 type DropPlaceholderBounds struct{ rt.HCore }
 
-// Origin is <gpui_kit::base::dock::DropPlaceholderBounds>::origin.
+// Origin calls <gpui_kit::base::dock::DropPlaceholderBounds>::origin.
 func (s DropPlaceholderBounds) Origin(cx *gk.Cx) gk.GpuiPoint {
 	rt.UseBaseDock()
 	o := rt.NewReq(869)
@@ -871,7 +875,7 @@ func (s DropPlaceholderBounds) Origin(cx *gk.Cx) gk.GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
-// Size is <gpui_kit::base::dock::DropPlaceholderBounds>::size.
+// Size calls <gpui_kit::base::dock::DropPlaceholderBounds>::size.
 func (s DropPlaceholderBounds) Size(cx *gk.Cx) gk.GpuiSize {
 	rt.UseBaseDock()
 	o := rt.NewReq(870)
@@ -880,7 +884,7 @@ func (s DropPlaceholderBounds) Size(cx *gk.Cx) gk.GpuiSize {
 	return rdGpuiSize(r)
 }
 
-// NewDropPlaceholderBoundsForPlacement is <gpui_kit::base::dock::DropPlaceholderBounds>::for_placement.
+// NewDropPlaceholderBoundsForPlacement calls <gpui_kit::base::dock::DropPlaceholderBounds>::for_placement.
 func NewDropPlaceholderBoundsForPlacement(cx *gk.Cx, bounds gk.Bounds, placement gk.Option[gk.Placement]) DropPlaceholderBounds {
 	rt.UseBaseDock()
 	o := rt.NewReq(868)
@@ -891,14 +895,14 @@ func NewDropPlaceholderBoundsForPlacement(cx *gk.Cx, bounds gk.Bounds, placement
 	} else {
 		o.U8(0)
 	}
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return DropPlaceholderBounds{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// DropTarget is a handle to gpui_kit::base::dock::DropTarget, a library object (PROTOCOLS.md section 13).
+// DropTarget is a handle to gpui_kit::base::dock::DropTarget, a runtime-owned library object.
 type DropTarget struct{ rt.HCore }
 
-// Node is <gpui_kit::base::dock::DropTarget>::node.
+// Node calls <gpui_kit::base::dock::DropTarget>::node.
 func (s DropTarget) Node(cx *gk.Cx) NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1552)
@@ -907,7 +911,7 @@ func (s DropTarget) Node(cx *gk.Cx) NodeID {
 	return NodeID(r.U64())
 }
 
-// Placement is <gpui_kit::base::dock::DropTarget>::placement.
+// Placement calls <gpui_kit::base::dock::DropTarget>::placement.
 func (s DropTarget) Placement(cx *gk.Cx) gk.Option[gk.Placement] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1428)
@@ -916,10 +920,10 @@ func (s DropTarget) Placement(cx *gk.Cx) gk.Option[gk.Placement] {
 	return rt.RdOpt(r, func(r *rt.Reader) gk.Placement { return gk.Placement(r.U16()) })
 }
 
-// EditResult is a handle to gpui_kit::base::dock::EditResult, a library object (PROTOCOLS.md section 13).
+// EditResult is a handle to gpui_kit::base::dock::EditResult, a runtime-owned library object.
 type EditResult struct{ rt.HCore }
 
-// Changed is <gpui_kit::base::dock::EditResult>::changed.
+// Changed calls <gpui_kit::base::dock::EditResult>::changed.
 func (s EditResult) Changed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(871)
@@ -928,18 +932,18 @@ func (s EditResult) Changed(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// NewEditResultDefault is <gpui_kit::base::dock::EditResult as Default>::default.
+// NewEditResultDefault calls <gpui_kit::base::dock::EditResult as Default>::default.
 func NewEditResultDefault(cx *gk.Cx) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(1462)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return EditResult{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PaneNode is a handle to gpui_kit::base::dock::PaneNode, a library object (PROTOCOLS.md section 13).
+// PaneNode is a handle to gpui_kit::base::dock::PaneNode, a runtime-owned library object.
 type PaneNode struct{ rt.HCore }
 
-// ID is <gpui_kit::base::dock::PaneNode>::id.
+// ID calls <gpui_kit::base::dock::PaneNode>::id.
 func (s PaneNode) ID(cx *gk.Cx) NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1553)
@@ -948,12 +952,12 @@ func (s PaneNode) ID(cx *gk.Cx) NodeID {
 	return NodeID(r.U64())
 }
 
-// PaneTree is a handle to gpui_kit::base::dock::PaneTree, a library object (PROTOCOLS.md section 13).
+// PaneTree is a handle to gpui_kit::base::dock::PaneTree, a runtime-owned library object.
 type PaneTree struct{ rt.HCore }
 
 // Whether `panel` is anywhere in this tree.
 //
-// ContainsPanel is <gpui_kit::base::dock::PaneTree>::contains_panel.
+// ContainsPanel calls <gpui_kit::base::dock::PaneTree>::contains_panel.
 func (s PaneTree) ContainsPanel(cx *gk.Cx, panel DockPanelID) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(872)
@@ -963,7 +967,7 @@ func (s PaneTree) ContainsPanel(cx *gk.Cx, panel DockPanelID) bool {
 	return r.Bool()
 }
 
-// FindNode is <gpui_kit::base::dock::PaneTree>::find_node.
+// FindNode calls <gpui_kit::base::dock::PaneTree>::find_node.
 func (s PaneTree) FindNode(cx *gk.Cx, id NodeID) gk.Option[PaneNode] {
 	rt.UseBaseDock()
 	o := rt.NewReq(873)
@@ -975,7 +979,7 @@ func (s PaneTree) FindNode(cx *gk.Cx, id NodeID) gk.Option[PaneNode] {
 
 // The tab node holding `panel`.
 //
-// FindPanelNode is <gpui_kit::base::dock::PaneTree>::find_panel_node.
+// FindPanelNode calls <gpui_kit::base::dock::PaneTree>::find_panel_node.
 func (s PaneTree) FindPanelNode(cx *gk.Cx, panel DockPanelID) gk.Option[NodeID] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1554)
@@ -987,7 +991,7 @@ func (s PaneTree) FindPanelNode(cx *gk.Cx, panel DockPanelID) gk.Option[NodeID] 
 
 // Every container id in the tree, in pre-order.
 //
-// NodeIDs is <gpui_kit::base::dock::PaneTree>::node_ids.
+// NodeIDs calls <gpui_kit::base::dock::PaneTree>::node_ids.
 func (s PaneTree) NodeIDs(cx *gk.Cx) []NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1557)
@@ -998,7 +1002,7 @@ func (s PaneTree) NodeIDs(cx *gk.Cx) []NodeID {
 
 // Every panel in the tree, in pre-order.
 //
-// Panels is <gpui_kit::base::dock::PaneTree>::panels.
+// Panels calls <gpui_kit::base::dock::PaneTree>::panels.
 func (s PaneTree) Panels(cx *gk.Cx) []DockPanelID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1558)
@@ -1007,7 +1011,7 @@ func (s PaneTree) Panels(cx *gk.Cx) []DockPanelID {
 	return rt.RdList(r, func(r *rt.Reader) DockPanelID { return DockPanelID(r.U64()) })
 }
 
-// Root is <gpui_kit::base::dock::PaneTree>::root.
+// Root calls <gpui_kit::base::dock::PaneTree>::root.
 func (s PaneTree) Root(cx *gk.Cx) PaneNode {
 	rt.UseBaseDock()
 	o := rt.NewReq(877)
@@ -1016,7 +1020,7 @@ func (s PaneTree) Root(cx *gk.Cx) PaneNode {
 	return PaneNode{HCore: rt.MkH(r.U64())}
 }
 
-// RootKind is <gpui_kit::base::dock::PaneTree>::root_kind.
+// RootKind calls <gpui_kit::base::dock::PaneTree>::root_kind.
 func (s PaneTree) RootKind(cx *gk.Cx) RootKind {
 	rt.UseBaseDock()
 	o := rt.NewReq(878)
@@ -1025,7 +1029,7 @@ func (s PaneTree) RootKind(cx *gk.Cx) RootKind {
 	return RootKind(r.U16())
 }
 
-// InsertPanel is <gpui_kit::base::dock::PaneTree>::insert_panel.
+// InsertPanel calls <gpui_kit::base::dock::PaneTree>::insert_panel.
 func (s PaneTree) InsertPanel(cx *gk.Cx, panel DockPanelID, target InsertTarget) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(1555)
@@ -1039,7 +1043,7 @@ func (s PaneTree) InsertPanel(cx *gk.Cx, panel DockPanelID, target InsertTarget)
 // Move a panel to a new home without ever removing it from the tree's perspective, so the caller
 // never fires `on_removed` for a drag.
 //
-// MovePanel is <gpui_kit::base::dock::PaneTree>::move_panel.
+// MovePanel calls <gpui_kit::base::dock::PaneTree>::move_panel.
 func (s PaneTree) MovePanel(cx *gk.Cx, panel DockPanelID, target InsertTarget) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(1556)
@@ -1050,7 +1054,7 @@ func (s PaneTree) MovePanel(cx *gk.Cx, panel DockPanelID, target InsertTarget) E
 	return EditResult{HCore: rt.MkH(r.U64())}
 }
 
-// RemovePanel is <gpui_kit::base::dock::PaneTree>::remove_panel.
+// RemovePanel calls <gpui_kit::base::dock::PaneTree>::remove_panel.
 func (s PaneTree) RemovePanel(cx *gk.Cx, panel DockPanelID) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(876)
@@ -1060,7 +1064,7 @@ func (s PaneTree) RemovePanel(cx *gk.Cx, panel DockPanelID) EditResult {
 	return EditResult{HCore: rt.MkH(r.U64())}
 }
 
-// SetActive is <gpui_kit::base::dock::PaneTree>::set_active.
+// SetActive calls <gpui_kit::base::dock::PaneTree>::set_active.
 func (s PaneTree) SetActive(cx *gk.Cx, node NodeID, ix int) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(879)
@@ -1077,7 +1081,7 @@ func (s PaneTree) SetActive(cx *gk.Cx, node NodeID, ix int) EditResult {
 // match the split's child count: no rule in `normalize` repairs a length mismatch, so applying it
 // would otherwise leave `children.len() != sizes.len()` and trip `normalize`'s `debug_assert!`.
 //
-// SetSizes is <gpui_kit::base::dock::PaneTree>::set_sizes.
+// SetSizes calls <gpui_kit::base::dock::PaneTree>::set_sizes.
 func (s PaneTree) SetSizes(cx *gk.Cx, node NodeID, newSizes []gk.Option[float32]) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(880)
@@ -1096,7 +1100,7 @@ func (s PaneTree) SetSizes(cx *gk.Cx, node NodeID, newSizes []gk.Option[float32]
 	return EditResult{HCore: rt.MkH(r.U64())}
 }
 
-// Split is <gpui_kit::base::dock::PaneTree>::split.
+// Split calls <gpui_kit::base::dock::PaneTree>::split.
 func (s PaneTree) Split(cx *gk.Cx, at NodeID, panel DockPanelID, placement gk.Placement, size gk.Option[float32]) EditResult {
 	rt.UseBaseDock()
 	o := rt.NewReq(881)
@@ -1132,7 +1136,7 @@ func (s PaneTree) Split(cx *gk.Cx, at NodeID, panel DockPanelID, placement gk.Pl
 //
 // Idempotent: `normalize(normalize(t)) == normalize(t)`.
 //
-// Normalize is <gpui_kit::base::dock::PaneTree>::normalize.
+// Normalize calls <gpui_kit::base::dock::PaneTree>::normalize.
 func (s PaneTree) Normalize(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(875)
@@ -1140,21 +1144,21 @@ func (s PaneTree) Normalize(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// NewPaneTree is <gpui_kit::base::dock::PaneTree>::new.
+// NewPaneTree calls <gpui_kit::base::dock::PaneTree>::new.
 func NewPaneTree(cx *gk.Cx, rootKind RootKind) PaneTree {
 	rt.UseBaseDock()
 	o := rt.NewReq(874)
 	o.U16(uint16(rootKind))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PaneTree{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PanelHandle is a handle to gpui_kit::component::dock::PanelHandle, a library object (PROTOCOLS.md section 13).
+// PanelHandle is a handle to gpui_kit::component::dock::PanelHandle, a runtime-owned library object.
 type PanelHandle struct{ rt.HCore }
 
 // The presentation handle, cloned out.
 //
-// Panel is <gpui_kit::component::dock::PanelHandle>::panel.
+// Panel calls <gpui_kit::component::dock::PanelHandle>::panel.
 func (s PanelHandle) Panel(cx *gk.Cx) Panel {
 	rt.UseComponentDock()
 	o := rt.NewReq(1588)
@@ -1163,30 +1167,30 @@ func (s PanelHandle) Panel(cx *gk.Cx) Panel {
 	return Panel{HCore: rt.MkH(r.U64())}
 }
 
-// NewPanelHandle is <gpui_kit::component::dock::PanelHandle>::new.
+// NewPanelHandle calls <gpui_kit::component::dock::PanelHandle>::new.
 func NewPanelHandle(cx *gk.Cx, panel Panel) PanelHandle {
 	rt.UseComponentDock()
 	o := rt.NewReq(1281)
 	o.U64(rt.Held(rt.H(panel.HCore)))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PanelHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
 // Wrap a presentation handle that is already erased.
 //
-// NewPanelHandleFromView is <gpui_kit::component::dock::PanelHandle>::from_view.
+// NewPanelHandleFromView calls <gpui_kit::component::dock::PanelHandle>::from_view.
 func NewPanelHandleFromView(cx *gk.Cx, panel Panel) PanelHandle {
 	rt.UseComponentDock()
 	o := rt.NewReq(1280)
 	o.U64(rt.Held(rt.H(panel.HCore)))
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PanelHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
 // A skin must draw something for that case; base's own `panel_name` is the fallback with no
 // obligations on the panel author.
 //
-// PanelHandleOf is <gpui_kit::component::dock::PanelHandle>::of.
+// PanelHandleOf calls <gpui_kit::component::dock::PanelHandle>::of.
 func PanelHandleOf(cx *gk.Cx, panel Panel) gk.Option[PanelHandle] {
 	rt.UseComponentDock()
 	o := rt.NewReq(1282)
@@ -1195,18 +1199,18 @@ func PanelHandleOf(cx *gk.Cx, panel Panel) gk.Option[PanelHandle] {
 	return rt.RdOpt(r, func(r *rt.Reader) PanelHandle { return PanelHandle{HCore: rt.MkH(r.U64())} })
 }
 
-// PanelRegistry is a handle to gpui_kit::base::dock::PanelRegistry, a library object (PROTOCOLS.md section 13).
+// PanelRegistry is a handle to gpui_kit::base::dock::PanelRegistry, a runtime-owned library object.
 type PanelRegistry struct{ rt.HCore }
 
-// NewPanelRegistry is <gpui_kit::base::dock::PanelRegistry>::new.
+// NewPanelRegistry calls <gpui_kit::base::dock::PanelRegistry>::new.
 func NewPanelRegistry(cx *gk.Cx) PanelRegistry {
 	rt.UseBaseDock()
 	o := rt.NewReq(884)
-	o.U16(0) // no builder ops follow
+	o.U16(0) // zero chained builder ops
 	return PanelRegistry{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
 
-// PanelRegistryGlobal is <gpui_kit::base::dock::PanelRegistry>::global.
+// PanelRegistryGlobal calls <gpui_kit::base::dock::PanelRegistry>::global.
 func PanelRegistryGlobal(cx *gk.Cx) PanelRegistry {
 	rt.UseBaseDock()
 	o := rt.NewReq(882)
@@ -1214,7 +1218,7 @@ func PanelRegistryGlobal(cx *gk.Cx) PanelRegistry {
 	return PanelRegistry{HCore: rt.MkH(r.U64())}
 }
 
-// PanelRegistryGlobalMut is <gpui_kit::base::dock::PanelRegistry>::global_mut.
+// PanelRegistryGlobalMut calls <gpui_kit::base::dock::PanelRegistry>::global_mut.
 func PanelRegistryGlobalMut(cx *gk.Cx) PanelRegistry {
 	rt.UseBaseDock()
 	o := rt.NewReq(883)
@@ -1222,10 +1226,10 @@ func PanelRegistryGlobalMut(cx *gk.Cx) PanelRegistry {
 	return PanelRegistry{HCore: rt.MkH(r.U64())}
 }
 
-// TabGroup is a handle to gpui_kit::base::dock::TabGroup, kit state that lives in the library.
+// TabGroup is a handle to gpui_kit::base::dock::TabGroup, a runtime-owned kit state entity.
 type TabGroup struct{ rt.HCore }
 
-// ActiveIx is <gpui_kit::base::dock::TabGroup>::active_ix.
+// ActiveIx calls <gpui_kit::base::dock::TabGroup>::active_ix.
 func (s TabGroup) ActiveIx(cx *gk.Cx) int {
 	rt.UseBaseDock()
 	o := rt.NewReq(1559)
@@ -1237,7 +1241,7 @@ func (s TabGroup) ActiveIx(cx *gk.Cx) int {
 // The panel currently on screen, which is the displayed tab unless it has gone invisible, in which
 // case rendering falls back to the first visible panel.
 //
-// ActivePanel is <gpui_kit::base::dock::TabGroup>::active_panel.
+// ActivePanel calls <gpui_kit::base::dock::TabGroup>::active_panel.
 func (s TabGroup) ActivePanel(cx *gk.Cx) gk.Option[Panel] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1560)
@@ -1248,7 +1252,7 @@ func (s TabGroup) ActivePanel(cx *gk.Cx) gk.Option[Panel] {
 
 // A snapshot of everything a skin needs to draw this group.
 //
-// Context is <gpui_kit::base::dock::TabGroup>::context.
+// Context calls <gpui_kit::base::dock::TabGroup>::context.
 func (s TabGroup) Context(cx *gk.Cx) TabGroupContext {
 	rt.UseBaseDock()
 	o := rt.NewReq(1562)
@@ -1262,7 +1266,7 @@ func (s TabGroup) Context(cx *gk.Cx) TabGroupContext {
 // Mirrors the old `TabPanel::closable`: the container must permit it, the group must have
 // somewhere to go, and the displayed panel must itself be closable.
 //
-// IsClosable is <gpui_kit::base::dock::TabGroup>::is_closable.
+// IsClosable calls <gpui_kit::base::dock::TabGroup>::is_closable.
 func (s TabGroup) IsClosable(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1563)
@@ -1271,7 +1275,7 @@ func (s TabGroup) IsClosable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsCollapsed is <gpui_kit::base::dock::TabGroup>::is_collapsed.
+// IsCollapsed calls <gpui_kit::base::dock::TabGroup>::is_collapsed.
 func (s TabGroup) IsCollapsed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1564)
@@ -1280,7 +1284,7 @@ func (s TabGroup) IsCollapsed(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsZoomed is <gpui_kit::base::dock::TabGroup>::is_zoomed.
+// IsZoomed calls <gpui_kit::base::dock::TabGroup>::is_zoomed.
 func (s TabGroup) IsZoomed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1565)
@@ -1291,7 +1295,7 @@ func (s TabGroup) IsZoomed(cx *gk.Cx) bool {
 
 // The `Tabs` node this group mirrors.
 //
-// Node is <gpui_kit::base::dock::TabGroup>::node.
+// Node calls <gpui_kit::base::dock::TabGroup>::node.
 func (s TabGroup) Node(cx *gk.Cx) NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1566)
@@ -1300,7 +1304,7 @@ func (s TabGroup) Node(cx *gk.Cx) NodeID {
 	return NodeID(r.U64())
 }
 
-// Panels is <gpui_kit::base::dock::TabGroup>::panels.
+// Panels calls <gpui_kit::base::dock::TabGroup>::panels.
 func (s TabGroup) Panels(cx *gk.Cx) []Panel {
 	rt.UseBaseDock()
 	o := rt.NewReq(1567)
@@ -1312,7 +1316,7 @@ func (s TabGroup) Panels(cx *gk.Cx) []Panel {
 // Ask the container to close `panel`. Nothing happens for a panel that is not in this group, or
 // when either the group or the panel refuses.
 //
-// ClosePanel is <gpui_kit::base::dock::TabGroup>::close_panel.
+// ClosePanel calls <gpui_kit::base::dock::TabGroup>::close_panel.
 func (s TabGroup) ClosePanel(cx *gk.Cx, panel DockPanelID) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1561)
@@ -1323,7 +1327,7 @@ func (s TabGroup) ClosePanel(cx *gk.Cx, panel DockPanelID) {
 
 // Display `ix`, if it names a tab that is not already displayed.
 //
-// SelectTab is <gpui_kit::base::dock::TabGroup>::select_tab.
+// SelectTab calls <gpui_kit::base::dock::TabGroup>::select_tab.
 func (s TabGroup) SelectTab(cx *gk.Cx, ix int) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1568)
@@ -1332,7 +1336,7 @@ func (s TabGroup) SelectTab(cx *gk.Cx, ix int) {
 	rt.StateSet(cx, o)
 }
 
-// ToggleZoom is <gpui_kit::base::dock::TabGroup>::toggle_zoom.
+// ToggleZoom calls <gpui_kit::base::dock::TabGroup>::toggle_zoom.
 func (s TabGroup) ToggleZoom(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1570)
@@ -1340,7 +1344,7 @@ func (s TabGroup) ToggleZoom(cx *gk.Cx) {
 	rt.StateSet(cx, o)
 }
 
-// OnTabGroupEvent subscribes a handler to the state's TabGroupEvent events; gk.Release ends it.
+// OnTabGroupEvent registers a listener for TabGroupEvent events on this state; release the returned Subscription to unsubscribe.
 func (s TabGroup) OnTabGroupEvent(cx *gk.Cx, h func(cx *gk.Cx, e TabGroupEvent)) gk.Subscription {
 	slot, gen := rt.KeepHandler(cx, h, 88)
 	o := rt.NewReq(1569)
@@ -1351,22 +1355,23 @@ func (s TabGroup) OnTabGroupEvent(cx *gk.Cx, h func(cx *gk.Cx, e TabGroupEvent))
 	return rt.MkSubscription(r.U64(), slot)
 }
 
-// TabGroupBuilder is the chain of TabGroup's `self -> Self` methods; Build makes it, in one crossing.
+// TabGroupBuilder accumulates chained TabGroup builder options before creating the handle in Build.
 type TabGroupBuilder struct{ sb *rt.StateBuilder }
 
+// WithRenderer calls <gpui_kit::base::dock::TabGroup>::with_renderer.
 func (b TabGroupBuilder) WithRenderer(renderer Renderer) TabGroupBuilder {
 	o := b.sb.Op(1)
 	o.U64(rt.H(renderer.HCore))
 	return b
 }
 
-// Build makes the TabGroup.
+// Build commits the queued options and returns the new TabGroup handle.
 func (b TabGroupBuilder) Build() TabGroup { return TabGroup{HCore: rt.MkH(b.sb.Build())} }
 
-// TabGroupContext is a handle to gpui_kit::base::dock::TabGroupContext, a library object (PROTOCOLS.md section 13).
+// TabGroupContext is a handle to gpui_kit::base::dock::TabGroupContext, a runtime-owned library object.
 type TabGroupContext struct{ rt.HCore }
 
-// ActiveIx is <gpui_kit::base::dock::TabGroupContext>::active_ix.
+// ActiveIx calls <gpui_kit::base::dock::TabGroupContext>::active_ix.
 func (s TabGroupContext) ActiveIx(cx *gk.Cx) int {
 	rt.UseBaseDock()
 	o := rt.NewReq(1571)
@@ -1377,7 +1382,7 @@ func (s TabGroupContext) ActiveIx(cx *gk.Cx) int {
 
 // The panel on screen, which is the displayed tab unless that panel has gone invisible.
 //
-// ActivePanel is <gpui_kit::base::dock::TabGroupContext>::active_panel.
+// ActivePanel calls <gpui_kit::base::dock::TabGroupContext>::active_panel.
 func (s TabGroupContext) ActivePanel(cx *gk.Cx) gk.Option[Panel] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1572)
@@ -1389,7 +1394,7 @@ func (s TabGroupContext) ActivePanel(cx *gk.Cx) gk.Option[Panel] {
 // The drag payload for the tab at `ix`, for a skin wiring `on_drag` onto its tabs. `None` when
 // `ix` names no panel.
 //
-// DragPanel is <gpui_kit::base::dock::TabGroupContext>::drag_panel.
+// DragPanel calls <gpui_kit::base::dock::TabGroupContext>::drag_panel.
 func (s TabGroupContext) DragPanel(cx *gk.Cx, ix int) gk.Option[DragPanel] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1745)
@@ -1399,7 +1404,7 @@ func (s TabGroupContext) DragPanel(cx *gk.Cx, ix int) gk.Option[DragPanel] {
 	return rt.RdOpt(r, func(r *rt.Reader) DragPanel { return DragPanel{HCore: rt.MkH(r.U64())} })
 }
 
-// DropIndicator is <gpui_kit::base::dock::TabGroupContext>::drop_indicator.
+// DropIndicator calls <gpui_kit::base::dock::TabGroupContext>::drop_indicator.
 func (s TabGroupContext) DropIndicator(cx *gk.Cx) gk.Option[DropIndicator] {
 	rt.UseBaseDock()
 	o := rt.NewReq(1574)
@@ -1410,7 +1415,7 @@ func (s TabGroupContext) DropIndicator(cx *gk.Cx) gk.Option[DropIndicator] {
 
 // Whether the active panel can be closed.
 //
-// IsClosable is <gpui_kit::base::dock::TabGroupContext>::is_closable.
+// IsClosable calls <gpui_kit::base::dock::TabGroupContext>::is_closable.
 func (s TabGroupContext) IsClosable(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1576)
@@ -1419,7 +1424,7 @@ func (s TabGroupContext) IsClosable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsCollapsed is <gpui_kit::base::dock::TabGroupContext>::is_collapsed.
+// IsCollapsed calls <gpui_kit::base::dock::TabGroupContext>::is_collapsed.
 func (s TabGroupContext) IsCollapsed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1577)
@@ -1428,7 +1433,7 @@ func (s TabGroupContext) IsCollapsed(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsDraggable is <gpui_kit::base::dock::TabGroupContext>::is_draggable.
+// IsDraggable calls <gpui_kit::base::dock::TabGroupContext>::is_draggable.
 func (s TabGroupContext) IsDraggable(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1578)
@@ -1437,7 +1442,7 @@ func (s TabGroupContext) IsDraggable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsDroppable is <gpui_kit::base::dock::TabGroupContext>::is_droppable.
+// IsDroppable calls <gpui_kit::base::dock::TabGroupContext>::is_droppable.
 func (s TabGroupContext) IsDroppable(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1579)
@@ -1446,7 +1451,7 @@ func (s TabGroupContext) IsDroppable(cx *gk.Cx) bool {
 	return r.Bool()
 }
 
-// IsLocked is <gpui_kit::base::dock::TabGroupContext>::is_locked.
+// IsLocked calls <gpui_kit::base::dock::TabGroupContext>::is_locked.
 func (s TabGroupContext) IsLocked(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1580)
@@ -1458,7 +1463,7 @@ func (s TabGroupContext) IsLocked(cx *gk.Cx) bool {
 // Whether `panel` can be closed from this group. Uses the same constraints as `ClosePanel`,
 // including the panel's own `closable` flag.
 //
-// IsPanelClosable is <gpui_kit::base::dock::TabGroupContext>::is_panel_closable.
+// IsPanelClosable calls <gpui_kit::base::dock::TabGroupContext>::is_panel_closable.
 func (s TabGroupContext) IsPanelClosable(cx *gk.Cx, panel DockPanelID) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1581)
@@ -1468,7 +1473,7 @@ func (s TabGroupContext) IsPanelClosable(cx *gk.Cx, panel DockPanelID) bool {
 	return r.Bool()
 }
 
-// IsZoomed is <gpui_kit::base::dock::TabGroupContext>::is_zoomed.
+// IsZoomed calls <gpui_kit::base::dock::TabGroupContext>::is_zoomed.
 func (s TabGroupContext) IsZoomed(cx *gk.Cx) bool {
 	rt.UseBaseDock()
 	o := rt.NewReq(1582)
@@ -1480,7 +1485,7 @@ func (s TabGroupContext) IsZoomed(cx *gk.Cx) bool {
 // The `Tabs` node this group mirrors, for a skin that needs to name the group in a drag payload or
 // a drop target.
 //
-// Node is <gpui_kit::base::dock::TabGroupContext>::node.
+// Node calls <gpui_kit::base::dock::TabGroupContext>::node.
 func (s TabGroupContext) Node(cx *gk.Cx) NodeID {
 	rt.UseBaseDock()
 	o := rt.NewReq(1583)
@@ -1489,10 +1494,10 @@ func (s TabGroupContext) Node(cx *gk.Cx) NodeID {
 	return NodeID(r.U64())
 }
 
-// Every panel in the group, in tab order — visible or not. A skin filters with `Visible` when it
+// Every panel in the group, in tab order - visible or not. A skin filters with `Visible` when it
 // draws.
 //
-// Panels is <gpui_kit::base::dock::TabGroupContext>::panels.
+// Panels calls <gpui_kit::base::dock::TabGroupContext>::panels.
 func (s TabGroupContext) Panels(cx *gk.Cx) []Panel {
 	rt.UseBaseDock()
 	o := rt.NewReq(1584)
@@ -1501,7 +1506,7 @@ func (s TabGroupContext) Panels(cx *gk.Cx) []Panel {
 	return rt.RdList(r, func(r *rt.Reader) Panel { return Panel{HCore: rt.MkH(r.U64())} })
 }
 
-// Close is <gpui_kit::base::dock::TabGroupContext>::close.
+// Close calls <gpui_kit::base::dock::TabGroupContext>::close.
 func (s TabGroupContext) Close(cx *gk.Cx, panel DockPanelID) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1573)
@@ -1513,7 +1518,7 @@ func (s TabGroupContext) Close(cx *gk.Cx, panel DockPanelID) {
 // A host-owned drag dropped on the tab bar. `placement` is `None` to merge into this group rather
 // than split beside it.
 //
-// DropItem is <gpui_kit::base::dock::TabGroupContext>::drop_item.
+// DropItem calls <gpui_kit::base::dock::TabGroupContext>::drop_item.
 func (s TabGroupContext) DropItem(cx *gk.Cx, item AnyDrag, placement gk.Option[gk.Placement]) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1575)
@@ -1531,7 +1536,7 @@ func (s TabGroupContext) DropItem(cx *gk.Cx, item AnyDrag, placement gk.Option[g
 // A panel dropped on the tab bar. `ix` names the slot it lands in, or `None` to append; `activate`
 // decides whether it becomes displayed.
 //
-// DropPanel is <gpui_kit::base::dock::TabGroupContext>::drop_panel.
+// DropPanel calls <gpui_kit::base::dock::TabGroupContext>::drop_panel.
 func (s TabGroupContext) DropPanel(cx *gk.Cx, drag DragPanel, ix gk.Option[int], activate bool) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1746)
@@ -1547,7 +1552,7 @@ func (s TabGroupContext) DropPanel(cx *gk.Cx, drag DragPanel, ix gk.Option[int],
 	rt.StateSet(cx, o)
 }
 
-// SelectTab is <gpui_kit::base::dock::TabGroupContext>::select_tab.
+// SelectTab calls <gpui_kit::base::dock::TabGroupContext>::select_tab.
 func (s TabGroupContext) SelectTab(cx *gk.Cx, ix int) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1585)
@@ -1556,7 +1561,7 @@ func (s TabGroupContext) SelectTab(cx *gk.Cx, ix int) {
 	rt.StateSet(cx, o)
 }
 
-// ToggleZoom is <gpui_kit::base::dock::TabGroupContext>::toggle_zoom.
+// ToggleZoom calls <gpui_kit::base::dock::TabGroupContext>::toggle_zoom.
 func (s TabGroupContext) ToggleZoom(cx *gk.Cx) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1586)

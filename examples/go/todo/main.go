@@ -1,11 +1,5 @@
-// todo: a small to-do app. Projects in a resizable sidebar, a
-// task list per project with custom rows, add/edit/delete through a dialog, filters and search,
-// keyboard shortcuts, a menu, light and dark themes, state saved to a JSON file, and a goroutine
-// that pretends to sync and posts what it did.
-//
-//	todo-go                    a real window
-//	TODO_FILE=path             where the state is kept (default todo.json in the current directory)
-//	GK_SCRIPT=file todo-go     offscreen under a gk-meter script (gates/todo.sh)
+// Multi-project task manager example: persists state to JSON (TODO_FILE, default todo.json),
+// filters and searches tasks, edits items in modal dialogs, and simulates background sync.
 package main
 
 import (
@@ -42,7 +36,6 @@ var priorityNames = []string{"Low", "Medium", "High"}
 
 func (p Priority) String() string { return priorityNames[p] }
 
-// MarshalText and UnmarshalText keep the priority by name in the saved file.
 func (p Priority) MarshalText() ([]byte, error) { return []byte(p.String()), nil }
 
 func (p *Priority) UnmarshalText(b []byte) error {
@@ -58,7 +51,7 @@ var priorityColor = [...]gk.Color{Low: palette.Sky500, Medium: palette.Amber500,
 type Task struct {
 	Title    string   `json:"title"`
 	Done     bool     `json:"done"`
-	Due      string   `json:"due"` // "2026-11-20" or ""
+	Due      string   `json:"due"`
 	Priority Priority `json:"priority"`
 }
 
@@ -79,28 +72,26 @@ func (f Filter) String() string { return [...]string{"All", "Active", "Done"}[f]
 
 type App struct {
 	projects []Project
-	current  int // the project shown
+	current  int
 	filter   Filter
-	visible  []int // the current project's tasks that pass the filter and the search
-	selected int   // a task of the current project, -1 none
-	editing  int   // the task the dialog edits, -1 a new one
+	visible  []int
+	selected int
+	editing  int
 	editPrio Priority
 	path     string
 	dark     bool
 	status   string
-	dirty    int // changes not yet "synced"
+	dirty    int
 
 	search, newProject, editTitle, editDue editor.InputState
 	projectList, taskList                  table.ListState
 	editDialog                             gk.Built[overlay.DialogEl]
 	confirm                                gk.Built[overlay.AlertDialogEl]
 
-	newTask, deleteTask, find, toggleTheme gk.Action // shortcuts, also in the menu
+	newTask, deleteTask, find, toggleTheme gk.Action
 }
 
 func (a *App) tasks() *[]Task { return &a.projects[a.current].Tasks }
-
-// --- state on disk ----------------------------------------------------------------------------
 
 type saved struct {
 	Projects []Project `json:"projects"`
@@ -128,8 +119,6 @@ func (a *App) save() {
 	}
 }
 
-// changed is called after every edit of the tasks or projects. gk.Refresh redraws every view
-// and every row, and the lists take their counts from their count functions.
 func (a *App) changed(cx *gk.Cx) {
 	a.dirty++
 	a.save()
@@ -153,17 +142,18 @@ func (a *App) refilter(cx *gk.Cx) {
 		}
 		a.visible = append(a.visible, i)
 	}
-	table.SelectRow(cx, a.taskList, row, table.ScrollIntoView) // a task added at the end is shown
+	table.SelectRow(cx, a.taskList, row, table.ScrollIntoView)
 }
 
-// --- init -------------------------------------------------------------------------------------
-
+// init restores persisted tasks, registers shortcuts (including a context-scoped delete
+// key), creates reusable Built overlays once, and starts the background sync goroutine.
 func (a *App) init(cx *gk.Cx) {
 	a.selected = -1
 	a.load()
 	if a.dark {
 		gk.ThemeChange(cx, gk.ThemeModeDark)
 	}
+	// WhenIn("Tasks") restricts Delete so it does not fire while editing a text input outside Tasks.
 	a.newTask = gk.Shortcut(cx, "ctrl-n", a.addTask)
 	a.deleteTask = gk.Shortcut(cx, "delete", a.askDelete, gk.WhenIn("Tasks"))
 	a.find = gk.Shortcut(cx, "ctrl-f", func(cx *gk.Cx) { a.search.Focus(cx) })
@@ -175,6 +165,7 @@ func (a *App) init(cx *gk.Cx) {
 	a.newProject.OnInputEvent(cx, a.newProjectEvent)
 	a.editTitle = editor.NewInputState(cx).Placeholder("What needs doing?").Build()
 	a.editDue = editor.NewInputState(cx).Placeholder("Due date, e.g. 2026-11-20").Build()
+	// NewBuilt creates long-lived overlay views once in init instead of per call site.
 	a.editDialog = gk.NewBuilt(cx, a.editView)
 	a.confirm = gk.NewBuilt(cx, a.confirmView)
 
@@ -186,11 +177,9 @@ func (a *App) init(cx *gk.Cx) {
 
 	a.status = "not synced yet"
 	a.refilter(cx)
-	gk.Refresh(cx) // the task list's first count
+	gk.Refresh(cx)
 	go a.syncLoop()
 }
-
-// --- the views --------------------------------------------------------------------------------
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	open := 0
@@ -266,8 +255,6 @@ func (a *App) tasksPane() gk.Element {
 		Child(gk.Div(s.Flex1, s.MinH0).Child(body))
 }
 
-// taskRow is one task: a checkbox, the priority's colour, the title (a double click edits it)
-// and the due date as a tag, red when overdue and amber when due today.
 func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	i := a.visible[at.Row]
 	t := (*a.tasks())[i]
@@ -277,7 +264,7 @@ func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	row := gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
 		Child(kit.Checkbox(gk.Key("done", i)).Checked(t.Done).OnClick(func(cx *gk.Cx, done bool) {
-			gk.StopPropagation(cx) // the row is not selected by the click
+			gk.StopPropagation(cx)
 			(*a.tasks())[i].Done = done
 			a.changed(cx)
 		})).
@@ -299,8 +286,6 @@ func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	}
 	return table.ListItem(gk.Key("task", i)).Child(row)
 }
-
-// --- the edit dialog --------------------------------------------------------------------------
 
 func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 	prios := gk.HFlex(s.Gap1)
@@ -341,7 +326,7 @@ func (a *App) openEditor(cx *gk.Cx, task int) {
 func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	title := strings.TrimSpace(a.editTitle.Value(cx))
 	if title == "" {
-		return false // keep the dialog open
+		return false
 	}
 	if a.editing < 0 {
 		*a.tasks() = append(*a.tasks(), Task{})
@@ -353,8 +338,6 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	a.changed(cx)
 	return true
 }
-
-// --- what the app does ------------------------------------------------------------------------
 
 func (a *App) addTask(cx *gk.Cx, _ gk.ClickEvent) { a.openEditor(cx, -1) }
 
@@ -378,7 +361,7 @@ func (a *App) taskEvent(cx *gk.Cx, e table.ListEvent) {
 	case table.ListEventSelect:
 		a.selected = a.visible[e.Row]
 	case table.ListEventConfirm:
-		a.selected = a.visible[e.Row] // a click; Enter as well
+		a.selected = a.visible[e.Row]
 	}
 }
 
@@ -430,14 +413,14 @@ func (a *App) switchTheme(cx *gk.Cx, _ gk.ClickEvent) {
 	a.save()
 }
 
-// --- the pretend sync: a goroutine that posts to the UI thread --------------------------------
-
+// syncLoop runs on a background goroutine and hands status updates back to the UI thread
+// via gk.Post, which is the only gk function safe to call off the UI thread.
 func (a *App) syncLoop() {
 	for rev := 1; ; rev++ {
 		time.Sleep(2 * time.Second)
 		remote := ""
 		if rev == 2 {
-			remote = "Reply to the sync survey" // a task another device added
+			remote = "Reply to the sync survey"
 		}
 		gk.Post(func(cx *gk.Cx) { a.synced(cx, rev, remote) })
 	}

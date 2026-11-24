@@ -1,7 +1,5 @@
-// The code blocks of docs/GO.md, collected into one program that compiles, so the page cannot
-// drift from the package (gates/docs-snippets.py checks each block against this file). Section 3
-// is an app of its own (run by gates/docs-go.sh); section 7's examples are the bodies of the
-// Bands methods below. Not an app to read for itself: the tutorial in docs/tutorial-go is.
+// Compilable snippet host for docs/GO.md.
+// gates/docs-go.sh builds and runs this program to keep guide excerpts verified.
 package main
 
 import (
@@ -19,13 +17,13 @@ import (
 
 type App struct {
 	count int
-	name  editor.InputState // a handle: the kit's InputState lives in the library
+	name  editor.InputState
 	root  gk.View
 }
 
 func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
-func (a *App) add(cx *gk.Cx) { a.count++ } // marks its view for redraw on return
+func (a *App) add(cx *gk.Cx) { a.count++ }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
@@ -33,7 +31,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 			Child(kit.Button("add").Primary().Label("Add").OnClickDo(a.add)).
 			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
 		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
-		Child(kit.Label("hello " + a.name.Value(cx))) // a read in a view: redrawn when it changes
+		Child(kit.Label("hello " + a.name.Value(cx)))
 }
 
 func main() {
@@ -46,8 +44,6 @@ func main() {
 	}
 }
 
-// Bands holds what section 7's examples use: a draggable band, a plot with a gradient line, and
-// asking before a window closes.
 type Bands struct {
 	bandPreview gk.View
 	names       []string
@@ -68,7 +64,7 @@ func (a *Bands) moveBand(from, to int) { a.names[from], a.names[to] = a.names[to
 
 func (a *Bands) examples(cx *gk.Cx, i int, name string, xs, ys []float32, area, curve [][2]float32, cyan, violet gk.Color) {
 gk.Div().ID(gk.Key("band", i)).
-	OnDrag(gk.DragValue{ID: uint64(i), Text: name}, a.bandPreview).   // a.bandPreview: a gk.View made in init
+	OnDrag(gk.DragValue{ID: uint64(i), Text: name}, a.bandPreview).
 	CanDrop(gk.DropAccept{IDs: a.bandIDs()}).
 	DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent)).
 	OnDrop(func(cx *gk.Cx, d gk.DragValue) { a.moveBand(int(d.ID), i) })
@@ -79,7 +75,7 @@ chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
 
 gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
 	if !a.dirty { return true }
-	overlay.OpenAlertDialog(cx, a.askClose) // its OK calls gk.CloseWindow(cx, a.win), which does not ask again
+	overlay.OpenAlertDialog(cx, a.askClose)
 	return false
 })
 }

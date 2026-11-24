@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""counter-summary.py DIR [FRONT]: the verdict of gates/counter.sh.
+"""Judge click-to-rebuild frame latency and protocol turns from gates/counter.sh CSVs.
 
-DIR holds rust.csv and FRONT.csv (FRONT go, the default; the GATE line is "counter
-click-go") (one row per measured frame, diag library). For every
-injected click (a row with click=1: the click arrived during that frame's interval), finds
-the later frame in which gpui-fast built more views than usual, and what the click cost in
-turns. Prints one line "GATE counter click-go PASS|FAIL ...". Exit 0 on pass."""
+Gates: Go (or another candidate passed as argv[2]) against the Rust reference on `counter`.
+Method: computes each build's usual idle views_built count (mode over click==0 frames), then for
+every click==1 frame locates the first frame within +0..+5 frames where views_built rises above
+baseline and sums protocol counters across the 2-frame window [i, i+1].
+PASS: both runs record clicks, every click rebuilds a view, Go's rebuild frame offsets match Rust
+exactly, and every Go click uses 1 EVENT turn and at most 1 VIEWS turn (exit 0).
+"""
 import csv
 import statistics
 import sys
@@ -18,12 +20,14 @@ for b in ("rust", front):
         rows = list(csv.DictReader(open(f"{out}/{b}.csv")))
     except OSError:
         rows = []
+    # Baseline views_built on frames with no click injected.
     quiet = [int(r["views_built"]) for r in rows if r["click"] == "0"]
     base = statistics.mode(quiet) if quiet else 0
     offs, costs = [], []
     for i, r in enumerate(rows):
         if r["click"] != "1" or i + 2 > len(rows):
             continue
+        # Find the first frame within 0..5 frames after the click where view rebuilds rise above idle.
         offs.append(next((j - i for j in range(i, min(i + 6, len(rows)))
                           if int(rows[j]["views_built"]) > base), None))
         pair = rows[i:i + 2]

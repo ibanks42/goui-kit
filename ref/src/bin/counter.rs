@@ -1,9 +1,9 @@
-//! ref-counter: the Rust reference for the `counter` app, written the way a Rust GPUI-kit
-//! app is written: three views (controls, echo, list) inside a root view, state in entities,
-//! `cx.listener` for the click.
+//! Pure-Rust counter, text input, and 10,000-row uniform list reference app.
 //!
-//!   ref-counter                      a real window (GK_FRAMES, GK_CLICK drive and measure it)
-//!   ref-counter --script FILE        offscreen, driven by a gk-meter script (diag build)
+//! Serves as the baseline against the Go counter example for pixel parity and
+//! frame-cost gates. Supports interactive launch as well as headless script
+//! playback (`--script <path>`) when compiled with the `diag` feature.
+
 use gpui_kit::component::button::{Button, ButtonVariants};
 use gpui_kit::component::input::{Input, InputState};
 use gpui_kit::component::label::Label;
@@ -13,24 +13,29 @@ use gpui_kit::{
     Window, div, px, uniform_list,
 };
 
+/// Initial row count populated into the virtualized list.
 const ROWS: usize = 10_000;
 
+/// Top-level window view composing controls, live text echo, and the list.
 struct Root {
     controls: Entity<Controls>,
     echo: Entity<Echo>,
     list: Entity<List>,
 }
 
+/// Toolbar view holding the increment button, counter label, and name input.
 struct Controls {
     count: usize,
     name: Entity<InputState>,
     list: Entity<List>,
 }
 
+/// Separate view that mirrors `InputState::value` to test cross-view updates.
 struct Echo {
     name: Entity<InputState>,
 }
 
+/// Virtualized 24 px row list backed by `uniform_list`.
 struct List {
     rows: Vec<SharedString>,
 }
@@ -79,7 +84,6 @@ impl Render for Echo {
     }
 }
 
-/// The row element; the library's decoder builds the same one (capi/src/decode.rs list_row).
 fn list_row(text: SharedString) -> gpui_kit::Div {
     div().h(px(24.)).px_2().child(text)
 }

@@ -13,7 +13,7 @@ type QuestionnaireEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// Questionnaire is <gpui_kit::component::questionnaire::Questionnaire>::new.
+// Questionnaire calls <gpui_kit::component::questionnaire::Questionnaire>::new.
 func Questionnaire(state base.QuestionnaireState, st ...gk.Style) QuestionnaireEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(718)
@@ -25,20 +25,24 @@ func Questionnaire(state base.QuestionnaireState, st ...gk.Style) QuestionnaireE
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireEl) PopoverStyle() QuestionnaireEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireEl) RoundedFullStyle() QuestionnaireEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -47,16 +51,18 @@ func (e QuestionnaireEl) RoundedFullStyle() QuestionnaireEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireEl) FocusRingStyle() QuestionnaireEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -69,24 +75,32 @@ func (e QuestionnaireEl) FocusRingStyle() QuestionnaireEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireEl) KeepTextSelection(id gk.ID) QuestionnaireEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireEl) BorderE(width gk.Length) QuestionnaireEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireEl) BorderS(width gk.Length) QuestionnaireEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -94,136 +108,178 @@ func (e QuestionnaireEl) BorderS(width gk.Length) QuestionnaireEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireEl) FlexRowDir() QuestionnaireEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireEl) InsetE(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireEl) InsetS(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireEl) JustifyFlexEnd() QuestionnaireEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireEl) JustifyFlexStart() QuestionnaireEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireEl) Me(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireEl) Ms(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireEl) Pe(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireEl) Ps(length gk.Length) QuestionnaireEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireEl) RoundedE(radius gk.Length) QuestionnaireEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireEl) RoundedS(radius gk.Length) QuestionnaireEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireEl) TextEnd() QuestionnaireEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireEl) TextStart() QuestionnaireEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireEl) CornerRadii(radius gk.Corners) QuestionnaireEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireEl) DebugBlue() QuestionnaireEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireEl) DebugGreen() QuestionnaireEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireEl) DebugPink() QuestionnaireEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireEl) DebugRed() QuestionnaireEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireEl) DebugYellow() QuestionnaireEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireEl) FontBlack() QuestionnaireEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireEl) FontBold() QuestionnaireEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireEl) FontExtrabold() QuestionnaireEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireEl) FontExtralight() QuestionnaireEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireEl) FontLight() QuestionnaireEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireEl) FontMedium() QuestionnaireEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireEl) FontNormal() QuestionnaireEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireEl) FontSemibold() QuestionnaireEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireEl) FontThin() QuestionnaireEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -232,18 +288,23 @@ func (e QuestionnaireEl) FontThin() QuestionnaireEl { tStyledExtFontThin(rt.N(e.
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireEl) HFlex() QuestionnaireEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireEl) Margins(margins gk.EdgesInto) QuestionnaireEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireEl) Paddings(paddings gk.EdgesInto) QuestionnaireEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireEl) RefineStyle(style gk.StyleRefinement) QuestionnaireEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -253,39 +314,55 @@ func (e QuestionnaireEl) RefineStyle(style gk.StyleRefinement) QuestionnaireEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireEl) VFlex() QuestionnaireEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireEl) Large() QuestionnaireEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireEl) Small() QuestionnaireEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireEl) WithSize(size gk.SizeInto) QuestionnaireEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireEl) Xsmall() QuestionnaireEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireEl) Style(st ...gk.Style) QuestionnaireEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireEl) AspectRatio(ratio float32) QuestionnaireEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireEl) Bg(fill gk.Fill) QuestionnaireEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireEl) Border(length gk.Length) QuestionnaireEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -293,12 +370,16 @@ func (e QuestionnaireEl) Border(length gk.Length) QuestionnaireEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireEl) BorderB(length gk.Length) QuestionnaireEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireEl) BorderColor(borderColor gk.Color) QuestionnaireEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -306,6 +387,8 @@ func (e QuestionnaireEl) BorderColor(borderColor gk.Color) QuestionnaireEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireEl) BorderL(length gk.Length) QuestionnaireEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -313,6 +396,8 @@ func (e QuestionnaireEl) BorderL(length gk.Length) QuestionnaireEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireEl) BorderR(length gk.Length) QuestionnaireEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -320,6 +405,8 @@ func (e QuestionnaireEl) BorderR(length gk.Length) QuestionnaireEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireEl) BorderT(length gk.Length) QuestionnaireEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -327,6 +414,8 @@ func (e QuestionnaireEl) BorderT(length gk.Length) QuestionnaireEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireEl) BorderX(length gk.Length) QuestionnaireEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -334,6 +423,8 @@ func (e QuestionnaireEl) BorderX(length gk.Length) QuestionnaireEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireEl) BorderY(length gk.Length) QuestionnaireEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -341,30 +432,40 @@ func (e QuestionnaireEl) BorderY(length gk.Length) QuestionnaireEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireEl) Bottom(length gk.Length) QuestionnaireEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireEl) ColEnd(end int16) QuestionnaireEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireEl) ColSpan(span uint16) QuestionnaireEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireEl) ColStart(start int16) QuestionnaireEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireEl) Cursor(cursor gk.CursorStyle) QuestionnaireEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -372,36 +473,48 @@ func (e QuestionnaireEl) Cursor(cursor gk.CursorStyle) QuestionnaireEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireEl) FlexBasis(basis gk.Length) QuestionnaireEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireEl) FlexGrow(grow float32) QuestionnaireEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireEl) FlexShrink(shrink float32) QuestionnaireEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireEl) Font(font gk.Font) QuestionnaireEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireEl) FontFamily(familyName string) QuestionnaireEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireEl) FontFeatures(features gk.FontFeatures) QuestionnaireEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -410,12 +523,16 @@ func (e QuestionnaireEl) FontFeatures(features gk.FontFeatures) QuestionnaireEl 
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireEl) FontWeight(weight gk.FontWeight) QuestionnaireEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireEl) Gap(length gk.Length) QuestionnaireEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -423,6 +540,8 @@ func (e QuestionnaireEl) Gap(length gk.Length) QuestionnaireEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireEl) GapX(length gk.Length) QuestionnaireEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -430,18 +549,24 @@ func (e QuestionnaireEl) GapX(length gk.Length) QuestionnaireEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireEl) GapY(length gk.Length) QuestionnaireEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireEl) GridCols(cols uint16) QuestionnaireEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireEl) GridColsMaxContent(cols uint16) QuestionnaireEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -449,18 +574,24 @@ func (e QuestionnaireEl) GridColsMaxContent(cols uint16) QuestionnaireEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireEl) GridColsMinContent(cols uint16) QuestionnaireEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireEl) GridRows(rows uint16) QuestionnaireEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireEl) GridRowsMaxContent(rows uint16) QuestionnaireEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -468,12 +599,16 @@ func (e QuestionnaireEl) GridRowsMaxContent(rows uint16) QuestionnaireEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireEl) GridRowsMinContent(rows uint16) QuestionnaireEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireEl) H(length gk.Length) QuestionnaireEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -481,6 +616,8 @@ func (e QuestionnaireEl) H(length gk.Length) QuestionnaireEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireEl) Inset(length gk.Length) QuestionnaireEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -488,6 +625,8 @@ func (e QuestionnaireEl) Inset(length gk.Length) QuestionnaireEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireEl) Left(length gk.Length) QuestionnaireEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -495,36 +634,48 @@ func (e QuestionnaireEl) Left(length gk.Length) QuestionnaireEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireEl) LineClamp(lines int) QuestionnaireEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireEl) LineHeight(lineHeight gk.Length) QuestionnaireEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireEl) M(length gk.Length) QuestionnaireEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireEl) MaxH(length gk.Length) QuestionnaireEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireEl) MaxSize(length gk.Length) QuestionnaireEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireEl) MaxW(length gk.Length) QuestionnaireEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -532,24 +683,32 @@ func (e QuestionnaireEl) MaxW(length gk.Length) QuestionnaireEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireEl) Mb(length gk.Length) QuestionnaireEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireEl) MinH(length gk.Length) QuestionnaireEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireEl) MinSize(length gk.Length) QuestionnaireEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireEl) MinW(length gk.Length) QuestionnaireEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -557,6 +716,8 @@ func (e QuestionnaireEl) MinW(length gk.Length) QuestionnaireEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireEl) Ml(length gk.Length) QuestionnaireEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -564,6 +725,8 @@ func (e QuestionnaireEl) Ml(length gk.Length) QuestionnaireEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireEl) Mr(length gk.Length) QuestionnaireEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -571,6 +734,8 @@ func (e QuestionnaireEl) Mr(length gk.Length) QuestionnaireEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireEl) Mt(length gk.Length) QuestionnaireEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -578,6 +743,8 @@ func (e QuestionnaireEl) Mt(length gk.Length) QuestionnaireEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireEl) Mx(length gk.Length) QuestionnaireEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -585,18 +752,24 @@ func (e QuestionnaireEl) Mx(length gk.Length) QuestionnaireEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireEl) My(length gk.Length) QuestionnaireEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireEl) Opacity(opacity float32) QuestionnaireEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireEl) P(length gk.Length) QuestionnaireEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -604,6 +777,8 @@ func (e QuestionnaireEl) P(length gk.Length) QuestionnaireEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireEl) Pb(length gk.Length) QuestionnaireEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -611,6 +786,8 @@ func (e QuestionnaireEl) Pb(length gk.Length) QuestionnaireEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireEl) Pl(length gk.Length) QuestionnaireEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -618,6 +795,8 @@ func (e QuestionnaireEl) Pl(length gk.Length) QuestionnaireEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireEl) Pr(length gk.Length) QuestionnaireEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -625,6 +804,8 @@ func (e QuestionnaireEl) Pr(length gk.Length) QuestionnaireEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireEl) Pt(length gk.Length) QuestionnaireEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -632,6 +813,8 @@ func (e QuestionnaireEl) Pt(length gk.Length) QuestionnaireEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireEl) Px(length gk.Length) QuestionnaireEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -639,6 +822,8 @@ func (e QuestionnaireEl) Px(length gk.Length) QuestionnaireEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireEl) Py(length gk.Length) QuestionnaireEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -646,12 +831,16 @@ func (e QuestionnaireEl) Py(length gk.Length) QuestionnaireEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireEl) Right(length gk.Length) QuestionnaireEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireEl) Rounded(length gk.Length) QuestionnaireEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -659,6 +848,8 @@ func (e QuestionnaireEl) Rounded(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireEl) RoundedB(length gk.Length) QuestionnaireEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -666,6 +857,8 @@ func (e QuestionnaireEl) RoundedB(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireEl) RoundedBl(length gk.Length) QuestionnaireEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -673,6 +866,8 @@ func (e QuestionnaireEl) RoundedBl(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireEl) RoundedBr(length gk.Length) QuestionnaireEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -680,6 +875,8 @@ func (e QuestionnaireEl) RoundedBr(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireEl) RoundedL(length gk.Length) QuestionnaireEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -687,6 +884,8 @@ func (e QuestionnaireEl) RoundedL(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireEl) RoundedR(length gk.Length) QuestionnaireEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -694,6 +893,8 @@ func (e QuestionnaireEl) RoundedR(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireEl) RoundedT(length gk.Length) QuestionnaireEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -701,6 +902,8 @@ func (e QuestionnaireEl) RoundedT(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireEl) RoundedTl(length gk.Length) QuestionnaireEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -708,24 +911,32 @@ func (e QuestionnaireEl) RoundedTl(length gk.Length) QuestionnaireEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireEl) RoundedTr(length gk.Length) QuestionnaireEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireEl) RowEnd(end int16) QuestionnaireEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireEl) RowSpan(span uint16) QuestionnaireEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireEl) RowStart(start int16) QuestionnaireEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -735,24 +946,32 @@ func (e QuestionnaireEl) RowStart(start int16) QuestionnaireEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireEl) ScrollbarWidth(width gk.Length) QuestionnaireEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireEl) Shadow(shadows []gk.BoxShadow) QuestionnaireEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireEl) Size(length gk.Length) QuestionnaireEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireEl) TextAlign(align gk.TextAlign) QuestionnaireEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -761,6 +980,8 @@ func (e QuestionnaireEl) TextAlign(align gk.TextAlign) QuestionnaireEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireEl) TextBg(bg gk.Color) QuestionnaireEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -769,18 +990,24 @@ func (e QuestionnaireEl) TextBg(bg gk.Color) QuestionnaireEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireEl) TextColor(color gk.Color) QuestionnaireEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireEl) TextDecorationColor(color gk.Color) QuestionnaireEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -789,6 +1016,8 @@ func (e QuestionnaireEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireEl 
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireEl) TextSize(size gk.Length) QuestionnaireEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -796,29 +1025,38 @@ func (e QuestionnaireEl) TextSize(size gk.Length) QuestionnaireEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireEl) Top(length gk.Length) QuestionnaireEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireEl) W(length gk.Length) QuestionnaireEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireEl) Text(s string) QuestionnaireEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireEl) ChildView(v gk.View) QuestionnaireEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireEl) Child(child gk.Element) QuestionnaireEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireEl) Children(children ...gk.Element) QuestionnaireEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -829,7 +1067,7 @@ type QuestionnaireActionsEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireActions is <gpui_kit::component::questionnaire::QuestionnaireActions>::new.
+// QuestionnaireActions calls <gpui_kit::component::questionnaire::QuestionnaireActions>::new.
 func QuestionnaireActions(state base.QuestionnaireState, st ...gk.Style) QuestionnaireActionsEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(719)
@@ -841,20 +1079,24 @@ func QuestionnaireActions(state base.QuestionnaireState, st ...gk.Style) Questio
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireActionsEl) PopoverStyle() QuestionnaireActionsEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireActionsEl) RoundedFullStyle() QuestionnaireActionsEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -863,16 +1105,18 @@ func (e QuestionnaireActionsEl) RoundedFullStyle() QuestionnaireActionsEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireActionsEl) FocusRingStyle() QuestionnaireActionsEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -885,24 +1129,32 @@ func (e QuestionnaireActionsEl) FocusRingStyle() QuestionnaireActionsEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireActionsEl) KeepTextSelection(id gk.ID) QuestionnaireActionsEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireActionsEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireActionsEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireActionsEl) BorderE(width gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireActionsEl) BorderS(width gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -910,163 +1162,205 @@ func (e QuestionnaireActionsEl) BorderS(width gk.Length) QuestionnaireActionsEl 
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireActionsEl) FlexRowDir() QuestionnaireActionsEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireActionsEl) InsetE(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireActionsEl) InsetS(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireActionsEl) JustifyFlexEnd() QuestionnaireActionsEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireActionsEl) JustifyFlexStart() QuestionnaireActionsEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireActionsEl) Me(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireActionsEl) Ms(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireActionsEl) Pe(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireActionsEl) Ps(length gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireActionsEl) RoundedE(radius gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireActionsEl) RoundedS(radius gk.Length) QuestionnaireActionsEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireActionsEl) TextEnd() QuestionnaireActionsEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireActionsEl) TextStart() QuestionnaireActionsEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireActionsEl) CornerRadii(radius gk.Corners) QuestionnaireActionsEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireActionsEl) DebugBlue() QuestionnaireActionsEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireActionsEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireActionsEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireActionsEl) DebugGreen() QuestionnaireActionsEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireActionsEl) DebugPink() QuestionnaireActionsEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireActionsEl) DebugRed() QuestionnaireActionsEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireActionsEl) DebugYellow() QuestionnaireActionsEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireActionsEl) FontBlack() QuestionnaireActionsEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireActionsEl) FontBold() QuestionnaireActionsEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireActionsEl) FontExtrabold() QuestionnaireActionsEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireActionsEl) FontExtralight() QuestionnaireActionsEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireActionsEl) FontLight() QuestionnaireActionsEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireActionsEl) FontMedium() QuestionnaireActionsEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireActionsEl) FontNormal() QuestionnaireActionsEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireActionsEl) FontSemibold() QuestionnaireActionsEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireActionsEl) FontThin() QuestionnaireActionsEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -1074,8 +1368,8 @@ func (e QuestionnaireActionsEl) FontThin() QuestionnaireActionsEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1084,21 +1378,26 @@ func (e QuestionnaireActionsEl) FontThin() QuestionnaireActionsEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireActionsEl) HFlex() QuestionnaireActionsEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireActionsEl) Margins(margins gk.EdgesInto) QuestionnaireActionsEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireActionsEl) Paddings(paddings gk.EdgesInto) QuestionnaireActionsEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireActionsEl) RefineStyle(style gk.StyleRefinement) QuestionnaireActionsEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -1108,51 +1407,67 @@ func (e QuestionnaireActionsEl) RefineStyle(style gk.StyleRefinement) Questionna
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireActionsEl) VFlex() QuestionnaireActionsEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireActionsEl) Large() QuestionnaireActionsEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireActionsEl) Small() QuestionnaireActionsEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireActionsEl) WithSize(size gk.SizeInto) QuestionnaireActionsEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireActionsEl) Xsmall() QuestionnaireActionsEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireActionsEl) Style(st ...gk.Style) QuestionnaireActionsEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireActionsEl) AspectRatio(ratio float32) QuestionnaireActionsEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireActionsEl) Bg(fill gk.Fill) QuestionnaireActionsEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireActionsEl) Border(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -1160,12 +1475,16 @@ func (e QuestionnaireActionsEl) Border(length gk.Length) QuestionnaireActionsEl 
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireActionsEl) BorderB(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireActionsEl) BorderColor(borderColor gk.Color) QuestionnaireActionsEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -1173,6 +1492,8 @@ func (e QuestionnaireActionsEl) BorderColor(borderColor gk.Color) QuestionnaireA
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireActionsEl) BorderL(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -1180,6 +1501,8 @@ func (e QuestionnaireActionsEl) BorderL(length gk.Length) QuestionnaireActionsEl
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireActionsEl) BorderR(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -1187,6 +1510,8 @@ func (e QuestionnaireActionsEl) BorderR(length gk.Length) QuestionnaireActionsEl
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireActionsEl) BorderT(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -1194,6 +1519,8 @@ func (e QuestionnaireActionsEl) BorderT(length gk.Length) QuestionnaireActionsEl
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireActionsEl) BorderX(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -1201,6 +1528,8 @@ func (e QuestionnaireActionsEl) BorderX(length gk.Length) QuestionnaireActionsEl
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireActionsEl) BorderY(length gk.Length) QuestionnaireActionsEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -1208,30 +1537,40 @@ func (e QuestionnaireActionsEl) BorderY(length gk.Length) QuestionnaireActionsEl
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireActionsEl) Bottom(length gk.Length) QuestionnaireActionsEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireActionsEl) ColEnd(end int16) QuestionnaireActionsEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireActionsEl) ColSpan(span uint16) QuestionnaireActionsEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireActionsEl) ColStart(start int16) QuestionnaireActionsEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireActionsEl) Cursor(cursor gk.CursorStyle) QuestionnaireActionsEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -1239,36 +1578,48 @@ func (e QuestionnaireActionsEl) Cursor(cursor gk.CursorStyle) QuestionnaireActio
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireActionsEl) FlexBasis(basis gk.Length) QuestionnaireActionsEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireActionsEl) FlexGrow(grow float32) QuestionnaireActionsEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireActionsEl) FlexShrink(shrink float32) QuestionnaireActionsEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireActionsEl) Font(font gk.Font) QuestionnaireActionsEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireActionsEl) FontFamily(familyName string) QuestionnaireActionsEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireActionsEl) FontFeatures(features gk.FontFeatures) QuestionnaireActionsEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -1277,12 +1628,16 @@ func (e QuestionnaireActionsEl) FontFeatures(features gk.FontFeatures) Questionn
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireActionsEl) FontWeight(weight gk.FontWeight) QuestionnaireActionsEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireActionsEl) Gap(length gk.Length) QuestionnaireActionsEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -1290,6 +1645,8 @@ func (e QuestionnaireActionsEl) Gap(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireActionsEl) GapX(length gk.Length) QuestionnaireActionsEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -1297,18 +1654,24 @@ func (e QuestionnaireActionsEl) GapX(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireActionsEl) GapY(length gk.Length) QuestionnaireActionsEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireActionsEl) GridCols(cols uint16) QuestionnaireActionsEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireActionsEl) GridColsMaxContent(cols uint16) QuestionnaireActionsEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -1316,18 +1679,24 @@ func (e QuestionnaireActionsEl) GridColsMaxContent(cols uint16) QuestionnaireAct
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireActionsEl) GridColsMinContent(cols uint16) QuestionnaireActionsEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireActionsEl) GridRows(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireActionsEl) GridRowsMaxContent(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -1335,12 +1704,16 @@ func (e QuestionnaireActionsEl) GridRowsMaxContent(rows uint16) QuestionnaireAct
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireActionsEl) GridRowsMinContent(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireActionsEl) H(length gk.Length) QuestionnaireActionsEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -1348,6 +1721,8 @@ func (e QuestionnaireActionsEl) H(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireActionsEl) Inset(length gk.Length) QuestionnaireActionsEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -1355,6 +1730,8 @@ func (e QuestionnaireActionsEl) Inset(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireActionsEl) Left(length gk.Length) QuestionnaireActionsEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -1362,36 +1739,48 @@ func (e QuestionnaireActionsEl) Left(length gk.Length) QuestionnaireActionsEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireActionsEl) LineClamp(lines int) QuestionnaireActionsEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireActionsEl) LineHeight(lineHeight gk.Length) QuestionnaireActionsEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireActionsEl) M(length gk.Length) QuestionnaireActionsEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireActionsEl) MaxH(length gk.Length) QuestionnaireActionsEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireActionsEl) MaxSize(length gk.Length) QuestionnaireActionsEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireActionsEl) MaxW(length gk.Length) QuestionnaireActionsEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -1399,24 +1788,32 @@ func (e QuestionnaireActionsEl) MaxW(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireActionsEl) Mb(length gk.Length) QuestionnaireActionsEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireActionsEl) MinH(length gk.Length) QuestionnaireActionsEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireActionsEl) MinSize(length gk.Length) QuestionnaireActionsEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireActionsEl) MinW(length gk.Length) QuestionnaireActionsEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -1424,6 +1821,8 @@ func (e QuestionnaireActionsEl) MinW(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireActionsEl) Ml(length gk.Length) QuestionnaireActionsEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -1431,6 +1830,8 @@ func (e QuestionnaireActionsEl) Ml(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireActionsEl) Mr(length gk.Length) QuestionnaireActionsEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -1438,6 +1839,8 @@ func (e QuestionnaireActionsEl) Mr(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireActionsEl) Mt(length gk.Length) QuestionnaireActionsEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -1445,6 +1848,8 @@ func (e QuestionnaireActionsEl) Mt(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireActionsEl) Mx(length gk.Length) QuestionnaireActionsEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -1452,18 +1857,24 @@ func (e QuestionnaireActionsEl) Mx(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireActionsEl) My(length gk.Length) QuestionnaireActionsEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireActionsEl) Opacity(opacity float32) QuestionnaireActionsEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireActionsEl) P(length gk.Length) QuestionnaireActionsEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -1471,6 +1882,8 @@ func (e QuestionnaireActionsEl) P(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireActionsEl) Pb(length gk.Length) QuestionnaireActionsEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -1478,6 +1891,8 @@ func (e QuestionnaireActionsEl) Pb(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireActionsEl) Pl(length gk.Length) QuestionnaireActionsEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -1485,6 +1900,8 @@ func (e QuestionnaireActionsEl) Pl(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireActionsEl) Pr(length gk.Length) QuestionnaireActionsEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -1492,6 +1909,8 @@ func (e QuestionnaireActionsEl) Pr(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireActionsEl) Pt(length gk.Length) QuestionnaireActionsEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -1499,6 +1918,8 @@ func (e QuestionnaireActionsEl) Pt(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireActionsEl) Px(length gk.Length) QuestionnaireActionsEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -1506,6 +1927,8 @@ func (e QuestionnaireActionsEl) Px(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireActionsEl) Py(length gk.Length) QuestionnaireActionsEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -1513,12 +1936,16 @@ func (e QuestionnaireActionsEl) Py(length gk.Length) QuestionnaireActionsEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireActionsEl) Right(length gk.Length) QuestionnaireActionsEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireActionsEl) Rounded(length gk.Length) QuestionnaireActionsEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -1526,6 +1953,8 @@ func (e QuestionnaireActionsEl) Rounded(length gk.Length) QuestionnaireActionsEl
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireActionsEl) RoundedB(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -1533,6 +1962,8 @@ func (e QuestionnaireActionsEl) RoundedB(length gk.Length) QuestionnaireActionsE
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireActionsEl) RoundedBl(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -1540,6 +1971,8 @@ func (e QuestionnaireActionsEl) RoundedBl(length gk.Length) QuestionnaireActions
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireActionsEl) RoundedBr(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -1547,6 +1980,8 @@ func (e QuestionnaireActionsEl) RoundedBr(length gk.Length) QuestionnaireActions
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireActionsEl) RoundedL(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -1554,6 +1989,8 @@ func (e QuestionnaireActionsEl) RoundedL(length gk.Length) QuestionnaireActionsE
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireActionsEl) RoundedR(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -1561,6 +1998,8 @@ func (e QuestionnaireActionsEl) RoundedR(length gk.Length) QuestionnaireActionsE
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireActionsEl) RoundedT(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -1568,6 +2007,8 @@ func (e QuestionnaireActionsEl) RoundedT(length gk.Length) QuestionnaireActionsE
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireActionsEl) RoundedTl(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -1575,24 +2016,32 @@ func (e QuestionnaireActionsEl) RoundedTl(length gk.Length) QuestionnaireActions
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireActionsEl) RoundedTr(length gk.Length) QuestionnaireActionsEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireActionsEl) RowEnd(end int16) QuestionnaireActionsEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireActionsEl) RowSpan(span uint16) QuestionnaireActionsEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireActionsEl) RowStart(start int16) QuestionnaireActionsEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -1602,24 +2051,32 @@ func (e QuestionnaireActionsEl) RowStart(start int16) QuestionnaireActionsEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireActionsEl) ScrollbarWidth(width gk.Length) QuestionnaireActionsEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireActionsEl) Shadow(shadows []gk.BoxShadow) QuestionnaireActionsEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireActionsEl) Size(length gk.Length) QuestionnaireActionsEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireActionsEl) TextAlign(align gk.TextAlign) QuestionnaireActionsEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -1628,6 +2085,8 @@ func (e QuestionnaireActionsEl) TextAlign(align gk.TextAlign) QuestionnaireActio
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireActionsEl) TextBg(bg gk.Color) QuestionnaireActionsEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -1636,18 +2095,24 @@ func (e QuestionnaireActionsEl) TextBg(bg gk.Color) QuestionnaireActionsEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireActionsEl) TextColor(color gk.Color) QuestionnaireActionsEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireActionsEl) TextDecorationColor(color gk.Color) QuestionnaireActionsEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireActionsEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireActionsEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -1656,6 +2121,8 @@ func (e QuestionnaireActionsEl) TextOverflow(overflow gk.TextOverflow) Questionn
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireActionsEl) TextSize(size gk.Length) QuestionnaireActionsEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -1663,35 +2130,44 @@ func (e QuestionnaireActionsEl) TextSize(size gk.Length) QuestionnaireActionsEl 
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireActionsEl) Top(length gk.Length) QuestionnaireActionsEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireActionsEl) W(length gk.Length) QuestionnaireActionsEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireActionsEl) Text(s string) QuestionnaireActionsEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireActionsEl) ChildView(v gk.View) QuestionnaireActionsEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireActionsEl) Child(child gk.Element) QuestionnaireActionsEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireActionsEl) Children(children ...gk.Element) QuestionnaireActionsEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -1702,7 +2178,7 @@ type QuestionnaireChoiceEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireChoice is <gpui_kit::component::questionnaire::QuestionnaireChoice>::new.
+// QuestionnaireChoice calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::new.
 func QuestionnaireChoice(state base.QuestionnaireState, item string, value string, st ...gk.Style) QuestionnaireChoiceEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(720)
@@ -1714,35 +2190,35 @@ func QuestionnaireChoice(state base.QuestionnaireState, item string, value strin
 	return QuestionnaireChoiceEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
 
-// ContentStyle is <gpui_kit::component::questionnaire::QuestionnaireChoice>::content_style.
+// ContentStyle calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::content_style.
 func (e QuestionnaireChoiceEl) ContentStyle(style gk.StyleRefinement) QuestionnaireChoiceEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
 	return e
 }
 
-// IndicatorStyle is <gpui_kit::component::questionnaire::QuestionnaireChoice>::indicator_style.
+// IndicatorStyle calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::indicator_style.
 func (e QuestionnaireChoiceEl) IndicatorStyle(style gk.StyleRefinement) QuestionnaireChoiceEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
 	return e
 }
 
-// RenderIndicator is <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_indicator.
+// RenderIndicator calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_indicator.
 func (e QuestionnaireChoiceEl) RenderIndicator(renderer gk.RowSource) QuestionnaireChoiceEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U64(rt.ItemsCheck(renderer, 20))
 	return e
 }
 
-// RenderShortcut is <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_shortcut.
+// RenderShortcut calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_shortcut.
 func (e QuestionnaireChoiceEl) RenderShortcut(renderer gk.RowSource) QuestionnaireChoiceEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U64(rt.ItemsCheck(renderer, 20))
 	return e
 }
 
-// ShortcutStyle is <gpui_kit::component::questionnaire::QuestionnaireChoice>::shortcut_style.
+// ShortcutStyle calls <gpui_kit::component::questionnaire::QuestionnaireChoice>::shortcut_style.
 func (e QuestionnaireChoiceEl) ShortcutStyle(style gk.StyleRefinement) QuestionnaireChoiceEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.TakeValue(rt.N(style.Core)))
@@ -1751,20 +2227,24 @@ func (e QuestionnaireChoiceEl) ShortcutStyle(style gk.StyleRefinement) Questionn
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireChoiceEl) PopoverStyle() QuestionnaireChoiceEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireChoiceEl) RoundedFullStyle() QuestionnaireChoiceEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -1773,16 +2253,18 @@ func (e QuestionnaireChoiceEl) RoundedFullStyle() QuestionnaireChoiceEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireChoiceEl) FocusRingStyle() QuestionnaireChoiceEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -1795,24 +2277,32 @@ func (e QuestionnaireChoiceEl) FocusRingStyle() QuestionnaireChoiceEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireChoiceEl) KeepTextSelection(id gk.ID) QuestionnaireChoiceEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireChoiceEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireChoiceEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireChoiceEl) BorderE(width gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireChoiceEl) BorderS(width gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -1820,163 +2310,205 @@ func (e QuestionnaireChoiceEl) BorderS(width gk.Length) QuestionnaireChoiceEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireChoiceEl) FlexRowDir() QuestionnaireChoiceEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireChoiceEl) InsetE(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireChoiceEl) InsetS(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireChoiceEl) JustifyFlexEnd() QuestionnaireChoiceEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireChoiceEl) JustifyFlexStart() QuestionnaireChoiceEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireChoiceEl) Me(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireChoiceEl) Ms(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireChoiceEl) Pe(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireChoiceEl) Ps(length gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireChoiceEl) RoundedE(radius gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireChoiceEl) RoundedS(radius gk.Length) QuestionnaireChoiceEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireChoiceEl) TextEnd() QuestionnaireChoiceEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireChoiceEl) TextStart() QuestionnaireChoiceEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireChoiceEl) CornerRadii(radius gk.Corners) QuestionnaireChoiceEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireChoiceEl) DebugBlue() QuestionnaireChoiceEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireChoiceEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireChoiceEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireChoiceEl) DebugGreen() QuestionnaireChoiceEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireChoiceEl) DebugPink() QuestionnaireChoiceEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireChoiceEl) DebugRed() QuestionnaireChoiceEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireChoiceEl) DebugYellow() QuestionnaireChoiceEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireChoiceEl) FontBlack() QuestionnaireChoiceEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireChoiceEl) FontBold() QuestionnaireChoiceEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireChoiceEl) FontExtrabold() QuestionnaireChoiceEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireChoiceEl) FontExtralight() QuestionnaireChoiceEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireChoiceEl) FontLight() QuestionnaireChoiceEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireChoiceEl) FontMedium() QuestionnaireChoiceEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireChoiceEl) FontNormal() QuestionnaireChoiceEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireChoiceEl) FontSemibold() QuestionnaireChoiceEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireChoiceEl) FontThin() QuestionnaireChoiceEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -1984,8 +2516,8 @@ func (e QuestionnaireChoiceEl) FontThin() QuestionnaireChoiceEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -1994,18 +2526,23 @@ func (e QuestionnaireChoiceEl) FontThin() QuestionnaireChoiceEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireChoiceEl) HFlex() QuestionnaireChoiceEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireChoiceEl) Margins(margins gk.EdgesInto) QuestionnaireChoiceEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireChoiceEl) Paddings(paddings gk.EdgesInto) QuestionnaireChoiceEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireChoiceEl) RefineStyle(style gk.StyleRefinement) QuestionnaireChoiceEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2015,45 +2552,61 @@ func (e QuestionnaireChoiceEl) RefineStyle(style gk.StyleRefinement) Questionnai
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireChoiceEl) VFlex() QuestionnaireChoiceEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireChoiceEl) Large() QuestionnaireChoiceEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireChoiceEl) Small() QuestionnaireChoiceEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireChoiceEl) WithSize(size gk.SizeInto) QuestionnaireChoiceEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireChoiceEl) Xsmall() QuestionnaireChoiceEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireChoiceEl) Style(st ...gk.Style) QuestionnaireChoiceEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireChoiceEl) AspectRatio(ratio float32) QuestionnaireChoiceEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireChoiceEl) Bg(fill gk.Fill) QuestionnaireChoiceEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireChoiceEl) Border(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2061,12 +2614,16 @@ func (e QuestionnaireChoiceEl) Border(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireChoiceEl) BorderB(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireChoiceEl) BorderColor(borderColor gk.Color) QuestionnaireChoiceEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2074,6 +2631,8 @@ func (e QuestionnaireChoiceEl) BorderColor(borderColor gk.Color) QuestionnaireCh
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireChoiceEl) BorderL(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2081,6 +2640,8 @@ func (e QuestionnaireChoiceEl) BorderL(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireChoiceEl) BorderR(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2088,6 +2649,8 @@ func (e QuestionnaireChoiceEl) BorderR(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireChoiceEl) BorderT(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2095,6 +2658,8 @@ func (e QuestionnaireChoiceEl) BorderT(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireChoiceEl) BorderX(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2102,6 +2667,8 @@ func (e QuestionnaireChoiceEl) BorderX(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireChoiceEl) BorderY(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2109,30 +2676,40 @@ func (e QuestionnaireChoiceEl) BorderY(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireChoiceEl) Bottom(length gk.Length) QuestionnaireChoiceEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireChoiceEl) ColEnd(end int16) QuestionnaireChoiceEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireChoiceEl) ColSpan(span uint16) QuestionnaireChoiceEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireChoiceEl) ColStart(start int16) QuestionnaireChoiceEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireChoiceEl) Cursor(cursor gk.CursorStyle) QuestionnaireChoiceEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -2140,36 +2717,48 @@ func (e QuestionnaireChoiceEl) Cursor(cursor gk.CursorStyle) QuestionnaireChoice
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireChoiceEl) FlexBasis(basis gk.Length) QuestionnaireChoiceEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireChoiceEl) FlexGrow(grow float32) QuestionnaireChoiceEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireChoiceEl) FlexShrink(shrink float32) QuestionnaireChoiceEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireChoiceEl) Font(font gk.Font) QuestionnaireChoiceEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireChoiceEl) FontFamily(familyName string) QuestionnaireChoiceEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireChoiceEl) FontFeatures(features gk.FontFeatures) QuestionnaireChoiceEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -2178,12 +2767,16 @@ func (e QuestionnaireChoiceEl) FontFeatures(features gk.FontFeatures) Questionna
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireChoiceEl) FontWeight(weight gk.FontWeight) QuestionnaireChoiceEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireChoiceEl) Gap(length gk.Length) QuestionnaireChoiceEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -2191,6 +2784,8 @@ func (e QuestionnaireChoiceEl) Gap(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireChoiceEl) GapX(length gk.Length) QuestionnaireChoiceEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -2198,18 +2793,24 @@ func (e QuestionnaireChoiceEl) GapX(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireChoiceEl) GapY(length gk.Length) QuestionnaireChoiceEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireChoiceEl) GridCols(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireChoiceEl) GridColsMaxContent(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -2217,18 +2818,24 @@ func (e QuestionnaireChoiceEl) GridColsMaxContent(cols uint16) QuestionnaireChoi
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireChoiceEl) GridColsMinContent(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireChoiceEl) GridRows(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireChoiceEl) GridRowsMaxContent(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -2236,12 +2843,16 @@ func (e QuestionnaireChoiceEl) GridRowsMaxContent(rows uint16) QuestionnaireChoi
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireChoiceEl) GridRowsMinContent(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireChoiceEl) H(length gk.Length) QuestionnaireChoiceEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -2249,6 +2860,8 @@ func (e QuestionnaireChoiceEl) H(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireChoiceEl) Inset(length gk.Length) QuestionnaireChoiceEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -2256,6 +2869,8 @@ func (e QuestionnaireChoiceEl) Inset(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireChoiceEl) Left(length gk.Length) QuestionnaireChoiceEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -2263,36 +2878,48 @@ func (e QuestionnaireChoiceEl) Left(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireChoiceEl) LineClamp(lines int) QuestionnaireChoiceEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireChoiceEl) LineHeight(lineHeight gk.Length) QuestionnaireChoiceEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireChoiceEl) M(length gk.Length) QuestionnaireChoiceEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireChoiceEl) MaxH(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireChoiceEl) MaxSize(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireChoiceEl) MaxW(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -2300,24 +2927,32 @@ func (e QuestionnaireChoiceEl) MaxW(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireChoiceEl) Mb(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireChoiceEl) MinH(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireChoiceEl) MinSize(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireChoiceEl) MinW(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -2325,6 +2960,8 @@ func (e QuestionnaireChoiceEl) MinW(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireChoiceEl) Ml(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -2332,6 +2969,8 @@ func (e QuestionnaireChoiceEl) Ml(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireChoiceEl) Mr(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -2339,6 +2978,8 @@ func (e QuestionnaireChoiceEl) Mr(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireChoiceEl) Mt(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -2346,6 +2987,8 @@ func (e QuestionnaireChoiceEl) Mt(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireChoiceEl) Mx(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -2353,18 +2996,24 @@ func (e QuestionnaireChoiceEl) Mx(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireChoiceEl) My(length gk.Length) QuestionnaireChoiceEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireChoiceEl) Opacity(opacity float32) QuestionnaireChoiceEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireChoiceEl) P(length gk.Length) QuestionnaireChoiceEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -2372,6 +3021,8 @@ func (e QuestionnaireChoiceEl) P(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireChoiceEl) Pb(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -2379,6 +3030,8 @@ func (e QuestionnaireChoiceEl) Pb(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireChoiceEl) Pl(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -2386,6 +3039,8 @@ func (e QuestionnaireChoiceEl) Pl(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireChoiceEl) Pr(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -2393,6 +3048,8 @@ func (e QuestionnaireChoiceEl) Pr(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireChoiceEl) Pt(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -2400,6 +3057,8 @@ func (e QuestionnaireChoiceEl) Pt(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireChoiceEl) Px(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -2407,6 +3066,8 @@ func (e QuestionnaireChoiceEl) Px(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireChoiceEl) Py(length gk.Length) QuestionnaireChoiceEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -2414,12 +3075,16 @@ func (e QuestionnaireChoiceEl) Py(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireChoiceEl) Right(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireChoiceEl) Rounded(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -2427,6 +3092,8 @@ func (e QuestionnaireChoiceEl) Rounded(length gk.Length) QuestionnaireChoiceEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireChoiceEl) RoundedB(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -2434,6 +3101,8 @@ func (e QuestionnaireChoiceEl) RoundedB(length gk.Length) QuestionnaireChoiceEl 
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireChoiceEl) RoundedBl(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -2441,6 +3110,8 @@ func (e QuestionnaireChoiceEl) RoundedBl(length gk.Length) QuestionnaireChoiceEl
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireChoiceEl) RoundedBr(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -2448,6 +3119,8 @@ func (e QuestionnaireChoiceEl) RoundedBr(length gk.Length) QuestionnaireChoiceEl
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireChoiceEl) RoundedL(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -2455,6 +3128,8 @@ func (e QuestionnaireChoiceEl) RoundedL(length gk.Length) QuestionnaireChoiceEl 
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireChoiceEl) RoundedR(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -2462,6 +3137,8 @@ func (e QuestionnaireChoiceEl) RoundedR(length gk.Length) QuestionnaireChoiceEl 
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireChoiceEl) RoundedT(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -2469,6 +3146,8 @@ func (e QuestionnaireChoiceEl) RoundedT(length gk.Length) QuestionnaireChoiceEl 
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireChoiceEl) RoundedTl(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -2476,24 +3155,32 @@ func (e QuestionnaireChoiceEl) RoundedTl(length gk.Length) QuestionnaireChoiceEl
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireChoiceEl) RoundedTr(length gk.Length) QuestionnaireChoiceEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireChoiceEl) RowEnd(end int16) QuestionnaireChoiceEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireChoiceEl) RowSpan(span uint16) QuestionnaireChoiceEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireChoiceEl) RowStart(start int16) QuestionnaireChoiceEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -2503,24 +3190,32 @@ func (e QuestionnaireChoiceEl) RowStart(start int16) QuestionnaireChoiceEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireChoiceEl) ScrollbarWidth(width gk.Length) QuestionnaireChoiceEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireChoiceEl) Shadow(shadows []gk.BoxShadow) QuestionnaireChoiceEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireChoiceEl) Size(length gk.Length) QuestionnaireChoiceEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireChoiceEl) TextAlign(align gk.TextAlign) QuestionnaireChoiceEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -2529,6 +3224,8 @@ func (e QuestionnaireChoiceEl) TextAlign(align gk.TextAlign) QuestionnaireChoice
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireChoiceEl) TextBg(bg gk.Color) QuestionnaireChoiceEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -2537,18 +3234,24 @@ func (e QuestionnaireChoiceEl) TextBg(bg gk.Color) QuestionnaireChoiceEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireChoiceEl) TextColor(color gk.Color) QuestionnaireChoiceEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireChoiceEl) TextDecorationColor(color gk.Color) QuestionnaireChoiceEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireChoiceEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireChoiceEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -2557,6 +3260,8 @@ func (e QuestionnaireChoiceEl) TextOverflow(overflow gk.TextOverflow) Questionna
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireChoiceEl) TextSize(size gk.Length) QuestionnaireChoiceEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -2564,35 +3269,44 @@ func (e QuestionnaireChoiceEl) TextSize(size gk.Length) QuestionnaireChoiceEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireChoiceEl) Top(length gk.Length) QuestionnaireChoiceEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireChoiceEl) W(length gk.Length) QuestionnaireChoiceEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireChoiceEl) Text(s string) QuestionnaireChoiceEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireChoiceEl) ChildView(v gk.View) QuestionnaireChoiceEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireChoiceEl) Child(child gk.Element) QuestionnaireChoiceEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireChoiceEl) Children(children ...gk.Element) QuestionnaireChoiceEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -2603,7 +3317,7 @@ type QuestionnaireChoiceDescriptionEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireChoiceDescription is <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription>::new.
+// QuestionnaireChoiceDescription calls <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription>::new.
 func QuestionnaireChoiceDescription(st ...gk.Style) QuestionnaireChoiceDescriptionEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(722)
@@ -2611,7 +3325,7 @@ func QuestionnaireChoiceDescription(st ...gk.Style) QuestionnaireChoiceDescripti
 	return QuestionnaireChoiceDescriptionEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
 
-// QuestionnaireChoiceDescriptionDefault is <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription as Default>::default.
+// QuestionnaireChoiceDescriptionDefault calls <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription as Default>::default.
 func QuestionnaireChoiceDescriptionDefault(st ...gk.Style) QuestionnaireChoiceDescriptionEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(721)
@@ -2621,20 +3335,24 @@ func QuestionnaireChoiceDescriptionDefault(st ...gk.Style) QuestionnaireChoiceDe
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireChoiceDescriptionEl) PopoverStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireChoiceDescriptionEl) RoundedFullStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -2643,16 +3361,18 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedFullStyle() QuestionnaireChoice
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireChoiceDescriptionEl) FocusRingStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -2665,24 +3385,32 @@ func (e QuestionnaireChoiceDescriptionEl) FocusRingStyle() QuestionnaireChoiceDe
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireChoiceDescriptionEl) KeepTextSelection(id gk.ID) QuestionnaireChoiceDescriptionEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireChoiceDescriptionEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireChoiceDescriptionEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireChoiceDescriptionEl) BorderE(width gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireChoiceDescriptionEl) BorderS(width gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -2690,163 +3418,205 @@ func (e QuestionnaireChoiceDescriptionEl) BorderS(width gk.Length) Questionnaire
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireChoiceDescriptionEl) FlexRowDir() QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireChoiceDescriptionEl) InsetE(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireChoiceDescriptionEl) InsetS(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireChoiceDescriptionEl) JustifyFlexEnd() QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireChoiceDescriptionEl) JustifyFlexStart() QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireChoiceDescriptionEl) Me(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireChoiceDescriptionEl) Ms(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireChoiceDescriptionEl) Pe(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireChoiceDescriptionEl) Ps(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireChoiceDescriptionEl) RoundedE(radius gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireChoiceDescriptionEl) RoundedS(radius gk.Length) QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireChoiceDescriptionEl) TextEnd() QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireChoiceDescriptionEl) TextStart() QuestionnaireChoiceDescriptionEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireChoiceDescriptionEl) CornerRadii(radius gk.Corners) QuestionnaireChoiceDescriptionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireChoiceDescriptionEl) DebugBlue() QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireChoiceDescriptionEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireChoiceDescriptionEl) DebugGreen() QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireChoiceDescriptionEl) DebugPink() QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireChoiceDescriptionEl) DebugRed() QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireChoiceDescriptionEl) DebugYellow() QuestionnaireChoiceDescriptionEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireChoiceDescriptionEl) FontBlack() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireChoiceDescriptionEl) FontBold() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireChoiceDescriptionEl) FontExtrabold() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireChoiceDescriptionEl) FontExtralight() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireChoiceDescriptionEl) FontLight() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireChoiceDescriptionEl) FontMedium() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireChoiceDescriptionEl) FontNormal() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireChoiceDescriptionEl) FontSemibold() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireChoiceDescriptionEl) FontThin() QuestionnaireChoiceDescriptionEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -2854,8 +3624,8 @@ func (e QuestionnaireChoiceDescriptionEl) FontThin() QuestionnaireChoiceDescript
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -2864,21 +3634,26 @@ func (e QuestionnaireChoiceDescriptionEl) FontThin() QuestionnaireChoiceDescript
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireChoiceDescriptionEl) HFlex() QuestionnaireChoiceDescriptionEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireChoiceDescriptionEl) Margins(margins gk.EdgesInto) QuestionnaireChoiceDescriptionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireChoiceDescriptionEl) Paddings(paddings gk.EdgesInto) QuestionnaireChoiceDescriptionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireChoiceDescriptionEl) RefineStyle(style gk.StyleRefinement) QuestionnaireChoiceDescriptionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -2888,18 +3663,24 @@ func (e QuestionnaireChoiceDescriptionEl) RefineStyle(style gk.StyleRefinement) 
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireChoiceDescriptionEl) VFlex() QuestionnaireChoiceDescriptionEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireChoiceDescriptionEl) Large() QuestionnaireChoiceDescriptionEl {
 	tSizableLarge(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireChoiceDescriptionEl) Small() QuestionnaireChoiceDescriptionEl {
 	tSizableSmall(rt.N(e.Core))
 	return e
@@ -2909,36 +3690,46 @@ func (e QuestionnaireChoiceDescriptionEl) Small() QuestionnaireChoiceDescription
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireChoiceDescriptionEl) WithSize(size gk.SizeInto) QuestionnaireChoiceDescriptionEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireChoiceDescriptionEl) Xsmall() QuestionnaireChoiceDescriptionEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireChoiceDescriptionEl) Style(st ...gk.Style) QuestionnaireChoiceDescriptionEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireChoiceDescriptionEl) AspectRatio(ratio float32) QuestionnaireChoiceDescriptionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireChoiceDescriptionEl) Bg(fill gk.Fill) QuestionnaireChoiceDescriptionEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireChoiceDescriptionEl) Border(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -2946,12 +3737,16 @@ func (e QuestionnaireChoiceDescriptionEl) Border(length gk.Length) Questionnaire
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireChoiceDescriptionEl) BorderB(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireChoiceDescriptionEl) BorderColor(borderColor gk.Color) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -2959,6 +3754,8 @@ func (e QuestionnaireChoiceDescriptionEl) BorderColor(borderColor gk.Color) Ques
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireChoiceDescriptionEl) BorderL(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -2966,6 +3763,8 @@ func (e QuestionnaireChoiceDescriptionEl) BorderL(length gk.Length) Questionnair
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireChoiceDescriptionEl) BorderR(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -2973,6 +3772,8 @@ func (e QuestionnaireChoiceDescriptionEl) BorderR(length gk.Length) Questionnair
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireChoiceDescriptionEl) BorderT(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -2980,6 +3781,8 @@ func (e QuestionnaireChoiceDescriptionEl) BorderT(length gk.Length) Questionnair
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireChoiceDescriptionEl) BorderX(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -2987,6 +3790,8 @@ func (e QuestionnaireChoiceDescriptionEl) BorderX(length gk.Length) Questionnair
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireChoiceDescriptionEl) BorderY(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -2994,30 +3799,40 @@ func (e QuestionnaireChoiceDescriptionEl) BorderY(length gk.Length) Questionnair
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireChoiceDescriptionEl) Bottom(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireChoiceDescriptionEl) ColEnd(end int16) QuestionnaireChoiceDescriptionEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireChoiceDescriptionEl) ColSpan(span uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireChoiceDescriptionEl) ColStart(start int16) QuestionnaireChoiceDescriptionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireChoiceDescriptionEl) Cursor(cursor gk.CursorStyle) QuestionnaireChoiceDescriptionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3025,36 +3840,48 @@ func (e QuestionnaireChoiceDescriptionEl) Cursor(cursor gk.CursorStyle) Question
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireChoiceDescriptionEl) FlexBasis(basis gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireChoiceDescriptionEl) FlexGrow(grow float32) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireChoiceDescriptionEl) FlexShrink(shrink float32) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireChoiceDescriptionEl) Font(font gk.Font) QuestionnaireChoiceDescriptionEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireChoiceDescriptionEl) FontFamily(familyName string) QuestionnaireChoiceDescriptionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireChoiceDescriptionEl) FontFeatures(features gk.FontFeatures) QuestionnaireChoiceDescriptionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3063,12 +3890,16 @@ func (e QuestionnaireChoiceDescriptionEl) FontFeatures(features gk.FontFeatures)
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireChoiceDescriptionEl) FontWeight(weight gk.FontWeight) QuestionnaireChoiceDescriptionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireChoiceDescriptionEl) Gap(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3076,6 +3907,8 @@ func (e QuestionnaireChoiceDescriptionEl) Gap(length gk.Length) QuestionnaireCho
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireChoiceDescriptionEl) GapX(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3083,18 +3916,24 @@ func (e QuestionnaireChoiceDescriptionEl) GapX(length gk.Length) QuestionnaireCh
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireChoiceDescriptionEl) GapY(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireChoiceDescriptionEl) GridCols(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireChoiceDescriptionEl) GridColsMaxContent(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3102,18 +3941,24 @@ func (e QuestionnaireChoiceDescriptionEl) GridColsMaxContent(cols uint16) Questi
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireChoiceDescriptionEl) GridColsMinContent(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireChoiceDescriptionEl) GridRows(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireChoiceDescriptionEl) GridRowsMaxContent(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3121,12 +3966,16 @@ func (e QuestionnaireChoiceDescriptionEl) GridRowsMaxContent(rows uint16) Questi
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireChoiceDescriptionEl) GridRowsMinContent(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireChoiceDescriptionEl) H(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -3134,6 +3983,8 @@ func (e QuestionnaireChoiceDescriptionEl) H(length gk.Length) QuestionnaireChoic
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireChoiceDescriptionEl) Inset(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -3141,6 +3992,8 @@ func (e QuestionnaireChoiceDescriptionEl) Inset(length gk.Length) QuestionnaireC
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireChoiceDescriptionEl) Left(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -3148,36 +4001,48 @@ func (e QuestionnaireChoiceDescriptionEl) Left(length gk.Length) QuestionnaireCh
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireChoiceDescriptionEl) LineClamp(lines int) QuestionnaireChoiceDescriptionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireChoiceDescriptionEl) LineHeight(lineHeight gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireChoiceDescriptionEl) M(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireChoiceDescriptionEl) MaxH(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireChoiceDescriptionEl) MaxSize(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireChoiceDescriptionEl) MaxW(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -3185,24 +4050,32 @@ func (e QuestionnaireChoiceDescriptionEl) MaxW(length gk.Length) QuestionnaireCh
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireChoiceDescriptionEl) Mb(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireChoiceDescriptionEl) MinH(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireChoiceDescriptionEl) MinSize(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireChoiceDescriptionEl) MinW(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -3210,6 +4083,8 @@ func (e QuestionnaireChoiceDescriptionEl) MinW(length gk.Length) QuestionnaireCh
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireChoiceDescriptionEl) Ml(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -3217,6 +4092,8 @@ func (e QuestionnaireChoiceDescriptionEl) Ml(length gk.Length) QuestionnaireChoi
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireChoiceDescriptionEl) Mr(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -3224,6 +4101,8 @@ func (e QuestionnaireChoiceDescriptionEl) Mr(length gk.Length) QuestionnaireChoi
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireChoiceDescriptionEl) Mt(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -3231,6 +4110,8 @@ func (e QuestionnaireChoiceDescriptionEl) Mt(length gk.Length) QuestionnaireChoi
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireChoiceDescriptionEl) Mx(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -3238,18 +4119,24 @@ func (e QuestionnaireChoiceDescriptionEl) Mx(length gk.Length) QuestionnaireChoi
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireChoiceDescriptionEl) My(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireChoiceDescriptionEl) Opacity(opacity float32) QuestionnaireChoiceDescriptionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireChoiceDescriptionEl) P(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -3257,6 +4144,8 @@ func (e QuestionnaireChoiceDescriptionEl) P(length gk.Length) QuestionnaireChoic
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireChoiceDescriptionEl) Pb(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -3264,6 +4153,8 @@ func (e QuestionnaireChoiceDescriptionEl) Pb(length gk.Length) QuestionnaireChoi
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireChoiceDescriptionEl) Pl(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -3271,6 +4162,8 @@ func (e QuestionnaireChoiceDescriptionEl) Pl(length gk.Length) QuestionnaireChoi
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireChoiceDescriptionEl) Pr(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -3278,6 +4171,8 @@ func (e QuestionnaireChoiceDescriptionEl) Pr(length gk.Length) QuestionnaireChoi
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireChoiceDescriptionEl) Pt(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -3285,6 +4180,8 @@ func (e QuestionnaireChoiceDescriptionEl) Pt(length gk.Length) QuestionnaireChoi
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireChoiceDescriptionEl) Px(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -3292,6 +4189,8 @@ func (e QuestionnaireChoiceDescriptionEl) Px(length gk.Length) QuestionnaireChoi
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireChoiceDescriptionEl) Py(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -3299,12 +4198,16 @@ func (e QuestionnaireChoiceDescriptionEl) Py(length gk.Length) QuestionnaireChoi
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireChoiceDescriptionEl) Right(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireChoiceDescriptionEl) Rounded(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -3312,6 +4215,8 @@ func (e QuestionnaireChoiceDescriptionEl) Rounded(length gk.Length) Questionnair
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireChoiceDescriptionEl) RoundedB(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -3319,6 +4224,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedB(length gk.Length) Questionnai
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireChoiceDescriptionEl) RoundedBl(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -3326,6 +4233,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedBl(length gk.Length) Questionna
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireChoiceDescriptionEl) RoundedBr(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -3333,6 +4242,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedBr(length gk.Length) Questionna
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireChoiceDescriptionEl) RoundedL(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -3340,6 +4251,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedL(length gk.Length) Questionnai
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireChoiceDescriptionEl) RoundedR(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -3347,6 +4260,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedR(length gk.Length) Questionnai
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireChoiceDescriptionEl) RoundedT(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -3354,6 +4269,8 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedT(length gk.Length) Questionnai
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireChoiceDescriptionEl) RoundedTl(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -3361,24 +4278,32 @@ func (e QuestionnaireChoiceDescriptionEl) RoundedTl(length gk.Length) Questionna
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireChoiceDescriptionEl) RoundedTr(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireChoiceDescriptionEl) RowEnd(end int16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireChoiceDescriptionEl) RowSpan(span uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireChoiceDescriptionEl) RowStart(start int16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -3388,24 +4313,32 @@ func (e QuestionnaireChoiceDescriptionEl) RowStart(start int16) QuestionnaireCho
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireChoiceDescriptionEl) ScrollbarWidth(width gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireChoiceDescriptionEl) Shadow(shadows []gk.BoxShadow) QuestionnaireChoiceDescriptionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireChoiceDescriptionEl) Size(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireChoiceDescriptionEl) TextAlign(align gk.TextAlign) QuestionnaireChoiceDescriptionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -3414,6 +4347,8 @@ func (e QuestionnaireChoiceDescriptionEl) TextAlign(align gk.TextAlign) Question
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireChoiceDescriptionEl) TextBg(bg gk.Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -3422,18 +4357,24 @@ func (e QuestionnaireChoiceDescriptionEl) TextBg(bg gk.Color) QuestionnaireChoic
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireChoiceDescriptionEl) TextColor(color gk.Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireChoiceDescriptionEl) TextDecorationColor(color gk.Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireChoiceDescriptionEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireChoiceDescriptionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -3442,6 +4383,8 @@ func (e QuestionnaireChoiceDescriptionEl) TextOverflow(overflow gk.TextOverflow)
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireChoiceDescriptionEl) TextSize(size gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -3449,35 +4392,44 @@ func (e QuestionnaireChoiceDescriptionEl) TextSize(size gk.Length) Questionnaire
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireChoiceDescriptionEl) Top(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireChoiceDescriptionEl) W(length gk.Length) QuestionnaireChoiceDescriptionEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireChoiceDescriptionEl) Text(s string) QuestionnaireChoiceDescriptionEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireChoiceDescriptionEl) ChildView(v gk.View) QuestionnaireChoiceDescriptionEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireChoiceDescriptionEl) Child(child gk.Element) QuestionnaireChoiceDescriptionEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireChoiceDescriptionEl) Children(children ...gk.Element) QuestionnaireChoiceDescriptionEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -3488,7 +4440,7 @@ type QuestionnaireChoicesEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireChoices is <gpui_kit::component::questionnaire::QuestionnaireChoices>::new.
+// QuestionnaireChoices calls <gpui_kit::component::questionnaire::QuestionnaireChoices>::new.
 func QuestionnaireChoices(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireChoicesEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(723)
@@ -3501,20 +4453,24 @@ func QuestionnaireChoices(state base.QuestionnaireState, item string, st ...gk.S
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireChoicesEl) PopoverStyle() QuestionnaireChoicesEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireChoicesEl) RoundedFullStyle() QuestionnaireChoicesEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -3523,16 +4479,18 @@ func (e QuestionnaireChoicesEl) RoundedFullStyle() QuestionnaireChoicesEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireChoicesEl) FocusRingStyle() QuestionnaireChoicesEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -3545,24 +4503,32 @@ func (e QuestionnaireChoicesEl) FocusRingStyle() QuestionnaireChoicesEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireChoicesEl) KeepTextSelection(id gk.ID) QuestionnaireChoicesEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireChoicesEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireChoicesEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireChoicesEl) BorderE(width gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireChoicesEl) BorderS(width gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -3570,163 +4536,205 @@ func (e QuestionnaireChoicesEl) BorderS(width gk.Length) QuestionnaireChoicesEl 
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireChoicesEl) FlexRowDir() QuestionnaireChoicesEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireChoicesEl) InsetE(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireChoicesEl) InsetS(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireChoicesEl) JustifyFlexEnd() QuestionnaireChoicesEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireChoicesEl) JustifyFlexStart() QuestionnaireChoicesEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireChoicesEl) Me(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireChoicesEl) Ms(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireChoicesEl) Pe(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireChoicesEl) Ps(length gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireChoicesEl) RoundedE(radius gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireChoicesEl) RoundedS(radius gk.Length) QuestionnaireChoicesEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireChoicesEl) TextEnd() QuestionnaireChoicesEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireChoicesEl) TextStart() QuestionnaireChoicesEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireChoicesEl) CornerRadii(radius gk.Corners) QuestionnaireChoicesEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireChoicesEl) DebugBlue() QuestionnaireChoicesEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireChoicesEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireChoicesEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireChoicesEl) DebugGreen() QuestionnaireChoicesEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireChoicesEl) DebugPink() QuestionnaireChoicesEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireChoicesEl) DebugRed() QuestionnaireChoicesEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireChoicesEl) DebugYellow() QuestionnaireChoicesEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireChoicesEl) FontBlack() QuestionnaireChoicesEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireChoicesEl) FontBold() QuestionnaireChoicesEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireChoicesEl) FontExtrabold() QuestionnaireChoicesEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireChoicesEl) FontExtralight() QuestionnaireChoicesEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireChoicesEl) FontLight() QuestionnaireChoicesEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireChoicesEl) FontMedium() QuestionnaireChoicesEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireChoicesEl) FontNormal() QuestionnaireChoicesEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireChoicesEl) FontSemibold() QuestionnaireChoicesEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireChoicesEl) FontThin() QuestionnaireChoicesEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -3734,8 +4742,8 @@ func (e QuestionnaireChoicesEl) FontThin() QuestionnaireChoicesEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -3744,21 +4752,26 @@ func (e QuestionnaireChoicesEl) FontThin() QuestionnaireChoicesEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireChoicesEl) HFlex() QuestionnaireChoicesEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireChoicesEl) Margins(margins gk.EdgesInto) QuestionnaireChoicesEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireChoicesEl) Paddings(paddings gk.EdgesInto) QuestionnaireChoicesEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireChoicesEl) RefineStyle(style gk.StyleRefinement) QuestionnaireChoicesEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -3768,51 +4781,67 @@ func (e QuestionnaireChoicesEl) RefineStyle(style gk.StyleRefinement) Questionna
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireChoicesEl) VFlex() QuestionnaireChoicesEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireChoicesEl) Large() QuestionnaireChoicesEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireChoicesEl) Small() QuestionnaireChoicesEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireChoicesEl) WithSize(size gk.SizeInto) QuestionnaireChoicesEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireChoicesEl) Xsmall() QuestionnaireChoicesEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireChoicesEl) Style(st ...gk.Style) QuestionnaireChoicesEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireChoicesEl) AspectRatio(ratio float32) QuestionnaireChoicesEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireChoicesEl) Bg(fill gk.Fill) QuestionnaireChoicesEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireChoicesEl) Border(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -3820,12 +4849,16 @@ func (e QuestionnaireChoicesEl) Border(length gk.Length) QuestionnaireChoicesEl 
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireChoicesEl) BorderB(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireChoicesEl) BorderColor(borderColor gk.Color) QuestionnaireChoicesEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -3833,6 +4866,8 @@ func (e QuestionnaireChoicesEl) BorderColor(borderColor gk.Color) QuestionnaireC
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireChoicesEl) BorderL(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -3840,6 +4875,8 @@ func (e QuestionnaireChoicesEl) BorderL(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireChoicesEl) BorderR(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -3847,6 +4884,8 @@ func (e QuestionnaireChoicesEl) BorderR(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireChoicesEl) BorderT(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -3854,6 +4893,8 @@ func (e QuestionnaireChoicesEl) BorderT(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireChoicesEl) BorderX(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -3861,6 +4902,8 @@ func (e QuestionnaireChoicesEl) BorderX(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireChoicesEl) BorderY(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -3868,30 +4911,40 @@ func (e QuestionnaireChoicesEl) BorderY(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireChoicesEl) Bottom(length gk.Length) QuestionnaireChoicesEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireChoicesEl) ColEnd(end int16) QuestionnaireChoicesEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireChoicesEl) ColSpan(span uint16) QuestionnaireChoicesEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireChoicesEl) ColStart(start int16) QuestionnaireChoicesEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireChoicesEl) Cursor(cursor gk.CursorStyle) QuestionnaireChoicesEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -3899,36 +4952,48 @@ func (e QuestionnaireChoicesEl) Cursor(cursor gk.CursorStyle) QuestionnaireChoic
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireChoicesEl) FlexBasis(basis gk.Length) QuestionnaireChoicesEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireChoicesEl) FlexGrow(grow float32) QuestionnaireChoicesEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireChoicesEl) FlexShrink(shrink float32) QuestionnaireChoicesEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireChoicesEl) Font(font gk.Font) QuestionnaireChoicesEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireChoicesEl) FontFamily(familyName string) QuestionnaireChoicesEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireChoicesEl) FontFeatures(features gk.FontFeatures) QuestionnaireChoicesEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -3937,12 +5002,16 @@ func (e QuestionnaireChoicesEl) FontFeatures(features gk.FontFeatures) Questionn
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireChoicesEl) FontWeight(weight gk.FontWeight) QuestionnaireChoicesEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireChoicesEl) Gap(length gk.Length) QuestionnaireChoicesEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -3950,6 +5019,8 @@ func (e QuestionnaireChoicesEl) Gap(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireChoicesEl) GapX(length gk.Length) QuestionnaireChoicesEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -3957,18 +5028,24 @@ func (e QuestionnaireChoicesEl) GapX(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireChoicesEl) GapY(length gk.Length) QuestionnaireChoicesEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireChoicesEl) GridCols(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireChoicesEl) GridColsMaxContent(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -3976,18 +5053,24 @@ func (e QuestionnaireChoicesEl) GridColsMaxContent(cols uint16) QuestionnaireCho
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireChoicesEl) GridColsMinContent(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireChoicesEl) GridRows(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireChoicesEl) GridRowsMaxContent(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -3995,12 +5078,16 @@ func (e QuestionnaireChoicesEl) GridRowsMaxContent(rows uint16) QuestionnaireCho
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireChoicesEl) GridRowsMinContent(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireChoicesEl) H(length gk.Length) QuestionnaireChoicesEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4008,6 +5095,8 @@ func (e QuestionnaireChoicesEl) H(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireChoicesEl) Inset(length gk.Length) QuestionnaireChoicesEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4015,6 +5104,8 @@ func (e QuestionnaireChoicesEl) Inset(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireChoicesEl) Left(length gk.Length) QuestionnaireChoicesEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4022,36 +5113,48 @@ func (e QuestionnaireChoicesEl) Left(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireChoicesEl) LineClamp(lines int) QuestionnaireChoicesEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireChoicesEl) LineHeight(lineHeight gk.Length) QuestionnaireChoicesEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireChoicesEl) M(length gk.Length) QuestionnaireChoicesEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireChoicesEl) MaxH(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireChoicesEl) MaxSize(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireChoicesEl) MaxW(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4059,24 +5162,32 @@ func (e QuestionnaireChoicesEl) MaxW(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireChoicesEl) Mb(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireChoicesEl) MinH(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireChoicesEl) MinSize(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireChoicesEl) MinW(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4084,6 +5195,8 @@ func (e QuestionnaireChoicesEl) MinW(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireChoicesEl) Ml(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4091,6 +5204,8 @@ func (e QuestionnaireChoicesEl) Ml(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireChoicesEl) Mr(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4098,6 +5213,8 @@ func (e QuestionnaireChoicesEl) Mr(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireChoicesEl) Mt(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4105,6 +5222,8 @@ func (e QuestionnaireChoicesEl) Mt(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireChoicesEl) Mx(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4112,18 +5231,24 @@ func (e QuestionnaireChoicesEl) Mx(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireChoicesEl) My(length gk.Length) QuestionnaireChoicesEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireChoicesEl) Opacity(opacity float32) QuestionnaireChoicesEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireChoicesEl) P(length gk.Length) QuestionnaireChoicesEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -4131,6 +5256,8 @@ func (e QuestionnaireChoicesEl) P(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireChoicesEl) Pb(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -4138,6 +5265,8 @@ func (e QuestionnaireChoicesEl) Pb(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireChoicesEl) Pl(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -4145,6 +5274,8 @@ func (e QuestionnaireChoicesEl) Pl(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireChoicesEl) Pr(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -4152,6 +5283,8 @@ func (e QuestionnaireChoicesEl) Pr(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireChoicesEl) Pt(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -4159,6 +5292,8 @@ func (e QuestionnaireChoicesEl) Pt(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireChoicesEl) Px(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -4166,6 +5301,8 @@ func (e QuestionnaireChoicesEl) Px(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireChoicesEl) Py(length gk.Length) QuestionnaireChoicesEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -4173,12 +5310,16 @@ func (e QuestionnaireChoicesEl) Py(length gk.Length) QuestionnaireChoicesEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireChoicesEl) Right(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireChoicesEl) Rounded(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -4186,6 +5327,8 @@ func (e QuestionnaireChoicesEl) Rounded(length gk.Length) QuestionnaireChoicesEl
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireChoicesEl) RoundedB(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -4193,6 +5336,8 @@ func (e QuestionnaireChoicesEl) RoundedB(length gk.Length) QuestionnaireChoicesE
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireChoicesEl) RoundedBl(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -4200,6 +5345,8 @@ func (e QuestionnaireChoicesEl) RoundedBl(length gk.Length) QuestionnaireChoices
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireChoicesEl) RoundedBr(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -4207,6 +5354,8 @@ func (e QuestionnaireChoicesEl) RoundedBr(length gk.Length) QuestionnaireChoices
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireChoicesEl) RoundedL(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -4214,6 +5363,8 @@ func (e QuestionnaireChoicesEl) RoundedL(length gk.Length) QuestionnaireChoicesE
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireChoicesEl) RoundedR(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -4221,6 +5372,8 @@ func (e QuestionnaireChoicesEl) RoundedR(length gk.Length) QuestionnaireChoicesE
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireChoicesEl) RoundedT(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -4228,6 +5381,8 @@ func (e QuestionnaireChoicesEl) RoundedT(length gk.Length) QuestionnaireChoicesE
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireChoicesEl) RoundedTl(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -4235,24 +5390,32 @@ func (e QuestionnaireChoicesEl) RoundedTl(length gk.Length) QuestionnaireChoices
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireChoicesEl) RoundedTr(length gk.Length) QuestionnaireChoicesEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireChoicesEl) RowEnd(end int16) QuestionnaireChoicesEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireChoicesEl) RowSpan(span uint16) QuestionnaireChoicesEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireChoicesEl) RowStart(start int16) QuestionnaireChoicesEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -4262,24 +5425,32 @@ func (e QuestionnaireChoicesEl) RowStart(start int16) QuestionnaireChoicesEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireChoicesEl) ScrollbarWidth(width gk.Length) QuestionnaireChoicesEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireChoicesEl) Shadow(shadows []gk.BoxShadow) QuestionnaireChoicesEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireChoicesEl) Size(length gk.Length) QuestionnaireChoicesEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireChoicesEl) TextAlign(align gk.TextAlign) QuestionnaireChoicesEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -4288,6 +5459,8 @@ func (e QuestionnaireChoicesEl) TextAlign(align gk.TextAlign) QuestionnaireChoic
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireChoicesEl) TextBg(bg gk.Color) QuestionnaireChoicesEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -4296,18 +5469,24 @@ func (e QuestionnaireChoicesEl) TextBg(bg gk.Color) QuestionnaireChoicesEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireChoicesEl) TextColor(color gk.Color) QuestionnaireChoicesEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireChoicesEl) TextDecorationColor(color gk.Color) QuestionnaireChoicesEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireChoicesEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireChoicesEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -4316,6 +5495,8 @@ func (e QuestionnaireChoicesEl) TextOverflow(overflow gk.TextOverflow) Questionn
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireChoicesEl) TextSize(size gk.Length) QuestionnaireChoicesEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -4323,35 +5504,44 @@ func (e QuestionnaireChoicesEl) TextSize(size gk.Length) QuestionnaireChoicesEl 
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireChoicesEl) Top(length gk.Length) QuestionnaireChoicesEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireChoicesEl) W(length gk.Length) QuestionnaireChoicesEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireChoicesEl) Text(s string) QuestionnaireChoicesEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireChoicesEl) ChildView(v gk.View) QuestionnaireChoicesEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireChoicesEl) Child(child gk.Element) QuestionnaireChoicesEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireChoicesEl) Children(children ...gk.Element) QuestionnaireChoicesEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -4362,7 +5552,7 @@ type QuestionnaireDescriptionEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireDescription is <gpui_kit::component::questionnaire::QuestionnaireDescription>::new.
+// QuestionnaireDescription calls <gpui_kit::component::questionnaire::QuestionnaireDescription>::new.
 func QuestionnaireDescription(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireDescriptionEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(724)
@@ -4375,20 +5565,24 @@ func QuestionnaireDescription(state base.QuestionnaireState, item string, st ...
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireDescriptionEl) PopoverStyle() QuestionnaireDescriptionEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireDescriptionEl) RoundedFullStyle() QuestionnaireDescriptionEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -4397,16 +5591,18 @@ func (e QuestionnaireDescriptionEl) RoundedFullStyle() QuestionnaireDescriptionE
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireDescriptionEl) FocusRingStyle() QuestionnaireDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -4419,24 +5615,32 @@ func (e QuestionnaireDescriptionEl) FocusRingStyle() QuestionnaireDescriptionEl 
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireDescriptionEl) KeepTextSelection(id gk.ID) QuestionnaireDescriptionEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireDescriptionEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireDescriptionEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireDescriptionEl) BorderE(width gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireDescriptionEl) BorderS(width gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -4444,163 +5648,205 @@ func (e QuestionnaireDescriptionEl) BorderS(width gk.Length) QuestionnaireDescri
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireDescriptionEl) FlexRowDir() QuestionnaireDescriptionEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireDescriptionEl) InsetE(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireDescriptionEl) InsetS(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireDescriptionEl) JustifyFlexEnd() QuestionnaireDescriptionEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireDescriptionEl) JustifyFlexStart() QuestionnaireDescriptionEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireDescriptionEl) Me(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireDescriptionEl) Ms(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireDescriptionEl) Pe(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireDescriptionEl) Ps(length gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireDescriptionEl) RoundedE(radius gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireDescriptionEl) RoundedS(radius gk.Length) QuestionnaireDescriptionEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireDescriptionEl) TextEnd() QuestionnaireDescriptionEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireDescriptionEl) TextStart() QuestionnaireDescriptionEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireDescriptionEl) CornerRadii(radius gk.Corners) QuestionnaireDescriptionEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireDescriptionEl) DebugBlue() QuestionnaireDescriptionEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireDescriptionEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireDescriptionEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireDescriptionEl) DebugGreen() QuestionnaireDescriptionEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireDescriptionEl) DebugPink() QuestionnaireDescriptionEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireDescriptionEl) DebugRed() QuestionnaireDescriptionEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireDescriptionEl) DebugYellow() QuestionnaireDescriptionEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireDescriptionEl) FontBlack() QuestionnaireDescriptionEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireDescriptionEl) FontBold() QuestionnaireDescriptionEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireDescriptionEl) FontExtrabold() QuestionnaireDescriptionEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireDescriptionEl) FontExtralight() QuestionnaireDescriptionEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireDescriptionEl) FontLight() QuestionnaireDescriptionEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireDescriptionEl) FontMedium() QuestionnaireDescriptionEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireDescriptionEl) FontNormal() QuestionnaireDescriptionEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireDescriptionEl) FontSemibold() QuestionnaireDescriptionEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireDescriptionEl) FontThin() QuestionnaireDescriptionEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -4608,8 +5854,8 @@ func (e QuestionnaireDescriptionEl) FontThin() QuestionnaireDescriptionEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -4618,21 +5864,26 @@ func (e QuestionnaireDescriptionEl) FontThin() QuestionnaireDescriptionEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireDescriptionEl) HFlex() QuestionnaireDescriptionEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireDescriptionEl) Margins(margins gk.EdgesInto) QuestionnaireDescriptionEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireDescriptionEl) Paddings(paddings gk.EdgesInto) QuestionnaireDescriptionEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireDescriptionEl) RefineStyle(style gk.StyleRefinement) QuestionnaireDescriptionEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -4642,18 +5893,24 @@ func (e QuestionnaireDescriptionEl) RefineStyle(style gk.StyleRefinement) Questi
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireDescriptionEl) VFlex() QuestionnaireDescriptionEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireDescriptionEl) Large() QuestionnaireDescriptionEl {
 	tSizableLarge(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireDescriptionEl) Small() QuestionnaireDescriptionEl {
 	tSizableSmall(rt.N(e.Core))
 	return e
@@ -4663,36 +5920,46 @@ func (e QuestionnaireDescriptionEl) Small() QuestionnaireDescriptionEl {
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireDescriptionEl) WithSize(size gk.SizeInto) QuestionnaireDescriptionEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireDescriptionEl) Xsmall() QuestionnaireDescriptionEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireDescriptionEl) Style(st ...gk.Style) QuestionnaireDescriptionEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireDescriptionEl) AspectRatio(ratio float32) QuestionnaireDescriptionEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireDescriptionEl) Bg(fill gk.Fill) QuestionnaireDescriptionEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireDescriptionEl) Border(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -4700,12 +5967,16 @@ func (e QuestionnaireDescriptionEl) Border(length gk.Length) QuestionnaireDescri
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireDescriptionEl) BorderB(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireDescriptionEl) BorderColor(borderColor gk.Color) QuestionnaireDescriptionEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -4713,6 +5984,8 @@ func (e QuestionnaireDescriptionEl) BorderColor(borderColor gk.Color) Questionna
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireDescriptionEl) BorderL(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -4720,6 +5993,8 @@ func (e QuestionnaireDescriptionEl) BorderL(length gk.Length) QuestionnaireDescr
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireDescriptionEl) BorderR(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -4727,6 +6002,8 @@ func (e QuestionnaireDescriptionEl) BorderR(length gk.Length) QuestionnaireDescr
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireDescriptionEl) BorderT(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -4734,6 +6011,8 @@ func (e QuestionnaireDescriptionEl) BorderT(length gk.Length) QuestionnaireDescr
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireDescriptionEl) BorderX(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -4741,6 +6020,8 @@ func (e QuestionnaireDescriptionEl) BorderX(length gk.Length) QuestionnaireDescr
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireDescriptionEl) BorderY(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -4748,30 +6029,40 @@ func (e QuestionnaireDescriptionEl) BorderY(length gk.Length) QuestionnaireDescr
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireDescriptionEl) Bottom(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireDescriptionEl) ColEnd(end int16) QuestionnaireDescriptionEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireDescriptionEl) ColSpan(span uint16) QuestionnaireDescriptionEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireDescriptionEl) ColStart(start int16) QuestionnaireDescriptionEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireDescriptionEl) Cursor(cursor gk.CursorStyle) QuestionnaireDescriptionEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -4779,36 +6070,48 @@ func (e QuestionnaireDescriptionEl) Cursor(cursor gk.CursorStyle) QuestionnaireD
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireDescriptionEl) FlexBasis(basis gk.Length) QuestionnaireDescriptionEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireDescriptionEl) FlexGrow(grow float32) QuestionnaireDescriptionEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireDescriptionEl) FlexShrink(shrink float32) QuestionnaireDescriptionEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireDescriptionEl) Font(font gk.Font) QuestionnaireDescriptionEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireDescriptionEl) FontFamily(familyName string) QuestionnaireDescriptionEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireDescriptionEl) FontFeatures(features gk.FontFeatures) QuestionnaireDescriptionEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -4817,12 +6120,16 @@ func (e QuestionnaireDescriptionEl) FontFeatures(features gk.FontFeatures) Quest
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireDescriptionEl) FontWeight(weight gk.FontWeight) QuestionnaireDescriptionEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireDescriptionEl) Gap(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -4830,6 +6137,8 @@ func (e QuestionnaireDescriptionEl) Gap(length gk.Length) QuestionnaireDescripti
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireDescriptionEl) GapX(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -4837,18 +6146,24 @@ func (e QuestionnaireDescriptionEl) GapX(length gk.Length) QuestionnaireDescript
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireDescriptionEl) GapY(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireDescriptionEl) GridCols(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireDescriptionEl) GridColsMaxContent(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -4856,18 +6171,24 @@ func (e QuestionnaireDescriptionEl) GridColsMaxContent(cols uint16) Questionnair
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireDescriptionEl) GridColsMinContent(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireDescriptionEl) GridRows(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireDescriptionEl) GridRowsMaxContent(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -4875,12 +6196,16 @@ func (e QuestionnaireDescriptionEl) GridRowsMaxContent(rows uint16) Questionnair
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireDescriptionEl) GridRowsMinContent(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireDescriptionEl) H(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -4888,6 +6213,8 @@ func (e QuestionnaireDescriptionEl) H(length gk.Length) QuestionnaireDescription
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireDescriptionEl) Inset(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -4895,6 +6222,8 @@ func (e QuestionnaireDescriptionEl) Inset(length gk.Length) QuestionnaireDescrip
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireDescriptionEl) Left(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -4902,36 +6231,48 @@ func (e QuestionnaireDescriptionEl) Left(length gk.Length) QuestionnaireDescript
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireDescriptionEl) LineClamp(lines int) QuestionnaireDescriptionEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireDescriptionEl) LineHeight(lineHeight gk.Length) QuestionnaireDescriptionEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireDescriptionEl) M(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireDescriptionEl) MaxH(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireDescriptionEl) MaxSize(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireDescriptionEl) MaxW(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -4939,24 +6280,32 @@ func (e QuestionnaireDescriptionEl) MaxW(length gk.Length) QuestionnaireDescript
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireDescriptionEl) Mb(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireDescriptionEl) MinH(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireDescriptionEl) MinSize(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireDescriptionEl) MinW(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -4964,6 +6313,8 @@ func (e QuestionnaireDescriptionEl) MinW(length gk.Length) QuestionnaireDescript
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireDescriptionEl) Ml(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -4971,6 +6322,8 @@ func (e QuestionnaireDescriptionEl) Ml(length gk.Length) QuestionnaireDescriptio
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireDescriptionEl) Mr(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -4978,6 +6331,8 @@ func (e QuestionnaireDescriptionEl) Mr(length gk.Length) QuestionnaireDescriptio
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireDescriptionEl) Mt(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -4985,6 +6340,8 @@ func (e QuestionnaireDescriptionEl) Mt(length gk.Length) QuestionnaireDescriptio
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireDescriptionEl) Mx(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -4992,18 +6349,24 @@ func (e QuestionnaireDescriptionEl) Mx(length gk.Length) QuestionnaireDescriptio
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireDescriptionEl) My(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireDescriptionEl) Opacity(opacity float32) QuestionnaireDescriptionEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireDescriptionEl) P(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5011,6 +6374,8 @@ func (e QuestionnaireDescriptionEl) P(length gk.Length) QuestionnaireDescription
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireDescriptionEl) Pb(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5018,6 +6383,8 @@ func (e QuestionnaireDescriptionEl) Pb(length gk.Length) QuestionnaireDescriptio
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireDescriptionEl) Pl(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5025,6 +6392,8 @@ func (e QuestionnaireDescriptionEl) Pl(length gk.Length) QuestionnaireDescriptio
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireDescriptionEl) Pr(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5032,6 +6401,8 @@ func (e QuestionnaireDescriptionEl) Pr(length gk.Length) QuestionnaireDescriptio
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireDescriptionEl) Pt(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5039,6 +6410,8 @@ func (e QuestionnaireDescriptionEl) Pt(length gk.Length) QuestionnaireDescriptio
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireDescriptionEl) Px(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5046,6 +6419,8 @@ func (e QuestionnaireDescriptionEl) Px(length gk.Length) QuestionnaireDescriptio
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireDescriptionEl) Py(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5053,12 +6428,16 @@ func (e QuestionnaireDescriptionEl) Py(length gk.Length) QuestionnaireDescriptio
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireDescriptionEl) Right(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireDescriptionEl) Rounded(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5066,6 +6445,8 @@ func (e QuestionnaireDescriptionEl) Rounded(length gk.Length) QuestionnaireDescr
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireDescriptionEl) RoundedB(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5073,6 +6454,8 @@ func (e QuestionnaireDescriptionEl) RoundedB(length gk.Length) QuestionnaireDesc
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireDescriptionEl) RoundedBl(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5080,6 +6463,8 @@ func (e QuestionnaireDescriptionEl) RoundedBl(length gk.Length) QuestionnaireDes
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireDescriptionEl) RoundedBr(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5087,6 +6472,8 @@ func (e QuestionnaireDescriptionEl) RoundedBr(length gk.Length) QuestionnaireDes
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireDescriptionEl) RoundedL(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5094,6 +6481,8 @@ func (e QuestionnaireDescriptionEl) RoundedL(length gk.Length) QuestionnaireDesc
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireDescriptionEl) RoundedR(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5101,6 +6490,8 @@ func (e QuestionnaireDescriptionEl) RoundedR(length gk.Length) QuestionnaireDesc
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireDescriptionEl) RoundedT(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5108,6 +6499,8 @@ func (e QuestionnaireDescriptionEl) RoundedT(length gk.Length) QuestionnaireDesc
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireDescriptionEl) RoundedTl(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5115,24 +6508,32 @@ func (e QuestionnaireDescriptionEl) RoundedTl(length gk.Length) QuestionnaireDes
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireDescriptionEl) RoundedTr(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireDescriptionEl) RowEnd(end int16) QuestionnaireDescriptionEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireDescriptionEl) RowSpan(span uint16) QuestionnaireDescriptionEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireDescriptionEl) RowStart(start int16) QuestionnaireDescriptionEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -5142,24 +6543,32 @@ func (e QuestionnaireDescriptionEl) RowStart(start int16) QuestionnaireDescripti
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireDescriptionEl) ScrollbarWidth(width gk.Length) QuestionnaireDescriptionEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireDescriptionEl) Shadow(shadows []gk.BoxShadow) QuestionnaireDescriptionEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireDescriptionEl) Size(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireDescriptionEl) TextAlign(align gk.TextAlign) QuestionnaireDescriptionEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -5168,6 +6577,8 @@ func (e QuestionnaireDescriptionEl) TextAlign(align gk.TextAlign) QuestionnaireD
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireDescriptionEl) TextBg(bg gk.Color) QuestionnaireDescriptionEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -5176,18 +6587,24 @@ func (e QuestionnaireDescriptionEl) TextBg(bg gk.Color) QuestionnaireDescription
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireDescriptionEl) TextColor(color gk.Color) QuestionnaireDescriptionEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireDescriptionEl) TextDecorationColor(color gk.Color) QuestionnaireDescriptionEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireDescriptionEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireDescriptionEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -5196,6 +6613,8 @@ func (e QuestionnaireDescriptionEl) TextOverflow(overflow gk.TextOverflow) Quest
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireDescriptionEl) TextSize(size gk.Length) QuestionnaireDescriptionEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -5203,35 +6622,44 @@ func (e QuestionnaireDescriptionEl) TextSize(size gk.Length) QuestionnaireDescri
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireDescriptionEl) Top(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireDescriptionEl) W(length gk.Length) QuestionnaireDescriptionEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireDescriptionEl) Text(s string) QuestionnaireDescriptionEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireDescriptionEl) ChildView(v gk.View) QuestionnaireDescriptionEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireDescriptionEl) Child(child gk.Element) QuestionnaireDescriptionEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireDescriptionEl) Children(children ...gk.Element) QuestionnaireDescriptionEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -5242,7 +6670,7 @@ type QuestionnaireErrorEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireError is <gpui_kit::component::questionnaire::QuestionnaireError>::new.
+// QuestionnaireError calls <gpui_kit::component::questionnaire::QuestionnaireError>::new.
 func QuestionnaireError(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireErrorEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(725)
@@ -5255,20 +6683,24 @@ func QuestionnaireError(state base.QuestionnaireState, item string, st ...gk.Sty
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireErrorEl) PopoverStyle() QuestionnaireErrorEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireErrorEl) RoundedFullStyle() QuestionnaireErrorEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -5277,16 +6709,18 @@ func (e QuestionnaireErrorEl) RoundedFullStyle() QuestionnaireErrorEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireErrorEl) FocusRingStyle() QuestionnaireErrorEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -5299,24 +6733,32 @@ func (e QuestionnaireErrorEl) FocusRingStyle() QuestionnaireErrorEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireErrorEl) KeepTextSelection(id gk.ID) QuestionnaireErrorEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireErrorEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireErrorEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireErrorEl) BorderE(width gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireErrorEl) BorderS(width gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -5324,163 +6766,205 @@ func (e QuestionnaireErrorEl) BorderS(width gk.Length) QuestionnaireErrorEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireErrorEl) FlexRowDir() QuestionnaireErrorEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireErrorEl) InsetE(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireErrorEl) InsetS(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireErrorEl) JustifyFlexEnd() QuestionnaireErrorEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireErrorEl) JustifyFlexStart() QuestionnaireErrorEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireErrorEl) Me(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireErrorEl) Ms(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireErrorEl) Pe(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireErrorEl) Ps(length gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireErrorEl) RoundedE(radius gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireErrorEl) RoundedS(radius gk.Length) QuestionnaireErrorEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireErrorEl) TextEnd() QuestionnaireErrorEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireErrorEl) TextStart() QuestionnaireErrorEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireErrorEl) CornerRadii(radius gk.Corners) QuestionnaireErrorEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireErrorEl) DebugBlue() QuestionnaireErrorEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireErrorEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireErrorEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireErrorEl) DebugGreen() QuestionnaireErrorEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireErrorEl) DebugPink() QuestionnaireErrorEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireErrorEl) DebugRed() QuestionnaireErrorEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireErrorEl) DebugYellow() QuestionnaireErrorEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireErrorEl) FontBlack() QuestionnaireErrorEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireErrorEl) FontBold() QuestionnaireErrorEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireErrorEl) FontExtrabold() QuestionnaireErrorEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireErrorEl) FontExtralight() QuestionnaireErrorEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireErrorEl) FontLight() QuestionnaireErrorEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireErrorEl) FontMedium() QuestionnaireErrorEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireErrorEl) FontNormal() QuestionnaireErrorEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireErrorEl) FontSemibold() QuestionnaireErrorEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireErrorEl) FontThin() QuestionnaireErrorEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -5488,8 +6972,8 @@ func (e QuestionnaireErrorEl) FontThin() QuestionnaireErrorEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -5498,18 +6982,23 @@ func (e QuestionnaireErrorEl) FontThin() QuestionnaireErrorEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireErrorEl) HFlex() QuestionnaireErrorEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireErrorEl) Margins(margins gk.EdgesInto) QuestionnaireErrorEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireErrorEl) Paddings(paddings gk.EdgesInto) QuestionnaireErrorEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireErrorEl) RefineStyle(style gk.StyleRefinement) QuestionnaireErrorEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -5519,45 +7008,61 @@ func (e QuestionnaireErrorEl) RefineStyle(style gk.StyleRefinement) Questionnair
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireErrorEl) VFlex() QuestionnaireErrorEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireErrorEl) Large() QuestionnaireErrorEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireErrorEl) Small() QuestionnaireErrorEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireErrorEl) WithSize(size gk.SizeInto) QuestionnaireErrorEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireErrorEl) Xsmall() QuestionnaireErrorEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireErrorEl) Style(st ...gk.Style) QuestionnaireErrorEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireErrorEl) AspectRatio(ratio float32) QuestionnaireErrorEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireErrorEl) Bg(fill gk.Fill) QuestionnaireErrorEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireErrorEl) Border(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -5565,12 +7070,16 @@ func (e QuestionnaireErrorEl) Border(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireErrorEl) BorderB(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireErrorEl) BorderColor(borderColor gk.Color) QuestionnaireErrorEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -5578,6 +7087,8 @@ func (e QuestionnaireErrorEl) BorderColor(borderColor gk.Color) QuestionnaireErr
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireErrorEl) BorderL(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -5585,6 +7096,8 @@ func (e QuestionnaireErrorEl) BorderL(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireErrorEl) BorderR(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -5592,6 +7105,8 @@ func (e QuestionnaireErrorEl) BorderR(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireErrorEl) BorderT(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -5599,6 +7114,8 @@ func (e QuestionnaireErrorEl) BorderT(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireErrorEl) BorderX(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -5606,6 +7123,8 @@ func (e QuestionnaireErrorEl) BorderX(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireErrorEl) BorderY(length gk.Length) QuestionnaireErrorEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -5613,30 +7132,40 @@ func (e QuestionnaireErrorEl) BorderY(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireErrorEl) Bottom(length gk.Length) QuestionnaireErrorEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireErrorEl) ColEnd(end int16) QuestionnaireErrorEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireErrorEl) ColSpan(span uint16) QuestionnaireErrorEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireErrorEl) ColStart(start int16) QuestionnaireErrorEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireErrorEl) Cursor(cursor gk.CursorStyle) QuestionnaireErrorEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -5644,36 +7173,48 @@ func (e QuestionnaireErrorEl) Cursor(cursor gk.CursorStyle) QuestionnaireErrorEl
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireErrorEl) FlexBasis(basis gk.Length) QuestionnaireErrorEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireErrorEl) FlexGrow(grow float32) QuestionnaireErrorEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireErrorEl) FlexShrink(shrink float32) QuestionnaireErrorEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireErrorEl) Font(font gk.Font) QuestionnaireErrorEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireErrorEl) FontFamily(familyName string) QuestionnaireErrorEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireErrorEl) FontFeatures(features gk.FontFeatures) QuestionnaireErrorEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -5682,12 +7223,16 @@ func (e QuestionnaireErrorEl) FontFeatures(features gk.FontFeatures) Questionnai
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireErrorEl) FontWeight(weight gk.FontWeight) QuestionnaireErrorEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireErrorEl) Gap(length gk.Length) QuestionnaireErrorEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -5695,6 +7240,8 @@ func (e QuestionnaireErrorEl) Gap(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireErrorEl) GapX(length gk.Length) QuestionnaireErrorEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -5702,18 +7249,24 @@ func (e QuestionnaireErrorEl) GapX(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireErrorEl) GapY(length gk.Length) QuestionnaireErrorEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireErrorEl) GridCols(cols uint16) QuestionnaireErrorEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireErrorEl) GridColsMaxContent(cols uint16) QuestionnaireErrorEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -5721,18 +7274,24 @@ func (e QuestionnaireErrorEl) GridColsMaxContent(cols uint16) QuestionnaireError
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireErrorEl) GridColsMinContent(cols uint16) QuestionnaireErrorEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireErrorEl) GridRows(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireErrorEl) GridRowsMaxContent(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -5740,12 +7299,16 @@ func (e QuestionnaireErrorEl) GridRowsMaxContent(rows uint16) QuestionnaireError
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireErrorEl) GridRowsMinContent(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireErrorEl) H(length gk.Length) QuestionnaireErrorEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -5753,6 +7316,8 @@ func (e QuestionnaireErrorEl) H(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireErrorEl) Inset(length gk.Length) QuestionnaireErrorEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -5760,6 +7325,8 @@ func (e QuestionnaireErrorEl) Inset(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireErrorEl) Left(length gk.Length) QuestionnaireErrorEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -5767,36 +7334,48 @@ func (e QuestionnaireErrorEl) Left(length gk.Length) QuestionnaireErrorEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireErrorEl) LineClamp(lines int) QuestionnaireErrorEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireErrorEl) LineHeight(lineHeight gk.Length) QuestionnaireErrorEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireErrorEl) M(length gk.Length) QuestionnaireErrorEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireErrorEl) MaxH(length gk.Length) QuestionnaireErrorEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireErrorEl) MaxSize(length gk.Length) QuestionnaireErrorEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireErrorEl) MaxW(length gk.Length) QuestionnaireErrorEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -5804,24 +7383,32 @@ func (e QuestionnaireErrorEl) MaxW(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireErrorEl) Mb(length gk.Length) QuestionnaireErrorEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireErrorEl) MinH(length gk.Length) QuestionnaireErrorEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireErrorEl) MinSize(length gk.Length) QuestionnaireErrorEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireErrorEl) MinW(length gk.Length) QuestionnaireErrorEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -5829,6 +7416,8 @@ func (e QuestionnaireErrorEl) MinW(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireErrorEl) Ml(length gk.Length) QuestionnaireErrorEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -5836,6 +7425,8 @@ func (e QuestionnaireErrorEl) Ml(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireErrorEl) Mr(length gk.Length) QuestionnaireErrorEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -5843,6 +7434,8 @@ func (e QuestionnaireErrorEl) Mr(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireErrorEl) Mt(length gk.Length) QuestionnaireErrorEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -5850,6 +7443,8 @@ func (e QuestionnaireErrorEl) Mt(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireErrorEl) Mx(length gk.Length) QuestionnaireErrorEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -5857,18 +7452,24 @@ func (e QuestionnaireErrorEl) Mx(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireErrorEl) My(length gk.Length) QuestionnaireErrorEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireErrorEl) Opacity(opacity float32) QuestionnaireErrorEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireErrorEl) P(length gk.Length) QuestionnaireErrorEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -5876,6 +7477,8 @@ func (e QuestionnaireErrorEl) P(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireErrorEl) Pb(length gk.Length) QuestionnaireErrorEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -5883,6 +7486,8 @@ func (e QuestionnaireErrorEl) Pb(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireErrorEl) Pl(length gk.Length) QuestionnaireErrorEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -5890,6 +7495,8 @@ func (e QuestionnaireErrorEl) Pl(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireErrorEl) Pr(length gk.Length) QuestionnaireErrorEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -5897,6 +7504,8 @@ func (e QuestionnaireErrorEl) Pr(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireErrorEl) Pt(length gk.Length) QuestionnaireErrorEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -5904,6 +7513,8 @@ func (e QuestionnaireErrorEl) Pt(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireErrorEl) Px(length gk.Length) QuestionnaireErrorEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -5911,6 +7522,8 @@ func (e QuestionnaireErrorEl) Px(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireErrorEl) Py(length gk.Length) QuestionnaireErrorEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -5918,12 +7531,16 @@ func (e QuestionnaireErrorEl) Py(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireErrorEl) Right(length gk.Length) QuestionnaireErrorEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireErrorEl) Rounded(length gk.Length) QuestionnaireErrorEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -5931,6 +7548,8 @@ func (e QuestionnaireErrorEl) Rounded(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireErrorEl) RoundedB(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -5938,6 +7557,8 @@ func (e QuestionnaireErrorEl) RoundedB(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireErrorEl) RoundedBl(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -5945,6 +7566,8 @@ func (e QuestionnaireErrorEl) RoundedBl(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireErrorEl) RoundedBr(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -5952,6 +7575,8 @@ func (e QuestionnaireErrorEl) RoundedBr(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireErrorEl) RoundedL(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -5959,6 +7584,8 @@ func (e QuestionnaireErrorEl) RoundedL(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireErrorEl) RoundedR(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -5966,6 +7593,8 @@ func (e QuestionnaireErrorEl) RoundedR(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireErrorEl) RoundedT(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -5973,6 +7602,8 @@ func (e QuestionnaireErrorEl) RoundedT(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireErrorEl) RoundedTl(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -5980,24 +7611,32 @@ func (e QuestionnaireErrorEl) RoundedTl(length gk.Length) QuestionnaireErrorEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireErrorEl) RoundedTr(length gk.Length) QuestionnaireErrorEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireErrorEl) RowEnd(end int16) QuestionnaireErrorEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireErrorEl) RowSpan(span uint16) QuestionnaireErrorEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireErrorEl) RowStart(start int16) QuestionnaireErrorEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -6007,24 +7646,32 @@ func (e QuestionnaireErrorEl) RowStart(start int16) QuestionnaireErrorEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireErrorEl) ScrollbarWidth(width gk.Length) QuestionnaireErrorEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireErrorEl) Shadow(shadows []gk.BoxShadow) QuestionnaireErrorEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireErrorEl) Size(length gk.Length) QuestionnaireErrorEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireErrorEl) TextAlign(align gk.TextAlign) QuestionnaireErrorEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -6033,6 +7680,8 @@ func (e QuestionnaireErrorEl) TextAlign(align gk.TextAlign) QuestionnaireErrorEl
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireErrorEl) TextBg(bg gk.Color) QuestionnaireErrorEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -6041,18 +7690,24 @@ func (e QuestionnaireErrorEl) TextBg(bg gk.Color) QuestionnaireErrorEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireErrorEl) TextColor(color gk.Color) QuestionnaireErrorEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireErrorEl) TextDecorationColor(color gk.Color) QuestionnaireErrorEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireErrorEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireErrorEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -6061,6 +7716,8 @@ func (e QuestionnaireErrorEl) TextOverflow(overflow gk.TextOverflow) Questionnai
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireErrorEl) TextSize(size gk.Length) QuestionnaireErrorEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -6068,35 +7725,44 @@ func (e QuestionnaireErrorEl) TextSize(size gk.Length) QuestionnaireErrorEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireErrorEl) Top(length gk.Length) QuestionnaireErrorEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireErrorEl) W(length gk.Length) QuestionnaireErrorEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireErrorEl) Text(s string) QuestionnaireErrorEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireErrorEl) ChildView(v gk.View) QuestionnaireErrorEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireErrorEl) Child(child gk.Element) QuestionnaireErrorEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireErrorEl) Children(children ...gk.Element) QuestionnaireErrorEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -6107,7 +7773,7 @@ type QuestionnaireInputEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireInput is <gpui_kit::component::questionnaire::QuestionnaireInput>::new.
+// QuestionnaireInput calls <gpui_kit::component::questionnaire::QuestionnaireInput>::new.
 func QuestionnaireInput(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireInputEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(726)
@@ -6120,32 +7786,40 @@ func QuestionnaireInput(state base.QuestionnaireState, item string, st ...gk.Sty
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireInputEl) PopoverStyle() QuestionnaireInputEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireInputEl) RoundedFullStyle() QuestionnaireInputEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireInputEl) BorderE(width gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireInputEl) BorderS(width gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -6153,163 +7827,205 @@ func (e QuestionnaireInputEl) BorderS(width gk.Length) QuestionnaireInputEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireInputEl) FlexRowDir() QuestionnaireInputEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireInputEl) InsetE(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireInputEl) InsetS(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireInputEl) JustifyFlexEnd() QuestionnaireInputEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireInputEl) JustifyFlexStart() QuestionnaireInputEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireInputEl) Me(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireInputEl) Ms(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireInputEl) Pe(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireInputEl) Ps(length gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireInputEl) RoundedE(radius gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireInputEl) RoundedS(radius gk.Length) QuestionnaireInputEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireInputEl) TextEnd() QuestionnaireInputEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireInputEl) TextStart() QuestionnaireInputEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireInputEl) CornerRadii(radius gk.Corners) QuestionnaireInputEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireInputEl) DebugBlue() QuestionnaireInputEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireInputEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireInputEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireInputEl) DebugGreen() QuestionnaireInputEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireInputEl) DebugPink() QuestionnaireInputEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireInputEl) DebugRed() QuestionnaireInputEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireInputEl) DebugYellow() QuestionnaireInputEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireInputEl) FontBlack() QuestionnaireInputEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireInputEl) FontBold() QuestionnaireInputEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireInputEl) FontExtrabold() QuestionnaireInputEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireInputEl) FontExtralight() QuestionnaireInputEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireInputEl) FontLight() QuestionnaireInputEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireInputEl) FontMedium() QuestionnaireInputEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireInputEl) FontNormal() QuestionnaireInputEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireInputEl) FontSemibold() QuestionnaireInputEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireInputEl) FontThin() QuestionnaireInputEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -6317,8 +8033,8 @@ func (e QuestionnaireInputEl) FontThin() QuestionnaireInputEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -6327,18 +8043,23 @@ func (e QuestionnaireInputEl) FontThin() QuestionnaireInputEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireInputEl) HFlex() QuestionnaireInputEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireInputEl) Margins(margins gk.EdgesInto) QuestionnaireInputEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireInputEl) Paddings(paddings gk.EdgesInto) QuestionnaireInputEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireInputEl) RefineStyle(style gk.StyleRefinement) QuestionnaireInputEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -6348,45 +8069,61 @@ func (e QuestionnaireInputEl) RefineStyle(style gk.StyleRefinement) Questionnair
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireInputEl) VFlex() QuestionnaireInputEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireInputEl) Large() QuestionnaireInputEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireInputEl) Small() QuestionnaireInputEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireInputEl) WithSize(size gk.SizeInto) QuestionnaireInputEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireInputEl) Xsmall() QuestionnaireInputEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireInputEl) Style(st ...gk.Style) QuestionnaireInputEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireInputEl) AspectRatio(ratio float32) QuestionnaireInputEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireInputEl) Bg(fill gk.Fill) QuestionnaireInputEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireInputEl) Border(length gk.Length) QuestionnaireInputEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -6394,12 +8131,16 @@ func (e QuestionnaireInputEl) Border(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireInputEl) BorderB(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireInputEl) BorderColor(borderColor gk.Color) QuestionnaireInputEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -6407,6 +8148,8 @@ func (e QuestionnaireInputEl) BorderColor(borderColor gk.Color) QuestionnaireInp
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireInputEl) BorderL(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -6414,6 +8157,8 @@ func (e QuestionnaireInputEl) BorderL(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireInputEl) BorderR(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -6421,6 +8166,8 @@ func (e QuestionnaireInputEl) BorderR(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireInputEl) BorderT(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -6428,6 +8175,8 @@ func (e QuestionnaireInputEl) BorderT(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireInputEl) BorderX(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -6435,6 +8184,8 @@ func (e QuestionnaireInputEl) BorderX(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireInputEl) BorderY(length gk.Length) QuestionnaireInputEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -6442,30 +8193,40 @@ func (e QuestionnaireInputEl) BorderY(length gk.Length) QuestionnaireInputEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireInputEl) Bottom(length gk.Length) QuestionnaireInputEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireInputEl) ColEnd(end int16) QuestionnaireInputEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireInputEl) ColSpan(span uint16) QuestionnaireInputEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireInputEl) ColStart(start int16) QuestionnaireInputEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireInputEl) Cursor(cursor gk.CursorStyle) QuestionnaireInputEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -6473,36 +8234,48 @@ func (e QuestionnaireInputEl) Cursor(cursor gk.CursorStyle) QuestionnaireInputEl
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireInputEl) FlexBasis(basis gk.Length) QuestionnaireInputEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireInputEl) FlexGrow(grow float32) QuestionnaireInputEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireInputEl) FlexShrink(shrink float32) QuestionnaireInputEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireInputEl) Font(font gk.Font) QuestionnaireInputEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireInputEl) FontFamily(familyName string) QuestionnaireInputEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireInputEl) FontFeatures(features gk.FontFeatures) QuestionnaireInputEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -6511,12 +8284,16 @@ func (e QuestionnaireInputEl) FontFeatures(features gk.FontFeatures) Questionnai
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireInputEl) FontWeight(weight gk.FontWeight) QuestionnaireInputEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireInputEl) Gap(length gk.Length) QuestionnaireInputEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -6524,6 +8301,8 @@ func (e QuestionnaireInputEl) Gap(length gk.Length) QuestionnaireInputEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireInputEl) GapX(length gk.Length) QuestionnaireInputEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -6531,18 +8310,24 @@ func (e QuestionnaireInputEl) GapX(length gk.Length) QuestionnaireInputEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireInputEl) GapY(length gk.Length) QuestionnaireInputEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireInputEl) GridCols(cols uint16) QuestionnaireInputEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireInputEl) GridColsMaxContent(cols uint16) QuestionnaireInputEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -6550,18 +8335,24 @@ func (e QuestionnaireInputEl) GridColsMaxContent(cols uint16) QuestionnaireInput
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireInputEl) GridColsMinContent(cols uint16) QuestionnaireInputEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireInputEl) GridRows(rows uint16) QuestionnaireInputEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireInputEl) GridRowsMaxContent(rows uint16) QuestionnaireInputEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -6569,12 +8360,16 @@ func (e QuestionnaireInputEl) GridRowsMaxContent(rows uint16) QuestionnaireInput
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireInputEl) GridRowsMinContent(rows uint16) QuestionnaireInputEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireInputEl) H(length gk.Length) QuestionnaireInputEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -6582,6 +8377,8 @@ func (e QuestionnaireInputEl) H(length gk.Length) QuestionnaireInputEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireInputEl) Inset(length gk.Length) QuestionnaireInputEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -6589,6 +8386,8 @@ func (e QuestionnaireInputEl) Inset(length gk.Length) QuestionnaireInputEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireInputEl) Left(length gk.Length) QuestionnaireInputEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -6596,36 +8395,48 @@ func (e QuestionnaireInputEl) Left(length gk.Length) QuestionnaireInputEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireInputEl) LineClamp(lines int) QuestionnaireInputEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireInputEl) LineHeight(lineHeight gk.Length) QuestionnaireInputEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireInputEl) M(length gk.Length) QuestionnaireInputEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireInputEl) MaxH(length gk.Length) QuestionnaireInputEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireInputEl) MaxSize(length gk.Length) QuestionnaireInputEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireInputEl) MaxW(length gk.Length) QuestionnaireInputEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -6633,24 +8444,32 @@ func (e QuestionnaireInputEl) MaxW(length gk.Length) QuestionnaireInputEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireInputEl) Mb(length gk.Length) QuestionnaireInputEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireInputEl) MinH(length gk.Length) QuestionnaireInputEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireInputEl) MinSize(length gk.Length) QuestionnaireInputEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireInputEl) MinW(length gk.Length) QuestionnaireInputEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -6658,6 +8477,8 @@ func (e QuestionnaireInputEl) MinW(length gk.Length) QuestionnaireInputEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireInputEl) Ml(length gk.Length) QuestionnaireInputEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -6665,6 +8486,8 @@ func (e QuestionnaireInputEl) Ml(length gk.Length) QuestionnaireInputEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireInputEl) Mr(length gk.Length) QuestionnaireInputEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -6672,6 +8495,8 @@ func (e QuestionnaireInputEl) Mr(length gk.Length) QuestionnaireInputEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireInputEl) Mt(length gk.Length) QuestionnaireInputEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -6679,6 +8504,8 @@ func (e QuestionnaireInputEl) Mt(length gk.Length) QuestionnaireInputEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireInputEl) Mx(length gk.Length) QuestionnaireInputEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -6686,18 +8513,24 @@ func (e QuestionnaireInputEl) Mx(length gk.Length) QuestionnaireInputEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireInputEl) My(length gk.Length) QuestionnaireInputEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireInputEl) Opacity(opacity float32) QuestionnaireInputEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireInputEl) P(length gk.Length) QuestionnaireInputEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -6705,6 +8538,8 @@ func (e QuestionnaireInputEl) P(length gk.Length) QuestionnaireInputEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireInputEl) Pb(length gk.Length) QuestionnaireInputEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -6712,6 +8547,8 @@ func (e QuestionnaireInputEl) Pb(length gk.Length) QuestionnaireInputEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireInputEl) Pl(length gk.Length) QuestionnaireInputEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -6719,6 +8556,8 @@ func (e QuestionnaireInputEl) Pl(length gk.Length) QuestionnaireInputEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireInputEl) Pr(length gk.Length) QuestionnaireInputEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -6726,6 +8565,8 @@ func (e QuestionnaireInputEl) Pr(length gk.Length) QuestionnaireInputEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireInputEl) Pt(length gk.Length) QuestionnaireInputEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -6733,6 +8574,8 @@ func (e QuestionnaireInputEl) Pt(length gk.Length) QuestionnaireInputEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireInputEl) Px(length gk.Length) QuestionnaireInputEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -6740,6 +8583,8 @@ func (e QuestionnaireInputEl) Px(length gk.Length) QuestionnaireInputEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireInputEl) Py(length gk.Length) QuestionnaireInputEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -6747,12 +8592,16 @@ func (e QuestionnaireInputEl) Py(length gk.Length) QuestionnaireInputEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireInputEl) Right(length gk.Length) QuestionnaireInputEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireInputEl) Rounded(length gk.Length) QuestionnaireInputEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -6760,6 +8609,8 @@ func (e QuestionnaireInputEl) Rounded(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireInputEl) RoundedB(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -6767,6 +8618,8 @@ func (e QuestionnaireInputEl) RoundedB(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireInputEl) RoundedBl(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -6774,6 +8627,8 @@ func (e QuestionnaireInputEl) RoundedBl(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireInputEl) RoundedBr(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -6781,6 +8636,8 @@ func (e QuestionnaireInputEl) RoundedBr(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireInputEl) RoundedL(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -6788,6 +8645,8 @@ func (e QuestionnaireInputEl) RoundedL(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireInputEl) RoundedR(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -6795,6 +8654,8 @@ func (e QuestionnaireInputEl) RoundedR(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireInputEl) RoundedT(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -6802,6 +8663,8 @@ func (e QuestionnaireInputEl) RoundedT(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireInputEl) RoundedTl(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -6809,24 +8672,32 @@ func (e QuestionnaireInputEl) RoundedTl(length gk.Length) QuestionnaireInputEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireInputEl) RoundedTr(length gk.Length) QuestionnaireInputEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireInputEl) RowEnd(end int16) QuestionnaireInputEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireInputEl) RowSpan(span uint16) QuestionnaireInputEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireInputEl) RowStart(start int16) QuestionnaireInputEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -6836,24 +8707,32 @@ func (e QuestionnaireInputEl) RowStart(start int16) QuestionnaireInputEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireInputEl) ScrollbarWidth(width gk.Length) QuestionnaireInputEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireInputEl) Shadow(shadows []gk.BoxShadow) QuestionnaireInputEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireInputEl) Size(length gk.Length) QuestionnaireInputEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireInputEl) TextAlign(align gk.TextAlign) QuestionnaireInputEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -6862,6 +8741,8 @@ func (e QuestionnaireInputEl) TextAlign(align gk.TextAlign) QuestionnaireInputEl
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireInputEl) TextBg(bg gk.Color) QuestionnaireInputEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -6870,18 +8751,24 @@ func (e QuestionnaireInputEl) TextBg(bg gk.Color) QuestionnaireInputEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireInputEl) TextColor(color gk.Color) QuestionnaireInputEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireInputEl) TextDecorationColor(color gk.Color) QuestionnaireInputEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireInputEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireInputEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -6890,6 +8777,8 @@ func (e QuestionnaireInputEl) TextOverflow(overflow gk.TextOverflow) Questionnai
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireInputEl) TextSize(size gk.Length) QuestionnaireInputEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -6897,12 +8786,16 @@ func (e QuestionnaireInputEl) TextSize(size gk.Length) QuestionnaireInputEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireInputEl) Top(length gk.Length) QuestionnaireInputEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireInputEl) W(length gk.Length) QuestionnaireInputEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
@@ -6913,7 +8806,7 @@ type QuestionnaireItemEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireItem is <gpui_kit::component::questionnaire::QuestionnaireItem>::new.
+// QuestionnaireItem calls <gpui_kit::component::questionnaire::QuestionnaireItem>::new.
 func QuestionnaireItem(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireItemEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(727)
@@ -6926,20 +8819,24 @@ func QuestionnaireItem(state base.QuestionnaireState, item string, st ...gk.Styl
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireItemEl) PopoverStyle() QuestionnaireItemEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireItemEl) RoundedFullStyle() QuestionnaireItemEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -6948,16 +8845,18 @@ func (e QuestionnaireItemEl) RoundedFullStyle() QuestionnaireItemEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireItemEl) FocusRingStyle() QuestionnaireItemEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -6970,24 +8869,32 @@ func (e QuestionnaireItemEl) FocusRingStyle() QuestionnaireItemEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireItemEl) KeepTextSelection(id gk.ID) QuestionnaireItemEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireItemEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireItemEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireItemEl) BorderE(width gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireItemEl) BorderS(width gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -6995,163 +8902,205 @@ func (e QuestionnaireItemEl) BorderS(width gk.Length) QuestionnaireItemEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireItemEl) FlexRowDir() QuestionnaireItemEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireItemEl) InsetE(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireItemEl) InsetS(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireItemEl) JustifyFlexEnd() QuestionnaireItemEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireItemEl) JustifyFlexStart() QuestionnaireItemEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireItemEl) Me(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireItemEl) Ms(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireItemEl) Pe(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireItemEl) Ps(length gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireItemEl) RoundedE(radius gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireItemEl) RoundedS(radius gk.Length) QuestionnaireItemEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireItemEl) TextEnd() QuestionnaireItemEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireItemEl) TextStart() QuestionnaireItemEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireItemEl) CornerRadii(radius gk.Corners) QuestionnaireItemEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireItemEl) DebugBlue() QuestionnaireItemEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireItemEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireItemEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireItemEl) DebugGreen() QuestionnaireItemEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireItemEl) DebugPink() QuestionnaireItemEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireItemEl) DebugRed() QuestionnaireItemEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireItemEl) DebugYellow() QuestionnaireItemEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireItemEl) FontBlack() QuestionnaireItemEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireItemEl) FontBold() QuestionnaireItemEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireItemEl) FontExtrabold() QuestionnaireItemEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireItemEl) FontExtralight() QuestionnaireItemEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireItemEl) FontLight() QuestionnaireItemEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireItemEl) FontMedium() QuestionnaireItemEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireItemEl) FontNormal() QuestionnaireItemEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireItemEl) FontSemibold() QuestionnaireItemEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireItemEl) FontThin() QuestionnaireItemEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -7159,8 +9108,8 @@ func (e QuestionnaireItemEl) FontThin() QuestionnaireItemEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -7169,18 +9118,23 @@ func (e QuestionnaireItemEl) FontThin() QuestionnaireItemEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireItemEl) HFlex() QuestionnaireItemEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireItemEl) Margins(margins gk.EdgesInto) QuestionnaireItemEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireItemEl) Paddings(paddings gk.EdgesInto) QuestionnaireItemEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireItemEl) RefineStyle(style gk.StyleRefinement) QuestionnaireItemEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -7190,45 +9144,61 @@ func (e QuestionnaireItemEl) RefineStyle(style gk.StyleRefinement) Questionnaire
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireItemEl) VFlex() QuestionnaireItemEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireItemEl) Large() QuestionnaireItemEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireItemEl) Small() QuestionnaireItemEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireItemEl) WithSize(size gk.SizeInto) QuestionnaireItemEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireItemEl) Xsmall() QuestionnaireItemEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireItemEl) Style(st ...gk.Style) QuestionnaireItemEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireItemEl) AspectRatio(ratio float32) QuestionnaireItemEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireItemEl) Bg(fill gk.Fill) QuestionnaireItemEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireItemEl) Border(length gk.Length) QuestionnaireItemEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -7236,12 +9206,16 @@ func (e QuestionnaireItemEl) Border(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireItemEl) BorderB(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireItemEl) BorderColor(borderColor gk.Color) QuestionnaireItemEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -7249,6 +9223,8 @@ func (e QuestionnaireItemEl) BorderColor(borderColor gk.Color) QuestionnaireItem
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireItemEl) BorderL(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -7256,6 +9232,8 @@ func (e QuestionnaireItemEl) BorderL(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireItemEl) BorderR(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -7263,6 +9241,8 @@ func (e QuestionnaireItemEl) BorderR(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireItemEl) BorderT(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -7270,6 +9250,8 @@ func (e QuestionnaireItemEl) BorderT(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireItemEl) BorderX(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -7277,6 +9259,8 @@ func (e QuestionnaireItemEl) BorderX(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireItemEl) BorderY(length gk.Length) QuestionnaireItemEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -7284,30 +9268,40 @@ func (e QuestionnaireItemEl) BorderY(length gk.Length) QuestionnaireItemEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireItemEl) Bottom(length gk.Length) QuestionnaireItemEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireItemEl) ColEnd(end int16) QuestionnaireItemEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireItemEl) ColSpan(span uint16) QuestionnaireItemEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireItemEl) ColStart(start int16) QuestionnaireItemEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireItemEl) Cursor(cursor gk.CursorStyle) QuestionnaireItemEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -7315,36 +9309,48 @@ func (e QuestionnaireItemEl) Cursor(cursor gk.CursorStyle) QuestionnaireItemEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireItemEl) FlexBasis(basis gk.Length) QuestionnaireItemEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireItemEl) FlexGrow(grow float32) QuestionnaireItemEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireItemEl) FlexShrink(shrink float32) QuestionnaireItemEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireItemEl) Font(font gk.Font) QuestionnaireItemEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireItemEl) FontFamily(familyName string) QuestionnaireItemEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireItemEl) FontFeatures(features gk.FontFeatures) QuestionnaireItemEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -7353,12 +9359,16 @@ func (e QuestionnaireItemEl) FontFeatures(features gk.FontFeatures) Questionnair
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireItemEl) FontWeight(weight gk.FontWeight) QuestionnaireItemEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireItemEl) Gap(length gk.Length) QuestionnaireItemEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -7366,6 +9376,8 @@ func (e QuestionnaireItemEl) Gap(length gk.Length) QuestionnaireItemEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireItemEl) GapX(length gk.Length) QuestionnaireItemEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -7373,18 +9385,24 @@ func (e QuestionnaireItemEl) GapX(length gk.Length) QuestionnaireItemEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireItemEl) GapY(length gk.Length) QuestionnaireItemEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireItemEl) GridCols(cols uint16) QuestionnaireItemEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireItemEl) GridColsMaxContent(cols uint16) QuestionnaireItemEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -7392,18 +9410,24 @@ func (e QuestionnaireItemEl) GridColsMaxContent(cols uint16) QuestionnaireItemEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireItemEl) GridColsMinContent(cols uint16) QuestionnaireItemEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireItemEl) GridRows(rows uint16) QuestionnaireItemEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireItemEl) GridRowsMaxContent(rows uint16) QuestionnaireItemEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -7411,12 +9435,16 @@ func (e QuestionnaireItemEl) GridRowsMaxContent(rows uint16) QuestionnaireItemEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireItemEl) GridRowsMinContent(rows uint16) QuestionnaireItemEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireItemEl) H(length gk.Length) QuestionnaireItemEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -7424,6 +9452,8 @@ func (e QuestionnaireItemEl) H(length gk.Length) QuestionnaireItemEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireItemEl) Inset(length gk.Length) QuestionnaireItemEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -7431,6 +9461,8 @@ func (e QuestionnaireItemEl) Inset(length gk.Length) QuestionnaireItemEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireItemEl) Left(length gk.Length) QuestionnaireItemEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -7438,36 +9470,48 @@ func (e QuestionnaireItemEl) Left(length gk.Length) QuestionnaireItemEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireItemEl) LineClamp(lines int) QuestionnaireItemEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireItemEl) LineHeight(lineHeight gk.Length) QuestionnaireItemEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireItemEl) M(length gk.Length) QuestionnaireItemEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireItemEl) MaxH(length gk.Length) QuestionnaireItemEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireItemEl) MaxSize(length gk.Length) QuestionnaireItemEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireItemEl) MaxW(length gk.Length) QuestionnaireItemEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -7475,24 +9519,32 @@ func (e QuestionnaireItemEl) MaxW(length gk.Length) QuestionnaireItemEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireItemEl) Mb(length gk.Length) QuestionnaireItemEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireItemEl) MinH(length gk.Length) QuestionnaireItemEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireItemEl) MinSize(length gk.Length) QuestionnaireItemEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireItemEl) MinW(length gk.Length) QuestionnaireItemEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -7500,6 +9552,8 @@ func (e QuestionnaireItemEl) MinW(length gk.Length) QuestionnaireItemEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireItemEl) Ml(length gk.Length) QuestionnaireItemEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -7507,6 +9561,8 @@ func (e QuestionnaireItemEl) Ml(length gk.Length) QuestionnaireItemEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireItemEl) Mr(length gk.Length) QuestionnaireItemEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -7514,6 +9570,8 @@ func (e QuestionnaireItemEl) Mr(length gk.Length) QuestionnaireItemEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireItemEl) Mt(length gk.Length) QuestionnaireItemEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -7521,6 +9579,8 @@ func (e QuestionnaireItemEl) Mt(length gk.Length) QuestionnaireItemEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireItemEl) Mx(length gk.Length) QuestionnaireItemEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -7528,18 +9588,24 @@ func (e QuestionnaireItemEl) Mx(length gk.Length) QuestionnaireItemEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireItemEl) My(length gk.Length) QuestionnaireItemEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireItemEl) Opacity(opacity float32) QuestionnaireItemEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireItemEl) P(length gk.Length) QuestionnaireItemEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -7547,6 +9613,8 @@ func (e QuestionnaireItemEl) P(length gk.Length) QuestionnaireItemEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireItemEl) Pb(length gk.Length) QuestionnaireItemEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -7554,6 +9622,8 @@ func (e QuestionnaireItemEl) Pb(length gk.Length) QuestionnaireItemEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireItemEl) Pl(length gk.Length) QuestionnaireItemEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -7561,6 +9631,8 @@ func (e QuestionnaireItemEl) Pl(length gk.Length) QuestionnaireItemEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireItemEl) Pr(length gk.Length) QuestionnaireItemEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -7568,6 +9640,8 @@ func (e QuestionnaireItemEl) Pr(length gk.Length) QuestionnaireItemEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireItemEl) Pt(length gk.Length) QuestionnaireItemEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -7575,6 +9649,8 @@ func (e QuestionnaireItemEl) Pt(length gk.Length) QuestionnaireItemEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireItemEl) Px(length gk.Length) QuestionnaireItemEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -7582,6 +9658,8 @@ func (e QuestionnaireItemEl) Px(length gk.Length) QuestionnaireItemEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireItemEl) Py(length gk.Length) QuestionnaireItemEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -7589,12 +9667,16 @@ func (e QuestionnaireItemEl) Py(length gk.Length) QuestionnaireItemEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireItemEl) Right(length gk.Length) QuestionnaireItemEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireItemEl) Rounded(length gk.Length) QuestionnaireItemEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -7602,6 +9684,8 @@ func (e QuestionnaireItemEl) Rounded(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireItemEl) RoundedB(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -7609,6 +9693,8 @@ func (e QuestionnaireItemEl) RoundedB(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireItemEl) RoundedBl(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -7616,6 +9702,8 @@ func (e QuestionnaireItemEl) RoundedBl(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireItemEl) RoundedBr(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -7623,6 +9711,8 @@ func (e QuestionnaireItemEl) RoundedBr(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireItemEl) RoundedL(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -7630,6 +9720,8 @@ func (e QuestionnaireItemEl) RoundedL(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireItemEl) RoundedR(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -7637,6 +9729,8 @@ func (e QuestionnaireItemEl) RoundedR(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireItemEl) RoundedT(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -7644,6 +9738,8 @@ func (e QuestionnaireItemEl) RoundedT(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireItemEl) RoundedTl(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -7651,24 +9747,32 @@ func (e QuestionnaireItemEl) RoundedTl(length gk.Length) QuestionnaireItemEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireItemEl) RoundedTr(length gk.Length) QuestionnaireItemEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireItemEl) RowEnd(end int16) QuestionnaireItemEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireItemEl) RowSpan(span uint16) QuestionnaireItemEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireItemEl) RowStart(start int16) QuestionnaireItemEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -7678,24 +9782,32 @@ func (e QuestionnaireItemEl) RowStart(start int16) QuestionnaireItemEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireItemEl) ScrollbarWidth(width gk.Length) QuestionnaireItemEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireItemEl) Shadow(shadows []gk.BoxShadow) QuestionnaireItemEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireItemEl) Size(length gk.Length) QuestionnaireItemEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireItemEl) TextAlign(align gk.TextAlign) QuestionnaireItemEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -7704,6 +9816,8 @@ func (e QuestionnaireItemEl) TextAlign(align gk.TextAlign) QuestionnaireItemEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireItemEl) TextBg(bg gk.Color) QuestionnaireItemEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -7712,18 +9826,24 @@ func (e QuestionnaireItemEl) TextBg(bg gk.Color) QuestionnaireItemEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireItemEl) TextColor(color gk.Color) QuestionnaireItemEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireItemEl) TextDecorationColor(color gk.Color) QuestionnaireItemEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireItemEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireItemEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -7732,6 +9852,8 @@ func (e QuestionnaireItemEl) TextOverflow(overflow gk.TextOverflow) Questionnair
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireItemEl) TextSize(size gk.Length) QuestionnaireItemEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -7739,35 +9861,44 @@ func (e QuestionnaireItemEl) TextSize(size gk.Length) QuestionnaireItemEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireItemEl) Top(length gk.Length) QuestionnaireItemEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireItemEl) W(length gk.Length) QuestionnaireItemEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireItemEl) Text(s string) QuestionnaireItemEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireItemEl) ChildView(v gk.View) QuestionnaireItemEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireItemEl) Child(child gk.Element) QuestionnaireItemEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireItemEl) Children(children ...gk.Element) QuestionnaireItemEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -7778,7 +9909,7 @@ type QuestionnaireNextEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireNext is <gpui_kit::component::questionnaire::QuestionnaireNext>::new.
+// QuestionnaireNext calls <gpui_kit::component::questionnaire::QuestionnaireNext>::new.
 func QuestionnaireNext(state base.QuestionnaireState, st ...gk.Style) QuestionnaireNextEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(728)
@@ -7790,20 +9921,24 @@ func QuestionnaireNext(state base.QuestionnaireState, st ...gk.Style) Questionna
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireNextEl) PopoverStyle() QuestionnaireNextEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireNextEl) RoundedFullStyle() QuestionnaireNextEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -7812,16 +9947,18 @@ func (e QuestionnaireNextEl) RoundedFullStyle() QuestionnaireNextEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireNextEl) FocusRingStyle() QuestionnaireNextEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -7834,24 +9971,32 @@ func (e QuestionnaireNextEl) FocusRingStyle() QuestionnaireNextEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireNextEl) KeepTextSelection(id gk.ID) QuestionnaireNextEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireNextEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireNextEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireNextEl) BorderE(width gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireNextEl) BorderS(width gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -7859,163 +10004,205 @@ func (e QuestionnaireNextEl) BorderS(width gk.Length) QuestionnaireNextEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireNextEl) FlexRowDir() QuestionnaireNextEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireNextEl) InsetE(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireNextEl) InsetS(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireNextEl) JustifyFlexEnd() QuestionnaireNextEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireNextEl) JustifyFlexStart() QuestionnaireNextEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireNextEl) Me(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireNextEl) Ms(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireNextEl) Pe(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireNextEl) Ps(length gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireNextEl) RoundedE(radius gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireNextEl) RoundedS(radius gk.Length) QuestionnaireNextEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireNextEl) TextEnd() QuestionnaireNextEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireNextEl) TextStart() QuestionnaireNextEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireNextEl) CornerRadii(radius gk.Corners) QuestionnaireNextEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireNextEl) DebugBlue() QuestionnaireNextEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireNextEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireNextEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireNextEl) DebugGreen() QuestionnaireNextEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireNextEl) DebugPink() QuestionnaireNextEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireNextEl) DebugRed() QuestionnaireNextEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireNextEl) DebugYellow() QuestionnaireNextEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireNextEl) FontBlack() QuestionnaireNextEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireNextEl) FontBold() QuestionnaireNextEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireNextEl) FontExtrabold() QuestionnaireNextEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireNextEl) FontExtralight() QuestionnaireNextEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireNextEl) FontLight() QuestionnaireNextEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireNextEl) FontMedium() QuestionnaireNextEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireNextEl) FontNormal() QuestionnaireNextEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireNextEl) FontSemibold() QuestionnaireNextEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireNextEl) FontThin() QuestionnaireNextEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -8023,8 +10210,8 @@ func (e QuestionnaireNextEl) FontThin() QuestionnaireNextEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -8033,18 +10220,23 @@ func (e QuestionnaireNextEl) FontThin() QuestionnaireNextEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireNextEl) HFlex() QuestionnaireNextEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireNextEl) Margins(margins gk.EdgesInto) QuestionnaireNextEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireNextEl) Paddings(paddings gk.EdgesInto) QuestionnaireNextEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireNextEl) RefineStyle(style gk.StyleRefinement) QuestionnaireNextEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -8054,27 +10246,35 @@ func (e QuestionnaireNextEl) RefineStyle(style gk.StyleRefinement) Questionnaire
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireNextEl) VFlex() QuestionnaireNextEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireNextEl) Style(st ...gk.Style) QuestionnaireNextEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireNextEl) AspectRatio(ratio float32) QuestionnaireNextEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireNextEl) Bg(fill gk.Fill) QuestionnaireNextEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireNextEl) Border(length gk.Length) QuestionnaireNextEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -8082,12 +10282,16 @@ func (e QuestionnaireNextEl) Border(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireNextEl) BorderB(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireNextEl) BorderColor(borderColor gk.Color) QuestionnaireNextEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -8095,6 +10299,8 @@ func (e QuestionnaireNextEl) BorderColor(borderColor gk.Color) QuestionnaireNext
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireNextEl) BorderL(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -8102,6 +10308,8 @@ func (e QuestionnaireNextEl) BorderL(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireNextEl) BorderR(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -8109,6 +10317,8 @@ func (e QuestionnaireNextEl) BorderR(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireNextEl) BorderT(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -8116,6 +10326,8 @@ func (e QuestionnaireNextEl) BorderT(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireNextEl) BorderX(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -8123,6 +10335,8 @@ func (e QuestionnaireNextEl) BorderX(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireNextEl) BorderY(length gk.Length) QuestionnaireNextEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -8130,30 +10344,40 @@ func (e QuestionnaireNextEl) BorderY(length gk.Length) QuestionnaireNextEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireNextEl) Bottom(length gk.Length) QuestionnaireNextEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireNextEl) ColEnd(end int16) QuestionnaireNextEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireNextEl) ColSpan(span uint16) QuestionnaireNextEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireNextEl) ColStart(start int16) QuestionnaireNextEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireNextEl) Cursor(cursor gk.CursorStyle) QuestionnaireNextEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -8161,36 +10385,48 @@ func (e QuestionnaireNextEl) Cursor(cursor gk.CursorStyle) QuestionnaireNextEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireNextEl) FlexBasis(basis gk.Length) QuestionnaireNextEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireNextEl) FlexGrow(grow float32) QuestionnaireNextEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireNextEl) FlexShrink(shrink float32) QuestionnaireNextEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireNextEl) Font(font gk.Font) QuestionnaireNextEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireNextEl) FontFamily(familyName string) QuestionnaireNextEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireNextEl) FontFeatures(features gk.FontFeatures) QuestionnaireNextEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -8199,12 +10435,16 @@ func (e QuestionnaireNextEl) FontFeatures(features gk.FontFeatures) Questionnair
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireNextEl) FontWeight(weight gk.FontWeight) QuestionnaireNextEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireNextEl) Gap(length gk.Length) QuestionnaireNextEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -8212,6 +10452,8 @@ func (e QuestionnaireNextEl) Gap(length gk.Length) QuestionnaireNextEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireNextEl) GapX(length gk.Length) QuestionnaireNextEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -8219,18 +10461,24 @@ func (e QuestionnaireNextEl) GapX(length gk.Length) QuestionnaireNextEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireNextEl) GapY(length gk.Length) QuestionnaireNextEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireNextEl) GridCols(cols uint16) QuestionnaireNextEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireNextEl) GridColsMaxContent(cols uint16) QuestionnaireNextEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -8238,18 +10486,24 @@ func (e QuestionnaireNextEl) GridColsMaxContent(cols uint16) QuestionnaireNextEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireNextEl) GridColsMinContent(cols uint16) QuestionnaireNextEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireNextEl) GridRows(rows uint16) QuestionnaireNextEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireNextEl) GridRowsMaxContent(rows uint16) QuestionnaireNextEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -8257,12 +10511,16 @@ func (e QuestionnaireNextEl) GridRowsMaxContent(rows uint16) QuestionnaireNextEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireNextEl) GridRowsMinContent(rows uint16) QuestionnaireNextEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireNextEl) H(length gk.Length) QuestionnaireNextEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -8270,6 +10528,8 @@ func (e QuestionnaireNextEl) H(length gk.Length) QuestionnaireNextEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireNextEl) Inset(length gk.Length) QuestionnaireNextEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -8277,6 +10537,8 @@ func (e QuestionnaireNextEl) Inset(length gk.Length) QuestionnaireNextEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireNextEl) Left(length gk.Length) QuestionnaireNextEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -8284,36 +10546,48 @@ func (e QuestionnaireNextEl) Left(length gk.Length) QuestionnaireNextEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireNextEl) LineClamp(lines int) QuestionnaireNextEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireNextEl) LineHeight(lineHeight gk.Length) QuestionnaireNextEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireNextEl) M(length gk.Length) QuestionnaireNextEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireNextEl) MaxH(length gk.Length) QuestionnaireNextEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireNextEl) MaxSize(length gk.Length) QuestionnaireNextEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireNextEl) MaxW(length gk.Length) QuestionnaireNextEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -8321,24 +10595,32 @@ func (e QuestionnaireNextEl) MaxW(length gk.Length) QuestionnaireNextEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireNextEl) Mb(length gk.Length) QuestionnaireNextEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireNextEl) MinH(length gk.Length) QuestionnaireNextEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireNextEl) MinSize(length gk.Length) QuestionnaireNextEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireNextEl) MinW(length gk.Length) QuestionnaireNextEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -8346,6 +10628,8 @@ func (e QuestionnaireNextEl) MinW(length gk.Length) QuestionnaireNextEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireNextEl) Ml(length gk.Length) QuestionnaireNextEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -8353,6 +10637,8 @@ func (e QuestionnaireNextEl) Ml(length gk.Length) QuestionnaireNextEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireNextEl) Mr(length gk.Length) QuestionnaireNextEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -8360,6 +10646,8 @@ func (e QuestionnaireNextEl) Mr(length gk.Length) QuestionnaireNextEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireNextEl) Mt(length gk.Length) QuestionnaireNextEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -8367,6 +10655,8 @@ func (e QuestionnaireNextEl) Mt(length gk.Length) QuestionnaireNextEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireNextEl) Mx(length gk.Length) QuestionnaireNextEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -8374,18 +10664,24 @@ func (e QuestionnaireNextEl) Mx(length gk.Length) QuestionnaireNextEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireNextEl) My(length gk.Length) QuestionnaireNextEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireNextEl) Opacity(opacity float32) QuestionnaireNextEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireNextEl) P(length gk.Length) QuestionnaireNextEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -8393,6 +10689,8 @@ func (e QuestionnaireNextEl) P(length gk.Length) QuestionnaireNextEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireNextEl) Pb(length gk.Length) QuestionnaireNextEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -8400,6 +10698,8 @@ func (e QuestionnaireNextEl) Pb(length gk.Length) QuestionnaireNextEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireNextEl) Pl(length gk.Length) QuestionnaireNextEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -8407,6 +10707,8 @@ func (e QuestionnaireNextEl) Pl(length gk.Length) QuestionnaireNextEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireNextEl) Pr(length gk.Length) QuestionnaireNextEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -8414,6 +10716,8 @@ func (e QuestionnaireNextEl) Pr(length gk.Length) QuestionnaireNextEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireNextEl) Pt(length gk.Length) QuestionnaireNextEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -8421,6 +10725,8 @@ func (e QuestionnaireNextEl) Pt(length gk.Length) QuestionnaireNextEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireNextEl) Px(length gk.Length) QuestionnaireNextEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -8428,6 +10734,8 @@ func (e QuestionnaireNextEl) Px(length gk.Length) QuestionnaireNextEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireNextEl) Py(length gk.Length) QuestionnaireNextEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -8435,12 +10743,16 @@ func (e QuestionnaireNextEl) Py(length gk.Length) QuestionnaireNextEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireNextEl) Right(length gk.Length) QuestionnaireNextEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireNextEl) Rounded(length gk.Length) QuestionnaireNextEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -8448,6 +10760,8 @@ func (e QuestionnaireNextEl) Rounded(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireNextEl) RoundedB(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -8455,6 +10769,8 @@ func (e QuestionnaireNextEl) RoundedB(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireNextEl) RoundedBl(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -8462,6 +10778,8 @@ func (e QuestionnaireNextEl) RoundedBl(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireNextEl) RoundedBr(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -8469,6 +10787,8 @@ func (e QuestionnaireNextEl) RoundedBr(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireNextEl) RoundedL(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -8476,6 +10796,8 @@ func (e QuestionnaireNextEl) RoundedL(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireNextEl) RoundedR(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -8483,6 +10805,8 @@ func (e QuestionnaireNextEl) RoundedR(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireNextEl) RoundedT(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -8490,6 +10814,8 @@ func (e QuestionnaireNextEl) RoundedT(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireNextEl) RoundedTl(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -8497,24 +10823,32 @@ func (e QuestionnaireNextEl) RoundedTl(length gk.Length) QuestionnaireNextEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireNextEl) RoundedTr(length gk.Length) QuestionnaireNextEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireNextEl) RowEnd(end int16) QuestionnaireNextEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireNextEl) RowSpan(span uint16) QuestionnaireNextEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireNextEl) RowStart(start int16) QuestionnaireNextEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -8524,24 +10858,32 @@ func (e QuestionnaireNextEl) RowStart(start int16) QuestionnaireNextEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireNextEl) ScrollbarWidth(width gk.Length) QuestionnaireNextEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireNextEl) Shadow(shadows []gk.BoxShadow) QuestionnaireNextEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireNextEl) Size(length gk.Length) QuestionnaireNextEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireNextEl) TextAlign(align gk.TextAlign) QuestionnaireNextEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -8550,6 +10892,8 @@ func (e QuestionnaireNextEl) TextAlign(align gk.TextAlign) QuestionnaireNextEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireNextEl) TextBg(bg gk.Color) QuestionnaireNextEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -8558,18 +10902,24 @@ func (e QuestionnaireNextEl) TextBg(bg gk.Color) QuestionnaireNextEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireNextEl) TextColor(color gk.Color) QuestionnaireNextEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireNextEl) TextDecorationColor(color gk.Color) QuestionnaireNextEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireNextEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireNextEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -8578,6 +10928,8 @@ func (e QuestionnaireNextEl) TextOverflow(overflow gk.TextOverflow) Questionnair
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireNextEl) TextSize(size gk.Length) QuestionnaireNextEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -8585,53 +10937,70 @@ func (e QuestionnaireNextEl) TextSize(size gk.Length) QuestionnaireNextEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireNextEl) Top(length gk.Length) QuestionnaireNextEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireNextEl) W(length gk.Length) QuestionnaireNextEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireNextEl) Large() QuestionnaireNextEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireNextEl) Small() QuestionnaireNextEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireNextEl) WithSize(size gk.SizeInto) QuestionnaireNextEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireNextEl) Xsmall() QuestionnaireNextEl { tSizableXsmall(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireNextEl) Text(s string) QuestionnaireNextEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireNextEl) ChildView(v gk.View) QuestionnaireNextEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireNextEl) Child(child gk.Element) QuestionnaireNextEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireNextEl) Children(children ...gk.Element) QuestionnaireNextEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -8642,7 +11011,7 @@ type QuestionnairePreviousEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnairePrevious is <gpui_kit::component::questionnaire::QuestionnairePrevious>::new.
+// QuestionnairePrevious calls <gpui_kit::component::questionnaire::QuestionnairePrevious>::new.
 func QuestionnairePrevious(state base.QuestionnaireState, st ...gk.Style) QuestionnairePreviousEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(729)
@@ -8654,20 +11023,24 @@ func QuestionnairePrevious(state base.QuestionnaireState, st ...gk.Style) Questi
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnairePreviousEl) PopoverStyle() QuestionnairePreviousEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnairePreviousEl) RoundedFullStyle() QuestionnairePreviousEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -8676,16 +11049,18 @@ func (e QuestionnairePreviousEl) RoundedFullStyle() QuestionnairePreviousEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnairePreviousEl) FocusRingStyle() QuestionnairePreviousEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -8698,24 +11073,32 @@ func (e QuestionnairePreviousEl) FocusRingStyle() QuestionnairePreviousEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnairePreviousEl) KeepTextSelection(id gk.ID) QuestionnairePreviousEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnairePreviousEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnairePreviousEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnairePreviousEl) BorderE(width gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnairePreviousEl) BorderS(width gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -8723,163 +11106,205 @@ func (e QuestionnairePreviousEl) BorderS(width gk.Length) QuestionnairePreviousE
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnairePreviousEl) FlexRowDir() QuestionnairePreviousEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnairePreviousEl) InsetE(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnairePreviousEl) InsetS(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnairePreviousEl) JustifyFlexEnd() QuestionnairePreviousEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnairePreviousEl) JustifyFlexStart() QuestionnairePreviousEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnairePreviousEl) Me(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnairePreviousEl) Ms(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnairePreviousEl) Pe(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnairePreviousEl) Ps(length gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnairePreviousEl) RoundedE(radius gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnairePreviousEl) RoundedS(radius gk.Length) QuestionnairePreviousEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnairePreviousEl) TextEnd() QuestionnairePreviousEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnairePreviousEl) TextStart() QuestionnairePreviousEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnairePreviousEl) CornerRadii(radius gk.Corners) QuestionnairePreviousEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnairePreviousEl) DebugBlue() QuestionnairePreviousEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnairePreviousEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnairePreviousEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnairePreviousEl) DebugGreen() QuestionnairePreviousEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnairePreviousEl) DebugPink() QuestionnairePreviousEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnairePreviousEl) DebugRed() QuestionnairePreviousEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnairePreviousEl) DebugYellow() QuestionnairePreviousEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnairePreviousEl) FontBlack() QuestionnairePreviousEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnairePreviousEl) FontBold() QuestionnairePreviousEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnairePreviousEl) FontExtrabold() QuestionnairePreviousEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnairePreviousEl) FontExtralight() QuestionnairePreviousEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnairePreviousEl) FontLight() QuestionnairePreviousEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnairePreviousEl) FontMedium() QuestionnairePreviousEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnairePreviousEl) FontNormal() QuestionnairePreviousEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnairePreviousEl) FontSemibold() QuestionnairePreviousEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnairePreviousEl) FontThin() QuestionnairePreviousEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -8887,8 +11312,8 @@ func (e QuestionnairePreviousEl) FontThin() QuestionnairePreviousEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -8897,21 +11322,26 @@ func (e QuestionnairePreviousEl) FontThin() QuestionnairePreviousEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnairePreviousEl) HFlex() QuestionnairePreviousEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnairePreviousEl) Margins(margins gk.EdgesInto) QuestionnairePreviousEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnairePreviousEl) Paddings(paddings gk.EdgesInto) QuestionnairePreviousEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnairePreviousEl) RefineStyle(style gk.StyleRefinement) QuestionnairePreviousEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -8921,30 +11351,38 @@ func (e QuestionnairePreviousEl) RefineStyle(style gk.StyleRefinement) Questionn
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnairePreviousEl) VFlex() QuestionnairePreviousEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnairePreviousEl) Style(st ...gk.Style) QuestionnairePreviousEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnairePreviousEl) AspectRatio(ratio float32) QuestionnairePreviousEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnairePreviousEl) Bg(fill gk.Fill) QuestionnairePreviousEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnairePreviousEl) Border(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -8952,12 +11390,16 @@ func (e QuestionnairePreviousEl) Border(length gk.Length) QuestionnairePreviousE
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnairePreviousEl) BorderB(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnairePreviousEl) BorderColor(borderColor gk.Color) QuestionnairePreviousEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -8965,6 +11407,8 @@ func (e QuestionnairePreviousEl) BorderColor(borderColor gk.Color) Questionnaire
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnairePreviousEl) BorderL(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -8972,6 +11416,8 @@ func (e QuestionnairePreviousEl) BorderL(length gk.Length) QuestionnairePrevious
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnairePreviousEl) BorderR(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -8979,6 +11425,8 @@ func (e QuestionnairePreviousEl) BorderR(length gk.Length) QuestionnairePrevious
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnairePreviousEl) BorderT(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -8986,6 +11434,8 @@ func (e QuestionnairePreviousEl) BorderT(length gk.Length) QuestionnairePrevious
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnairePreviousEl) BorderX(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -8993,6 +11443,8 @@ func (e QuestionnairePreviousEl) BorderX(length gk.Length) QuestionnairePrevious
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnairePreviousEl) BorderY(length gk.Length) QuestionnairePreviousEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -9000,30 +11452,40 @@ func (e QuestionnairePreviousEl) BorderY(length gk.Length) QuestionnairePrevious
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnairePreviousEl) Bottom(length gk.Length) QuestionnairePreviousEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnairePreviousEl) ColEnd(end int16) QuestionnairePreviousEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnairePreviousEl) ColSpan(span uint16) QuestionnairePreviousEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnairePreviousEl) ColStart(start int16) QuestionnairePreviousEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnairePreviousEl) Cursor(cursor gk.CursorStyle) QuestionnairePreviousEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -9031,36 +11493,48 @@ func (e QuestionnairePreviousEl) Cursor(cursor gk.CursorStyle) QuestionnairePrev
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnairePreviousEl) FlexBasis(basis gk.Length) QuestionnairePreviousEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnairePreviousEl) FlexGrow(grow float32) QuestionnairePreviousEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnairePreviousEl) FlexShrink(shrink float32) QuestionnairePreviousEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnairePreviousEl) Font(font gk.Font) QuestionnairePreviousEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnairePreviousEl) FontFamily(familyName string) QuestionnairePreviousEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnairePreviousEl) FontFeatures(features gk.FontFeatures) QuestionnairePreviousEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -9069,12 +11543,16 @@ func (e QuestionnairePreviousEl) FontFeatures(features gk.FontFeatures) Question
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnairePreviousEl) FontWeight(weight gk.FontWeight) QuestionnairePreviousEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnairePreviousEl) Gap(length gk.Length) QuestionnairePreviousEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -9082,6 +11560,8 @@ func (e QuestionnairePreviousEl) Gap(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnairePreviousEl) GapX(length gk.Length) QuestionnairePreviousEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -9089,18 +11569,24 @@ func (e QuestionnairePreviousEl) GapX(length gk.Length) QuestionnairePreviousEl 
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnairePreviousEl) GapY(length gk.Length) QuestionnairePreviousEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnairePreviousEl) GridCols(cols uint16) QuestionnairePreviousEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnairePreviousEl) GridColsMaxContent(cols uint16) QuestionnairePreviousEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -9108,18 +11594,24 @@ func (e QuestionnairePreviousEl) GridColsMaxContent(cols uint16) QuestionnairePr
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnairePreviousEl) GridColsMinContent(cols uint16) QuestionnairePreviousEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnairePreviousEl) GridRows(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnairePreviousEl) GridRowsMaxContent(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -9127,12 +11619,16 @@ func (e QuestionnairePreviousEl) GridRowsMaxContent(rows uint16) QuestionnairePr
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnairePreviousEl) GridRowsMinContent(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnairePreviousEl) H(length gk.Length) QuestionnairePreviousEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -9140,6 +11636,8 @@ func (e QuestionnairePreviousEl) H(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnairePreviousEl) Inset(length gk.Length) QuestionnairePreviousEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -9147,6 +11645,8 @@ func (e QuestionnairePreviousEl) Inset(length gk.Length) QuestionnairePreviousEl
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnairePreviousEl) Left(length gk.Length) QuestionnairePreviousEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -9154,36 +11654,48 @@ func (e QuestionnairePreviousEl) Left(length gk.Length) QuestionnairePreviousEl 
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnairePreviousEl) LineClamp(lines int) QuestionnairePreviousEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnairePreviousEl) LineHeight(lineHeight gk.Length) QuestionnairePreviousEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnairePreviousEl) M(length gk.Length) QuestionnairePreviousEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnairePreviousEl) MaxH(length gk.Length) QuestionnairePreviousEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnairePreviousEl) MaxSize(length gk.Length) QuestionnairePreviousEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnairePreviousEl) MaxW(length gk.Length) QuestionnairePreviousEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -9191,24 +11703,32 @@ func (e QuestionnairePreviousEl) MaxW(length gk.Length) QuestionnairePreviousEl 
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnairePreviousEl) Mb(length gk.Length) QuestionnairePreviousEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnairePreviousEl) MinH(length gk.Length) QuestionnairePreviousEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnairePreviousEl) MinSize(length gk.Length) QuestionnairePreviousEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnairePreviousEl) MinW(length gk.Length) QuestionnairePreviousEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -9216,6 +11736,8 @@ func (e QuestionnairePreviousEl) MinW(length gk.Length) QuestionnairePreviousEl 
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnairePreviousEl) Ml(length gk.Length) QuestionnairePreviousEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -9223,6 +11745,8 @@ func (e QuestionnairePreviousEl) Ml(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnairePreviousEl) Mr(length gk.Length) QuestionnairePreviousEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -9230,6 +11754,8 @@ func (e QuestionnairePreviousEl) Mr(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnairePreviousEl) Mt(length gk.Length) QuestionnairePreviousEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -9237,6 +11763,8 @@ func (e QuestionnairePreviousEl) Mt(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnairePreviousEl) Mx(length gk.Length) QuestionnairePreviousEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -9244,18 +11772,24 @@ func (e QuestionnairePreviousEl) Mx(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnairePreviousEl) My(length gk.Length) QuestionnairePreviousEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnairePreviousEl) Opacity(opacity float32) QuestionnairePreviousEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnairePreviousEl) P(length gk.Length) QuestionnairePreviousEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -9263,6 +11797,8 @@ func (e QuestionnairePreviousEl) P(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnairePreviousEl) Pb(length gk.Length) QuestionnairePreviousEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -9270,6 +11806,8 @@ func (e QuestionnairePreviousEl) Pb(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnairePreviousEl) Pl(length gk.Length) QuestionnairePreviousEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -9277,6 +11815,8 @@ func (e QuestionnairePreviousEl) Pl(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnairePreviousEl) Pr(length gk.Length) QuestionnairePreviousEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -9284,6 +11824,8 @@ func (e QuestionnairePreviousEl) Pr(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnairePreviousEl) Pt(length gk.Length) QuestionnairePreviousEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -9291,6 +11833,8 @@ func (e QuestionnairePreviousEl) Pt(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnairePreviousEl) Px(length gk.Length) QuestionnairePreviousEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -9298,6 +11842,8 @@ func (e QuestionnairePreviousEl) Px(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnairePreviousEl) Py(length gk.Length) QuestionnairePreviousEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -9305,12 +11851,16 @@ func (e QuestionnairePreviousEl) Py(length gk.Length) QuestionnairePreviousEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnairePreviousEl) Right(length gk.Length) QuestionnairePreviousEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnairePreviousEl) Rounded(length gk.Length) QuestionnairePreviousEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -9318,6 +11868,8 @@ func (e QuestionnairePreviousEl) Rounded(length gk.Length) QuestionnairePrevious
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnairePreviousEl) RoundedB(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -9325,6 +11877,8 @@ func (e QuestionnairePreviousEl) RoundedB(length gk.Length) QuestionnairePreviou
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnairePreviousEl) RoundedBl(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -9332,6 +11886,8 @@ func (e QuestionnairePreviousEl) RoundedBl(length gk.Length) QuestionnairePrevio
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnairePreviousEl) RoundedBr(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -9339,6 +11895,8 @@ func (e QuestionnairePreviousEl) RoundedBr(length gk.Length) QuestionnairePrevio
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnairePreviousEl) RoundedL(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -9346,6 +11904,8 @@ func (e QuestionnairePreviousEl) RoundedL(length gk.Length) QuestionnairePreviou
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnairePreviousEl) RoundedR(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -9353,6 +11913,8 @@ func (e QuestionnairePreviousEl) RoundedR(length gk.Length) QuestionnairePreviou
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnairePreviousEl) RoundedT(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -9360,6 +11922,8 @@ func (e QuestionnairePreviousEl) RoundedT(length gk.Length) QuestionnairePreviou
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnairePreviousEl) RoundedTl(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -9367,24 +11931,32 @@ func (e QuestionnairePreviousEl) RoundedTl(length gk.Length) QuestionnairePrevio
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnairePreviousEl) RoundedTr(length gk.Length) QuestionnairePreviousEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnairePreviousEl) RowEnd(end int16) QuestionnairePreviousEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnairePreviousEl) RowSpan(span uint16) QuestionnairePreviousEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnairePreviousEl) RowStart(start int16) QuestionnairePreviousEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -9394,24 +11966,32 @@ func (e QuestionnairePreviousEl) RowStart(start int16) QuestionnairePreviousEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnairePreviousEl) ScrollbarWidth(width gk.Length) QuestionnairePreviousEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnairePreviousEl) Shadow(shadows []gk.BoxShadow) QuestionnairePreviousEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnairePreviousEl) Size(length gk.Length) QuestionnairePreviousEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnairePreviousEl) TextAlign(align gk.TextAlign) QuestionnairePreviousEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -9420,6 +12000,8 @@ func (e QuestionnairePreviousEl) TextAlign(align gk.TextAlign) QuestionnairePrev
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnairePreviousEl) TextBg(bg gk.Color) QuestionnairePreviousEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -9428,18 +12010,24 @@ func (e QuestionnairePreviousEl) TextBg(bg gk.Color) QuestionnairePreviousEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnairePreviousEl) TextColor(color gk.Color) QuestionnairePreviousEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnairePreviousEl) TextDecorationColor(color gk.Color) QuestionnairePreviousEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnairePreviousEl) TextOverflow(overflow gk.TextOverflow) QuestionnairePreviousEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -9448,6 +12036,8 @@ func (e QuestionnairePreviousEl) TextOverflow(overflow gk.TextOverflow) Question
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnairePreviousEl) TextSize(size gk.Length) QuestionnairePreviousEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -9455,24 +12045,32 @@ func (e QuestionnairePreviousEl) TextSize(size gk.Length) QuestionnairePreviousE
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnairePreviousEl) Top(length gk.Length) QuestionnairePreviousEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnairePreviousEl) W(length gk.Length) QuestionnairePreviousEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnairePreviousEl) Large() QuestionnairePreviousEl {
 	tSizableLarge(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnairePreviousEl) Small() QuestionnairePreviousEl {
 	tSizableSmall(rt.N(e.Core))
 	return e
@@ -9482,35 +12080,44 @@ func (e QuestionnairePreviousEl) Small() QuestionnairePreviousEl {
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnairePreviousEl) WithSize(size gk.SizeInto) QuestionnairePreviousEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnairePreviousEl) Xsmall() QuestionnairePreviousEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnairePreviousEl) Text(s string) QuestionnairePreviousEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnairePreviousEl) ChildView(v gk.View) QuestionnairePreviousEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnairePreviousEl) Child(child gk.Element) QuestionnairePreviousEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnairePreviousEl) Children(children ...gk.Element) QuestionnairePreviousEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -9521,7 +12128,7 @@ type QuestionnaireProgressEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireProgress is <gpui_kit::component::questionnaire::QuestionnaireProgress>::new.
+// QuestionnaireProgress calls <gpui_kit::component::questionnaire::QuestionnaireProgress>::new.
 func QuestionnaireProgress(state base.QuestionnaireState, st ...gk.Style) QuestionnaireProgressEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(730)
@@ -9533,20 +12140,24 @@ func QuestionnaireProgress(state base.QuestionnaireState, st ...gk.Style) Questi
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireProgressEl) PopoverStyle() QuestionnaireProgressEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireProgressEl) RoundedFullStyle() QuestionnaireProgressEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -9555,16 +12166,18 @@ func (e QuestionnaireProgressEl) RoundedFullStyle() QuestionnaireProgressEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireProgressEl) FocusRingStyle() QuestionnaireProgressEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -9577,24 +12190,32 @@ func (e QuestionnaireProgressEl) FocusRingStyle() QuestionnaireProgressEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireProgressEl) KeepTextSelection(id gk.ID) QuestionnaireProgressEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireProgressEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireProgressEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireProgressEl) BorderE(width gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireProgressEl) BorderS(width gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -9602,163 +12223,205 @@ func (e QuestionnaireProgressEl) BorderS(width gk.Length) QuestionnaireProgressE
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireProgressEl) FlexRowDir() QuestionnaireProgressEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireProgressEl) InsetE(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireProgressEl) InsetS(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireProgressEl) JustifyFlexEnd() QuestionnaireProgressEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireProgressEl) JustifyFlexStart() QuestionnaireProgressEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireProgressEl) Me(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireProgressEl) Ms(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireProgressEl) Pe(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireProgressEl) Ps(length gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireProgressEl) RoundedE(radius gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireProgressEl) RoundedS(radius gk.Length) QuestionnaireProgressEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireProgressEl) TextEnd() QuestionnaireProgressEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireProgressEl) TextStart() QuestionnaireProgressEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireProgressEl) CornerRadii(radius gk.Corners) QuestionnaireProgressEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireProgressEl) DebugBlue() QuestionnaireProgressEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireProgressEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireProgressEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireProgressEl) DebugGreen() QuestionnaireProgressEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireProgressEl) DebugPink() QuestionnaireProgressEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireProgressEl) DebugRed() QuestionnaireProgressEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireProgressEl) DebugYellow() QuestionnaireProgressEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireProgressEl) FontBlack() QuestionnaireProgressEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireProgressEl) FontBold() QuestionnaireProgressEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireProgressEl) FontExtrabold() QuestionnaireProgressEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireProgressEl) FontExtralight() QuestionnaireProgressEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireProgressEl) FontLight() QuestionnaireProgressEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireProgressEl) FontMedium() QuestionnaireProgressEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireProgressEl) FontNormal() QuestionnaireProgressEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireProgressEl) FontSemibold() QuestionnaireProgressEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireProgressEl) FontThin() QuestionnaireProgressEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -9766,8 +12429,8 @@ func (e QuestionnaireProgressEl) FontThin() QuestionnaireProgressEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -9776,21 +12439,26 @@ func (e QuestionnaireProgressEl) FontThin() QuestionnaireProgressEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireProgressEl) HFlex() QuestionnaireProgressEl {
 	tStyledExtHFlex(rt.N(e.Core))
 	return e
 }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireProgressEl) Margins(margins gk.EdgesInto) QuestionnaireProgressEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireProgressEl) Paddings(paddings gk.EdgesInto) QuestionnaireProgressEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireProgressEl) RefineStyle(style gk.StyleRefinement) QuestionnaireProgressEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -9800,18 +12468,24 @@ func (e QuestionnaireProgressEl) RefineStyle(style gk.StyleRefinement) Questionn
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireProgressEl) VFlex() QuestionnaireProgressEl {
 	tStyledExtVFlex(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireProgressEl) Large() QuestionnaireProgressEl {
 	tSizableLarge(rt.N(e.Core))
 	return e
 }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireProgressEl) Small() QuestionnaireProgressEl {
 	tSizableSmall(rt.N(e.Core))
 	return e
@@ -9821,36 +12495,46 @@ func (e QuestionnaireProgressEl) Small() QuestionnaireProgressEl {
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireProgressEl) WithSize(size gk.SizeInto) QuestionnaireProgressEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireProgressEl) Xsmall() QuestionnaireProgressEl {
 	tSizableXsmall(rt.N(e.Core))
 	return e
 }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireProgressEl) Style(st ...gk.Style) QuestionnaireProgressEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireProgressEl) AspectRatio(ratio float32) QuestionnaireProgressEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireProgressEl) Bg(fill gk.Fill) QuestionnaireProgressEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireProgressEl) Border(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -9858,12 +12542,16 @@ func (e QuestionnaireProgressEl) Border(length gk.Length) QuestionnaireProgressE
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireProgressEl) BorderB(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireProgressEl) BorderColor(borderColor gk.Color) QuestionnaireProgressEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -9871,6 +12559,8 @@ func (e QuestionnaireProgressEl) BorderColor(borderColor gk.Color) Questionnaire
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireProgressEl) BorderL(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -9878,6 +12568,8 @@ func (e QuestionnaireProgressEl) BorderL(length gk.Length) QuestionnaireProgress
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireProgressEl) BorderR(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -9885,6 +12577,8 @@ func (e QuestionnaireProgressEl) BorderR(length gk.Length) QuestionnaireProgress
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireProgressEl) BorderT(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -9892,6 +12586,8 @@ func (e QuestionnaireProgressEl) BorderT(length gk.Length) QuestionnaireProgress
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireProgressEl) BorderX(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -9899,6 +12595,8 @@ func (e QuestionnaireProgressEl) BorderX(length gk.Length) QuestionnaireProgress
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireProgressEl) BorderY(length gk.Length) QuestionnaireProgressEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -9906,30 +12604,40 @@ func (e QuestionnaireProgressEl) BorderY(length gk.Length) QuestionnaireProgress
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireProgressEl) Bottom(length gk.Length) QuestionnaireProgressEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireProgressEl) ColEnd(end int16) QuestionnaireProgressEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireProgressEl) ColSpan(span uint16) QuestionnaireProgressEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireProgressEl) ColStart(start int16) QuestionnaireProgressEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireProgressEl) Cursor(cursor gk.CursorStyle) QuestionnaireProgressEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -9937,36 +12645,48 @@ func (e QuestionnaireProgressEl) Cursor(cursor gk.CursorStyle) QuestionnaireProg
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireProgressEl) FlexBasis(basis gk.Length) QuestionnaireProgressEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireProgressEl) FlexGrow(grow float32) QuestionnaireProgressEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireProgressEl) FlexShrink(shrink float32) QuestionnaireProgressEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireProgressEl) Font(font gk.Font) QuestionnaireProgressEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireProgressEl) FontFamily(familyName string) QuestionnaireProgressEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireProgressEl) FontFeatures(features gk.FontFeatures) QuestionnaireProgressEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -9975,12 +12695,16 @@ func (e QuestionnaireProgressEl) FontFeatures(features gk.FontFeatures) Question
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireProgressEl) FontWeight(weight gk.FontWeight) QuestionnaireProgressEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireProgressEl) Gap(length gk.Length) QuestionnaireProgressEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -9988,6 +12712,8 @@ func (e QuestionnaireProgressEl) Gap(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireProgressEl) GapX(length gk.Length) QuestionnaireProgressEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -9995,18 +12721,24 @@ func (e QuestionnaireProgressEl) GapX(length gk.Length) QuestionnaireProgressEl 
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireProgressEl) GapY(length gk.Length) QuestionnaireProgressEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireProgressEl) GridCols(cols uint16) QuestionnaireProgressEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireProgressEl) GridColsMaxContent(cols uint16) QuestionnaireProgressEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -10014,18 +12746,24 @@ func (e QuestionnaireProgressEl) GridColsMaxContent(cols uint16) QuestionnairePr
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireProgressEl) GridColsMinContent(cols uint16) QuestionnaireProgressEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireProgressEl) GridRows(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireProgressEl) GridRowsMaxContent(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -10033,12 +12771,16 @@ func (e QuestionnaireProgressEl) GridRowsMaxContent(rows uint16) QuestionnairePr
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireProgressEl) GridRowsMinContent(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireProgressEl) H(length gk.Length) QuestionnaireProgressEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -10046,6 +12788,8 @@ func (e QuestionnaireProgressEl) H(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireProgressEl) Inset(length gk.Length) QuestionnaireProgressEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -10053,6 +12797,8 @@ func (e QuestionnaireProgressEl) Inset(length gk.Length) QuestionnaireProgressEl
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireProgressEl) Left(length gk.Length) QuestionnaireProgressEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -10060,36 +12806,48 @@ func (e QuestionnaireProgressEl) Left(length gk.Length) QuestionnaireProgressEl 
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireProgressEl) LineClamp(lines int) QuestionnaireProgressEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireProgressEl) LineHeight(lineHeight gk.Length) QuestionnaireProgressEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireProgressEl) M(length gk.Length) QuestionnaireProgressEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireProgressEl) MaxH(length gk.Length) QuestionnaireProgressEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireProgressEl) MaxSize(length gk.Length) QuestionnaireProgressEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireProgressEl) MaxW(length gk.Length) QuestionnaireProgressEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -10097,24 +12855,32 @@ func (e QuestionnaireProgressEl) MaxW(length gk.Length) QuestionnaireProgressEl 
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireProgressEl) Mb(length gk.Length) QuestionnaireProgressEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireProgressEl) MinH(length gk.Length) QuestionnaireProgressEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireProgressEl) MinSize(length gk.Length) QuestionnaireProgressEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireProgressEl) MinW(length gk.Length) QuestionnaireProgressEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -10122,6 +12888,8 @@ func (e QuestionnaireProgressEl) MinW(length gk.Length) QuestionnaireProgressEl 
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireProgressEl) Ml(length gk.Length) QuestionnaireProgressEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -10129,6 +12897,8 @@ func (e QuestionnaireProgressEl) Ml(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireProgressEl) Mr(length gk.Length) QuestionnaireProgressEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -10136,6 +12906,8 @@ func (e QuestionnaireProgressEl) Mr(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireProgressEl) Mt(length gk.Length) QuestionnaireProgressEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -10143,6 +12915,8 @@ func (e QuestionnaireProgressEl) Mt(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireProgressEl) Mx(length gk.Length) QuestionnaireProgressEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -10150,18 +12924,24 @@ func (e QuestionnaireProgressEl) Mx(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireProgressEl) My(length gk.Length) QuestionnaireProgressEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireProgressEl) Opacity(opacity float32) QuestionnaireProgressEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireProgressEl) P(length gk.Length) QuestionnaireProgressEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -10169,6 +12949,8 @@ func (e QuestionnaireProgressEl) P(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireProgressEl) Pb(length gk.Length) QuestionnaireProgressEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -10176,6 +12958,8 @@ func (e QuestionnaireProgressEl) Pb(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireProgressEl) Pl(length gk.Length) QuestionnaireProgressEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -10183,6 +12967,8 @@ func (e QuestionnaireProgressEl) Pl(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireProgressEl) Pr(length gk.Length) QuestionnaireProgressEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -10190,6 +12976,8 @@ func (e QuestionnaireProgressEl) Pr(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireProgressEl) Pt(length gk.Length) QuestionnaireProgressEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -10197,6 +12985,8 @@ func (e QuestionnaireProgressEl) Pt(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireProgressEl) Px(length gk.Length) QuestionnaireProgressEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -10204,6 +12994,8 @@ func (e QuestionnaireProgressEl) Px(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireProgressEl) Py(length gk.Length) QuestionnaireProgressEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -10211,12 +13003,16 @@ func (e QuestionnaireProgressEl) Py(length gk.Length) QuestionnaireProgressEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireProgressEl) Right(length gk.Length) QuestionnaireProgressEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireProgressEl) Rounded(length gk.Length) QuestionnaireProgressEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -10224,6 +13020,8 @@ func (e QuestionnaireProgressEl) Rounded(length gk.Length) QuestionnaireProgress
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireProgressEl) RoundedB(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -10231,6 +13029,8 @@ func (e QuestionnaireProgressEl) RoundedB(length gk.Length) QuestionnaireProgres
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireProgressEl) RoundedBl(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -10238,6 +13038,8 @@ func (e QuestionnaireProgressEl) RoundedBl(length gk.Length) QuestionnaireProgre
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireProgressEl) RoundedBr(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -10245,6 +13047,8 @@ func (e QuestionnaireProgressEl) RoundedBr(length gk.Length) QuestionnaireProgre
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireProgressEl) RoundedL(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -10252,6 +13056,8 @@ func (e QuestionnaireProgressEl) RoundedL(length gk.Length) QuestionnaireProgres
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireProgressEl) RoundedR(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -10259,6 +13065,8 @@ func (e QuestionnaireProgressEl) RoundedR(length gk.Length) QuestionnaireProgres
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireProgressEl) RoundedT(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -10266,6 +13074,8 @@ func (e QuestionnaireProgressEl) RoundedT(length gk.Length) QuestionnaireProgres
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireProgressEl) RoundedTl(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -10273,24 +13083,32 @@ func (e QuestionnaireProgressEl) RoundedTl(length gk.Length) QuestionnaireProgre
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireProgressEl) RoundedTr(length gk.Length) QuestionnaireProgressEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireProgressEl) RowEnd(end int16) QuestionnaireProgressEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireProgressEl) RowSpan(span uint16) QuestionnaireProgressEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireProgressEl) RowStart(start int16) QuestionnaireProgressEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -10300,24 +13118,32 @@ func (e QuestionnaireProgressEl) RowStart(start int16) QuestionnaireProgressEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireProgressEl) ScrollbarWidth(width gk.Length) QuestionnaireProgressEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireProgressEl) Shadow(shadows []gk.BoxShadow) QuestionnaireProgressEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireProgressEl) Size(length gk.Length) QuestionnaireProgressEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireProgressEl) TextAlign(align gk.TextAlign) QuestionnaireProgressEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -10326,6 +13152,8 @@ func (e QuestionnaireProgressEl) TextAlign(align gk.TextAlign) QuestionnaireProg
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireProgressEl) TextBg(bg gk.Color) QuestionnaireProgressEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -10334,18 +13162,24 @@ func (e QuestionnaireProgressEl) TextBg(bg gk.Color) QuestionnaireProgressEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireProgressEl) TextColor(color gk.Color) QuestionnaireProgressEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireProgressEl) TextDecorationColor(color gk.Color) QuestionnaireProgressEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireProgressEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireProgressEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -10354,6 +13188,8 @@ func (e QuestionnaireProgressEl) TextOverflow(overflow gk.TextOverflow) Question
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireProgressEl) TextSize(size gk.Length) QuestionnaireProgressEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -10361,35 +13197,44 @@ func (e QuestionnaireProgressEl) TextSize(size gk.Length) QuestionnaireProgressE
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireProgressEl) Top(length gk.Length) QuestionnaireProgressEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireProgressEl) W(length gk.Length) QuestionnaireProgressEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireProgressEl) Text(s string) QuestionnaireProgressEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireProgressEl) ChildView(v gk.View) QuestionnaireProgressEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireProgressEl) Child(child gk.Element) QuestionnaireProgressEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireProgressEl) Children(children ...gk.Element) QuestionnaireProgressEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -10400,7 +13245,7 @@ type QuestionnaireSkipEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireSkip is <gpui_kit::component::questionnaire::QuestionnaireSkip>::new.
+// QuestionnaireSkip calls <gpui_kit::component::questionnaire::QuestionnaireSkip>::new.
 func QuestionnaireSkip(state base.QuestionnaireState, st ...gk.Style) QuestionnaireSkipEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(731)
@@ -10412,20 +13257,24 @@ func QuestionnaireSkip(state base.QuestionnaireState, st ...gk.Style) Questionna
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireSkipEl) PopoverStyle() QuestionnaireSkipEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireSkipEl) RoundedFullStyle() QuestionnaireSkipEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -10434,16 +13283,18 @@ func (e QuestionnaireSkipEl) RoundedFullStyle() QuestionnaireSkipEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireSkipEl) FocusRingStyle() QuestionnaireSkipEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -10456,24 +13307,32 @@ func (e QuestionnaireSkipEl) FocusRingStyle() QuestionnaireSkipEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireSkipEl) KeepTextSelection(id gk.ID) QuestionnaireSkipEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireSkipEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireSkipEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireSkipEl) BorderE(width gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireSkipEl) BorderS(width gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -10481,163 +13340,205 @@ func (e QuestionnaireSkipEl) BorderS(width gk.Length) QuestionnaireSkipEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireSkipEl) FlexRowDir() QuestionnaireSkipEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireSkipEl) InsetE(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireSkipEl) InsetS(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireSkipEl) JustifyFlexEnd() QuestionnaireSkipEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireSkipEl) JustifyFlexStart() QuestionnaireSkipEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireSkipEl) Me(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireSkipEl) Ms(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireSkipEl) Pe(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireSkipEl) Ps(length gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireSkipEl) RoundedE(radius gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireSkipEl) RoundedS(radius gk.Length) QuestionnaireSkipEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireSkipEl) TextEnd() QuestionnaireSkipEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireSkipEl) TextStart() QuestionnaireSkipEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireSkipEl) CornerRadii(radius gk.Corners) QuestionnaireSkipEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireSkipEl) DebugBlue() QuestionnaireSkipEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireSkipEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireSkipEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireSkipEl) DebugGreen() QuestionnaireSkipEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireSkipEl) DebugPink() QuestionnaireSkipEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireSkipEl) DebugRed() QuestionnaireSkipEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireSkipEl) DebugYellow() QuestionnaireSkipEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireSkipEl) FontBlack() QuestionnaireSkipEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireSkipEl) FontBold() QuestionnaireSkipEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireSkipEl) FontExtrabold() QuestionnaireSkipEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireSkipEl) FontExtralight() QuestionnaireSkipEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireSkipEl) FontLight() QuestionnaireSkipEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireSkipEl) FontMedium() QuestionnaireSkipEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireSkipEl) FontNormal() QuestionnaireSkipEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireSkipEl) FontSemibold() QuestionnaireSkipEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireSkipEl) FontThin() QuestionnaireSkipEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -10645,8 +13546,8 @@ func (e QuestionnaireSkipEl) FontThin() QuestionnaireSkipEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -10655,18 +13556,23 @@ func (e QuestionnaireSkipEl) FontThin() QuestionnaireSkipEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireSkipEl) HFlex() QuestionnaireSkipEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireSkipEl) Margins(margins gk.EdgesInto) QuestionnaireSkipEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireSkipEl) Paddings(paddings gk.EdgesInto) QuestionnaireSkipEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireSkipEl) RefineStyle(style gk.StyleRefinement) QuestionnaireSkipEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -10676,27 +13582,35 @@ func (e QuestionnaireSkipEl) RefineStyle(style gk.StyleRefinement) Questionnaire
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireSkipEl) VFlex() QuestionnaireSkipEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireSkipEl) Style(st ...gk.Style) QuestionnaireSkipEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireSkipEl) AspectRatio(ratio float32) QuestionnaireSkipEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireSkipEl) Bg(fill gk.Fill) QuestionnaireSkipEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireSkipEl) Border(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -10704,12 +13618,16 @@ func (e QuestionnaireSkipEl) Border(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireSkipEl) BorderB(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireSkipEl) BorderColor(borderColor gk.Color) QuestionnaireSkipEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -10717,6 +13635,8 @@ func (e QuestionnaireSkipEl) BorderColor(borderColor gk.Color) QuestionnaireSkip
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireSkipEl) BorderL(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -10724,6 +13644,8 @@ func (e QuestionnaireSkipEl) BorderL(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireSkipEl) BorderR(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -10731,6 +13653,8 @@ func (e QuestionnaireSkipEl) BorderR(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireSkipEl) BorderT(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -10738,6 +13662,8 @@ func (e QuestionnaireSkipEl) BorderT(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireSkipEl) BorderX(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -10745,6 +13671,8 @@ func (e QuestionnaireSkipEl) BorderX(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireSkipEl) BorderY(length gk.Length) QuestionnaireSkipEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -10752,30 +13680,40 @@ func (e QuestionnaireSkipEl) BorderY(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireSkipEl) Bottom(length gk.Length) QuestionnaireSkipEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireSkipEl) ColEnd(end int16) QuestionnaireSkipEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireSkipEl) ColSpan(span uint16) QuestionnaireSkipEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireSkipEl) ColStart(start int16) QuestionnaireSkipEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireSkipEl) Cursor(cursor gk.CursorStyle) QuestionnaireSkipEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -10783,36 +13721,48 @@ func (e QuestionnaireSkipEl) Cursor(cursor gk.CursorStyle) QuestionnaireSkipEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireSkipEl) FlexBasis(basis gk.Length) QuestionnaireSkipEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireSkipEl) FlexGrow(grow float32) QuestionnaireSkipEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireSkipEl) FlexShrink(shrink float32) QuestionnaireSkipEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireSkipEl) Font(font gk.Font) QuestionnaireSkipEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireSkipEl) FontFamily(familyName string) QuestionnaireSkipEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireSkipEl) FontFeatures(features gk.FontFeatures) QuestionnaireSkipEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -10821,12 +13771,16 @@ func (e QuestionnaireSkipEl) FontFeatures(features gk.FontFeatures) Questionnair
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireSkipEl) FontWeight(weight gk.FontWeight) QuestionnaireSkipEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireSkipEl) Gap(length gk.Length) QuestionnaireSkipEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -10834,6 +13788,8 @@ func (e QuestionnaireSkipEl) Gap(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireSkipEl) GapX(length gk.Length) QuestionnaireSkipEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -10841,18 +13797,24 @@ func (e QuestionnaireSkipEl) GapX(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireSkipEl) GapY(length gk.Length) QuestionnaireSkipEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireSkipEl) GridCols(cols uint16) QuestionnaireSkipEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireSkipEl) GridColsMaxContent(cols uint16) QuestionnaireSkipEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -10860,18 +13822,24 @@ func (e QuestionnaireSkipEl) GridColsMaxContent(cols uint16) QuestionnaireSkipEl
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireSkipEl) GridColsMinContent(cols uint16) QuestionnaireSkipEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireSkipEl) GridRows(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireSkipEl) GridRowsMaxContent(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -10879,12 +13847,16 @@ func (e QuestionnaireSkipEl) GridRowsMaxContent(rows uint16) QuestionnaireSkipEl
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireSkipEl) GridRowsMinContent(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireSkipEl) H(length gk.Length) QuestionnaireSkipEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -10892,6 +13864,8 @@ func (e QuestionnaireSkipEl) H(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireSkipEl) Inset(length gk.Length) QuestionnaireSkipEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -10899,6 +13873,8 @@ func (e QuestionnaireSkipEl) Inset(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireSkipEl) Left(length gk.Length) QuestionnaireSkipEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -10906,36 +13882,48 @@ func (e QuestionnaireSkipEl) Left(length gk.Length) QuestionnaireSkipEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireSkipEl) LineClamp(lines int) QuestionnaireSkipEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireSkipEl) LineHeight(lineHeight gk.Length) QuestionnaireSkipEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireSkipEl) M(length gk.Length) QuestionnaireSkipEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireSkipEl) MaxH(length gk.Length) QuestionnaireSkipEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireSkipEl) MaxSize(length gk.Length) QuestionnaireSkipEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireSkipEl) MaxW(length gk.Length) QuestionnaireSkipEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -10943,24 +13931,32 @@ func (e QuestionnaireSkipEl) MaxW(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireSkipEl) Mb(length gk.Length) QuestionnaireSkipEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireSkipEl) MinH(length gk.Length) QuestionnaireSkipEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireSkipEl) MinSize(length gk.Length) QuestionnaireSkipEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireSkipEl) MinW(length gk.Length) QuestionnaireSkipEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -10968,6 +13964,8 @@ func (e QuestionnaireSkipEl) MinW(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireSkipEl) Ml(length gk.Length) QuestionnaireSkipEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -10975,6 +13973,8 @@ func (e QuestionnaireSkipEl) Ml(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireSkipEl) Mr(length gk.Length) QuestionnaireSkipEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -10982,6 +13982,8 @@ func (e QuestionnaireSkipEl) Mr(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireSkipEl) Mt(length gk.Length) QuestionnaireSkipEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -10989,6 +13991,8 @@ func (e QuestionnaireSkipEl) Mt(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireSkipEl) Mx(length gk.Length) QuestionnaireSkipEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -10996,18 +14000,24 @@ func (e QuestionnaireSkipEl) Mx(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireSkipEl) My(length gk.Length) QuestionnaireSkipEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireSkipEl) Opacity(opacity float32) QuestionnaireSkipEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireSkipEl) P(length gk.Length) QuestionnaireSkipEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -11015,6 +14025,8 @@ func (e QuestionnaireSkipEl) P(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireSkipEl) Pb(length gk.Length) QuestionnaireSkipEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -11022,6 +14034,8 @@ func (e QuestionnaireSkipEl) Pb(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireSkipEl) Pl(length gk.Length) QuestionnaireSkipEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -11029,6 +14043,8 @@ func (e QuestionnaireSkipEl) Pl(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireSkipEl) Pr(length gk.Length) QuestionnaireSkipEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -11036,6 +14052,8 @@ func (e QuestionnaireSkipEl) Pr(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireSkipEl) Pt(length gk.Length) QuestionnaireSkipEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -11043,6 +14061,8 @@ func (e QuestionnaireSkipEl) Pt(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireSkipEl) Px(length gk.Length) QuestionnaireSkipEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -11050,6 +14070,8 @@ func (e QuestionnaireSkipEl) Px(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireSkipEl) Py(length gk.Length) QuestionnaireSkipEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -11057,12 +14079,16 @@ func (e QuestionnaireSkipEl) Py(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireSkipEl) Right(length gk.Length) QuestionnaireSkipEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireSkipEl) Rounded(length gk.Length) QuestionnaireSkipEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -11070,6 +14096,8 @@ func (e QuestionnaireSkipEl) Rounded(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireSkipEl) RoundedB(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -11077,6 +14105,8 @@ func (e QuestionnaireSkipEl) RoundedB(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireSkipEl) RoundedBl(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -11084,6 +14114,8 @@ func (e QuestionnaireSkipEl) RoundedBl(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireSkipEl) RoundedBr(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -11091,6 +14123,8 @@ func (e QuestionnaireSkipEl) RoundedBr(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireSkipEl) RoundedL(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -11098,6 +14132,8 @@ func (e QuestionnaireSkipEl) RoundedL(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireSkipEl) RoundedR(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -11105,6 +14141,8 @@ func (e QuestionnaireSkipEl) RoundedR(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireSkipEl) RoundedT(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -11112,6 +14150,8 @@ func (e QuestionnaireSkipEl) RoundedT(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireSkipEl) RoundedTl(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -11119,24 +14159,32 @@ func (e QuestionnaireSkipEl) RoundedTl(length gk.Length) QuestionnaireSkipEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireSkipEl) RoundedTr(length gk.Length) QuestionnaireSkipEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireSkipEl) RowEnd(end int16) QuestionnaireSkipEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireSkipEl) RowSpan(span uint16) QuestionnaireSkipEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireSkipEl) RowStart(start int16) QuestionnaireSkipEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -11146,24 +14194,32 @@ func (e QuestionnaireSkipEl) RowStart(start int16) QuestionnaireSkipEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireSkipEl) ScrollbarWidth(width gk.Length) QuestionnaireSkipEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireSkipEl) Shadow(shadows []gk.BoxShadow) QuestionnaireSkipEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireSkipEl) Size(length gk.Length) QuestionnaireSkipEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireSkipEl) TextAlign(align gk.TextAlign) QuestionnaireSkipEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -11172,6 +14228,8 @@ func (e QuestionnaireSkipEl) TextAlign(align gk.TextAlign) QuestionnaireSkipEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireSkipEl) TextBg(bg gk.Color) QuestionnaireSkipEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -11180,18 +14238,24 @@ func (e QuestionnaireSkipEl) TextBg(bg gk.Color) QuestionnaireSkipEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireSkipEl) TextColor(color gk.Color) QuestionnaireSkipEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireSkipEl) TextDecorationColor(color gk.Color) QuestionnaireSkipEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireSkipEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireSkipEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -11200,6 +14264,8 @@ func (e QuestionnaireSkipEl) TextOverflow(overflow gk.TextOverflow) Questionnair
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireSkipEl) TextSize(size gk.Length) QuestionnaireSkipEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -11207,53 +14273,70 @@ func (e QuestionnaireSkipEl) TextSize(size gk.Length) QuestionnaireSkipEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireSkipEl) Top(length gk.Length) QuestionnaireSkipEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireSkipEl) W(length gk.Length) QuestionnaireSkipEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireSkipEl) Large() QuestionnaireSkipEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireSkipEl) Small() QuestionnaireSkipEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireSkipEl) WithSize(size gk.SizeInto) QuestionnaireSkipEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireSkipEl) Xsmall() QuestionnaireSkipEl { tSizableXsmall(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireSkipEl) Text(s string) QuestionnaireSkipEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireSkipEl) ChildView(v gk.View) QuestionnaireSkipEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireSkipEl) Child(child gk.Element) QuestionnaireSkipEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireSkipEl) Children(children ...gk.Element) QuestionnaireSkipEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -11264,7 +14347,7 @@ type QuestionnaireSubmitEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireSubmit is <gpui_kit::component::questionnaire::QuestionnaireSubmit>::new.
+// QuestionnaireSubmit calls <gpui_kit::component::questionnaire::QuestionnaireSubmit>::new.
 func QuestionnaireSubmit(state base.QuestionnaireState, st ...gk.Style) QuestionnaireSubmitEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(732)
@@ -11276,20 +14359,24 @@ func QuestionnaireSubmit(state base.QuestionnaireState, st ...gk.Style) Question
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireSubmitEl) PopoverStyle() QuestionnaireSubmitEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireSubmitEl) RoundedFullStyle() QuestionnaireSubmitEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -11298,16 +14385,18 @@ func (e QuestionnaireSubmitEl) RoundedFullStyle() QuestionnaireSubmitEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireSubmitEl) FocusRingStyle() QuestionnaireSubmitEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -11320,24 +14409,32 @@ func (e QuestionnaireSubmitEl) FocusRingStyle() QuestionnaireSubmitEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireSubmitEl) KeepTextSelection(id gk.ID) QuestionnaireSubmitEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireSubmitEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireSubmitEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireSubmitEl) BorderE(width gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireSubmitEl) BorderS(width gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -11345,163 +14442,205 @@ func (e QuestionnaireSubmitEl) BorderS(width gk.Length) QuestionnaireSubmitEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireSubmitEl) FlexRowDir() QuestionnaireSubmitEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireSubmitEl) InsetE(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireSubmitEl) InsetS(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireSubmitEl) JustifyFlexEnd() QuestionnaireSubmitEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireSubmitEl) JustifyFlexStart() QuestionnaireSubmitEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireSubmitEl) Me(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireSubmitEl) Ms(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireSubmitEl) Pe(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireSubmitEl) Ps(length gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireSubmitEl) RoundedE(radius gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireSubmitEl) RoundedS(radius gk.Length) QuestionnaireSubmitEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireSubmitEl) TextEnd() QuestionnaireSubmitEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireSubmitEl) TextStart() QuestionnaireSubmitEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireSubmitEl) CornerRadii(radius gk.Corners) QuestionnaireSubmitEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireSubmitEl) DebugBlue() QuestionnaireSubmitEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireSubmitEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireSubmitEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireSubmitEl) DebugGreen() QuestionnaireSubmitEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireSubmitEl) DebugPink() QuestionnaireSubmitEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireSubmitEl) DebugRed() QuestionnaireSubmitEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireSubmitEl) DebugYellow() QuestionnaireSubmitEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireSubmitEl) FontBlack() QuestionnaireSubmitEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireSubmitEl) FontBold() QuestionnaireSubmitEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireSubmitEl) FontExtrabold() QuestionnaireSubmitEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireSubmitEl) FontExtralight() QuestionnaireSubmitEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireSubmitEl) FontLight() QuestionnaireSubmitEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireSubmitEl) FontMedium() QuestionnaireSubmitEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireSubmitEl) FontNormal() QuestionnaireSubmitEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireSubmitEl) FontSemibold() QuestionnaireSubmitEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireSubmitEl) FontThin() QuestionnaireSubmitEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -11509,8 +14648,8 @@ func (e QuestionnaireSubmitEl) FontThin() QuestionnaireSubmitEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -11519,18 +14658,23 @@ func (e QuestionnaireSubmitEl) FontThin() QuestionnaireSubmitEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireSubmitEl) HFlex() QuestionnaireSubmitEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireSubmitEl) Margins(margins gk.EdgesInto) QuestionnaireSubmitEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireSubmitEl) Paddings(paddings gk.EdgesInto) QuestionnaireSubmitEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireSubmitEl) RefineStyle(style gk.StyleRefinement) QuestionnaireSubmitEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -11540,27 +14684,35 @@ func (e QuestionnaireSubmitEl) RefineStyle(style gk.StyleRefinement) Questionnai
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireSubmitEl) VFlex() QuestionnaireSubmitEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireSubmitEl) Style(st ...gk.Style) QuestionnaireSubmitEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireSubmitEl) AspectRatio(ratio float32) QuestionnaireSubmitEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireSubmitEl) Bg(fill gk.Fill) QuestionnaireSubmitEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireSubmitEl) Border(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -11568,12 +14720,16 @@ func (e QuestionnaireSubmitEl) Border(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireSubmitEl) BorderB(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireSubmitEl) BorderColor(borderColor gk.Color) QuestionnaireSubmitEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -11581,6 +14737,8 @@ func (e QuestionnaireSubmitEl) BorderColor(borderColor gk.Color) QuestionnaireSu
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireSubmitEl) BorderL(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -11588,6 +14746,8 @@ func (e QuestionnaireSubmitEl) BorderL(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireSubmitEl) BorderR(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -11595,6 +14755,8 @@ func (e QuestionnaireSubmitEl) BorderR(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireSubmitEl) BorderT(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -11602,6 +14764,8 @@ func (e QuestionnaireSubmitEl) BorderT(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireSubmitEl) BorderX(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -11609,6 +14773,8 @@ func (e QuestionnaireSubmitEl) BorderX(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireSubmitEl) BorderY(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -11616,30 +14782,40 @@ func (e QuestionnaireSubmitEl) BorderY(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireSubmitEl) Bottom(length gk.Length) QuestionnaireSubmitEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireSubmitEl) ColEnd(end int16) QuestionnaireSubmitEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireSubmitEl) ColSpan(span uint16) QuestionnaireSubmitEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireSubmitEl) ColStart(start int16) QuestionnaireSubmitEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireSubmitEl) Cursor(cursor gk.CursorStyle) QuestionnaireSubmitEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -11647,36 +14823,48 @@ func (e QuestionnaireSubmitEl) Cursor(cursor gk.CursorStyle) QuestionnaireSubmit
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireSubmitEl) FlexBasis(basis gk.Length) QuestionnaireSubmitEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireSubmitEl) FlexGrow(grow float32) QuestionnaireSubmitEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireSubmitEl) FlexShrink(shrink float32) QuestionnaireSubmitEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireSubmitEl) Font(font gk.Font) QuestionnaireSubmitEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireSubmitEl) FontFamily(familyName string) QuestionnaireSubmitEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireSubmitEl) FontFeatures(features gk.FontFeatures) QuestionnaireSubmitEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -11685,12 +14873,16 @@ func (e QuestionnaireSubmitEl) FontFeatures(features gk.FontFeatures) Questionna
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireSubmitEl) FontWeight(weight gk.FontWeight) QuestionnaireSubmitEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireSubmitEl) Gap(length gk.Length) QuestionnaireSubmitEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -11698,6 +14890,8 @@ func (e QuestionnaireSubmitEl) Gap(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireSubmitEl) GapX(length gk.Length) QuestionnaireSubmitEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -11705,18 +14899,24 @@ func (e QuestionnaireSubmitEl) GapX(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireSubmitEl) GapY(length gk.Length) QuestionnaireSubmitEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireSubmitEl) GridCols(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireSubmitEl) GridColsMaxContent(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -11724,18 +14924,24 @@ func (e QuestionnaireSubmitEl) GridColsMaxContent(cols uint16) QuestionnaireSubm
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireSubmitEl) GridColsMinContent(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireSubmitEl) GridRows(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireSubmitEl) GridRowsMaxContent(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -11743,12 +14949,16 @@ func (e QuestionnaireSubmitEl) GridRowsMaxContent(rows uint16) QuestionnaireSubm
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireSubmitEl) GridRowsMinContent(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireSubmitEl) H(length gk.Length) QuestionnaireSubmitEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -11756,6 +14966,8 @@ func (e QuestionnaireSubmitEl) H(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireSubmitEl) Inset(length gk.Length) QuestionnaireSubmitEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -11763,6 +14975,8 @@ func (e QuestionnaireSubmitEl) Inset(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireSubmitEl) Left(length gk.Length) QuestionnaireSubmitEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -11770,36 +14984,48 @@ func (e QuestionnaireSubmitEl) Left(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireSubmitEl) LineClamp(lines int) QuestionnaireSubmitEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireSubmitEl) LineHeight(lineHeight gk.Length) QuestionnaireSubmitEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireSubmitEl) M(length gk.Length) QuestionnaireSubmitEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireSubmitEl) MaxH(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireSubmitEl) MaxSize(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireSubmitEl) MaxW(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -11807,24 +15033,32 @@ func (e QuestionnaireSubmitEl) MaxW(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireSubmitEl) Mb(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireSubmitEl) MinH(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireSubmitEl) MinSize(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireSubmitEl) MinW(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -11832,6 +15066,8 @@ func (e QuestionnaireSubmitEl) MinW(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireSubmitEl) Ml(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -11839,6 +15075,8 @@ func (e QuestionnaireSubmitEl) Ml(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireSubmitEl) Mr(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -11846,6 +15084,8 @@ func (e QuestionnaireSubmitEl) Mr(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireSubmitEl) Mt(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -11853,6 +15093,8 @@ func (e QuestionnaireSubmitEl) Mt(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireSubmitEl) Mx(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -11860,18 +15102,24 @@ func (e QuestionnaireSubmitEl) Mx(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireSubmitEl) My(length gk.Length) QuestionnaireSubmitEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireSubmitEl) Opacity(opacity float32) QuestionnaireSubmitEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireSubmitEl) P(length gk.Length) QuestionnaireSubmitEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -11879,6 +15127,8 @@ func (e QuestionnaireSubmitEl) P(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireSubmitEl) Pb(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -11886,6 +15136,8 @@ func (e QuestionnaireSubmitEl) Pb(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireSubmitEl) Pl(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -11893,6 +15145,8 @@ func (e QuestionnaireSubmitEl) Pl(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireSubmitEl) Pr(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -11900,6 +15154,8 @@ func (e QuestionnaireSubmitEl) Pr(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireSubmitEl) Pt(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -11907,6 +15163,8 @@ func (e QuestionnaireSubmitEl) Pt(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireSubmitEl) Px(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -11914,6 +15172,8 @@ func (e QuestionnaireSubmitEl) Px(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireSubmitEl) Py(length gk.Length) QuestionnaireSubmitEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -11921,12 +15181,16 @@ func (e QuestionnaireSubmitEl) Py(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireSubmitEl) Right(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireSubmitEl) Rounded(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -11934,6 +15198,8 @@ func (e QuestionnaireSubmitEl) Rounded(length gk.Length) QuestionnaireSubmitEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireSubmitEl) RoundedB(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -11941,6 +15207,8 @@ func (e QuestionnaireSubmitEl) RoundedB(length gk.Length) QuestionnaireSubmitEl 
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireSubmitEl) RoundedBl(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -11948,6 +15216,8 @@ func (e QuestionnaireSubmitEl) RoundedBl(length gk.Length) QuestionnaireSubmitEl
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireSubmitEl) RoundedBr(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -11955,6 +15225,8 @@ func (e QuestionnaireSubmitEl) RoundedBr(length gk.Length) QuestionnaireSubmitEl
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireSubmitEl) RoundedL(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -11962,6 +15234,8 @@ func (e QuestionnaireSubmitEl) RoundedL(length gk.Length) QuestionnaireSubmitEl 
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireSubmitEl) RoundedR(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -11969,6 +15243,8 @@ func (e QuestionnaireSubmitEl) RoundedR(length gk.Length) QuestionnaireSubmitEl 
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireSubmitEl) RoundedT(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -11976,6 +15252,8 @@ func (e QuestionnaireSubmitEl) RoundedT(length gk.Length) QuestionnaireSubmitEl 
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireSubmitEl) RoundedTl(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -11983,24 +15261,32 @@ func (e QuestionnaireSubmitEl) RoundedTl(length gk.Length) QuestionnaireSubmitEl
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireSubmitEl) RoundedTr(length gk.Length) QuestionnaireSubmitEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireSubmitEl) RowEnd(end int16) QuestionnaireSubmitEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireSubmitEl) RowSpan(span uint16) QuestionnaireSubmitEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireSubmitEl) RowStart(start int16) QuestionnaireSubmitEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -12010,24 +15296,32 @@ func (e QuestionnaireSubmitEl) RowStart(start int16) QuestionnaireSubmitEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireSubmitEl) ScrollbarWidth(width gk.Length) QuestionnaireSubmitEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireSubmitEl) Shadow(shadows []gk.BoxShadow) QuestionnaireSubmitEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireSubmitEl) Size(length gk.Length) QuestionnaireSubmitEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireSubmitEl) TextAlign(align gk.TextAlign) QuestionnaireSubmitEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -12036,6 +15330,8 @@ func (e QuestionnaireSubmitEl) TextAlign(align gk.TextAlign) QuestionnaireSubmit
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireSubmitEl) TextBg(bg gk.Color) QuestionnaireSubmitEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -12044,18 +15340,24 @@ func (e QuestionnaireSubmitEl) TextBg(bg gk.Color) QuestionnaireSubmitEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireSubmitEl) TextColor(color gk.Color) QuestionnaireSubmitEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireSubmitEl) TextDecorationColor(color gk.Color) QuestionnaireSubmitEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireSubmitEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireSubmitEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -12064,6 +15366,8 @@ func (e QuestionnaireSubmitEl) TextOverflow(overflow gk.TextOverflow) Questionna
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireSubmitEl) TextSize(size gk.Length) QuestionnaireSubmitEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -12071,53 +15375,70 @@ func (e QuestionnaireSubmitEl) TextSize(size gk.Length) QuestionnaireSubmitEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireSubmitEl) Top(length gk.Length) QuestionnaireSubmitEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireSubmitEl) W(length gk.Length) QuestionnaireSubmitEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireSubmitEl) Large() QuestionnaireSubmitEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireSubmitEl) Small() QuestionnaireSubmitEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireSubmitEl) WithSize(size gk.SizeInto) QuestionnaireSubmitEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireSubmitEl) Xsmall() QuestionnaireSubmitEl { tSizableXsmall(rt.N(e.Core)); return e }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireSubmitEl) Text(s string) QuestionnaireSubmitEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireSubmitEl) ChildView(v gk.View) QuestionnaireSubmitEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireSubmitEl) Child(child gk.Element) QuestionnaireSubmitEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireSubmitEl) Children(children ...gk.Element) QuestionnaireSubmitEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e
@@ -12128,7 +15449,7 @@ type QuestionnaireTitleEl struct {
 	rt.ElAnimatableElementSizableNode
 }
 
-// QuestionnaireTitle is <gpui_kit::component::questionnaire::QuestionnaireTitle>::new.
+// QuestionnaireTitle calls <gpui_kit::component::questionnaire::QuestionnaireTitle>::new.
 func QuestionnaireTitle(state base.QuestionnaireState, item string, st ...gk.Style) QuestionnaireTitleEl {
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(733)
@@ -12141,20 +15462,24 @@ func QuestionnaireTitle(state base.QuestionnaireState, item string, st ...gk.Sty
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e QuestionnaireTitleEl) PopoverStyle() QuestionnaireTitleEl {
 	tThemeStyledPopoverStyle(rt.N(e.Core))
 	return e
 }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e QuestionnaireTitleEl) RoundedFullStyle() QuestionnaireTitleEl {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
@@ -12163,16 +15488,18 @@ func (e QuestionnaireTitleEl) RoundedFullStyle() QuestionnaireTitleEl {
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e QuestionnaireTitleEl) FocusRingStyle() QuestionnaireTitleEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -12185,24 +15512,32 @@ func (e QuestionnaireTitleEl) FocusRingStyle() QuestionnaireTitleEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e QuestionnaireTitleEl) KeepTextSelection(id gk.ID) QuestionnaireTitleEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e QuestionnaireTitleEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) QuestionnaireTitleEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e QuestionnaireTitleEl) BorderE(width gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e QuestionnaireTitleEl) BorderS(width gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -12210,163 +15545,205 @@ func (e QuestionnaireTitleEl) BorderS(width gk.Length) QuestionnaireTitleEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e QuestionnaireTitleEl) FlexRowDir() QuestionnaireTitleEl {
 	tLogicalStyledExtFlexRowDir(rt.N(e.Core))
 	return e
 }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e QuestionnaireTitleEl) InsetE(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e QuestionnaireTitleEl) InsetS(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e QuestionnaireTitleEl) JustifyFlexEnd() QuestionnaireTitleEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e QuestionnaireTitleEl) JustifyFlexStart() QuestionnaireTitleEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e QuestionnaireTitleEl) Me(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e QuestionnaireTitleEl) Ms(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e QuestionnaireTitleEl) Pe(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e QuestionnaireTitleEl) Ps(length gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e QuestionnaireTitleEl) RoundedE(radius gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e QuestionnaireTitleEl) RoundedS(radius gk.Length) QuestionnaireTitleEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e QuestionnaireTitleEl) TextEnd() QuestionnaireTitleEl {
 	tLogicalStyledExtTextEnd(rt.N(e.Core))
 	return e
 }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e QuestionnaireTitleEl) TextStart() QuestionnaireTitleEl {
 	tLogicalStyledExtTextStart(rt.N(e.Core))
 	return e
 }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e QuestionnaireTitleEl) CornerRadii(radius gk.Corners) QuestionnaireTitleEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e QuestionnaireTitleEl) DebugBlue() QuestionnaireTitleEl {
 	tStyledExtDebugBlue(rt.N(e.Core))
 	return e
 }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e QuestionnaireTitleEl) DebugFocused(focusHandle gk.FocusHandle) QuestionnaireTitleEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e QuestionnaireTitleEl) DebugGreen() QuestionnaireTitleEl {
 	tStyledExtDebugGreen(rt.N(e.Core))
 	return e
 }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e QuestionnaireTitleEl) DebugPink() QuestionnaireTitleEl {
 	tStyledExtDebugPink(rt.N(e.Core))
 	return e
 }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e QuestionnaireTitleEl) DebugRed() QuestionnaireTitleEl {
 	tStyledExtDebugRed(rt.N(e.Core))
 	return e
 }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e QuestionnaireTitleEl) DebugYellow() QuestionnaireTitleEl {
 	tStyledExtDebugYellow(rt.N(e.Core))
 	return e
 }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e QuestionnaireTitleEl) FontBlack() QuestionnaireTitleEl {
 	tStyledExtFontBlack(rt.N(e.Core))
 	return e
 }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e QuestionnaireTitleEl) FontBold() QuestionnaireTitleEl {
 	tStyledExtFontBold(rt.N(e.Core))
 	return e
 }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e QuestionnaireTitleEl) FontExtrabold() QuestionnaireTitleEl {
 	tStyledExtFontExtrabold(rt.N(e.Core))
 	return e
 }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e QuestionnaireTitleEl) FontExtralight() QuestionnaireTitleEl {
 	tStyledExtFontExtralight(rt.N(e.Core))
 	return e
 }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e QuestionnaireTitleEl) FontLight() QuestionnaireTitleEl {
 	tStyledExtFontLight(rt.N(e.Core))
 	return e
 }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e QuestionnaireTitleEl) FontMedium() QuestionnaireTitleEl {
 	tStyledExtFontMedium(rt.N(e.Core))
 	return e
 }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e QuestionnaireTitleEl) FontNormal() QuestionnaireTitleEl {
 	tStyledExtFontNormal(rt.N(e.Core))
 	return e
 }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e QuestionnaireTitleEl) FontSemibold() QuestionnaireTitleEl {
 	tStyledExtFontSemibold(rt.N(e.Core))
 	return e
 }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e QuestionnaireTitleEl) FontThin() QuestionnaireTitleEl {
 	tStyledExtFontThin(rt.N(e.Core))
 	return e
@@ -12374,8 +15751,8 @@ func (e QuestionnaireTitleEl) FontThin() QuestionnaireTitleEl {
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -12384,18 +15761,23 @@ func (e QuestionnaireTitleEl) FontThin() QuestionnaireTitleEl {
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e QuestionnaireTitleEl) HFlex() QuestionnaireTitleEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e QuestionnaireTitleEl) Margins(margins gk.EdgesInto) QuestionnaireTitleEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e QuestionnaireTitleEl) Paddings(paddings gk.EdgesInto) QuestionnaireTitleEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e QuestionnaireTitleEl) RefineStyle(style gk.StyleRefinement) QuestionnaireTitleEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -12405,45 +15787,61 @@ func (e QuestionnaireTitleEl) RefineStyle(style gk.StyleRefinement) Questionnair
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e QuestionnaireTitleEl) VFlex() QuestionnaireTitleEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
 // Set to Size::Large
+//
+// Large calls <E as gpui_kit::component::Sizable>::large.
 func (e QuestionnaireTitleEl) Large() QuestionnaireTitleEl { tSizableLarge(rt.N(e.Core)); return e }
 
 // Set to Size::Small
+//
+// Small calls <E as gpui_kit::component::Sizable>::small.
 func (e QuestionnaireTitleEl) Small() QuestionnaireTitleEl { tSizableSmall(rt.N(e.Core)); return e }
 
 // Set the ui::Size of this element.
 //
 // Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
 // `px(30.)`
+//
+// WithSize calls <E as gpui_kit::component::Sizable>::with_size.
 func (e QuestionnaireTitleEl) WithSize(size gk.SizeInto) QuestionnaireTitleEl {
 	tSizableWithSize(rt.N(e.Core), size)
 	return e
 }
 
 // Set to Size::XSmall
+//
+// Xsmall calls <E as gpui_kit::component::Sizable>::xsmall.
 func (e QuestionnaireTitleEl) Xsmall() QuestionnaireTitleEl { tSizableXsmall(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e QuestionnaireTitleEl) Style(st ...gk.Style) QuestionnaireTitleEl {
 	rt.Tokens(rt.N(e.Core), st)
 	return e
 }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e QuestionnaireTitleEl) AspectRatio(ratio float32) QuestionnaireTitleEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e QuestionnaireTitleEl) Bg(fill gk.Fill) QuestionnaireTitleEl {
 	tStyledBg(rt.N(e.Core), fill)
 	return e
 }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e QuestionnaireTitleEl) Border(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -12451,12 +15849,16 @@ func (e QuestionnaireTitleEl) Border(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e QuestionnaireTitleEl) BorderB(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e QuestionnaireTitleEl) BorderColor(borderColor gk.Color) QuestionnaireTitleEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -12464,6 +15866,8 @@ func (e QuestionnaireTitleEl) BorderColor(borderColor gk.Color) QuestionnaireTit
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e QuestionnaireTitleEl) BorderL(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -12471,6 +15875,8 @@ func (e QuestionnaireTitleEl) BorderL(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e QuestionnaireTitleEl) BorderR(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -12478,6 +15884,8 @@ func (e QuestionnaireTitleEl) BorderR(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e QuestionnaireTitleEl) BorderT(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -12485,6 +15893,8 @@ func (e QuestionnaireTitleEl) BorderT(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e QuestionnaireTitleEl) BorderX(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -12492,6 +15902,8 @@ func (e QuestionnaireTitleEl) BorderX(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e QuestionnaireTitleEl) BorderY(length gk.Length) QuestionnaireTitleEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -12499,30 +15911,40 @@ func (e QuestionnaireTitleEl) BorderY(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e QuestionnaireTitleEl) Bottom(length gk.Length) QuestionnaireTitleEl {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e QuestionnaireTitleEl) ColEnd(end int16) QuestionnaireTitleEl {
 	tStyledColEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e QuestionnaireTitleEl) ColSpan(span uint16) QuestionnaireTitleEl {
 	tStyledColSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e QuestionnaireTitleEl) ColStart(start int16) QuestionnaireTitleEl {
 	tStyledColStart(rt.N(e.Core), start)
 	return e
 }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e QuestionnaireTitleEl) Cursor(cursor gk.CursorStyle) QuestionnaireTitleEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -12530,36 +15952,48 @@ func (e QuestionnaireTitleEl) Cursor(cursor gk.CursorStyle) QuestionnaireTitleEl
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e QuestionnaireTitleEl) FlexBasis(basis gk.Length) QuestionnaireTitleEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e QuestionnaireTitleEl) FlexGrow(grow float32) QuestionnaireTitleEl {
 	tStyledFlexGrow(rt.N(e.Core), grow)
 	return e
 }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e QuestionnaireTitleEl) FlexShrink(shrink float32) QuestionnaireTitleEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e QuestionnaireTitleEl) Font(font gk.Font) QuestionnaireTitleEl {
 	tStyledFont(rt.N(e.Core), font)
 	return e
 }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e QuestionnaireTitleEl) FontFamily(familyName string) QuestionnaireTitleEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e QuestionnaireTitleEl) FontFeatures(features gk.FontFeatures) QuestionnaireTitleEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -12568,12 +16002,16 @@ func (e QuestionnaireTitleEl) FontFeatures(features gk.FontFeatures) Questionnai
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e QuestionnaireTitleEl) FontWeight(weight gk.FontWeight) QuestionnaireTitleEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e QuestionnaireTitleEl) Gap(length gk.Length) QuestionnaireTitleEl {
 	tStyledGap(rt.N(e.Core), length)
 	return e
@@ -12581,6 +16019,8 @@ func (e QuestionnaireTitleEl) Gap(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e QuestionnaireTitleEl) GapX(length gk.Length) QuestionnaireTitleEl {
 	tStyledGapX(rt.N(e.Core), length)
 	return e
@@ -12588,18 +16028,24 @@ func (e QuestionnaireTitleEl) GapX(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e QuestionnaireTitleEl) GapY(length gk.Length) QuestionnaireTitleEl {
 	tStyledGapY(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e QuestionnaireTitleEl) GridCols(cols uint16) QuestionnaireTitleEl {
 	tStyledGridCols(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e QuestionnaireTitleEl) GridColsMaxContent(cols uint16) QuestionnaireTitleEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -12607,18 +16053,24 @@ func (e QuestionnaireTitleEl) GridColsMaxContent(cols uint16) QuestionnaireTitle
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e QuestionnaireTitleEl) GridColsMinContent(cols uint16) QuestionnaireTitleEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e QuestionnaireTitleEl) GridRows(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRows(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e QuestionnaireTitleEl) GridRowsMaxContent(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -12626,12 +16078,16 @@ func (e QuestionnaireTitleEl) GridRowsMaxContent(rows uint16) QuestionnaireTitle
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e QuestionnaireTitleEl) GridRowsMinContent(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e QuestionnaireTitleEl) H(length gk.Length) QuestionnaireTitleEl {
 	tStyledH(rt.N(e.Core), length)
 	return e
@@ -12639,6 +16095,8 @@ func (e QuestionnaireTitleEl) H(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e QuestionnaireTitleEl) Inset(length gk.Length) QuestionnaireTitleEl {
 	tStyledInset(rt.N(e.Core), length)
 	return e
@@ -12646,6 +16104,8 @@ func (e QuestionnaireTitleEl) Inset(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e QuestionnaireTitleEl) Left(length gk.Length) QuestionnaireTitleEl {
 	tStyledLeft(rt.N(e.Core), length)
 	return e
@@ -12653,36 +16113,48 @@ func (e QuestionnaireTitleEl) Left(length gk.Length) QuestionnaireTitleEl {
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e QuestionnaireTitleEl) LineClamp(lines int) QuestionnaireTitleEl {
 	tStyledLineClamp(rt.N(e.Core), lines)
 	return e
 }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e QuestionnaireTitleEl) LineHeight(lineHeight gk.Length) QuestionnaireTitleEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e QuestionnaireTitleEl) M(length gk.Length) QuestionnaireTitleEl {
 	tStyledM(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e QuestionnaireTitleEl) MaxH(length gk.Length) QuestionnaireTitleEl {
 	tStyledMaxH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e QuestionnaireTitleEl) MaxSize(length gk.Length) QuestionnaireTitleEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e QuestionnaireTitleEl) MaxW(length gk.Length) QuestionnaireTitleEl {
 	tStyledMaxW(rt.N(e.Core), length)
 	return e
@@ -12690,24 +16162,32 @@ func (e QuestionnaireTitleEl) MaxW(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e QuestionnaireTitleEl) Mb(length gk.Length) QuestionnaireTitleEl {
 	tStyledMb(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e QuestionnaireTitleEl) MinH(length gk.Length) QuestionnaireTitleEl {
 	tStyledMinH(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e QuestionnaireTitleEl) MinSize(length gk.Length) QuestionnaireTitleEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e QuestionnaireTitleEl) MinW(length gk.Length) QuestionnaireTitleEl {
 	tStyledMinW(rt.N(e.Core), length)
 	return e
@@ -12715,6 +16195,8 @@ func (e QuestionnaireTitleEl) MinW(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e QuestionnaireTitleEl) Ml(length gk.Length) QuestionnaireTitleEl {
 	tStyledMl(rt.N(e.Core), length)
 	return e
@@ -12722,6 +16204,8 @@ func (e QuestionnaireTitleEl) Ml(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e QuestionnaireTitleEl) Mr(length gk.Length) QuestionnaireTitleEl {
 	tStyledMr(rt.N(e.Core), length)
 	return e
@@ -12729,6 +16213,8 @@ func (e QuestionnaireTitleEl) Mr(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e QuestionnaireTitleEl) Mt(length gk.Length) QuestionnaireTitleEl {
 	tStyledMt(rt.N(e.Core), length)
 	return e
@@ -12736,6 +16222,8 @@ func (e QuestionnaireTitleEl) Mt(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e QuestionnaireTitleEl) Mx(length gk.Length) QuestionnaireTitleEl {
 	tStyledMx(rt.N(e.Core), length)
 	return e
@@ -12743,18 +16231,24 @@ func (e QuestionnaireTitleEl) Mx(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e QuestionnaireTitleEl) My(length gk.Length) QuestionnaireTitleEl {
 	tStyledMy(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e QuestionnaireTitleEl) Opacity(opacity float32) QuestionnaireTitleEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e QuestionnaireTitleEl) P(length gk.Length) QuestionnaireTitleEl {
 	tStyledP(rt.N(e.Core), length)
 	return e
@@ -12762,6 +16256,8 @@ func (e QuestionnaireTitleEl) P(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e QuestionnaireTitleEl) Pb(length gk.Length) QuestionnaireTitleEl {
 	tStyledPb(rt.N(e.Core), length)
 	return e
@@ -12769,6 +16265,8 @@ func (e QuestionnaireTitleEl) Pb(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e QuestionnaireTitleEl) Pl(length gk.Length) QuestionnaireTitleEl {
 	tStyledPl(rt.N(e.Core), length)
 	return e
@@ -12776,6 +16274,8 @@ func (e QuestionnaireTitleEl) Pl(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e QuestionnaireTitleEl) Pr(length gk.Length) QuestionnaireTitleEl {
 	tStyledPr(rt.N(e.Core), length)
 	return e
@@ -12783,6 +16283,8 @@ func (e QuestionnaireTitleEl) Pr(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e QuestionnaireTitleEl) Pt(length gk.Length) QuestionnaireTitleEl {
 	tStyledPt(rt.N(e.Core), length)
 	return e
@@ -12790,6 +16292,8 @@ func (e QuestionnaireTitleEl) Pt(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e QuestionnaireTitleEl) Px(length gk.Length) QuestionnaireTitleEl {
 	tStyledPx(rt.N(e.Core), length)
 	return e
@@ -12797,6 +16301,8 @@ func (e QuestionnaireTitleEl) Px(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e QuestionnaireTitleEl) Py(length gk.Length) QuestionnaireTitleEl {
 	tStyledPy(rt.N(e.Core), length)
 	return e
@@ -12804,12 +16310,16 @@ func (e QuestionnaireTitleEl) Py(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e QuestionnaireTitleEl) Right(length gk.Length) QuestionnaireTitleEl {
 	tStyledRight(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e QuestionnaireTitleEl) Rounded(length gk.Length) QuestionnaireTitleEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -12817,6 +16327,8 @@ func (e QuestionnaireTitleEl) Rounded(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e QuestionnaireTitleEl) RoundedB(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -12824,6 +16336,8 @@ func (e QuestionnaireTitleEl) RoundedB(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e QuestionnaireTitleEl) RoundedBl(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -12831,6 +16345,8 @@ func (e QuestionnaireTitleEl) RoundedBl(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e QuestionnaireTitleEl) RoundedBr(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -12838,6 +16354,8 @@ func (e QuestionnaireTitleEl) RoundedBr(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e QuestionnaireTitleEl) RoundedL(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -12845,6 +16363,8 @@ func (e QuestionnaireTitleEl) RoundedL(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e QuestionnaireTitleEl) RoundedR(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -12852,6 +16372,8 @@ func (e QuestionnaireTitleEl) RoundedR(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e QuestionnaireTitleEl) RoundedT(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -12859,6 +16381,8 @@ func (e QuestionnaireTitleEl) RoundedT(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e QuestionnaireTitleEl) RoundedTl(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -12866,24 +16390,32 @@ func (e QuestionnaireTitleEl) RoundedTl(length gk.Length) QuestionnaireTitleEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e QuestionnaireTitleEl) RoundedTr(length gk.Length) QuestionnaireTitleEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e QuestionnaireTitleEl) RowEnd(end int16) QuestionnaireTitleEl {
 	tStyledRowEnd(rt.N(e.Core), end)
 	return e
 }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e QuestionnaireTitleEl) RowSpan(span uint16) QuestionnaireTitleEl {
 	tStyledRowSpan(rt.N(e.Core), span)
 	return e
 }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e QuestionnaireTitleEl) RowStart(start int16) QuestionnaireTitleEl {
 	tStyledRowStart(rt.N(e.Core), start)
 	return e
@@ -12893,24 +16425,32 @@ func (e QuestionnaireTitleEl) RowStart(start int16) QuestionnaireTitleEl {
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e QuestionnaireTitleEl) ScrollbarWidth(width gk.Length) QuestionnaireTitleEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e QuestionnaireTitleEl) Shadow(shadows []gk.BoxShadow) QuestionnaireTitleEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e QuestionnaireTitleEl) Size(length gk.Length) QuestionnaireTitleEl {
 	tStyledSize(rt.N(e.Core), length)
 	return e
 }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e QuestionnaireTitleEl) TextAlign(align gk.TextAlign) QuestionnaireTitleEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -12919,6 +16459,8 @@ func (e QuestionnaireTitleEl) TextAlign(align gk.TextAlign) QuestionnaireTitleEl
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e QuestionnaireTitleEl) TextBg(bg gk.Color) QuestionnaireTitleEl {
 	tStyledTextBg(rt.N(e.Core), bg)
 	return e
@@ -12927,18 +16469,24 @@ func (e QuestionnaireTitleEl) TextBg(bg gk.Color) QuestionnaireTitleEl {
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e QuestionnaireTitleEl) TextColor(color gk.Color) QuestionnaireTitleEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e QuestionnaireTitleEl) TextDecorationColor(color gk.Color) QuestionnaireTitleEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e QuestionnaireTitleEl) TextOverflow(overflow gk.TextOverflow) QuestionnaireTitleEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -12947,6 +16495,8 @@ func (e QuestionnaireTitleEl) TextOverflow(overflow gk.TextOverflow) Questionnai
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e QuestionnaireTitleEl) TextSize(size gk.Length) QuestionnaireTitleEl {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -12954,35 +16504,44 @@ func (e QuestionnaireTitleEl) TextSize(size gk.Length) QuestionnaireTitleEl {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e QuestionnaireTitleEl) Top(length gk.Length) QuestionnaireTitleEl {
 	tStyledTop(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e QuestionnaireTitleEl) W(length gk.Length) QuestionnaireTitleEl {
 	tStyledW(rt.N(e.Core), length)
 	return e
 }
 
+// Text appends a plain text child to the element.
 func (e QuestionnaireTitleEl) Text(s string) QuestionnaireTitleEl {
 	rt.PutText(rt.N(e.Core), s)
 	return e
 }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e QuestionnaireTitleEl) ChildView(v gk.View) QuestionnaireTitleEl {
 	rt.SlotView(rt.N(e.Core), v)
 	return e
 }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e QuestionnaireTitleEl) Child(child gk.Element) QuestionnaireTitleEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e QuestionnaireTitleEl) Children(children ...gk.Element) QuestionnaireTitleEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e

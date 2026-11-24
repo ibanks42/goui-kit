@@ -1,8 +1,6 @@
-// panels: the panels scene in Go, the same dashboard as ref/src/bin/panels.rs
-// (a port of gpui-fast's views_frames benchmark). 60 panels of 64 labels,
-// each panel a view of its own; `changing` of them change before every frame.
-//
-//	panels-go [panels] [labels] [changing]      (default 60 64 2)
+// Panels scene: renders N child views of M cells each and marks K views dirty per frame
+// via gk.OnFrame. Used by pixel, memory, and frame-cost gates against ref-panels.
+// Usage: panels [panelCount] [cellsPerPanel] [changingPerFrame]
 package main
 
 import (
@@ -15,7 +13,7 @@ import (
 	"gpuikit.dev/gk/s"
 )
 
-const labels = 97 // distinct labels a cell can show
+const labels = 97
 
 type Panel struct {
 	app         *App
@@ -31,6 +29,8 @@ type App struct {
 	root            gk.View
 }
 
+// render describes a single panel view. Because each panel is its own gk.View,
+// dirtying 2 panels per frame leaves the other 58 panels retained by gpui-fast.
 func (p *Panel) render(cx *gk.Cx) gk.Element {
 	hover := gk.NewStyleRefinementDefault().Bg(gk.HSLA(0.1, 0.6, 0.4, 1))
 	cells := gk.Div(s.Flex, s.FlexRow, s.FlexWrap)
@@ -54,8 +54,8 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	return d
 }
 
-// frame runs before every frame (only because init asked for it): change a few panels and mark
-// only them, as a timer or a message from elsewhere would.
+// frame runs in the pre-frame hook (K_FRAME) and dirties a.changing panels per frame;
+// when there are no deferred state writes, Go inline-describes those panels in the same reply.
 func (a *App) frame(cx *gk.Cx) {
 	a.tick++
 	for n := range a.changing {

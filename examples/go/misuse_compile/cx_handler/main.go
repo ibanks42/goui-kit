@@ -1,4 +1,4 @@
-// A handler without the Cx: every handler takes the turn's *gk.Cx first.
+// Compile-time misuse case: OnClick handlers must take *gk.Cx as their first parameter.
 package main
 
 import (

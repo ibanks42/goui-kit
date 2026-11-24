@@ -10,7 +10,7 @@ import (
 // CrossLineEl is gpui_kit::component::plot::tooltip::CrossLine.
 type CrossLineEl struct{ rt.El }
 
-// CrossLine is <gpui_kit::component::plot::tooltip::CrossLine>::new.
+// CrossLine calls <gpui_kit::component::plot::tooltip::CrossLine>::new.
 func CrossLine(point gk.GpuiPoint) CrossLineEl {
 	rt.UseComponentPlot()
 	n := rt.NewNode(712)
@@ -22,7 +22,7 @@ func CrossLine(point gk.GpuiPoint) CrossLineEl {
 // Render a solid translucent highlight band of `thickness` (centered on `point`) instead of the
 // default dashed hairline. Use the bar/band width to highlight the hovered column or row.
 //
-// Band is <gpui_kit::component::plot::tooltip::CrossLine>::band.
+// Band calls <gpui_kit::component::plot::tooltip::CrossLine>::band.
 func (e CrossLineEl) Band(thickness float32) CrossLineEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.F32(thickness)
@@ -31,7 +31,7 @@ func (e CrossLineEl) Band(thickness float32) CrossLineEl {
 
 // Set the cross line axis to both.
 //
-// Both is <gpui_kit::component::plot::tooltip::CrossLine>::both.
+// Both calls <gpui_kit::component::plot::tooltip::CrossLine>::both.
 func (e CrossLineEl) Both() CrossLineEl {
 	rt.Op(rt.N(e.Core), 257)
 	return e
@@ -40,7 +40,7 @@ func (e CrossLineEl) Both() CrossLineEl {
 // Confine the horizontal line to `start, start + length` along the x axis, so it stays within the
 // plot area.
 //
-// HSpan is <gpui_kit::component::plot::tooltip::CrossLine>::h_span.
+// HSpan calls <gpui_kit::component::plot::tooltip::CrossLine>::h_span.
 func (e CrossLineEl) HSpan(start float32, length float32) CrossLineEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(start)
@@ -50,7 +50,7 @@ func (e CrossLineEl) HSpan(start float32, length float32) CrossLineEl {
 
 // Set the vertical line's length along the y axis (from the top edge).
 //
-// Height is <gpui_kit::component::plot::tooltip::CrossLine>::height.
+// Height calls <gpui_kit::component::plot::tooltip::CrossLine>::height.
 func (e CrossLineEl) Height(height float32) CrossLineEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(height)
@@ -59,7 +59,7 @@ func (e CrossLineEl) Height(height float32) CrossLineEl {
 
 // Set the cross line axis to horizontal.
 //
-// Horizontal is <gpui_kit::component::plot::tooltip::CrossLine>::horizontal.
+// Horizontal calls <gpui_kit::component::plot::tooltip::CrossLine>::horizontal.
 func (e CrossLineEl) Horizontal() CrossLineEl {
 	rt.Op(rt.N(e.Core), 260)
 	return e
@@ -68,7 +68,7 @@ func (e CrossLineEl) Horizontal() CrossLineEl {
 // Confine the vertical line to `start, start + length` along the y axis, so it stays within the
 // plot area.
 //
-// Span is <gpui_kit::component::plot::tooltip::CrossLine>::span.
+// Span calls <gpui_kit::component::plot::tooltip::CrossLine>::span.
 func (e CrossLineEl) Span(start float32, length float32) CrossLineEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.F32(start)
@@ -78,7 +78,7 @@ func (e CrossLineEl) Span(start float32, length float32) CrossLineEl {
 
 // Set the horizontal line's length along the x axis (from the left edge).
 //
-// Width is <gpui_kit::component::plot::tooltip::CrossLine>::width.
+// Width calls <gpui_kit::component::plot::tooltip::CrossLine>::width.
 func (e CrossLineEl) Width(width float32) CrossLineEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.F32(width)
@@ -88,7 +88,7 @@ func (e CrossLineEl) Width(width float32) CrossLineEl {
 // DotEl is gpui_kit::component::plot::tooltip::Dot.
 type DotEl struct{ rt.El }
 
-// Dot is <gpui_kit::component::plot::tooltip::Dot>::new.
+// Dot calls <gpui_kit::component::plot::tooltip::Dot>::new.
 func Dot(point gk.GpuiPoint) DotEl {
 	rt.UseComponentPlot()
 	n := rt.NewNode(713)
@@ -99,7 +99,7 @@ func Dot(point gk.GpuiPoint) DotEl {
 
 // Set the fill of the dot.
 //
-// Fill is <gpui_kit::component::plot::tooltip::Dot>::fill.
+// Fill calls <gpui_kit::component::plot::tooltip::Dot>::fill.
 func (e DotEl) Fill(fill gk.Color) DotEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutColor(o, fill)
@@ -112,7 +112,7 @@ func (e DotEl) Fill(fill gk.Color) DotEl {
 // `size` is the ring at full hover progress: in a `TooltipEl` the ring grows out of the dot as the
 // hover fades in.
 //
-// Halo is <gpui_kit::component::plot::tooltip::Dot>::halo.
+// Halo calls <gpui_kit::component::plot::tooltip::Dot>::halo.
 func (e DotEl) Halo(size float32) DotEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.F32(size)
@@ -121,7 +121,7 @@ func (e DotEl) Halo(size float32) DotEl {
 
 // Set the size of the dot.
 //
-// Size is <gpui_kit::component::plot::tooltip::Dot>::size.
+// Size calls <gpui_kit::component::plot::tooltip::Dot>::size.
 func (e DotEl) Size(size float32) DotEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.F32(size)
@@ -130,7 +130,7 @@ func (e DotEl) Size(size float32) DotEl {
 
 // Set the stroke of the dot.
 //
-// Stroke is <gpui_kit::component::plot::tooltip::Dot>::stroke.
+// Stroke calls <gpui_kit::component::plot::tooltip::Dot>::stroke.
 func (e DotEl) Stroke(stroke gk.Color) DotEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	rt.PutColor(o, stroke)
@@ -142,7 +142,7 @@ type TooltipEl struct{ rt.ElAnimatableElement }
 
 // Create a tooltip whose box follows the cursor at `cursor` within a `within`-sized plot.
 //
-// Tooltip is <gpui_kit::component::plot::tooltip::Tooltip>::new.
+// Tooltip calls <gpui_kit::component::plot::tooltip::Tooltip>::new.
 func Tooltip(cursor gk.GpuiPoint, within gk.GpuiSize, st ...gk.Style) TooltipEl {
 	rt.UseComponentPlot()
 	n := rt.NewNode(714)
@@ -155,7 +155,7 @@ func Tooltip(cursor gk.GpuiPoint, within gk.GpuiSize, st ...gk.Style) TooltipEl 
 
 // Set the appearance of the tooltip.
 //
-// Appearance is <gpui_kit::component::plot::tooltip::Tooltip>::appearance.
+// Appearance calls <gpui_kit::component::plot::tooltip::Tooltip>::appearance.
 func (e TooltipEl) Appearance(appearance bool) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 256)
 	o.Bool(appearance)
@@ -164,7 +164,7 @@ func (e TooltipEl) Appearance(appearance bool) TooltipEl {
 
 // Set the cross line of the tooltip.
 //
-// CrossLine is <gpui_kit::component::plot::tooltip::Tooltip>::cross_line.
+// CrossLine calls <gpui_kit::component::plot::tooltip::Tooltip>::cross_line.
 func (e TooltipEl) CrossLine(crossLine CrossLineEl) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 257)
 	o.U32(rt.TakeNode(rt.N(crossLine.Core), false))
@@ -173,7 +173,7 @@ func (e TooltipEl) CrossLine(crossLine CrossLineEl) TooltipEl {
 
 // Set the dots of the tooltip.
 //
-// Dots is <gpui_kit::component::plot::tooltip::Tooltip>::dots.
+// Dots calls <gpui_kit::component::plot::tooltip::Tooltip>::dots.
 func (e TooltipEl) Dots(dots []DotEl) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(uint32(len(dots)))
@@ -185,7 +185,7 @@ func (e TooltipEl) Dots(dots []DotEl) TooltipEl {
 
 // Set the gap of the tooltip.
 //
-// Gap is <gpui_kit::component::plot::tooltip::Tooltip>::gap.
+// Gap calls <gpui_kit::component::plot::tooltip::Tooltip>::gap.
 func (e TooltipEl) Gap(gap float32) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.F32(gap)
@@ -201,7 +201,7 @@ func (e TooltipEl) Gap(gap float32) TooltipEl {
 //
 // Default is true.
 //
-// Glide is <gpui_kit::component::plot::tooltip::Tooltip>::glide.
+// Glide calls <gpui_kit::component::plot::tooltip::Tooltip>::glide.
 func (e TooltipEl) Glide(glide bool) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.Bool(glide)
@@ -213,7 +213,7 @@ func (e TooltipEl) Glide(glide bool) TooltipEl {
 //
 // Among series rows its label lines up with theirs; without any, the labels sit at the start.
 //
-// PlainRow is <gpui_kit::component::plot::tooltip::Tooltip>::plain_row.
+// PlainRow calls <gpui_kit::component::plot::tooltip::Tooltip>::plain_row.
 func (e TooltipEl) PlainRow(label string, value string) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 261)
 	o.Str(label)
@@ -221,13 +221,13 @@ func (e TooltipEl) PlainRow(label string, value string) TooltipEl {
 	return e
 }
 
-// Fade the whole overlay — crosshair, dots and box — to `progress` (`0..=1`).
+// Fade the whole overlay - crosshair, dots and box - to `progress` (`0..=1`).
 //
 // A tooltip returned from `tooltip` already follows the plot's hover, easing in when the cursor
 // lands on a datum and out after it leaves (`progress`); set this to override that, or to fade a
 // tooltip rendered outside a plot.
 //
-// Progress is <gpui_kit::component::plot::tooltip::Tooltip>::progress.
+// Progress calls <gpui_kit::component::plot::tooltip::Tooltip>::progress.
 func (e TooltipEl) Progress(progress float32) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 262)
 	o.F32(progress)
@@ -236,7 +236,7 @@ func (e TooltipEl) Progress(progress float32) TooltipEl {
 
 // Append a series row: a colored swatch, a muted `label`, and a right-aligned `value`.
 //
-// Row is <gpui_kit::component::plot::tooltip::Tooltip>::row.
+// Row calls <gpui_kit::component::plot::tooltip::Tooltip>::row.
 func (e TooltipEl) Row(color gk.Color, label string, value string) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	rt.PutColor(o, color)
@@ -247,19 +247,19 @@ func (e TooltipEl) Row(color gk.Color, label string, value string) TooltipEl {
 
 // Set a bold title row shown at the top of the tooltip (e.g. the hovered x value).
 //
-// Title is <gpui_kit::component::plot::tooltip::Tooltip>::title.
+// Title calls <gpui_kit::component::plot::tooltip::Tooltip>::title.
 func (e TooltipEl) Title(title string) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 264)
 	o.Str(title)
 	return e
 }
 
-// Color the value of the row added last — by `Row` or `PlainRow` — such as green or red by its
+// Color the value of the row added last - by `Row` or `PlainRow` - such as green or red by its
 // sign. The value reads in the tooltip's text color otherwise.
 //
 // Call it right after the row it colors; before any row it does nothing.
 //
-// ValueColor is <gpui_kit::component::plot::tooltip::Tooltip>::value_color.
+// ValueColor calls <gpui_kit::component::plot::tooltip::Tooltip>::value_color.
 func (e TooltipEl) ValueColor(color gk.Color) TooltipEl {
 	o := rt.Op(rt.N(e.Core), 265)
 	rt.PutColor(o, color)
@@ -268,32 +268,38 @@ func (e TooltipEl) ValueColor(color gk.Color) TooltipEl {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e TooltipEl) PopoverStyle() TooltipEl { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e TooltipEl) RoundedFullStyle() TooltipEl { tThemeStyledRoundedFullStyle(rt.N(e.Core)); return e }
 
 // Give this element the focus appearance the framework's own controls use: its border tinted with
 // the focus colour, and the ring outside it.
 //
-// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// The ring is dropped when `focus_ring` is off, leaving the tinted border - an application whose
 // layout clips its containers can turn it off rather than finding room for the ring in each of
 // them. An element without a border draws a 1px line on its edge instead, so borderless controls
 // still show focus.
 //
 // Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
-// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+// control shows one at all - its focus state, `focus_ring`, appearance, and so on.
 //
 // The ring sits outside the element's border, so an ancestor that clips its content will cut it
-// off — leave it a few pixels of room, or don't clip.
+// off - leave it a few pixels of room, or don't clip.
+//
+// FocusRingStyle calls <E as gpui_kit::component::ThemeStyled>::focus_ring_style.
 func (e TooltipEl) FocusRingStyle() TooltipEl {
 	tThemeStyledParentElementFocusRingStyle(rt.N(e.Core))
 	return e
@@ -306,24 +312,32 @@ func (e TooltipEl) FocusRingStyle() TooltipEl {
 //
 // The window remembers each element marked this way until it closes, so mark the row of buttons,
 // not each row of a long list.
+//
+// KeepTextSelection calls <E as gpui_kit::base::ElementExt>::keep_text_selection.
 func (e TooltipEl) KeepTextSelection(id gk.ID) TooltipEl {
 	tElementExtKeepTextSelection(rt.N(e.Core), id)
 	return e
 }
 
 // Invokes `callback` during prepaint with this element's resolved bounds.
+//
+// OnPrepaint calls <E as gpui_kit::base::ElementExt>::on_prepaint.
 func (e TooltipEl) OnPrepaint(callback func(cx *gk.Cx, e gk.Bounds)) TooltipEl {
 	tElementExtOnPrepaint(rt.N(e.Core), callback)
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e TooltipEl) BorderE(width gk.Length) TooltipEl {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e TooltipEl) BorderS(width gk.Length) TooltipEl {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -331,121 +345,163 @@ func (e TooltipEl) BorderS(width gk.Length) TooltipEl {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e TooltipEl) FlexRowDir() TooltipEl { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e TooltipEl) InsetE(length gk.Length) TooltipEl {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e TooltipEl) InsetS(length gk.Length) TooltipEl {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e TooltipEl) JustifyFlexEnd() TooltipEl {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e TooltipEl) JustifyFlexStart() TooltipEl {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e TooltipEl) Me(length gk.Length) TooltipEl {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e TooltipEl) Ms(length gk.Length) TooltipEl {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e TooltipEl) Pe(length gk.Length) TooltipEl {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e TooltipEl) Ps(length gk.Length) TooltipEl {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e TooltipEl) RoundedE(radius gk.Length) TooltipEl {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e TooltipEl) RoundedS(radius gk.Length) TooltipEl {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e TooltipEl) TextEnd() TooltipEl { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e TooltipEl) TextStart() TooltipEl { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e TooltipEl) CornerRadii(radius gk.Corners) TooltipEl {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e TooltipEl) DebugBlue() TooltipEl { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e TooltipEl) DebugFocused(focusHandle gk.FocusHandle) TooltipEl {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e TooltipEl) DebugGreen() TooltipEl { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e TooltipEl) DebugPink() TooltipEl { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e TooltipEl) DebugRed() TooltipEl { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e TooltipEl) DebugYellow() TooltipEl { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e TooltipEl) FontBlack() TooltipEl { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e TooltipEl) FontBold() TooltipEl { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e TooltipEl) FontExtrabold() TooltipEl { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e TooltipEl) FontExtralight() TooltipEl { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e TooltipEl) FontLight() TooltipEl { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e TooltipEl) FontMedium() TooltipEl { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e TooltipEl) FontNormal() TooltipEl { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e TooltipEl) FontSemibold() TooltipEl { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e TooltipEl) FontThin() TooltipEl { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -454,18 +510,23 @@ func (e TooltipEl) FontThin() TooltipEl { tStyledExtFontThin(rt.N(e.Core)); retu
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e TooltipEl) HFlex() TooltipEl { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e TooltipEl) Margins(margins gk.EdgesInto) TooltipEl {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e TooltipEl) Paddings(paddings gk.EdgesInto) TooltipEl {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e TooltipEl) RefineStyle(style gk.StyleRefinement) TooltipEl {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -475,31 +536,43 @@ func (e TooltipEl) RefineStyle(style gk.StyleRefinement) TooltipEl {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e TooltipEl) VFlex() TooltipEl { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e TooltipEl) Style(st ...gk.Style) TooltipEl { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e TooltipEl) AspectRatio(ratio float32) TooltipEl {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e TooltipEl) Bg(fill gk.Fill) TooltipEl { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e TooltipEl) Border(length gk.Length) TooltipEl { tStyledBorder(rt.N(e.Core), length); return e }
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e TooltipEl) BorderB(length gk.Length) TooltipEl {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e TooltipEl) BorderColor(borderColor gk.Color) TooltipEl {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -507,6 +580,8 @@ func (e TooltipEl) BorderColor(borderColor gk.Color) TooltipEl {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e TooltipEl) BorderL(length gk.Length) TooltipEl {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -514,6 +589,8 @@ func (e TooltipEl) BorderL(length gk.Length) TooltipEl {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e TooltipEl) BorderR(length gk.Length) TooltipEl {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -521,6 +598,8 @@ func (e TooltipEl) BorderR(length gk.Length) TooltipEl {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e TooltipEl) BorderT(length gk.Length) TooltipEl {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -528,6 +607,8 @@ func (e TooltipEl) BorderT(length gk.Length) TooltipEl {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e TooltipEl) BorderX(length gk.Length) TooltipEl {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -535,6 +616,8 @@ func (e TooltipEl) BorderX(length gk.Length) TooltipEl {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e TooltipEl) BorderY(length gk.Length) TooltipEl {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -542,18 +625,28 @@ func (e TooltipEl) BorderY(length gk.Length) TooltipEl {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e TooltipEl) Bottom(length gk.Length) TooltipEl { tStyledBottom(rt.N(e.Core), length); return e }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e TooltipEl) ColEnd(end int16) TooltipEl { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e TooltipEl) ColSpan(span uint16) TooltipEl { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e TooltipEl) ColStart(start int16) TooltipEl { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e TooltipEl) Cursor(cursor gk.CursorStyle) TooltipEl {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -561,30 +654,42 @@ func (e TooltipEl) Cursor(cursor gk.CursorStyle) TooltipEl {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e TooltipEl) FlexBasis(basis gk.Length) TooltipEl {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e TooltipEl) FlexGrow(grow float32) TooltipEl { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e TooltipEl) FlexShrink(shrink float32) TooltipEl {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e TooltipEl) Font(font gk.Font) TooltipEl { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e TooltipEl) FontFamily(familyName string) TooltipEl {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e TooltipEl) FontFeatures(features gk.FontFeatures) TooltipEl {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -593,6 +698,8 @@ func (e TooltipEl) FontFeatures(features gk.FontFeatures) TooltipEl {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e TooltipEl) FontWeight(weight gk.FontWeight) TooltipEl {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
@@ -600,16 +707,24 @@ func (e TooltipEl) FontWeight(weight gk.FontWeight) TooltipEl {
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e TooltipEl) GapX(length gk.Length) TooltipEl { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e TooltipEl) GapY(length gk.Length) TooltipEl { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e TooltipEl) GridCols(cols uint16) TooltipEl { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e TooltipEl) GridColsMaxContent(cols uint16) TooltipEl {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -617,15 +732,21 @@ func (e TooltipEl) GridColsMaxContent(cols uint16) TooltipEl {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e TooltipEl) GridColsMinContent(cols uint16) TooltipEl {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e TooltipEl) GridRows(rows uint16) TooltipEl { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e TooltipEl) GridRowsMaxContent(rows uint16) TooltipEl {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -633,121 +754,179 @@ func (e TooltipEl) GridRowsMaxContent(rows uint16) TooltipEl {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e TooltipEl) GridRowsMinContent(rows uint16) TooltipEl {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e TooltipEl) H(length gk.Length) TooltipEl { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e TooltipEl) Inset(length gk.Length) TooltipEl { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e TooltipEl) Left(length gk.Length) TooltipEl { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e TooltipEl) LineClamp(lines int) TooltipEl { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e TooltipEl) LineHeight(lineHeight gk.Length) TooltipEl {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e TooltipEl) M(length gk.Length) TooltipEl { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e TooltipEl) MaxH(length gk.Length) TooltipEl { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e TooltipEl) MaxSize(length gk.Length) TooltipEl {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e TooltipEl) MaxW(length gk.Length) TooltipEl { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e TooltipEl) Mb(length gk.Length) TooltipEl { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e TooltipEl) MinH(length gk.Length) TooltipEl { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e TooltipEl) MinSize(length gk.Length) TooltipEl {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e TooltipEl) MinW(length gk.Length) TooltipEl { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e TooltipEl) Ml(length gk.Length) TooltipEl { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e TooltipEl) Mr(length gk.Length) TooltipEl { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e TooltipEl) Mt(length gk.Length) TooltipEl { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e TooltipEl) Mx(length gk.Length) TooltipEl { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e TooltipEl) My(length gk.Length) TooltipEl { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e TooltipEl) Opacity(opacity float32) TooltipEl {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e TooltipEl) P(length gk.Length) TooltipEl { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e TooltipEl) Pb(length gk.Length) TooltipEl { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e TooltipEl) Pl(length gk.Length) TooltipEl { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e TooltipEl) Pr(length gk.Length) TooltipEl { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e TooltipEl) Pt(length gk.Length) TooltipEl { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e TooltipEl) Px(length gk.Length) TooltipEl { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e TooltipEl) Py(length gk.Length) TooltipEl { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e TooltipEl) Right(length gk.Length) TooltipEl { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e TooltipEl) Rounded(length gk.Length) TooltipEl {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -755,6 +934,8 @@ func (e TooltipEl) Rounded(length gk.Length) TooltipEl {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e TooltipEl) RoundedB(length gk.Length) TooltipEl {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -762,6 +943,8 @@ func (e TooltipEl) RoundedB(length gk.Length) TooltipEl {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e TooltipEl) RoundedBl(length gk.Length) TooltipEl {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -769,6 +952,8 @@ func (e TooltipEl) RoundedBl(length gk.Length) TooltipEl {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e TooltipEl) RoundedBr(length gk.Length) TooltipEl {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -776,6 +961,8 @@ func (e TooltipEl) RoundedBr(length gk.Length) TooltipEl {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e TooltipEl) RoundedL(length gk.Length) TooltipEl {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -783,6 +970,8 @@ func (e TooltipEl) RoundedL(length gk.Length) TooltipEl {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e TooltipEl) RoundedR(length gk.Length) TooltipEl {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -790,6 +979,8 @@ func (e TooltipEl) RoundedR(length gk.Length) TooltipEl {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e TooltipEl) RoundedT(length gk.Length) TooltipEl {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -797,6 +988,8 @@ func (e TooltipEl) RoundedT(length gk.Length) TooltipEl {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e TooltipEl) RoundedTl(length gk.Length) TooltipEl {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -804,39 +997,55 @@ func (e TooltipEl) RoundedTl(length gk.Length) TooltipEl {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e TooltipEl) RoundedTr(length gk.Length) TooltipEl {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e TooltipEl) RowEnd(end int16) TooltipEl { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e TooltipEl) RowSpan(span uint16) TooltipEl { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e TooltipEl) RowStart(start int16) TooltipEl { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e TooltipEl) ScrollbarWidth(width gk.Length) TooltipEl {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e TooltipEl) Shadow(shadows []gk.BoxShadow) TooltipEl {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e TooltipEl) Size(length gk.Length) TooltipEl { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e TooltipEl) TextAlign(align gk.TextAlign) TooltipEl {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -845,23 +1054,31 @@ func (e TooltipEl) TextAlign(align gk.TextAlign) TooltipEl {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e TooltipEl) TextBg(bg gk.Color) TooltipEl { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e TooltipEl) TextColor(color gk.Color) TooltipEl {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e TooltipEl) TextDecorationColor(color gk.Color) TooltipEl {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e TooltipEl) TextOverflow(overflow gk.TextOverflow) TooltipEl {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -870,27 +1087,38 @@ func (e TooltipEl) TextOverflow(overflow gk.TextOverflow) TooltipEl {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e TooltipEl) TextSize(size gk.Length) TooltipEl { tStyledTextSize(rt.N(e.Core), size); return e }
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e TooltipEl) Top(length gk.Length) TooltipEl { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e TooltipEl) W(length gk.Length) TooltipEl { tStyledW(rt.N(e.Core), length); return e }
 
+// Text appends a plain text child to the element.
 func (e TooltipEl) Text(s string) TooltipEl { rt.PutText(rt.N(e.Core), s); return e }
 
-// ChildView embeds a view: the parent's description does not change when the child is described again.
+// ChildView attaches a child view slot so the child can re-render independently.
 func (e TooltipEl) ChildView(v gk.View) TooltipEl { rt.SlotView(rt.N(e.Core), v); return e }
 
 // Add a single child element to this element.
+//
+// Child calls <E as gpui_kit::ParentElement>::child.
 func (e TooltipEl) Child(child gk.Element) TooltipEl {
 	tParentElementChild(rt.N(e.Core), child)
 	return e
 }
 
 // Add multiple child elements to this element.
+//
+// Children calls <E as gpui_kit::ParentElement>::children.
 func (e TooltipEl) Children(children ...gk.Element) TooltipEl {
 	tParentElementChildren(rt.N(e.Core), children...)
 	return e

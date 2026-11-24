@@ -14,7 +14,7 @@ type KitTooltip struct{ rt.ValViewOrTooltip }
 
 // Create a Tooltip with a text content.
 //
-// NewKitTooltip is <gpui_kit::component::tooltip::Tooltip>::new.
+// NewKitTooltip calls <gpui_kit::component::tooltip::Tooltip>::new.
 func NewKitTooltip(text editor.TextInto, st ...gk.Style) KitTooltip {
 	n := rt.NewValue(881)
 	o := rt.NodeArgs(n)
@@ -25,7 +25,7 @@ func NewKitTooltip(text editor.TextInto, st ...gk.Style) KitTooltip {
 
 // Create a Tooltip with a custom element.
 //
-// NewKitTooltipElement is <gpui_kit::component::tooltip::Tooltip>::element.
+// NewKitTooltipElement calls <gpui_kit::component::tooltip::Tooltip>::element.
 func NewKitTooltipElement(builder gk.Element, st ...gk.Style) KitTooltip {
 	n := rt.NewValue(880)
 	o := rt.NodeArgs(n)
@@ -36,7 +36,7 @@ func NewKitTooltipElement(builder gk.Element, st ...gk.Style) KitTooltip {
 
 // Set Action to display key binding information for the tooltip if it exists.
 //
-// Action is <gpui_kit::component::tooltip::Tooltip>::action.
+// Action calls <gpui_kit::component::tooltip::Tooltip>::action.
 func (e KitTooltip) Action(action gk.Action, context gk.Option[string]) KitTooltip {
 	o := rt.Op(rt.N(e.Core), 256)
 	rt.PutAction(o, action)
@@ -51,7 +51,7 @@ func (e KitTooltip) Action(action gk.Action, context gk.Option[string]) KitToolt
 
 // Set KeyBinding information for the tooltip.
 //
-// KeyBinding is <gpui_kit::component::tooltip::Tooltip>::key_binding.
+// KeyBinding calls <gpui_kit::component::tooltip::Tooltip>::key_binding.
 func (e KitTooltip) KeyBinding(keyBinding gk.Option[kit.KbdEl]) KitTooltip {
 	o := rt.Op(rt.N(e.Core), 257)
 	if x0, ok := keyBinding.Get(); ok {
@@ -65,29 +65,37 @@ func (e KitTooltip) KeyBinding(keyBinding gk.Option[kit.KbdEl]) KitTooltip {
 
 // Give this element the surface, edge, shadow and radius of a popover.
 //
-// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
-// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// This is the one surface every popup shares - Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers - so they cannot drift apart. See `popover_shadow` for what the
 // shadow is modelled on.
+//
+// PopoverStyle calls <E as gpui_kit::component::ThemeStyled>::popover_style.
 func (e KitTooltip) PopoverStyle() KitTooltip { tThemeStyledPopoverStyle(rt.N(e.Core)); return e }
 
-// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// Round this element as far as its size allows - a circle if it is square, a pill if it is not -
 // unless the theme squares its corners.
 //
 // Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
+//
+// RoundedFullStyle calls <E as gpui_kit::component::ThemeStyled>::rounded_full_style.
 func (e KitTooltip) RoundedFullStyle() KitTooltip {
 	tThemeStyledRoundedFullStyle(rt.N(e.Core))
 	return e
 }
 
 // Border width on the end edge.
+//
+// BorderE calls <E as gpui_kit::base::LogicalStyledExt>::border_e.
 func (e KitTooltip) BorderE(width gk.Length) KitTooltip {
 	tLogicalStyledExtBorderE(rt.N(e.Core), width)
 	return e
 }
 
 // Border width on the start edge.
+//
+// BorderS calls <E as gpui_kit::base::LogicalStyledExt>::border_s.
 func (e KitTooltip) BorderS(width gk.Length) KitTooltip {
 	tLogicalStyledExtBorderS(rt.N(e.Core), width)
 	return e
@@ -95,121 +103,163 @@ func (e KitTooltip) BorderS(width gk.Length) KitTooltip {
 
 // A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
 // `flex_row_reverse` in RTL.
+//
+// FlexRowDir calls <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir.
 func (e KitTooltip) FlexRowDir() KitTooltip { tLogicalStyledExtFlexRowDir(rt.N(e.Core)); return e }
 
 // Inset from the end edge of the positioned ancestor.
+//
+// InsetE calls <E as gpui_kit::base::LogicalStyledExt>::inset_e.
 func (e KitTooltip) InsetE(length gk.Length) KitTooltip {
 	tLogicalStyledExtInsetE(rt.N(e.Core), length)
 	return e
 }
 
 // Inset from the start edge of the positioned ancestor.
+//
+// InsetS calls <E as gpui_kit::base::LogicalStyledExt>::inset_s.
 func (e KitTooltip) InsetS(length gk.Length) KitTooltip {
 	tLogicalStyledExtInsetS(rt.N(e.Core), length)
 	return e
 }
 
-// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// Packs a row's children against the edge its last child sits on - the end edge of a `FlexRowDir`
 // row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+//
+// JustifyFlexEnd calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end.
 func (e KitTooltip) JustifyFlexEnd() KitTooltip {
 	tLogicalStyledExtJustifyFlexEnd(rt.N(e.Core))
 	return e
 }
 
-// Packs a row's children against the edge its first child sits on — the start edge of a
+// Packs a row's children against the edge its first child sits on - the start edge of a
 // `FlexRowDir` row.
 //
 // `justify_start` is the physical left edge even in a reversed row, so it does not follow the
 // layout direction; this is CSS `flex-start`.
+//
+// JustifyFlexStart calls <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start.
 func (e KitTooltip) JustifyFlexStart() KitTooltip {
 	tLogicalStyledExtJustifyFlexStart(rt.N(e.Core))
 	return e
 }
 
 // Margin on the end edge.
+//
+// Me calls <E as gpui_kit::base::LogicalStyledExt>::me.
 func (e KitTooltip) Me(length gk.Length) KitTooltip {
 	tLogicalStyledExtMe(rt.N(e.Core), length)
 	return e
 }
 
 // Margin on the start edge.
+//
+// Ms calls <E as gpui_kit::base::LogicalStyledExt>::ms.
 func (e KitTooltip) Ms(length gk.Length) KitTooltip {
 	tLogicalStyledExtMs(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the end edge.
+//
+// Pe calls <E as gpui_kit::base::LogicalStyledExt>::pe.
 func (e KitTooltip) Pe(length gk.Length) KitTooltip {
 	tLogicalStyledExtPe(rt.N(e.Core), length)
 	return e
 }
 
 // Padding on the start edge.
+//
+// Ps calls <E as gpui_kit::base::LogicalStyledExt>::ps.
 func (e KitTooltip) Ps(length gk.Length) KitTooltip {
 	tLogicalStyledExtPs(rt.N(e.Core), length)
 	return e
 }
 
 // Corner radius of both end corners.
+//
+// RoundedE calls <E as gpui_kit::base::LogicalStyledExt>::rounded_e.
 func (e KitTooltip) RoundedE(radius gk.Length) KitTooltip {
 	tLogicalStyledExtRoundedE(rt.N(e.Core), radius)
 	return e
 }
 
 // Corner radius of both start corners.
+//
+// RoundedS calls <E as gpui_kit::base::LogicalStyledExt>::rounded_s.
 func (e KitTooltip) RoundedS(radius gk.Length) KitTooltip {
 	tLogicalStyledExtRoundedS(rt.N(e.Core), radius)
 	return e
 }
 
 // Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+//
+// TextEnd calls <E as gpui_kit::base::LogicalStyledExt>::text_end.
 func (e KitTooltip) TextEnd() KitTooltip { tLogicalStyledExtTextEnd(rt.N(e.Core)); return e }
 
 // Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+//
+// TextStart calls <E as gpui_kit::base::LogicalStyledExt>::text_start.
 func (e KitTooltip) TextStart() KitTooltip { tLogicalStyledExtTextStart(rt.N(e.Core)); return e }
 
+// CornerRadii calls <E as gpui_kit::base::StyledExt>::corner_radii.
 func (e KitTooltip) CornerRadii(radius gk.Corners) KitTooltip {
 	tStyledExtCornerRadii(rt.N(e.Core), radius)
 	return e
 }
 
+// DebugBlue calls <E as gpui_kit::base::StyledExt>::debug_blue.
 func (e KitTooltip) DebugBlue() KitTooltip { tStyledExtDebugBlue(rt.N(e.Core)); return e }
 
+// DebugFocused calls <E as gpui_kit::base::StyledExt>::debug_focused.
 func (e KitTooltip) DebugFocused(focusHandle gk.FocusHandle) KitTooltip {
 	tStyledExtDebugFocused(rt.N(e.Core), focusHandle)
 	return e
 }
 
+// DebugGreen calls <E as gpui_kit::base::StyledExt>::debug_green.
 func (e KitTooltip) DebugGreen() KitTooltip { tStyledExtDebugGreen(rt.N(e.Core)); return e }
 
+// DebugPink calls <E as gpui_kit::base::StyledExt>::debug_pink.
 func (e KitTooltip) DebugPink() KitTooltip { tStyledExtDebugPink(rt.N(e.Core)); return e }
 
+// DebugRed calls <E as gpui_kit::base::StyledExt>::debug_red.
 func (e KitTooltip) DebugRed() KitTooltip { tStyledExtDebugRed(rt.N(e.Core)); return e }
 
+// DebugYellow calls <E as gpui_kit::base::StyledExt>::debug_yellow.
 func (e KitTooltip) DebugYellow() KitTooltip { tStyledExtDebugYellow(rt.N(e.Core)); return e }
 
+// FontBlack calls <E as gpui_kit::base::StyledExt>::font_black.
 func (e KitTooltip) FontBlack() KitTooltip { tStyledExtFontBlack(rt.N(e.Core)); return e }
 
+// FontBold calls <E as gpui_kit::base::StyledExt>::font_bold.
 func (e KitTooltip) FontBold() KitTooltip { tStyledExtFontBold(rt.N(e.Core)); return e }
 
+// FontExtrabold calls <E as gpui_kit::base::StyledExt>::font_extrabold.
 func (e KitTooltip) FontExtrabold() KitTooltip { tStyledExtFontExtrabold(rt.N(e.Core)); return e }
 
+// FontExtralight calls <E as gpui_kit::base::StyledExt>::font_extralight.
 func (e KitTooltip) FontExtralight() KitTooltip { tStyledExtFontExtralight(rt.N(e.Core)); return e }
 
+// FontLight calls <E as gpui_kit::base::StyledExt>::font_light.
 func (e KitTooltip) FontLight() KitTooltip { tStyledExtFontLight(rt.N(e.Core)); return e }
 
+// FontMedium calls <E as gpui_kit::base::StyledExt>::font_medium.
 func (e KitTooltip) FontMedium() KitTooltip { tStyledExtFontMedium(rt.N(e.Core)); return e }
 
+// FontNormal calls <E as gpui_kit::base::StyledExt>::font_normal.
 func (e KitTooltip) FontNormal() KitTooltip { tStyledExtFontNormal(rt.N(e.Core)); return e }
 
+// FontSemibold calls <E as gpui_kit::base::StyledExt>::font_semibold.
 func (e KitTooltip) FontSemibold() KitTooltip { tStyledExtFontSemibold(rt.N(e.Core)); return e }
 
+// FontThin calls <E as gpui_kit::base::StyledExt>::font_thin.
 func (e KitTooltip) FontThin() KitTooltip { tStyledExtFontThin(rt.N(e.Core)); return e }
 
 // Lays children out in a row, centered on the cross axis.
 //
-// The centering is the desktop default for a row of controls — an icon beside its label lines up
-// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// The centering is the desktop default for a row of controls - an icon beside its label lines up
+// without either side asking for it - but it is **not** the mirror image of `VFlex`, which leaves
 // the cross axis stretching. A column placed in a row therefore does not take the row's height: it
 // takes its content's height and is centered inside the row. When its content is taller than the
 // row, it overflows equally above and below, so the column's header is pushed off the top edge and
@@ -218,18 +268,23 @@ func (e KitTooltip) FontThin() KitTooltip { tStyledExtFontThin(rt.N(e.Core)); re
 // Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
 // the child owns a header, a footer, or a scroll region that has to resolve against the row's
 // height.
+//
+// HFlex calls <E as gpui_kit::base::StyledExt>::h_flex.
 func (e KitTooltip) HFlex() KitTooltip { tStyledExtHFlex(rt.N(e.Core)); return e }
 
+// Margins calls <E as gpui_kit::base::StyledExt>::margins.
 func (e KitTooltip) Margins(margins gk.EdgesInto) KitTooltip {
 	tStyledExtMargins(rt.N(e.Core), margins)
 	return e
 }
 
+// Paddings calls <E as gpui_kit::base::StyledExt>::paddings.
 func (e KitTooltip) Paddings(paddings gk.EdgesInto) KitTooltip {
 	tStyledExtPaddings(rt.N(e.Core), paddings)
 	return e
 }
 
+// RefineStyle calls <E as gpui_kit::base::StyledExt>::refine_style.
 func (e KitTooltip) RefineStyle(style gk.StyleRefinement) KitTooltip {
 	tStyledExtRefineStyle(rt.N(e.Core), style)
 	return e
@@ -239,21 +294,29 @@ func (e KitTooltip) RefineStyle(style gk.StyleRefinement) KitTooltip {
 //
 // Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
 // column. See `h_flex` for the asymmetry.
+//
+// VFlex calls <E as gpui_kit::base::StyledExt>::v_flex.
 func (e KitTooltip) VFlex() KitTooltip { tStyledExtVFlex(rt.N(e.Core)); return e }
 
-// Style adds style tokens (s.Gap2, s.SizeFull).
+// Style appends nullary style tokens (such as s.Gap2 or s.SizeFull).
 func (e KitTooltip) Style(st ...gk.Style) KitTooltip { rt.Tokens(rt.N(e.Core), st); return e }
 
 // Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+//
+// AspectRatio calls <E as gpui_kit::Styled>::aspect_ratio.
 func (e KitTooltip) AspectRatio(ratio float32) KitTooltip {
 	tStyledAspectRatio(rt.N(e.Core), ratio)
 	return e
 }
 
 // Sets the background color of the element.
+//
+// Bg calls <E as gpui_kit::Styled>::bg.
 func (e KitTooltip) Bg(fill gk.Fill) KitTooltip { tStyledBg(rt.N(e.Core), fill); return e }
 
 // Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+//
+// Border calls <E as gpui_kit::Styled>::border.
 func (e KitTooltip) Border(length gk.Length) KitTooltip {
 	tStyledBorder(rt.N(e.Core), length)
 	return e
@@ -261,12 +324,16 @@ func (e KitTooltip) Border(length gk.Length) KitTooltip {
 
 // Sets the border width of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderB calls <E as gpui_kit::Styled>::border_b.
 func (e KitTooltip) BorderB(length gk.Length) KitTooltip {
 	tStyledBorderB(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the border color of the element.
+//
+// BorderColor calls <E as gpui_kit::Styled>::border_color.
 func (e KitTooltip) BorderColor(borderColor gk.Color) KitTooltip {
 	tStyledBorderColor(rt.N(e.Core), borderColor)
 	return e
@@ -274,6 +341,8 @@ func (e KitTooltip) BorderColor(borderColor gk.Color) KitTooltip {
 
 // Sets the border width of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderL calls <E as gpui_kit::Styled>::border_l.
 func (e KitTooltip) BorderL(length gk.Length) KitTooltip {
 	tStyledBorderL(rt.N(e.Core), length)
 	return e
@@ -281,6 +350,8 @@ func (e KitTooltip) BorderL(length gk.Length) KitTooltip {
 
 // Sets the border width of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderR calls <E as gpui_kit::Styled>::border_r.
 func (e KitTooltip) BorderR(length gk.Length) KitTooltip {
 	tStyledBorderR(rt.N(e.Core), length)
 	return e
@@ -288,6 +359,8 @@ func (e KitTooltip) BorderR(length gk.Length) KitTooltip {
 
 // Sets the border width of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-width#individual-sides)
+//
+// BorderT calls <E as gpui_kit::Styled>::border_t.
 func (e KitTooltip) BorderT(length gk.Length) KitTooltip {
 	tStyledBorderT(rt.N(e.Core), length)
 	return e
@@ -295,6 +368,8 @@ func (e KitTooltip) BorderT(length gk.Length) KitTooltip {
 
 // Sets the border width of the vertical sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderX calls <E as gpui_kit::Styled>::border_x.
 func (e KitTooltip) BorderX(length gk.Length) KitTooltip {
 	tStyledBorderX(rt.N(e.Core), length)
 	return e
@@ -302,6 +377,8 @@ func (e KitTooltip) BorderX(length gk.Length) KitTooltip {
 
 // Sets the border width of the horizontal sides of the element. Docs
 // (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+//
+// BorderY calls <E as gpui_kit::Styled>::border_y.
 func (e KitTooltip) BorderY(length gk.Length) KitTooltip {
 	tStyledBorderY(rt.N(e.Core), length)
 	return e
@@ -309,21 +386,31 @@ func (e KitTooltip) BorderY(length gk.Length) KitTooltip {
 
 // Sets the bottom value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Bottom calls <E as gpui_kit::Styled>::bottom.
 func (e KitTooltip) Bottom(length gk.Length) KitTooltip {
 	tStyledBottom(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the column end of this element.
+//
+// ColEnd calls <E as gpui_kit::Styled>::col_end.
 func (e KitTooltip) ColEnd(end int16) KitTooltip { tStyledColEnd(rt.N(e.Core), end); return e }
 
 // Sets the column span of this element.
+//
+// ColSpan calls <E as gpui_kit::Styled>::col_span.
 func (e KitTooltip) ColSpan(span uint16) KitTooltip { tStyledColSpan(rt.N(e.Core), span); return e }
 
 // Sets the column start of this element.
+//
+// ColStart calls <E as gpui_kit::Styled>::col_start.
 func (e KitTooltip) ColStart(start int16) KitTooltip { tStyledColStart(rt.N(e.Core), start); return e }
 
 // Set the cursor style when hovering over this element
+//
+// Cursor calls <E as gpui_kit::Styled>::cursor.
 func (e KitTooltip) Cursor(cursor gk.CursorStyle) KitTooltip {
 	tStyledCursor(rt.N(e.Core), cursor)
 	return e
@@ -331,30 +418,42 @@ func (e KitTooltip) Cursor(cursor gk.CursorStyle) KitTooltip {
 
 // Sets the initial size of flex items for this element. Docs
 // (https://tailwindcss.com/docs/flex-basis)
+//
+// FlexBasis calls <E as gpui_kit::Styled>::flex_basis.
 func (e KitTooltip) FlexBasis(basis gk.Length) KitTooltip {
 	tStyledFlexBasis(rt.N(e.Core), basis)
 	return e
 }
 
 // Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+//
+// FlexGrow calls <E as gpui_kit::Styled>::flex_grow.
 func (e KitTooltip) FlexGrow(grow float32) KitTooltip { tStyledFlexGrow(rt.N(e.Core), grow); return e }
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+//
+// FlexShrink calls <E as gpui_kit::Styled>::flex_shrink.
 func (e KitTooltip) FlexShrink(shrink float32) KitTooltip {
 	tStyledFlexShrink(rt.N(e.Core), shrink)
 	return e
 }
 
 // Sets the font of this element and its children.
+//
+// Font calls <E as gpui_kit::Styled>::font.
 func (e KitTooltip) Font(font gk.Font) KitTooltip { tStyledFont(rt.N(e.Core), font); return e }
 
 // Sets the font family of this element and its children.
+//
+// FontFamily calls <E as gpui_kit::Styled>::font_family.
 func (e KitTooltip) FontFamily(familyName string) KitTooltip {
 	tStyledFontFamily(rt.N(e.Core), familyName)
 	return e
 }
 
 // Sets the font features of this element and its children.
+//
+// FontFeatures calls <E as gpui_kit::Styled>::font_features.
 func (e KitTooltip) FontFeatures(features gk.FontFeatures) KitTooltip {
 	tStyledFontFeatures(rt.N(e.Core), features)
 	return e
@@ -363,26 +462,38 @@ func (e KitTooltip) FontFeatures(features gk.FontFeatures) KitTooltip {
 // Sets the font weight of this element
 //
 // This value cascades to its child elements.
+//
+// FontWeight calls <E as gpui_kit::Styled>::font_weight.
 func (e KitTooltip) FontWeight(weight gk.FontWeight) KitTooltip {
 	tStyledFontWeight(rt.N(e.Core), weight)
 	return e
 }
 
 // Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+//
+// Gap calls <E as gpui_kit::Styled>::gap.
 func (e KitTooltip) Gap(length gk.Length) KitTooltip { tStyledGap(rt.N(e.Core), length); return e }
 
 // Sets the gap between columns in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapX calls <E as gpui_kit::Styled>::gap_x.
 func (e KitTooltip) GapX(length gk.Length) KitTooltip { tStyledGapX(rt.N(e.Core), length); return e }
 
 // Sets the gap between rows in flex layouts. Docs
 // (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+//
+// GapY calls <E as gpui_kit::Styled>::gap_y.
 func (e KitTooltip) GapY(length gk.Length) KitTooltip { tStyledGapY(rt.N(e.Core), length); return e }
 
 // Sets the grid columns of this element.
+//
+// GridCols calls <E as gpui_kit::Styled>::grid_cols.
 func (e KitTooltip) GridCols(cols uint16) KitTooltip { tStyledGridCols(rt.N(e.Core), cols); return e }
 
 // Sets the grid columns with max-content maximum sizing for content-based column widths.
+//
+// GridColsMaxContent calls <E as gpui_kit::Styled>::grid_cols_max_content.
 func (e KitTooltip) GridColsMaxContent(cols uint16) KitTooltip {
 	tStyledGridColsMaxContent(rt.N(e.Core), cols)
 	return e
@@ -390,15 +501,21 @@ func (e KitTooltip) GridColsMaxContent(cols uint16) KitTooltip {
 
 // Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
 // width 0 in AvailableSpace::MinContent constraints.
+//
+// GridColsMinContent calls <E as gpui_kit::Styled>::grid_cols_min_content.
 func (e KitTooltip) GridColsMinContent(cols uint16) KitTooltip {
 	tStyledGridColsMinContent(rt.N(e.Core), cols)
 	return e
 }
 
 // Sets the grid rows of this element.
+//
+// GridRows calls <E as gpui_kit::Styled>::grid_rows.
 func (e KitTooltip) GridRows(rows uint16) KitTooltip { tStyledGridRows(rt.N(e.Core), rows); return e }
 
 // Sets the grid rows with max-content maximum sizing for content-based row heights.
+//
+// GridRowsMaxContent calls <E as gpui_kit::Styled>::grid_rows_max_content.
 func (e KitTooltip) GridRowsMaxContent(rows uint16) KitTooltip {
 	tStyledGridRowsMaxContent(rt.N(e.Core), rows)
 	return e
@@ -406,121 +523,179 @@ func (e KitTooltip) GridRowsMaxContent(rows uint16) KitTooltip {
 
 // Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
 // 0 in AvailableSpace::MinContent constraints.
+//
+// GridRowsMinContent calls <E as gpui_kit::Styled>::grid_rows_min_content.
 func (e KitTooltip) GridRowsMinContent(rows uint16) KitTooltip {
 	tStyledGridRowsMinContent(rt.N(e.Core), rows)
 	return e
 }
 
 // Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+//
+// H calls <E as gpui_kit::Styled>::h.
 func (e KitTooltip) H(length gk.Length) KitTooltip { tStyledH(rt.N(e.Core), length); return e }
 
 // Sets the top, right, bottom, and left values of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Inset calls <E as gpui_kit::Styled>::inset.
 func (e KitTooltip) Inset(length gk.Length) KitTooltip { tStyledInset(rt.N(e.Core), length); return e }
 
 // Sets the left value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Left calls <E as gpui_kit::Styled>::left.
 func (e KitTooltip) Left(length gk.Length) KitTooltip { tStyledLeft(rt.N(e.Core), length); return e }
 
 // Sets number of lines to show before truncating the text. Docs
 // (https://tailwindcss.com/docs/line-clamp)
+//
+// LineClamp calls <E as gpui_kit::Styled>::line_clamp.
 func (e KitTooltip) LineClamp(lines int) KitTooltip { tStyledLineClamp(rt.N(e.Core), lines); return e }
 
 // Sets the line height of this element and its children.
+//
+// LineHeight calls <E as gpui_kit::Styled>::line_height.
 func (e KitTooltip) LineHeight(lineHeight gk.Length) KitTooltip {
 	tStyledLineHeight(rt.N(e.Core), lineHeight)
 	return e
 }
 
 // Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+//
+// M calls <E as gpui_kit::Styled>::m.
 func (e KitTooltip) M(length gk.Length) KitTooltip { tStyledM(rt.N(e.Core), length); return e }
 
 // Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+//
+// MaxH calls <E as gpui_kit::Styled>::max_h.
 func (e KitTooltip) MaxH(length gk.Length) KitTooltip { tStyledMaxH(rt.N(e.Core), length); return e }
 
 // Sets the maximum width and height of the element.
+//
+// MaxSize calls <E as gpui_kit::Styled>::max_size.
 func (e KitTooltip) MaxSize(length gk.Length) KitTooltip {
 	tStyledMaxSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+//
+// MaxW calls <E as gpui_kit::Styled>::max_w.
 func (e KitTooltip) MaxW(length gk.Length) KitTooltip { tStyledMaxW(rt.N(e.Core), length); return e }
 
 // Sets the bottom margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mb calls <E as gpui_kit::Styled>::mb.
 func (e KitTooltip) Mb(length gk.Length) KitTooltip { tStyledMb(rt.N(e.Core), length); return e }
 
 // Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+//
+// MinH calls <E as gpui_kit::Styled>::min_h.
 func (e KitTooltip) MinH(length gk.Length) KitTooltip { tStyledMinH(rt.N(e.Core), length); return e }
 
 // Sets the minimum width and height of the element.
+//
+// MinSize calls <E as gpui_kit::Styled>::min_size.
 func (e KitTooltip) MinSize(length gk.Length) KitTooltip {
 	tStyledMinSize(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+//
+// MinW calls <E as gpui_kit::Styled>::min_w.
 func (e KitTooltip) MinW(length gk.Length) KitTooltip { tStyledMinW(rt.N(e.Core), length); return e }
 
 // Sets the left margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Ml calls <E as gpui_kit::Styled>::ml.
 func (e KitTooltip) Ml(length gk.Length) KitTooltip { tStyledMl(rt.N(e.Core), length); return e }
 
 // Sets the right margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mr calls <E as gpui_kit::Styled>::mr.
 func (e KitTooltip) Mr(length gk.Length) KitTooltip { tStyledMr(rt.N(e.Core), length); return e }
 
 // Sets the top margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+//
+// Mt calls <E as gpui_kit::Styled>::mt.
 func (e KitTooltip) Mt(length gk.Length) KitTooltip { tStyledMt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+//
+// Mx calls <E as gpui_kit::Styled>::mx.
 func (e KitTooltip) Mx(length gk.Length) KitTooltip { tStyledMx(rt.N(e.Core), length); return e }
 
 // Sets the vertical margin of the element. Docs
 // (https://tailwindcss.com/docs/margin#add-vertical-margin)
+//
+// My calls <E as gpui_kit::Styled>::my.
 func (e KitTooltip) My(length gk.Length) KitTooltip { tStyledMy(rt.N(e.Core), length); return e }
 
 // Sets the opacity of this element and its children.
+//
+// Opacity calls <E as gpui_kit::Styled>::opacity.
 func (e KitTooltip) Opacity(opacity float32) KitTooltip {
 	tStyledOpacity(rt.N(e.Core), opacity)
 	return e
 }
 
 // Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+//
+// P calls <E as gpui_kit::Styled>::p.
 func (e KitTooltip) P(length gk.Length) KitTooltip { tStyledP(rt.N(e.Core), length); return e }
 
 // Sets the bottom padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pb calls <E as gpui_kit::Styled>::pb.
 func (e KitTooltip) Pb(length gk.Length) KitTooltip { tStyledPb(rt.N(e.Core), length); return e }
 
 // Sets the left padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pl calls <E as gpui_kit::Styled>::pl.
 func (e KitTooltip) Pl(length gk.Length) KitTooltip { tStyledPl(rt.N(e.Core), length); return e }
 
 // Sets the right padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pr calls <E as gpui_kit::Styled>::pr.
 func (e KitTooltip) Pr(length gk.Length) KitTooltip { tStyledPr(rt.N(e.Core), length); return e }
 
 // Sets the top padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+//
+// Pt calls <E as gpui_kit::Styled>::pt.
 func (e KitTooltip) Pt(length gk.Length) KitTooltip { tStyledPt(rt.N(e.Core), length); return e }
 
 // Sets the horizontal padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+//
+// Px calls <E as gpui_kit::Styled>::px.
 func (e KitTooltip) Px(length gk.Length) KitTooltip { tStyledPx(rt.N(e.Core), length); return e }
 
 // Sets the vertical padding of the element. Docs
 // (https://tailwindcss.com/docs/padding#add-vertical-padding)
+//
+// Py calls <E as gpui_kit::Styled>::py.
 func (e KitTooltip) Py(length gk.Length) KitTooltip { tStyledPy(rt.N(e.Core), length); return e }
 
 // Sets the right value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Right calls <E as gpui_kit::Styled>::right.
 func (e KitTooltip) Right(length gk.Length) KitTooltip { tStyledRight(rt.N(e.Core), length); return e }
 
 // Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+//
+// Rounded calls <E as gpui_kit::Styled>::rounded.
 func (e KitTooltip) Rounded(length gk.Length) KitTooltip {
 	tStyledRounded(rt.N(e.Core), length)
 	return e
@@ -528,6 +703,8 @@ func (e KitTooltip) Rounded(length gk.Length) KitTooltip {
 
 // Sets the border radius of the bottom side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedB calls <E as gpui_kit::Styled>::rounded_b.
 func (e KitTooltip) RoundedB(length gk.Length) KitTooltip {
 	tStyledRoundedB(rt.N(e.Core), length)
 	return e
@@ -535,6 +712,8 @@ func (e KitTooltip) RoundedB(length gk.Length) KitTooltip {
 
 // Sets the border radius of the bottom left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBl calls <E as gpui_kit::Styled>::rounded_bl.
 func (e KitTooltip) RoundedBl(length gk.Length) KitTooltip {
 	tStyledRoundedBl(rt.N(e.Core), length)
 	return e
@@ -542,6 +721,8 @@ func (e KitTooltip) RoundedBl(length gk.Length) KitTooltip {
 
 // Sets the border radius of the bottom right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedBr calls <E as gpui_kit::Styled>::rounded_br.
 func (e KitTooltip) RoundedBr(length gk.Length) KitTooltip {
 	tStyledRoundedBr(rt.N(e.Core), length)
 	return e
@@ -549,6 +730,8 @@ func (e KitTooltip) RoundedBr(length gk.Length) KitTooltip {
 
 // Sets the border radius of the left side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedL calls <E as gpui_kit::Styled>::rounded_l.
 func (e KitTooltip) RoundedL(length gk.Length) KitTooltip {
 	tStyledRoundedL(rt.N(e.Core), length)
 	return e
@@ -556,6 +739,8 @@ func (e KitTooltip) RoundedL(length gk.Length) KitTooltip {
 
 // Sets the border radius of the right side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedR calls <E as gpui_kit::Styled>::rounded_r.
 func (e KitTooltip) RoundedR(length gk.Length) KitTooltip {
 	tStyledRoundedR(rt.N(e.Core), length)
 	return e
@@ -563,6 +748,8 @@ func (e KitTooltip) RoundedR(length gk.Length) KitTooltip {
 
 // Sets the border radius of the top side of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+//
+// RoundedT calls <E as gpui_kit::Styled>::rounded_t.
 func (e KitTooltip) RoundedT(length gk.Length) KitTooltip {
 	tStyledRoundedT(rt.N(e.Core), length)
 	return e
@@ -570,6 +757,8 @@ func (e KitTooltip) RoundedT(length gk.Length) KitTooltip {
 
 // Sets the border radius of the top left corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTl calls <E as gpui_kit::Styled>::rounded_tl.
 func (e KitTooltip) RoundedTl(length gk.Length) KitTooltip {
 	tStyledRoundedTl(rt.N(e.Core), length)
 	return e
@@ -577,39 +766,55 @@ func (e KitTooltip) RoundedTl(length gk.Length) KitTooltip {
 
 // Sets the border radius of the top right corner of the element. Docs
 // (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+//
+// RoundedTr calls <E as gpui_kit::Styled>::rounded_tr.
 func (e KitTooltip) RoundedTr(length gk.Length) KitTooltip {
 	tStyledRoundedTr(rt.N(e.Core), length)
 	return e
 }
 
 // Sets the row end of this element.
+//
+// RowEnd calls <E as gpui_kit::Styled>::row_end.
 func (e KitTooltip) RowEnd(end int16) KitTooltip { tStyledRowEnd(rt.N(e.Core), end); return e }
 
 // Sets the row span of this element.
+//
+// RowSpan calls <E as gpui_kit::Styled>::row_span.
 func (e KitTooltip) RowSpan(span uint16) KitTooltip { tStyledRowSpan(rt.N(e.Core), span); return e }
 
 // Sets the row start of this element.
+//
+// RowStart calls <E as gpui_kit::Styled>::row_start.
 func (e KitTooltip) RowStart(start int16) KitTooltip { tStyledRowStart(rt.N(e.Core), start); return e }
 
 // Set the space to be reserved for rendering the scrollbar.
 //
 // This will only affect the layout of the element when overflow for this element is set to
 // `Overflow::Scroll`.
+//
+// ScrollbarWidth calls <E as gpui_kit::Styled>::scrollbar_width.
 func (e KitTooltip) ScrollbarWidth(width gk.Length) KitTooltip {
 	tStyledScrollbarWidth(rt.N(e.Core), width)
 	return e
 }
 
 // Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+//
+// Shadow calls <E as gpui_kit::Styled>::shadow.
 func (e KitTooltip) Shadow(shadows []gk.BoxShadow) KitTooltip {
 	tStyledShadow(rt.N(e.Core), shadows)
 	return e
 }
 
 // Sets the width and height of the element.
+//
+// Size calls <E as gpui_kit::Styled>::size.
 func (e KitTooltip) Size(length gk.Length) KitTooltip { tStyledSize(rt.N(e.Core), length); return e }
 
 // Set the text alignment of the element.
+//
+// TextAlign calls <E as gpui_kit::Styled>::text_align.
 func (e KitTooltip) TextAlign(align gk.TextAlign) KitTooltip {
 	tStyledTextAlign(rt.N(e.Core), align)
 	return e
@@ -618,23 +823,31 @@ func (e KitTooltip) TextAlign(align gk.TextAlign) KitTooltip {
 // Sets the background color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextBg calls <E as gpui_kit::Styled>::text_bg.
 func (e KitTooltip) TextBg(bg gk.Color) KitTooltip { tStyledTextBg(rt.N(e.Core), bg); return e }
 
 // Sets the text color of this element.
 //
 // This value cascades to its child elements.
+//
+// TextColor calls <E as gpui_kit::Styled>::text_color.
 func (e KitTooltip) TextColor(color gk.Color) KitTooltip {
 	tStyledTextColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the color for the underline on this element
+//
+// TextDecorationColor calls <E as gpui_kit::Styled>::text_decoration_color.
 func (e KitTooltip) TextDecorationColor(color gk.Color) KitTooltip {
 	tStyledTextDecorationColor(rt.N(e.Core), color)
 	return e
 }
 
 // Sets the text overflow behavior of the element.
+//
+// TextOverflow calls <E as gpui_kit::Styled>::text_overflow.
 func (e KitTooltip) TextOverflow(overflow gk.TextOverflow) KitTooltip {
 	tStyledTextOverflow(rt.N(e.Core), overflow)
 	return e
@@ -643,6 +856,8 @@ func (e KitTooltip) TextOverflow(overflow gk.TextOverflow) KitTooltip {
 // Sets the text size of this element.
 //
 // This value cascades to its child elements.
+//
+// TextSize calls <E as gpui_kit::Styled>::text_size.
 func (e KitTooltip) TextSize(size gk.Length) KitTooltip {
 	tStyledTextSize(rt.N(e.Core), size)
 	return e
@@ -650,7 +865,11 @@ func (e KitTooltip) TextSize(size gk.Length) KitTooltip {
 
 // Sets the top value of a positioned element. Docs
 // (https://tailwindcss.com/docs/top-right-bottom-left)
+//
+// Top calls <E as gpui_kit::Styled>::top.
 func (e KitTooltip) Top(length gk.Length) KitTooltip { tStyledTop(rt.N(e.Core), length); return e }
 
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+//
+// W calls <E as gpui_kit::Styled>::w.
 func (e KitTooltip) W(length gk.Length) KitTooltip { tStyledW(rt.N(e.Core), length); return e }

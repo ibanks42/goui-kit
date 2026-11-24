@@ -1,5 +1,5 @@
-# The write-rule case: four frames, an image after each. Before every frame the app writes
-# "frame N" into the input; the input and the echo below it must show the same N.
+# Offscreen script for the writerule pixel gate (gates/pixels.sh writerule).
+# Captures four consecutive frames to check per-frame state updates.
 size 480 200
 frame
 shot 1.png

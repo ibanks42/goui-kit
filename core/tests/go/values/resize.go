@@ -1,6 +1,3 @@
-// c6-resize: a resizable group whose divider the app draws through an item function over the kit's
-// ResizeHandleContext (gk.Items) given to
-// ResizablePanelGroupEl.WithHandleAppearance.
 package main
 
 import (
@@ -13,27 +10,25 @@ import (
 	"gpuikit.dev/gk/theme"
 )
 
-// c6-resize's state: one row per handle the group draws.
+// c6 holds the custom handle RowSource and ResizableState for `c6-resize`.
 var c6 struct {
 	handles gk.RowSource
 	resizer base.ResizableState
-	made    bool // the row source exists
+	made    bool
 }
 
 func init() {
 	modes["c6-resize"] = &mode{init: comp6Init, view: comp6View,
-		// the pointer over the divider between the panels (the left one is 200 wide), then away
+		// Move the pointer onto the horizontal handle at x=200 and then away to observe Idle -> Hovered transitions.
 		script: "size 640 480\nframe\nframe\nmove 200 100\nframe\nframe\nframe\nmove 500 300\nframe\nframe\nframe\nstat\n"}
 }
 
-// The root view's init (a row source needs the window, which a view's init has).
 func comp6Init(a *App, cx *gk.Cx) {
 	c6.handles = overlay.Items(cx, a.handleRow)
 	c6.resizer = base.NewResizableState(cx)
 	c6.made = true
 }
 
-// The names of the enum values the checks print.
 func axisName(x gk.Axis) string {
 	if x == gk.AxisHorizontal {
 		return "Horizontal"
@@ -52,8 +47,9 @@ func stateName(x base.ResizeHandleState) string {
 	return [...]string{"Idle", "Hovered", "Pressed", "Dragging"}[x]
 }
 
-// The handle's visible part, drawn from the snapshot of the context the kit hands the renderer.
-// Go: an item function is handed the context, not its row; the group has one divider, row 0.
+// handleRow proves HResizable's custom handle appearance callback receives
+// Horizontal axis, no outer edge (has_edge=false), and transitions from State
+// Idle to Hovered when the pointer moves onto the divider at x=200.
 func (a *App) handleRow(cx *gk.Cx, ctx base.ResizeHandleContext) gk.Element {
 	edge, hasEdge := ctx.Edge.Get()
 	fmt.Printf("values c6 handle row=%d axis=%s edge=%s has_edge=%v active=%v state=%s\n", 0, axisName(ctx.Axis), edgeName(edge),
