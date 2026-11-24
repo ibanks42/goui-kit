@@ -69,8 +69,9 @@ pub fn apply_component_button(dx: &mut Dx, mut el: gpui_kit::component::button::
             272 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::button::Button>::tooltip_show_delay(el, a0) }; }
             273 => { el = { let Some((a0, a1, a2)) = (|| Some((gpui_kit::SharedString::new(r.str()), genapi::action(r).ok()?, if r.u8() != 0 { Some(r.str()) } else { None })))() else { continue }; <gpui_kit::component::button::Button>::tooltip_with_action(el, a0, &*a1, a2) }; }
             274 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::component::button::Button>::track_focus(el, &a0) }; }
-            275 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::button::Button>::loading_icon(el, a0) }; }
-            276 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::button::Button>::icon(el, a0) }; }
+            275 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::button::Button>::loading_icon(el, a0) }; }
+            276 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::button::Button>::icon(el, a0) }; }
+            277 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::button::Button>::aria_expanded(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
@@ -218,7 +219,7 @@ pub fn apply_component_toggle(dx: &mut Dx, mut el: gpui_kit::component::button::
             258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::button::Toggle>::on_click(el, a0) }; }
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::button::Toggle>::tooltip(el, a0) }; }
             260 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::button::Toggle>::tooltip_show_delay(el, a0) }; }
-            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::button::Toggle>::icon(el, a0) }; }
+            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::button::Toggle>::icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

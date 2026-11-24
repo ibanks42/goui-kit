@@ -29,7 +29,7 @@ pub fn sb_component_diff_line_position(s: gpui_kit::component::diff::DiffLinePos
     }
 }
 pub fn c_985(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffLinePosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffLinePosition>::line(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
-pub fn c_986(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = en_103(r.u16()); let a2 = r.u64() as usize; let cx = &mut *c.cx; let mut s = <gpui_kit::component::diff::DiffLinePosition>::new(a0, a1, a2); for _ in 0..r.u16() { let op = r.u16(); s = sb_component_diff_line_position(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
+pub fn c_986(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = en_104(r.u16()); let a2 = r.u64() as usize; let cx = &mut *c.cx; let mut s = <gpui_kit::component::diff::DiffLinePosition>::new(a0, a1, a2); for _ in 0..r.u16() { let op = r.u16(); s = sb_component_diff_line_position(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_987(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffLinePosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffLinePosition>::path(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_988(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffLinePosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffLinePosition>::side(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1641(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffParseError, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffParseError>::line(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -39,9 +39,9 @@ pub fn sb_component_diff_state(s: gpui_kit::component::diff::DiffState, op: u16,
         1 => { let a0 = if r.u8() != 0 { Some(r.u64() as usize) } else { None }; <gpui_kit::component::diff::DiffState>::with_context_lines(s, a0) }
         2 => { let a0 = r.u64() as usize; <gpui_kit::component::diff::DiffState>::with_expansion_lines(s, a0) }
         3 => { let a0 = r.u64() as usize; <gpui_kit::component::diff::DiffState>::with_inline_max_line_length(s, a0) }
-        4 => { let a0 = if r.u8() != 0 { Some(en_101(r.u16())) } else { None }; <gpui_kit::component::diff::DiffState>::with_inline_unit(s, a0) }
+        4 => { let a0 = if r.u8() != 0 { Some(en_102(r.u16())) } else { None }; <gpui_kit::component::diff::DiffState>::with_inline_unit(s, a0) }
         5 => { let a0 = r.u64() as usize; <gpui_kit::component::diff::DiffState>::with_min_collapsed_lines(s, a0) }
-        6 => { let a0 = en_102(r.u16()); <gpui_kit::component::diff::DiffState>::with_mode(s, a0) }
+        6 => { let a0 = en_103(r.u16()); <gpui_kit::component::diff::DiffState>::with_mode(s, a0) }
         7 => { let a0 = r.u64() as usize; <gpui_kit::component::diff::DiffState>::with_syntax_max_line_length(s, a0) }
         8 => { let Some((a0,)) = (|| Some(({ let a = crate::shim_text::Ask::take(r.u64()); move |k0: &str, k1: &str| -> std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)> { a.get::<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>, std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>>(crate::shim_text::key(&(&k0, &k1)), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>> { let _ = &dx; Some({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, rc_22(r, dx)?)); } v }) }, |v| v, Default::default) } },)))() else { return s }; <gpui_kit::component::diff::DiffState>::with_syntax_highlighter(s, a0) }
         _ => s,
@@ -61,7 +61,7 @@ pub fn c_999(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = 
 pub fn c_1000(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_component_diff_file)?); } v }; let entity = c.cx.new(|cx| { let mut s = <gpui_kit::component::diff::DiffState>::new(a0, cx); for _ in 0..r.u16() { let op = r.u16(); s = sb_component_diff_state(s, op, r); } s }); let h = genapi::state_new(entity, c); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_1001(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::next_change(s, cx); })?; Ok(()) }
 pub fn c_1002(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::previous_change(s, cx); })?; Ok(()) }
-pub fn c_1003(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); let a1 = r.u64() as usize; let a2 = if r.u8() != 0 { Some(en_97(r.u16())) } else { None }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::resolve_conflict(s, &a0[..], a1, a2, cx); })?; Ok(()) }
+pub fn c_1003(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); let a1 = r.u64() as usize; let a2 = if r.u8() != 0 { Some(en_98(r.u16())) } else { None }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::resolve_conflict(s, &a0[..], a1, a2, cx); })?; Ok(()) }
 pub fn c_1004(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); let bytes = genapi::state_read::<gpui_kit::component::diff::DiffState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffState>::resolved_text(s, &a0[..]), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1005(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::scroll_to_file(s, &a0[..], cx); })?; Ok(()) }
 pub fn c_1006(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::obj_clone::<gpui_kit::component::diff::DiffLinePosition>(r.u64())?; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::scroll_to_line(s, a0, cx); })?; Ok(()) }
@@ -71,9 +71,9 @@ pub fn c_1009(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h =
 pub fn c_1010(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); let a1 = r.u8() != 0; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_file_collapsed(s, &a0[..], a1, cx); })?; Ok(()) }
 pub fn c_1011(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_component_diff_file)?); } v }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_files(s, a0, cx); })?; Ok(()) }
 pub fn c_1012(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_inline_max_line_length(s, a0, cx); })?; Ok(()) }
-pub fn c_1013(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = if r.u8() != 0 { Some(en_101(r.u16())) } else { None }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_inline_unit(s, a0, cx); })?; Ok(()) }
+pub fn c_1013(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = if r.u8() != 0 { Some(en_102(r.u16())) } else { None }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_inline_unit(s, a0, cx); })?; Ok(()) }
 pub fn c_1014(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_min_collapsed_lines(s, a0, cx); })?; Ok(()) }
-pub fn c_1015(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_102(r.u16()); genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_mode(s, a0, cx); })?; Ok(()) }
+pub fn c_1015(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_103(r.u16()); genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_mode(s, a0, cx); })?; Ok(()) }
 pub fn c_1016(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = if r.u8() != 0 { Some(genapi::value_arg(c, r, build_component_diff_line_range)?) } else { None }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_selected_lines(s, a0, cx); })?; Ok(()) }
 pub fn c_1017(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_syntax_max_line_length(s, a0, cx); })?; Ok(()) }
 pub fn c_1019(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::component::diff::DiffState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffState>::syntax_max_line_length(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -82,6 +82,10 @@ pub fn c_1361(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h =
 pub fn c_1488(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = { let a = crate::shim_text::Ask::take(r.u64()); move |k0: &str, k1: &str| -> std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)> { a.get::<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>, std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>>(crate::shim_text::key(&(&k0, &k1)), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>> { let _ = &dx; Some({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, rc_22(r, dx)?)); } v }) }, |v| v, Default::default) } }; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_syntax_highlighter(s, a0, cx); })?; Ok(()) }
 pub fn c_1774(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u8() != 0; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_all_files_collapsed(s, a0, cx); })?; Ok(()) }
 pub fn c_1775(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(gpui_kit::SharedString::new(r.str())); } v }; let a1 = r.u8() != 0; genapi::state_update::<gpui_kit::component::diff::DiffState>(h, c, move |s, window, cx| { <gpui_kit::component::diff::DiffState>::set_files_collapsed(s, a0, a1, cx); })?; Ok(()) }
+pub fn c_1803(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::obj_rc::<gpui_kit::component::diff::DiffLinePosition>(r.u64())?; let bytes = genapi::state_read::<gpui_kit::component::diff::DiffState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffState>::has_line(s, &*a0.borrow()), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1804(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffTextPosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffTextPosition>::offset(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1805(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffTextPosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffTextPosition>::position(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1806(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffTextPosition, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffTextPosition>::text(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1408(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffFile, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::additions(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1409(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffFile, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::conflicts(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1410(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::component::diff::DiffFile, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::deletions(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -191,6 +195,10 @@ pub fn call__component_diff(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<
         1675 => c_1675(r, c),
         1774 => c_1774(r, c),
         1775 => c_1775(r, c),
+        1803 => c_1803(r, c),
+        1804 => c_1804(r, c),
+        1805 => c_1805(r, c),
+        1806 => c_1806(r, c),
         _ => return None,
     })
 }
@@ -231,12 +239,12 @@ pub fn apply_component_diff(dx: &mut Dx, mut el: gpui_kit::component::diff::Diff
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::Diff>::change_background(el, a0) }; }
-            257 => { el = { let a0 = en_96(r.u16()); <gpui_kit::component::diff::Diff>::change_indicator(el, a0) }; }
+            257 => { el = { let a0 = en_97(r.u16()); <gpui_kit::component::diff::Diff>::change_indicator(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_diff_decoration(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::diff::Diff>::decorations(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_diff_gutter_marker(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::diff::Diff>::gutter_markers(el, a0) }; }
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::Diff>::header_visible(el, a0) }; }
-            261 => { el = { let a0 = en_99(r.u16()); <gpui_kit::component::diff::Diff>::hover_highlight(el, a0) }; }
-            262 => { el = { let a0 = en_100(r.u16()); <gpui_kit::component::diff::Diff>::hunk_separator(el, a0) }; }
+            261 => { el = { let a0 = en_100(r.u16()); <gpui_kit::component::diff::Diff>::hover_highlight(el, a0) }; }
+            262 => { el = { let a0 = en_101(r.u16()); <gpui_kit::component::diff::Diff>::hunk_separator(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::Diff>::line_number(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::Diff>::soft_wrap(el, a0) }; }
             265 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::Diff>::syntax_highlight(el, a0) }; }
@@ -256,6 +264,10 @@ pub fn apply_component_diff(dx: &mut Dx, mut el: gpui_kit::component::diff::Diff
             279 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::diff::DiffFile, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::language(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::status(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::original_path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::modified_path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::extended_headers(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::is_binary(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::is_truncated(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::additions(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::deletions(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::has_changes(k0), &mut p); let c0 = k0.clone(); (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { genapi::Wire::put(&c0, o); }), window, cx)) } }; <gpui_kit::component::diff::Diff>::render_header_suffix(el, a0) }; }
             280 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::diff::DiffFile, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::language(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::status(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::original_path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::modified_path(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::extended_headers(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::is_binary(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::is_truncated(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::additions(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::deletions(k0), &mut p); genapi::Wire::put(&<gpui_kit::component::diff::DiffFile>::has_changes(k0), &mut p); let c0 = k0.clone(); (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { genapi::Wire::put(&c0, o); }), window, cx)) } }; <gpui_kit::component::diff::Diff>::render_header_title_suffix(el, a0) }; }
             281 => { el = { let a0 = r.f32(); <gpui_kit::component::diff::Diff>::split_ratio(el, a0) }; }
+            282 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_diff_span_highlight(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::diff::Diff>::span_highlights(el, a0) }; }
+            283 => { el = { let a0 = en_7(r.u16()); <gpui_kit::component::diff::Diff>::text_cursor(el, a0) }; }
+            284 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::component::diff::DiffTextPosition, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 121, &(a0, a1), window, cx) } }; <gpui_kit::component::diff::Diff>::on_text_click(el, a0) }; }
+            285 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: std::option::Option<&gpui_kit::component::diff::DiffTextPosition>, a1: gpui_kit::Modifiers, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 122, &(&a0, &a1), window, cx) } }; <gpui_kit::component::diff::Diff>::on_text_hover(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -300,6 +312,7 @@ pub fn make_component_diff_file(dx: &mut Dx, ty: u16, args: u32, first: u32) -> 
         646 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = r.str(); <gpui_kit::component::diff::DiffFile>::unchanged(a0, a1) }
         847 => { let a0 = r.str(); let a1 = r.u64() as usize; (|patch, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse(patch), index))(a0, a1) }
         848 => { let a0 = r.str(); let a1 = build_component_diff_parse_options(dx, r.u32())?; let a2 = r.u64() as usize; (|patch, options, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse_with(patch, options), index))(a0, a1, a2) }
+        890 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((r.u64() as usize, r.str())); } v }; <gpui_kit::component::diff::DiffFile>::excerpts(a0, a1) }
         _ => return bad_node("DiffFile", ty),
     };
     Some(apply_component_diff_file(dx, el, first))
@@ -347,7 +360,7 @@ pub fn build_component_diff_line_range(dx: &mut Dx, n: u32) -> Option<gpui_kit::
 pub fn make_component_diff_line_range(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::diff::DiffLineRange> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::diff::DiffLineRange = match ty {
-        647 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = en_103(r.u16()); let a2 = r.u64() as usize; let a3 = r.u64() as usize; <gpui_kit::component::diff::DiffLineRange>::new(a0, a1, a2, a3) }
+        647 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = en_104(r.u16()); let a2 = r.u64() as usize; let a3 = r.u64() as usize; <gpui_kit::component::diff::DiffLineRange>::new(a0, a1, a2, a3) }
         _ => return bad_node("DiffLineRange", ty),
     };
     Some(apply_component_diff_line_range(dx, el, first))
@@ -358,7 +371,7 @@ pub fn apply_component_diff_line_range(dx: &mut Dx, mut el: gpui_kit::component:
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_103(r.u16()); <gpui_kit::component::diff::DiffLineRange>::with_end_side(el, a0) }; }
+            256 => { el = { let a0 = en_104(r.u16()); <gpui_kit::component::diff::DiffLineRange>::with_end_side(el, a0) }; }
             _ => bad_op("DiffLineRange", op),
         }
     }
@@ -385,6 +398,32 @@ pub fn apply_component_diff_parse_options(dx: &mut Dx, mut el: gpui_kit::compone
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::diff::DiffParseOptions>::truncated_hunks(el, a0) }; }
             _ => bad_op("DiffParseOptions", op),
+        }
+    }
+    el
+}
+pub fn build_component_diff_span_highlight(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::diff::DiffSpanHighlight> {
+    let (ty, args, first) = dx.node(n);
+    make_component_diff_span_highlight(dx, ty, args, first)
+}
+pub fn make_component_diff_span_highlight(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::diff::DiffSpanHighlight> {
+    let r = &mut dx.args(args);
+    let el: gpui_kit::component::diff::DiffSpanHighlight = match ty {
+        891 => { let a0 = genapi::obj_shown::<gpui_kit::component::diff::DiffLinePosition>(r.u64()); let a1 = { let a = r.u64() as usize; a..(r.u64() as usize) }; <gpui_kit::component::diff::DiffSpanHighlight>::new(a0, a1) }
+        _ => return bad_node("DiffSpanHighlight", ty),
+    };
+    Some(apply_component_diff_span_highlight(dx, el, first))
+}
+#[inline]
+pub fn apply_component_diff_span_highlight(dx: &mut Dx, mut el: gpui_kit::component::diff::DiffSpanHighlight, first: u32) -> gpui_kit::component::diff::DiffSpanHighlight {
+    let mut at = first;
+    while let Some((op, mut r)) = dx.op(&mut at) {
+        let r = &mut r;
+        match op {
+            256 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::diff::DiffSpanHighlight>::with_background(el, a0) }; }
+            257 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::diff::DiffSpanHighlight>::with_foreground(el, a0) }; }
+            258 => { el = { <gpui_kit::component::diff::DiffSpanHighlight>::with_underline(el) }; }
+            _ => bad_op("DiffSpanHighlight", op),
         }
     }
     el

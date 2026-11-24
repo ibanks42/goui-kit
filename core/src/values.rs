@@ -62,11 +62,11 @@ impl<K: Wire, V: Wire, S> Wire for HashMap<K, V, S> {
     }
 }
 
-// chrono's calendar values (PROTOCOLS.md 13.13): a date is i32 year, u32 month, u32 day; a time
+// jiff's calendar values (PROTOCOLS.md 13.13): a date is i32 year, u32 month, u32 day; a time
 // u32 hour, minute, second, nanosecond; a date and time both; a weekday a u8 from Monday = 0.
-// Odin's writers (rt_values.odin put_naive_date and the rest) stop on a date or time that does not
-// exist, so what arrives here is valid; a raw C client that sends one anyway gets the first day of
-// the common era or midnight instead (never a panic).
+// Odin's and Go's writers (put_civil_date and the rest) stop on a date or time that does not exist
+// or that jiff cannot hold (years -9999 to 9999), so what arrives here is valid; a raw C client that
+// sends one anyway gets jiff's zero date (0000-01-01) or midnight instead (never a panic).
 /// A duration read back: i64 nanoseconds (Odin's `time.Duration`), at most about 292 years.
 impl Wire for std::time::Duration {
     fn put(&self, out: &mut Vec<u8>) {
@@ -91,63 +91,69 @@ pub fn entity_handle<T: 'static>(e: &gpui_kit::Entity<T>) -> u64 {
     crate::dock::entity_handle(e)
 }
 
-impl Wire for chrono::NaiveDate {
+impl Wire for jiff::civil::Date {
     fn put(&self, out: &mut Vec<u8>) {
-        use chrono::Datelike;
-        out.put_i32(self.year());
-        out.put_u32(self.month());
-        out.put_u32(self.day());
+        out.put_i32(self.year().into());
+        out.put_u32(self.month() as u32);
+        out.put_u32(self.day() as u32);
     }
 }
 
-impl crate::genapi::Unwire for chrono::NaiveDate {
+fn civil_date(y: i32, m: u32, d: u32) -> Option<jiff::civil::Date> {
+    jiff::civil::Date::new(i16::try_from(y).ok()?, i8::try_from(m).ok()?, i8::try_from(d).ok()?).ok()
+}
+
+impl crate::genapi::Unwire for jiff::civil::Date {
     fn get(r: &mut R) -> Self {
         let (y, m, d) = (r.i32(), r.u32(), r.u32());
-        chrono::NaiveDate::from_ymd_opt(y, m, d).unwrap_or_default()
+        civil_date(y, m, d).unwrap_or_default()
     }
 }
 
-impl Wire for chrono::NaiveTime {
+impl Wire for jiff::civil::Time {
     fn put(&self, out: &mut Vec<u8>) {
-        use chrono::Timelike;
-        out.put_u32(self.hour());
-        out.put_u32(self.minute());
-        out.put_u32(self.second());
-        out.put_u32(self.nanosecond());
+        out.put_u32(self.hour() as u32);
+        out.put_u32(self.minute() as u32);
+        out.put_u32(self.second() as u32);
+        out.put_u32(self.subsec_nanosecond() as u32);
     }
 }
 
-impl crate::genapi::Unwire for chrono::NaiveTime {
+fn civil_time(h: u32, m: u32, s: u32, n: u32) -> Option<jiff::civil::Time> {
+    let b = |v: u32| i8::try_from(v).ok();
+    jiff::civil::Time::new(b(h)?, b(m)?, b(s)?, i32::try_from(n).ok()?).ok()
+}
+
+impl crate::genapi::Unwire for jiff::civil::Time {
     fn get(r: &mut R) -> Self {
         let (h, m, s, n) = (r.u32(), r.u32(), r.u32(), r.u32());
-        chrono::NaiveTime::from_hms_nano_opt(h, m, s, n).unwrap_or_default()
+        civil_time(h, m, s, n).unwrap_or_default()
     }
 }
 
-impl Wire for chrono::NaiveDateTime {
+impl Wire for jiff::civil::DateTime {
     fn put(&self, out: &mut Vec<u8>) {
         self.date().put(out);
         self.time().put(out);
     }
 }
 
-impl crate::genapi::Unwire for chrono::NaiveDateTime {
+impl crate::genapi::Unwire for jiff::civil::DateTime {
     fn get(r: &mut R) -> Self {
-        use crate::genapi::Unwire;
-        let d = chrono::NaiveDate::get(r);
-        d.and_time(chrono::NaiveTime::get(r))
+        let d = jiff::civil::Date::get(r);
+        d.to_datetime(jiff::civil::Time::get(r))
     }
 }
 
-impl Wire for chrono::Weekday {
+impl Wire for jiff::civil::Weekday {
     fn put(&self, out: &mut Vec<u8>) {
-        out.put_u8(self.num_days_from_monday() as u8);
+        out.put_u8(self.to_monday_zero_offset() as u8);
     }
 }
 
-impl crate::genapi::Unwire for chrono::Weekday {
+impl crate::genapi::Unwire for jiff::civil::Weekday {
     fn get(r: &mut R) -> Self {
-        chrono::Weekday::try_from(r.u8() % 7).unwrap_or(chrono::Weekday::Mon)
+        jiff::civil::Weekday::from_monday_zero_offset((r.u8() % 7) as i8).unwrap_or(jiff::civil::Weekday::Monday)
     }
 }
 
@@ -498,49 +504,79 @@ fn hsla_in_debug(text: &str) -> Vec<gpui_kit::Hsla> {
 }
 
 /// A calendar matcher's parts (PROTOCOLS.md 11.21): their fields are private and have no reads,
-/// so they are made by the enum's own constructors (`Matcher::interval`, `Matcher::range`), and the
-/// library keeps what each one was made of, keyed by its bytes, to read it back: the binding is
-/// the only way an app makes one. (A matcher's dates cannot be found through `Matcher::matched`:
-/// the days it leaves out may be a single day anywhere.)
-const _: () = assert!(std::mem::size_of::<gpui_kit::base::IntervalMatcher>() == 8);
-const _: () = assert!(std::mem::size_of::<gpui_kit::base::RangeMatcher>() == 8);
+/// so they are made by the enum's own constructors (`Matcher::interval`, `Matcher::range`) and read
+/// back through `Part`, a struct with the same two fields (`Option<civil::Date>` each, in the same
+/// order). (A matcher's dates cannot be found through `Matcher::matched`: the days it leaves out
+/// may be a single day anywhere.) Rust does not promise that two structs with the same fields share
+/// a layout, so the sizes are asserted here and `parts_readable` checks once, on a matcher with
+/// known dates, that the two fields are where `Part` says; if not, a read gives no dates (never a
+/// wrong one).
+#[derive(Clone, Copy)]
+struct Part {
+    a: Option<jiff::civil::Date>,
+    b: Option<jiff::civil::Date>,
+}
+const _: () = assert!(std::mem::size_of::<gpui_kit::base::IntervalMatcher>() == std::mem::size_of::<Part>());
+const _: () = assert!(std::mem::size_of::<gpui_kit::base::RangeMatcher>() == std::mem::size_of::<Part>());
+const _: () = assert!(std::mem::align_of::<gpui_kit::base::IntervalMatcher>() == std::mem::align_of::<Part>());
+const _: () = assert!(std::mem::align_of::<gpui_kit::base::RangeMatcher>() == std::mem::align_of::<Part>());
 const _: () = assert!(!std::mem::needs_drop::<gpui_kit::base::IntervalMatcher>());
 const _: () = assert!(!std::mem::needs_drop::<gpui_kit::base::RangeMatcher>());
 
 thread_local! {
-    /// What each matcher part was made of: its 8 bytes -> (the two dates' wire bytes).
-    static MATCHER_PARTS: RefCell<HashMap<[u8; 8], Vec<u8>>> = RefCell::new(HashMap::new());
     /// What each set of values was made of (a `Matcher::Custom`'s closure): its address -> the list's bytes.
     static VALUE_SETS: RefCell<HashMap<usize, Vec<u8>>> = RefCell::new(HashMap::new());
 }
 
-/// The bytes of a matcher part: two optional dates, no padding (8 bytes, asserted above).
-fn part_bytes<T>(v: &T) -> [u8; 8] {
-    let mut b = [0u8; 8];
-    // SAFETY: T is IntervalMatcher or RangeMatcher, two Option<NaiveDate> (niche-packed i32s) in
-    // 8 bytes with no padding (asserted above), so every byte is initialised.
-    unsafe { std::ptr::copy_nonoverlapping(v as *const T as *const u8, b.as_mut_ptr(), 8) };
-    b
+/// A matcher part's two dates, read as `Part`.
+///
+/// # Safety
+/// T is IntervalMatcher or RangeMatcher (same size and alignment as Part, asserted above).
+unsafe fn part_of<T>(v: &T) -> Part {
+    // SAFETY: the caller's T has Part's size and alignment; `parts_readable` has checked that its
+    // two fields sit where Part's do, so this typed read sees two valid Option<Date> values.
+    unsafe { std::ptr::read(v as *const T as *const Part) }
 }
 
-fn read_part<T>(r: &mut R, make: impl FnOnce(Option<chrono::NaiveDate>, Option<chrono::NaiveDate>) -> T) -> T {
-    let a = <Option<chrono::NaiveDate> as crate::genapi::Unwire>::get(r);
-    let b = <Option<chrono::NaiveDate> as crate::genapi::Unwire>::get(r);
-    let v = make(a, b);
-    let mut wire = Vec::new();
-    a.put(&mut wire);
-    b.put(&mut wire);
-    MATCHER_PARTS.with(|m| m.borrow_mut().insert(part_bytes(&v), wire));
-    v
+/// Whether `Part` reads a matcher part's dates in the right places: checked once, on parts made
+/// with known, distinct dates by upstream's own constructors.
+fn parts_readable() -> bool {
+    static OK: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *OK.get_or_init(|| {
+        let (x, y) = (jiff::civil::Date::constant(2001, 2, 3), jiff::civil::Date::constant(2004, 5, 6));
+        let check = |m: gpui_kit::base::Matcher, a, b| {
+            let p = match &m {
+                // SAFETY: an IntervalMatcher and a RangeMatcher (part_of's contract).
+                gpui_kit::base::Matcher::Interval(v) => unsafe { part_of(v) },
+                gpui_kit::base::Matcher::Range(v) => unsafe { part_of(v) },
+                _ => return false,
+            };
+            p.a == a && p.b == b
+        };
+        check(gpui_kit::base::Matcher::interval(Some(x), None), Some(x), None)
+            && check(gpui_kit::base::Matcher::interval(None, Some(y)), None, Some(y))
+            && check(gpui_kit::base::Matcher::range(Some(x), Some(y)), Some(x), Some(y))
+            && check(gpui_kit::base::Matcher::range(Some(y), None), Some(y), None)
+    })
 }
 
-fn put_part<T>(v: &T, out: &mut Vec<u8>) {
-    match MATCHER_PARTS.with(|m| m.borrow().get(&part_bytes(v)).cloned()) {
-        Some(w) => out.extend_from_slice(&w),
-        None => {
-            out.put_u8(0); // not made by the binding: no dates known
-            out.put_u8(0);
-        }
+fn read_part<T>(r: &mut R, make: impl FnOnce(Option<jiff::civil::Date>, Option<jiff::civil::Date>) -> T) -> T {
+    let a = <Option<jiff::civil::Date> as crate::genapi::Unwire>::get(r);
+    let b = <Option<jiff::civil::Date> as crate::genapi::Unwire>::get(r);
+    make(a, b)
+}
+
+/// # Safety
+/// T is IntervalMatcher or RangeMatcher (part_of's contract).
+unsafe fn put_part<T>(v: &T, out: &mut Vec<u8>) {
+    if parts_readable() {
+        // SAFETY: the caller's contract.
+        let p = unsafe { part_of(v) };
+        p.a.put(out);
+        p.b.put(out);
+    } else {
+        out.put_u8(0); // a layout this library cannot read: no dates known
+        out.put_u8(0);
     }
 }
 
@@ -556,7 +592,8 @@ impl crate::genapi::Unwire for gpui_kit::base::IntervalMatcher {
 
 impl Wire for gpui_kit::base::IntervalMatcher {
     fn put(&self, out: &mut Vec<u8>) {
-        put_part(self, out)
+        // SAFETY: an IntervalMatcher.
+        unsafe { put_part(self, out) }
     }
 }
 
@@ -572,7 +609,8 @@ impl crate::genapi::Unwire for gpui_kit::base::RangeMatcher {
 
 impl Wire for gpui_kit::base::RangeMatcher {
     fn put(&self, out: &mut Vec<u8>) {
-        put_part(self, out)
+        // SAFETY: a RangeMatcher.
+        unsafe { put_part(self, out) }
     }
 }
 

@@ -49,10 +49,10 @@ pub fn apply_component_bubble(dx: &mut Dx, mut el: gpui_kit::component::bubble::
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_112(r.u16()); <gpui_kit::component::bubble::Bubble>::alignment(el, a0) }; }
+            256 => { el = { let a0 = en_113(r.u16()); <gpui_kit::component::bubble::Bubble>::alignment(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((build_component_bubble_content(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::bubble::Bubble>::content(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((build_component_bubble_reactions(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::bubble::Bubble>::reactions(el, a0) }; }
-            259 => { el = { let a0 = en_93(r.u16()); <gpui_kit::component::bubble::Bubble>::with_variant(el, a0) }; }
+            259 => { el = { let a0 = en_94(r.u16()); <gpui_kit::component::bubble::Bubble>::with_variant(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
@@ -156,8 +156,8 @@ pub fn apply_component_bubble_reactions(dx: &mut Dx, mut el: gpui_kit::component
         let r = &mut r;
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((build_component_button(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::bubble::BubbleReactions>::action(el, a0) }; }
-            257 => { el = { let a0 = en_112(r.u16()); <gpui_kit::component::bubble::BubbleReactions>::alignment(el, a0) }; }
-            258 => { el = { let a0 = en_92(r.u16()); <gpui_kit::component::bubble::BubbleReactions>::side(el, a0) }; }
+            257 => { el = { let a0 = en_113(r.u16()); <gpui_kit::component::bubble::BubbleReactions>::alignment(el, a0) }; }
+            258 => { el = { let a0 = en_93(r.u16()); <gpui_kit::component::bubble::BubbleReactions>::side(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

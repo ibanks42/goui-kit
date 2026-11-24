@@ -281,7 +281,7 @@ def gpui_value(m, hc, name, args, out):
 # Third-party types the library carries (PROTOCOLS.md 9.19): (crate, name) -> the Rust path.
 THIRD_PARTY = {("ropey", "Rope"): "ropey::Rope", ("ropey", "RopeSlice"): "ropey::RopeSlice",
                ("lsp_types", "CompletionItem"): "lsp_types::CompletionItem",
-               ("chrono", "NaiveDate"): "chrono::NaiveDate"}  # a set of dates (Matcher::Custom, PROTOCOLS.md 11.21)
+               ("jiff", "Date"): "jiff::civil::Date"}  # a set of dates (Matcher::Custom, PROTOCOLS.md 11.21)
 
 
 def third_party_path(hc, name):

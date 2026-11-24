@@ -121,6 +121,8 @@ toolbar_vt := Toolbar_VT {
 				oe = x.el
 			case Form:
 				oe = x.el
+			case Editor:
+				oe = x.el
 			case Input:
 				oe = x.el
 			case Input_Group:
@@ -280,6 +282,8 @@ toolbar_vt := Toolbar_VT {
 				case Description_List:
 					oe = x.el
 				case Form:
+					oe = x.el
+				case Editor:
 					oe = x.el
 				case Input:
 					oe = x.el
@@ -505,6 +509,8 @@ toolbar_group_vt := Toolbar_Group_VT {
 				oe = x.el
 			case Form:
 				oe = x.el
+			case Editor:
+				oe = x.el
 			case Input:
 				oe = x.el
 			case Input_Group:
@@ -664,6 +670,8 @@ toolbar_group_vt := Toolbar_Group_VT {
 				case Description_List:
 					oe = x.el
 				case Form:
+					oe = x.el
+				case Editor:
 					oe = x.el
 				case Input:
 					oe = x.el

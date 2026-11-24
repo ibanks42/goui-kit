@@ -63,7 +63,7 @@ pub fn tr_group_box_variants_62<E: gpui_kit::component::group_box::GroupBoxVaria
         18816 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::fill(el) }
         18817 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::normal(el) }
         18818 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::outline(el) }
-        18819 => { let a0 = en_106(r.u16()); <E as gpui_kit::component::group_box::GroupBoxVariants>::with_variant(el, a0) }
+        18819 => { let a0 = en_107(r.u16()); <E as gpui_kit::component::group_box::GroupBoxVariants>::with_variant(el, a0) }
         _ => { bad_op("GroupBoxVariants", op); el }
     }
 }
@@ -373,7 +373,7 @@ pub fn tr_toggle_variants_58<E: gpui_kit::component::button::ToggleVariants>(el:
     match op {
         18688 => { <E as gpui_kit::component::button::ToggleVariants>::ghost(el) }
         18689 => { <E as gpui_kit::component::button::ToggleVariants>::outline(el) }
-        18690 => { let a0 = en_94(r.u16()); <E as gpui_kit::component::button::ToggleVariants>::with_variant(el, a0) }
+        18690 => { let a0 = en_95(r.u16()); <E as gpui_kit::component::button::ToggleVariants>::with_variant(el, a0) }
         _ => { bad_op("ToggleVariants", op); el }
     }
 }

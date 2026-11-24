@@ -114,7 +114,7 @@ view7 :: proc(a: ^App, cx: ^gk.Cx) -> (gk.Element, bool) {
 		// The base Editor: an editor drawn outside the kit's overlays, which is what the key set is for.
 		// The kit's code editor (component::input::Editor) installs its own overlay handler each time
 		// it renders (its completion menu takes the menu's actions), replacing the app's.
-		return gk.div()->w(gk.px(420))->h(gk.px(160))->child(gk.editor(a.ed)), true
+		return gk.div()->w(gk.px(420))->h(gk.px(160))->child(gk.base_editor(a.ed)), true
 	case "lsp-ask", "diagnostic-shown":
 		// The kit's code editor (component::input::Editor): its overlays draw the completion menu and
 		// the diagnostic popover.

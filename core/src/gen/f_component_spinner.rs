@@ -36,7 +36,7 @@ pub fn apply_component_spinner(dx: &mut Dx, mut el: gpui_kit::component::spinner
         let r = &mut r;
         match op {
             256 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::spinner::Spinner>::color(el, a0) }; }
-            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::spinner::Spinner>::icon(el, a0) }; }
+            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::spinner::Spinner>::icon(el, a0) }; }
             258 => { el = { let a0 = { let e = crate::shim_editor::Expr::new(r.str()); move |a0: f32| { (e.eval(&[(a0 as f64)]) as f32) } }; <gpui_kit::component::spinner::Spinner>::ease(el, a0) }; }
             18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Spinner", op),

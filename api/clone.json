@@ -1,7 +1,7 @@
 {
  "note": "structs that implement Clone, read from the pinned sources by tools/clone_scan.py",
  "pin": {
-  "gpui-kit": "0.9.1"
+  "gpui-kit": "0.11.0"
  },
  "clone": {
   "gpui_base": [
@@ -96,12 +96,14 @@
    "LineSpan",
    "LineSummary",
    "LinearStop",
+   "Link",
    "LinkMark",
    "ListSettings",
    "LongestLineKey",
    "MarkdownExtensions",
    "MarkdownNode",
    "MeasuredInlineObject",
+   "MonospaceWidths",
    "MotionTransform",
    "MotionValue",
    "NodeContext",
@@ -116,6 +118,7 @@
    "PanelState",
    "Paragraph",
    "ParagraphRenderCache",
+   "ParagraphRows",
    "ParsedContent",
    "ParsedDocument",
    "PlotAppear",
@@ -263,9 +266,12 @@
    "DiffLineRange",
    "DiffParseError",
    "DiffParseOptions",
+   "DiffSpanHighlight",
+   "DiffTextPosition",
    "DragColumn",
    "FieldProps",
    "FolderTabMetrics",
+   "GutterStyle",
    "HeaderCell",
    "HighlightTheme",
    "HighlightThemeStyle",
@@ -276,6 +282,7 @@
    "LayoutKey",
    "LinePair",
    "MeasuredEntrySize",
+   "MenuSide",
    "Microphone",
    "MotionTokens",
    "NotificationSettings",

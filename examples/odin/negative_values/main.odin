@@ -42,7 +42,7 @@ clicked :: proc(a: ^App, cx: ^gk.Cx) {
 		t = t->child(t)
 	case "val-bad-time":
 		tf := gk.time_field_state(cx)->build()
-		gk.set_time(tf, cx, gk.Naive_Time{24, 0, 0, 0})
+		gk.set_time(tf, cx, gk.Civil_Time{24, 0, 0, 0})
 	case "val-scroll-freed":
 		gk.release(cx, a.scroll)
 	case "c6-rules-source":

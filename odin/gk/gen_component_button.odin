@@ -155,6 +155,11 @@ Button_VT :: struct {
 	// what pressing it does. Setting this replaces the announced name without adding anything to the
 	// screen.
 	accessibility_label: proc(e: Button, label: string) -> Button,
+	// Expose whether the disclosure controlled by this button is expanded.
+	//
+	// When unset, the button does not expose an expanded state. This is separate from `open`, which
+	// controls the button's visual open state.
+	aria_expanded: proc(e: Button, expanded: bool) -> Button,
 	// Set the button to compact mode, then padding will be reduced.
 	compact: proc(e: Button) -> Button,
 	// Set to show a dropdown caret icon at the end of the button.
@@ -365,6 +370,11 @@ button_vt := Button_VT {
 	accessibility_label = proc(e: Button, label: string) -> Button {
 		o := op(e.el, 257)
 		put_str(o, label)
+		return e
+	},
+	aria_expanded = proc(e: Button, expanded: bool) -> Button {
+		o := op(e.el, 277)
+		put_u8(o, u8(expanded))
 		return e
 	},
 	compact = proc(e: Button) -> Button {

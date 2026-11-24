@@ -10,7 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 gpui-kit.workspace = true
-gpui-fps = { version = "=0.10.0", features = ["gpui-fast"], optional = true }
+gpui-fps = { version = "=0.11.0", features = ["gpui-fast"], optional = true }
 gk-meter.workspace = true
 futures = "0.3"
 # The input family's provider shims (core/src/shim_input.rs) implement upstream traits whose
@@ -20,7 +20,7 @@ lsp-types = "=0.97.0"
 ropey = "=2.0.0-beta.1"
 # The calendar values of the date family (core/src/values.rs, PROTOCOLS.md 13.13): the version
 # gpui-base and gpui-component already link (no new crate).
-chrono = { version = "=0.4.45", default-features = false }
+jiff = { version = "=1.0.2", default-features = false }
 # A saved dock layout's per-panel data (PanelInfo::Panel, core/src/dock.rs): the version gpui-base links.
 serde_json = "=1.0.154"
 # gpui's element leftovers (core/src/platform.rs, PROTOCOLS.md 13.31): accessibility nodes the app

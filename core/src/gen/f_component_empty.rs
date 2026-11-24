@@ -189,7 +189,7 @@ pub fn apply_component_empty_media(dx: &mut Dx, mut el: gpui_kit::component::emp
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_105(r.u16()); <gpui_kit::component::empty::EmptyMedia>::with_variant(el, a0) }; }
+            256 => { el = { let a0 = en_106(r.u16()); <gpui_kit::component::empty::EmptyMedia>::with_variant(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

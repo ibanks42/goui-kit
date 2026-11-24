@@ -1523,6 +1523,34 @@ call		gpui_kit::component::diff::DiffState::set_files_collapsed	1775
 call		gpui_kit::component::message_scroller::MessageScrollerState::scroll_to_offset	1776
 call		gpui_kit::base::logical_anchor	1777
 call		gpui_kit::base::set_reduce_motion_preference	1778
+call		gpui_kit::base::ResizableState::is_resizing	1779
+call		gpui_kit::base::input::EditorScrollbarContext::content_height_f64	1780
+call		gpui_kit::base::input::EditorScrollbarContext::placement	1781
+call		gpui_kit::base::input::EditorScrollbarContext::scroll_y_f64	1782
+call		gpui_kit::base::input::EditorState::content_height_f64	1783
+call		gpui_kit::base::input::EditorState::fold_all	1784
+call		gpui_kit::base::input::EditorState::fold_at_level	1785
+call		gpui_kit::base::input::EditorState::fold_candidates	1786
+call		gpui_kit::base::input::EditorState::scroll_by_y_f64	1787
+call		gpui_kit::base::input::EditorState::scroll_y_f64	1788
+call		gpui_kit::base::input::EditorState::set_active_line_only_when_focused	1789
+call		gpui_kit::base::input::EditorState::set_folded	1790
+call		gpui_kit::base::input::EditorState::set_scroll_y_f64	1791
+call		gpui_kit::base::input::EditorState::set_scrollbar_placement	1792
+call		gpui_kit::base::input::EditorState::unfold_all	1793
+call		gpui_kit::base::input::InputState::content_height_f64	1794
+call		gpui_kit::base::input::InputState::scroll_by_y_f64	1795
+call		gpui_kit::base::input::InputState::scroll_y_f64	1796
+call		gpui_kit::base::input::InputState::set_scroll_y_f64	1797
+call		gpui_kit::base::input::TextareaState::content_height_f64	1798
+call		gpui_kit::base::input::TextareaState::scroll_by_y_f64	1799
+call		gpui_kit::base::input::TextareaState::scroll_y_f64	1800
+call		gpui_kit::base::input::TextareaState::set_scroll_y_f64	1801
+call		gpui_kit::base::input::TextareaState::set_scrollbar_placement	1802
+call		gpui_kit::component::diff::DiffState::has_line	1803
+call		gpui_kit::component::diff::DiffTextPosition::offset	1804
+call		gpui_kit::component::diff::DiffTextPosition::position	1805
+call		gpui_kit::component::diff::DiffTextPosition::text	1806
 node		gpui_kit::base::h_flex	256
 node		gpui_kit::base::v_flex	257
 node		gpui_kit::div	258
@@ -2157,6 +2185,10 @@ node		gpui_kit::component::Icon::empty	886
 node		gpui_kit::component::Icon::new	887
 node		gpui_kit::base::input::TextareaExtras::Default::default	888
 node		gpui_kit::base::text::Link::new	889
+node		gpui_kit::component::diff::DiffFile::excerpts	890
+node		gpui_kit::component::diff::DiffSpanHighlight::new	891
+node		gpui_kit::component::input::GutterStyle::Default::default	892
+node		gpui_kit::component::input::Editor::new	893
 op	gpui_kit::Div	on_children_prepainted	256
 op	gpui_kit::Div	image_cache	257
 op	gpui_kit::Div	with_dynamic_prepaint_order	258
@@ -2165,6 +2197,7 @@ op	gpui_kit::Svg	data	256
 op	gpui_kit::Svg	external_path	257
 op	gpui_kit::Svg	path	258
 op	gpui_kit::Svg	with_transformation	259
+op	gpui_kit::Svg	with_timed_transformation	260
 op	gpui_kit::base::AccordionHeader	id	256
 op	gpui_kit::base::AccordionHeader	level	257
 op	gpui_kit::base::AccordionItem	disabled	256
@@ -2427,6 +2460,7 @@ op	gpui_kit::base::Scrollbar	scroll_size	259
 op	gpui_kit::base::Scrollbar	styles	260
 op	gpui_kit::base::Scrollbar	viewport_bounds	261
 op	gpui_kit::base::Scrollbar	viewport_from_layout	262
+op	gpui_kit::base::Scrollbar	placement	263
 op	gpui_kit::base::ScrollbarMotion	with_enter	256
 op	gpui_kit::base::ScrollbarMotion	with_entrance	257
 op	gpui_kit::base::ScrollbarMotion	with_exit	258
@@ -2463,6 +2497,8 @@ op	gpui_kit::base::SelectableText	document_order	256
 op	gpui_kit::base::SelectableText	selection_color	257
 op	gpui_kit::base::SelectableText	text_style	258
 op	gpui_kit::base::SelectableText	highlights	259
+op	gpui_kit::base::SelectableText	on_reveal	260
+op	gpui_kit::base::SelectableText	reveal_range	261
 op	gpui_kit::base::Sheet	on_close	256
 op	gpui_kit::base::Sheet	overlay	257
 op	gpui_kit::base::Sheet	overlay_closable	258
@@ -2851,6 +2887,7 @@ op	gpui_kit::component::button::Button	tooltip_with_action	273
 op	gpui_kit::component::button::Button	track_focus	274
 op	gpui_kit::component::button::Button	loading_icon	275
 op	gpui_kit::component::button::Button	icon	276
+op	gpui_kit::component::button::Button	aria_expanded	277
 op	gpui_kit::component::button::ButtonCustomVariant	active	256
 op	gpui_kit::component::button::ButtonCustomVariant	color	257
 op	gpui_kit::component::button::ButtonCustomVariant	foreground	258
@@ -3216,11 +3253,18 @@ op	gpui_kit::component::diff::Diff	render_header_prefix	278
 op	gpui_kit::component::diff::Diff	render_header_suffix	279
 op	gpui_kit::component::diff::Diff	render_header_title_suffix	280
 op	gpui_kit::component::diff::Diff	split_ratio	281
+op	gpui_kit::component::diff::Diff	span_highlights	282
+op	gpui_kit::component::diff::Diff	text_cursor	283
+op	gpui_kit::component::diff::Diff	on_text_click	284
+op	gpui_kit::component::diff::Diff	on_text_hover	285
 op	gpui_kit::component::diff::DiffDecoration	with_background	256
 op	gpui_kit::component::diff::DiffFile	with_language	256
 op	gpui_kit::component::diff::DiffGutterMarker	with_label	256
 op	gpui_kit::component::diff::DiffLineRange	with_end_side	256
 op	gpui_kit::component::diff::DiffParseOptions	truncated_hunks	256
+op	gpui_kit::component::diff::DiffSpanHighlight	with_background	256
+op	gpui_kit::component::diff::DiffSpanHighlight	with_foreground	257
+op	gpui_kit::component::diff::DiffSpanHighlight	with_underline	258
 op	gpui_kit::component::empty::Empty	content	256
 op	gpui_kit::component::empty::Empty	header	257
 op	gpui_kit::component::empty::EmptyHeader	description	256
@@ -3261,6 +3305,22 @@ op	gpui_kit::component::hover_card::HoverCard	open_delay	260
 op	gpui_kit::component::hover_card::HoverCard	trigger	261
 op	gpui_kit::component::hover_card::HoverCard	trigger_style	262
 op	gpui_kit::component::hover_card::HoverCard	content	263
+op	gpui_kit::component::input::Editor	appearance	256
+op	gpui_kit::component::input::Editor	aria_label	257
+op	gpui_kit::component::input::Editor	bordered	258
+op	gpui_kit::component::input::Editor	context_menu	259
+op	gpui_kit::component::input::Editor	disabled	260
+op	gpui_kit::component::input::Editor	gutter_style	261
+op	gpui_kit::component::input::Editor	h	262
+op	gpui_kit::component::input::Editor	on_paste	263
+op	gpui_kit::component::input::Editor	readonly	264
+op	gpui_kit::component::input::Editor	role	265
+op	gpui_kit::component::input::Editor	tab_index	266
+op	gpui_kit::component::input::GutterStyle	with_active_line_number_color	256
+op	gpui_kit::component::input::GutterStyle	with_gap	257
+op	gpui_kit::component::input::GutterStyle	with_line_number_color	258
+op	gpui_kit::component::input::GutterStyle	with_line_number_font_family	259
+op	gpui_kit::component::input::GutterStyle	with_line_number_font_size	260
 op	gpui_kit::component::input::Input	accessibility_id	256
 op	gpui_kit::component::input::Input	appearance	257
 op	gpui_kit::component::input::Input	aria_label	258
@@ -3283,6 +3343,7 @@ op	gpui_kit::component::input::Input	tab_index	274
 op	gpui_kit::component::input::Input	on_token_click	275
 op	gpui_kit::component::input::Input	on_token_hover	276
 op	gpui_kit::component::input::Input	token	277
+op	gpui_kit::component::input::Input	list	278
 op	gpui_kit::component::input::InputGroup	addon	256
 op	gpui_kit::component::input::InputGroup	aria_label	257
 op	gpui_kit::component::input::InputGroup	disabled	258
@@ -4064,6 +4125,8 @@ shape		[[["rec", "gpui_kit::base::ResolvedPosition"], ["rec", "gpui_kit::Bounds<
 shape		[[["rec", "gpui_kit::base::ResolvedPosition"]], "unit"]	118
 shape		[[["leaf", "drag_move_event"]], "unit"]	119
 shape		[[["rec", "gpui_kit::base::input::InputEditsEvent"]], "unit"]	120
+shape		[[["obj", "gpui_kit::component::diff::DiffTextPosition", "gpui_kit::component::diff::DiffTextPosition", true], ["leaf", "click_event"]], "bool"]	121
+shape		[[["opt", ["obj", "gpui_kit::component::diff::DiffTextPosition", "gpui_kit::component::diff::DiffTextPosition", true]], ["rec", "gpui_kit::Modifiers"]], "unit"]	122
 state-op	gpui_kit::base::CalendarState	year_range	1
 state-op	gpui_kit::base::CalendarState	disabled_matcher	2
 state-op	gpui_kit::base::ColorPickerState	default_value	1
@@ -4113,6 +4176,7 @@ state-op	gpui_kit::base::input::EditorState	scroll_beyond_last_line	11
 state-op	gpui_kit::base::input::EditorState	scroll_bounce	12
 state-op	gpui_kit::base::input::EditorState	searchable	13
 state-op	gpui_kit::base::input::EditorState	mask_pattern	14
+state-op	gpui_kit::base::input::EditorState	scrollbar_placement	15
 state-op	gpui_kit::base::input::InputState	autocapitalize	1
 state-op	gpui_kit::base::input::InputState	autocorrect	2
 state-op	gpui_kit::base::input::InputState	clean_on_escape	3
@@ -4142,6 +4206,7 @@ state-op	gpui_kit::base::input::TextareaState	scroll_beyond_last_line	10
 state-op	gpui_kit::base::input::TextareaState	scroll_bounce	11
 state-op	gpui_kit::base::input::TextareaState	searchable	12
 state-op	gpui_kit::base::input::TextareaState	mask_pattern	13
+state-op	gpui_kit::base::input::TextareaState	scrollbar_placement	14
 state-op	gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>	band_count	1
 state-op	gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>	max_band_width	2
 state-op	gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>	padding_inner	3
@@ -8256,6 +8321,10 @@ variant	gpui_kit::base::ScrollbarEntrance	SlideAndFade	1
 variant	gpui_kit::base::ScrollbarMode	Scrolling	0
 variant	gpui_kit::base::ScrollbarMode	Hover	1
 variant	gpui_kit::base::ScrollbarMode	Always	2
+variant	gpui_kit::base::ScrollbarPlacement	BottomRight	0
+variant	gpui_kit::base::ScrollbarPlacement	BottomLeft	1
+variant	gpui_kit::base::ScrollbarPlacement	TopRight	2
+variant	gpui_kit::base::ScrollbarPlacement	TopLeft	3
 variant	gpui_kit::base::SelectionEdge	Start	0
 variant	gpui_kit::base::SelectionEdge	End	1
 variant	gpui_kit::base::SelectionFormat	Plain	0

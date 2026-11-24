@@ -938,7 +938,8 @@ thread_local! {
 }
 
 /// u64 dock area, u8 what (0 panel style -> u16, 1 set style u16, 2 toggle button visible -> u8,
-/// 3 set it u8, 4 set the close button visible u8): DockSkin's reads and settings.
+/// 3 set it u8, 4 set the close button visible u8, 5 collapsed tab bar visible -> u8, 6 set it u8,
+/// 7 split divider line visible -> u8, 8 set it u8): DockSkin's reads and settings.
 fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     use gpui_kit::component::dock::PanelStyle;
     let h = r.u64();
@@ -955,6 +956,10 @@ fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
         2 => c.out.put_u8(skin.is_toggle_button_visible() as u8),
         3 => skin.set_toggle_button_visible(r.u8() != 0, c.cx),
         4 => skin.set_close_button_visible(r.u8() != 0, c.cx),
+        5 => c.out.put_u8(skin.is_collapsed_tab_bar_visible() as u8),
+        6 => skin.set_collapsed_tab_bar_visible(r.u8() != 0, c.cx),
+        7 => c.out.put_u8(skin.is_split_divider_line_visible() as u8),
+        8 => skin.set_split_divider_line_visible(r.u8() != 0, c.cx),
         n => return genapi::err(ERR_BAD_OP, format!("dock skin call {n}")),
     }
     Ok(())

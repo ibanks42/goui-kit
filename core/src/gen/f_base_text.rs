@@ -51,7 +51,7 @@ pub fn sb_base_text_view_state(s: gpui_kit::base::TextViewState, op: u16, r: &mu
     match op {
         1 => { let a0 = r.u8() != 0; <gpui_kit::base::TextViewState>::scrollable(s, a0) }
         2 => { let a0 = r.u8() != 0; <gpui_kit::base::TextViewState>::selectable(s, a0) }
-        3 => { let a0 = en_59(r.u16()); <gpui_kit::base::TextViewState>::selection_format(s, a0) }
+        3 => { let a0 = en_60(r.u16()); <gpui_kit::base::TextViewState>::selection_format(s, a0) }
         4 => { let Some((a0,)) = (|| Some((None?,)))() else { return s }; <gpui_kit::base::TextViewState>::motion(s, a0) }
         _ => s,
     }
@@ -62,7 +62,7 @@ pub fn sbp_base_text_view_state(op: u16, r: &mut R, c: &mut genapi::Call) -> gen
     Ok(match op {
         1 => { let a0 = r.u8() != 0; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::scrollable(s, a0)) }
         2 => { let a0 = r.u8() != 0; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selectable(s, a0)) }
-        3 => { let a0 = en_59(r.u16()); Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selection_format(s, a0)) }
+        3 => { let a0 = en_60(r.u16()); Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selection_format(s, a0)) }
         4 => { let a0 = genapi::value_arg(c, r, build_base_text_view_motion)?; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::motion(s, a0)) }
         _ => Box::new(|s: gpui_kit::base::TextViewState| s),
     })
@@ -77,7 +77,7 @@ pub fn c_312(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = 
 pub fn c_313(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TextViewState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TextViewState>::selected_text(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_314(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u8() != 0; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_scrollable(s, a0, cx); })?; Ok(()) }
 pub fn c_315(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u8() != 0; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selectable(s, a0, cx); })?; Ok(()) }
-pub fn c_316(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_59(r.u16()); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selection_format(s, a0, cx); })?; Ok(()) }
+pub fn c_316(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_60(r.u16()); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selection_format(s, a0, cx); })?; Ok(()) }
 pub fn c_317(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_text(s, &a0[..], cx); })?; Ok(()) }
 pub fn c_818(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TextViewState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&genapi::Owned::new(<gpui_kit::base::TextViewState>::rendered_text(s)), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_819(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::value_arg(c, r, build_base_text_view_motion)?; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_motion(s, a0); })?; Ok(()) }
@@ -106,7 +106,7 @@ pub fn sb_base_table(s: gpui_kit::base::text::editor_host::Table, op: u16, r: &m
     }
 }
 pub fn c_954(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::Table, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::Table>::column_aligns(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
-pub fn c_955(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_base_paragraph)?); } v }); } v }; let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(en_86(r.u16())); } v }; let cx = &mut *c.cx; let mut s = <gpui_kit::base::text::editor_host::Table>::new(a0, a1); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_table(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
+pub fn c_955(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_base_paragraph)?); } v }); } v }; let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(en_87(r.u16())); } v }; let cx = &mut *c.cx; let mut s = <gpui_kit::base::text::editor_host::Table>::new(a0, a1); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_table(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_1358(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::Table, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&(<gpui_kit::base::text::editor_host::Table>::rows(s)).map(|i| i.collect::<Vec<_>>()).collect::<Vec<_>>(), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1403(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::InlineNode, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::InlineNode>::as_custom(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1404(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::InlineNode, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::InlineNode>::as_image(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -268,7 +268,7 @@ pub fn apply_base_text_view(dx: &mut Dx, mut el: gpui_kit::base::TextView, first
             263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <gpui_kit::base::TextView>::on_reveal(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TextView>::scrollable(el, a0) }; }
             265 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TextView>::selectable(el, a0) }; }
-            266 => { el = { let a0 = en_59(r.u16()); <gpui_kit::base::TextView>::selection_format(el, a0) }; }
+            266 => { el = { let a0 = en_60(r.u16()); <gpui_kit::base::TextView>::selection_format(el, a0) }; }
             267 => { el = { let Some((a0,)) = (|| Some((build_base_text_view_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::TextView>::style(el, a0) }; }
             268 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::SharedString, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::base::TextView>::on_link_click(el, a0) }; }
             269 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::base::TaskToggleEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 105, a0, window, cx) } }; <gpui_kit::base::TextView>::on_task_toggle(el, a0) }; }

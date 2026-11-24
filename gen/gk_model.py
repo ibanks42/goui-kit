@@ -360,6 +360,8 @@ class Model:
             return crate, {"verbatim": a}, a
         if a in self.PRIMS:
             return crate, {"primitive": a}, a
+        if a == "()":  # a parameter's default unit (`Editor<R = ()>`, gpui-kit 0.11)
+            return crate, {"tuple": []}, a
         found = [(cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items()
                  if it["name"] == a and not self.info(cr, i)["generic"]]
         if len(found) == 1:
@@ -380,7 +382,7 @@ class Model:
         if m is None:
             raise SystemExit(f"gkgen: overrides [instantiate] types: not `Generic<Args> [as Name]`: {spec}")
         args = gk_values.split_args(m.group(2))  # nested arguments: Sidebar<SidebarGroup<SidebarMenu>> (13.8)
-        if len(args) == 1 and not (args[0] in self.PRIMS or args[0] in LEAF or args[0] in self.data_types()) and \
+        if len(args) == 1 and not (args[0] in self.PRIMS or args[0] in LEAF or args[0] == "()" or args[0] in self.data_types()) and \
                 (m.group(3) is None or args[0].startswith("crate::")):
             return False
         found = [(cr, i) for cr in CRATES for i, (_, it) in self.api.walks[cr].types.items()

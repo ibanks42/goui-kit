@@ -3,6 +3,345 @@ package gk
 
 import "core:time"
 
+// A styled source-code editor.
+//
+// Editor is gpui_kit::component::input::Editor.
+Editor :: struct {
+	using el: Element,
+	using vt: ^Editor_VT,
+}
+
+Editor_VT :: struct {
+	using t_theme_styled: ^Theme_Styled_Trait(Editor),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Editor),
+	using t_styled_ext: ^Styled_Ext_Trait(Editor),
+	using t_sizable: ^Sizable_Trait(Editor),
+	aspect_ratio: proc(e: Editor, ratio: f32) -> Editor,
+	bg: proc(e: Editor, fill: Fill) -> Editor,
+	border: proc(e: Editor, length: Length) -> Editor,
+	border_b: proc(e: Editor, length: Length) -> Editor,
+	border_color: proc(e: Editor, border_color: Color) -> Editor,
+	border_l: proc(e: Editor, length: Length) -> Editor,
+	border_r: proc(e: Editor, length: Length) -> Editor,
+	border_t: proc(e: Editor, length: Length) -> Editor,
+	border_x: proc(e: Editor, length: Length) -> Editor,
+	border_y: proc(e: Editor, length: Length) -> Editor,
+	bottom: proc(e: Editor, length: Length) -> Editor,
+	col_end: proc(e: Editor, end: i16) -> Editor,
+	col_span: proc(e: Editor, span: u16) -> Editor,
+	col_start: proc(e: Editor, start: i16) -> Editor,
+	cursor: proc(e: Editor, cursor: Cursor_Style) -> Editor,
+	flex_basis: proc(e: Editor, basis: Length) -> Editor,
+	flex_grow: proc(e: Editor, grow: f32) -> Editor,
+	flex_shrink: proc(e: Editor, shrink: f32) -> Editor,
+	font: proc(e: Editor, font: Font) -> Editor,
+	font_family: proc(e: Editor, family_name: string) -> Editor,
+	font_features: proc(e: Editor, features: Font_Features) -> Editor,
+	font_weight: proc(e: Editor, weight: Font_Weight) -> Editor,
+	gap: proc(e: Editor, length: Length) -> Editor,
+	gap_x: proc(e: Editor, length: Length) -> Editor,
+	gap_y: proc(e: Editor, length: Length) -> Editor,
+	grid_cols: proc(e: Editor, cols: u16) -> Editor,
+	grid_cols_max_content: proc(e: Editor, cols: u16) -> Editor,
+	grid_cols_min_content: proc(e: Editor, cols: u16) -> Editor,
+	grid_rows: proc(e: Editor, rows: u16) -> Editor,
+	grid_rows_max_content: proc(e: Editor, rows: u16) -> Editor,
+	grid_rows_min_content: proc(e: Editor, rows: u16) -> Editor,
+	inset: proc(e: Editor, length: Length) -> Editor,
+	left: proc(e: Editor, length: Length) -> Editor,
+	line_clamp: proc(e: Editor, lines: int) -> Editor,
+	line_height: proc(e: Editor, line_height: Length) -> Editor,
+	m: proc(e: Editor, length: Length) -> Editor,
+	max_h: proc(e: Editor, length: Length) -> Editor,
+	max_size: proc(e: Editor, length: Length) -> Editor,
+	max_w: proc(e: Editor, length: Length) -> Editor,
+	mb: proc(e: Editor, length: Length) -> Editor,
+	min_h: proc(e: Editor, length: Length) -> Editor,
+	min_size: proc(e: Editor, length: Length) -> Editor,
+	min_w: proc(e: Editor, length: Length) -> Editor,
+	ml: proc(e: Editor, length: Length) -> Editor,
+	mr: proc(e: Editor, length: Length) -> Editor,
+	mt: proc(e: Editor, length: Length) -> Editor,
+	mx: proc(e: Editor, length: Length) -> Editor,
+	my: proc(e: Editor, length: Length) -> Editor,
+	opacity: proc(e: Editor, opacity: f32) -> Editor,
+	p: proc(e: Editor, length: Length) -> Editor,
+	pb: proc(e: Editor, length: Length) -> Editor,
+	pl: proc(e: Editor, length: Length) -> Editor,
+	pr: proc(e: Editor, length: Length) -> Editor,
+	pt: proc(e: Editor, length: Length) -> Editor,
+	px: proc(e: Editor, length: Length) -> Editor,
+	py: proc(e: Editor, length: Length) -> Editor,
+	right: proc(e: Editor, length: Length) -> Editor,
+	rounded: proc(e: Editor, length: Length) -> Editor,
+	rounded_b: proc(e: Editor, length: Length) -> Editor,
+	rounded_bl: proc(e: Editor, length: Length) -> Editor,
+	rounded_br: proc(e: Editor, length: Length) -> Editor,
+	rounded_l: proc(e: Editor, length: Length) -> Editor,
+	rounded_r: proc(e: Editor, length: Length) -> Editor,
+	rounded_t: proc(e: Editor, length: Length) -> Editor,
+	rounded_tl: proc(e: Editor, length: Length) -> Editor,
+	rounded_tr: proc(e: Editor, length: Length) -> Editor,
+	row_end: proc(e: Editor, end: i16) -> Editor,
+	row_span: proc(e: Editor, span: u16) -> Editor,
+	row_start: proc(e: Editor, start: i16) -> Editor,
+	scrollbar_width: proc(e: Editor, width: Length) -> Editor,
+	shadow: proc(e: Editor, shadows: []Box_Shadow) -> Editor,
+	size: proc(e: Editor, length: Length) -> Editor,
+	text_align: proc(e: Editor, align: Text_Align) -> Editor,
+	text_bg: proc(e: Editor, bg: Color) -> Editor,
+	text_color: proc(e: Editor, color: Color) -> Editor,
+	text_decoration_color: proc(e: Editor, color: Color) -> Editor,
+	text_overflow: proc(e: Editor, overflow: Text_Overflow) -> Editor,
+	text_size: proc(e: Editor, size: Length) -> Editor,
+	top: proc(e: Editor, length: Length) -> Editor,
+	w: proc(e: Editor, length: Length) -> Editor,
+	style: proc(e: Editor, flags: ..Style_Flag) -> Editor,
+	appearance: proc(e: Editor, appearance: bool) -> Editor,
+	aria_label: proc(e: Editor, label: string) -> Editor,
+	bordered: proc(e: Editor, bordered: bool) -> Editor,
+	// Replace the built-in context menu shown on right-click.
+	//
+	// The closure receives an empty menu and returns the one to show, so it decides entirely what
+	// appears — the default items are not added. It shows only while the state's context menu is
+	// enabled, which is the default.
+	context_menu: proc(e: Editor, f: Native_Menu) -> Editor,
+	disabled: proc(e: Editor, disabled: bool) -> Editor,
+	// Overrides specified line-number properties for this editor.
+	//
+	// Omitting this on a later render restores the inherited defaults.
+	gutter_style: proc(e: Editor, style: Gutter_Style) -> Editor,
+	h: proc(e: Editor, height: Length) -> Editor,
+	// Intercept paste payloads (images, files) before the default text insertion.
+	//
+	// `true` consumes the paste so nothing is inserted, `false` falls through to `clipboard.text()`.
+	// Copied files arrive as `ExternalPaths` through the same hook. On web the clipboard reads `None`;
+	// image paste needs async clipboard access and is out of scope.
+	on_paste: proc(e: Editor, handler: Handler) -> Editor,
+	// Set the editor to read-only, default is `false`.
+	//
+	// Unlike `->disabled`, a read-only editor keeps the normal appearance and still can be focused,
+	// selected and copied, it only rejects the changes made by the user.
+	readonly: proc(e: Editor, readonly: bool) -> Editor,
+	role: proc(e: Editor, role: Role_Override) -> Editor,
+	tab_index: proc(e: Editor, index: int) -> Editor,
+}
+
+editor :: proc(state: Editor_State, flags: ..Style_Flag, loc := #caller_location) -> Editor {
+	use_component_input()
+	e := Editor{new_node(893, loc), &editor_vt}
+	o := node_args()
+	put_u64(o, state.h)
+	tokens(e.el, flags)
+	return e
+}
+
+@(private)
+editor_vt := Editor_VT {
+	t_theme_styled = cast(^Theme_Styled_Trait(Editor))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Editor))&logical_styled_ext_any,
+	t_styled_ext = cast(^Styled_Ext_Trait(Editor))&styled_ext_any,
+	t_sizable = cast(^Sizable_Trait(Editor))&sizable_any,
+	aspect_ratio = transmute(proc(e: Editor, ratio: f32) -> Editor)styled_aspect_ratio,
+	bg = transmute(proc(e: Editor, fill: Fill) -> Editor)styled_bg,
+	border = transmute(proc(e: Editor, length: Length) -> Editor)styled_border,
+	border_b = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_b,
+	border_color = transmute(proc(e: Editor, border_color: Color) -> Editor)styled_border_color,
+	border_l = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_l,
+	border_r = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_r,
+	border_t = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_t,
+	border_x = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_x,
+	border_y = transmute(proc(e: Editor, length: Length) -> Editor)styled_border_y,
+	bottom = transmute(proc(e: Editor, length: Length) -> Editor)styled_bottom,
+	col_end = transmute(proc(e: Editor, end: i16) -> Editor)styled_col_end,
+	col_span = transmute(proc(e: Editor, span: u16) -> Editor)styled_col_span,
+	col_start = transmute(proc(e: Editor, start: i16) -> Editor)styled_col_start,
+	cursor = transmute(proc(e: Editor, cursor: Cursor_Style) -> Editor)styled_cursor,
+	flex_basis = transmute(proc(e: Editor, basis: Length) -> Editor)styled_flex_basis,
+	flex_grow = transmute(proc(e: Editor, grow: f32) -> Editor)styled_flex_grow,
+	flex_shrink = transmute(proc(e: Editor, shrink: f32) -> Editor)styled_flex_shrink,
+	font = transmute(proc(e: Editor, font: Font) -> Editor)styled_font,
+	font_family = transmute(proc(e: Editor, family_name: string) -> Editor)styled_font_family,
+	font_features = transmute(proc(e: Editor, features: Font_Features) -> Editor)styled_font_features,
+	font_weight = transmute(proc(e: Editor, weight: Font_Weight) -> Editor)styled_font_weight,
+	gap = transmute(proc(e: Editor, length: Length) -> Editor)styled_gap,
+	gap_x = transmute(proc(e: Editor, length: Length) -> Editor)styled_gap_x,
+	gap_y = transmute(proc(e: Editor, length: Length) -> Editor)styled_gap_y,
+	grid_cols = transmute(proc(e: Editor, cols: u16) -> Editor)styled_grid_cols,
+	grid_cols_max_content = transmute(proc(e: Editor, cols: u16) -> Editor)styled_grid_cols_max_content,
+	grid_cols_min_content = transmute(proc(e: Editor, cols: u16) -> Editor)styled_grid_cols_min_content,
+	grid_rows = transmute(proc(e: Editor, rows: u16) -> Editor)styled_grid_rows,
+	grid_rows_max_content = transmute(proc(e: Editor, rows: u16) -> Editor)styled_grid_rows_max_content,
+	grid_rows_min_content = transmute(proc(e: Editor, rows: u16) -> Editor)styled_grid_rows_min_content,
+	inset = transmute(proc(e: Editor, length: Length) -> Editor)styled_inset,
+	left = transmute(proc(e: Editor, length: Length) -> Editor)styled_left,
+	line_clamp = transmute(proc(e: Editor, lines: int) -> Editor)styled_line_clamp,
+	line_height = transmute(proc(e: Editor, line_height: Length) -> Editor)styled_line_height,
+	m = transmute(proc(e: Editor, length: Length) -> Editor)styled_m,
+	max_h = transmute(proc(e: Editor, length: Length) -> Editor)styled_max_h,
+	max_size = transmute(proc(e: Editor, length: Length) -> Editor)styled_max_size,
+	max_w = transmute(proc(e: Editor, length: Length) -> Editor)styled_max_w,
+	mb = transmute(proc(e: Editor, length: Length) -> Editor)styled_mb,
+	min_h = transmute(proc(e: Editor, length: Length) -> Editor)styled_min_h,
+	min_size = transmute(proc(e: Editor, length: Length) -> Editor)styled_min_size,
+	min_w = transmute(proc(e: Editor, length: Length) -> Editor)styled_min_w,
+	ml = transmute(proc(e: Editor, length: Length) -> Editor)styled_ml,
+	mr = transmute(proc(e: Editor, length: Length) -> Editor)styled_mr,
+	mt = transmute(proc(e: Editor, length: Length) -> Editor)styled_mt,
+	mx = transmute(proc(e: Editor, length: Length) -> Editor)styled_mx,
+	my = transmute(proc(e: Editor, length: Length) -> Editor)styled_my,
+	opacity = transmute(proc(e: Editor, opacity: f32) -> Editor)styled_opacity,
+	p = transmute(proc(e: Editor, length: Length) -> Editor)styled_p,
+	pb = transmute(proc(e: Editor, length: Length) -> Editor)styled_pb,
+	pl = transmute(proc(e: Editor, length: Length) -> Editor)styled_pl,
+	pr = transmute(proc(e: Editor, length: Length) -> Editor)styled_pr,
+	pt = transmute(proc(e: Editor, length: Length) -> Editor)styled_pt,
+	px = transmute(proc(e: Editor, length: Length) -> Editor)styled_px,
+	py = transmute(proc(e: Editor, length: Length) -> Editor)styled_py,
+	right = transmute(proc(e: Editor, length: Length) -> Editor)styled_right,
+	rounded = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded,
+	rounded_b = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_b,
+	rounded_bl = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_bl,
+	rounded_br = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_br,
+	rounded_l = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_l,
+	rounded_r = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_r,
+	rounded_t = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_t,
+	rounded_tl = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_tl,
+	rounded_tr = transmute(proc(e: Editor, length: Length) -> Editor)styled_rounded_tr,
+	row_end = transmute(proc(e: Editor, end: i16) -> Editor)styled_row_end,
+	row_span = transmute(proc(e: Editor, span: u16) -> Editor)styled_row_span,
+	row_start = transmute(proc(e: Editor, start: i16) -> Editor)styled_row_start,
+	scrollbar_width = transmute(proc(e: Editor, width: Length) -> Editor)styled_scrollbar_width,
+	shadow = transmute(proc(e: Editor, shadows: []Box_Shadow) -> Editor)styled_shadow,
+	size = transmute(proc(e: Editor, length: Length) -> Editor)styled_size,
+	text_align = transmute(proc(e: Editor, align: Text_Align) -> Editor)styled_text_align,
+	text_bg = transmute(proc(e: Editor, bg: Color) -> Editor)styled_text_bg,
+	text_color = transmute(proc(e: Editor, color: Color) -> Editor)styled_text_color,
+	text_decoration_color = transmute(proc(e: Editor, color: Color) -> Editor)styled_text_decoration_color,
+	text_overflow = transmute(proc(e: Editor, overflow: Text_Overflow) -> Editor)styled_text_overflow,
+	text_size = transmute(proc(e: Editor, size: Length) -> Editor)styled_text_size,
+	top = transmute(proc(e: Editor, length: Length) -> Editor)styled_top,
+	w = transmute(proc(e: Editor, length: Length) -> Editor)styled_w,
+	style = transmute(proc(e: Editor, flags: ..Style_Flag) -> Editor)rt_style,
+	appearance = proc(e: Editor, appearance: bool) -> Editor {
+		o := op(e.el, 256)
+		put_u8(o, u8(appearance))
+		return e
+	},
+	aria_label = proc(e: Editor, label: string) -> Editor {
+		o := op(e.el, 257)
+		put_str(o, label)
+		return e
+	},
+	bordered = proc(e: Editor, bordered: bool) -> Editor {
+		o := op(e.el, 258)
+		put_u8(o, u8(bordered))
+		return e
+	},
+	context_menu = proc(e: Editor, f: Native_Menu) -> Editor {
+		o := op(e.el, 259)
+		put_u32(o, take_value(f.nd))
+		return e
+	},
+	disabled = proc(e: Editor, disabled: bool) -> Editor {
+		o := op(e.el, 260)
+		put_u8(o, u8(disabled))
+		return e
+	},
+	gutter_style = proc(e: Editor, style: Gutter_Style) -> Editor {
+		o := op(e.el, 261)
+		put_u32(o, take_value(style.nd))
+		return e
+	},
+	h = proc(e: Editor, height: Length) -> Editor {
+		o := op(e.el, 262)
+		put_definite_length(o, height)
+		return e
+	},
+	on_paste = proc(e: Editor, handler: Handler) -> Editor {
+		o := op(e.el, 263)
+		put_u32(o, register(handler, 76))
+		return e
+	},
+	readonly = proc(e: Editor, readonly: bool) -> Editor {
+		o := op(e.el, 264)
+		put_u8(o, u8(readonly))
+		return e
+	},
+	role = proc(e: Editor, role: Role_Override) -> Editor {
+		o := op(e.el, 265)
+		put_Role_Override(o, role)
+		return e
+	},
+	tab_index = proc(e: Editor, index: int) -> Editor {
+		o := op(e.el, 266)
+		put_u64(o, u64(index))
+		return e
+	},
+}
+
+// Optional line-number presentation supplied by the application or UI layer.
+//
+// Unspecified properties inherit the editor's defaults. Keeping them optional lets a per-editor
+// override follow later theme changes for every other property.
+//
+// Gutter_Style is gpui_kit::component::input::GutterStyle.
+Gutter_Style :: struct {
+	using nd: Value,
+	using vt: ^Gutter_Style_VT,
+}
+
+Gutter_Style_VT :: struct {
+	// Sets the color of the current line number.
+	with_active_line_number_color: proc(e: Gutter_Style, color: Color) -> Gutter_Style,
+	// Sets the gap before the body text, after any folding controls.
+	//
+	// Accepts rems that follow window zoom or pixels for a fixed gap.
+	with_gap: proc(e: Gutter_Style, gap: Length) -> Gutter_Style,
+	// Sets the color of line numbers outside the current line.
+	with_line_number_color: proc(e: Gutter_Style, color: Color) -> Gutter_Style,
+	// Sets the line-number font independently of the body font.
+	with_line_number_font_family: proc(e: Gutter_Style, family: string) -> Gutter_Style,
+	// Sets the line-number font size without changing the body row height.
+	//
+	// Accepts rems that follow window zoom or pixels for a fixed font size.
+	with_line_number_font_size: proc(e: Gutter_Style, size: Length) -> Gutter_Style,
+}
+
+gutter_style_default :: proc(loc := #caller_location) -> Gutter_Style {
+	e := Gutter_Style{new_value(892, loc), &gutter_style_vt}
+	return e
+}
+
+@(private)
+gutter_style_vt := Gutter_Style_VT {
+	with_active_line_number_color = proc(e: Gutter_Style, color: Color) -> Gutter_Style {
+		o := op(vel(e.nd), 256)
+		put_color(o, color)
+		return e
+	},
+	with_gap = proc(e: Gutter_Style, gap: Length) -> Gutter_Style {
+		o := op(vel(e.nd), 257)
+		put_absolute_length(o, gap)
+		return e
+	},
+	with_line_number_color = proc(e: Gutter_Style, color: Color) -> Gutter_Style {
+		o := op(vel(e.nd), 258)
+		put_color(o, color)
+		return e
+	},
+	with_line_number_font_family = proc(e: Gutter_Style, family: string) -> Gutter_Style {
+		o := op(vel(e.nd), 259)
+		put_str(o, family)
+		return e
+	},
+	with_line_number_font_size = proc(e: Gutter_Style, size: Length) -> Gutter_Style {
+		o := op(vel(e.nd), 260)
+		put_absolute_length(o, size)
+		return e
+	},
+}
+
 // A text input element bind to an `InputState`.
 //
 // Input is gpui_kit::component::input::Input.
@@ -127,6 +466,15 @@ Input_VT :: struct {
 	h_full: proc(e: Input) -> Input,
 	// Sets the GPUI identity of the input frame. By default it uses the state entity ID.
 	id: proc(e: Input, id: Id) -> Input,
+	// Offer a `List` under the field while the user types, as an HTML `<input list>` does. The input
+	// still accepts any text: the list only helps type it.
+	//
+	// The list searches with the field's text through `->perform_search`, so the delegate decides what
+	// matches, how long to wait and how rows look. Nothing is highlighted until the user presses Down,
+	// so Enter on the typed text emits `PressEnter`. Write the accepted value in `->confirm`, for
+	// example with `replace_all`. The popup shows while there are rows or `->loading` is true, and
+	// only while the input has focus. A disabled or read-only input offers none.
+	list: proc(e: Input, list: List_State) -> Input,
 	// Set to enable toggle button for password mask state.
 	mask_toggle: proc(e: Input) -> Input,
 	// Intercept paste payloads (images, files) before the default text insertion.
@@ -321,6 +669,11 @@ input_vt := Input_VT {
 	id = proc(e: Input, id: Id) -> Input {
 		o := op(e.el, 267)
 		put_id(o, id)
+		return e
+	},
+	list = proc(e: Input, list: List_State) -> Input {
+		o := op(e.el, 278)
+		put_u64(o, list.h)
 		return e
 	},
 	mask_toggle = proc(e: Input) -> Input {

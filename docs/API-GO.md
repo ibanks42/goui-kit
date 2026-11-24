@@ -196,7 +196,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 <!-- index:begin (written by gen/gk_apidoc.py from go/gk/gen_*.go; do not edit) -->
 
-253 element types, 141 kit state types and 92 value types, in 76 upstream modules. Styling builders every element has (`.Bg`, `.W`, `.P`, `.BorderColor`, … and the style tokens) are not repeated per type.
+253 element types, 142 kit state types and 94 value types, in 76 upstream modules. Styling builders every element has (`.Bg`, `.W`, `.P`, `.BorderColor`, … and the style tokens) are not repeated per type.
 
 ### component
 
@@ -336,20 +336,22 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::diff
 
-- **`gk.DiffEl`** (Diff, element): `gk.Diff(state)`; `.Annotations`, `.BorderE`, `.BorderS`, `.ChangeBackground`, `.ChangeIndicator`, `.Decorations`, `.FlexRowDir`, `.GutterMarkers` and 22 more
+- **`gk.DiffEl`** (Diff, element): `gk.Diff(state)`; `.Annotations`, `.BorderE`, `.BorderS`, `.ChangeBackground`, `.ChangeIndicator`, `.Decorations`, `.FlexRowDir`, `.GutterMarkers` and 26 more
 - **`gk.DiffAnnotation`** (DiffAnnotation, kit state): `gk.NewDiffAnnotationFile(cx, id, path)` or `gk.NewDiffAnnotationLine(cx, id, position)`; reads `.ID`, `.Path`, `.Position`
 - **`gk.DiffConflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `.BaseLabel`, `.BaseLines`, `.CurrentLabel`, `.CurrentLines`, `.IncomingLabel`, `.IncomingLines`, `.Lines`
 - **`gk.DiffFileRead`** (DiffFile, kit state): handed out by the kit (no constructor); reads `.Additions`, `.Conflicts`, `.Deletions`, `.ExtendedHeaders`, `.HasChanges`, `.IsBinary`, `.IsTruncated`, `.Language` and 4 more
 - **`gk.DiffGutterMarkerRead`** (DiffGutterMarker, kit state): handed out by the kit (no constructor); reads `.Label`, `.ID`, `.Position`
-- **`gk.DiffLinePosition`** (DiffLinePosition, kit state): `gk.NewDiffLinePosition(cx, path, side, line)`; shown by `gk.NewDiffGutterMarker(state)`; reads `.Line`, `.Path`, `.Side`
+- **`gk.DiffLinePosition`** (DiffLinePosition, kit state): `gk.NewDiffLinePosition(cx, path, side, line)`; shown by `gk.NewDiffGutterMarker(state)`, `gk.NewDiffSpanHighlight(state)`; reads `.Line`, `.Path`, `.Side`
 - **`gk.DiffLineRangeRead`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `.End`, `.EndSide`, `.Path`, `.Side`, `.Start`
 - **`gk.DiffParseError`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `.Line`, `.Message`
-- **`gk.DiffState`** (DiffState, kit state): `gk.NewDiffState(cx, files)….Build()`; shown by `gk.Diff(state)`; built with `.WithContextLines`, `.WithExpansionLines`, `.WithInlineMaxLineLength`, `.WithInlineUnit`, `.WithMinCollapsedLines`, `.WithMode`, `.WithSyntaxMaxLineLength`; reads `.ConflictResolution`, `.ContextLines`, `.ExpansionLines`, `.Files`, `.InlineMaxLineLength`, `.InlineUnit`, `.IsFileCollapsed`, `.MinCollapsedLines` and 5 more; writes `.ClearSyntaxHighlighter`, `.CollapseUnchanged`, `.ExpandUnchanged`, `.NextChange`, `.PreviousChange`, `.ResolveConflict`, `.ScrollToFile`, `.ScrollToLine` and 12 more; events `.OnDiffEvent(cx, f)`
+- **`gk.DiffState`** (DiffState, kit state): `gk.NewDiffState(cx, files)….Build()`; shown by `gk.Diff(state)`; built with `.WithContextLines`, `.WithExpansionLines`, `.WithInlineMaxLineLength`, `.WithInlineUnit`, `.WithMinCollapsedLines`, `.WithMode`, `.WithSyntaxMaxLineLength`; reads `.ConflictResolution`, `.ContextLines`, `.ExpansionLines`, `.Files`, `.HasLine`, `.InlineMaxLineLength`, `.InlineUnit`, `.IsFileCollapsed` and 6 more; writes `.ClearSyntaxHighlighter`, `.CollapseUnchanged`, `.ExpandUnchanged`, `.NextChange`, `.PreviousChange`, `.ResolveConflict`, `.ScrollToFile`, `.ScrollToLine` and 12 more; events `.OnDiffEvent(cx, f)`
+- **`gk.DiffTextPosition`** (DiffTextPosition, kit state): handed out by the kit (no constructor); reads `.Text`, `.Offset`, `.Position`
 - **`gk.DiffDecoration`** (DiffDecoration, value): `gk.NewDiffDecoration(range_)`; `.WithBackground`
-- **`gk.DiffFile`** (DiffFile, value): `gk.NewDiffFileParseAt(patch, index)` or `gk.NewDiffFileUnchanged(path, text)` or `gk.NewDiffFileParseWithAt(patch, options, index)`; `.WithLanguage`
+- **`gk.DiffFile`** (DiffFile, value): `gk.NewDiffFileExcerpts(path, parts)` or `gk.NewDiffFileParseAt(patch, index)` or `gk.NewDiffFileUnchanged(path, text)` (and 1 more); `.WithLanguage`
 - **`gk.DiffGutterMarker`** (DiffGutterMarker, value): `gk.NewDiffGutterMarker(id, position)`; `.WithLabel`
 - **`gk.DiffLineRange`** (DiffLineRange, value): `gk.NewDiffLineRange(path, side, start, end)`; `.WithEndSide`
 - **`gk.DiffParseOptions`** (DiffParseOptions, value): `gk.NewDiffParseOptions()` or `gk.NewDiffParseOptionsDefault()`; `.TruncatedHunks`
+- **`gk.DiffSpanHighlight`** (DiffSpanHighlight, value): `gk.NewDiffSpanHighlight(position, span)`; `.WithBackground`, `.WithForeground`, `.WithUnderline`
 
 ### component::dock
 
@@ -385,7 +387,8 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::input
 
-- **`gk.InputEl`** (Input, element): `gk.Input(state)`; `.Selected`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 28 more
+- **`gk.EditorEl`** (Editor, element): `gk.Editor(state)`; `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE`, `.BorderS`, `.Bordered`, `.FlexRowDir` and 17 more
+- **`gk.InputEl`** (Input, element): `gk.Input(state)`; `.Selected`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 29 more
 - **`gk.InputGroupAddonEl`** (InputGroupAddon, element): `gk.InputGroupAddon(id)`; `.Align`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
 - **`gk.InputGroupButtonEl`** (InputGroupButton, element): `gk.InputGroupButton(id)`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Tooltip`, `.Primary`, `.Ghost`, `.Outline` and 33 more
 - **`gk.InputGroupEl`** (InputGroup, element): `gk.InputGroup(id)`; `.Small`, `.Large`, `.Disabled`, `.Addon`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Input` and 16 more
@@ -394,6 +397,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.NumberInputEl`** (NumberInput, element): `gk.NumberInput(state)`; `.Placeholder`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 17 more
 - **`gk.OtpInputEl`** (OtpInput, element): `gk.OtpInput(state)`; `.Small`, `.Large`, `.Disabled`, `.Groups`, `.WithSize`, `.Xsmall`
 - **`gk.TextareaEl`** (Textarea, element): `gk.Textarea(state)`; `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE`, `.BorderS`, `.Bordered`, `.FlexRowDir` and 18 more
+- **`gk.GutterStyle`** (GutterStyle, value): `gk.NewGutterStyleDefault()`; `.WithActiveLineNumberColor`, `.WithGap`, `.WithLineNumberColor`, `.WithLineNumberFontFamily`, `.WithLineNumberFontSize`
 
 ### component::kbd
 
@@ -681,7 +685,6 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.DialogBackdropEl`** (DialogBackdrop, element): `gk.DialogBackdrop()` or `gk.DialogBackdropDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.DialogPopupEl`** (DialogPopup, element): `gk.DialogPopup()` or `gk.DialogPopupDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.DialogTriggerEl`** (DialogTrigger, element): `gk.DialogTrigger(trigger)`; `.Handle`, `.OnOpen`
-- **`gk.EditorEl`** (Editor, element): `gk.Editor(state)`
 - **`gk.GridLayoutEl`** (GridLayout, element): `gk.GridLayout(id, state)` or `gk.KitGridLayout(id, state)`; `.Placeholder`, `.BorderE`, `.BorderS`, `.DraggingItem`, `.FlexRowDir`, `.FocusedItem`, `.InsetE`, `.InsetS` and 17 more
 - **`gk.InputBaseEl`** (InputBase, element): `gk.InputBase(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Focused`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
 - **`gk.MotionRevealEl`** (MotionReveal, element): `gk.MotionReveal(id, progress, child)`
@@ -698,8 +701,8 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.RoundedFrameCoverEl`** (RoundedFrameCover, element): `gk.RoundedFrameCoverUniform(radius)`; `.Backdrop`, `.FrameBorder`
 - **`gk.ScrollBounceEl`** (ScrollBounce, element): `gk.ScrollBounce(id, handle, child)`; `.Enabled`, `.Motion`, `.ScrollWheel`
 - **`gk.ScrollableMaskEl`** (ScrollableMask<ScrollHandle>, element): `gk.ScrollableMaskVerticalWheel(scrollHandle)` or `gk.ScrollableMask(axis, scrollHandle)`; `.Debug`
-- **`gk.ScrollbarEl`** (Scrollbar, element): `gk.Scrollbar(scrollHandle)` or `gk.ScrollbarHorizontal(scrollHandle)` or `gk.ScrollbarVertical(scrollHandle)`; `.Axis`, `.Mode`, `.ScrollSize`, `.Styles`, `.ViewportBounds`, `.ViewportFromLayout`
-- **`gk.SelectableTextEl`** (SelectableText, element): `gk.SelectableText(id, text)` or `gk.SelectableTextWithHandle(id, handle, text)`; `.DocumentOrder`, `.Highlights`, `.SelectionColor`, `.TextStyle`
+- **`gk.ScrollbarEl`** (Scrollbar, element): `gk.Scrollbar(scrollHandle)` or `gk.ScrollbarHorizontal(scrollHandle)` or `gk.ScrollbarVertical(scrollHandle)`; `.Axis`, `.Mode`, `.Placement`, `.ScrollSize`, `.Styles`, `.ViewportBounds`, `.ViewportFromLayout`
+- **`gk.SelectableTextEl`** (SelectableText, element): `gk.SelectableText(id, text)` or `gk.SelectableTextWithHandle(id, handle, text)`; `.DocumentOrder`, `.Highlights`, `.OnReveal`, `.RevealRange`, `.SelectionColor`, `.TextStyle`
 - **`gk.SliderIndicatorEl`** (SliderIndicator, element): `gk.SliderIndicator(state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.SliderThumbEl`** (SliderThumb, element): `gk.SliderThumb(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
 - **`gk.SliderTrackEl`** (SliderTrack, element): `gk.SliderTrack(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
@@ -731,7 +734,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.PopoverState`** (PopoverState, kit state): `gk.NewPopoverState(cx, defaultOpen)`; reads `.IsOpen`; writes `.Dismiss`, `.Show`
 - **`gk.RangeHighlight`** (RangeHighlight, kit state): `gk.NewRangeHighlight(cx, range_, background)`; reads `.Background`, `.Range`
 - **`gk.RenderedText`** (RenderedText, kit state): handed out by the kit (no constructor); reads `.AsStr`, `.IsEmpty`, `.Len`, `.RangeForSource`, `.Source`
-- **`gk.ResizableState`** (ResizableState, kit state): `gk.NewResizableState(cx)`; reads `.ContainerSize`, `.Sizes`; writes `.Clear`, `.InsertPanel`, `.RemovePanel`, `.ResetPanel`, `.ResizePanel`; events `.OnResizablePanelEvent(cx, f)`
+- **`gk.ResizableState`** (ResizableState, kit state): `gk.NewResizableState(cx)`; reads `.ContainerSize`, `.IsResizing`, `.Sizes`; writes `.Clear`, `.InsertPanel`, `.RemovePanel`, `.ResetPanel`, `.ResizePanel`; events `.OnResizablePanelEvent(cx, f)`
 - **`gk.ScrollbarMotionRead`** (ScrollbarMotion, kit state): handed out by the kit (no constructor); reads `.Enter`, `.Entrance`, `.Exit`, `.Expand`, `.Idle`, `.ThumbHoverEntrance`
 - **`gk.ScrollbarThemeRead`** (ScrollbarTheme, kit state): handed out by the kit (no constructor); reads `.Mode`, `.Motion`
 - **`gk.Sequence`** (Sequence<f32>, kit state): `gk.NewSequence(cx, id, from)….Build()`; built with `.WithStep`, `.WithSteps`; reads `.From`, `.Sample`, `.Steps`
@@ -818,8 +821,8 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.CursorBlinkRead`** (CursorBlink, kit state): handed out by the kit (no constructor); reads `.IdleTimeout`, `.Interval`, `.IsSteady`
 - **`gk.DiagnosticSet`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `.ForOffset`, `.IsEmpty`, `.Iter`, `.Len`, `.Range`; writes `.Clear`, `.Extend`, `.Push`
 - **`gk.DisplayMap`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `.Text`, `.BufferLineCount`, `.BufferLineToDisplayRow`, `.BufferLineToDisplayRowRange`, `.BufferPosToDisplayPos`, `.DisplayPosToBufferPos`, `.DisplayRowCount`, `.DisplayRowToBufferLine` and 9 more; writes `.ClearFolds`, `.OnLayoutChanged`, `.SetFoldCandidates`, `.SetFolded`, `.SetWrappingIndent`, `.ToggleFold`
-- **`gk.EditorScrollbarContext`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `.Axis`, `.ScrollViewportSize`
-- **`gk.EditorState`** (EditorState, kit state): `gk.NewEditorState(cx)….Build()`; shown by `gk.Editor(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.GutterDecorationsWidth` and 6 more; reads `.Text`, `.Value`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.CreateDecorationsCollection`, `.CreateGutterDecorationsCollection`, `.CreateOverviewRulerDecorationsCollection`, `.CreateRangeDecorationsCollection` and 54 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.ClearDiagnosticPopover`, `.ClearHoverState`, `.CloseEditMenu`, `.CloseSearch` and 54 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.EditorScrollbarContext`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `.Axis`, `.ContentHeightF64`, `.Placement`, `.ScrollViewportSize`, `.ScrollYF64`
+- **`gk.EditorState`** (EditorState, kit state): `gk.NewEditorState(cx)….Build()`; shown by `gk.Editor(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.GutterDecorationsWidth` and 7 more; reads `.Text`, `.Value`, `.ContentHeightF64`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.CreateDecorationsCollection`, `.CreateGutterDecorationsCollection`, `.CreateOverviewRulerDecorationsCollection` and 58 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.ClearDiagnosticPopover`, `.ClearHoverState`, `.CloseEditMenu`, `.CloseSearch` and 61 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.GutterDecorationCollection`** (GutterDecorationCollection, kit state): `gk.NewGutterDecorationCollectionDefault(cx)`; reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.InlineTokenClickEvent`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `.Bounds`, `.Click`, `.Range`, `.Token`
 - **`gk.InlineTokenContext`** (InlineTokenContext, kit state): handed out by the kit (no constructor); shown by `gk.InputToken(state)`; reads `.AvailableWidth`, `.IsDisabled`, `.IsReadonly`, `.IsSelected`, `.LineHeight`, `.Range`, `.Token`
@@ -829,13 +832,13 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.InputContent`** (InputContent, kit state): `gk.NewInputContent(cx, text)`; reads `.Text`, `.Tokens`
 - **`gk.InputContextMenuCapabilitiesRead`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `.HasCodeActions`, `.HasDefinition`, `.HasSelection`, `.IsCodeEditor`, `.IsCopyable`, `.IsDisabled`, `.IsEditable`, `.IsMasked` and 1 more
 - **`gk.InputPresentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `.Placeholder`, `.FocusHandle`, `.IsCodeEditor`, `.IsDisabled`, `.IsEditable`, `.IsLoading`, `.IsMasked`, `.IsMultiLine` and 3 more
-- **`gk.InputState`** (InputState, kit state): `gk.NewInputState(cx)….Build()`; shown by `gk.BaseInput(state)`, `gk.BaseNumberInput(state)`, `gk.Input(state)`, `gk.NewQuestionnaireInputDefinition(state)`, `gk.NumberInput(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.InputAction` and 7 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.DiagnosticPopover`, `.Diagnostics` and 49 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 41 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.InputState`** (InputState, kit state): `gk.NewInputState(cx)….Build()`; shown by `gk.BaseInput(state)`, `gk.BaseNumberInput(state)`, `gk.Input(state)`, `gk.NewQuestionnaireInputDefinition(state)`, `gk.NumberInput(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.InputAction` and 7 more; reads `.Text`, `.Value`, `.Content`, `.ContentHeightF64`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.DiagnosticPopover` and 51 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 43 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.OverviewRulerDecorationCollection`** (OverviewRulerDecorationCollection, kit state): `gk.NewOverviewRulerDecorationCollectionDefault(cx)`; reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.RangeDecorationCollection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.SearchMatcher`** (SearchMatcher, kit state): `gk.NewSearchMatcher(cx)`; reads `.Label`, `.Current`, `.CurrentMatchIndex`, `.IsEmpty`, `.Len`, `.MatchedRanges`; writes `.UpdateCursorByOffset`, `.UpdateQuery`
 - **`gk.SearchSession`** (SearchSession, kit state): `gk.NewSearchSessionDefault(cx)`; reads `.IsActive`
 - **`gk.TextDecorationCollection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `.GetRanges`; writes `.Append`, `.Clear`, `.Set`
-- **`gk.TextareaState`** (TextareaState, kit state): `gk.NewTextareaState(cx)….Build()`; shown by `gk.BaseTextarea(state)`, `gk.Textarea(state)`; built with `.Placeholder`, `.AutoGrow`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue` and 5 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.Decorations`, `.DiagnosticPopover` and 50 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 43 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.TextareaState`** (TextareaState, kit state): `gk.NewTextareaState(cx)….Build()`; shown by `gk.BaseTextarea(state)`, `gk.Textarea(state)`; built with `.Placeholder`, `.AutoGrow`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue` and 6 more; reads `.Text`, `.Value`, `.Content`, `.ContentHeightF64`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.Decorations` and 52 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 46 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.AutoClosingPair`** (AutoClosingPair, value): `gk.NewAutoClosingPair(open, close_)`; `.NotIn`
 - **`gk.BracketPair`** (BracketPair, value): `gk.NewBracketPair(open, close_)`
 - **`gk.CursorBlink`** (CursorBlink, value): `gk.NewCursorBlinkDefault()` or `gk.NewCursorBlinkSteady()` or `gk.NewCursorBlinkBlinking(interval)`; `.WithIdleTimeout`

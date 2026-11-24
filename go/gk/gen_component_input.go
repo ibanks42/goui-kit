@@ -8,6 +8,624 @@ import (
 	"time"
 )
 
+// EditorEl is gpui_kit::component::input::Editor.
+type EditorEl struct{ n *node }
+
+func (e EditorEl) node() *node { return e.n }
+
+// Editor is <gpui_kit::component::input::Editor>::new.
+func Editor(state EditorState, st ...Style) EditorEl {
+	useComponentInput()
+	n := newNode(893)
+	o := nodeArgs(n)
+	o.u64(state.h)
+	tokens(n, st)
+	return EditorEl{n}
+}
+
+// Appearance is <gpui_kit::component::input::Editor>::appearance.
+func (e EditorEl) Appearance(appearance bool) EditorEl {
+	o := op(e.n, 256)
+	o.bool(appearance)
+	return e
+}
+
+// AriaLabel is <gpui_kit::component::input::Editor>::aria_label.
+func (e EditorEl) AriaLabel(label string) EditorEl {
+	o := op(e.n, 257)
+	o.str(label)
+	return e
+}
+
+// Bordered is <gpui_kit::component::input::Editor>::bordered.
+func (e EditorEl) Bordered(bordered bool) EditorEl {
+	o := op(e.n, 258)
+	o.bool(bordered)
+	return e
+}
+
+// Replace the built-in context menu shown on right-click.
+//
+// The closure receives an empty menu and returns the one to show, so it decides entirely what
+// appears — the default items are not added. It shows only while the state's context menu is
+// enabled, which is the default.
+//
+// ContextMenu is <gpui_kit::component::input::Editor>::context_menu.
+func (e EditorEl) ContextMenu(f NativeMenu) EditorEl {
+	o := op(e.n, 259)
+	o.u32(takeValue(f.n))
+	return e
+}
+
+// Disabled is <gpui_kit::component::input::Editor>::disabled.
+func (e EditorEl) Disabled(disabled bool) EditorEl {
+	o := op(e.n, 260)
+	o.bool(disabled)
+	return e
+}
+
+// Overrides specified line-number properties for this editor.
+//
+// Omitting this on a later render restores the inherited defaults.
+//
+// GutterStyle is <gpui_kit::component::input::Editor>::gutter_style.
+func (e EditorEl) GutterStyle(style GutterStyle) EditorEl {
+	o := op(e.n, 261)
+	o.u32(takeValue(style.n))
+	return e
+}
+
+// H is <gpui_kit::component::input::Editor>::h.
+func (e EditorEl) H(height Length) EditorEl {
+	o := op(e.n, 262)
+	putDefiniteLength(o, height)
+	return e
+}
+
+// Intercept paste payloads (images, files) before the default text insertion.
+//
+// `true` consumes the paste so nothing is inserted, `false` falls through to `clipboard.text()`.
+// Copied files arrive as `ExternalPaths` through the same hook. On web the clipboard reads `None`;
+// image paste needs async clipboard access and is out of scope.
+//
+// OnPaste is <gpui_kit::component::input::Editor>::on_paste.
+func (e EditorEl) OnPaste(handler func(cx *Cx, e ClipboardItem) bool) EditorEl {
+	o := op(e.n, 263)
+	o.u32(register(handler, 76))
+	return e
+}
+
+// Set the editor to read-only, default is `false`.
+//
+// Unlike `Disabled`, a read-only editor keeps the normal appearance and still can be focused,
+// selected and copied, it only rejects the changes made by the user.
+//
+// Readonly is <gpui_kit::component::input::Editor>::readonly.
+func (e EditorEl) Readonly(readonly bool) EditorEl {
+	o := op(e.n, 264)
+	o.bool(readonly)
+	return e
+}
+
+// Role is <gpui_kit::component::input::Editor>::role.
+func (e EditorEl) Role(role RoleOverride) EditorEl {
+	o := op(e.n, 265)
+	putRoleOverride(o, role)
+	return e
+}
+
+// TabIndex is <gpui_kit::component::input::Editor>::tab_index.
+func (e EditorEl) TabIndex(index int) EditorEl {
+	o := op(e.n, 266)
+	o.u64(uint64(index))
+	return e
+}
+
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e EditorEl) PopoverStyle() EditorEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
+func (e EditorEl) RoundedFullStyle() EditorEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e EditorEl) BorderE(width Length) EditorEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e EditorEl) BorderS(width Length) EditorEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e EditorEl) FlexRowDir() EditorEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e EditorEl) InsetE(length Length) EditorEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e EditorEl) InsetS(length Length) EditorEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e EditorEl) JustifyFlexEnd() EditorEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e EditorEl) JustifyFlexStart() EditorEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e EditorEl) Me(length Length) EditorEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e EditorEl) Ms(length Length) EditorEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e EditorEl) Pe(length Length) EditorEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e EditorEl) Ps(length Length) EditorEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e EditorEl) RoundedE(radius Length) EditorEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e EditorEl) RoundedS(radius Length) EditorEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e EditorEl) TextEnd() EditorEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e EditorEl) TextStart() EditorEl { tLogicalStyledExtTextStart(e.n); return e }
+
+func (e EditorEl) CornerRadii(radius Corners) EditorEl { tStyledExtCornerRadii(e.n, radius); return e }
+func (e EditorEl) DebugBlue() EditorEl                 { tStyledExtDebugBlue(e.n); return e }
+func (e EditorEl) DebugFocused(focusHandle FocusHandle) EditorEl {
+	tStyledExtDebugFocused(e.n, focusHandle)
+	return e
+}
+func (e EditorEl) DebugGreen() EditorEl     { tStyledExtDebugGreen(e.n); return e }
+func (e EditorEl) DebugPink() EditorEl      { tStyledExtDebugPink(e.n); return e }
+func (e EditorEl) DebugRed() EditorEl       { tStyledExtDebugRed(e.n); return e }
+func (e EditorEl) DebugYellow() EditorEl    { tStyledExtDebugYellow(e.n); return e }
+func (e EditorEl) FontBlack() EditorEl      { tStyledExtFontBlack(e.n); return e }
+func (e EditorEl) FontBold() EditorEl       { tStyledExtFontBold(e.n); return e }
+func (e EditorEl) FontExtrabold() EditorEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e EditorEl) FontExtralight() EditorEl { tStyledExtFontExtralight(e.n); return e }
+func (e EditorEl) FontLight() EditorEl      { tStyledExtFontLight(e.n); return e }
+func (e EditorEl) FontMedium() EditorEl     { tStyledExtFontMedium(e.n); return e }
+func (e EditorEl) FontNormal() EditorEl     { tStyledExtFontNormal(e.n); return e }
+func (e EditorEl) FontSemibold() EditorEl   { tStyledExtFontSemibold(e.n); return e }
+func (e EditorEl) FontThin() EditorEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EditorEl) HFlex() EditorEl                      { tStyledExtHFlex(e.n); return e }
+func (e EditorEl) Margins(margins EdgesInto) EditorEl   { tStyledExtMargins(e.n, margins); return e }
+func (e EditorEl) Paddings(paddings EdgesInto) EditorEl { tStyledExtPaddings(e.n, paddings); return e }
+func (e EditorEl) RefineStyle(style StyleRefinement) EditorEl {
+	tStyledExtRefineStyle(e.n, style)
+	return e
+}
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
+func (e EditorEl) VFlex() EditorEl { tStyledExtVFlex(e.n); return e }
+
+// Set to Size::Large
+func (e EditorEl) Large() EditorEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e EditorEl) Small() EditorEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
+func (e EditorEl) WithSize(size SizeInto) EditorEl { tSizableWithSize(e.n, size); return e }
+
+// Set to Size::XSmall
+func (e EditorEl) Xsmall() EditorEl { tSizableXsmall(e.n); return e }
+
+// Style adds style tokens (s.Gap2, s.SizeFull).
+func (e EditorEl) Style(st ...Style) EditorEl { tokens(e.n, st); return e }
+
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e EditorEl) AspectRatio(ratio float32) EditorEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e EditorEl) Bg(fill Fill) EditorEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EditorEl) Border(length Length) EditorEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EditorEl) BorderB(length Length) EditorEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
+func (e EditorEl) BorderColor(borderColor Color) EditorEl {
+	tStyledBorderColor(e.n, borderColor)
+	return e
+}
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EditorEl) BorderL(length Length) EditorEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EditorEl) BorderR(length Length) EditorEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EditorEl) BorderT(length Length) EditorEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EditorEl) BorderX(length Length) EditorEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EditorEl) BorderY(length Length) EditorEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EditorEl) Bottom(length Length) EditorEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EditorEl) ColEnd(end int16) EditorEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EditorEl) ColSpan(span uint16) EditorEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EditorEl) ColStart(start int16) EditorEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e EditorEl) Cursor(cursor CursorStyle) EditorEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e EditorEl) FlexBasis(basis Length) EditorEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e EditorEl) FlexGrow(grow float32) EditorEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e EditorEl) FlexShrink(shrink float32) EditorEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e EditorEl) FontFamily(familyName string) EditorEl {
+	tStyledFontFamily(e.n, familyName)
+	return e
+}
+
+// Sets the font features of this element and its children.
+func (e EditorEl) FontFeatures(features FontFeatures) EditorEl {
+	tStyledFontFeatures(e.n, features)
+	return e
+}
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e EditorEl) FontWeight(weight FontWeight) EditorEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EditorEl) Gap(length Length) EditorEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EditorEl) GapX(length Length) EditorEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EditorEl) GapY(length Length) EditorEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e EditorEl) GridCols(cols uint16) EditorEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
+func (e EditorEl) GridColsMaxContent(cols uint16) EditorEl {
+	tStyledGridColsMaxContent(e.n, cols)
+	return e
+}
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
+func (e EditorEl) GridColsMinContent(cols uint16) EditorEl {
+	tStyledGridColsMinContent(e.n, cols)
+	return e
+}
+
+// Sets the grid rows of this element.
+func (e EditorEl) GridRows(rows uint16) EditorEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
+func (e EditorEl) GridRowsMaxContent(rows uint16) EditorEl {
+	tStyledGridRowsMaxContent(e.n, rows)
+	return e
+}
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
+func (e EditorEl) GridRowsMinContent(rows uint16) EditorEl {
+	tStyledGridRowsMinContent(e.n, rows)
+	return e
+}
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EditorEl) Inset(length Length) EditorEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EditorEl) Left(length Length) EditorEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e EditorEl) LineClamp(lines int) EditorEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e EditorEl) LineHeight(lineHeight Length) EditorEl {
+	tStyledLineHeight(e.n, lineHeight)
+	return e
+}
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EditorEl) M(length Length) EditorEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EditorEl) MaxH(length Length) EditorEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e EditorEl) MaxSize(length Length) EditorEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EditorEl) MaxW(length Length) EditorEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EditorEl) Mb(length Length) EditorEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EditorEl) MinH(length Length) EditorEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e EditorEl) MinSize(length Length) EditorEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EditorEl) MinW(length Length) EditorEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EditorEl) Ml(length Length) EditorEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EditorEl) Mr(length Length) EditorEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EditorEl) Mt(length Length) EditorEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EditorEl) Mx(length Length) EditorEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EditorEl) My(length Length) EditorEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e EditorEl) Opacity(opacity float32) EditorEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EditorEl) P(length Length) EditorEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EditorEl) Pb(length Length) EditorEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EditorEl) Pl(length Length) EditorEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EditorEl) Pr(length Length) EditorEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EditorEl) Pt(length Length) EditorEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EditorEl) Px(length Length) EditorEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EditorEl) Py(length Length) EditorEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EditorEl) Right(length Length) EditorEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e EditorEl) Rounded(length Length) EditorEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EditorEl) RoundedB(length Length) EditorEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EditorEl) RoundedBl(length Length) EditorEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EditorEl) RoundedBr(length Length) EditorEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EditorEl) RoundedL(length Length) EditorEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EditorEl) RoundedR(length Length) EditorEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EditorEl) RoundedT(length Length) EditorEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EditorEl) RoundedTl(length Length) EditorEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EditorEl) RoundedTr(length Length) EditorEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e EditorEl) RowEnd(end int16) EditorEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EditorEl) RowSpan(span uint16) EditorEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e EditorEl) RowStart(start int16) EditorEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e EditorEl) ScrollbarWidth(width Length) EditorEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e EditorEl) Shadow(shadows []BoxShadow) EditorEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e EditorEl) Size(length Length) EditorEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e EditorEl) TextAlign(align TextAlign) EditorEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EditorEl) TextBg(bg Color) EditorEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e EditorEl) TextColor(color Color) EditorEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
+func (e EditorEl) TextDecorationColor(color Color) EditorEl {
+	tStyledTextDecorationColor(e.n, color)
+	return e
+}
+
+// Sets the text overflow behavior of the element.
+func (e EditorEl) TextOverflow(overflow TextOverflow) EditorEl {
+	tStyledTextOverflow(e.n, overflow)
+	return e
+}
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e EditorEl) TextSize(size Length) EditorEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EditorEl) Top(length Length) EditorEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EditorEl) W(length Length) EditorEl { tStyledW(e.n, length); return e }
+
+// GutterStyle is gpui_kit::component::input::GutterStyle.
+type GutterStyle struct{ n *node }
+
+func (e GutterStyle) valueNode() *node { return e.n }
+
+// NewGutterStyleDefault is <gpui_kit::component::input::GutterStyle as Default>::default.
+func NewGutterStyleDefault() GutterStyle {
+	n := newValue(892)
+	return GutterStyle{n}
+}
+
+// Sets the color of the current line number.
+//
+// WithActiveLineNumberColor is <gpui_kit::component::input::GutterStyle>::with_active_line_number_color.
+func (e GutterStyle) WithActiveLineNumberColor(color Color) GutterStyle {
+	o := op(e.n, 256)
+	putColor(o, color)
+	return e
+}
+
+// Sets the gap before the body text, after any folding controls.
+//
+// Accepts rems that follow window zoom or pixels for a fixed gap.
+//
+// WithGap is <gpui_kit::component::input::GutterStyle>::with_gap.
+func (e GutterStyle) WithGap(gap Length) GutterStyle {
+	o := op(e.n, 257)
+	putAbsoluteLength(o, gap)
+	return e
+}
+
+// Sets the color of line numbers outside the current line.
+//
+// WithLineNumberColor is <gpui_kit::component::input::GutterStyle>::with_line_number_color.
+func (e GutterStyle) WithLineNumberColor(color Color) GutterStyle {
+	o := op(e.n, 258)
+	putColor(o, color)
+	return e
+}
+
+// Sets the line-number font independently of the body font.
+//
+// WithLineNumberFontFamily is <gpui_kit::component::input::GutterStyle>::with_line_number_font_family.
+func (e GutterStyle) WithLineNumberFontFamily(family string) GutterStyle {
+	o := op(e.n, 259)
+	o.str(family)
+	return e
+}
+
+// Sets the line-number font size without changing the body row height.
+//
+// Accepts rems that follow window zoom or pixels for a fixed font size.
+//
+// WithLineNumberFontSize is <gpui_kit::component::input::GutterStyle>::with_line_number_font_size.
+func (e GutterStyle) WithLineNumberFontSize(size Length) GutterStyle {
+	o := op(e.n, 260)
+	putAbsoluteLength(o, size)
+	return e
+}
+
 // InputEl is gpui_kit::component::input::Input.
 type InputEl struct{ n *node }
 
@@ -131,6 +749,22 @@ func (e InputEl) HFull() InputEl {
 func (e InputEl) ID(id ID) InputEl {
 	o := op(e.n, 267)
 	putID(o, id)
+	return e
+}
+
+// Offer a `ListEl` under the field while the user types, as an HTML `<input list>` does. The input
+// still accepts any text: the list only helps type it.
+//
+// The list searches with the field's text through `PerformSearch`, so the delegate decides what
+// matches, how long to wait and how rows look. Nothing is highlighted until the user presses Down,
+// so Enter on the typed text emits `PressEnter`. Write the accepted value in `Confirm`, for
+// example with `replace_all`. The popup shows while there are rows or `Loading` is true, and only
+// while the input has focus. A disabled or read-only input offers none.
+//
+// List is <gpui_kit::component::input::Input>::list.
+func (e InputEl) List(list ListState) InputEl {
+	o := op(e.n, 278)
+	o.u64(list.h)
 	return e
 }
 

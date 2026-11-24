@@ -237,11 +237,11 @@ pub fn apply_base_plot_axis(dx: &mut Dx, mut el: gpui_kit::base::plot::PlotAxis,
             257 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::plot::PlotAxis>::x(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::plot::PlotAxis>::x_axis(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_base_axis_text(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::base::plot::PlotAxis>::x_label(el, a0) }; }
-            260 => { el = { let a0 = en_77(r.u16()); <gpui_kit::base::plot::PlotAxis>::x_label_side(el, a0) }; }
+            260 => { el = { let a0 = en_78(r.u16()); <gpui_kit::base::plot::PlotAxis>::x_label_side(el, a0) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::plot::PlotAxis>::y(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::plot::PlotAxis>::y_axis(el, a0) }; }
             263 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_base_axis_text(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::base::plot::PlotAxis>::y_label(el, a0) }; }
-            264 => { el = { let a0 = en_77(r.u16()); <gpui_kit::base::plot::PlotAxis>::y_label_side(el, a0) }; }
+            264 => { el = { let a0 = en_78(r.u16()); <gpui_kit::base::plot::PlotAxis>::y_label_side(el, a0) }; }
             _ => bad_op("PlotAxis", op),
         }
     }
@@ -292,7 +292,7 @@ pub fn apply_base_area_shape(dx: &mut Dx, mut el: gpui_kit::base::plot::shape::A
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_78(r.u16()); <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::curve(el, a0) }; }
+            256 => { el = { let a0 = en_79(r.u16()); <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::curve(el, a0) }; }
             257 => { el = { let a0 = crate::data::rows(r, &*dx.cx); <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::data(el, a0) }; }
             258 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::fill(el, a0) }; }
             259 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::stroke(el, a0) }; }
@@ -323,7 +323,7 @@ pub fn apply_base_bar_shape(dx: &mut Dx, mut el: gpui_kit::base::plot::shape::Ba
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_79(r.u16()); <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::alignment(el, a0) }; }
+            256 => { el = { let a0 = en_80(r.u16()); <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::alignment(el, a0) }; }
             257 => { el = { let a0 = r.f32(); <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::band_width(el, a0) }; }
             258 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> f32 { f.num(a0) as f32 } }; <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::base(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((in_2(r, dx)?,)))() else { continue }; <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::corner_radii(el, a0) }; }
@@ -356,7 +356,7 @@ pub fn apply_base_line_shape(dx: &mut Dx, mut el: gpui_kit::base::plot::shape::L
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_78(r.u16()); <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::curve(el, a0) }; }
+            256 => { el = { let a0 = en_79(r.u16()); <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::curve(el, a0) }; }
             257 => { el = { let a0 = crate::data::rows(r, &*dx.cx); <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::data(el, a0) }; }
             258 => { el = { <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot(el) }; }
             259 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot_fill(el, a0) }; }
@@ -427,11 +427,11 @@ pub fn apply_base_sankey(dx: &mut Dx, mut el: gpui_kit::base::plot::shape::Sanke
         match op {
             256 => { el = { let a0 = r.f32(); let a1 = r.f32(); let a2 = r.f32(); let a3 = r.f32(); <gpui_kit::base::plot::shape::Sankey>::extent(el, a0, a1, a2, a3) }; }
             257 => { el = { let a0 = r.u64() as usize; <gpui_kit::base::plot::shape::Sankey>::iterations(el, a0) }; }
-            258 => { el = { let a0 = en_80(r.u16()); <gpui_kit::base::plot::shape::Sankey>::node_align(el, a0) }; }
+            258 => { el = { let a0 = en_81(r.u16()); <gpui_kit::base::plot::shape::Sankey>::node_align(el, a0) }; }
             259 => { el = { let a0 = r.f32(); <gpui_kit::base::plot::shape::Sankey>::node_padding(el, a0) }; }
             260 => { el = { let a0 = r.f32(); <gpui_kit::base::plot::shape::Sankey>::node_width(el, a0) }; }
             261 => { el = { let a0 = r.f32(); let a1 = r.f32(); <gpui_kit::base::plot::shape::Sankey>::size(el, a0, a1) }; }
-            262 => { el = { let a0 = en_81(r.u16()); <gpui_kit::base::plot::shape::Sankey>::value_scale(el, a0) }; }
+            262 => { el = { let a0 = en_82(r.u16()); <gpui_kit::base::plot::shape::Sankey>::value_scale(el, a0) }; }
             _ => bad_op("Sankey", op),
         }
     }

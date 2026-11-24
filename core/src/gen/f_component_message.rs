@@ -53,7 +53,7 @@ pub fn apply_component_message(dx: &mut Dx, mut el: gpui_kit::component::message
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_112(r.u16()); <gpui_kit::component::message::Message>::alignment(el, a0) }; }
+            256 => { el = { let a0 = en_113(r.u16()); <gpui_kit::component::message::Message>::alignment(el, a0) }; }
             257 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::message::Message>::avatar(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((build_component_message_avatar(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::message::Message>::avatar_slot(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((build_component_message_content(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::message::Message>::content(el, a0) }; }

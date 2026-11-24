@@ -51,7 +51,7 @@ library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.10.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel |
+| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.11.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel |
 | `lib/libgpuikit_sys.so` | Linux: a small linker script naming the system libraries the library uses |
 | `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the library in Visual Studio's format, which Odin links, and the import library of the Windows API it uses |
 | `windows/` | Windows: the manifest a program needs, and `gpuikit.rc`, which embeds it |

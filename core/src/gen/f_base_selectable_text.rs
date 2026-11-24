@@ -40,6 +40,8 @@ pub fn apply_base_selectable_text(dx: &mut Dx, mut el: gpui_kit::base::Selectabl
             257 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::base::SelectableText>::selection_color(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((rc_47(r, dx)?,)))() else { continue }; <gpui_kit::base::SelectableText>::text_style(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, rc_22(r, dx)?)); } v },)))() else { continue }; <gpui_kit::base::SelectableText>::highlights(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <gpui_kit::base::SelectableText>::on_reveal(el, a0) }; }
+            261 => { el = { let a0 = { let a = r.u64() as usize; a..(r.u64() as usize) }; <gpui_kit::base::SelectableText>::reveal_range(el, a0) }; }
             _ => bad_op("SelectableText", op),
         }
     }

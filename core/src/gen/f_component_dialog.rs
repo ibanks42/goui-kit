@@ -64,7 +64,7 @@ pub fn apply_component_alert_dialog(dx: &mut Dx, mut el: gpui_kit::component::di
             261 => { el = { <gpui_kit::component::dialog::AlertDialog>::confirm(el) }; }
             262 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::dialog::DialogContent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_dialog_content(dx, v, dx.node(n).2)) }; <gpui_kit::component::dialog::AlertDialog>::content(el, a0) }; }
             263 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::description(el, a0) }; }
-            264 => { el = { let a0 = en_95(r.u16()); <gpui_kit::component::dialog::AlertDialog>::entrance(el, a0) }; }
+            264 => { el = { let a0 = en_96(r.u16()); <gpui_kit::component::dialog::AlertDialog>::entrance(el, a0) }; }
             265 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::footer(el, a0) }; }
             266 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::icon(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::AlertDialog>::keyboard(el, a0) }; }
@@ -115,7 +115,7 @@ pub fn apply_component_dialog(dx: &mut Dx, mut el: gpui_kit::component::dialog::
             257 => { el = { <gpui_kit::component::dialog::Dialog>::centered(el) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::close_button(el, a0) }; }
             259 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::dialog::DialogContent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_dialog_content(dx, v, dx.node(n).2)) }; <gpui_kit::component::dialog::Dialog>::content(el, a0) }; }
-            260 => { el = { let a0 = en_95(r.u16()); <gpui_kit::component::dialog::Dialog>::entrance(el, a0) }; }
+            260 => { el = { let a0 = en_96(r.u16()); <gpui_kit::component::dialog::Dialog>::entrance(el, a0) }; }
             261 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::Dialog>::footer(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::keyboard(el, a0) }; }
             263 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::margin_top(el, a0) }; }

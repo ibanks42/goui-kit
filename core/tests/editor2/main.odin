@@ -167,7 +167,7 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	case "fold":
 		body = gk.div()->w(gk.px(420))->child(gk.code_editor(a.ed, height = 120))
 	case "decorations", "editor-style", "display-map", "route":
-		body = gk.div()->w(gk.px(420))->h(gk.px(120))->child(gk.editor(a.ed))
+		body = gk.div()->w(gk.px(420))->h(gk.px(120))->child(gk.base_editor(a.ed))
 	case "mask-variant":
 		body = gk.div()->w(gk.px(220))->child(gk.input(a.inp))
 	case "owner":

@@ -468,7 +468,7 @@ calendar_state_date :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location)
 	return
 }
 
-calendar_state_days :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][]Naive_Date) {
+calendar_state_days :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][]Civil_Date) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_calendar()
@@ -514,7 +514,7 @@ calendar_state_has_prev_year_page :: proc(s: Calendar_State, cx: ^Cx, loc := #ca
 
 // Calendar weeks grouped by visible month. This preserves six-week months and is the preferred
 // rendering API.
-calendar_state_month_days :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][][]Naive_Date) {
+calendar_state_month_days :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][][]Civil_Date) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_calendar()
@@ -548,7 +548,7 @@ calendar_state_offset_year_month :: proc(s: Calendar_State, cx: ^Cx, offset: int
 	return
 }
 
-calendar_state_today :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Naive_Date) {
+calendar_state_today :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Civil_Date) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_calendar()
@@ -583,13 +583,13 @@ calendar_state_years_on_page :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_
 
 // Activates a day item and emits `Selected` once the controlled value is complete. This is the
 // single pointer/keyboard activation path used by the calendar root.
-calendar_state_activate_date :: proc(s: Calendar_State, cx: ^Cx, value: Naive_Date, loc := #caller_location) -> (v: bool) {
+calendar_state_activate_date :: proc(s: Calendar_State, cx: ^Cx, value: Civil_Date, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_calendar()
 	put_op(o, 1322)
 	put_u64(o, s.h)
-	put_naive_date(o, value)
+	put_civil_date(o, value)
 	r := state_call(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -629,13 +629,13 @@ calendar_state_prev_year_page :: proc(s: Calendar_State, cx: ^Cx, loc := #caller
 	return
 }
 
-calendar_state_select_date :: proc(s: Calendar_State, cx: ^Cx, value: Naive_Date, loc := #caller_location) -> (v: bool) {
+calendar_state_select_date :: proc(s: Calendar_State, cx: ^Cx, value: Civil_Date, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_calendar()
 	put_op(o, 1326)
 	put_u64(o, s.h)
-	put_naive_date(o, value)
+	put_civil_date(o, value)
 	r := state_call(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -1926,7 +1926,7 @@ Date_Picker_State_Builder_VT :: struct {
 	// picker edits times, e.g. `%H:%M` or `%I:%M %p`.
 	date_format: proc(b: Date_Picker_State_Builder, format: string) -> Date_Picker_State_Builder,
 	// Set the time given to a date before the user edits it, default: `00:00`.
-	default_time: proc(b: Date_Picker_State_Builder, time: Naive_Time) -> Date_Picker_State_Builder,
+	default_time: proc(b: Date_Picker_State_Builder, time: Civil_Time) -> Date_Picker_State_Builder,
 	// Set the disabled match for the calendar.
 	disabled_matcher: proc(b: Date_Picker_State_Builder, disabled: Matcher_Into) -> Date_Picker_State_Builder,
 	// Set the first day of the week.
@@ -1954,10 +1954,10 @@ date_picker_state_builder_vt := Date_Picker_State_Builder_VT {
 		o[b.count_at] += 1
 		return b
 	},
-	default_time = proc(b: Date_Picker_State_Builder, time: Naive_Time) -> Date_Picker_State_Builder {
+	default_time = proc(b: Date_Picker_State_Builder, time: Civil_Time) -> Date_Picker_State_Builder {
 		o := b.req
 		put_op(o, 6)
-		put_naive_time(o, time)
+		put_civil_time(o, time)
 		o[b.count_at] += 1
 		return b
 	},
@@ -2732,6 +2732,20 @@ diff_state_files :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// Whether the patch carries the source line at `position`, shown or folded. A line beyond the
+// context the patch was made with is not there to scroll to.
+diff_state_has_line :: proc(s: Diff_State, cx: ^Cx, position: Diff_Line_Position, loc := #caller_location) -> (v: bool) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1803)
+	put_u64(o, s.h)
+	put_u64(o, position.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 diff_state_inline_max_line_length :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3236,6 +3250,51 @@ diff_state :: proc(cx: ^Cx, files: []Diff_File, loc := #caller_location) -> Diff
 	}
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &diff_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
+}
+
+// One character of a source line, as the pointer finds it.
+//
+// Diff_Text_Position is a handle to gpui_kit::component::diff::DiffTextPosition, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named diff_text_position_*.
+Diff_Text_Position :: struct {
+	using state: State,
+}
+
+// The character's byte offset in the line's content, before tab expansion: the unit
+// `Diff_Span_Highlight` spans use.
+diff_text_position_offset :: proc(s: Diff_Text_Position, cx: ^Cx, loc := #caller_location) -> (v: int) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1804)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// The line the character is on.
+diff_text_position_position :: proc(s: Diff_Text_Position, cx: ^Cx, loc := #caller_location) -> (v: Diff_Line_Position) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1805)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// The line's content, so the handler can read the word around the offset without a copy of the
+// patch.
+diff_text_position_text :: proc(s: Diff_Text_Position, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1806)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
 }
 
 // Discrete is a handle to gpui_kit::base::Discrete<f32>, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named discrete_*.
@@ -4728,6 +4787,32 @@ editor_scrollbar_context_axis :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc 
 	return
 }
 
+// Authoritative vertical content height in `f64` pixels (including padding when combined via
+// `scroll_viewport_size`).
+editor_scrollbar_context_content_height_f64 :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1780)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Where the editor places its scrollbars, as set with `scrollbar_placement`, for a supplied
+// scrollbar to follow.
+editor_scrollbar_context_placement :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Placement) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1781)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // The editor's viewport without padding, for consumers that need its text layout size. Scrollbars
 // should use `->content_size` and `->viewport_bounds` to calculate the scroll range; both include
 // the padding around this viewport.
@@ -4742,9 +4827,33 @@ editor_scrollbar_context_scroll_viewport_size :: proc(s: Editor_Scrollbar_Contex
 	return
 }
 
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+editor_scrollbar_context_scroll_y_f64 :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1782)
+	put_u64(o, s.h)
+	r := obj_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Editor_State is a handle to gpui_kit::base::input::EditorState, an entity the library keeps. Its procedures are named editor_state_*.
 Editor_State :: struct {
 	using state: State,
+}
+
+// Authoritative vertical scrollable content height in `f64` pixels.
+editor_state_content_height_f64 :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1783)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
 }
 
 editor_state_context_menu_capabilities :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
@@ -5021,6 +5130,18 @@ editor_state_display_map_wrap_row_to_display_row :: proc(s: Editor_State, cx: ^C
 	return
 }
 
+// The fold candidates, as reported by the highlighter.
+editor_state_fold_candidates :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1786)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 editor_state_has_overlay_action_handler :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5218,6 +5339,18 @@ editor_state_scroll_offset :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	o := &req
 	use_base_input()
 	put_op(o, 440)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+editor_state_scroll_y_f64 :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1788)
 	put_u64(o, s.h)
 	r := state_get(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -5613,6 +5746,21 @@ editor_state_route_overlay_action :: proc(s: Editor_State, cx: ^Cx, action: Acti
 	return
 }
 
+// Fold or unfold the fold candidate that starts at `start_line` (a 0-based buffer line). Returns
+// false when no candidate starts there or folding is disabled.
+editor_state_set_folded :: proc(s: Editor_State, cx: ^Cx, start_line: int, folded: bool, loc := #caller_location) -> (v: bool) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1790)
+	put_u64(o, s.h)
+	put_usize(o, start_line)
+	put_u8(o, u8(folded))
+	r := state_call(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Unfold any folded ranges that hide the given position.
 //
 // Use this to reveal a position before acting on it (e.g. before
@@ -5800,6 +5948,29 @@ editor_state_focus :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Fold every fold candidate.
+editor_state_fold_all :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1784)
+	put_u64(o, s.h)
+	state_set(cx, req[:], loc)
+}
+
+// Fold the candidates at one nesting level and unfold all others, as Zed's `editor::FoldAtLevel`.
+// Level 1 is a candidate that no other candidate contains; level 2 is one inside a level-1
+// candidate, and so on.
+editor_state_fold_at_level :: proc(s: Editor_State, cx: ^Cx, level: int, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1785)
+	put_u64(o, s.h)
+	put_usize(o, level)
+	state_set(cx, req[:], loc)
+}
+
 // Insert text at the current cursor position.
 //
 // And the cursor will be moved to the end of inserted text.
@@ -5953,6 +6124,17 @@ editor_state_replace_all :: proc(s: Editor_State, cx: ^Cx, text: string, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+editor_state_scroll_by_y_f64 :: proc(s: Editor_State, cx: ^Cx, delta_y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1787)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(delta_y))
+	state_set(cx, req[:], loc)
+}
+
 editor_state_select_all :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5981,6 +6163,17 @@ editor_state_set_accessibility :: proc(s: Editor_State, cx: ^Cx, accessibility: 
 	put_op(o, 895)
 	put_u64(o, s.h)
 	put_vtape(o, accessibility.nd)
+	state_set(cx, req[:], loc)
+}
+
+// Set showing the active line only while focused.
+editor_state_set_active_line_only_when_focused :: proc(s: Editor_State, cx: ^Cx, active_line_only_when_focused: bool, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1789)
+	put_u64(o, s.h)
+	put_u8(o, u8(active_line_only_when_focused))
 	state_set(cx, req[:], loc)
 }
 
@@ -6251,6 +6444,28 @@ editor_state_set_scroll_offset :: proc(s: Editor_State, cx: ^Cx, offset: Gpui_Po
 	state_set(cx, req[:], loc)
 }
 
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+editor_state_set_scroll_y_f64 :: proc(s: Editor_State, cx: ^Cx, y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1791)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(y))
+	state_set(cx, req[:], loc)
+}
+
+// See `->scrollbar_placement`.
+editor_state_set_scrollbar_placement :: proc(s: Editor_State, cx: ^Cx, placement: Scrollbar_Placement, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1792)
+	put_u64(o, s.h)
+	put_u16(o, u16(placement))
+	state_set(cx, req[:], loc)
+}
+
 // Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
 // renderer is called where the editor paints its scrollbar, with that frame's
 // `EditorScrollbarContext`. Like `gk.input_state_set_editor_style`, this does not notify, so it
@@ -6471,6 +6686,16 @@ editor_state_toggle_masked :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	state_set(cx, req[:], loc)
 }
 
+// Unfold every folded range. Fold candidates are kept.
+editor_state_unfold_all :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1793)
+	put_u64(o, s.h)
+	state_set(cx, req[:], loc)
+}
+
 // Unselects the currently selected text.
 editor_state_unselect :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -6595,6 +6820,11 @@ Editor_State_Builder_VT :: struct {
 	// scrolling does not bounce. The default follows `gk.base_enabled_by_default`: on on iOS, Android
 	// and macOS, off elsewhere. Under reduced motion the text stops at its ends without stretching.
 	scroll_bounce: proc(b: Editor_State_Builder, scroll_bounce: bool) -> Editor_State_Builder,
+	// The placement of the scrollbars, default is `BottomRight`.
+	//
+	// On the left, the vertical scrollbar sits on the input's left edge, over the line numbers. At the
+	// top, the horizontal scrollbar overlays the first line, as at the bottom it overlays the last.
+	scrollbar_placement: proc(b: Editor_State_Builder, placement: Scrollbar_Placement) -> Editor_State_Builder,
 	// Whether the built-in search panel and its shortcut are enabled. Off by default, on for the code
 	// editor.
 	//
@@ -6705,6 +6935,13 @@ editor_state_builder_vt := Editor_State_Builder_VT {
 		o := b.req
 		put_op(o, 12)
 		put_u8(o, u8(scroll_bounce))
+		o[b.count_at] += 1
+		return b
+	},
+	scrollbar_placement = proc(b: Editor_State_Builder, placement: Scrollbar_Placement) -> Editor_State_Builder {
+		o := b.req
+		put_op(o, 15)
+		put_u16(o, u16(placement))
 		o[b.count_at] += 1
 		return b
 	},
@@ -8238,6 +8475,18 @@ input_state_content :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Authoritative vertical scrollable content height in `f64` pixels.
+input_state_content_height_f64 :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1794)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 input_state_context_menu_capabilities :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8660,6 +8909,18 @@ input_state_scroll_offset :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	o := &req
 	use_base_input()
 	put_op(o, 502)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+input_state_scroll_y_f64 :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1796)
 	put_u64(o, s.h)
 	r := state_get(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -9198,6 +9459,17 @@ input_state_replace_all :: proc(s: Input_State, cx: ^Cx, text: string, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+input_state_scroll_by_y_f64 :: proc(s: Input_State, cx: ^Cx, delta_y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1795)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(delta_y))
+	state_set(cx, req[:], loc)
+}
+
 input_state_select_all :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9464,6 +9736,17 @@ input_state_set_scroll_offset :: proc(s: Input_State, cx: ^Cx, offset: Gpui_Poin
 	put_op(o, 625)
 	put_u64(o, s.h)
 	put_Gpui_Point(o, offset)
+	state_set(cx, req[:], loc)
+}
+
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+input_state_set_scroll_y_f64 :: proc(s: Input_State, cx: ^Cx, y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1797)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(y))
 	state_set(cx, req[:], loc)
 }
 
@@ -13618,6 +13901,21 @@ resizable_state_container_size :: proc(s: Resizable_State, cx: ^Cx, loc := #call
 	return
 }
 
+// Whether a resize handle is being dragged.
+//
+// Starting a drag does not notify, so read this while rendering during the drag rather than
+// relying on a notification when it starts.
+resizable_state_is_resizing :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_resizable()
+	put_op(o, 1779)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Get the size of the panels.
 resizable_state_sizes :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: []f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -13690,12 +13988,12 @@ resizable_state_reset_panel :: proc(s: Resizable_State, cx: ^Cx, panel_ix: int, 
 // Programmatically resize the panel at `ix` to `size`, redistributing space among siblings using
 // the same logic as a drag.
 //
-// Sizes are clamped to the panel's `size_range` and to the container. Emits
+// The size change respects the visible panels' `size_range` and available space. Emits
 // `ResizablePanelEvent::Resized` so subscribers (e.g. preference persistence) see the change just
 // as if the user had dragged a handle.
 //
-// Out-of-range indices are a no-op. For the last panel, space is taken from the previous sibling
-// (the last panel has no handle of its own).
+// Hidden panels and out-of-range indices are ignored. The last visible panel resizes using the
+// boundary with its previous visible sibling.
 resizable_state_resize_panel :: proc(s: Resizable_State, cx: ^Cx, ix: int, size: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16279,8 +16577,9 @@ table_state_set_right_clicked_row :: proc(s: Table_State, cx: ^Cx, row: Maybe(in
 
 // Sets the selected cell to the given row and column indices.
 //
-// This method: - Switches the table to cell selection mode - Scrolls to make the cell visible
-// (centered vertically) - Emits a `SelectCell` event
+// This method: - Switches the table to cell selection mode - Does not scroll; call
+// `gk.table_state_scroll_to_row` and `gk.table_state_scroll_to_col` to reveal the cell - Emits a
+// `SelectCell` event
 table_state_set_selected_cell :: proc(s: Table_State, cx: ^Cx, row_ix: int, col_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16293,6 +16592,9 @@ table_state_set_selected_cell :: proc(s: Table_State, cx: ^Cx, row_ix: int, col_
 }
 
 // Sets the selected col to the given index.
+//
+// This does not scroll; call `gk.table_state_scroll_to_col` to reveal the column. Clicks and
+// keyboard navigation still scroll the selection into view.
 table_state_set_selected_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16304,6 +16606,9 @@ table_state_set_selected_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc :
 }
 
 // Sets the selected row to the given index.
+//
+// This does not scroll; call `gk.table_state_scroll_to_row` to reveal the row. Clicks and keyboard
+// navigation still scroll the selection into view.
 table_state_set_selected_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16316,8 +16621,8 @@ table_state_set_selected_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc :
 
 // Sets the selection as one value; `None` clears it.
 //
-// Scrolls and emits exactly as the matching `set_selected_*` or `gk.table_state_clear_selection`
-// call would.
+// Like the matching `set_selected_*` it does not scroll, and emits as the matching
+// `set_selected_*` or `gk.table_state_clear_selection` call would.
 table_state_set_selection :: proc(s: Table_State, cx: ^Cx, selection: Table_Selection, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17287,6 +17592,18 @@ textarea_state_content :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Authoritative vertical scrollable content height in `f64` pixels.
+textarea_state_content_height_f64 :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1798)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 textarea_state_context_menu_capabilities :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17721,6 +18038,18 @@ textarea_state_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	o := &req
 	use_base_input()
 	put_op(o, 557)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+textarea_state_scroll_y_f64 :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: f64) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1800)
 	put_u64(o, s.h)
 	r := state_get(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -18259,6 +18588,17 @@ textarea_state_replace_all :: proc(s: Textarea_State, cx: ^Cx, text: string, loc
 	state_set(cx, req[:], loc)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+textarea_state_scroll_by_y_f64 :: proc(s: Textarea_State, cx: ^Cx, delta_y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1799)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(delta_y))
+	state_set(cx, req[:], loc)
+}
+
 textarea_state_select_all :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18520,6 +18860,28 @@ textarea_state_set_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, offset: Gpu
 	put_op(o, 640)
 	put_u64(o, s.h)
 	put_Gpui_Point(o, offset)
+	state_set(cx, req[:], loc)
+}
+
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+textarea_state_set_scroll_y_f64 :: proc(s: Textarea_State, cx: ^Cx, y: f64, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1801)
+	put_u64(o, s.h)
+	put_u64(o, transmute(u64)f64(y))
+	state_set(cx, req[:], loc)
+}
+
+// See `->scrollbar_placement`.
+textarea_state_set_scrollbar_placement :: proc(s: Textarea_State, cx: ^Cx, placement: Scrollbar_Placement, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1802)
+	put_u64(o, s.h)
+	put_u16(o, u16(placement))
 	state_set(cx, req[:], loc)
 }
 
@@ -18833,6 +19195,11 @@ Textarea_State_Builder_VT :: struct {
 	// scrolling does not bounce. The default follows `gk.base_enabled_by_default`: on on iOS, Android
 	// and macOS, off elsewhere. Under reduced motion the text stops at its ends without stretching.
 	scroll_bounce: proc(b: Textarea_State_Builder, scroll_bounce: bool) -> Textarea_State_Builder,
+	// The placement of the scrollbars, default is `BottomRight`.
+	//
+	// On the left, the vertical scrollbar sits on the input's left edge, over the line numbers. At the
+	// top, the horizontal scrollbar overlays the first line, as at the bottom it overlays the last.
+	scrollbar_placement: proc(b: Textarea_State_Builder, placement: Scrollbar_Placement) -> Textarea_State_Builder,
 	// Whether the built-in search panel and its shortcut are enabled. Off by default, on for the code
 	// editor.
 	//
@@ -18937,6 +19304,13 @@ textarea_state_builder_vt := Textarea_State_Builder_VT {
 		o := b.req
 		put_op(o, 11)
 		put_u8(o, u8(scroll_bounce))
+		o[b.count_at] += 1
+		return b
+	},
+	scrollbar_placement = proc(b: Textarea_State_Builder, placement: Scrollbar_Placement) -> Textarea_State_Builder {
+		o := b.req
+		put_op(o, 14)
+		put_u16(o, u16(placement))
 		o[b.count_at] += 1
 		return b
 	},
@@ -19915,7 +20289,7 @@ time_field_state_selected_segment :: proc(s: Time_Field_State, cx: ^Cx, loc := #
 	return
 }
 
-time_field_state_time :: proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) -> (v: Naive_Time) {
+time_field_state_time :: proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) -> (v: Civil_Time) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_time_field()
@@ -19956,13 +20330,13 @@ time_field_state_set_precision :: proc(s: Time_Field_State, cx: ^Cx, precision: 
 }
 
 // Replace the time without emitting `Change`.
-time_field_state_set_time :: proc(s: Time_Field_State, cx: ^Cx, time: Naive_Time, loc := #caller_location) {
+time_field_state_set_time :: proc(s: Time_Field_State, cx: ^Cx, time: Civil_Time, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
 	use_base_time_field()
 	put_op(o, 1329)
 	put_u64(o, s.h)
-	put_naive_time(o, time)
+	put_civil_time(o, time)
 	state_set(cx, req[:], loc)
 }
 
@@ -21041,6 +21415,7 @@ conflicts :: proc{diff_file_read_conflicts}
 container_size :: proc{resizable_state_container_size}
 contains_panel :: proc{pane_tree_contains_panel}
 content :: proc{input_state_content, textarea_state_content}
+content_height_f64 :: proc{editor_scrollbar_context_content_height_f64, editor_state_content_height_f64, input_state_content_height_f64, textarea_state_content_height_f64}
 content_point :: proc{text_selection_endpoint_content_point}
 content_size :: proc{scroll_handle_content_size}
 context_ :: proc{tab_group_context}
@@ -21141,6 +21516,9 @@ focus_next_answer :: proc{questionnaire_state_focus_next_answer}
 focus_previous_answer :: proc{questionnaire_state_focus_previous_answer}
 focus_ring :: proc{theme_focus_ring}
 focused_current_choice :: proc{questionnaire_state_focused_current_choice}
+fold_all :: proc{editor_state_fold_all}
+fold_at_level :: proc{editor_state_fold_at_level}
+fold_candidates :: proc{editor_state_fold_candidates}
 folded_ranges :: proc{display_map_folded_ranges}
 font_family :: proc{theme_font_family}
 font_size :: proc{inline_render_context_font_size, theme_font_size}
@@ -21160,6 +21538,7 @@ has_code_block_highlighter :: proc{text_view_defaults_has_code_block_highlighter
 has_definition :: proc{input_context_menu_capabilities_read_has_definition}
 has_dock :: proc{dock_area_has_dock}
 has_input :: proc{questionnaire_item_state_has_input}
+has_line :: proc{diff_state_has_line}
 has_local_selection :: proc{text_selection_handle_has_local_selection}
 has_next :: proc{carousel_state_has_next}
 has_next_year_page :: proc{calendar_state_has_next_year_page}
@@ -21249,7 +21628,7 @@ is_readonly :: proc{inline_token_context_is_readonly, input_context_menu_capabil
 is_replaceable :: proc{editor_state_is_replaceable, input_state_is_replaceable, textarea_state_is_replaceable}
 is_required :: proc{questionnaire_item_definition_read_is_required, questionnaire_item_state_is_required}
 is_resizable :: proc{grid_layout_state_is_resizable}
-is_resizing :: proc{dock_is_resizing}
+is_resizing :: proc{dock_is_resizing, resizable_state_is_resizing}
 is_root :: proc{base_tree_entry_is_root}
 is_scrolled_up :: proc{message_scroller_state_is_scrolled_up}
 is_selected :: proc{inline_token_context_is_selected, questionnaire_choice_state_is_selected}
@@ -21316,7 +21695,7 @@ node :: proc{drop_target_node, tab_group_node, tab_group_context_node}
 node_ids :: proc{pane_tree_node_ids}
 normalize :: proc{pane_tree_normalize}
 number_of_months :: proc{calendar_state_number_of_months}
-offset :: proc{scroll_handle_offset}
+offset :: proc{diff_text_position_offset, scroll_handle_offset}
 offset_year_month :: proc{calendar_state_offset_year_month}
 on_calendar_event :: proc{calendar_state_on_calendar_event}
 on_carousel_event :: proc{carousel_state_on_carousel_event}
@@ -21351,9 +21730,9 @@ paint_touch_handles :: proc{text_selection_handle_paint_touch_handles}
 panels :: proc{pane_tree_panels, tab_group_panels, tab_group_context_panels}
 path :: proc{diff_annotation_path, diff_file_read_path, diff_line_position_path, diff_line_range_read_path}
 placeholder :: proc{input_presentation_placeholder}
-placement :: proc{dock_context_placement, dock_state_placement, drop_indicator_placement, drop_target_placement}
+placement :: proc{dock_context_placement, dock_state_placement, drop_indicator_placement, drop_target_placement, editor_scrollbar_context_placement}
 pop_to_root :: proc{nav_stack_state_pop_to_root}
-position :: proc{diff_annotation_position, diff_gutter_marker_read_position}
+position :: proc{diff_annotation_position, diff_gutter_marker_read_position, diff_text_position_position}
 position_for_caret :: proc{leaf_geometry_position_for_caret}
 position_for_index :: proc{leaf_geometry_position_for_index}
 prepend :: proc{message_scroller_state_prepend}
@@ -21424,6 +21803,7 @@ route_overlay_action :: proc{editor_state_route_overlay_action}
 sample :: proc{discrete_sample, keyframes_sample, sequence_sample, transition_state_sample}
 sample_rate :: proc{audio_format_sample_rate}
 saturation :: proc{hsla_sliders_saturation}
+scroll_by_y_f64 :: proc{editor_state_scroll_by_y_f64, input_state_scroll_by_y_f64, textarea_state_scroll_by_y_f64}
 scroll_offset :: proc{editor_state_scroll_offset, input_state_scroll_offset, textarea_state_scroll_offset}
 scroll_to_bottom :: proc{virtual_list_scroll_handle_scroll_to_bottom}
 scroll_to_col :: proc{table_state_scroll_to_col}
@@ -21435,6 +21815,7 @@ scroll_to_offset :: proc{message_scroller_state_scroll_to_offset}
 scroll_to_row :: proc{table_state_scroll_to_row}
 scroll_to_selected_item :: proc{list_state_scroll_to_selected_item}
 scroll_viewport_size :: proc{editor_scrollbar_context_scroll_viewport_size}
+scroll_y_f64 :: proc{editor_scrollbar_context_scroll_y_f64, editor_state_scroll_y_f64, input_state_scroll_y_f64, textarea_state_scroll_y_f64}
 scrollbar_mode :: proc{theme_scrollbar_mode}
 search_activation_revision :: proc{editor_state_search_activation_revision, input_state_search_activation_revision, textarea_state_search_activation_revision}
 search_session :: proc{editor_state_search_session, input_state_search_session, textarea_state_search_session}
@@ -21469,6 +21850,7 @@ semantic_tokens :: proc{theme_semantic_tokens}
 series :: proc{stack_series}
 set_accessibility :: proc{editor_state_set_accessibility, input_state_set_accessibility, textarea_state_set_accessibility}
 set_active :: proc{pane_tree_set_active}
+set_active_line_only_when_focused :: proc{editor_state_set_active_line_only_when_focused}
 set_active_tab :: proc{color_picker_state_set_active_tab}
 set_all_files_collapsed :: proc{diff_state_set_all_files_collapsed}
 set_answer :: proc{questionnaire_state_set_answer}
@@ -21512,7 +21894,7 @@ set_focus_ring :: proc{theme_set_focus_ring}
 set_fold_background :: proc{editor_state_set_fold_background, input_state_set_fold_background, textarea_state_set_fold_background}
 set_fold_candidates :: proc{display_map_set_fold_candidates}
 set_fold_placeholder_renderer :: proc{editor_state_set_fold_placeholder_renderer, input_state_set_fold_placeholder_renderer, textarea_state_set_fold_placeholder_renderer}
-set_folded :: proc{display_map_set_folded}
+set_folded :: proc{display_map_set_folded, editor_state_set_folded}
 set_folding :: proc{editor_state_set_folding}
 set_font :: proc{display_map_set_font}
 set_font_family :: proc{theme_set_font_family}
@@ -21570,8 +21952,10 @@ set_rows :: proc{textarea_state_set_rows}
 set_scroll_beyond_last_line :: proc{editor_state_set_scroll_beyond_last_line, input_state_set_scroll_beyond_last_line, textarea_state_set_scroll_beyond_last_line}
 set_scroll_bounce :: proc{editor_state_set_scroll_bounce, textarea_state_set_scroll_bounce}
 set_scroll_offset :: proc{editor_state_set_scroll_offset, input_state_set_scroll_offset, textarea_state_set_scroll_offset}
+set_scroll_y_f64 :: proc{editor_state_set_scroll_y_f64, input_state_set_scroll_y_f64, textarea_state_set_scroll_y_f64}
 set_scrollable :: proc{text_view_state_set_scrollable}
 set_scrollbar :: proc{base_theme_set_scrollbar}
+set_scrollbar_placement :: proc{editor_state_set_scrollbar_placement, textarea_state_set_scrollbar_placement}
 set_scrollbar_renderer :: proc{editor_state_set_scrollbar_renderer, input_state_set_scrollbar_renderer, textarea_state_set_scrollbar_renderer}
 set_search_query :: proc{editor_state_set_search_query, input_state_set_search_query, textarea_state_set_search_query}
 set_searchable :: proc{editor_state_set_searchable, list_state_set_searchable, textarea_state_set_searchable}
@@ -21682,6 +22066,7 @@ transparent :: proc{theme_transparent}
 try_value :: proc{color_picker_state_try_value, editor_state_try_value, input_state_try_value, otp_state_try_value, questionnaire_choice_definition_read_try_value, questionnaire_choice_state_try_value, sequence_sample_try_value, slider_state_try_value, textarea_state_try_value}
 typography_tokens :: proc{theme_typography_tokens}
 undo :: proc{undo_history_undo}
+unfold_all :: proc{editor_state_unfold_all}
 unfold_at :: proc{editor_state_unfold_at}
 unmask_value :: proc{editor_state_unmask_value, input_state_unmask_value, textarea_state_unmask_value}
 unselect :: proc{editor_state_unselect, input_state_unselect, textarea_state_unselect}

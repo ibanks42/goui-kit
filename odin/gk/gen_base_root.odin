@@ -2663,25 +2663,25 @@ dialog_trigger_vt := Dialog_Trigger_VT {
 
 // An unstyled source-code editor.
 //
-// Editor is gpui_kit::base::Editor.
-Editor :: struct {
+// Base_Editor is gpui_kit::base::Editor<()>.
+Base_Editor :: struct {
 	using el: Element,
-	using vt: ^Editor_VT,
+	using vt: ^Base_Editor_VT,
 }
 
-Editor_VT :: struct {
+Base_Editor_VT :: struct {
 }
 
-editor :: proc(state: Editor_State, loc := #caller_location) -> Editor {
+base_editor :: proc(state: Editor_State, loc := #caller_location) -> Base_Editor {
 	use_base_input()
-	e := Editor{new_node(320, loc), &editor_vt}
+	e := Base_Editor{new_node(320, loc), &base_editor_vt}
 	o := node_args()
 	put_u64(o, state.h)
 	return e
 }
 
 @(private)
-editor_vt := Editor_VT {
+base_editor_vt := Base_Editor_VT {
 }
 
 // Where one item sits in a grid layout, in zero-based grid cells.
@@ -5443,6 +5443,11 @@ Scrollbar_VT :: struct {
 	//
 	// If unset, the current application theme projection is used.
 	mode: proc(e: Scrollbar, mode: Scrollbar_Mode) -> Scrollbar,
+	// Set the scrollbar placement, default is `BottomRight`.
+	//
+	// When both scrollbars are shown, the horizontal track ends before the vertical one, on the
+	// vertical scrollbar's side.
+	placement: proc(e: Scrollbar, placement: Scrollbar_Placement) -> Scrollbar,
 	// Set a special scroll size of the content area, default is None.
 	//
 	// Default will sync the `content_size` from `scroll_handle`.
@@ -5506,6 +5511,11 @@ scrollbar_vt := Scrollbar_VT {
 	mode = proc(e: Scrollbar, mode: Scrollbar_Mode) -> Scrollbar {
 		o := op(e.el, 258)
 		put_u16(o, u16(mode))
+		return e
+	},
+	placement = proc(e: Scrollbar, placement: Scrollbar_Placement) -> Scrollbar {
+		o := op(e.el, 263)
+		put_u16(o, u16(placement))
 		return e
 	},
 	scroll_size = proc(e: Scrollbar, scroll_size: Gpui_Size) -> Scrollbar {
@@ -5918,6 +5928,15 @@ Selectable_Text_VT :: struct {
 	// Styles ranges of the text, such as the matches of a search, as `with_highlights` does. The
 	// ranges are UTF-8 offsets, in order and without overlap.
 	highlights: proc(e: Selectable_Text, highlights: []Tuple_Range_Highlight_Style) -> Selectable_Text,
+	// Receive the requested line's bounds in window coordinates during prepaint, for containers that
+	// manage scrolling through a custom handle. Without a handler, the element requests GPUI
+	// autoscroll.
+	on_reveal: proc(e: Selectable_Text, handler: Handler) -> Selectable_Text,
+	// Request that the visual line containing the start of this UTF-8 byte range scroll into view. The
+	// line is revealed once when the range is first supplied or changes, matching
+	// `TextViewState::reveal_range`, so the user can scroll away afterwards. Invalid ranges are
+	// ignored.
+	reveal_range: proc(e: Selectable_Text, range: Range) -> Selectable_Text,
 	// Overrides the selection background, which defaults to the theme's `colors.selection` token.
 	selection_color: proc(e: Selectable_Text, color: Color) -> Selectable_Text,
 	// Sets the text style the run is laid out and painted with.
@@ -5959,6 +5978,16 @@ selectable_text_vt := Selectable_Text_VT {
 			put_range(o, x0.v0)
 			put_Highlight_Style(o, x0.v1)
 		}
+		return e
+	},
+	on_reveal = proc(e: Selectable_Text, handler: Handler) -> Selectable_Text {
+		o := op(e.el, 260)
+		put_u32(o, register(handler, 75))
+		return e
+	},
+	reveal_range = proc(e: Selectable_Text, range: Range) -> Selectable_Text {
+		o := op(e.el, 261)
+		put_range(o, range)
 		return e
 	},
 	selection_color = proc(e: Selectable_Text, color: Color) -> Selectable_Text {

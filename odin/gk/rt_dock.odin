@@ -419,6 +419,35 @@ dock_skin_set_close_button_visible :: proc(cx: ^Cx, dock: Dock_Area, visible: bo
 	defer_op(check_cx(cx, loc), req[:], loc)
 }
 
+// Whether a tab group that has collapsed (its panels hidden) still shows its tab bar.
+dock_skin_collapsed_tab_bar_visible :: proc(cx: ^Cx, dock: Dock_Area, loc := #caller_location) -> bool {
+	flush(check_cx(cx, loc), loc)
+	req := skin_req(dock, 5)
+	r := Reader{must_call(req[:], loc), 0}
+	return rd_u8(&r) != 0
+}
+
+dock_skin_set_collapsed_tab_bar_visible :: proc(cx: ^Cx, dock: Dock_Area, visible: bool, loc := #caller_location) {
+	req := skin_req(dock, 6)
+	put_u8(&req, u8(visible))
+	defer_op(check_cx(cx, loc), req[:], loc)
+}
+
+// Whether the divider between two split slots rests as a one-pixel line (shown by default). Hidden,
+// the indicator still appears on hover and while dragging, and the hit area is unchanged.
+dock_skin_split_divider_line_visible :: proc(cx: ^Cx, dock: Dock_Area, loc := #caller_location) -> bool {
+	flush(check_cx(cx, loc), loc)
+	req := skin_req(dock, 7)
+	r := Reader{must_call(req[:], loc), 0}
+	return rd_u8(&r) != 0
+}
+
+dock_skin_set_split_divider_line_visible :: proc(cx: ^Cx, dock: Dock_Area, visible: bool, loc := #caller_location) {
+	req := skin_req(dock, 8)
+	put_u8(&req, u8(visible))
+	defer_op(check_cx(cx, loc), req[:], loc)
+}
+
 // --- docs/PROTOCOLS.md 11.9: renderers -----------------------------------------------------
 //
 //   r := gk.dock_renderer(cx, {.Dock, .Tab_Bar}, gk.on(asked))     // in init or a handler

@@ -83,7 +83,7 @@ pub fn apply_base_toast(dx: &mut Dx, mut el: gpui_kit::base::Toast, first: u32) 
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_67(r.u16()); <gpui_kit::base::Toast>::transition_status(el, a0) }; }
+            256 => { el = { let a0 = en_68(r.u16()); <gpui_kit::base::Toast>::transition_status(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

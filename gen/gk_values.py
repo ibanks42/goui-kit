@@ -37,17 +37,16 @@ SPEECH = "gpui_kit::component::speech::"
 SPEECH_WHY = ("feature-off: the default library is built without speech (DESIGN.md decision 4): no "
               "recognizer or audio input exists in it, so an app cannot implement or drive one")
 # Descriptor kinds this module adds; a call op can carry each (gk_model.Model.call_bad).
-CALL_SAFE = {"fallible", "array", "chrono", "arcslice", "cell", "xform"}  # xform: gpui's Transformation (13.30)  # arcslice: the lists family's Arc<[T]>, a list in a call op too
+CALL_SAFE = {"fallible", "array", "civil", "arcslice", "cell", "xform", "txform"}  # xform, txform: gpui's Transformation and TimedTransformation (13.30)  # arcslice: the lists family's Arc<[T]>, a list in a call op too
 # Descriptor kinds this module adds that only an element's decoder can read (a call op cannot).
 DEC_ONLY = {"viewany", "traitval", "dragview", "dragstyle"}
-# chrono's calendar values (`["chrono", Name]`), plain records both ways (PROTOCOLS.md 13.13): Rust's
+# jiff's calendar values (`["civil", Name]`), plain records both ways (PROTOCOLS.md 13.13): Rust's
 # Wire and Unwire impls in core/src/values.rs; the Odin types and their checked writers
-# (`put_naive_date`: a date that does not exist stops) in odin/gk/rt_values.odin.
+# (`put_civil_date`: a date that does not exist stops) in odin/gk/rt_values.odin.
 # gpui types the app holds as library objects, with the kit traits whose methods they get
 # (PROTOCOLS.md 13.14).
 GPUI_OBJECTS = {"ScrollHandle": ("ScrollbarHandle",)}
-CHRONO = {"NaiveDate": "Naive_Date", "NaiveTime": "Naive_Time", "NaiveDateTime": "Naive_Date_Time",
-          "Weekday": "Weekday"}
+CIVIL = {"Date": "Civil_Date", "Time": "Civil_Time", "DateTime": "Civil_Date_Time", "Weekday": "Weekday"}
 OBJ_SPEC = re.compile(r"\s*(\w+)<(.+)>\s+as\s+(\w+)\s*")
 
 
@@ -72,11 +71,13 @@ def resolved(m, ctx, t, out):
     rp = t["resolved_path"]
     name, args = g.last(rp["path"]), g.path_args(rp)
     if name == "Transformation" and not args and m.api.home(ctx.crate, rp["id"])[0] == "gpui" and not out:
-        return ["xform"]  # an svg's scale, translation and rotation (gk.Transformation, PROTOCOLS.md 13.30)
+        return ["xform"]  # an svg's scale, translation, rotation and alpha (gk.Transformation, PROTOCOLS.md 13.30)
+    if name == "TimedTransformation" and not args and m.api.home(ctx.crate, rp["id"])[0] == "gpui" and not out:
+        return ["txform"]  # an svg's transformation over time (gk.Timed_Transformation, PROTOCOLS.md 13.30)
     if name == "Role" and not args and m.api.home(ctx.crate, rp["id"])[0] == "accesskit":
         return access_role(m)  # every accessibility role (api/accesskit-role.json, PROTOCOLS.md 13.30)
-    if name in CHRONO and not args and m.api.home(ctx.crate, rp["id"])[0] == "chrono":
-        return ["chrono", name]  # a calendar date, a time of day or a weekday (PROTOCOLS.md 13.13)
+    if name in CIVIL and not args and m.api.home(ctx.crate, rp["id"])[0] == "jiff":
+        return ["civil", name]  # a calendar date, a time of day or a weekday (PROTOCOLS.md 13.13)
     if out and name == "Duration" and not args and m.api.home(ctx.crate, rp["id"])[0] in g.STD:
         return ["leaf", "duration", ""]  # read back as nanoseconds, Odin's time.Duration (PROTOCOLS.md 13.13)
     if out and name == "Entity" and len(args) == 1 and "resolved_path" in args[0]:
@@ -955,13 +956,22 @@ def fixed_param(fn, pname):
     return name in DRAG_FNS and pname in DRAG_FNS[name]
 
 
+# Delegate traits the library implements once, over the app's row source (PROTOCOLS.md 9.5): a
+# method generic over one is given the library's shim (the states of [instantiate] states are).
+DELEGATE_SHIMS = {"ListDelegate": "crate::shim_rows::GkListDelegate",
+                  "TableDelegate": "crate::shim_rows::GkTableDelegate"}
+
+
 def fn_ctx(m, c, fn):
     """gk_model.Model.fn_ctx's hook: generic parameters the binding fixes, as substitutions.
 
     - the dragged value of gpui's drag methods (DRAG_FNS): the library's Drag, and the preview's
       view type the library's view (the app passes a gk.View);
     - a parameter bounded only by `Into<X>` and derive traits (DERIVES), X a type without
-      parameters: X itself (`margins(Edges<DefiniteLength>)`)."""
+      parameters: X itself (`margins(Edges<DefiniteLength>)`);
+    - a parameter bounded only by a delegate trait the library implements once (DELEGATE_SHIMS):
+      that shim, as the states over it are instantiated (`Input::list<D: ListDelegate>(&Entity<
+      ListState<D>>)` takes a gk.List_State)."""
     g = _m()
     name = _fn_names(m).get(id(fn))
     subst = None
@@ -974,6 +984,8 @@ def fn_ctx(m, c, fn):
         fix = None
         if name in DRAG_FNS and pn in DRAG_FNS[name] and not (set(names) - {"Render"}):
             fix = (c.crate, {"verbatim": DRAG_VIEW if "Render" in names else DRAG})
+        elif len(names) == 1 and names[0] in DELEGATE_SHIMS and not p["kind"]["type"].get("is_synthetic"):
+            fix = (c.crate, {"verbatim": DELEGATE_SHIMS[names[0]]})
         elif names.count("Into") == 1 and set(names) - {"Into"} <= DERIVES and not p["kind"]["type"].get("is_synthetic"):
             tr = next(t for n, t in parts if n == "Into")
             ta = g.path_args(tr)
@@ -1215,8 +1227,8 @@ def rust_dec(rs, d):
     """The Rust expression that reads a value of one of this module's descriptors."""
     if d[0] == "array":
         return "[" + ", ".join(rs.dec(d[1]) for _ in range(d[2])) + "]"
-    if d[0] == "chrono":
-        return f"<chrono::{d[1]} as genapi::Unwire>::get(r)"
+    if d[0] == "civil":
+        return f"<jiff::civil::{d[1]} as genapi::Unwire>::get(r)"
     if d[0] == "viewany":
         # A closure that returns a view (a tooltip): the app's view, mounted where the element is
         # decoded; none given draws an empty view (PROTOCOLS.md 13.18); or the kit's Tooltip (11.17).
@@ -1248,10 +1260,11 @@ def rust_dec(rs, d):
         return f"crate::generated::traitval_{_snake(d[1])}(dx, r.u32())?"
     if d[0] == "xform":
         # gpui's Transformation (13.30): f32 scale x, y, translation x, y (pixels), rotation (radians),
-        # read in that order (a method's receiver is evaluated before its arguments).
-        return ("gpui_kit::Transformation::scale(gpui_kit::size(r.f32(), r.f32()))"
-                ".with_translation(gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32())))"
-                ".with_rotation(gpui_kit::radians(r.f32()))")
+        # alpha, read in that order (crate::motion::transformation).
+        return "crate::motion::transformation(r)"
+    if d[0] == "txform":
+        # gpui's TimedTransformation (13.30): crate::motion::timed_transformation.
+        return "crate::motion::timed_transformation(r)"
     raise KeyError(d[0])
 
 
@@ -1304,8 +1317,8 @@ def odin_type(od, d, out):
         return f"[{d[2]}]{od.otype(d[1], out)}"
     if d[0] == "fallible":
         return f"Fallible({od.otype(d[1], out)})"
-    if d[0] == "chrono":
-        return CHRONO[d[1]]
+    if d[0] == "civil":
+        return CIVIL[d[1]]
     if d[0] == "viewany":
         return gk_comp6.odin_viewany_type(od, d)  # View, or View_Or_Tooltip (PROTOCOLS.md 11.17)
     if d[0] == "cell":
@@ -1318,6 +1331,8 @@ def odin_type(od, d, out):
         return od.otype(["stylefn", d[1], d[2]], out)
     if d[0] == "xform":
         return "Transformation"  # rt_motion.odin
+    if d[0] == "txform":
+        return "Timed_Transformation"  # rt_motion.odin
     raise KeyError(d[0])
 
 
@@ -1325,8 +1340,8 @@ def odin_put(od, d, v, depth):
     if d[0] == "array":
         x = f"x{depth}"
         return [f"for {x} in {v} {{"] + ["\t" + s for s in od.put(d[1], x, depth + 1)] + ["}"]
-    if d[0] == "chrono":
-        return [f"put_{CHRONO[d[1]].lower()}(o, {v})"]
+    if d[0] == "civil":
+        return [f"put_{CIVIL[d[1]].lower()}(o, {v})"]
     if d[0] == "viewany":
         return gk_comp6.odin_viewany_put(od, d, v)  # PROTOCOLS.md 11.17
     if d[0] == "cell":
@@ -1337,6 +1352,8 @@ def odin_put(od, d, v, depth):
         return od.put(["stylefn", d[1], d[2]], v)
     if d[0] == "xform":
         return [f"put_transformation(o, {v})"]
+    if d[0] == "txform":
+        return [f"put_timed_transformation(o, {v})"]
     if d[0] == "traitval":
         out = ["{", f"\tswitch x in {v} {{"]
         for k in d[2]:
@@ -1349,11 +1366,13 @@ def sample_val(sm, d, depth):
     if d[0] == "array":
         v = sm.val(d[1], depth + 1)
         return None if v is None else f"[{d[2]}]{sm.od.otype(d[1])}{{{', '.join([v] * d[2])}}}".replace("]Color", "]gk.Color")
-    if d[0] == "chrono":
-        return {"NaiveDate": "gk.Naive_Date{2026, 11, 11}", "NaiveTime": "gk.Naive_Time{9, 30, 0, 0}",
-                "NaiveDateTime": "gk.Naive_Date_Time{{2026, 11, 11}, {9, 30, 0, 0}}", "Weekday": "gk.Weekday.Mon"}[d[1]]
+    if d[0] == "civil":
+        return {"Date": "gk.Civil_Date{2026, 11, 11}", "Time": "gk.Civil_Time{9, 30, 0, 0}",
+                "DateTime": "gk.Civil_Date_Time{{2026, 11, 11}, {9, 30, 0, 0}}", "Weekday": "gk.Weekday.Mon"}[d[1]]
     if d[0] == "xform":
         return "gk.transform(rotate = 0.5)"
+    if d[0] == "txform":
+        return "gk.timed_rotation(2 * time.Second)"
     return None
 
 

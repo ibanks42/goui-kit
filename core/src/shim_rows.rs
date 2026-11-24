@@ -657,23 +657,30 @@ impl TableDelegate for GkTableDelegate {
         window: &mut Window,
         cx: &mut Context<TableState<Self>>,
     ) {
-        // Bind rows before they are drawn while the table scrolls: when the row a screen ahead
-        // (or half a screen behind) has no cells, ask for a screen behind and two ahead, all
-        // columns, in one ROWS turn. Rows arrive in batches of screens, so a steady scroll
-        // costs one turn per screen or two, not one per frame. A far jump still shows
-        // placeholders for one frame.
+        // Bind rows before they are drawn while the table scrolls: when the row two screens
+        // ahead (or behind) has no cells, ask for two screens behind and three ahead, all
+        // columns, in one ROWS turn. gpui-fast keeps two viewports of rows drawn on each side
+        // of the visible ones (its list layer's overscan, grown a few rows a frame), so a row
+        // is drawn up to two screens before it shows: bound any later, it is drawn as a
+        // placeholder first (gpui-kit 0.11, gpui-fast 0.1.19). Rows arrive in batches of
+        // screens, so a steady scroll costs one turn per screen, not one per frame: smaller,
+        // more frequent batches spread the app's describing like Rust's rendering of rows
+        // entering the overscan, but cost more at p95 than they save in missed frames
+        // (measured 23 Nov 2026, the 1000 Hz table scene). A far jump still shows placeholders
+        // for one frame.
         let n = self.columns.len();
         let rows = self.rows_count(cx);
         if n > 0 && rows > 0 && !visible.is_empty() {
             // The kit also reports short ranges (a few rows, from a measuring pass): a screen is
             // taken as at least 24 rows.
             let len = visible.len().max(24);
-            let ahead = (visible.end + len).min(rows - 1);
-            let behind = visible.start.saturating_sub(len / 2 + 1);
+            let ahead = (visible.end + 2 * len).min(rows - 1);
+            let behind = visible.start.saturating_sub(2 * len);
             let missing = |row: usize| !source::bound(self.src, self.cell_key(row, n - 1));
+            crate::rt::trace(|| format!("table visible={visible:?} ahead={ahead} behind={behind} missing={}/{}", missing(ahead), missing(behind)));
             if missing(ahead) || missing(behind) {
-                let lo = visible.start.saturating_sub(len) * n;
-                let hi = ((visible.end + 2 * len).min(rows)) * n;
+                let lo = visible.start.saturating_sub(2 * len) * n;
+                let hi = ((visible.end + 3 * len).min(rows)) * n;
                 source::want(self.src, 0, lo as u32, hi.min(u32::MAX as usize) as u32, window, cx);
             }
         }

@@ -141,7 +141,7 @@ pub fn apply_component_setting_group(dx: &mut Dx, mut el: gpui_kit::component::s
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingGroup>::description(el, a0) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingGroup>::title(el, a0) }; }
-            258 => { el = { let a0 = en_106(r.u16()); <gpui_kit::component::setting::SettingGroup>::variant(el, a0) }; }
+            258 => { el = { let a0 = en_107(r.u16()); <gpui_kit::component::setting::SettingGroup>::variant(el, a0) }; }
             259 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingGroup>::footer(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((build_component_setting_item(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::SettingGroup>::item(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_setting_item(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::setting::SettingGroup>::items(el, a0) }; }
@@ -210,7 +210,7 @@ pub fn apply_component_setting_page(dx: &mut Dx, mut el: gpui_kit::component::se
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::setting::SettingPage>::resettable(el, a0) }; }
             262 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingPage>::title(el, a0) }; }
             263 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingPage>::title_suffix(el, a0) }; }
-            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::setting::SettingPage>::icon(el, a0) }; }
+            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::setting::SettingPage>::icon(el, a0) }; }
             _ => bad_op("SettingPage", op),
         }
     }
@@ -240,7 +240,7 @@ pub fn apply_component_settings(dx: &mut Dx, mut el: gpui_kit::component::settin
             259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_setting_page(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::setting::Settings>::pages(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::Settings>::sidebar_style(el, &a0) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::setting::Settings>::sidebar_width(el, a0) }; }
-            262 => { el = { let a0 = en_106(r.u16()); <gpui_kit::component::setting::Settings>::with_group_variant(el, a0) }; }
+            262 => { el = { let a0 = en_107(r.u16()); <gpui_kit::component::setting::Settings>::with_group_variant(el, a0) }; }
             263 => { el = { let a0 = { let a = gpui_kit::px(r.f32()); a..gpui_kit::px(r.f32()) }; <gpui_kit::component::setting::Settings>::sidebar_size_range(el, a0) }; }
             18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Settings", op),

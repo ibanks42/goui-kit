@@ -225,7 +225,7 @@ impl gpui_kit::Render for Preview {
     }
 }
 
-/// PROTOCOLS.md 13.13, 13.14: a calendar whose state was given a date (chrono's NaiveDate),
+/// PROTOCOLS.md 13.13, 13.14: a calendar whose state was given a date (jiff's civil::Date),
 /// and a list scrolled from code through a ScrollHandle with a scrollbar over it.
 pub struct ValuesPages {
     pub cal: Entity<CalendarState>,
@@ -236,7 +236,7 @@ pub struct ValuesPages {
 impl ValuesPages {
     pub fn new(window: &mut Window, cx: &mut App) -> Self {
         let cal = cx.new(|cx| CalendarState::new(window, cx));
-        let date = chrono::NaiveDate::from_ymd_opt(2024, 2, 29).unwrap();
+        let date = jiff::civil::date(2024, 2, 29);
         cal.update(cx, |s, cx| s.set_date(Date::Single(Some(date)), window, cx));
         let scroll = ScrollHandle::new();
         ScrollbarHandle::set_offset(&scroll, point(px(0.), px(-120.)));
@@ -291,7 +291,7 @@ pub struct Comp6Pages {
 
 impl Comp6Pages {
     fn new(window: &mut Window, cx: &mut App) -> Self {
-        let d = |y, m, d| chrono::NaiveDate::from_ymd_opt(y, m, d).unwrap();
+        let d = |y, m, d| jiff::civil::date(y, m, d);
         let day = d(2024, 2, 29);
         let cal_range = cx.new(|cx| {
             CalendarState::new(window, cx).disabled_matcher(gpui_kit::base::Matcher::range(Some(d(2024, 2, 12)), Some(d(2024, 2, 16))))

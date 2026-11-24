@@ -248,7 +248,7 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if a.mode == "providers" {
 		editor = gk.code_editor(a.editor, height = 90)
 	} else {
-		editor = gk.editor(a.editor)
+		editor = gk.base_editor(a.editor)
 	}
 	// base::NumberInput: its buttons call on_step, which replaces upstream's own stepping, so
 	// the handler steps the value itself.

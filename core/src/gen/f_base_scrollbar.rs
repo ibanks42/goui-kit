@@ -44,6 +44,7 @@ pub fn apply_base_scrollbar(dx: &mut Dx, mut el: gpui_kit::base::Scrollbar, firs
             260 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::ScrollbarStyles| { let first = dx.node(n).2; apply_base_scrollbar_styles(dx, v, first) } }; <gpui_kit::base::Scrollbar>::styles(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((rc_11(r, dx)?,)))() else { continue }; <gpui_kit::base::Scrollbar>::viewport_bounds(el, a0) }; }
             262 => { el = { <gpui_kit::base::Scrollbar>::viewport_from_layout(el) }; }
+            263 => { el = { let a0 = en_58(r.u16()); <gpui_kit::base::Scrollbar>::placement(el, a0) }; }
             _ => bad_op("Scrollbar", op),
         }
     }

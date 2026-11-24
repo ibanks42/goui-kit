@@ -248,6 +248,16 @@ Svg_VT :: struct {
 	external_path: proc(e: Svg, path: string) -> Svg,
 	// Set the path to the SVG file for this element.
 	path: proc(e: Svg, path: string) -> Svg,
+	// Continuously animate the SVG between two transformations, phase-locked to the app's shared
+	// animation clock like `repeat_synced`.
+	//
+	// The SVG is painted once. On later frames the window moves it in the scene it already has and
+	// presents that again, instead of re-rendering this view.
+	//
+	// This replaces `->with_transformation`, and like it doesn't affect layout or hit testing. The SVG
+	// is still clipped and ordered by the bounds of its starting transformation, so keep its motion
+	// close to them.
+	with_timed_transformation: proc(e: Svg, transformation: Timed_Transformation) -> Svg,
 	// Transform the SVG element with the given transformation. Note that this won't effect the hitbox
 	// or layout of the element, only the rendering.
 	with_transformation: proc(e: Svg, transformation: Transformation) -> Svg,
@@ -280,6 +290,11 @@ svg_vt := Svg_VT {
 	path = proc(e: Svg, path: string) -> Svg {
 		o := op(e.el, 258)
 		put_str(o, path)
+		return e
+	},
+	with_timed_transformation = proc(e: Svg, transformation: Timed_Transformation) -> Svg {
+		o := op(e.el, 260)
+		put_timed_transformation(o, transformation)
 		return e
 	},
 	with_transformation = proc(e: Svg, transformation: Transformation) -> Svg {

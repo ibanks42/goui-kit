@@ -167,32 +167,32 @@ copy_value :: proc(a: ^App, cx: ^gk.Cx) -> string {
 	return "copied by the app"
 }
 
-// chrono's calendar values (PROTOCOLS.md 13.13): a calendar's date set and read back, its today and
+// jiff's calendar values (PROTOCOLS.md 13.13): a calendar's date set and read back, its today and
 // weeks, a date picker's date and date with time, a time field's time, a preset of a range.
 dates :: proc(a: ^App, cx: ^gk.Cx) {
 	cal := gk.calendar_state(cx)->build()
-	gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_date(cal, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})
 	got := gk.date(cal, cx)
 	d, _ := got.(gk.Date_Single).v0.?
 	today := gk.today(cal, cx)
 	weeks := gk.days(cal, cx)
 	fmt.printf("values calendar date=%d-%02d-%02d today_ok=%v weeks=%d week_len=%d\n", d.year, d.month, d.day,
 		today.year >= 2024 && today.month >= 1 && today.month <= 12, len(weeks), len(weeks[0]) if len(weeks) > 0 else 0)
-	ok := gk.apply_date(cal, cx, gk.Date_Range{gk.Naive_Date{2026, 1, 5}, gk.Naive_Date{2026, 1, 9}})
+	ok := gk.apply_date(cal, cx, gk.Date_Range{gk.Civil_Date{2026, 1, 5}, gk.Civil_Date{2026, 1, 9}})
 	r, _ := gk.date(cal, cx).(gk.Date_Range)
 	s, _ := r.v0.?
 	e, _ := r.v1.?
 	fmt.printf("values calendar range applied=%v start=%d-%02d-%02d end=%d\n", ok, s.year, s.month, s.day, e.day)
 	dp := gk.date_picker_state(cx)->build()
-	gk.set_date_time(dp, cx, gk.Date_Time_Single{gk.Naive_Date_Time{{2026, 11, 11}, {9, 30, 15, 0}}})
+	gk.set_date_time(dp, cx, gk.Date_Time_Single{gk.Civil_Date_Time{{2026, 11, 11}, {9, 30, 15, 0}}})
 	dt, _ := gk.date_time(dp, cx).(gk.Date_Time_Single).v0.?
 	fmt.printf("values picker date_time=%d-%02d-%02d %02d:%02d:%02d\n", dt.date.year, dt.date.month, dt.date.day,
 		dt.time.hour, dt.time.minute, dt.time.second)
 	tf := gk.time_field_state(cx)->build()
-	gk.set_time(tf, cx, gk.Naive_Time{23, 59, 0, 0}) // the field keeps minutes by default
+	gk.set_time(tf, cx, gk.Civil_Time{23, 59, 0, 0}) // the field keeps minutes by default
 	t := gk.time(tf, cx)
 	fmt.printf("values time %02d:%02d:%02d\n", t.hour, t.minute, t.second)
-	_ = gk.date_range_preset_date_time("Launch", gk.Date_Time_Single{gk.Naive_Date_Time{{2026, 11, 11}, {12, 0, 0, 0}}})
+	_ = gk.date_range_preset_date_time("Launch", gk.Date_Time_Single{gk.Civil_Date_Time{{2026, 11, 11}, {12, 0, 0, 0}}})
 	gk.release(cx, cal)
 	gk.release(cx, dp)
 	gk.release(cx, tf)
@@ -202,7 +202,7 @@ dates :: proc(a: ^App, cx: ^gk.Cx) {
 bad_date :: proc(a: ^App, cx: ^gk.Cx) {
 	cal := gk.calendar_state(cx)->build()
 	fmt.println("values writing February 30")
-	gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2026, 2, 30}})
+	gk.set_date(cal, cx, gk.Date_Single{gk.Civil_Date{2026, 2, 30}})
 	fmt.println("values not stopped")
 }
 

@@ -31,7 +31,7 @@ pub fn build_component_tag(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::t
 pub fn make_component_tag(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::tag::Tag> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::tag::Tag = match ty {
-        782 => { let a0 = en_87(r.u16()); <gpui_kit::component::tag::Tag>::color(a0) }
+        782 => { let a0 = en_88(r.u16()); <gpui_kit::component::tag::Tag>::color(a0) }
         783 => { let a0 = genapi::color(r, &*dx.cx); let a1 = genapi::color(r, &*dx.cx); let a2 = genapi::color(r, &*dx.cx); <gpui_kit::component::tag::Tag>::custom(a0, a1, a2) }
         784 => { <gpui_kit::component::tag::Tag>::danger() }
         785 => { <gpui_kit::component::tag::Tag>::info() }

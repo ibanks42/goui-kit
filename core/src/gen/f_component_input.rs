@@ -15,6 +15,7 @@ pub fn call__component_input(op: u16, r: &mut R, c: &mut genapi::Call) -> Option
 }
 pub fn node__component_input(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::AnyElement> {
     let el = match ty {
+        893 => make_component_editor(dx, ty, args, first).map(|e| e.into_any_element()),
         675 => make_component_input(dx, ty, args, first).map(|e| e.into_any_element()),
         676 => make_component_input_group(dx, ty, args, first).map(|e| e.into_any_element()),
         677 => make_component_input_group_addon(dx, ty, args, first).map(|e| e.into_any_element()),
@@ -31,6 +32,7 @@ pub fn node__component_input(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Opt
 pub fn motion_wrap__component_input(dx: &mut Dx, n: u32, w: crate::motion::Wrap) -> Option<gpui_kit::AnyElement> {
     let (ty, args, first) = dx.node(n);
     Some(match ty {
+        893 => crate::motion::styled(make_component_editor(dx, ty, args, first)?, w),
         675 => crate::motion::styled(make_component_input(dx, ty, args, first)?, w),
         676 => crate::motion::styled(make_component_input_group(dx, ty, args, first)?, w),
         677 => crate::motion::styled(make_component_input_group_addon(dx, ty, args, first)?, w),
@@ -46,6 +48,74 @@ pub static FAM_85: Fam = Fam { name: "component/input", call: Some(call__compone
 /// Links and registers the component/input family (the app calls it once, before gk_run).
 #[unsafe(no_mangle)]
 pub extern "C" fn gk_use_component_input() { fam_register(85, &FAM_85); }
+pub fn build_component_editor(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::input::Editor> {
+    let (ty, args, first) = dx.node(n);
+    make_component_editor(dx, ty, args, first)
+}
+pub fn make_component_editor(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::input::Editor> {
+    let r = &mut dx.args(args);
+    let el: gpui_kit::component::input::Editor = match ty {
+        893 => { let a0 = genapi::shown::<gpui_kit::base::input::EditorState>(r.u64()); <gpui_kit::component::input::Editor>::new(&a0) }
+        _ => return bad_node("Editor", ty),
+    };
+    Some(apply_component_editor(dx, el, first))
+}
+#[inline]
+pub fn apply_component_editor(dx: &mut Dx, mut el: gpui_kit::component::input::Editor, first: u32) -> gpui_kit::component::input::Editor {
+    let mut at = first;
+    while let Some((op, mut r)) = dx.op(&mut at) {
+        let r = &mut r;
+        match op {
+            256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Editor>::appearance(el, a0) }; }
+            257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::input::Editor>::aria_label(el, a0) }; }
+            258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Editor>::bordered(el, a0) }; }
+            259 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::native_menu::NativeMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_native_menu(dx, v, dx.node(n).2)) }; <gpui_kit::component::input::Editor>::context_menu(el, a0) }; }
+            260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Editor>::disabled(el, a0) }; }
+            261 => { el = { let Some((a0,)) = (|| Some((build_component_gutter_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::input::Editor>::gutter_style(el, a0) }; }
+            262 => { el = { let a0 = definite_length(r); <gpui_kit::component::input::Editor>::h(el, a0) }; }
+            263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClipboardItem, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 76, a0, window, cx) } }; <gpui_kit::component::input::Editor>::on_paste(el, a0) }; }
+            264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Editor>::readonly(el, a0) }; }
+            265 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::component::input::Editor>::role(el, a0) }; }
+            266 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::input::Editor>::tab_index(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
+            16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            _ => bad_op("Editor", op),
+        }
+    }
+    el
+}
+pub fn build_component_gutter_style(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::input::GutterStyle> {
+    let (ty, args, first) = dx.node(n);
+    make_component_gutter_style(dx, ty, args, first)
+}
+pub fn make_component_gutter_style(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::input::GutterStyle> {
+    let r = &mut dx.args(args);
+    let el: gpui_kit::component::input::GutterStyle = match ty {
+        892 => { <gpui_kit::component::input::GutterStyle as Default>::default() }
+        _ => return bad_node("GutterStyle", ty),
+    };
+    Some(apply_component_gutter_style(dx, el, first))
+}
+#[inline]
+pub fn apply_component_gutter_style(dx: &mut Dx, mut el: gpui_kit::component::input::GutterStyle, first: u32) -> gpui_kit::component::input::GutterStyle {
+    let mut at = first;
+    while let Some((op, mut r)) = dx.op(&mut at) {
+        let r = &mut r;
+        match op {
+            256 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::input::GutterStyle>::with_active_line_number_color(el, a0) }; }
+            257 => { el = { let a0 = absolute_length(r); <gpui_kit::component::input::GutterStyle>::with_gap(el, a0) }; }
+            258 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::input::GutterStyle>::with_line_number_color(el, a0) }; }
+            259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::input::GutterStyle>::with_line_number_font_family(el, a0) }; }
+            260 => { el = { let a0 = absolute_length(r); <gpui_kit::component::input::GutterStyle>::with_line_number_font_size(el, a0) }; }
+            _ => bad_op("GutterStyle", op),
+        }
+    }
+    el
+}
 pub fn build_component_input(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::input::Input> {
     let (ty, args, first) = dx.node(n);
     make_component_input(dx, ty, args, first)
@@ -69,7 +139,7 @@ pub fn apply_component_input(dx: &mut Dx, mut el: gpui_kit::component::input::In
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::input::Input>::aria_label(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Input>::bordered(el, a0) }; }
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Input>::cleanable(el, a0) }; }
-            261 => { el = { let a0 = en_107(r.u16()); <gpui_kit::component::input::Input>::content_type(el, a0) }; }
+            261 => { el = { let a0 = en_108(r.u16()); <gpui_kit::component::input::Input>::content_type(el, a0) }; }
             262 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::native_menu::NativeMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_native_menu(dx, v, dx.node(n).2)) }; <gpui_kit::component::input::Input>::context_menu(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Input>::disabled(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::input::Input>::focus_bordered(el, a0) }; }
@@ -86,6 +156,7 @@ pub fn apply_component_input(dx: &mut Dx, mut el: gpui_kit::component::input::In
             275 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::base::input::InlineTokenClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 106, a0, window, cx) } }; <gpui_kit::component::input::Input>::on_token_click(el, a0) }; }
             276 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::base::input::InlineTokenHoverEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 107, a0, window, cx) } }; <gpui_kit::component::input::Input>::on_token_hover(el, a0) }; }
             277 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::base::input::InlineTokenContext, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::range(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::is_selected(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::is_disabled(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::is_readonly(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::line_height(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::input::InlineTokenContext>::available_width(k0), &mut p); let c0 = k0.clone(); (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { genapi::Wire::put(&c0, o); }), window, cx)) } }; <gpui_kit::component::input::Input>::token(el, a0) }; }
+            278 => { el = { let a0 = genapi::shown::<gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>(r.u64()); <gpui_kit::component::input::Input>::list(el, &a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -153,7 +224,7 @@ pub fn apply_component_input_group_addon(dx: &mut Dx, mut el: gpui_kit::componen
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_108(r.u16()); <gpui_kit::component::input::InputGroupAddon>::align(el, a0) }; }
+            256 => { el = { let a0 = en_109(r.u16()); <gpui_kit::component::input::InputGroupAddon>::align(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
@@ -196,8 +267,8 @@ pub fn apply_component_input_group_button(dx: &mut Dx, mut el: gpui_kit::compone
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::input::InputGroupButton>::tab_index(el, a0) }; }
             263 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::input::InputGroupButton>::tooltip(el, a0) }; }
             264 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::input::InputGroupButton>::tooltip_show_delay(el, a0) }; }
-            265 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::input::InputGroupButton>::icon(el, a0) }; }
-            266 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::input::InputGroupButton>::loading_icon(el, a0) }; }
+            265 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::input::InputGroupButton>::icon(el, a0) }; }
+            266 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::input::InputGroupButton>::loading_icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
@@ -270,7 +341,7 @@ pub fn apply_component_input_token(dx: &mut Dx, mut el: gpui_kit::component::inp
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::input::InputToken>::icon(el, a0) }; }
+            256 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::input::InputToken>::icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

@@ -59,7 +59,7 @@ values_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	vp.font_size, vp.radius = gk.font_size(th, cx), gk.radius(th, cx)
 	// PROTOCOLS.md 13.13, 13.14
 	vp.cal = gk.calendar_state(cx)->build()
-	gk.set_date(vp.cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_date(vp.cal, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})
 	vp.scroll = gk.scroll_handle(cx)
 	gk.set_offset(vp.scroll, cx, {0, -120})
 	// PROTOCOLS.md 13.19, 13.20
@@ -125,7 +125,7 @@ values_scales_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return plot
 }
 
-// A calendar whose state was given a date (chrono's NaiveDate, PROTOCOLS.md 13.13).
+// A calendar whose state was given a date (jiff's civil::Date, PROTOCOLS.md 13.13).
 calendar_date_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return gk.div()->w(gk.px(320))->child(gk.calendar(vp.cal))
 }
@@ -243,11 +243,11 @@ comp6_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	c6p.zoom_out = gk.action(cx, "gallery_menu::MenuZoomOut")
 	c6p.handles = gk.row_source(cx, a, 0, comp6_handle_row)
 	c6p.cal_range = gk.calendar_state(cx)->
-		disabled_matcher(gk.Matcher_Range{gk.Range_Matcher{from = gk.Naive_Date{2024, 2, 12}, to = gk.Naive_Date{2024, 2, 16}}})->build()
-	gk.set_date(c6p.cal_range, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+		disabled_matcher(gk.Matcher_Range{gk.Range_Matcher{from = gk.Civil_Date{2024, 2, 12}, to = gk.Civil_Date{2024, 2, 16}}})->build()
+	gk.set_date(c6p.cal_range, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})
 	c6p.cal_days = gk.calendar_state(cx)->build()
-	gk.set_disabled_matcher(c6p.cal_days, cx, gk.Matcher_Custom{[]gk.Naive_Date{{2024, 2, 5}, {2024, 2, 20}}})
-	gk.set_date(c6p.cal_days, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_disabled_matcher(c6p.cal_days, cx, gk.Matcher_Custom{[]gk.Civil_Date{{2024, 2, 5}, {2024, 2, 20}}})
+	gk.set_date(c6p.cal_days, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})
 	columns := [?]gk.Table_Column{gk.table_column("id", "Id", 60), gk.table_column("name", "Name", 100)}
 	c6p.cells = gk.table_source(cx, a, 4, columns[:], comp6_cell)
 	c6p.table = gk.table_state(cx, c6p.cells)->build()

@@ -58,10 +58,20 @@ Diff_VT :: struct {
 	// Shows an add button beside the hovered line and at the end of the selected lines. The handler
 	// receives the selected range when the line is part of it, or that line alone.
 	on_add_annotation: proc(e: Diff, handler: Handler) -> Diff,
-	// Handles a click on a line's code, outside a text-selection drag.
+	// Handles a click on a line's code, outside a text-selection drag. A click that `->on_text_click`
+	// claims does not reach this handler.
 	on_line_click: proc(e: Diff, handler: Handler) -> Diff,
 	// Reports the line under the pointer, or `None` when the pointer leaves it.
 	on_line_hover: proc(e: Diff, handler: Handler) -> Diff,
+	// Handles a click on a character of source text, outside a text-selection drag. The text handler
+	// runs first and its return value decides who wins: true claims the click and `->on_line_click` is
+	// not called for it; false lets the click fall through to the line handler. A click that lands on
+	// no character goes to the line handler directly.
+	on_text_click: proc(e: Diff, handler: Handler) -> Diff,
+	// Reports the character under the pointer and the held modifiers, or `None` when the pointer is
+	// over no source text. Fires as the pointer moves and, while the diff has focus, when a modifier
+	// goes down or up with the pointer at rest - so a link can light up on the key alone.
+	on_text_hover: proc(e: Diff, handler: Handler) -> Diff,
 	// Renders each supplied annotation. Application state and commands stay with the owner.
 	render_annotation: proc(e: Diff, render: Row_Source) -> Diff, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, diff_annotation: Diff_Annotation) -> Element)
 	// Renders each gutter marker within a lane one row high and wide.
@@ -80,12 +90,17 @@ Diff_VT :: struct {
 	render_header_title_suffix: proc(e: Diff, render: Row_Source) -> Diff, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, diff_file_read: Diff_File_Read) -> Element)
 	// Wraps long lines at the column width instead of scrolling horizontally. Default is false.
 	soft_wrap: proc(e: Diff, value: bool) -> Diff,
+	// Emphasizes character spans inside lines, such as search matches, over decorations and inline
+	// emphasis.
+	span_highlights: proc(e: Diff, highlights: []Diff_Span_Highlight) -> Diff,
 	// Gives the original column this share of the width in split mode, clamped to 0.1..=0.9. Default
 	// is 0.5. Without soft wrap, each column keeps its share and clips its long lines, and the code of
 	// both columns scrolls horizontally together.
 	split_ratio: proc(e: Diff, ratio: f32) -> Diff,
 	// Emphasizes syntax once the state has prepared it. Default is true.
 	syntax_highlight: proc(e: Diff, value: bool) -> Diff,
+	// The pointer shown over source text, such as a pointing hand while the hovered span is a link.
+	text_cursor: proc(e: Diff, cursor: Cursor_Style) -> Diff,
 }
 
 diff :: proc(state: Diff_State, flags: ..Style_Flag, loc := #caller_location) -> Diff {
@@ -197,6 +212,16 @@ diff_vt := Diff_VT {
 		put_u32(o, register(handler, 109))
 		return e
 	},
+	on_text_click = proc(e: Diff, handler: Handler) -> Diff {
+		o := op(e.el, 284)
+		put_u32(o, register(handler, 121))
+		return e
+	},
+	on_text_hover = proc(e: Diff, handler: Handler) -> Diff {
+		o := op(e.el, 285)
+		put_u32(o, register(handler, 122))
+		return e
+	},
 	render_annotation = proc(e: Diff, render: Row_Source) -> Diff {
 		o := op(e.el, 275)
 		put_u64(o, items_check(render, 13))
@@ -232,6 +257,14 @@ diff_vt := Diff_VT {
 		put_u8(o, u8(value))
 		return e
 	},
+	span_highlights = proc(e: Diff, highlights: []Diff_Span_Highlight) -> Diff {
+		o := op(e.el, 282)
+		put_u32(o, u32(len(highlights)))
+		for x0 in highlights {
+			put_u32(o, take_value(x0.nd))
+		}
+		return e
+	},
 	split_ratio = proc(e: Diff, ratio: f32) -> Diff {
 		o := op(e.el, 281)
 		put_f32(o, ratio)
@@ -240,6 +273,11 @@ diff_vt := Diff_VT {
 	syntax_highlight = proc(e: Diff, value: bool) -> Diff {
 		o := op(e.el, 265)
 		put_u8(o, u8(value))
+		return e
+	},
+	text_cursor = proc(e: Diff, cursor: Cursor_Style) -> Diff {
+		o := op(e.el, 283)
+		put_u16(o, u16(cursor))
 		return e
 	},
 }
@@ -297,6 +335,22 @@ Diff_File_VT :: struct {
 	// Overrides the syntax language detected from the path, using a highlighter language name such as
 	// `rust` or `javascript`.
 	with_language: proc(e: Diff_File, language: string) -> Diff_File,
+}
+
+// Parts of a file shown for reference, without changes, each keeping its own line numbers: `(first
+// line, text)` per part, in file order without overlap. A first line below 1 is clamped to 1. Like
+// `gk.diff_file_unchanged` it is a single column in every display mode; the lines between the
+// parts are simply not there.
+diff_file_excerpts :: proc(path: string, parts: []Tuple_Int_String, loc := #caller_location) -> Diff_File {
+	e := Diff_File{new_value(890, loc), &diff_file_vt}
+	o := node_args()
+	put_str(o, path)
+	put_u32(o, u32(len(parts)))
+	for x0 in parts {
+		put_usize(o, x0.v0)
+		put_str(o, x0.v1)
+	}
+	return e
 }
 
 diff_file_parse_at :: proc(patch: string, index: int, loc := #caller_location) -> Diff_File {
@@ -439,6 +493,57 @@ diff_parse_options_vt := Diff_Parse_Options_VT {
 	truncated_hunks = proc(e: Diff_Parse_Options, truncated_hunks: bool) -> Diff_Parse_Options {
 		o := op(vel(e.nd), 256)
 		put_u8(o, u8(truncated_hunks))
+		return e
+	},
+}
+
+// A painted emphasis on a character span of one source line, such as the matched text of a search
+// hit.
+//
+// `span` is a byte range in the line's content, before tab expansion. The fill paints over syntax,
+// inline-change emphasis and decorations, so the span stays visible on marked lines; an active
+// text selection still shows above it.
+//
+// Diff_Span_Highlight is gpui_kit::component::diff::DiffSpanHighlight.
+Diff_Span_Highlight :: struct {
+	using nd: Value,
+	using vt: ^Diff_Span_Highlight_VT,
+}
+
+Diff_Span_Highlight_VT :: struct {
+	// Sets the fill, which defaults to a translucent warning color. A fully transparent fill leaves
+	// whatever the line shows beneath the span: for emphasis carried by the text itself, such as a
+	// link.
+	with_background: proc(e: Diff_Span_Highlight, background: Color) -> Diff_Span_Highlight,
+	// Sets the text color over the fill, keeping it readable on a strong one.
+	with_foreground: proc(e: Diff_Span_Highlight, foreground: Color) -> Diff_Span_Highlight,
+	// Underlines the span in its text color, the way a link reads.
+	with_underline: proc(e: Diff_Span_Highlight) -> Diff_Span_Highlight,
+}
+
+// Highlights `span` of the line at `position`.
+diff_span_highlight :: proc(position: Diff_Line_Position, span: Range, loc := #caller_location) -> Diff_Span_Highlight {
+	e := Diff_Span_Highlight{new_value(891, loc), &diff_span_highlight_vt}
+	o := node_args()
+	put_obj(o, position.h)
+	put_range(o, span)
+	return e
+}
+
+@(private)
+diff_span_highlight_vt := Diff_Span_Highlight_VT {
+	with_background = proc(e: Diff_Span_Highlight, background: Color) -> Diff_Span_Highlight {
+		o := op(vel(e.nd), 256)
+		put_color(o, background)
+		return e
+	},
+	with_foreground = proc(e: Diff_Span_Highlight, foreground: Color) -> Diff_Span_Highlight {
+		o := op(vel(e.nd), 257)
+		put_color(o, foreground)
+		return e
+	},
+	with_underline = proc(e: Diff_Span_Highlight) -> Diff_Span_Highlight {
+		op(vel(e.nd), 258)
 		return e
 	},
 }

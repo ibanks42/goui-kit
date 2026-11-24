@@ -159,7 +159,7 @@ types, is in its generated file.
 
 <!-- index:begin (written by gen/gk_apidoc.py from odin/gk/gen_*.odin; do not edit) -->
 
-254 element types, 139 kit state types and 94 value types, in 76 upstream modules. Styling builders every element has (`->bg`, `->w`, `->p`, `->border_color`, … and the style tokens) are not repeated per type.
+254 element types, 140 kit state types and 96 value types, in 76 upstream modules. Styling builders every element has (`->bg`, `->w`, `->p`, `->border_color`, … and the style tokens) are not repeated per type.
 
 ### component
 
@@ -299,7 +299,7 @@ types, is in its generated file.
 
 ### component::diff
 
-- **`gk.Diff`** (Diff, element): `gk.diff(state)`; `->annotations`, `->border_e`, `->border_s`, `->change_background`, `->change_indicator`, `->decorations`, `->flex_row_dir`, `->gutter_markers` and 22 more
+- **`gk.Diff`** (Diff, element): `gk.diff(state)`; `->annotations`, `->border_e`, `->border_s`, `->change_background`, `->change_indicator`, `->decorations`, `->flex_row_dir`, `->gutter_markers` and 26 more
 - **`gk.Diff_Annotation`** (DiffAnnotation, kit state): handed out by the kit (no constructor); reads `gk.diff_annotation_id`, `gk.path`, `gk.position`
 - **`gk.Diff_Conflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `gk.base_label`, `gk.base_lines`, `gk.current_label`, `gk.current_lines`, `gk.incoming_label`, `gk.incoming_lines`, `gk.lines`
 - **`gk.Diff_File_Read`** (DiffFile, kit state): handed out by the kit (no constructor); reads `gk.additions`, `gk.conflicts`, `gk.deletions`, `gk.extended_headers`, `gk.has_changes`, `gk.is_binary`, `gk.is_truncated`, `gk.language` and 4 more
@@ -307,12 +307,14 @@ types, is in its generated file.
 - **`gk.Diff_Line_Position`** (DiffLinePosition, kit state): handed out by the kit (no constructor); reads `gk.line`, `gk.path`, `gk.side`
 - **`gk.Diff_Line_Range_Read`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `gk.diff_line_range_read_start`, `gk.end`, `gk.end_side`, `gk.path`, `gk.side`
 - **`gk.Diff_Parse_Error`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `gk.diff_parse_error_message`, `gk.line`
-- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `gk.conflict_resolution`, `gk.context_lines`, `gk.expansion_lines`, `gk.files`, `gk.inline_max_line_length`, `gk.inline_unit`, `gk.is_file_collapsed`, `gk.min_collapsed_lines` and 5 more; writes `gk.clear_syntax_highlighter`, `gk.collapse_unchanged`, `gk.expand_unchanged`, `gk.next_change`, `gk.previous_change`, `gk.resolve_conflict`, `gk.scroll_to_file`, `gk.scroll_to_line` and 13 more; events `gk.on_diff_event(s, cx, gk.on(p))`
+- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `gk.conflict_resolution`, `gk.context_lines`, `gk.expansion_lines`, `gk.files`, `gk.has_line`, `gk.inline_max_line_length`, `gk.inline_unit`, `gk.is_file_collapsed` and 6 more; writes `gk.clear_syntax_highlighter`, `gk.collapse_unchanged`, `gk.expand_unchanged`, `gk.next_change`, `gk.previous_change`, `gk.resolve_conflict`, `gk.scroll_to_file`, `gk.scroll_to_line` and 13 more; events `gk.on_diff_event(s, cx, gk.on(p))`
+- **`gk.Diff_Text_Position`** (DiffTextPosition, kit state): handed out by the kit (no constructor); reads `gk.diff_text_position_text`, `gk.offset`, `gk.position`
 - **`gk.Diff_Decoration`** (DiffDecoration, value): `gk.diff_decoration(range)`; `->with_background`
-- **`gk.Diff_File`** (DiffFile, value): `gk.diff_file_parse_at(patch, index)` or `gk.diff_file_unchanged(path, text)` or `gk.diff_file_parse_with_at(patch, options, index)`; `->with_language`
+- **`gk.Diff_File`** (DiffFile, value): `gk.diff_file_excerpts(path, parts)` or `gk.diff_file_parse_at(patch, index)` or `gk.diff_file_unchanged(path, text)` (and 1 more); `->with_language`
 - **`gk.Diff_Gutter_Marker`** (DiffGutterMarker, value): `gk.diff_gutter_marker(id, position)`; `->with_label`
 - **`gk.Diff_Line_Range`** (DiffLineRange, value): `gk.diff_line_range(path, side, start, end)`; `->with_end_side`
 - **`gk.Diff_Parse_Options`** (DiffParseOptions, value): `gk.diff_parse_options()` or `gk.diff_parse_options_default()`; `->truncated_hunks`
+- **`gk.Diff_Span_Highlight`** (DiffSpanHighlight, value): `gk.diff_span_highlight(position, span)`; `->with_background`, `->with_foreground`, `->with_underline`
 
 ### component::dock
 
@@ -348,7 +350,8 @@ types, is in its generated file.
 
 ### component::input
 
-- **`gk.Input`** (Input, element): `gk.input(state)`; `->selected`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 28 more
+- **`gk.Editor`** (Editor, element): `gk.editor(state)`; `->small`, `->large`, `->disabled`, `->appearance`, `->border_e`, `->border_s`, `->bordered`, `->flex_row_dir` and 17 more
+- **`gk.Input`** (Input, element): `gk.input(state)`; `->selected`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 29 more
 - **`gk.Input_Group`** (InputGroup, element): `gk.input_group(id)`; `->small`, `->large`, `->disabled`, `->addon`, `->border_e`, `->border_s`, `->flex_row_dir`, `->input` and 16 more
 - **`gk.Input_Group_Addon`** (InputGroupAddon, element): `gk.input_group_addon(id)`; `->align`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
 - **`gk.Input_Group_Button`** (InputGroupButton, element): `gk.input_group_button(id)`; `->label`, `->child`, `->children`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->primary` and 35 more
@@ -357,6 +360,7 @@ types, is in its generated file.
 - **`gk.Number_Input`** (NumberInput, element): `gk.number_input(state)`; `->placeholder`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 17 more
 - **`gk.Otp_Input`** (OtpInput, element): `gk.otp_input(state)`; `->small`, `->large`, `->disabled`, `->groups`, `->with_size`, `->xsmall`
 - **`gk.Textarea`** (Textarea, element): `gk.textarea(state)`; `->small`, `->large`, `->disabled`, `->appearance`, `->border_e`, `->border_s`, `->bordered`, `->flex_row_dir` and 18 more
+- **`gk.Gutter_Style`** (GutterStyle, value): `gk.gutter_style_default()`; `->with_active_line_number_color`, `->with_gap`, `->with_line_number_color`, `->with_line_number_font_family`, `->with_line_number_font_size`
 
 ### component::kbd
 
@@ -647,7 +651,6 @@ types, is in its generated file.
 - **`gk.Dialog_Backdrop`** (DialogBackdrop, element): `gk.dialog_backdrop()` or `gk.dialog_backdrop_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Dialog_Popup`** (DialogPopup, element): `gk.dialog_popup()` or `gk.dialog_popup_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Dialog_Trigger`** (DialogTrigger, element): `gk.dialog_trigger(trigger)`; `->handle`, `->on_open`
-- **`gk.Editor`** (Editor, element): `gk.editor(state)`
 - **`gk.Grid_Layout`** (GridLayout, element): `gk.grid_layout(id, state)` or `gk.kit_grid_layout(id, state)`; `->placeholder`, `->border_e`, `->border_s`, `->dragging_item`, `->flex_row_dir`, `->focused_item`, `->inset_e`, `->inset_s` and 17 more
 - **`gk.Input_Base`** (InputBase, element): `gk.input_base(id)`; `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->focused`, `->inset_e` and 13 more
 - **`gk.Motion_Reveal`** (MotionReveal, element): `gk.motion_reveal(id, progress, child)`
@@ -664,8 +667,8 @@ types, is in its generated file.
 - **`gk.Rounded_Frame_Cover`** (RoundedFrameCover, element): `gk.rounded_frame_cover_uniform(radius)`; `->backdrop`, `->frame_border`
 - **`gk.Scroll_Bounce`** (ScrollBounce, element): `gk.scroll_bounce(id, handle, child)`; `->enabled`, `->motion`, `->scroll_wheel`
 - **`gk.Scrollable_Mask`** (ScrollableMask<ScrollHandle>, element): `gk.scrollable_mask_vertical_wheel(scroll_handle)` or `gk.scrollable_mask(axis, scroll_handle)`; `->debug`
-- **`gk.Scrollbar`** (Scrollbar, element): `gk.scrollbar(scroll_handle)` or `gk.scrollbar_horizontal(scroll_handle)` or `gk.scrollbar_vertical(scroll_handle)`; `->axis`, `->mode`, `->scroll_size`, `->styles`, `->viewport_bounds`, `->viewport_from_layout`
-- **`gk.Selectable_Text`** (SelectableText, element): `gk.selectable_text(id, text)` or `gk.selectable_text_with_handle(id, handle, text)`; `->document_order`, `->highlights`, `->selection_color`, `->text_style`
+- **`gk.Scrollbar`** (Scrollbar, element): `gk.scrollbar(scroll_handle)` or `gk.scrollbar_horizontal(scroll_handle)` or `gk.scrollbar_vertical(scroll_handle)`; `->axis`, `->mode`, `->placement`, `->scroll_size`, `->styles`, `->viewport_bounds`, `->viewport_from_layout`
+- **`gk.Selectable_Text`** (SelectableText, element): `gk.selectable_text(id, text)` or `gk.selectable_text_with_handle(id, handle, text)`; `->document_order`, `->highlights`, `->on_reveal`, `->reveal_range`, `->selection_color`, `->text_style`
 - **`gk.Slider_Indicator`** (SliderIndicator, element): `gk.slider_indicator(state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Slider_Thumb`** (SliderThumb, element): `gk.slider_thumb(state)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
 - **`gk.Slider_Track`** (SliderTrack, element): `gk.slider_track(state)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
@@ -696,7 +699,7 @@ types, is in its generated file.
 - **`gk.Popover_State`** (PopoverState, kit state): handed out by the kit (no constructor); reads `gk.is_open`; writes `gk.dismiss`, `gk.show`
 - **`gk.Range_Highlight`** (RangeHighlight, kit state): handed out by the kit (no constructor); reads `gk.background`, `gk.range`
 - **`gk.Rendered_Text`** (RenderedText, kit state): handed out by the kit (no constructor); reads `gk.as_str`, `gk.is_empty`, `gk.range_for_source`, `gk.rendered_text_len`, `gk.source`
-- **`gk.Resizable_State`** (ResizableState, kit state): handed out by the kit (no constructor); reads `gk.container_size`, `gk.sizes`; writes `gk.insert_panel`, `gk.remove_panel`, `gk.reset_panel`, `gk.resizable_state_clear`, `gk.resize_panel`; events `gk.on_resizable_panel_event(s, cx, gk.on(p))`
+- **`gk.Resizable_State`** (ResizableState, kit state): handed out by the kit (no constructor); reads `gk.container_size`, `gk.is_resizing`, `gk.sizes`; writes `gk.insert_panel`, `gk.remove_panel`, `gk.reset_panel`, `gk.resizable_state_clear`, `gk.resize_panel`; events `gk.on_resizable_panel_event(s, cx, gk.on(p))`
 - **`gk.Root`** (Root, kit state): handed out by the kit (no constructor); reads `gk.root_view`
 - **`gk.Scrollbar_Motion_Read`** (ScrollbarMotion, kit state): handed out by the kit (no constructor); reads `gk.enter`, `gk.entrance`, `gk.exit`, `gk.expand`, `gk.idle`, `gk.thumb_hover_entrance`
 - **`gk.Scrollbar_Theme_Read`** (ScrollbarTheme, kit state): handed out by the kit (no constructor); reads `gk.mode`, `gk.scrollbar_theme_read_motion`
@@ -782,8 +785,8 @@ types, is in its generated file.
 - **`gk.Cursor_Blink_Read`** (CursorBlink, kit state): handed out by the kit (no constructor); reads `gk.idle_timeout`, `gk.interval`, `gk.is_steady`
 - **`gk.Diagnostic_Set`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `gk.diagnostic_set_len`, `gk.for_offset`, `gk.is_empty`, `gk.iter`, `gk.range`; writes `gk.diagnostic_set_clear`, `gk.extend`, `gk.push`
 - **`gk.Display_Map`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `gk.buffer_line_count`, `gk.buffer_line_to_display_row`, `gk.buffer_line_to_display_row_range`, `gk.buffer_pos_to_display_pos`, `gk.display_map_text`, `gk.display_pos_to_buffer_pos`, `gk.display_row_count`, `gk.display_row_to_buffer_line` and 9 more; writes `gk.clear_folds`, `gk.on_layout_changed`, `gk.set_fold_candidates`, `gk.set_folded`, `gk.set_font`, `gk.set_wrapping_indent`, `gk.toggle_fold`
-- **`gk.Editor_Scrollbar_Context`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `gk.axis`, `gk.scroll_viewport_size`
-- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 6 more; reads `gk.value`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.create_decorations_collection`, `gk.create_gutter_decorations_collection`, `gk.create_overview_ruler_decorations_collection`, `gk.create_range_decorations_collection`, `gk.cursor` and 57 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.clear_diagnostic_popover`, `gk.clear_hover_state`, `gk.close_edit_menu`, `gk.close_search` and 61 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Editor_Scrollbar_Context`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `gk.axis`, `gk.content_height_f64`, `gk.placement`, `gk.scroll_viewport_size`, `gk.scroll_y_f64`
+- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 7 more; reads `gk.value`, `gk.content_height_f64`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.create_decorations_collection`, `gk.create_gutter_decorations_collection`, `gk.create_overview_ruler_decorations_collection`, `gk.create_range_decorations_collection` and 61 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.clear_diagnostic_popover`, `gk.clear_hover_state`, `gk.close_edit_menu`, `gk.close_search` and 68 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Gutter_Decoration_Collection`** (GutterDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.gutter_decoration_collection_append`, `gk.gutter_decoration_collection_clear`, `gk.gutter_decoration_collection_set`
 - **`gk.Inline_Token_Click_Event`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.click`, `gk.range`, `gk.token`
 - **`gk.Inline_Token_Context`** (InlineTokenContext, kit state): handed out by the kit (no constructor); reads `gk.available_width`, `gk.is_disabled`, `gk.is_readonly`, `gk.is_selected`, `gk.line_height`, `gk.range`, `gk.token`
@@ -793,13 +796,13 @@ types, is in its generated file.
 - **`gk.Input_Content`** (InputContent, kit state): handed out by the kit (no constructor); reads `gk.input_content_text`, `gk.input_content_tokens`, `gk.with_token`
 - **`gk.Input_Context_Menu_Capabilities_Read`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `gk.has_code_actions`, `gk.has_definition`, `gk.has_selection`, `gk.is_code_editor`, `gk.is_copyable`, `gk.is_disabled`, `gk.is_editable`, `gk.is_masked` and 1 more
 - **`gk.Input_Presentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `gk.placeholder`, `gk.input_presentation_focus_handle`, `gk.is_code_editor`, `gk.is_disabled`, `gk.is_editable`, `gk.is_loading`, `gk.is_masked`, `gk.is_multi_line` and 3 more
-- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics` and 51 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 45 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `gk.value`, `gk.content`, `gk.content_height_f64`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover` and 53 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 47 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Overview_Ruler_Decoration_Collection`** (OverviewRulerDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.overview_ruler_decoration_collection_append`, `gk.overview_ruler_decoration_collection_clear`, `gk.overview_ruler_decoration_collection_set`
 - **`gk.Range_Decoration_Collection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.range_decoration_collection_append`, `gk.range_decoration_collection_clear`, `gk.range_decoration_collection_set`
 - **`gk.Search_Matcher`** (SearchMatcher, kit state): handed out by the kit (no constructor); reads `gk.current`, `gk.current_match_index`, `gk.is_empty`, `gk.matched_ranges`, `gk.search_matcher_label`, `gk.search_matcher_len`; writes `gk.update_cursor_by_offset`, `gk.update_query`
 - **`gk.Search_Session`** (SearchSession, kit state): handed out by the kit (no constructor); reads `gk.is_active`
 - **`gk.Text_Decoration_Collection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.text_decoration_collection_append`, `gk.text_decoration_collection_clear`, `gk.text_decoration_collection_set`
-- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 5 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.decorations`, `gk.diagnostic_popover` and 52 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 47 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 6 more; reads `gk.value`, `gk.content`, `gk.content_height_f64`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.decorations` and 54 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 50 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Auto_Closing_Pair`** (AutoClosingPair, value): `gk.auto_closing_pair(open, close)`; `->not_in_`
 - **`gk.Bracket_Pair`** (BracketPair, value): `gk.bracket_pair(open, close)`
 - **`gk.Cursor_Blink`** (CursorBlink, value): `gk.cursor_blink_default()` or `gk.cursor_blink_steady()` or `gk.cursor_blink_blinking(interval)`; `->with_idle_timeout`

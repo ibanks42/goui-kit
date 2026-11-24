@@ -26369,18 +26369,18 @@ func (e DialogTriggerEl) OnOpen(open func(cx *Cx)) DialogTriggerEl {
 	return e
 }
 
-// EditorEl is gpui_kit::base::Editor.
-type EditorEl struct{ n *node }
+// BaseEditorEl is gpui_kit::base::Editor<()>.
+type BaseEditorEl struct{ n *node }
 
-func (e EditorEl) node() *node { return e.n }
+func (e BaseEditorEl) node() *node { return e.n }
 
-// Editor is <gpui_kit::base::Editor>::new.
-func Editor(state EditorState) EditorEl {
+// BaseEditor is <gpui_kit::base::Editor<()>>::new.
+func BaseEditor(state EditorState) BaseEditorEl {
 	useBaseInput()
 	n := newNode(320)
 	o := nodeArgs(n)
 	o.u64(state.h)
-	return EditorEl{n}
+	return BaseEditorEl{n}
 }
 
 // GridArea is gpui_kit::base::GridArea.
@@ -42480,6 +42480,18 @@ func (e ScrollbarEl) Mode(mode ScrollbarMode) ScrollbarEl {
 	return e
 }
 
+// Set the scrollbar placement, default is `BottomRight`.
+//
+// When both scrollbars are shown, the horizontal track ends before the vertical one, on the
+// vertical scrollbar's side.
+//
+// Placement is <gpui_kit::base::Scrollbar>::placement.
+func (e ScrollbarEl) Placement(placement ScrollbarPlacement) ScrollbarEl {
+	o := op(e.n, 263)
+	o.u16(uint16(placement))
+	return e
+}
+
 // Set a special scroll size of the content area, default is None.
 //
 // Default will sync the `content_size` from `scroll_handle`.
@@ -43403,6 +43415,29 @@ func (e SelectableTextEl) Highlights(highlights []TupleRangeHighlightstyle) Sele
 		putRange(o, x0.V0)
 		putHighlightStyle(o, x0.V1)
 	}
+	return e
+}
+
+// Receive the requested line's bounds in window coordinates during prepaint, for containers that
+// manage scrolling through a custom handle. Without a handler, the element requests GPUI
+// autoscroll.
+//
+// OnReveal is <gpui_kit::base::SelectableText>::on_reveal.
+func (e SelectableTextEl) OnReveal(handler func(cx *Cx, e Bounds)) SelectableTextEl {
+	o := op(e.n, 260)
+	o.u32(register(handler, 75))
+	return e
+}
+
+// Request that the visual line containing the start of this UTF-8 byte range scroll into view. The
+// line is revealed once when the range is first supplied or changes, matching
+// `TextViewState::reveal_range`, so the user can scroll away afterwards. Invalid ranges are
+// ignored.
+//
+// RevealRange is <gpui_kit::base::SelectableText>::reveal_range.
+func (e SelectableTextEl) RevealRange(range_ Range) SelectableTextEl {
+	o := op(e.n, 261)
+	putRange(o, range_)
 	return e
 }
 

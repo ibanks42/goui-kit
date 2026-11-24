@@ -15,7 +15,7 @@ publish = false
 # The rendering engine is chosen by each package's `gpui-fast` feature (on by default): with it,
 # gpui-kit runs on gpui-fast; built with --no-default-features it runs on upstream GPUI (gpui-pre).
 # Left out of the library to keep it small: tree-sitter grammars, speech, decimal.
-gpui-kit = { version = "=0.10.0", features = ["syntect"] }
+gpui-kit = { version = "=0.11.0", features = ["syntect"] }
 gk-meter = { path = "core/meter", default-features = false }
 
 [profile.release]

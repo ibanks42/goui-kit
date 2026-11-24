@@ -101,9 +101,10 @@ for phase in "$@"; do
     python3 "$here/reader-feed.py" "$d/feed.md" 3000
     # The Odin app runs twice: what differs between its own two runs is the session's noise. Two
     # boxes (image pixels) hold wall-clock time: the load toast says how long the load took
-    # ("in 7 ms"), and the list's scrollbar fades on a real timer (gates/go-apps-cmp.py).
+    # ("in 7 ms"; the box runs on over " ms", which moves when the number's width does: "1" is
+    # narrower than "2"), and the list's scrollbar fades on a real timer (gates/go-apps-cmp.py).
     for l in odin odin2 go; do run "$d" "$l" "$here/reader.script" "$bin/reader-${l%2}" READER_FEED="$d/feed.md"; done
-    python3 "$here/go-apps-cmp.py" "$d" reader "1500,130,1600,175;560,180,580,1320" > "$d/cmp.txt" 2>&1 || rc=1
+    python3 "$here/go-apps-cmp.py" "$d" reader "1500,130,1640,175;560,180,580,1320" > "$d/cmp.txt" 2>&1 || rc=1
     grep -v '^GATE' "$d/cmp.txt" | head -20; grep '^GATE' "$d/cmp.txt" ;;
   expenses)
     d=$out/expenses

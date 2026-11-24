@@ -1053,6 +1053,14 @@ Scrollbar_Mode :: enum u16 {
 	Always = 2,
 }
 
+// Scrollbar_Placement is gpui_kit::base::ScrollbarPlacement.
+Scrollbar_Placement :: enum u16 {
+	Bottom_Right = 0,
+	Bottom_Left = 1,
+	Top_Right = 2,
+	Top_Left = 3,
+}
+
 // Selection_Edge is gpui_kit::base::SelectionEdge.
 Selection_Edge :: enum u16 {
 	Start = 0,
@@ -1609,11 +1617,11 @@ Combobox_Event :: union #no_nil {
 
 // Date is gpui_kit::base::Date.
 Date_Single :: struct {
-	v0: Maybe(Naive_Date),
+	v0: Maybe(Civil_Date),
 }
 Date_Range :: struct {
-	v0: Maybe(Naive_Date),
-	v1: Maybe(Naive_Date),
+	v0: Maybe(Civil_Date),
+	v1: Maybe(Civil_Date),
 }
 Date :: union #no_nil {
 	Date_Single,
@@ -1627,7 +1635,7 @@ put_Date :: proc(o: ^Tape, v: Date) {
 		put_u16(o, 0)
 		if x0, ok := x.v0.?; ok {
 			put_u8(o, 1)
-			put_naive_date(o, x0)
+			put_civil_date(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
@@ -1635,13 +1643,13 @@ put_Date :: proc(o: ^Tape, v: Date) {
 		put_u16(o, 1)
 		if x0, ok := x.v0.?; ok {
 			put_u8(o, 1)
-			put_naive_date(o, x0)
+			put_civil_date(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
 		if x0, ok := x.v1.?; ok {
 			put_u8(o, 1)
-			put_naive_date(o, x0)
+			put_civil_date(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
@@ -1661,11 +1669,11 @@ Date_Picker_Event :: struct {
 
 // Date_Time is gpui_kit::component::date_picker::DateTime.
 Date_Time_Single :: struct {
-	v0: Maybe(Naive_Date_Time),
+	v0: Maybe(Civil_Date_Time),
 }
 Date_Time_Range :: struct {
-	v0: Maybe(Naive_Date_Time),
-	v1: Maybe(Naive_Date_Time),
+	v0: Maybe(Civil_Date_Time),
+	v1: Maybe(Civil_Date_Time),
 }
 Date_Time :: union #no_nil {
 	Date_Time_Single,
@@ -1679,7 +1687,7 @@ put_Date_Time :: proc(o: ^Tape, v: Date_Time) {
 		put_u16(o, 0)
 		if x0, ok := x.v0.?; ok {
 			put_u8(o, 1)
-			put_naive_date_time(o, x0)
+			put_civil_date_time(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
@@ -1687,13 +1695,13 @@ put_Date_Time :: proc(o: ^Tape, v: Date_Time) {
 		put_u16(o, 1)
 		if x0, ok := x.v0.?; ok {
 			put_u8(o, 1)
-			put_naive_date_time(o, x0)
+			put_civil_date_time(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
 		if x0, ok := x.v1.?; ok {
 			put_u8(o, 1)
-			put_naive_date_time(o, x0)
+			put_civil_date_time(o, x0)
 		} else {
 			put_u8(o, 0)
 		}
@@ -2219,7 +2227,7 @@ Matcher_Range :: struct {
 	v0: Range_Matcher,
 }
 Matcher_Custom :: struct {
-	v0: []Naive_Date,
+	v0: []Civil_Date,
 }
 Matcher :: union #no_nil {
 	Matcher_Day_Of_Week,
@@ -2247,7 +2255,7 @@ put_Matcher :: proc(o: ^Tape, v: Matcher) {
 		put_u16(o, 3)
 		put_u32(o, u32(len(x.v0)))
 		for x0 in x.v0 {
-			put_naive_date(o, x0)
+			put_civil_date(o, x0)
 		}
 	case:
 		put_u16(o, 0xffff)
@@ -2906,7 +2914,7 @@ put_Text_Overflow :: proc(o: ^Tape, v: Text_Overflow) {
 
 // Time_Field_Event is gpui_kit::base::TimeFieldEvent.
 Time_Field_Event_Change :: struct {
-	v0: Naive_Time,
+	v0: Civil_Time,
 }
 Time_Field_Event :: struct {
 	variant:     u16,
@@ -4693,8 +4701,8 @@ put_Corners_Into :: proc(o: ^Tape, v: Corners_Into) {
 Date_Into :: union #no_nil {
 	Date_Single,
 	Date_Range,
-	Naive_Date,
-	Tuple_Naive_Date_Naive_Date,
+	Civil_Date,
+	Tuple_Civil_Date_Civil_Date,
 }
 
 @(private)
@@ -4706,13 +4714,13 @@ put_Date_Into :: proc(o: ^Tape, v: Date_Into) {
 	case Date_Range:
 		put_u8(o, 0)
 		put_Date(o, x)
-	case Naive_Date:
+	case Civil_Date:
 		put_u8(o, 1)
-		put_naive_date(o, x)
-	case Tuple_Naive_Date_Naive_Date:
+		put_civil_date(o, x)
+	case Tuple_Civil_Date_Civil_Date:
 		put_u8(o, 2)
-		put_naive_date(o, x.v0)
-		put_naive_date(o, x.v1)
+		put_civil_date(o, x.v0)
+		put_civil_date(o, x.v1)
 	}
 }
 
@@ -5322,6 +5330,18 @@ Event_117 :: struct {
 	a1: Bounds,
 }
 
+// Event_121: the payload of handlers of shape 121: (&DiffTextPosition, &ClickEvent).
+Event_121 :: struct {
+	a0: Diff_Text_Position,
+	a1: Click_Event,
+}
+
+// Event_122: the payload of handlers of shape 122: (Option<&DiffTextPosition>, gpui::Modifiers).
+Event_122 :: struct {
+	a0: Maybe(Diff_Text_Position),
+	a1: Modifiers,
+}
+
 // The payload and return type of every generated handler shape, for the runtime's reflection.
 @(init, private)
 gen_shapes :: proc "contextless" () {
@@ -5381,6 +5401,8 @@ gen_shapes :: proc "contextless" () {
 	register_shape(118, Resolved_Position, nil) // (ResolvedPosition)
 	register_shape(119, Drag_Move_Event, nil) // (&DragMoveEvent<T>)
 	register_shape(120, Input_Edits_Event, nil) // (InputEditsEvent)
+	register_shape(121, Event_121, bool)
+	register_shape(122, Event_122, nil)
 }
 
 Tuple_Base_Index_Path_Search_Item :: struct {
@@ -5391,6 +5413,11 @@ Tuple_Base_Index_Path_Search_Item :: struct {
 Tuple_Calendar_Item_Kind_I32 :: struct {
 	v0: Calendar_Item_Kind,
 	v1: i32,
+}
+
+Tuple_Civil_Date_Civil_Date :: struct {
+	v0: Civil_Date,
+	v1: Civil_Date,
 }
 
 Tuple_F32_F32 :: struct {
@@ -5423,9 +5450,9 @@ Tuple_Int_Int :: struct {
 	v1: int,
 }
 
-Tuple_Naive_Date_Naive_Date :: struct {
-	v0: Naive_Date,
-	v1: Naive_Date,
+Tuple_Int_String :: struct {
+	v0: int,
+	v1: string,
 }
 
 Tuple_Range_Base_Text_Mark :: struct {

@@ -444,6 +444,10 @@ LIBRARY_CALLS = {
     "gpui_kit::component::dock::DockSkin::is_toggle_button_visible": "gk.dock_skin_toggle_button_visible (call DOCK_SKIN)",
     "gpui_kit::component::dock::DockSkin::set_toggle_button_visible": "gk.dock_skin_set_toggle_button_visible (call DOCK_SKIN, buffered)",
     "gpui_kit::component::dock::DockSkin::set_close_button_visible": "gk.dock_skin_set_close_button_visible (call DOCK_SKIN, buffered)",
+    "gpui_kit::component::dock::DockSkin::is_collapsed_tab_bar_visible": "gk.dock_skin_collapsed_tab_bar_visible (call DOCK_SKIN)",
+    "gpui_kit::component::dock::DockSkin::set_collapsed_tab_bar_visible": "gk.dock_skin_set_collapsed_tab_bar_visible (call DOCK_SKIN, buffered)",
+    "gpui_kit::component::dock::DockSkin::is_split_divider_line_visible": "gk.dock_skin_split_divider_line_visible (call DOCK_SKIN)",
+    "gpui_kit::component::dock::DockSkin::set_split_divider_line_visible": "gk.dock_skin_set_split_divider_line_visible (call DOCK_SKIN, buffered)",
     "gpui_kit::component::menu::DropdownMenu::dropdown_menu_with_anchor":
         "node DROPDOWN_ANCHOR (gk.dropdown_menu_anchored): DropdownMenuPopover<Button> has no public path",
 }

@@ -144,7 +144,8 @@ pub fn apply_gpui_svg(dx: &mut Dx, mut el: gpui_kit::Svg, first: u32) -> gpui_ki
             256 => { el = { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(r.u8()); } v }; <gpui_kit::Svg>::data(el, &a0[..]) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::Svg>::external_path(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::Svg>::path(el, a0) }; }
-            259 => { el = { let a0 = gpui_kit::Transformation::scale(gpui_kit::size(r.f32(), r.f32())).with_translation(gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32()))).with_rotation(gpui_kit::radians(r.f32())); <gpui_kit::Svg>::with_transformation(el, a0) }; }
+            259 => { el = { let a0 = crate::motion::transformation(r); <gpui_kit::Svg>::with_transformation(el, a0) }; }
+            260 => { el = { let a0 = crate::motion::timed_transformation(r); <gpui_kit::Svg>::with_timed_transformation(el, a0) }; }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             16512..=16639 => { el = tr_interactive_element_0(el, op, r, dx); }

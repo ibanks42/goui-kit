@@ -42,6 +42,84 @@ KEEP_STD = {"From", "Default"}
 OURS = ("gpui", "gpui_base", "gpui_component", "gpui_kit")
 
 
+# Public items rustdoc leaves out because their module is #[doc(hidden)], though a public module
+# re-exports them: (crate, the item's own path, the public module that re-exports it). Taken from
+# the --document-hidden-items pass (gen-json/hidden, gen/extract.sh) with their impls, every id
+# they name mapped to the public pass's by path. gpui-component's styled code editor
+# (`#[doc(hidden)] mod editor; pub use editor::Editor;` in input/mod.rs) is the kit's Editor.
+GRAFTS = [("gpui_component", ["gpui_component", "input", "editor", "Editor"], ["gpui_component", "input"])]
+
+
+def graft(d, h, path, into):
+    """Adds the struct at `path` of the hidden pass `h` to the public pass `d`, in module `into`."""
+    hpaths = h["paths"]
+    hid = next((k for k, p in hpaths.items() if p["path"] == path and p["kind"] == "struct" and p["crate_id"] == 0), None)
+    if hid is None or hid not in h["index"]:
+        raise SystemExit(f"strip: graft: {'::'.join(path)} is not in the hidden pass")
+    if any(p["path"] == path for p in d["paths"].values()):
+        return  # public now: nothing to graft
+    hnames = {k: v["name"] for k, v in h["external_crates"].items()}
+    dnames = {v["name"]: k for k, v in d["external_crates"].items()}
+    # The public pass's ids by (crate name, path, kind).
+    def crate_of(p, names):
+        return p["path"][0] if p["crate_id"] == 0 else names.get(str(p["crate_id"]))
+    pub = {}
+    for k, p in d["paths"].items():
+        pub[(crate_of(p, {k2: v["name"] for k2, v in d["external_crates"].items()}), tuple(p["path"]), p["kind"])] = k
+    # The grafted items: the struct, its impls and their items.
+    item = h["index"][hid]
+    take = [hid]
+    for i in item["inner"]["struct"]["impls"]:
+        im = h["index"].get(str(i))
+        if im is None:
+            continue
+        take.append(str(i))
+        take += [str(x) for x in im["inner"]["impl"]["items"] if str(x) in h["index"]]
+    nxt = max(int(k) for k in d["index"]) + 1
+    new = {}
+    for k in take:
+        new[k] = nxt
+        nxt += 1
+
+    def remap(x):
+        x = str(x)
+        if x in new:
+            return new[x]
+        p = hpaths.get(x)
+        if p is None:
+            return 2**31 - 1  # an item the public pass does not have: unresolved, as a hidden one is
+        hit = pub.get((crate_of(p, hnames), tuple(p["path"]), p["kind"]))
+        return int(hit) if hit is not None else 2**31 - 1
+
+    def walk(o):
+        if isinstance(o, dict):
+            out = {}
+            for k, v in o.items():
+                if k == "id" and isinstance(v, int):
+                    out[k] = remap(v)
+                elif k in ("items", "impls", "fields") and isinstance(v, list) and all(isinstance(x, int) for x in v):
+                    out[k] = [remap(x) for x in v]
+                elif k == "links" and isinstance(v, dict):
+                    out[k] = {a: remap(b) for a, b in v.items()}
+                else:
+                    out[k] = walk(v)
+            return out
+        if isinstance(o, list):
+            return [walk(x) for x in o]
+        return o
+
+    for k in take:
+        it = walk(h["index"][k])
+        it["id"] = new[k]
+        d["index"][str(new[k])] = it
+    d["paths"][str(new[hid])] = {"crate_id": 0, "path": path, "kind": "struct"}
+    mod = pub.get((into[0], tuple(into), "module"))
+    if mod is None:
+        raise SystemExit(f"strip: graft: no public module {'::'.join(into)}")
+    d["index"][mod]["inner"]["module"]["items"].append(new[hid])
+    print(f"strip: grafted {'::'.join(path)} from the hidden pass into {'::'.join(into)} ({len(take)} items)")
+
+
 def strip(src):
     """rustdoc JSON -> api/rustdoc/NAME.json.gz: docs, spans and links removed, and the impls
     nothing reads (auto traits, blanket and std-trait impls of third-party traits); the docs and
@@ -51,6 +129,10 @@ def strip(src):
     docs = {}
     for n in OURS:
         d = json.load(open(os.path.join(src, n + ".json")))
+        for crate, path, into in GRAFTS:
+            if crate == n:
+                hidden = os.path.join(os.path.dirname(os.path.abspath(src)), "hidden", n + ".json")
+                graft(d, json.load(open(hidden)), path, into)
         idx, drop = d["index"], set()
         names = {k: v["name"] for k, v in d["external_crates"].items()}
         # The doc comments go to docs.json.gz (gen/gk_doc.py writes them into the bindings): per

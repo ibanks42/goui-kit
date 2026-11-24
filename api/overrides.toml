@@ -48,6 +48,9 @@ types = [
     # The views family: a sidebar group of the kit's menus, and a sidebar of such groups.
     "SidebarGroup<SidebarMenu> as SidebarGroup",
     "Sidebar<SidebarGroup<SidebarMenu>> as GroupedSidebar",
+    # The unstyled editor, generic over a line-number renderer since gpui-kit 0.11 (its default, ()):
+    # the kit's own Editor takes a GutterStyle instead.
+    "Editor<()> as Editor",
 ]
 # Library types a type parameter can be given that are rows of a data table the app passes
 # (docs/PROTOCOLS.md section 12): `data` arguments, `field` and `format` closures.

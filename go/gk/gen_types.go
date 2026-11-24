@@ -1241,6 +1241,16 @@ const (
 	ScrollbarModeAlways    ScrollbarMode = 2
 )
 
+// ScrollbarPlacement is gpui_kit::base::ScrollbarPlacement.
+type ScrollbarPlacement uint16
+
+const (
+	ScrollbarPlacementBottomRight ScrollbarPlacement = 0
+	ScrollbarPlacementBottomLeft  ScrollbarPlacement = 1
+	ScrollbarPlacementTopRight    ScrollbarPlacement = 2
+	ScrollbarPlacementTopLeft     ScrollbarPlacement = 3
+)
+
 // SelectionEdge is gpui_kit::base::SelectionEdge.
 type SelectionEdge uint16
 
@@ -3453,12 +3463,12 @@ func (ComboboxEventConfirm) isComboboxEvent() {}
 // Date is gpui_kit::base::Date: one struct type per variant.
 type Date interface{ isDate() }
 
-// DateSingle is gpui_kit::base::Date::Single: not carried in Go yet (chrono).
+// DateSingle is gpui_kit::base::Date::Single: not carried in Go yet (civil).
 type DateSingle struct{}
 
 func (DateSingle) isDate() {}
 
-// DateRange is gpui_kit::base::Date::Range: not carried in Go yet (chrono).
+// DateRange is gpui_kit::base::Date::Range: not carried in Go yet (civil).
 type DateRange struct{}
 
 func (DateRange) isDate() {}
@@ -3483,12 +3493,12 @@ func (DatePickerEventChange) isDatePickerEvent() {}
 // DateTime is gpui_kit::component::date_picker::DateTime: one struct type per variant.
 type DateTime interface{ isDateTime() }
 
-// DateTimeSingle is gpui_kit::component::date_picker::DateTime::Single: not carried in Go yet (chrono).
+// DateTimeSingle is gpui_kit::component::date_picker::DateTime::Single: not carried in Go yet (civil).
 type DateTimeSingle struct{}
 
 func (DateTimeSingle) isDateTime() {}
 
-// DateTimeRange is gpui_kit::component::date_picker::DateTime::Range: not carried in Go yet (chrono).
+// DateTimeRange is gpui_kit::component::date_picker::DateTime::Range: not carried in Go yet (civil).
 type DateTimeRange struct{}
 
 func (DateTimeRange) isDateTime() {}
@@ -5035,7 +5045,7 @@ func putTextOverflow(o *tape, v TextOverflow) {
 // TimeFieldEvent is gpui_kit::base::TimeFieldEvent: one struct type per variant.
 type TimeFieldEvent interface{ isTimeFieldEvent() }
 
-// TimeFieldEventChange is gpui_kit::base::TimeFieldEvent::Change: not carried in Go yet (chrono).
+// TimeFieldEventChange is gpui_kit::base::TimeFieldEvent::Change: not carried in Go yet (civil).
 type TimeFieldEventChange struct{}
 
 func (TimeFieldEventChange) isTimeFieldEvent() {}
@@ -5747,6 +5757,18 @@ type Event117 struct {
 	A1 Bounds
 }
 
+// Event121 is the payload of handlers of shape 121: (&DiffTextPosition, &ClickEvent).
+type Event121 struct {
+	A0 DiffTextPosition
+	A1 ClickEvent
+}
+
+// Event122 is the payload of handlers of shape 122: (Option<&DiffTextPosition>, gpui::Modifiers).
+type Event122 struct {
+	A0 Option[DiffTextPosition]
+	A1 Modifiers
+}
+
 func init() {
 	shapes[1] = shapeInfo{name: "func(cx *Cx, e ClickEvent)", call: func(h any, cx *Cx, r *reader, ret *tape) bool {
 		f, ok := h.(func(cx *Cx, e ClickEvent))
@@ -6268,6 +6290,22 @@ func init() {
 		f(cx, rdInputEditsEvent(r))
 		return true
 	}}
+	shapes[121] = shapeInfo{name: "func(cx *Cx, e Event121) bool", call: func(h any, cx *Cx, r *reader, ret *tape) bool {
+		f, ok := h.(func(cx *Cx, e Event121) bool)
+		if !ok {
+			return false
+		}
+		ret.bool(f(cx, Event121{DiffTextPosition{h: r.u64()}, rdClickEvent(r)}))
+		return true
+	}}
+	shapes[122] = shapeInfo{name: "func(cx *Cx, e Event122)", call: func(h any, cx *Cx, r *reader, ret *tape) bool {
+		f, ok := h.(func(cx *Cx, e Event122))
+		if !ok {
+			return false
+		}
+		f(cx, Event122{rdOpt(r, func(r *reader) DiffTextPosition { return DiffTextPosition{h: r.u64()} }), rdModifiers(r)})
+		return true
+	}}
 }
 
 type TupleFloat32Float32 struct {
@@ -6298,6 +6336,11 @@ type TupleInt32Uint32 struct {
 type TupleIntInt struct {
 	V0 int
 	V1 int
+}
+
+type TupleIntString struct {
+	V0 int
+	V1 string
 }
 
 type TupleRangeBasetextmark struct {
@@ -6512,6 +6555,7 @@ func (FieldEl) isAnimatable()                          {}
 func (FormEl) isAnimatable()                           {}
 func (GroupBoxEl) isAnimatable()                       {}
 func (HoverCardEl) isAnimatable()                      {}
+func (EditorEl) isAnimatable()                         {}
 func (InputEl) isAnimatable()                          {}
 func (InputGroupEl) isAnimatable()                     {}
 func (InputGroupAddonEl) isAnimatable()                {}
@@ -6658,6 +6702,7 @@ func (ColorSelectEl) isSizableNode()                    {}
 func (DatePickerEl) isSizableNode()                     {}
 func (DescriptionListEl) isSizableNode()                {}
 func (FormEl) isSizableNode()                           {}
+func (EditorEl) isSizableNode()                         {}
 func (InputEl) isSizableNode()                          {}
 func (InputGroupEl) isSizableNode()                     {}
 func (InputGroupButtonEl) isSizableNode()               {}
@@ -6746,9 +6791,9 @@ func rdColorPickerEvent(r *reader) ColorPickerEvent {
 func rdDate(r *reader) Date {
 	switch r.u16() {
 	case 0:
-		stop("DateSingle cannot be read by the Go package yet (chrono): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		stop("DateSingle cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	case 1:
-		stop("DateRange cannot be read by the Go package yet (chrono): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		stop("DateRange cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	}
 	stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -6783,7 +6828,7 @@ func rdMatcher(r *reader) Matcher {
 func rdTimeFieldEvent(r *reader) TimeFieldEvent {
 	switch r.u16() {
 	case 0:
-		stop("TimeFieldEventChange cannot be read by the Go package yet (chrono read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		stop("TimeFieldEventChange cannot be read by the Go package yet (civil read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	}
 	stop("an event of type TimeFieldEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -6927,9 +6972,9 @@ func rdDatePickerEvent(r *reader) DatePickerEvent {
 func rdDateTime(r *reader) DateTime {
 	switch r.u16() {
 	case 0:
-		stop("DateTimeSingle cannot be read by the Go package yet (chrono): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		stop("DateTimeSingle cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	case 1:
-		stop("DateTimeRange cannot be read by the Go package yet (chrono): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		stop("DateTimeRange cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	}
 	stop("an event of type DateTime arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -7107,6 +7152,15 @@ func rdHighlightStyle(r *reader) (v HighlightStyle) {
 func rdListOffset(r *reader) (v ListOffset) {
 	v.ItemIx = int(r.u64())
 	v.OffsetInItem = r.f32()
+	return
+}
+
+func rdModifiers(r *reader) (v Modifiers) {
+	v.Control = r.bool()
+	v.Alt = r.bool()
+	v.Shift = r.bool()
+	v.Platform = r.bool()
+	v.Function = r.bool()
 	return
 }
 
@@ -7822,15 +7876,6 @@ func rdFontFeatures(r *reader) (v FontFeatures) {
 
 func rdFontWeight(r *reader) (v FontWeight) {
 	v.V0 = r.f32()
-	return
-}
-
-func rdModifiers(r *reader) (v Modifiers) {
-	v.Control = r.bool()
-	v.Alt = r.bool()
-	v.Shift = r.bool()
-	v.Platform = r.bool()
-	v.Function = r.bool()
 	return
 }
 

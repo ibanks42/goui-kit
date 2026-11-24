@@ -525,34 +525,43 @@ pub fn en_57(v: u16) -> gpui_kit::base::ScrollbarMode {
     }
 }
 impl genapi::Wire for gpui_kit::base::ScrollbarMode { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::ScrollbarMode::Scrolling => 0, gpui_kit::base::ScrollbarMode::Hover => 1, gpui_kit::base::ScrollbarMode::Always => 2, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_58(v: u16) -> gpui_kit::base::SelectionEdge {
+pub fn en_58(v: u16) -> gpui_kit::base::ScrollbarPlacement {
+    match v {
+        1 => gpui_kit::base::ScrollbarPlacement::BottomLeft,
+        2 => gpui_kit::base::ScrollbarPlacement::TopRight,
+        3 => gpui_kit::base::ScrollbarPlacement::TopLeft,
+        _ => gpui_kit::base::ScrollbarPlacement::BottomRight,
+    }
+}
+impl genapi::Wire for gpui_kit::base::ScrollbarPlacement { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::ScrollbarPlacement::BottomRight => 0, gpui_kit::base::ScrollbarPlacement::BottomLeft => 1, gpui_kit::base::ScrollbarPlacement::TopRight => 2, gpui_kit::base::ScrollbarPlacement::TopLeft => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
+pub fn en_59(v: u16) -> gpui_kit::base::SelectionEdge {
     match v {
         1 => gpui_kit::base::SelectionEdge::End,
         _ => gpui_kit::base::SelectionEdge::Start,
     }
 }
 impl genapi::Wire for gpui_kit::base::SelectionEdge { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::SelectionEdge::Start => 0, gpui_kit::base::SelectionEdge::End => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_59(v: u16) -> gpui_kit::base::SelectionFormat {
+pub fn en_60(v: u16) -> gpui_kit::base::SelectionFormat {
     match v {
         1 => gpui_kit::base::SelectionFormat::Source,
         2 => gpui_kit::base::SelectionFormat::SourceAcrossStyles,
         _ => gpui_kit::base::SelectionFormat::Plain,
     }
 }
-pub fn en_60(v: u16) -> gpui_kit::base::Side {
+pub fn en_61(v: u16) -> gpui_kit::base::Side {
     match v {
         1 => gpui_kit::base::Side::Right,
         _ => gpui_kit::base::Side::Left,
     }
 }
-pub fn en_61(v: u16) -> gpui_kit::base::StepAction {
+pub fn en_62(v: u16) -> gpui_kit::base::StepAction {
     match v {
         1 => gpui_kit::base::StepAction::Increment,
         _ => gpui_kit::base::StepAction::Decrement,
     }
 }
 impl genapi::Wire for gpui_kit::base::StepAction { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::StepAction::Decrement => 0, gpui_kit::base::StepAction::Increment => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_62(v: u16) -> gpui_kit::base::StepPosition {
+pub fn en_63(v: u16) -> gpui_kit::base::StepPosition {
     match v {
         1 => gpui_kit::base::StepPosition::JumpEnd,
         2 => gpui_kit::base::StepPosition::JumpNone,
@@ -562,21 +571,21 @@ pub fn en_62(v: u16) -> gpui_kit::base::StepPosition {
 }
 impl genapi::Wire for gpui_kit::base::StepPosition { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::StepPosition::JumpStart => 0, gpui_kit::base::StepPosition::JumpEnd => 1, gpui_kit::base::StepPosition::JumpNone => 2, gpui_kit::base::StepPosition::JumpBoth => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
 impl genapi::Wire for gpui_kit::base::TextSelectionCoverage { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::TextSelectionCoverage::Bounded => 0, gpui_kit::base::TextSelectionCoverage::FromStart => 1, gpui_kit::base::TextSelectionCoverage::ToEnd => 2, gpui_kit::base::TextSelectionCoverage::Full => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_64(v: u16) -> gpui_kit::base::ThemeAppearance {
+pub fn en_65(v: u16) -> gpui_kit::base::ThemeAppearance {
     match v {
         1 => gpui_kit::base::ThemeAppearance::Dark,
         _ => gpui_kit::base::ThemeAppearance::Light,
     }
 }
 impl genapi::Wire for gpui_kit::base::ThemeAppearance { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::ThemeAppearance::Light => 0, gpui_kit::base::ThemeAppearance::Dark => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_65(v: u16) -> gpui_kit::base::TimePrecision {
+pub fn en_66(v: u16) -> gpui_kit::base::TimePrecision {
     match v {
         1 => gpui_kit::base::TimePrecision::Second,
         _ => gpui_kit::base::TimePrecision::Minute,
     }
 }
 impl genapi::Wire for gpui_kit::base::TimeSegment { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::TimeSegment::Hour => 0, gpui_kit::base::TimeSegment::Minute => 1, gpui_kit::base::TimeSegment::Second => 2, gpui_kit::base::TimeSegment::Period => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_67(v: u16) -> gpui_kit::base::ToastTransitionStatus {
+pub fn en_68(v: u16) -> gpui_kit::base::ToastTransitionStatus {
     match v {
         1 => gpui_kit::base::ToastTransitionStatus::Present,
         2 => gpui_kit::base::ToastTransitionStatus::Ending,
@@ -584,7 +593,7 @@ pub fn en_67(v: u16) -> gpui_kit::base::ToastTransitionStatus {
     }
 }
 impl genapi::Wire for gpui_kit::base::ToastTransitionStatus { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::ToastTransitionStatus::Starting => 0, gpui_kit::base::ToastTransitionStatus::Present => 1, gpui_kit::base::ToastTransitionStatus::Ending => 2, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_68(v: u16) -> gpui_kit::base::dock::DockPlacement {
+pub fn en_69(v: u16) -> gpui_kit::base::dock::DockPlacement {
     match v {
         1 => gpui_kit::base::dock::DockPlacement::Left,
         2 => gpui_kit::base::dock::DockPlacement::Bottom,
@@ -593,14 +602,14 @@ pub fn en_68(v: u16) -> gpui_kit::base::dock::DockPlacement {
     }
 }
 impl genapi::Wire for gpui_kit::base::dock::DockPlacement { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::dock::DockPlacement::Center => 0, gpui_kit::base::dock::DockPlacement::Left => 1, gpui_kit::base::dock::DockPlacement::Bottom => 2, gpui_kit::base::dock::DockPlacement::Right => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_69(v: u16) -> gpui_kit::base::dock::RootKind {
+pub fn en_70(v: u16) -> gpui_kit::base::dock::RootKind {
     match v {
         1 => gpui_kit::base::dock::RootKind::Any,
         _ => gpui_kit::base::dock::RootKind::Split,
     }
 }
 impl genapi::Wire for gpui_kit::base::dock::RootKind { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::dock::RootKind::Split => 0, gpui_kit::base::dock::RootKind::Any => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_70(v: u16) -> gpui_kit::base::input::DiagnosticSeverity {
+pub fn en_71(v: u16) -> gpui_kit::base::input::DiagnosticSeverity {
     match v {
         1 => gpui_kit::base::input::DiagnosticSeverity::Error,
         2 => gpui_kit::base::input::DiagnosticSeverity::Warning,
@@ -609,13 +618,13 @@ pub fn en_70(v: u16) -> gpui_kit::base::input::DiagnosticSeverity {
     }
 }
 impl genapi::Wire for gpui_kit::base::input::DiagnosticSeverity { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::input::DiagnosticSeverity::Hint => 0, gpui_kit::base::input::DiagnosticSeverity::Error => 1, gpui_kit::base::input::DiagnosticSeverity::Warning => 2, gpui_kit::base::input::DiagnosticSeverity::Info => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_71(v: u16) -> gpui_kit::base::input::InputOverlayKind {
+pub fn en_72(v: u16) -> gpui_kit::base::input::InputOverlayKind {
     match v {
         1 => gpui_kit::base::input::InputOverlayKind::CodeAction,
         _ => gpui_kit::base::input::InputOverlayKind::Completion,
     }
 }
-pub fn en_72(v: u16) -> gpui_kit::base::input::OverviewRulerLane {
+pub fn en_73(v: u16) -> gpui_kit::base::input::OverviewRulerLane {
     match v {
         1 => gpui_kit::base::input::OverviewRulerLane::Center,
         2 => gpui_kit::base::input::OverviewRulerLane::Right,
@@ -623,45 +632,45 @@ pub fn en_72(v: u16) -> gpui_kit::base::input::OverviewRulerLane {
         _ => gpui_kit::base::input::OverviewRulerLane::Left,
     }
 }
-pub fn en_73(v: u16) -> gpui_kit::base::input::RangeDecorationStyle {
+pub fn en_74(v: u16) -> gpui_kit::base::input::RangeDecorationStyle {
     match v {
         1 => gpui_kit::base::input::RangeDecorationStyle::Frame,
         _ => gpui_kit::base::input::RangeDecorationStyle::Fill,
     }
 }
-pub fn en_74(v: u16) -> gpui_kit::base::input::SyntaxContext {
+pub fn en_75(v: u16) -> gpui_kit::base::input::SyntaxContext {
     match v {
         1 => gpui_kit::base::input::SyntaxContext::String,
         2 => gpui_kit::base::input::SyntaxContext::Comment,
         _ => gpui_kit::base::input::SyntaxContext::Code,
     }
 }
-pub fn en_75(v: u16) -> gpui_kit::base::input::WrappingIndent {
+pub fn en_76(v: u16) -> gpui_kit::base::input::WrappingIndent {
     match v {
         1 => gpui_kit::base::input::WrappingIndent::Same,
         _ => gpui_kit::base::input::WrappingIndent::None,
     }
 }
-pub fn en_76(v: u16) -> gpui_kit::base::plot::AxisLabelPlacement {
+pub fn en_77(v: u16) -> gpui_kit::base::plot::AxisLabelPlacement {
     match v {
         1 => gpui_kit::base::plot::AxisLabelPlacement::Inside,
         _ => gpui_kit::base::plot::AxisLabelPlacement::Outside,
     }
 }
-pub fn en_77(v: u16) -> gpui_kit::base::plot::AxisLabelSide {
+pub fn en_78(v: u16) -> gpui_kit::base::plot::AxisLabelSide {
     match v {
         1 => gpui_kit::base::plot::AxisLabelSide::Start,
         _ => gpui_kit::base::plot::AxisLabelSide::End,
     }
 }
-pub fn en_78(v: u16) -> gpui_kit::base::plot::Curve {
+pub fn en_79(v: u16) -> gpui_kit::base::plot::Curve {
     match v {
         1 => gpui_kit::base::plot::Curve::Linear,
         2 => gpui_kit::base::plot::Curve::StepAfter,
         _ => gpui_kit::base::plot::Curve::Natural,
     }
 }
-pub fn en_79(v: u16) -> gpui_kit::base::plot::shape::BarAlignment {
+pub fn en_80(v: u16) -> gpui_kit::base::plot::shape::BarAlignment {
     match v {
         1 => gpui_kit::base::plot::shape::BarAlignment::Top,
         2 => gpui_kit::base::plot::shape::BarAlignment::Left,
@@ -669,7 +678,7 @@ pub fn en_79(v: u16) -> gpui_kit::base::plot::shape::BarAlignment {
         _ => gpui_kit::base::plot::shape::BarAlignment::Bottom,
     }
 }
-pub fn en_80(v: u16) -> gpui_kit::base::plot::shape::SankeyAlign {
+pub fn en_81(v: u16) -> gpui_kit::base::plot::shape::SankeyAlign {
     match v {
         1 => gpui_kit::base::plot::shape::SankeyAlign::Right,
         2 => gpui_kit::base::plot::shape::SankeyAlign::Center,
@@ -677,34 +686,34 @@ pub fn en_80(v: u16) -> gpui_kit::base::plot::shape::SankeyAlign {
         _ => gpui_kit::base::plot::shape::SankeyAlign::Left,
     }
 }
-pub fn en_81(v: u16) -> gpui_kit::base::plot::shape::SankeyValueScale {
+pub fn en_82(v: u16) -> gpui_kit::base::plot::shape::SankeyValueScale {
     match v {
         1 => gpui_kit::base::plot::shape::SankeyValueScale::Sqrt,
         _ => gpui_kit::base::plot::shape::SankeyValueScale::Linear,
     }
 }
 impl genapi::Wire for gpui_kit::base::questionnaire::QuestionnaireItemStatus { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::questionnaire::QuestionnaireItemStatus::Unanswered => 0, gpui_kit::base::questionnaire::QuestionnaireItemStatus::Answered => 1, gpui_kit::base::questionnaire::QuestionnaireItemStatus::Skipped => 2, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_83(v: u16) -> gpui_kit::base::questionnaire::QuestionnaireShortcutMode {
+pub fn en_84(v: u16) -> gpui_kit::base::questionnaire::QuestionnaireShortcutMode {
     match v {
         1 => gpui_kit::base::questionnaire::QuestionnaireShortcutMode::Numbers,
         _ => gpui_kit::base::questionnaire::QuestionnaireShortcutMode::Letters,
     }
 }
 impl genapi::Wire for gpui_kit::base::questionnaire::QuestionnaireShortcutMode { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::questionnaire::QuestionnaireShortcutMode::Letters => 0, gpui_kit::base::questionnaire::QuestionnaireShortcutMode::Numbers => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_84(v: u16) -> gpui_kit::base::slider::SliderScale {
+pub fn en_85(v: u16) -> gpui_kit::base::slider::SliderScale {
     match v {
         1 => gpui_kit::base::slider::SliderScale::Logarithmic,
         _ => gpui_kit::base::slider::SliderScale::Linear,
     }
 }
-pub fn en_85(v: u16) -> gpui_kit::base::text::editor_host::CaretAffinity {
+pub fn en_86(v: u16) -> gpui_kit::base::text::editor_host::CaretAffinity {
     match v {
         1 => gpui_kit::base::text::editor_host::CaretAffinity::Downstream,
         _ => gpui_kit::base::text::editor_host::CaretAffinity::Upstream,
     }
 }
 impl genapi::Wire for gpui_kit::base::text::editor_host::CaretAffinity { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::text::editor_host::CaretAffinity::Upstream => 0, gpui_kit::base::text::editor_host::CaretAffinity::Downstream => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_86(v: u16) -> gpui_kit::base::text::editor_host::ColumnAlign {
+pub fn en_87(v: u16) -> gpui_kit::base::text::editor_host::ColumnAlign {
     match v {
         1 => gpui_kit::base::text::editor_host::ColumnAlign::Left,
         2 => gpui_kit::base::text::editor_host::ColumnAlign::Center,
@@ -713,7 +722,7 @@ pub fn en_86(v: u16) -> gpui_kit::base::text::editor_host::ColumnAlign {
     }
 }
 impl genapi::Wire for gpui_kit::base::text::editor_host::ColumnAlign { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::base::text::editor_host::ColumnAlign::None => 0, gpui_kit::base::text::editor_host::ColumnAlign::Left => 1, gpui_kit::base::text::editor_host::ColumnAlign::Center => 2, gpui_kit::base::text::editor_host::ColumnAlign::Right => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_87(v: u16) -> gpui_kit::component::ColorName {
+pub fn en_88(v: u16) -> gpui_kit::component::ColorName {
     match v {
         1 => gpui_kit::component::ColorName::Black,
         2 => gpui_kit::component::ColorName::Neutral,
@@ -738,7 +747,7 @@ pub fn en_87(v: u16) -> gpui_kit::component::ColorName {
         _ => gpui_kit::component::ColorName::White,
     }
 }
-pub fn en_88(v: u16) -> gpui_kit::component::IconName {
+pub fn en_89(v: u16) -> gpui_kit::component::IconName {
     match v {
         1 => gpui_kit::component::IconName::ArrowDown,
         2 => gpui_kit::component::IconName::ArrowLeft,
@@ -848,14 +857,14 @@ pub fn en_88(v: u16) -> gpui_kit::component::IconName {
         _ => gpui_kit::component::IconName::ALargeSmall,
     }
 }
-pub fn en_89(v: u16) -> gpui_kit::component::ThemeMode {
+pub fn en_90(v: u16) -> gpui_kit::component::ThemeMode {
     match v {
         1 => gpui_kit::component::ThemeMode::Dark,
         _ => gpui_kit::component::ThemeMode::Light,
     }
 }
 impl genapi::Wire for gpui_kit::component::ThemeMode { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::ThemeMode::Light => 0, gpui_kit::component::ThemeMode::Dark => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_90(v: u16) -> gpui_kit::component::alert::AlertVariant {
+pub fn en_91(v: u16) -> gpui_kit::component::alert::AlertVariant {
     match v {
         1 => gpui_kit::component::alert::AlertVariant::Info,
         2 => gpui_kit::component::alert::AlertVariant::Success,
@@ -864,7 +873,7 @@ pub fn en_90(v: u16) -> gpui_kit::component::alert::AlertVariant {
         _ => gpui_kit::component::alert::AlertVariant::Default,
     }
 }
-pub fn en_91(v: u16) -> gpui_kit::component::attachment::AttachmentStatus {
+pub fn en_92(v: u16) -> gpui_kit::component::attachment::AttachmentStatus {
     match v {
         1 => gpui_kit::component::attachment::AttachmentStatus::Uploading,
         2 => gpui_kit::component::attachment::AttachmentStatus::Processing,
@@ -873,13 +882,13 @@ pub fn en_91(v: u16) -> gpui_kit::component::attachment::AttachmentStatus {
         _ => gpui_kit::component::attachment::AttachmentStatus::Pending,
     }
 }
-pub fn en_92(v: u16) -> gpui_kit::component::bubble::BubbleReactionSide {
+pub fn en_93(v: u16) -> gpui_kit::component::bubble::BubbleReactionSide {
     match v {
         1 => gpui_kit::component::bubble::BubbleReactionSide::Bottom,
         _ => gpui_kit::component::bubble::BubbleReactionSide::Top,
     }
 }
-pub fn en_93(v: u16) -> gpui_kit::component::bubble::BubbleVariant {
+pub fn en_94(v: u16) -> gpui_kit::component::bubble::BubbleVariant {
     match v {
         1 => gpui_kit::component::bubble::BubbleVariant::Secondary,
         2 => gpui_kit::component::bubble::BubbleVariant::Muted,
@@ -890,13 +899,13 @@ pub fn en_93(v: u16) -> gpui_kit::component::bubble::BubbleVariant {
         _ => gpui_kit::component::bubble::BubbleVariant::Filled,
     }
 }
-pub fn en_94(v: u16) -> gpui_kit::component::button::ToggleVariant {
+pub fn en_95(v: u16) -> gpui_kit::component::button::ToggleVariant {
     match v {
         1 => gpui_kit::component::button::ToggleVariant::Outline,
         _ => gpui_kit::component::button::ToggleVariant::Ghost,
     }
 }
-pub fn en_95(v: u16) -> gpui_kit::component::dialog::DialogEntrance {
+pub fn en_96(v: u16) -> gpui_kit::component::dialog::DialogEntrance {
     match v {
         1 => gpui_kit::component::dialog::DialogEntrance::Fade,
         2 => gpui_kit::component::dialog::DialogEntrance::FadeSlide,
@@ -904,14 +913,14 @@ pub fn en_95(v: u16) -> gpui_kit::component::dialog::DialogEntrance {
         _ => gpui_kit::component::dialog::DialogEntrance::SlideDown,
     }
 }
-pub fn en_96(v: u16) -> gpui_kit::component::diff::DiffChangeIndicator {
+pub fn en_97(v: u16) -> gpui_kit::component::diff::DiffChangeIndicator {
     match v {
         1 => gpui_kit::component::diff::DiffChangeIndicator::Bars,
         2 => gpui_kit::component::diff::DiffChangeIndicator::None,
         _ => gpui_kit::component::diff::DiffChangeIndicator::Signs,
     }
 }
-pub fn en_97(v: u16) -> gpui_kit::component::diff::DiffConflictResolution {
+pub fn en_98(v: u16) -> gpui_kit::component::diff::DiffConflictResolution {
     match v {
         1 => gpui_kit::component::diff::DiffConflictResolution::Incoming,
         2 => gpui_kit::component::diff::DiffConflictResolution::Both,
@@ -919,7 +928,7 @@ pub fn en_97(v: u16) -> gpui_kit::component::diff::DiffConflictResolution {
     }
 }
 impl genapi::Wire for gpui_kit::component::diff::DiffConflictResolution { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::diff::DiffConflictResolution::Current => 0, gpui_kit::component::diff::DiffConflictResolution::Incoming => 1, gpui_kit::component::diff::DiffConflictResolution::Both => 2, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_98(v: u16) -> gpui_kit::component::diff::DiffFileStatus {
+pub fn en_99(v: u16) -> gpui_kit::component::diff::DiffFileStatus {
     match v {
         1 => gpui_kit::component::diff::DiffFileStatus::Deleted,
         2 => gpui_kit::component::diff::DiffFileStatus::Modified,
@@ -931,7 +940,7 @@ pub fn en_98(v: u16) -> gpui_kit::component::diff::DiffFileStatus {
     }
 }
 impl genapi::Wire for gpui_kit::component::diff::DiffFileStatus { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::diff::DiffFileStatus::Added => 0, gpui_kit::component::diff::DiffFileStatus::Deleted => 1, gpui_kit::component::diff::DiffFileStatus::Modified => 2, gpui_kit::component::diff::DiffFileStatus::Renamed => 3, gpui_kit::component::diff::DiffFileStatus::Copied => 4, gpui_kit::component::diff::DiffFileStatus::Unchanged => 5, gpui_kit::component::diff::DiffFileStatus::Conflicted => 6, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_99(v: u16) -> gpui_kit::component::diff::DiffHoverHighlight {
+pub fn en_100(v: u16) -> gpui_kit::component::diff::DiffHoverHighlight {
     match v {
         1 => gpui_kit::component::diff::DiffHoverHighlight::Line,
         2 => gpui_kit::component::diff::DiffHoverHighlight::LineNumber,
@@ -939,55 +948,55 @@ pub fn en_99(v: u16) -> gpui_kit::component::diff::DiffHoverHighlight {
         _ => gpui_kit::component::diff::DiffHoverHighlight::None,
     }
 }
-pub fn en_100(v: u16) -> gpui_kit::component::diff::DiffHunkSeparator {
+pub fn en_101(v: u16) -> gpui_kit::component::diff::DiffHunkSeparator {
     match v {
         1 => gpui_kit::component::diff::DiffHunkSeparator::LineInfo,
         2 => gpui_kit::component::diff::DiffHunkSeparator::Simple,
         _ => gpui_kit::component::diff::DiffHunkSeparator::Metadata,
     }
 }
-pub fn en_101(v: u16) -> gpui_kit::component::diff::DiffInlineUnit {
+pub fn en_102(v: u16) -> gpui_kit::component::diff::DiffInlineUnit {
     match v {
         1 => gpui_kit::component::diff::DiffInlineUnit::Character,
         _ => gpui_kit::component::diff::DiffInlineUnit::Word,
     }
 }
 impl genapi::Wire for gpui_kit::component::diff::DiffInlineUnit { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::diff::DiffInlineUnit::Word => 0, gpui_kit::component::diff::DiffInlineUnit::Character => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_102(v: u16) -> gpui_kit::component::diff::DiffMode {
+pub fn en_103(v: u16) -> gpui_kit::component::diff::DiffMode {
     match v {
         1 => gpui_kit::component::diff::DiffMode::Unified,
         _ => gpui_kit::component::diff::DiffMode::Split,
     }
 }
 impl genapi::Wire for gpui_kit::component::diff::DiffMode { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::diff::DiffMode::Split => 0, gpui_kit::component::diff::DiffMode::Unified => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_103(v: u16) -> gpui_kit::component::diff::DiffSide {
+pub fn en_104(v: u16) -> gpui_kit::component::diff::DiffSide {
     match v {
         1 => gpui_kit::component::diff::DiffSide::Modified,
         _ => gpui_kit::component::diff::DiffSide::Original,
     }
 }
 impl genapi::Wire for gpui_kit::component::diff::DiffSide { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::diff::DiffSide::Original => 0, gpui_kit::component::diff::DiffSide::Modified => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_104(v: u16) -> gpui_kit::component::dock::PanelStyle {
+pub fn en_105(v: u16) -> gpui_kit::component::dock::PanelStyle {
     match v {
         1 => gpui_kit::component::dock::PanelStyle::TabBar,
         _ => gpui_kit::component::dock::PanelStyle::Auto,
     }
 }
 impl genapi::Wire for gpui_kit::component::dock::PanelStyle { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::dock::PanelStyle::Auto => 0, gpui_kit::component::dock::PanelStyle::TabBar => 1, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_105(v: u16) -> gpui_kit::component::empty::EmptyMediaVariant {
+pub fn en_106(v: u16) -> gpui_kit::component::empty::EmptyMediaVariant {
     match v {
         1 => gpui_kit::component::empty::EmptyMediaVariant::Icon,
         _ => gpui_kit::component::empty::EmptyMediaVariant::Default,
     }
 }
-pub fn en_106(v: u16) -> gpui_kit::component::group_box::GroupBoxVariant {
+pub fn en_107(v: u16) -> gpui_kit::component::group_box::GroupBoxVariant {
     match v {
         1 => gpui_kit::component::group_box::GroupBoxVariant::Fill,
         2 => gpui_kit::component::group_box::GroupBoxVariant::Outline,
         _ => gpui_kit::component::group_box::GroupBoxVariant::Normal,
     }
 }
-pub fn en_107(v: u16) -> gpui_kit::component::input::InputContentType {
+pub fn en_108(v: u16) -> gpui_kit::component::input::InputContentType {
     match v {
         1 => gpui_kit::component::input::InputContentType::NamePrefix,
         2 => gpui_kit::component::input::InputContentType::GivenName,
@@ -1036,7 +1045,7 @@ pub fn en_107(v: u16) -> gpui_kit::component::input::InputContentType {
         _ => gpui_kit::component::input::InputContentType::Name,
     }
 }
-pub fn en_108(v: u16) -> gpui_kit::component::input::InputGroupAddonAlignment {
+pub fn en_109(v: u16) -> gpui_kit::component::input::InputGroupAddonAlignment {
     match v {
         1 => gpui_kit::component::input::InputGroupAddonAlignment::InlineEnd,
         2 => gpui_kit::component::input::InputGroupAddonAlignment::BlockStart,
@@ -1044,33 +1053,33 @@ pub fn en_108(v: u16) -> gpui_kit::component::input::InputGroupAddonAlignment {
         _ => gpui_kit::component::input::InputGroupAddonAlignment::InlineStart,
     }
 }
-pub fn en_109(v: u16) -> gpui_kit::component::marker::MarkerAlignment {
+pub fn en_110(v: u16) -> gpui_kit::component::marker::MarkerAlignment {
     match v {
         1 => gpui_kit::component::marker::MarkerAlignment::Center,
         2 => gpui_kit::component::marker::MarkerAlignment::End,
         _ => gpui_kit::component::marker::MarkerAlignment::Start,
     }
 }
-pub fn en_110(v: u16) -> gpui_kit::component::marker::MarkerLoadingStyle {
+pub fn en_111(v: u16) -> gpui_kit::component::marker::MarkerLoadingStyle {
     match v {
         1 => gpui_kit::component::marker::MarkerLoadingStyle::Shimmer,
         _ => gpui_kit::component::marker::MarkerLoadingStyle::Spinner,
     }
 }
-pub fn en_111(v: u16) -> gpui_kit::component::marker::MarkerVariant {
+pub fn en_112(v: u16) -> gpui_kit::component::marker::MarkerVariant {
     match v {
         1 => gpui_kit::component::marker::MarkerVariant::Separator,
         2 => gpui_kit::component::marker::MarkerVariant::Border,
         _ => gpui_kit::component::marker::MarkerVariant::Plain,
     }
 }
-pub fn en_112(v: u16) -> gpui_kit::component::message::MessageAlignment {
+pub fn en_113(v: u16) -> gpui_kit::component::message::MessageAlignment {
     match v {
         1 => gpui_kit::component::message::MessageAlignment::End,
         _ => gpui_kit::component::message::MessageAlignment::Start,
     }
 }
-pub fn en_113(v: u16) -> gpui_kit::component::notification::NotificationDelivery {
+pub fn en_114(v: u16) -> gpui_kit::component::notification::NotificationDelivery {
     match v {
         1 => gpui_kit::component::notification::NotificationDelivery::System,
         2 => gpui_kit::component::notification::NotificationDelivery::InAppAndSystem,
@@ -1078,7 +1087,7 @@ pub fn en_113(v: u16) -> gpui_kit::component::notification::NotificationDelivery
     }
 }
 impl genapi::Wire for gpui_kit::component::notification::NotificationDelivery { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::notification::NotificationDelivery::InApp => 0, gpui_kit::component::notification::NotificationDelivery::System => 1, gpui_kit::component::notification::NotificationDelivery::InAppAndSystem => 2, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_114(v: u16) -> gpui_kit::component::notification::NotificationType {
+pub fn en_115(v: u16) -> gpui_kit::component::notification::NotificationType {
     match v {
         1 => gpui_kit::component::notification::NotificationType::Success,
         2 => gpui_kit::component::notification::NotificationType::Warning,
@@ -1086,7 +1095,7 @@ pub fn en_114(v: u16) -> gpui_kit::component::notification::NotificationType {
         _ => gpui_kit::component::notification::NotificationType::Info,
     }
 }
-pub fn en_115(v: u16) -> gpui_kit::component::sidebar::SidebarCollapsible {
+pub fn en_116(v: u16) -> gpui_kit::component::sidebar::SidebarCollapsible {
     match v {
         1 => gpui_kit::component::sidebar::SidebarCollapsible::Offcanvas,
         2 => gpui_kit::component::sidebar::SidebarCollapsible::None,
@@ -1094,7 +1103,7 @@ pub fn en_115(v: u16) -> gpui_kit::component::sidebar::SidebarCollapsible {
     }
 }
 impl genapi::Wire for gpui_kit::component::speech::SpeechStatus { fn put(&self, out: &mut Vec<u8>) { let n: u16 = match self { gpui_kit::component::speech::SpeechStatus::Idle => 0, gpui_kit::component::speech::SpeechStatus::Connecting => 1, gpui_kit::component::speech::SpeechStatus::Recording => 2, gpui_kit::component::speech::SpeechStatus::Stopping => 3, _ => 0xffff }; out.extend_from_slice(&n.to_le_bytes()); } }
-pub fn en_117(v: u16) -> gpui_kit::component::tab::TabVariant {
+pub fn en_118(v: u16) -> gpui_kit::component::tab::TabVariant {
     match v {
         1 => gpui_kit::component::tab::TabVariant::Outline,
         2 => gpui_kit::component::tab::TabVariant::Pill,
@@ -1104,13 +1113,13 @@ pub fn en_117(v: u16) -> gpui_kit::component::tab::TabVariant {
         _ => gpui_kit::component::tab::TabVariant::Tab,
     }
 }
-pub fn en_118(v: u16) -> gpui_kit::component::table::ColumnFixed {
+pub fn en_119(v: u16) -> gpui_kit::component::table::ColumnFixed {
     match v {
         1 => gpui_kit::component::table::ColumnFixed::Right,
         _ => gpui_kit::component::table::ColumnFixed::Left,
     }
 }
-pub fn en_119(v: u16) -> gpui_kit::component::table::ColumnSort {
+pub fn en_120(v: u16) -> gpui_kit::component::table::ColumnSort {
     match v {
         1 => gpui_kit::component::table::ColumnSort::Ascending,
         2 => gpui_kit::component::table::ColumnSort::Descending,
@@ -1118,7 +1127,7 @@ pub fn en_119(v: u16) -> gpui_kit::component::table::ColumnSort {
     }
 }
 #[cfg(target_os = "linux")]
-pub fn en_120(v: u16) -> gpui_kit::layer_shell::Layer {
+pub fn en_121(v: u16) -> gpui_kit::layer_shell::Layer {
     match v {
         1 => gpui_kit::layer_shell::Layer::Bottom,
         2 => gpui_kit::layer_shell::Layer::Top,
@@ -1305,15 +1314,15 @@ impl genapi::Wire for gpui_kit::base::ColorPickerEvent {
 }
 pub fn de_13(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::Date> {
     Some(match r.u16() {
-        0 => gpui_kit::base::Date::Single(if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }),
-        1 => gpui_kit::base::Date::Range(if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }),
+        0 => gpui_kit::base::Date::Single(if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }),
+        1 => gpui_kit::base::Date::Range(if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }),
         _ => return None,
     })
 }
 pub fn de_13_c(r: &mut R) -> Option<gpui_kit::base::Date> {
     Some(match r.u16() {
-        0 => gpui_kit::base::Date::Single(if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }),
-        1 => gpui_kit::base::Date::Range(if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<chrono::NaiveDate as genapi::Unwire>::get(r)) } else { None }),
+        0 => gpui_kit::base::Date::Single(if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }),
+        1 => gpui_kit::base::Date::Range(if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<jiff::civil::Date as genapi::Unwire>::get(r)) } else { None }),
         _ => return None,
     })
 }
@@ -1334,7 +1343,7 @@ pub fn de_14(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::Easing> {
         3 => gpui_kit::base::Easing::EaseOut,
         4 => gpui_kit::base::Easing::EaseInOut,
         5 => gpui_kit::base::Easing::CubicBezier { x1: r.f32(), y1: r.f32(), x2: r.f32(), y2: r.f32() },
-        6 => gpui_kit::base::Easing::Steps { count: std::num::NonZeroU32::new(r.u32()).unwrap_or(std::num::NonZeroU32::MIN), position: en_62(r.u16()) },
+        6 => gpui_kit::base::Easing::Steps { count: std::num::NonZeroU32::new(r.u32()).unwrap_or(std::num::NonZeroU32::MIN), position: en_63(r.u16()) },
         7 => gpui_kit::base::Easing::LinearStops({ let v: Vec<_> = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((r.f32(), r.f32())); } v }; std::sync::Arc::from(v) }),
         8 => gpui_kit::base::Easing::Custom(std::rc::Rc::new({ let e = crate::shim_editor::Expr::new(r.str()); move |a0: f32| { (e.eval(&[(a0 as f64)]) as f32) } })),
         _ => return None,
@@ -1348,7 +1357,7 @@ pub fn de_14_c(r: &mut R) -> Option<gpui_kit::base::Easing> {
         3 => gpui_kit::base::Easing::EaseOut,
         4 => gpui_kit::base::Easing::EaseInOut,
         5 => gpui_kit::base::Easing::CubicBezier { x1: r.f32(), y1: r.f32(), x2: r.f32(), y2: r.f32() },
-        6 => gpui_kit::base::Easing::Steps { count: std::num::NonZeroU32::new(r.u32()).unwrap_or(std::num::NonZeroU32::MIN), position: en_62(r.u16()) },
+        6 => gpui_kit::base::Easing::Steps { count: std::num::NonZeroU32::new(r.u32()).unwrap_or(std::num::NonZeroU32::MIN), position: en_63(r.u16()) },
         7 => gpui_kit::base::Easing::LinearStops({ let v: Vec<_> = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((r.f32(), r.f32())); } v }; std::sync::Arc::from(v) }),
         8 => gpui_kit::base::Easing::Custom(std::rc::Rc::new({ let e = crate::shim_editor::Expr::new(r.str()); move |a0: f32| { (e.eval(&[(a0 as f64)]) as f32) } })),
         _ => return None,
@@ -1391,7 +1400,7 @@ pub fn de_17(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::Matcher> {
         0 => gpui_kit::base::Matcher::DayOfWeek({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(r.u32()); } v }),
         1 => gpui_kit::base::Matcher::Interval(<gpui_kit::base::IntervalMatcher as genapi::Unwire>::get(r)),
         2 => gpui_kit::base::Matcher::Range(<gpui_kit::base::RangeMatcher as genapi::Unwire>::get(r)),
-        3 => gpui_kit::base::Matcher::Custom(crate::values::value_set({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(<chrono::NaiveDate as genapi::Unwire>::get(r)); } v })),
+        3 => gpui_kit::base::Matcher::Custom(crate::values::value_set({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(<jiff::civil::Date as genapi::Unwire>::get(r)); } v })),
         _ => return None,
     })
 }
@@ -1400,7 +1409,7 @@ pub fn de_17_c(r: &mut R) -> Option<gpui_kit::base::Matcher> {
         0 => gpui_kit::base::Matcher::DayOfWeek({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(r.u32()); } v }),
         1 => gpui_kit::base::Matcher::Interval(<gpui_kit::base::IntervalMatcher as genapi::Unwire>::get(r)),
         2 => gpui_kit::base::Matcher::Range(<gpui_kit::base::RangeMatcher as genapi::Unwire>::get(r)),
-        3 => gpui_kit::base::Matcher::Custom(crate::values::value_set({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(<chrono::NaiveDate as genapi::Unwire>::get(r)); } v })),
+        3 => gpui_kit::base::Matcher::Custom(crate::values::value_set({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(<jiff::civil::Date as genapi::Unwire>::get(r)); } v })),
         _ => return None,
     })
 }
@@ -1718,15 +1727,15 @@ impl genapi::Wire for gpui_kit::component::date_picker::DatePickerEvent {
 }
 pub fn de_44(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::date_picker::DateTime> {
     Some(match r.u16() {
-        0 => gpui_kit::component::date_picker::DateTime::Single(if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }),
-        1 => gpui_kit::component::date_picker::DateTime::Range(if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }),
+        0 => gpui_kit::component::date_picker::DateTime::Single(if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }),
+        1 => gpui_kit::component::date_picker::DateTime::Range(if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }),
         _ => return None,
     })
 }
 pub fn de_44_c(r: &mut R) -> Option<gpui_kit::component::date_picker::DateTime> {
     Some(match r.u16() {
-        0 => gpui_kit::component::date_picker::DateTime::Single(if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }),
-        1 => gpui_kit::component::date_picker::DateTime::Range(if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<chrono::NaiveDateTime as genapi::Unwire>::get(r)) } else { None }),
+        0 => gpui_kit::component::date_picker::DateTime::Single(if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }),
+        1 => gpui_kit::component::date_picker::DateTime::Range(if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }, if r.u8() != 0 { Some(<jiff::civil::DateTime as genapi::Unwire>::get(r)) } else { None }),
         _ => return None,
     })
 }
@@ -1912,7 +1921,7 @@ pub fn de_58(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::tag::TagVari
         3 => gpui_kit::component::tag::TagVariant::Success,
         4 => gpui_kit::component::tag::TagVariant::Warning,
         5 => gpui_kit::component::tag::TagVariant::Info,
-        6 => gpui_kit::component::tag::TagVariant::Color(en_87(r.u16())),
+        6 => gpui_kit::component::tag::TagVariant::Color(en_88(r.u16())),
         7 => gpui_kit::component::tag::TagVariant::Custom { color: genapi::color(r, &*dx.cx), foreground: genapi::color(r, &*dx.cx), border: genapi::color(r, &*dx.cx) },
         _ => return None,
     })
@@ -2061,8 +2070,8 @@ pub fn rc_88_c(r: &mut R) -> Option<gpui_kit::base::input::TabSize> { Some(gpui_
 pub fn rc_89(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::input::TextDecoration> { Some(gpui_kit::base::input::TextDecoration { range: { let a = r.u64() as usize; a..(r.u64() as usize) }, style: rc_22(r, dx)? }) }
 impl genapi::Wire for gpui_kit::base::input::TextDecoration { fn put(&self, out: &mut Vec<u8>) { genapi::Wire::put(&self.range, out); genapi::Wire::put(&self.style, out); } }
 impl genapi::Wire for gpui_kit::base::text::Link { fn put(&self, out: &mut Vec<u8>) { genapi::Wire::put(&self.url, out); genapi::Wire::put(&self.title, out); } }
-pub fn rc_91(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::text::editor_host::Caret> { Some(gpui_kit::base::text::editor_host::Caret { index: r.u64() as usize, affinity: en_85(r.u16()) }) }
-pub fn rc_91_c(r: &mut R) -> Option<gpui_kit::base::text::editor_host::Caret> { Some(gpui_kit::base::text::editor_host::Caret { index: r.u64() as usize, affinity: en_85(r.u16()) }) }
+pub fn rc_91(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::text::editor_host::Caret> { Some(gpui_kit::base::text::editor_host::Caret { index: r.u64() as usize, affinity: en_86(r.u16()) }) }
+pub fn rc_91_c(r: &mut R) -> Option<gpui_kit::base::text::editor_host::Caret> { Some(gpui_kit::base::text::editor_host::Caret { index: r.u64() as usize, affinity: en_86(r.u16()) }) }
 impl genapi::Wire for gpui_kit::base::text::editor_host::Caret { fn put(&self, out: &mut Vec<u8>) { genapi::Wire::put(&self.index, out); genapi::Wire::put(&self.affinity, out); } }
 pub fn rc_92(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::text::editor_host::LinkMark> { Some(gpui_kit::base::text::editor_host::LinkMark { url: gpui_kit::SharedString::new(r.str()), identifier: if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None }, title: if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None } }) }
 impl genapi::Wire for gpui_kit::base::text::editor_host::LinkMark { fn put(&self, out: &mut Vec<u8>) { genapi::Wire::put(&self.url, out); genapi::Wire::put(&self.identifier, out); genapi::Wire::put(&self.title, out); } }
@@ -2113,16 +2122,16 @@ pub fn in_5(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::Radians> {
 pub fn in_6(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::base::Date> {
     Some(match r.u8() {
         0 => de_13(r, dx)?,
-        1 => <gpui_kit::base::Date as From<chrono::NaiveDate>>::from(<chrono::NaiveDate as genapi::Unwire>::get(r)),
-        2 => <gpui_kit::base::Date as From<(chrono::NaiveDate, chrono::NaiveDate)>>::from((<chrono::NaiveDate as genapi::Unwire>::get(r), <chrono::NaiveDate as genapi::Unwire>::get(r))),
+        1 => <gpui_kit::base::Date as From<jiff::civil::Date>>::from(<jiff::civil::Date as genapi::Unwire>::get(r)),
+        2 => <gpui_kit::base::Date as From<(jiff::civil::Date, jiff::civil::Date)>>::from((<jiff::civil::Date as genapi::Unwire>::get(r), <jiff::civil::Date as genapi::Unwire>::get(r))),
         _ => return None,
     })
 }
 pub fn in_6_c(r: &mut R) -> Option<gpui_kit::base::Date> {
     Some(match r.u8() {
         0 => de_13_c(r)?,
-        1 => <gpui_kit::base::Date as From<chrono::NaiveDate>>::from(<chrono::NaiveDate as genapi::Unwire>::get(r)),
-        2 => <gpui_kit::base::Date as From<(chrono::NaiveDate, chrono::NaiveDate)>>::from((<chrono::NaiveDate as genapi::Unwire>::get(r), <chrono::NaiveDate as genapi::Unwire>::get(r))),
+        1 => <gpui_kit::base::Date as From<jiff::civil::Date>>::from(<jiff::civil::Date as genapi::Unwire>::get(r)),
+        2 => <gpui_kit::base::Date as From<(jiff::civil::Date, jiff::civil::Date)>>::from((<jiff::civil::Date as genapi::Unwire>::get(r), <jiff::civil::Date as genapi::Unwire>::get(r))),
         _ => return None,
     })
 }
@@ -2248,14 +2257,14 @@ pub fn in_23(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::Size> {
 }
 pub fn in_24(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::ThemeMode> {
     Some(match r.u8() {
-        0 => en_89(r.u16()),
+        0 => en_90(r.u16()),
         1 => <gpui_kit::component::ThemeMode as From<gpui_kit::WindowAppearance>>::from(en_30(r.u16())),
         _ => return None,
     })
 }
 pub fn in_24_c(r: &mut R) -> Option<gpui_kit::component::ThemeMode> {
     Some(match r.u8() {
-        0 => en_89(r.u16()),
+        0 => en_90(r.u16()),
         1 => <gpui_kit::component::ThemeMode as From<gpui_kit::WindowAppearance>>::from(en_30(r.u16())),
         _ => return None,
     })
@@ -2322,7 +2331,7 @@ pub fn in_38(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::shimmer::Shi
 }
 pub fn in_39(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::sidebar::SidebarCollapsible> {
     Some(match r.u8() {
-        0 => en_115(r.u16()),
+        0 => en_116(r.u16()),
         1 => <gpui_kit::component::sidebar::SidebarCollapsible as From<bool>>::from(r.u8() != 0),
         _ => return None,
     })
@@ -2332,7 +2341,7 @@ pub fn in_41(r: &mut R, dx: &mut Dx) -> Option<gpui_kit::component::tab::Tab> {
         0 => build_component_tab(dx, r.u32())?,
         1 => <gpui_kit::component::tab::Tab as From<std::string::String>>::from(r.str().to_string()),
         2 => <gpui_kit::component::tab::Tab as From<gpui_kit::component::Icon>>::from(build_component_icon(dx, r.u32())?),
-        3 => <gpui_kit::component::tab::Tab as From<gpui_kit::component::IconName>>::from(en_88(r.u16())),
+        3 => <gpui_kit::component::tab::Tab as From<gpui_kit::component::IconName>>::from(en_89(r.u16())),
         _ => return None,
     })
 }
@@ -2423,6 +2432,7 @@ impl genapi::Wire for gpui_kit::component::diff::DiffAnnotation { fn put(&self, 
 impl genapi::Wire for gpui_kit::component::diff::DiffConflict { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
 impl genapi::Wire for gpui_kit::component::diff::DiffLinePosition { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
 impl genapi::Wire for gpui_kit::component::diff::DiffParseError { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
+impl genapi::Wire for gpui_kit::component::diff::DiffTextPosition { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
 impl genapi::Wire for gpui_kit::component::dock::PanelHandle { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
 impl genapi::Wire for gpui_kit::component::highlighter::StatusColors { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }
 impl genapi::Wire for gpui_kit::component::highlighter::SyntaxColors { fn put(&self, out: &mut Vec<u8>) { genapi::Put::put_u64(out, genapi::obj_temp(self.clone())); } }

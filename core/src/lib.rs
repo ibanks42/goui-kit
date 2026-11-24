@@ -83,14 +83,14 @@ pub struct GkApp {
 }
 
 #[cfg(feature = "gpui-fast")]
-macro_rules! engine { () => { "gpui-fast 0.1.14" } }
+macro_rules! engine { () => { "gpui-fast 0.1.19" } }
 #[cfg(not(feature = "gpui-fast"))]
-macro_rules! engine { () => { "gpui-pre 0.3.12" } }
+macro_rules! engine { () => { "gpui-pre 0.3.14" } }
 
 const VERSIONS: &str = concat!(
     "gk-capi ",
     env!("CARGO_PKG_VERSION"),
-    "; gpui-kit 0.9.1; ",
+    "; gpui-kit 0.11.0; ",
     engine!(),
     "; rustc 1.99.1"
 );

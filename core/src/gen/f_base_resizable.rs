@@ -19,6 +19,7 @@ pub fn c_1530(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h =
 pub fn c_1531(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; genapi::state_update::<gpui_kit::base::ResizableState>(h, c, move |s, window, cx| { <gpui_kit::base::ResizableState>::reset_panel(s, a0, cx); })?; Ok(()) }
 pub fn c_1532(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; let a1 = gpui_kit::px(r.f32()); genapi::state_update::<gpui_kit::base::ResizableState>(h, c, move |s, window, cx| { <gpui_kit::base::ResizableState>::resize_panel(s, a0, a1, window, cx); })?; Ok(()) }
 pub fn c_1533(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::ResizableState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::ResizableState>::sizes(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1779(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::ResizableState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::ResizableState>::is_resizing(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn call__base_resizable(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {
     Some(match op {
         1526 => c_1526(r, c),
@@ -29,6 +30,7 @@ pub fn call__base_resizable(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<
         1531 => c_1531(r, c),
         1532 => c_1532(r, c),
         1533 => c_1533(r, c),
+        1779 => c_1779(r, c),
         _ => return None,
     })
 }

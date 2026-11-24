@@ -55,7 +55,7 @@ pub fn apply_component_grouped_sidebar(dx: &mut Dx, mut el: gpui_kit::component:
             259 => { el = { let Some((a0,)) = (|| Some((in_39(r, dx)?,)))() else { continue }; <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsible(el, a0) }; }
             260 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::footer(el, a0) }; }
             261 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::header(el, a0) }; }
-            262 => { el = { let a0 = en_60(r.u16()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::side(el, a0) }; }
+            262 => { el = { let a0 = en_61(r.u16()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::side(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -90,7 +90,7 @@ pub fn apply_component_sidebar(dx: &mut Dx, mut el: gpui_kit::component::sidebar
             259 => { el = { let Some((a0,)) = (|| Some((in_39(r, dx)?,)))() else { continue }; <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsible(el, a0) }; }
             260 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::footer(el, a0) }; }
             261 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::header(el, a0) }; }
-            262 => { el = { let a0 = en_60(r.u16()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::side(el, a0) }; }
+            262 => { el = { let a0 = en_61(r.u16()); <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::side(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -262,7 +262,7 @@ pub fn apply_component_sidebar_menu_item(dx: &mut Dx, mut el: gpui_kit::componen
             265 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarMenuItem>::on_click(el, a0) }; }
             266 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::sidebar::SidebarMenuItem>::suffix(el, a0) }; }
             267 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::menu::PopupMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_popup_menu(dx, v, dx.node(n).2)) }; <gpui_kit::component::sidebar::SidebarMenuItem>::context_menu(el, a0) }; }
-            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::sidebar::SidebarMenuItem>::icon(el, a0) }; }
+            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::sidebar::SidebarMenuItem>::icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -295,7 +295,7 @@ pub fn apply_component_sidebar_toggle_button(dx: &mut Dx, mut el: gpui_kit::comp
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::sidebar::SidebarToggleButton>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sidebar::SidebarToggleButton>::collapsed(el, a0) }; }
             258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarToggleButton>::on_click(el, a0) }; }
-            259 => { el = { let a0 = en_60(r.u16()); <gpui_kit::component::sidebar::SidebarToggleButton>::side(el, a0) }; }
+            259 => { el = { let a0 = en_61(r.u16()); <gpui_kit::component::sidebar::SidebarToggleButton>::side(el, a0) }; }
             _ => bad_op("SidebarToggleButton", op),
         }
     }

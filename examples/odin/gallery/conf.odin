@@ -284,6 +284,7 @@ CONF := [?]Page {
 	{"component::Button.tooltip_show_delay", conf_component_button_tooltip_show_delay},
 	{"component::Button.loading", conf_component_button_loading},
 	{"component::Button.compact", conf_component_button_compact},
+	{"component::Button.aria_expanded", conf_component_button_aria_expanded},
 	{"component::Button.tab_index", conf_component_button_tab_index},
 	{"component::Button.tab_stop", conf_component_button_tab_stop},
 	{"component::Button.dropdown_caret", conf_component_button_dropdown_caret},
@@ -2390,6 +2391,12 @@ conf_component_button_loading :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 conf_component_button_compact :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.button("conf-a")->label("Button")
 	el := gk.button("conf-b")->label("Button")->compact()
+	return conf_pair(base, el)
+}
+
+conf_component_button_aria_expanded :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.button("conf-a")->label("Button")
+	el := gk.button("conf-b")->label("Button")->aria_expanded(true)
 	return conf_pair(base, el)
 }
 

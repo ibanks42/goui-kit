@@ -9,8 +9,8 @@ The exact runtime contract (every turn, message and rule, as built) is
 [PROTOCOLS.md](PROTOCOLS.md). The Go front end has its own design notes in [GO.md](GO.md).
 What is bound today is counted in [STATUS.md](STATUS.md).
 
-Pinned upstream: gpui-kit 0.10.0 (commit f697c31), gpui-fast 0.1.16, gpui-pre 0.3.12 (which
-gpui-kit 0.10.0 pins exactly), built from Zed commit d2a4fb6; rustc 1.99.1; rustdoc JSON format 61.
+Pinned upstream: gpui-kit 0.11.0, gpui-fast 0.1.19, gpui-pre 0.3.14 (which gpui-kit 0.11.0 pins
+exactly); rustc 1.99.1; rustdoc JSON format 61.
 
 A few words used throughout:
 
@@ -56,7 +56,7 @@ These choices shape everything below. Where a later section seems to disagree, t
    (section 18), never assumed. A change whose gate fails is not done.
 9. **gpui-fast is the default engine; upstream GPUI is supported.** The library's `gpui-fast`
    feature is on by default. `cargo build -p gk-capi --no-default-features` builds the same
-   library on upstream GPUI (gpui-pre 0.3.12) instead. `gk_info` reports which engine a library
+   library on upstream GPUI (gpui-pre 0.3.14) instead. `gk_info` reports which engine a library
    uses (the `GK_FEAT_GPUI_FAST` bit and its version string), and the packages print it in
    their diagnostics; neither refuses a library built without gpui-fast. The diagnostic variant
    needs gpui-fast, because the retention counters it reads exist only there. The frame-cost
@@ -158,8 +158,8 @@ name = "gpuikit"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-gpui-kit = { version = "=0.10.0", features = ["syntect"] }
-gpui-fps = { version = "=0.10.0", features = ["gpui-fast"], optional = true }
+gpui-kit = { version = "=0.11.0", features = ["syntect"] }
+gpui-fps = { version = "=0.11.0", features = ["gpui-fast"], optional = true }
 
 [features]
 default = ["gpui-fast"]
@@ -951,6 +951,20 @@ every element; 5 need a new protocol). One change needed a person: gpui-fast 0.1
 (`gk_model`: `f["element"]`), and the library's own elements implement `IntoElement` only for
 upstream GPUI (`editor_text.rs`). Read without it, 18 element types (`Div`, `Img`, `Svg`,
 `TextView`, ..) silently stopped being elements.
+
+From 0.10.0 to 0.11.0 (gpui-fast 0.1.16 to 0.1.19, gpui-pre 0.3.12 to 0.3.14) nothing bound was
+removed and every new function is bound or bridged. What needed a person: the date family moved
+from chrono to jiff (`civil::Date`, `Time`, `DateTime`, `Weekday`: the descriptor `civil`, Odin
+`gk.Civil_Date` and the rest, and the matcher parts read through a struct of the same fields,
+core/src/values.rs); `base::Editor` became generic over a line-number renderer (instantiated at
+its default, `Editor<()>`); `api/clone.json` had to be scanned again (`tools/clone_scan.py`; it had
+been left at 0.9.1, which hid that `DiffTextPosition` is Clone); gpui-fast's `Transformation`
+gained an alpha and `TimedTransformation` is new (`gk.Timed_Transformation`); and gpui-fast's list
+layer now keeps two viewports of rows drawn on each side and regrows them over several frames
+after a fresh paint, so the table shim binds rows two screens ahead (core/src/shim_rows.rs).
+The kit's styled `component::input::Editor` sits in a `#[doc(hidden)]` module and was missing from
+the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `gk.editor`
+is now the kit's styled editor and the unstyled one is `gk.base_editor`.
 
 ## 18. Verification and the frame-rate gate
 

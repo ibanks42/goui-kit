@@ -56,8 +56,8 @@ pub fn apply_component_tab(dx: &mut Dx, mut el: gpui_kit::component::tab::Tab, f
             264 => { el = { <gpui_kit::component::tab::Tab>::segmented(el) }; }
             265 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::Tab>::suffix(el, a0) }; }
             266 => { el = { <gpui_kit::component::tab::Tab>::underline(el) }; }
-            267 => { el = { let a0 = en_117(r.u16()); <gpui_kit::component::tab::Tab>::with_variant(el, a0) }; }
-            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::tab::Tab>::icon(el, a0) }; }
+            267 => { el = { let a0 = en_118(r.u16()); <gpui_kit::component::tab::Tab>::with_variant(el, a0) }; }
+            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::tab::Tab>::icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
@@ -109,7 +109,7 @@ pub fn apply_component_tab_bar(dx: &mut Dx, mut el: gpui_kit::component::tab::Ta
             267 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::tab::TabBar>::selected_index(el, a0) }; }
             268 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::TabBar>::suffix(el, a0) }; }
             269 => { el = { <gpui_kit::component::tab::TabBar>::underline(el) }; }
-            270 => { el = { let a0 = en_117(r.u16()); <gpui_kit::component::tab::TabBar>::with_variant(el, a0) }; }
+            270 => { el = { let a0 = en_118(r.u16()); <gpui_kit::component::tab::TabBar>::with_variant(el, a0) }; }
             271 => { el = { let a0 = genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()); <gpui_kit::component::tab::TabBar>::track_scroll(el, &a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }

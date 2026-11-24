@@ -77,12 +77,12 @@ background :: proc(a: ^App, cx: ^gk.Cx) {
 }
 
 matcher :: proc(a: ^App, cx: ^gk.Cx) {
-	d := gk.Naive_Date{2026, 11, 12}
+	d := gk.Civil_Date{2026, 11, 12}
 	cal := gk.calendar_state(cx)->disabled_matcher(gk.Matcher_Interval{gk.Interval_Matcher{before = d, after = nil}})->build()
 	print_matcher("interval", gk.disabled_matcher_ref(cal, cx))
-	gk.set_disabled_matcher(cal, cx, gk.Matcher_Range{gk.Range_Matcher{from = gk.Naive_Date{2026, 1, 1}, to = gk.Naive_Date{2026, 1, 31}}})
+	gk.set_disabled_matcher(cal, cx, gk.Matcher_Range{gk.Range_Matcher{from = gk.Civil_Date{2026, 1, 1}, to = gk.Civil_Date{2026, 1, 31}}})
 	print_matcher("range", gk.disabled_matcher_ref(cal, cx))
-	days := []gk.Naive_Date{{2026, 12, 24}, {2026, 12, 25}}
+	days := []gk.Civil_Date{{2026, 12, 24}, {2026, 12, 25}}
 	gk.set_disabled_matcher(cal, cx, gk.Matcher_Custom{days})
 	print_matcher("custom", gk.disabled_matcher_ref(cal, cx))
 	gk.set_disabled_matcher(cal, cx, []u32{0, 6})

@@ -38,7 +38,7 @@ GK_PROTO_BIN=values-odin run val-action-in-view 2 'values naming an action in a 
 # The clipboard's value closure: a handler that returns text, run by the copy button's click.
 GK_PROTO_BIN=values-odin run val-clipboard 0 'values clipboard value asked' \
   'values clipboard click=[12] ok=true text="copied by the app"'
-# Round 3 (PROTOCOLS.md 13.13 to 13.16). chrono's calendar values both ways: a calendar's date and
+# Round 3 (PROTOCOLS.md 13.13 to 13.16). jiff's calendar values both ways: a calendar's date and
 # range, a date picker's date with time, a time field's time.
 GK_PROTO_BIN=values-odin run val-dates 0 \
   'values calendar date=2024-02-29 today_ok=true weeks=[56] week_len=7' \

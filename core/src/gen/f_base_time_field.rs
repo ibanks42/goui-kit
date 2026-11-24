@@ -9,16 +9,16 @@ use gpui_kit::IntoElement as _;
 pub fn sb_base_time_field_state(s: gpui_kit::base::TimeFieldState, op: u16, r: &mut R) -> gpui_kit::base::TimeFieldState {
     match op {
         1 => { let a0 = en_40(r.u16()); <gpui_kit::base::TimeFieldState>::hour_cycle(s, a0) }
-        2 => { let a0 = en_65(r.u16()); <gpui_kit::base::TimeFieldState>::precision(s, a0) }
+        2 => { let a0 = en_66(r.u16()); <gpui_kit::base::TimeFieldState>::precision(s, a0) }
         _ => s,
     }
 }
 pub fn c_318(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let window = c.window()?; let entity = c.cx.new(|cx| { let mut s = <gpui_kit::base::TimeFieldState>::new(window, cx); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_time_field_state(s, op, r); } s }); let h = genapi::state_new(entity, c); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_319(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TimeFieldState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TimeFieldState>::selected_segment(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_320(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_40(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_hour_cycle(s, a0, window, cx); })?; Ok(()) }
-pub fn c_321(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_65(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_precision(s, a0, window, cx); })?; Ok(()) }
+pub fn c_321(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_66(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_precision(s, a0, window, cx); })?; Ok(()) }
 pub fn c_407(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::focus(s, window, cx); })?; Ok(()) }
-pub fn c_1329(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = <chrono::NaiveTime as genapi::Unwire>::get(r); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_time(s, a0, window, cx); })?; Ok(()) }
+pub fn c_1329(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = <jiff::civil::Time as genapi::Unwire>::get(r); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_time(s, a0, window, cx); })?; Ok(()) }
 pub fn c_1330(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TimeFieldState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TimeFieldState>::time(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn call__base_time_field(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {
     Some(match op {

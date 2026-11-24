@@ -60,23 +60,24 @@ test_value_pins :: proc(cx: ^Cx, loc := #caller_location) -> (pinned, later: int
 	return int(rd_u32(&r)), int(rd_u32(&r))
 }
 
-// chrono's calendar values (docs/PROTOCOLS.md 13.13), plain records both ways: a date picker's
-// and a calendar's dates, a time field's time, the first day of a week. A date or a time that
-// does not exist (February 30, 25:00) stops where it is written.
-Naive_Date :: struct {
+// jiff's calendar values (docs/PROTOCOLS.md 13.13: jiff::civil's Date, Time, DateTime and Weekday),
+// plain records both ways: a date picker's and a calendar's dates, a time field's time, the first
+// day of a week. A date or a time that does not exist (February 30, 25:00), or a year outside
+// -9999 to 9999 (what jiff holds), stops where it is written.
+Civil_Date :: struct {
 	year:  i32,
 	month: u32, // 1 to 12
 	day:   u32, // 1 to the month's last day
 }
 
-Naive_Time :: struct {
+Civil_Time :: struct {
 	hour, minute, second: u32,
-	nanosecond:           u32, // up to 1_999_999_999 (a leap second, as chrono allows)
+	nanosecond:           u32, // 0 to 999_999_999
 }
 
-Naive_Date_Time :: struct {
-	date: Naive_Date,
-	time: Naive_Time,
+Civil_Date_Time :: struct {
+	date: Civil_Date,
+	time: Civil_Time,
 }
 
 Weekday :: enum u8 {
@@ -89,7 +90,7 @@ Weekday :: enum u8 {
 	Sun,
 }
 
-// days_in_month: 28 to 31 for a month 1 to 12 (the proleptic Gregorian calendar, as chrono's), 0
+// days_in_month: 28 to 31 for a month 1 to 12 (the proleptic Gregorian calendar, as jiff's), 0
 // for another month.
 days_in_month :: proc(year: i32, month: u32) -> u32 {
 	switch month {
@@ -105,9 +106,9 @@ days_in_month :: proc(year: i32, month: u32) -> u32 {
 }
 
 @(private)
-put_naive_date :: proc(o: ^Tape, d: Naive_Date) {
-	if d.year < -262_143 || d.year > 262_142 {
-		stop({}, "the date %d-%d-%d is outside the years -262143 to 262142 a date can hold", d.year, d.month, d.day)
+put_civil_date :: proc(o: ^Tape, d: Civil_Date) {
+	if d.year < -9999 || d.year > 9999 {
+		stop({}, "the date %d-%d-%d is outside the years -9999 to 9999 a date can hold", d.year, d.month, d.day)
 	}
 	if d.day < 1 || d.day > days_in_month(d.year, d.month) {
 		stop({}, "the date %d-%02d-%02d does not exist (month 1 to 12, day 1 to the last day of the month)", d.year, d.month, d.day)
@@ -118,9 +119,8 @@ put_naive_date :: proc(o: ^Tape, d: Naive_Date) {
 }
 
 @(private)
-put_naive_time :: proc(o: ^Tape, t: Naive_Time) {
-	if t.hour > 23 || t.minute > 59 || t.second > 59 || t.nanosecond > 1_999_999_999 ||
-	   (t.nanosecond > 999_999_999 && t.second != 59) {
+put_civil_time :: proc(o: ^Tape, t: Civil_Time) {
+	if t.hour > 23 || t.minute > 59 || t.second > 59 || t.nanosecond > 999_999_999 {
 		stop({}, "the time %02d:%02d:%02d.%09d does not exist (hour 0 to 23, minute and second 0 to 59)", t.hour, t.minute, t.second, t.nanosecond)
 	}
 	put_u32(o, t.hour)
@@ -130,9 +130,9 @@ put_naive_time :: proc(o: ^Tape, t: Naive_Time) {
 }
 
 @(private)
-put_naive_date_time :: proc(o: ^Tape, v: Naive_Date_Time) {
-	put_naive_date(o, v.date)
-	put_naive_time(o, v.time)
+put_civil_date_time :: proc(o: ^Tape, v: Civil_Date_Time) {
+	put_civil_date(o, v.date)
+	put_civil_time(o, v.time)
 }
 
 @(private)
@@ -255,14 +255,14 @@ Background_Value :: struct {
 
 // A calendar matcher's parts (PROTOCOLS.md 11.21), both ways: Matcher_Interval{v0 = {before, after}}
 // disables the days before `before` and after `after`; Matcher_Range{v0 = {from, to}} the days from
-// `from` to `to`; nil is no bound. Matcher_Custom{v0 = []Naive_Date} disables exactly those days.
+// `from` to `to`; nil is no bound. Matcher_Custom{v0 = []Civil_Date} disables exactly those days.
 Interval_Matcher :: struct {
-	before: Maybe(Naive_Date),
-	after:  Maybe(Naive_Date),
+	before: Maybe(Civil_Date),
+	after:  Maybe(Civil_Date),
 }
 Range_Matcher :: struct {
-	from: Maybe(Naive_Date),
-	to:   Maybe(Naive_Date),
+	from: Maybe(Civil_Date),
+	to:   Maybe(Civil_Date),
 }
 
 // A questionnaire item's validator as rules (QuestionnaireItemDefinition::with_validator, PROTOCOLS.md

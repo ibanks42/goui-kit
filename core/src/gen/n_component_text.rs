@@ -61,7 +61,7 @@ pub fn apply_component_text_view(dx: &mut Dx, mut el: gpui_kit::component::text:
             263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <gpui_kit::component::text::TextView>::on_reveal(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::scrollable(el, a0) }; }
             265 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::selectable(el, a0) }; }
-            266 => { el = { let a0 = en_59(r.u16()); <gpui_kit::component::text::TextView>::selection_format(el, a0) }; }
+            266 => { el = { let a0 = en_60(r.u16()); <gpui_kit::component::text::TextView>::selection_format(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::stream_fade(el, a0) }; }
             268 => { el = { let Some((a0,)) = (|| Some((build_component_text_view_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::text::TextView>::style(el, a0) }; }
             269 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::SharedString, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::component::text::TextView>::on_link_click(el, a0) }; }

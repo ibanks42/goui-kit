@@ -142,7 +142,7 @@ pub fn apply_component_column(dx: &mut Dx, mut el: gpui_kit::component::table::C
         match op {
             256 => { el = { <gpui_kit::component::table::Column>::ascending(el) }; }
             257 => { el = { <gpui_kit::component::table::Column>::descending(el) }; }
-            258 => { el = { let a0 = en_118(r.u16()); <gpui_kit::component::table::Column>::fixed(el, a0) }; }
+            258 => { el = { let a0 = en_119(r.u16()); <gpui_kit::component::table::Column>::fixed(el, a0) }; }
             259 => { el = { <gpui_kit::component::table::Column>::fixed_left(el) }; }
             260 => { el = { <gpui_kit::component::table::Column>::fixed_right(el) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::table::Column>::max_width(el, a0) }; }
@@ -152,7 +152,7 @@ pub fn apply_component_column(dx: &mut Dx, mut el: gpui_kit::component::table::C
             265 => { el = { let Some((a0,)) = (|| Some((in_3(r, dx)?,)))() else { continue }; <gpui_kit::component::table::Column>::paddings(el, a0) }; }
             266 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::Column>::resizable(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::Column>::selectable(el, a0) }; }
-            268 => { el = { let a0 = en_119(r.u16()); <gpui_kit::component::table::Column>::sort(el, a0) }; }
+            268 => { el = { let a0 = en_120(r.u16()); <gpui_kit::component::table::Column>::sort(el, a0) }; }
             269 => { el = { <gpui_kit::component::table::Column>::sortable(el) }; }
             270 => { el = { <gpui_kit::component::table::Column>::text_center(el) }; }
             271 => { el = { <gpui_kit::component::table::Column>::text_right(el) }; }

@@ -101,21 +101,21 @@ date_range_preset_date_time :: proc(label: string, value: Date_Time, loc := #cal
 }
 
 // Creates a new DateRangePreset with a range of dates.
-date_range_preset_range :: proc(label: string, start: Naive_Date, end: Naive_Date, loc := #caller_location) -> Date_Range_Preset {
+date_range_preset_range :: proc(label: string, start: Civil_Date, end: Civil_Date, loc := #caller_location) -> Date_Range_Preset {
 	e := Date_Range_Preset{new_value(837, loc), &date_range_preset_vt}
 	o := node_args()
 	put_str(o, label)
-	put_naive_date(o, start)
-	put_naive_date(o, end)
+	put_civil_date(o, start)
+	put_civil_date(o, end)
 	return e
 }
 
 // Creates a new DateRangePreset with a date.
-date_range_preset_single :: proc(label: string, date: Naive_Date, loc := #caller_location) -> Date_Range_Preset {
+date_range_preset_single :: proc(label: string, date: Civil_Date, loc := #caller_location) -> Date_Range_Preset {
 	e := Date_Range_Preset{new_value(838, loc), &date_range_preset_vt}
 	o := node_args()
 	put_str(o, label)
-	put_naive_date(o, date)
+	put_civil_date(o, date)
 	return e
 }
 

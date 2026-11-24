@@ -104,7 +104,7 @@ pub fn apply_component_select(dx: &mut Dx, mut el: gpui_kit::component::select::
             265 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::search_placeholder(el, a0) }; }
             266 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::title_prefix(el, a0) }; }
             267 => { el = { let a0 = { let h = r.u64(); let v = if h == 0 { None } else { dx.child_view(h) }; move |window: &mut gpui_kit::Window, cx: &gpui_kit::App| crate::shim_select::view_element(&v) }; <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::empty(el, a0) }; }
-            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::icon(el, a0) }; }
+            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::icon(el, a0) }; }
             269 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::highlight_matches(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }

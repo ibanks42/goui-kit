@@ -47,6 +47,18 @@ func (e ButtonEl) AccessibilityLabel(label string) ButtonEl {
 	return e
 }
 
+// Expose whether the disclosure controlled by this button is expanded.
+//
+// When unset, the button does not expose an expanded state. This is separate from `open`, which
+// controls the button's visual open state.
+//
+// AriaExpanded is <gpui_kit::component::button::Button>::aria_expanded.
+func (e ButtonEl) AriaExpanded(expanded bool) ButtonEl {
+	o := op(e.n, 277)
+	o.bool(expanded)
+	return e
+}
+
 // Set the button to compact mode, then padding will be reduced.
 //
 // Compact is <gpui_kit::component::button::Button>::compact.

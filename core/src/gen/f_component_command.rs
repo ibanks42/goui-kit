@@ -148,7 +148,7 @@ pub fn apply_component_command_item(dx: &mut Dx, mut el: gpui_kit::component::co
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::command::CommandItem>::label(el, a0) }; }
             259 => { el = { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(gpui_kit::SharedString::new(r.str())); } v }; <gpui_kit::component::command::CommandItem>::keywords(el, a0) }; }
             260 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::command::CommandItem>::child(el, a0) }; }
-            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::command::CommandItem>::icon(el, a0) }; }
+            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::command::CommandItem>::icon(el, a0) }; }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
             _ => bad_op("CommandItem", op),
         }

@@ -84,7 +84,7 @@ pub fn apply_component_accordion_item(dx: &mut Dx, mut el: gpui_kit::component::
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::accordion::AccordionItem>::open(el, a0) }; }
             260 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::accordion::AccordionItem>::title(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::accordion::AccordionItem>::title_style(el, a0) }; }
-            262 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::accordion::AccordionItem>::icon(el, a0) }; }
+            262 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::accordion::AccordionItem>::icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

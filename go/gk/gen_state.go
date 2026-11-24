@@ -2219,6 +2219,19 @@ func (s DiffState) Files(cx *Cx) []DiffFileRead {
 	return rdList(r, func(r *reader) DiffFileRead { return DiffFileRead{h: r.u64()} })
 }
 
+// Whether the patch carries the source line at `position`, shown or folded. A line beyond the
+// context the patch was made with is not there to scroll to.
+//
+// HasLine is <gpui_kit::component::diff::DiffState>::has_line.
+func (s DiffState) HasLine(cx *Cx, position DiffLinePosition) bool {
+	useComponentDiff()
+	o := newReq(1803)
+	o.u64(s.h)
+	o.u64(position.h)
+	r := stateGet(s.h, cx, o)
+	return r.bool()
+}
+
 // InlineMaxLineLength is <gpui_kit::component::diff::DiffState>::inline_max_line_length.
 func (s DiffState) InlineMaxLineLength(cx *Cx) int {
 	useComponentDiff()
@@ -2642,6 +2655,46 @@ func NewDiffState(cx *Cx, files []DiffFile) DiffStateBuilder {
 		putVtape(o, x0.n)
 	}
 	return DiffStateBuilder{newStateBuilder(cx, o)}
+}
+
+// DiffTextPosition is a handle to gpui_kit::component::diff::DiffTextPosition, a library object (PROTOCOLS.md section 13).
+type DiffTextPosition struct{ h uint64 }
+
+func (s DiffTextPosition) handle() uint64 { return s.h }
+
+// The character's byte offset in the line's content, before tab expansion: the unit
+// `DiffSpanHighlight` spans use.
+//
+// Offset is <gpui_kit::component::diff::DiffTextPosition>::offset.
+func (s DiffTextPosition) Offset(cx *Cx) int {
+	useComponentDiff()
+	o := newReq(1804)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return int(r.u64())
+}
+
+// The line the character is on.
+//
+// Position is <gpui_kit::component::diff::DiffTextPosition>::position.
+func (s DiffTextPosition) Position(cx *Cx) DiffLinePosition {
+	useComponentDiff()
+	o := newReq(1805)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return DiffLinePosition{h: r.u64()}
+}
+
+// The line's content, so the handler can read the word around the offset without a copy of the
+// patch.
+//
+// Text is <gpui_kit::component::diff::DiffTextPosition>::text.
+func (s DiffTextPosition) Text(cx *Cx) string {
+	useComponentDiff()
+	o := newReq(1806)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return r.str()
 }
 
 // Discrete is a handle to gpui_kit::base::Discrete<f32>, a library object (PROTOCOLS.md section 13).
@@ -3707,6 +3760,30 @@ func (s EditorScrollbarContext) Axis(cx *Cx) ScrollbarAxis {
 	return ScrollbarAxis(r.u16())
 }
 
+// Authoritative vertical content height in `f64` pixels (including padding when combined via
+// `scroll_viewport_size`).
+//
+// ContentHeightF64 is <gpui_kit::base::input::EditorScrollbarContext>::content_height_f64.
+func (s EditorScrollbarContext) ContentHeightF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1780)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return r.f64()
+}
+
+// Where the editor places its scrollbars, as set with `scrollbar_placement`, for a supplied
+// scrollbar to follow.
+//
+// Placement is <gpui_kit::base::input::EditorScrollbarContext>::placement.
+func (s EditorScrollbarContext) Placement(cx *Cx) ScrollbarPlacement {
+	useBaseInput()
+	o := newReq(1781)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return ScrollbarPlacement(r.u16())
+}
+
 // The editor's viewport without padding, for consumers that need its text layout size. Scrollbars
 // should use `ContentSize` and `ViewportBounds` to calculate the scroll range; both include the
 // padding around this viewport.
@@ -3720,10 +3797,32 @@ func (s EditorScrollbarContext) ScrollViewportSize(cx *Cx) GpuiSize {
 	return rdGpuiSize(r)
 }
 
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+//
+// ScrollYF64 is <gpui_kit::base::input::EditorScrollbarContext>::scroll_y_f64.
+func (s EditorScrollbarContext) ScrollYF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1782)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return r.f64()
+}
+
 // EditorState is a handle to gpui_kit::base::input::EditorState, kit state that lives in the library.
 type EditorState struct{ h uint64 }
 
 func (s EditorState) handle() uint64 { return s.h }
+
+// Authoritative vertical scrollable content height in `f64` pixels.
+//
+// ContentHeightF64 is <gpui_kit::base::input::EditorState>::content_height_f64.
+func (s EditorState) ContentHeightF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1783)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
+}
 
 // ContextMenuCapabilities is <gpui_kit::base::input::EditorState>::context_menu_capabilities.
 func (s EditorState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
@@ -3945,6 +4044,17 @@ func (s EditorState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[i
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// The fold candidates, as reported by the highlighter.
+//
+// FoldCandidates is <gpui_kit::base::input::EditorState>::fold_candidates.
+func (s EditorState) FoldCandidates(cx *Cx) []FoldRange {
+	useBaseInput()
+	o := newReq(1786)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) FoldRange { return rdFoldRange(r) })
+}
+
 // HasOverlayActionHandler is <gpui_kit::base::input::EditorState>::has_overlay_action_handler.
 func (s EditorState) HasOverlayActionHandler(cx *Cx) bool {
 	useBaseInput()
@@ -4125,6 +4235,17 @@ func (s EditorState) ScrollOffset(cx *Cx) GpuiPoint {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdGpuiPoint(r)
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+//
+// ScrollYF64 is <gpui_kit::base::input::EditorState>::scroll_y_f64.
+func (s EditorState) ScrollYF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1788)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
 }
 
 // A counter that advances every time `OpenSearch` runs, including while the session is already
@@ -4475,6 +4596,20 @@ func (s EditorState) RouteOverlayAction(cx *Cx, action Action) bool {
 	return r.bool()
 }
 
+// Fold or unfold the fold candidate that starts at `start_line` (a 0-based buffer line). Returns
+// false when no candidate starts there or folding is disabled.
+//
+// SetFolded is <gpui_kit::base::input::EditorState>::set_folded.
+func (s EditorState) SetFolded(cx *Cx, startLine int, folded bool) bool {
+	useBaseInput()
+	o := newReq(1790)
+	o.u64(s.h)
+	putUsize(o, startLine)
+	o.bool(folded)
+	r := stateCall(s.h, cx, o)
+	return r.bool()
+}
+
 // Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
 // of Alt-clicking another cursor into the text.
 //
@@ -4632,6 +4767,29 @@ func (s EditorState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Fold every fold candidate.
+//
+// FoldAll is <gpui_kit::base::input::EditorState>::fold_all.
+func (s EditorState) FoldAll(cx *Cx) {
+	useBaseInput()
+	o := newReq(1784)
+	o.u64(s.h)
+	stateSet(cx, o)
+}
+
+// Fold the candidates at one nesting level and unfold all others, as Zed's `editor::FoldAtLevel`.
+// Level 1 is a candidate that no other candidate contains; level 2 is one inside a level-1
+// candidate, and so on.
+//
+// FoldAtLevel is <gpui_kit::base::input::EditorState>::fold_at_level.
+func (s EditorState) FoldAtLevel(cx *Cx, level int) {
+	useBaseInput()
+	o := newReq(1785)
+	o.u64(s.h)
+	putUsize(o, level)
+	stateSet(cx, o)
+}
+
 // Insert text at the current cursor position.
 //
 // And the cursor will be moved to the end of inserted text.
@@ -4726,6 +4884,17 @@ func (s EditorState) ReplaceAll(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+//
+// ScrollByYF64 is <gpui_kit::base::input::EditorState>::scroll_by_y_f64.
+func (s EditorState) ScrollByYF64(cx *Cx, deltaY float64) {
+	useBaseInput()
+	o := newReq(1787)
+	o.u64(s.h)
+	o.f64(deltaY)
+	stateSet(cx, o)
+}
+
 // SelectAll is <gpui_kit::base::input::EditorState>::select_all.
 func (s EditorState) SelectAll(cx *Cx) {
 	useBaseInput()
@@ -4753,6 +4922,17 @@ func (s EditorState) SetAccessibility(cx *Cx, accessibility InputAccessibility) 
 	o := newReq(895)
 	o.u64(s.h)
 	putVtape(o, accessibility.n)
+	stateSet(cx, o)
+}
+
+// Set showing the active line only while focused.
+//
+// SetActiveLineOnlyWhenFocused is <gpui_kit::base::input::EditorState>::set_active_line_only_when_focused.
+func (s EditorState) SetActiveLineOnlyWhenFocused(cx *Cx, activeLineOnlyWhenFocused bool) {
+	useBaseInput()
+	o := newReq(1789)
+	o.u64(s.h)
+	o.bool(activeLineOnlyWhenFocused)
 	stateSet(cx, o)
 }
 
@@ -4986,6 +5166,28 @@ func (s EditorState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	stateSet(cx, o)
 }
 
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+//
+// SetScrollYF64 is <gpui_kit::base::input::EditorState>::set_scroll_y_f64.
+func (s EditorState) SetScrollYF64(cx *Cx, y float64) {
+	useBaseInput()
+	o := newReq(1791)
+	o.u64(s.h)
+	o.f64(y)
+	stateSet(cx, o)
+}
+
+// See `ScrollbarPlacement`.
+//
+// SetScrollbarPlacement is <gpui_kit::base::input::EditorState>::set_scrollbar_placement.
+func (s EditorState) SetScrollbarPlacement(cx *Cx, placement ScrollbarPlacement) {
+	useBaseInput()
+	o := newReq(1792)
+	o.u64(s.h)
+	o.u16(uint16(placement))
+	stateSet(cx, o)
+}
+
 // Set the search query and highlight its matches.
 //
 // This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
@@ -5183,6 +5385,16 @@ func (s EditorState) ToggleMasked(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Unfold every folded range. Fold candidates are kept.
+//
+// UnfoldAll is <gpui_kit::base::input::EditorState>::unfold_all.
+func (s EditorState) UnfoldAll(cx *Cx) {
+	useBaseInput()
+	o := newReq(1793)
+	o.u64(s.h)
+	stateSet(cx, o)
+}
+
 // Unselects the currently selected text.
 //
 // Unselect is <gpui_kit::base::input::EditorState>::unselect.
@@ -5316,6 +5528,12 @@ func (b EditorStateBuilder) ScrollBeyondLastLine(rows Option[int]) EditorStateBu
 func (b EditorStateBuilder) ScrollBounce(scrollBounce bool) EditorStateBuilder {
 	o := b.sb.op(12)
 	o.bool(scrollBounce)
+	return b
+}
+
+func (b EditorStateBuilder) ScrollbarPlacement(placement ScrollbarPlacement) EditorStateBuilder {
+	o := b.sb.op(15)
+	o.u16(uint16(placement))
 	return b
 }
 
@@ -6569,6 +6787,17 @@ func (s InputState) Content(cx *Cx) InputContent {
 	return InputContent{h: r.u64()}
 }
 
+// Authoritative vertical scrollable content height in `f64` pixels.
+//
+// ContentHeightF64 is <gpui_kit::base::input::InputState>::content_height_f64.
+func (s InputState) ContentHeightF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1794)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
+}
+
 // ContextMenuCapabilities is <gpui_kit::base::input::InputState>::context_menu_capabilities.
 func (s InputState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
 	useBaseInput()
@@ -6926,6 +7155,17 @@ func (s InputState) ScrollOffset(cx *Cx) GpuiPoint {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdGpuiPoint(r)
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+//
+// ScrollYF64 is <gpui_kit::base::input::InputState>::scroll_y_f64.
+func (s InputState) ScrollYF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1796)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
 }
 
 // A counter that advances every time `OpenSearch` runs, including while the session is already
@@ -7398,6 +7638,17 @@ func (s InputState) ReplaceAll(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+//
+// ScrollByYF64 is <gpui_kit::base::input::InputState>::scroll_by_y_f64.
+func (s InputState) ScrollByYF64(cx *Cx, deltaY float64) {
+	useBaseInput()
+	o := newReq(1795)
+	o.u64(s.h)
+	o.f64(deltaY)
+	stateSet(cx, o)
+}
+
 // SelectAll is <gpui_kit::base::input::InputState>::select_all.
 func (s InputState) SelectAll(cx *Cx) {
 	useBaseInput()
@@ -7627,6 +7878,17 @@ func (s InputState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	o := newReq(625)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
+	stateSet(cx, o)
+}
+
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+//
+// SetScrollYF64 is <gpui_kit::base::input::InputState>::set_scroll_y_f64.
+func (s InputState) SetScrollYF64(cx *Cx, y float64) {
+	useBaseInput()
+	o := newReq(1797)
+	o.u64(s.h)
+	o.f64(y)
 	stateSet(cx, o)
 }
 
@@ -10621,6 +10883,20 @@ func (s ResizableState) ContainerSize(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Whether a resize handle is being dragged.
+//
+// Starting a drag does not notify, so read this while rendering during the drag rather than
+// relying on a notification when it starts.
+//
+// IsResizing is <gpui_kit::base::ResizableState>::is_resizing.
+func (s ResizableState) IsResizing(cx *Cx) bool {
+	useBaseResizable()
+	o := newReq(1779)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.bool()
+}
+
 // Get the size of the panels.
 //
 // Sizes is <gpui_kit::base::ResizableState>::sizes.
@@ -10692,12 +10968,12 @@ func (s ResizableState) ResetPanel(cx *Cx, panelIx int) {
 // Programmatically resize the panel at `ix` to `size`, redistributing space among siblings using
 // the same logic as a drag.
 //
-// Sizes are clamped to the panel's `size_range` and to the container. Emits
+// The size change respects the visible panels' `size_range` and available space. Emits
 // `ResizablePanelEvent::Resized` so subscribers (e.g. preference persistence) see the change just
 // as if the user had dragged a handle.
 //
-// Out-of-range indices are a no-op. For the last panel, space is taken from the previous sibling
-// (the last panel has no handle of its own).
+// Hidden panels and out-of-range indices are ignored. The last visible panel resizes using the
+// boundary with its previous visible sibling.
 //
 // ResizePanel is <gpui_kit::base::ResizableState>::resize_panel.
 func (s ResizableState) ResizePanel(cx *Cx, ix int, size float32) {
@@ -12690,8 +12966,8 @@ func (s TableState) SetRightClickedRow(cx *Cx, row Option[int]) {
 
 // Sets the selected cell to the given row and column indices.
 //
-// This method: - Switches the table to cell selection mode - Scrolls to make the cell visible
-// (centered vertically) - Emits a `SelectCell` event
+// This method: - Switches the table to cell selection mode - Does not scroll; call `ScrollToRow`
+// and `ScrollToCol` to reveal the cell - Emits a `SelectCell` event
 //
 // SetSelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_cell.
 func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
@@ -12705,6 +12981,9 @@ func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
 
 // Sets the selected col to the given index.
 //
+// This does not scroll; call `ScrollToCol` to reveal the column. Clicks and keyboard navigation
+// still scroll the selection into view.
+//
 // SetSelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_col.
 func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
 	useComponentTable()
@@ -12715,6 +12994,9 @@ func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
 }
 
 // Sets the selected row to the given index.
+//
+// This does not scroll; call `ScrollToRow` to reveal the row. Clicks and keyboard navigation still
+// scroll the selection into view.
 //
 // SetSelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_row.
 func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
@@ -12727,7 +13009,8 @@ func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
 
 // Sets the selection as one value; `None` clears it.
 //
-// Scrolls and emits exactly as the matching `set_selected_*` or `ClearSelection` call would.
+// Like the matching `set_selected_*` it does not scroll, and emits as the matching
+// `set_selected_*` or `ClearSelection` call would.
 //
 // SetSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selection.
 func (s TableState) SetSelection(cx *Cx, selection TableSelection) {
@@ -13516,6 +13799,17 @@ func (s TextareaState) Content(cx *Cx) InputContent {
 	return InputContent{h: r.u64()}
 }
 
+// Authoritative vertical scrollable content height in `f64` pixels.
+//
+// ContentHeightF64 is <gpui_kit::base::input::TextareaState>::content_height_f64.
+func (s TextareaState) ContentHeightF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1798)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
+}
+
 // ContextMenuCapabilities is <gpui_kit::base::input::TextareaState>::context_menu_capabilities.
 func (s TextareaState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
 	useBaseInput()
@@ -13884,6 +14178,17 @@ func (s TextareaState) ScrollOffset(cx *Cx) GpuiPoint {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdGpuiPoint(r)
+}
+
+// Authoritative vertical scroll offset in `f64` pixels (`<= 0.0`).
+//
+// ScrollYF64 is <gpui_kit::base::input::TextareaState>::scroll_y_f64.
+func (s TextareaState) ScrollYF64(cx *Cx) float64 {
+	useBaseInput()
+	o := newReq(1800)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return r.f64()
 }
 
 // A counter that advances every time `OpenSearch` runs, including while the session is already
@@ -14356,6 +14661,17 @@ func (s TextareaState) ReplaceAll(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Scroll vertically by `delta_y` in `f64` pixels without `f32` quantization.
+//
+// ScrollByYF64 is <gpui_kit::base::input::TextareaState>::scroll_by_y_f64.
+func (s TextareaState) ScrollByYF64(cx *Cx, deltaY float64) {
+	useBaseInput()
+	o := newReq(1799)
+	o.u64(s.h)
+	o.f64(deltaY)
+	stateSet(cx, o)
+}
+
 // SelectAll is <gpui_kit::base::input::TextareaState>::select_all.
 func (s TextareaState) SelectAll(cx *Cx) {
 	useBaseInput()
@@ -14577,6 +14893,28 @@ func (s TextareaState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	o := newReq(640)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
+	stateSet(cx, o)
+}
+
+// Set vertical scroll offset in `f64` pixels without `f32` quantization.
+//
+// SetScrollYF64 is <gpui_kit::base::input::TextareaState>::set_scroll_y_f64.
+func (s TextareaState) SetScrollYF64(cx *Cx, y float64) {
+	useBaseInput()
+	o := newReq(1801)
+	o.u64(s.h)
+	o.f64(y)
+	stateSet(cx, o)
+}
+
+// See `ScrollbarPlacement`.
+//
+// SetScrollbarPlacement is <gpui_kit::base::input::TextareaState>::set_scrollbar_placement.
+func (s TextareaState) SetScrollbarPlacement(cx *Cx, placement ScrollbarPlacement) {
+	useBaseInput()
+	o := newReq(1802)
+	o.u64(s.h)
+	o.u16(uint16(placement))
 	stateSet(cx, o)
 }
 
@@ -14876,6 +15214,12 @@ func (b TextareaStateBuilder) ScrollBeyondLastLine(rows Option[int]) TextareaSta
 func (b TextareaStateBuilder) ScrollBounce(scrollBounce bool) TextareaStateBuilder {
 	o := b.sb.op(11)
 	o.bool(scrollBounce)
+	return b
+}
+
+func (b TextareaStateBuilder) ScrollbarPlacement(placement ScrollbarPlacement) TextareaStateBuilder {
+	o := b.sb.op(14)
+	o.u16(uint16(placement))
 	return b
 }
 

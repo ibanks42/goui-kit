@@ -186,7 +186,7 @@ def _opt_element(m, ctx, output):
     return None
 
 
-SET_KEYS = {"chrono", "rec", "enum", "int", "str", "bool"}
+SET_KEYS = {"civil", "rec", "enum", "int", "str", "bool"}
 
 
 def closure(m, ctx, kind, inputs, output, wrap, params, ptypes, payload):
@@ -315,7 +315,7 @@ def rust_valset(rs, d):
 
 def set_variants(m):
     """A variant of an enum with data whose field is a set of values (11.21: `Matcher::Custom(Box<dyn
-    Fn(&NaiveDate) -> bool + Send + Sync>)`) is buildable, and reads back as the set the app gave
+    Fn(&civil::Date) -> bool + Send + Sync>)`) is buildable, and reads back as the set the app gave
     (the library's boxed closure keeps it): when the enum was first met read back, the variant was
     left out for both directions."""
     g = _g()

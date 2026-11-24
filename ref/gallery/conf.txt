@@ -272,6 +272,7 @@ component::Button.tooltip_placement |  | gpui_kit::component::button::Button::to
 component::Button.tooltip_show_delay |  | gpui_kit::component::button::Button::tooltip_show_delay
 component::Button.loading |  | gpui_kit::component::button::Button::loading
 component::Button.compact |  | gpui_kit::component::button::Button::compact
+component::Button.aria_expanded |  | gpui_kit::component::button::Button::aria_expanded
 component::Button.tab_index |  | gpui_kit::component::button::Button::tab_index
 component::Button.tab_stop |  | gpui_kit::component::button::Button::tab_stop
 component::Button.dropdown_caret |  | gpui_kit::component::button::Button::dropdown_caret

@@ -127,7 +127,7 @@ pub fn apply_component_list_item(dx: &mut Dx, mut el: gpui_kit::component::list:
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::list::ListItem>::selected(el, a0) }; }
             263 => { el = { <gpui_kit::component::list::ListItem>::separator(el) }; }
             264 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::list::ListItem>::suffix(el, a0) }; }
-            265 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::list::ListItem>::check_icon(el, a0) }; }
+            265 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::list::ListItem>::check_icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

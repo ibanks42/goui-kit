@@ -10,7 +10,7 @@ pub fn sb_base_slider_state(s: gpui_kit::base::slider::SliderState, op: u16, r: 
     match op {
         1 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::max(s, a0) }
         2 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::min(s, a0) }
-        3 => { let a0 = en_84(r.u16()); <gpui_kit::base::slider::SliderState>::scale(s, a0) }
+        3 => { let a0 = en_85(r.u16()); <gpui_kit::base::slider::SliderState>::scale(s, a0) }
         4 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::step(s, a0) }
         5 => { let Some((a0,)) = (|| Some((in_18_c(r)?,)))() else { return s }; <gpui_kit::base::slider::SliderState>::default_value(s, a0) }
         _ => s,

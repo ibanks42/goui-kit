@@ -15,7 +15,7 @@ anyhow = "1"
 lsp-types = "=0.97.0"
 ropey = "=2.0.0-beta.1"
 # The calendar page (values_pages.rs) writes a date as a Rust app does: the version gpui-base links.
-chrono = { version = "=0.4.45", default-features = false }
+jiff = { version = "=1.0.2", default-features = false }
 # The gallery's motion pages (motion_pages.rs) give an image as pixels as a Rust app does
 # (image's Frame for gpui's RenderImage) and synthetic accessibility nodes (accesskit's Node): the
 # versions gpui links.

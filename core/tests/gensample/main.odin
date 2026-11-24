@@ -5345,8 +5345,8 @@ s_base_dialog_trigger :: proc() {
 }
 
 s_base_editor :: proc() {
-	_ = gk.editor(gk.Editor_State{state = {h = 1}})
-	e := gk.editor(gk.Editor_State{state = {h = 1}})
+	_ = gk.base_editor(gk.Editor_State{state = {h = 1}})
+	e := gk.base_editor(gk.Editor_State{state = {h = 1}})
 	_ = e
 }
 
@@ -8463,6 +8463,7 @@ s_base_scrollbar :: proc() {
 	e = e->axis(gk.Scrollbar_Axis.Vertical)
 	e = e->id(gk.Id("id"))
 	e = e->mode(gk.Scrollbar_Mode.Scrolling)
+	e = e->placement(gk.Scrollbar_Placement.Bottom_Right)
 	e = e->scroll_size(gk.Gpui_Size{4, 4})
 	e = e->styles(gk.scrollbar_styles_default())
 	e = e->viewport_bounds(gk.Bounds{gk.Gpui_Point{4, 4}, gk.Gpui_Size{4, 4}})
@@ -8655,7 +8656,7 @@ s_base_select :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.M_1, .Max_H_96, .Max_Size_Neg_7)
+	e = e->style(.M_1_12, .Max_H_Neg_11, .Max_Size_Neg_Px)
 	_ = e
 }
 
@@ -8665,6 +8666,8 @@ s_base_selectable_text :: proc() {
 	e := gk.selectable_text(gk.Id("id"), "s")
 	e = e->document_order(3)
 	e = e->highlights([]gk.Tuple_Range_Highlight_Style{gk.Tuple_Range_Highlight_Style{gk.Range{1, 3}, gk.Highlight_Style{gk.hsla(0.5, 0.25, 0.75, 1), gk.Font_Weight{1.5}, gk.Font_Style.Normal, gk.hsla(0.5, 0.25, 0.75, 1), gk.Underline_Style{4, gk.hsla(0.5, 0.25, 0.75, 1), true}, gk.Strikethrough_Style{4, gk.hsla(0.5, 0.25, 0.75, 1)}, 1.5}}})
+	e = e->on_reveal(gk.on(noop))
+	e = e->reveal_range(gk.Range{1, 3})
 	e = e->selection_color(gk.hsla(0.5, 0.25, 0.75, 1))
 	_ = e
 }
@@ -8797,7 +8800,7 @@ s_base_sheet :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mt_Neg_9, .My_6, .P_Neg_3p5)
+	e = e->style(.Mx_2, .My_Neg_1_3, .Pb_1)
 	_ = e
 }
 
@@ -8929,7 +8932,7 @@ s_base_slider :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Rounded_Bl_2xl, .Size_Auto, .Top_Neg_20)
+	e = e->style(.Rounded_L_Full, .Size_Neg_2_3, .Top_Neg_72)
 	_ = e
 }
 
@@ -9130,7 +9133,7 @@ s_base_slider_indicator :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Max_H_Px, .Max_W_8, .Mb_Neg_5_6)
+	e = e->style(.Max_Size_2_4, .Max_W_Neg_1p5, .Min_H_1_12)
 	_ = e
 }
 
@@ -9334,7 +9337,7 @@ s_base_slider_thumb :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Pt_Neg_24, .Py_1_5, .Right_Neg_16)
+	e = e->style(.Pt_Neg_8, .Py_5_6, .Right_Neg_40)
 	_ = e
 }
 
@@ -9503,7 +9506,7 @@ s_base_slider_track :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.Gap_Y_3_4, .H_Neg_2_4, .Left_0)
+	e = e->style(.Gap_Y_Neg_1, .H_Neg_9, .Left_2_5)
 	_ = e
 }
 
@@ -9635,7 +9638,7 @@ s_base_state_style :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_32, .Min_W_Neg_2_3, .Mr_1_5)
+	e = e->style(.Min_Size_Neg_0, .Min_W_Neg_80, .Mr_5_6)
 	_ = e
 }
 
@@ -9841,7 +9844,7 @@ s_base_switch :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Size_11, .Top_3, .W_Neg_1p5)
+	e = e->style(.Size_3_4, .Top_Full, .W_Neg_64)
 	_ = e
 }
 
@@ -9977,7 +9980,7 @@ s_base_switch_thumb :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Inset_1_6, .Left_9, .M_Neg_6)
+	e = e->style(.Inset_6, .Left_Neg_20, .Max_H_1_2)
 	_ = e
 }
 
@@ -10189,7 +10192,7 @@ s_base_switch_track :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Pb_3_4, .Pl_Neg_2p5, .Pt_20)
+	e = e->style(.Pb_Neg_1, .Pl_Neg_Full, .Pt_72)
 	_ = e
 }
 
@@ -10404,7 +10407,7 @@ s_base_tab :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Gap_Y_80, .H_Neg_6, .Left_1p5)
+	e = e->style(.Gap_Y_Neg_20, .Inset_1_12, .Left_64)
 	_ = e
 }
 
@@ -10616,7 +10619,7 @@ s_base_table :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.My_Neg_16, .P_Px, .Pl_80)
+	e = e->style(.My_Neg_40, .Pb_2_4, .Pl_Neg_20)
 	_ = e
 }
 
@@ -10817,7 +10820,7 @@ s_base_table_body :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Cursor_Crosshair, .Gap_X_12, .Gap_Y_Neg_10)
+	e = e->style(.Flex_Auto, .Gap_X_3p5, .Gap_Y_Neg_32)
 	_ = e
 }
 
@@ -11018,7 +11021,7 @@ s_base_table_caption :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Ml_Neg_80, .Mt_5_6, .Mx_Neg_40)
+	e = e->style(.Mr_1p5, .Mt_Neg_1_2, .My_11)
 	_ = e
 }
 
@@ -11219,7 +11222,7 @@ s_base_table_cell :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.W_12, .Border_B_24, .Bottom_64)
+	e = e->style(.W_3p5, .Border_L_4, .Bottom_Neg_1_4)
 	_ = e
 }
 
@@ -11420,7 +11423,7 @@ s_base_table_head :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Min_H_3_5, .Min_Size_Neg_2_5, .Ml_1p5)
+	e = e->style(.Min_H_Neg_1, .Min_Size_Neg_96, .Ml_64)
 	_ = e
 }
 
@@ -11621,7 +11624,7 @@ s_base_table_header :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Right_Neg_3_4, .Size_1_3, .Top_48)
+	e = e->style(.Rounded_2xl, .Size_5, .Top_Neg_12)
 	_ = e
 }
 
@@ -11822,7 +11825,7 @@ s_base_table_row :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Max_H_Neg_1_5, .Max_W_128, .Mb_Neg_1)
+	e = e->style(.Max_H_Neg_5_6, .Max_W_4, .Mb_Neg_3)
 	_ = e
 }
 
@@ -12024,7 +12027,7 @@ s_base_tabs :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Pt_2, .Px_Neg_1_5, .Right_128)
+	e = e->style(.Pt_7, .Px_Neg_5_6, .Right_4)
 	_ = e
 }
 
@@ -12329,7 +12332,7 @@ s_base_time_field :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_12, .Min_W_Neg_0p5, .Ml_Neg_9)
+	e = e->style(.Min_Size_3p5, .Min_W_Neg_2p5, .Mr_2)
 	_ = e
 }
 
@@ -12541,7 +12544,7 @@ s_base_toast :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Size_4, .Top_Neg_1, .W_Neg_8)
+	e = e->style(.Size_Neg_11, .Top_Neg_3, .Font_Semibold)
 	_ = e
 }
 
@@ -12746,7 +12749,7 @@ s_base_toast_stack :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Max_W_Neg_128, .Min_H_0p5, .Min_Size_9)
+	e = e->style(.Max_W_Neg_4, .Min_H_2p5, .Min_Size_Neg_20)
 	_ = e
 }
 
@@ -12952,7 +12955,7 @@ s_base_toggle :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Py_80, .Right_Neg_6, .Size_2_5)
+	e = e->style(.Py_Neg_20, .Rounded_B_Xs, .Size_96)
 	_ = e
 }
 
@@ -13154,7 +13157,7 @@ s_base_toggle_group :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.M_6, .Max_H_Neg_48, .Max_W_32)
+	e = e->style(.M_Neg_1_3, .Max_Size_112, .Max_W_Neg_0)
 	_ = e
 }
 
@@ -13365,7 +13368,7 @@ s_base_toolbar :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Pr_Neg_1_3, .Px_12, .Py_Neg_10)
+	e = e->style(.Pr_Neg_5, .Px_3p5, .Py_Neg_32)
 	_ = e
 }
 
@@ -13567,7 +13570,7 @@ s_base_toolbar_group :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.H_Neg_3, .Left_10, .M_96)
+	e = e->style(.H_Neg_Px, .Left_32, .M_Neg_24)
 	_ = e
 }
 
@@ -13693,7 +13696,7 @@ s_base_tooltip :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Min_W_3_4, .Ml_Neg_2_4, .Mt_1_6)
+	e = e->style(.Min_W_Neg_0p5, .Ml_Neg_9, .Mt_6)
 	_ = e
 }
 
@@ -13843,7 +13846,7 @@ s_base_tree :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Px_Neg_4_5, .Right_3_4, .Rounded_Tl_Md)
+	e = e->style(.Py_12, .Right_Neg_0p5, .Self_End)
 	_ = e
 }
 
@@ -14769,7 +14772,7 @@ s_component_icon :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Right_Neg_8, .Size_3_4, .Top_Full)
+	e = e->style(.Rounded_Bl_Lg, .Size_Neg_0p5, .Top_Neg_2_4)
 	_ = e
 }
 
@@ -14923,7 +14926,7 @@ s_component_title_bar :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Inset_48, .Left_Neg_1_4, .Max_H_112)
+	e = e->style(.Inset_Neg_12, .Left_Neg_56, .Max_H_3_5)
 	_ = e
 }
 
@@ -15070,7 +15073,7 @@ s_component_accordion :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mr_Full, .Mt_Neg_8, .My_56)
+	e = e->style(.Mr_Neg_2_4, .Mx_1_6, .My_Neg_1_12)
 	_ = e
 }
 
@@ -15210,7 +15213,7 @@ s_component_accordion_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Right_3_4, .Rounded_Tl_Md, .Text_Decoration_2)
+	e = e->style(.Right_Neg_0p5, .Self_End, .Top_12)
 	_ = e
 }
 
@@ -15348,7 +15351,7 @@ s_component_alert :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Gap_Y_96, .H_Neg_7, .Left_20)
+	e = e->style(.Gap_Y_Neg_2_3, .Inset_1_3, .Left_72)
 	_ = e
 }
 
@@ -15488,7 +15491,7 @@ s_component_attachment :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_W_12, .Ml_Neg_0p5, .Mr_Neg_9)
+	e = e->style(.Min_W_3p5, .Ml_Neg_2p5, .Mt_2)
 	_ = e
 }
 
@@ -15618,7 +15621,7 @@ s_component_attachment_actions :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pt_12, .Px_Neg_10, .Py_Neg_Px)
+	e = e->style(.Pt_3p5, .Px_Neg_32, .Right_24)
 	_ = e
 }
 
@@ -15750,7 +15753,7 @@ s_component_attachment_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Bottom_4_5, .Gap_2_5, .Gap_X_Neg_24)
+	e = e->style(.Bottom_Neg_128, .Gap_96, .Gap_X_Neg_8)
 	_ = e
 }
 
@@ -15875,7 +15878,7 @@ s_component_attachment_description :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_Size_32, .Max_W_Neg_2_3, .Min_H_1_5)
+	e = e->style(.Max_Size_Neg_0, .Max_W_Neg_80, .Min_H_5_6)
 	_ = e
 }
 
@@ -16006,7 +16009,7 @@ s_component_attachment_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.My_4_5, .P_Neg_3, .Pl_24)
+	e = e->style(.My_Neg_128, .P_Neg_Px, .Pl_8)
 	_ = e
 }
 
@@ -16142,7 +16145,7 @@ s_component_attachment_media :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Size_Neg_2p5, .Top_Neg_9, .Border_4)
+	e = e->style(.Size_Neg_Full, .W_1_5, .Border_B_8)
 	_ = e
 }
 
@@ -16268,7 +16271,7 @@ s_component_attachment_title :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Inset_128, .Left_5_6, .M_Neg_4)
+	e = e->style(.Inset_4, .Left_Neg_1_2, .Max_H_10)
 	_ = e
 }
 
@@ -16440,7 +16443,7 @@ s_component_avatar :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.Mx_1_6, .My_Neg_1_12, .Pb_0)
+	e = e->style(.Mx_6, .My_Neg_48, .Pb_2_5)
 	_ = e
 }
 
@@ -16613,7 +16616,7 @@ s_component_avatar_group :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.W_1_4, .Border_B_7, .Bottom_96)
+	e = e->style(.W_56, .Border_R_0, .Bottom_Neg_24)
 	_ = e
 }
 
@@ -16758,7 +16761,7 @@ s_component_breadcrumb :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_H_11, .Max_Size_Full, .Max_W_Neg_8)
+	e = e->style(.Max_H_3_4, .Max_Size_Neg_2_4, .Mb_1_6)
 	_ = e
 }
 
@@ -16884,7 +16887,7 @@ s_component_breadcrumb_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mt_Neg_2p5, .My_2, .P_Neg_16)
+	e = e->style(.Mt_Neg_Full, .My_7, .P_Neg_40)
 	_ = e
 }
 
@@ -17018,7 +17021,7 @@ s_component_bubble :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Rounded_B_Md, .Size_72, .Top_Neg_1_4)
+	e = e->style(.Rounded_Br_Xl, .Size_Neg_1_6, .Top_Neg_56)
 	_ = e
 }
 
@@ -17148,7 +17151,7 @@ s_component_bubble_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Gap_Y_Neg_1_6, .Inset_12, .Left_56)
+	e = e->style(.Gap_Y_Neg_6, .Inset_3p5, .Left_Neg_1_12)
 	_ = e
 }
 
@@ -17278,7 +17281,7 @@ s_component_bubble_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_Auto, .Min_W_Neg_72, .Mr_5)
+	e = e->style(.Min_Size_Neg_2_3, .Ml_1_5, .Mr_Neg_16)
 	_ = e
 }
 
@@ -17411,7 +17414,7 @@ s_component_bubble_reactions :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pr_Neg_2_3, .Px_1_6, .Py_Neg_1_3)
+	e = e->style(.Pr_Neg_80, .Px_6, .Py_Neg_5)
 	_ = e
 }
 
@@ -17420,6 +17423,7 @@ s_component_button :: proc() {
 	e := gk.button(gk.Id("id"))
 	e = e->accessibility_id("s")
 	e = e->accessibility_label("s")
+	e = e->aria_expanded(true)
 	e = e->compact()
 	e = e->dropdown_caret(true)
 	e = e->icon(gk.Icon_Name.A_Large_Small)
@@ -17618,7 +17622,7 @@ s_component_button :: proc() {
 	e = e->on_scroll(gk.on(noop))
 	e = e->tab_group()
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.Inset_2_3, .Left_Neg_0p5, .M_Neg_80)
+	e = e->style(.Inset_Neg_1, .Left_Neg_40, .Max_H_2p5)
 	_ = e
 }
 
@@ -17776,7 +17780,7 @@ s_component_button_group :: proc() {
 	e = e->text()
 	e = e->warning()
 	e = e->with_variant(gk.Button_Variant_Kind.Default)
-	e = e->style(.Mt_2_3, .Mx_Neg_1_6, .P_11)
+	e = e->style(.Mt_Neg_1, .Mx_Neg_96, .P_5)
 	_ = e
 }
 
@@ -17924,7 +17928,7 @@ s_component_dropdown_button :: proc() {
 	e = e->open(true)
 	e = e->secondary_selected(true)
 	e = e->selected(true)
-	e = e->style(.Rounded_T_Md, .Size_Neg_Full, .W_1_5)
+	e = e->style(.Self_Baseline, .Top_11, .W_9)
 	_ = e
 }
 
@@ -18067,7 +18071,7 @@ s_component_toggle :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Inset_2, .Left_Auto, .M_Neg_7)
+	e = e->style(.Inset_Full, .Left_Neg_3_5, .Max_H_2_3)
 	_ = e
 }
 
@@ -18204,7 +18208,7 @@ s_component_toggle_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Ml_Neg_12, .Mt_0, .Mx_80)
+	e = e->style(.Ml_Neg_5_6, .Mt_4, .Mx_Neg_3)
 	_ = e
 }
 
@@ -18333,7 +18337,7 @@ s_component_calendar :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Px_Neg_0p5, .Py_Neg_96, .Rounded_L_None)
+	e = e->style(.Px_Neg_40, .Right_3, .Rounded_Tl_Full)
 	_ = e
 }
 
@@ -18464,7 +18468,7 @@ s_component_carousel :: proc() {
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
 	e = e->focus_ring(true)
-	e = e->style(.Gap_1_4, .Gap_X_Neg_1_12, .H_10)
+	e = e->style(.Gap_80, .Gap_X_Neg_7, .H_4_5)
 	_ = e
 }
 
@@ -18594,7 +18598,7 @@ s_component_carousel_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_W_Px, .Min_H_8, .Min_Size_Neg_5_6)
+	e = e->style(.Mb_3p5, .Min_H_Neg_2p5, .Min_W_2)
 	_ = e
 }
 
@@ -18724,7 +18728,7 @@ s_component_carousel_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.P_Neg_96, .Pl_7, .Pr_Neg_5_6)
+	e = e->style(.Pb_32, .Pl_Neg_2_5, .Pt_2)
 	_ = e
 }
 
@@ -18858,7 +18862,7 @@ s_component_carousel_next :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Truncate, .Border_9, .Bottom_3p5)
+	e = e->style(.W_3_4, .Border_L_3, .Bottom_Neg_1_2)
 	_ = e
 }
 
@@ -18988,7 +18992,7 @@ s_component_carousel_pagination :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Left_Neg_2p5, .Max_H_1p5, .Max_Size_Neg_1_2)
+	e = e->style(.M_10, .Max_H_Auto, .Max_Size_Neg_72)
 	_ = e
 }
 
@@ -19122,7 +19126,7 @@ s_component_carousel_pagination_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mt_10, .Mx_Auto, .My_Neg_72)
+	e = e->style(.Mt_4_5, .Mx_Neg_3_5, .P_2)
 	_ = e
 }
 
@@ -19256,7 +19260,7 @@ s_component_carousel_previous :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Right_56, .Rounded_Tr_Lg, .Text_Ellipsis_Start)
+	e = e->style(.Right_Neg_2, .Size_1, .Top_2_5)
 	_ = e
 }
 
@@ -19687,7 +19691,7 @@ s_component_checkbox :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Px_Neg_9, .Right_6, .Rounded_Tr_None)
+	e = e->style(.Py_3, .Right_Neg_24, .Size_11)
 	_ = e
 }
 
@@ -19836,7 +19840,7 @@ s_component_collapsible :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Gap_X_Neg_Px, .H_72, .Inset_Neg_5)
+	e = e->style(.Gap_Y_3_5, .H_Neg_2_5, .Left_0p5)
 	_ = e
 }
 
@@ -19969,7 +19973,7 @@ s_component_color_picker :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_11, .Min_W_Full, .Ml_Neg_8)
+	e = e->style(.Min_Size_5, .Min_W_Neg_3p5, .Mr_2_5)
 	_ = e
 }
 
@@ -20100,7 +20104,7 @@ s_component_color_select :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pr_1_2, .Pt_Neg_128, .Py_1)
+	e = e->style(.Pr_72, .Pt_Neg_6, .Py_48)
 	_ = e
 }
 
@@ -20247,7 +20251,7 @@ s_component_combobox :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Bottom_Neg_112, .Gap_80, .Gap_X_Neg_7)
+	e = e->style(.Bottom_Neg_56, .Gap_Neg_32, .Gap_Y_2_3)
 	_ = e
 }
 
@@ -20385,7 +20389,7 @@ s_component_command :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_W_Auto, .Mb_Neg_72, .Min_Size_5)
+	e = e->style(.Max_W_Neg_3_5, .Min_H_2_4, .Min_Size_Neg_1p5)
 	_ = e
 }
 
@@ -20542,7 +20546,7 @@ s_component_date_picker :: proc() {
 	e = e->w(gk.px(8))
 	e = e->disabled(true)
 	e = e->focus_ring(true)
-	e = e->style(.Pl_Neg_11, .Pr_Px, .Px_80)
+	e = e->style(.Pl_Neg_5, .Pt_3p5, .Px_Neg_32)
 	_ = e
 }
 
@@ -20713,7 +20717,7 @@ s_component_alert_dialog :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Gap_3_4, .Gap_X_Neg_2p5, .H_2)
+	e = e->style(.Gap_Neg_1_12, .Gap_Y_11, .H_Full)
 	_ = e
 }
 
@@ -20858,7 +20862,7 @@ s_component_dialog :: proc() {
 	e = e->text_overflow(gk.Text_Overflow_Truncate{"s"})
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
-	e = e->style(.Min_H_3_5, .Min_Size_Neg_2_5, .Ml_1p5)
+	e = e->style(.Min_H_Neg_1_12, .Min_W_10, .Ml_Auto)
 	_ = e
 }
 
@@ -21021,7 +21025,7 @@ s_component_dialog_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pt_Neg_4_5, .Py_3_5, .Right_Neg_2_5)
+	e = e->style(.Px_1_5, .Py_Neg_1_2, .Rounded_B_3xl)
 	_ = e
 }
 
@@ -21150,7 +21154,7 @@ s_component_dialog_description :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Bottom_Neg_5_6, .Gap_Neg_3_4, .Gap_Y_2_4)
+	e = e->style(.Cursor_Default, .Gap_X_128, .Gap_Y_Neg_11)
 	_ = e
 }
 
@@ -21279,7 +21283,7 @@ s_component_dialog_footer :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_W_1_12, .Mb_Neg_11, .Min_H_Neg_Px)
+	e = e->style(.Max_W_7, .Mb_Neg_5, .Min_Size_3_5)
 	_ = e
 }
 
@@ -21408,7 +21412,7 @@ s_component_dialog_header :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Overflow_X_Hidden, .Pb_8, .Pl_Neg_64)
+	e = e->style(.P_3_5, .Pb_Neg_3, .Pr_24)
 	_ = e
 }
 
@@ -21537,7 +21541,7 @@ s_component_dialog_title :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Size_Neg_6, .W_112, .Border_B_20)
+	e = e->style(.Text_Right, .W_56, .Border_R_0)
 	_ = e
 }
 
@@ -21556,9 +21560,13 @@ s_component_diff :: proc() {
 	e = e->on_add_annotation(gk.on(noop))
 	e = e->on_line_click(gk.on(noop))
 	e = e->on_line_hover(gk.on(noop))
+	e = e->on_text_click(gk.on(noop))
+	e = e->on_text_hover(gk.on(noop))
 	e = e->soft_wrap(true)
+	e = e->span_highlights([]gk.Diff_Span_Highlight{gk.diff_span_highlight(gk.Diff_Line_Position{state = {h = 1}}, gk.Range{1, 3})})
 	e = e->split_ratio(1.5)
 	e = e->syntax_highlight(true)
+	e = e->text_cursor(gk.Cursor_Style.Arrow)
 	e = e->popover_style()
 	e = e->rounded_full_style()
 	e = e->border_e(gk.px(8))
@@ -21676,7 +21684,7 @@ s_component_diff :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Left_128, .M_Neg_0p5, .Max_H_Neg_9)
+	e = e->style(.Left_Neg_24, .Max_H_1_3, .Max_Size_Neg_12)
 	_ = e
 }
 
@@ -21688,10 +21696,11 @@ s_component_diff_decoration :: proc() {
 }
 
 s_component_diff_file :: proc() {
+	_ = gk.diff_file_excerpts("s", []gk.Tuple_Int_String{gk.Tuple_Int_String{3, "s"}})
 	_ = gk.diff_file_parse_at("s", 3)
 	_ = gk.diff_file_parse_with_at("s", gk.diff_parse_options_default(), 3)
 	_ = gk.diff_file_unchanged("s", "s")
-	e := gk.diff_file_parse_at("s", 3)
+	e := gk.diff_file_excerpts("s", []gk.Tuple_Int_String{gk.Tuple_Int_String{3, "s"}})
 	e = e->with_language("s")
 	_ = e
 }
@@ -21715,6 +21724,15 @@ s_component_diff_parse_options :: proc() {
 	_ = gk.diff_parse_options()
 	e := gk.diff_parse_options_default()
 	e = e->truncated_hunks(true)
+	_ = e
+}
+
+s_component_diff_span_highlight :: proc() {
+	_ = gk.diff_span_highlight(gk.Diff_Line_Position{state = {h = 1}}, gk.Range{1, 3})
+	e := gk.diff_span_highlight(gk.Diff_Line_Position{state = {h = 1}}, gk.Range{1, 3})
+	e = e->with_background(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->with_foreground(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->with_underline()
 	_ = e
 }
 
@@ -21858,7 +21876,7 @@ s_component_empty :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.P_1, .Pb_Full, .Pl_Neg_80)
+	e = e->style(.Pb_72, .Pl_Neg_6, .Pt_48)
 	_ = e
 }
 
@@ -21988,7 +22006,7 @@ s_component_empty_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Text_2xl, .W_2, .Border_L_0)
+	e = e->style(.W_1_3, .Border_B_6, .Bottom_9)
 	_ = e
 }
 
@@ -22118,7 +22136,7 @@ s_component_empty_description :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Inset_Neg_1_6, .Left_Neg_9, .Max_H_5_6)
+	e = e->style(.Left_Neg_64, .Max_H_40, .Max_Size_Neg_32)
 	_ = e
 }
 
@@ -22246,7 +22264,7 @@ s_component_empty_header :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Ml_4_5, .Mr_Neg_3_5, .Mx_2_4)
+	e = e->style(.Mr_Neg_2_5, .Mx_1p5, .My_Neg_1_2)
 	_ = e
 }
 
@@ -22377,7 +22395,7 @@ s_component_empty_media :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Px_8, .Py_Neg_64, .Rounded_Full)
+	e = e->style(.Py_Neg_4_5, .Rounded_Br_Md, .Size_Neg_1_3)
 	_ = e
 }
 
@@ -22507,7 +22525,7 @@ s_component_empty_title :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Flex_Wrap_Reverse, .Gap_X_80, .Gap_Y_Neg_7)
+	e = e->style(.Gap_X_6, .Gap_Y_Neg_5, .Inset_32)
 	_ = e
 }
 
@@ -22647,7 +22665,7 @@ s_component_field :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mb_Neg_1_3, .Min_Size_112, .Min_W_Neg_0)
+	e = e->style(.Min_Size_0, .Min_W_80, .Ml_Neg_6)
 	_ = e
 }
 
@@ -22788,7 +22806,7 @@ s_component_form :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Pl_80, .Pr_Neg_7, .Px_5)
+	e = e->style(.Pr_Neg_5, .Px_3p5, .Py_Neg_32)
 	_ = e
 }
 
@@ -22926,7 +22944,7 @@ s_component_group_box :: proc() {
 	e = e->normal()
 	e = e->outline()
 	e = e->with_variant(gk.Group_Box_Variant.Normal)
-	e = e->style(.Border_L_5, .Bottom_Neg_1_5, .Gap_Neg_11)
+	e = e->style(.Bottom_Neg_16, .Gap_Full, .Gap_X_Neg_80)
 	_ = e
 }
 
@@ -23062,7 +23080,156 @@ s_component_hover_card :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Max_H_Neg_Full, .Max_W_7, .Mb_Neg_5)
+	e = e->style(.Max_W_5, .Mb_Neg_3p5, .Min_Size_2_5)
+	_ = e
+}
+
+s_component_editor :: proc() {
+	_ = gk.editor(gk.Editor_State{state = {h = 1}})
+	e := gk.editor(gk.Editor_State{state = {h = 1}})
+	e = e->appearance(true)
+	e = e->aria_label("s")
+	e = e->bordered(true)
+	e = e->context_menu(gk.native_menu_default())
+	e = e->disabled(true)
+	e = e->gutter_style(gk.gutter_style_default())
+	e = e->h(gk.px(8))
+	e = e->on_paste(gk.on(noop))
+	e = e->readonly(true)
+	e = e->role(gk.Role_Override_Kind.Implicit)
+	e = e->tab_index(3)
+	e = e->popover_style()
+	e = e->rounded_full_style()
+	e = e->border_e(gk.px(8))
+	e = e->border_s(gk.px(8))
+	e = e->flex_row_dir()
+	e = e->inset_e(gk.px(8))
+	e = e->inset_s(gk.px(8))
+	e = e->justify_flex_end()
+	e = e->justify_flex_start()
+	e = e->me(gk.px(8))
+	e = e->ms(gk.px(8))
+	e = e->pe(gk.px(8))
+	e = e->ps(gk.px(8))
+	e = e->rounded_e(gk.px(8))
+	e = e->rounded_s(gk.px(8))
+	e = e->text_end()
+	e = e->text_start()
+	e = e->corner_radii(gk.Corners{4, 4, 4, 4})
+	e = e->debug_blue()
+	e = e->debug_focused(gk.Focus_Handle(gk.Handle{1}))
+	e = e->debug_green()
+	e = e->debug_pink()
+	e = e->debug_red()
+	e = e->debug_yellow()
+	e = e->font_black()
+	e = e->font_bold()
+	e = e->font_extrabold()
+	e = e->font_extralight()
+	e = e->font_light()
+	e = e->font_medium()
+	e = e->font_normal()
+	e = e->font_semibold()
+	e = e->font_thin()
+	e = e->h_flex()
+	e = e->margins(gk.Gpui_Edges{4, 4, 4, 4})
+	e = e->paddings(gk.Gpui_Edges{4, 4, 4, 4})
+	e = e->refine_style(gk.style_refinement_default())
+	e = e->v_flex()
+	e = e->large()
+	e = e->small()
+	e = e->with_size(gk.Size_Kind.X_Small)
+	e = e->xsmall()
+	e = e->aspect_ratio(1.5)
+	e = e->bg(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->border(gk.px(8))
+	e = e->border_b(gk.px(8))
+	e = e->border_color(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->border_l(gk.px(8))
+	e = e->border_r(gk.px(8))
+	e = e->border_t(gk.px(8))
+	e = e->border_x(gk.px(8))
+	e = e->border_y(gk.px(8))
+	e = e->bottom(gk.px(8))
+	e = e->col_end(3)
+	e = e->col_span(3)
+	e = e->col_start(3)
+	e = e->cursor(gk.Cursor_Style.Arrow)
+	e = e->flex_basis(gk.px(8))
+	e = e->flex_grow(1.5)
+	e = e->flex_shrink(1.5)
+	e = e->font_family("s")
+	e = e->font_weight(gk.Font_Weight{1.5})
+	e = e->gap(gk.px(8))
+	e = e->gap_x(gk.px(8))
+	e = e->gap_y(gk.px(8))
+	e = e->grid_cols(3)
+	e = e->grid_cols_max_content(3)
+	e = e->grid_cols_min_content(3)
+	e = e->grid_rows(3)
+	e = e->grid_rows_max_content(3)
+	e = e->grid_rows_min_content(3)
+	e = e->inset(gk.px(8))
+	e = e->left(gk.px(8))
+	e = e->line_clamp(3)
+	e = e->line_height(gk.px(8))
+	e = e->m(gk.px(8))
+	e = e->max_h(gk.px(8))
+	e = e->max_size(gk.px(8))
+	e = e->max_w(gk.px(8))
+	e = e->mb(gk.px(8))
+	e = e->min_h(gk.px(8))
+	e = e->min_size(gk.px(8))
+	e = e->min_w(gk.px(8))
+	e = e->ml(gk.px(8))
+	e = e->mr(gk.px(8))
+	e = e->mt(gk.px(8))
+	e = e->mx(gk.px(8))
+	e = e->my(gk.px(8))
+	e = e->opacity(1.5)
+	e = e->p(gk.px(8))
+	e = e->pb(gk.px(8))
+	e = e->pl(gk.px(8))
+	e = e->pr(gk.px(8))
+	e = e->pt(gk.px(8))
+	e = e->px(gk.px(8))
+	e = e->py(gk.px(8))
+	e = e->right(gk.px(8))
+	e = e->rounded(gk.px(8))
+	e = e->rounded_b(gk.px(8))
+	e = e->rounded_bl(gk.px(8))
+	e = e->rounded_br(gk.px(8))
+	e = e->rounded_l(gk.px(8))
+	e = e->rounded_r(gk.px(8))
+	e = e->rounded_t(gk.px(8))
+	e = e->rounded_tl(gk.px(8))
+	e = e->rounded_tr(gk.px(8))
+	e = e->row_end(3)
+	e = e->row_span(3)
+	e = e->row_start(3)
+	e = e->scrollbar_width(gk.px(8))
+	e = e->shadow([]gk.Box_Shadow{gk.Box_Shadow{gk.hsla(0.5, 0.25, 0.75, 1), gk.Gpui_Point{4, 4}, 4, 4, true}})
+	e = e->size(gk.px(8))
+	e = e->text_align(gk.Text_Align.Left)
+	e = e->text_bg(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->text_color(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->text_decoration_color(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->text_overflow(gk.Text_Overflow_Truncate{"s"})
+	e = e->text_size(gk.px(8))
+	e = e->top(gk.px(8))
+	e = e->w(gk.px(8))
+	e = e->style(.P_Neg_80, .Pl_6, .Pr_Neg_5)
+	_ = e
+}
+
+s_component_gutter_style :: proc() {
+	_ = gk.gutter_style_default()
+	e := gk.gutter_style_default()
+	e = e->with_active_line_number_color(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->with_gap(gk.px(8))
+	e = e->with_line_number_color(gk.hsla(0.5, 0.25, 0.75, 1))
+	e = e->with_line_number_font_family("s")
+	e = e->with_line_number_font_size(gk.px(8))
 	_ = e
 }
 
@@ -23081,6 +23248,7 @@ s_component_input :: proc() {
 	e = e->h(gk.px(8))
 	e = e->h_full()
 	e = e->id(gk.Id("id"))
+	e = e->list(gk.List_State{state = {h = 1}})
 	e = e->mask_toggle()
 	e = e->on_paste(gk.on(noop))
 	e = e->on_token_click(gk.on(noop))
@@ -23214,7 +23382,7 @@ s_component_input :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.P_Neg_1_4, .Pl_128, .Pr_Neg_11)
+	e = e->style(.Border_X_20, .Cursor_Context_Menu, .Gap_X_11)
 	_ = e
 }
 
@@ -23349,7 +23517,7 @@ s_component_input_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Top_Neg_3, .Font_Semibold, .Bottom_11)
+	e = e->style(.Max_Size_64, .Max_W_Neg_4_5, .Min_H_3_4)
 	_ = e
 }
 
@@ -23479,7 +23647,7 @@ s_component_input_group_addon :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Left_Full, .M_Neg_72, .Max_Size_5)
+	e = e->style(.My_64, .P_Neg_4, .Pl_3)
 	_ = e
 }
 
@@ -23678,7 +23846,7 @@ s_component_input_group_button :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Pb_Neg_32, .Pr_2_3, .Pt_Neg_2)
+	e = e->style(.Bottom_Neg_48, .Gap_Neg_2_5, .Gap_Y_2)
 	_ = e
 }
 
@@ -23808,7 +23976,7 @@ s_component_input_group_text :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.W_9, .Border_R_24, .Bottom_Neg_3_5)
+	e = e->style(.Max_W_1_4, .Mb_Neg_128, .Min_Size_0p5)
 	_ = e
 }
 
@@ -23933,7 +24101,7 @@ s_component_input_token :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Left_Neg_4_5, .Max_H_32, .Max_Size_Neg_2_3)
+	e = e->style(.My_Neg_3, .Pb_1_6, .Pl_Neg_1_3)
 	_ = e
 }
 
@@ -24069,7 +24237,7 @@ s_component_number_input :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mt_3_5, .Mx_Neg_2_5, .P_1_3)
+	e = e->style(.Text_Ellipsis_Middle, .W_40, .Border_L_6)
 	_ = e
 }
 
@@ -24222,7 +24390,7 @@ s_component_textarea :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Shadow_Xs, .Top_24, .W_Neg_1_2)
+	e = e->style(.M_7, .Max_H_Neg_5, .Max_W_3_5)
 	_ = e
 }
 
@@ -24348,7 +24516,7 @@ s_component_kbd :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.H_4_5, .Inset_Neg_3_4, .M_112)
+	e = e->style(.Mt_1_12, .Mx_Neg_11, .My_Neg_Px)
 	_ = e
 }
 
@@ -24476,7 +24644,7 @@ s_component_label :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_W_1, .Ml_96, .Mr_Neg_7)
+	e = e->style(.Py_Neg_Px, .Rounded_L_Xl, .Size_Neg_32)
 	_ = e
 }
 
@@ -24608,7 +24776,7 @@ s_component_link :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Pt_2, .Px_Neg_1_5, .Right_128)
+	e = e->style(.Gap_X_Neg_24, .H_1_4, .Inset_Neg_12)
 	_ = e
 }
 
@@ -24739,7 +24907,7 @@ s_component_list :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Bottom_5_6, .Gap_32, .Gap_X_Neg_2_5)
+	e = e->style(.Min_H_Neg_1_2, .Min_W_11, .Ml_Full)
 	_ = e
 }
 
@@ -24953,7 +25121,7 @@ s_component_list_item :: proc() {
 	e = e->role(gk.Role.Unknown)
 	e = e->tooltip_show_delay(250 * time.Millisecond)
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
-	e = e->style(.Mr_1_5, .Mt_Neg_16, .My_1)
+	e = e->style(.Size_0, .Top_2_3, .W_Neg_1_3)
 	_ = e
 }
 
@@ -25093,7 +25261,7 @@ s_component_marker :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Py_Neg_9, .Rounded_L_Md, .Size_Neg_2_5)
+	e = e->style(.Inset_72, .Left_Neg_2_4, .Max_H_1_5)
 	_ = e
 }
 
@@ -25224,7 +25392,7 @@ s_component_marker_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Gap_X_Neg_16, .H_1, .Inset_9)
+	e = e->style(.Ml_4_5, .Mr_Neg_3_5, .Mx_2_4)
 	_ = e
 }
 
@@ -25354,7 +25522,7 @@ s_component_marker_icon :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_H_72, .Min_Size_Neg_56, .Ml_3p5)
+	e = e->style(.Px_5, .Py_Neg_40, .Rounded_Br_Full)
 	_ = e
 }
 
@@ -25442,7 +25610,7 @@ s_component_context_menu_div :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.My_20, .P_Neg_1_12, .Pl_11)
+	e = e->style(.W_Neg_3_5, .Border_X_12, .Content_Stretch)
 	_ = e
 }
 
@@ -25623,7 +25791,7 @@ s_component_message :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Border_L_8, .Bottom_Neg_2, .Gap_Neg_128)
+	e = e->style(.Mb_96, .Min_H_Neg_7, .Min_W_4_5)
 	_ = e
 }
 
@@ -25753,7 +25921,7 @@ s_component_message_avatar :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_H_Neg_11, .Max_Size_Neg_Px, .Mb_72)
+	e = e->style(.Pb_8, .Pl_Neg_64, .Pt_4_5)
 	_ = e
 }
 
@@ -25884,7 +26052,7 @@ s_component_message_content :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mx_Neg_1_3, .P_0p5, .Pb_96)
+	e = e->style(.W_2_3, .Border_L_11, .Bottom_Neg_11)
 	_ = e
 }
 
@@ -26015,7 +26183,7 @@ s_component_message_footer :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Rounded_Tl_Md, .Text_Decoration_2, .W_2p5)
+	e = e->style(.M_11, .Max_H_Full, .Max_Size_Neg_8)
 	_ = e
 }
 
@@ -26145,7 +26313,7 @@ s_component_message_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.H_3_5, .Inset_Neg_2_4, .M_0)
+	e = e->style(.Mt_11, .Mx_Full, .My_Neg_8)
 	_ = e
 }
 
@@ -26276,7 +26444,7 @@ s_component_message_header :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_W_24, .Ml_Neg_1_5, .Mt_128)
+	e = e->style(.Right_1_5, .Rounded_T_3xl, .Size_Neg_80)
 	_ = e
 }
 
@@ -26431,7 +26599,7 @@ s_component_pagination :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Py_1_5, .Right_Neg_16, .Shadow_Lg)
+	e = e->style(.H_Neg_1_5, .Items_Stretch, .M_5)
 	_ = e
 }
 
@@ -26592,7 +26760,7 @@ s_component_tooltip :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.H_1_12, .Inset_Neg_10, .Left_Neg_48)
+	e = e->style(.Mr_Neg_56, .Mx_3p5, .My_Neg_2p5)
 	_ = e
 }
 
@@ -26732,7 +26900,7 @@ s_component_popover :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_W_Neg_2_3, .Mr_1_5, .Mt_Neg_16)
+	e = e->style(.Right_Neg_1_6, .Size_0, .Top_2_3)
 	_ = e
 }
 
@@ -26864,7 +27032,7 @@ s_component_progress :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Pt_Neg_5_6, .Py_40, .Right_Neg_32)
+	e = e->style(.Gap_Y_5_6, .H_Neg_40, .Left_1_12)
 	_ = e
 }
 
@@ -27001,7 +27169,7 @@ s_component_progress_circle :: proc() {
 	e = e->xsmall()
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Flex_Shrink_1, .Gap_X_72, .Gap_Y_Neg_6)
+	e = e->style(.Min_Size_Neg_3, .Ml_20, .Mr_Neg_1_4)
 	_ = e
 }
 
@@ -27134,7 +27302,7 @@ s_component_questionnaire :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Mb_112, .Min_H_Neg_0, .Min_Size_Neg_80)
+	e = e->style(.Pr_Neg_Px, .Px_8, .Py_Neg_64)
 	_ = e
 }
 
@@ -27267,7 +27435,7 @@ s_component_questionnaire_actions :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Pb_3, .Pl_Neg_2_4, .Pt_1p5)
+	e = e->style(.Bottom_48, .Gap_2_4, .Gap_X_Neg_20)
 	_ = e
 }
 
@@ -27403,7 +27571,7 @@ s_component_questionnaire_choice :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.W_72, .Border_R_16, .Bottom_Neg_3)
+	e = e->style(.Max_W_1_12, .Mb_Neg_11, .Min_H_Neg_Px)
 	_ = e
 }
 
@@ -27537,7 +27705,7 @@ s_component_questionnaire_choice_description :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.M_Full, .Max_H_Neg_8, .Max_W_56)
+	e = e->style(.P_56, .Pb_Neg_48, .Pr_3_4)
 	_ = e
 }
 
@@ -27670,7 +27838,7 @@ s_component_questionnaire_choices :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Mt_Neg_2_4, .My_1_6, .P_Neg_12)
+	e = e->style(.Top_4_5, .W_Neg_3, .Border_X_1)
 	_ = e
 }
 
@@ -27803,7 +27971,7 @@ s_component_questionnaire_description :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Right_Neg_Full, .Size_40, .Top_Neg_10)
+	e = e->style(.Left_4, .M_Neg_2p5, .Max_Size_2)
 	_ = e
 }
 
@@ -27936,7 +28104,7 @@ s_component_questionnaire_error :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Gap_Y_Neg_3_5, .Inset_24, .Left_Neg_0)
+	e = e->style(.Mr_Neg_10, .Mt_Neg_Full, .My_7)
 	_ = e
 }
 
@@ -28064,7 +28232,7 @@ s_component_questionnaire_input :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_9, .Min_W_Neg_64, .Mr_48)
+	e = e->style(.Py_64, .Right_Neg_4_5, .Size_20)
 	_ = e
 }
 
@@ -28197,7 +28365,7 @@ s_component_questionnaire_item :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Pr_Neg_20, .Px_1_4, .Py_Neg_1_12)
+	e = e->style(.Gap_X_20, .Gap_Y_Neg_1_6, .Inset_12)
 	_ = e
 }
 
@@ -28330,7 +28498,7 @@ s_component_questionnaire_next :: proc() {
 	e = e->xsmall()
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Bottom_10, .Flex_Nowrap, .Gap_X_5_6)
+	e = e->style(.Min_H_32, .Min_Size_Neg_2_3, .Ml_1_5)
 	_ = e
 }
 
@@ -28463,7 +28631,7 @@ s_component_questionnaire_previous :: proc() {
 	e = e->xsmall()
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Max_Size_Neg_128, .Mb_0p5, .Min_H_9)
+	e = e->style(.Pl_Full, .Pr_Neg_80, .Px_6)
 	_ = e
 }
 
@@ -28596,7 +28764,7 @@ s_component_questionnaire_progress :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.My_Neg_4, .Pb_2_3, .Pl_Neg_2)
+	e = e->style(.Border_8, .Bottom_3_5, .Gap_2)
 	_ = e
 }
 
@@ -28729,7 +28897,7 @@ s_component_questionnaire_skip :: proc() {
 	e = e->xsmall()
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Size_Neg_Full, .W_1_5, .Border_B_8)
+	e = e->style(.Max_H_6, .Max_Size_Neg_48, .Mb_32)
 	_ = e
 }
 
@@ -28862,7 +29030,7 @@ s_component_questionnaire_submit :: proc() {
 	e = e->xsmall()
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Inset_Neg_5, .M_1_4, .Max_H_Neg_128)
+	e = e->style(.Mx_Neg_1_3, .P_0p5, .Pb_96)
 	_ = e
 }
 
@@ -28995,7 +29163,7 @@ s_component_questionnaire_title :: proc() {
 	e = e->w(gk.px(8))
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Ml_Neg_8, .Mt_56, .Mx_Neg_4)
+	e = e->style(.Rounded_Xl, .Text_Xs, .W_64)
 	_ = e
 }
 
@@ -29210,7 +29378,7 @@ s_component_radio :: proc() {
 	e = e->track_scroll(gk.Scroll_Handle{state = {h = 1}})
 	e = e->child(gk.div())
 	e = e->children([]gk.Element{gk.div()})
-	e = e->style(.Font_Medium, .Bottom_1, .Flex_None)
+	e = e->style(.Max_W_Neg_40, .Min_H_3, .Min_Size_Neg_24)
 	_ = e
 }
 
@@ -29343,7 +29511,7 @@ s_component_radio_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_H_1_3, .Max_Size_Neg_12, .Mb_0)
+	e = e->style(.Pb_0p5, .Pl_96, .Pr_Neg_8)
 	_ = e
 }
 
@@ -29476,7 +29644,7 @@ s_component_rating :: proc() {
 	e = e->large()
 	e = e->small()
 	e = e->xsmall()
-	e = e->style(.Mx_5, .My_Neg_3p5, .Pb_24)
+	e = e->style(.Top_Neg_Px, .Border_7, .Bottom_3_4)
 	_ = e
 }
 
@@ -29650,7 +29818,7 @@ s_component_scrollable_div :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.W_7, .Border_R_12, .Bottom_Neg_2p5)
+	e = e->style(.Max_W_16, .Mb_Neg_10, .Min_H_Neg_Full)
 	_ = e
 }
 
@@ -29789,7 +29957,7 @@ s_component_searchable_list_item_element :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.M_Neg_56, .Max_Size_3p5, .Max_W_Neg_2p5)
+	e = e->style(.P_Neg_3, .Pl_24, .Pr_Neg_1p5)
 	_ = e
 }
 
@@ -29931,7 +30099,7 @@ s_component_select :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Mx_Neg_3_5, .P_2, .Pb_Neg_1_5)
+	e = e->style(.W_5_6, .Border_R_1, .Bottom_Neg_2_3)
 	_ = e
 }
 
@@ -30061,7 +30229,7 @@ s_component_separator :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Rounded_Tr_Lg, .Text_Ellipsis_Start, .W_48)
+	e = e->style(.M_1_4, .Max_H_Neg_128, .Max_W_0p5)
 	_ = e
 }
 
@@ -30187,7 +30355,7 @@ s_component_setting_field_text :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.H_12, .Inset_Neg_0, .Left_Neg_3p5)
+	e = e->style(.Mr_Neg_48, .Mx_32, .My_Neg_2_3)
 	_ = e
 }
 
@@ -30317,7 +30485,7 @@ s_component_setting_group :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_Neg_7, .Ml_4_5, .Mr_Neg_3_5)
+	e = e->style(.Py_Neg_56, .Rounded_Br_Sm, .Size_Neg_1_5)
 	_ = e
 }
 
@@ -30494,7 +30662,7 @@ s_component_sheet :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Right_Neg_11, .Self_Start, .Top_1_12)
+	e = e->style(.Items_Baseline, .M_4, .Max_H_Neg_3)
 	_ = e
 }
 
@@ -30643,7 +30811,7 @@ s_component_shimmer_text :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.H_Neg_128, .Invisible, .M_3_5)
+	e = e->style(.Mt_48, .Mx_Neg_3_4, .P_1p5)
 	_ = e
 }
 
@@ -30774,7 +30942,7 @@ s_component_grouped_sidebar :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_W_Full, .Ml_Neg_8, .Mt_56)
+	e = e->style(.Right_8, .Rounded_Xl, .Text_Xs)
 	_ = e
 }
 
@@ -30905,7 +31073,7 @@ s_component_sidebar :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pt_Neg_128, .Py_1, .Right_96)
+	e = e->style(.Gap_Y_128, .H_Neg_1, .Inset_Neg_9)
 	_ = e
 }
 
@@ -31079,7 +31247,7 @@ s_component_sidebar_footer :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.Gap_Y_Neg_112, .H_Neg_Px, .Left_32)
+	e = e->style(.Mr_3p5, .Mt_Neg_2p5, .My_2)
 	_ = e
 }
 
@@ -31264,7 +31432,7 @@ s_component_sidebar_header :: proc() {
 	e = e->tab_stop(true)
 	e = e->track_focus(gk.Focus_Handle(gk.Handle{1}))
 	e = e->window_control_area(gk.Window_Control_Area.Drag)
-	e = e->style(.Mt_Neg_1_2, .My_11, .P_80)
+	e = e->style(.Top_2_5, .W_Neg_1_5, .Border_T_24)
 	_ = e
 }
 
@@ -31391,7 +31559,7 @@ s_component_sidebar_menu :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Right_64, .Rounded_Tr_Sm, .Text_Right)
+	e = e->style(.Inset_Neg_6, .M_1p5, .Max_H_Neg_1_2)
 	_ = e
 }
 
@@ -31528,7 +31696,7 @@ s_component_sidebar_menu_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Gap_Y_Neg_1, .H_Neg_9, .Left_2_5)
+	e = e->style(.Mr_32, .Mt_Neg_2_3, .My_1_5)
 	_ = e
 }
 
@@ -31663,7 +31831,7 @@ s_component_skeleton :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Min_Size_Neg_2_5, .Ml_1p5, .Mr_Neg_1_2)
+	e = e->style(.Py_Neg_20, .Rounded_B_Xs, .Size_96)
 	_ = e
 }
 
@@ -31794,7 +31962,7 @@ s_component_slider :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pr_Neg_4, .Px_3, .Py_Neg_2_4)
+	e = e->style(.Gap_X_4, .Gap_Y_Neg_3_4, .Inset_20)
 	_ = e
 }
 
@@ -31924,7 +32092,7 @@ s_component_speech_button :: proc() {
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
 	e = e->disabled(true)
-	e = e->style(.Border_Y_32, .Cursor_W_Resize, .Gap_X_32)
+	e = e->style(.Min_H_1_6, .Min_Size_Neg_1_12, .Ml_10)
 	_ = e
 }
 
@@ -32063,7 +32231,7 @@ s_component_speech_waveform :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_Size_Neg_8, .Mb_56, .Min_H_Neg_4)
+	e = e->style(.Pl_Neg_4_5, .Pt_3_5, .Px_Neg_3)
 	_ = e
 }
 
@@ -32204,7 +32372,7 @@ s_component_status_bar :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.P_Neg_2p5, .Pl_20, .Pr_Neg_1_6)
+	e = e->style(.Border_Y_0, .Cursor_Nesw_Resize, .Gap_X_1_6)
 	_ = e
 }
 
@@ -32340,7 +32508,7 @@ s_component_stepper :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Top_Neg_80, .Border_32, .Bottom_2_5)
+	e = e->style(.Max_Size_Neg_16, .Mb_1, .Min_H_96)
 	_ = e
 }
 
@@ -32475,7 +32643,7 @@ s_component_stepper_item :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.M_11, .Max_H_Full, .Max_Size_Neg_8)
+	e = e->style(.My_Neg_Full, .Pb_5_6, .Pl_Neg_4_5)
 	_ = e
 }
 
@@ -32615,7 +32783,7 @@ s_component_switch :: proc() {
 	e = e->xsmall()
 	e = e->disabled(true)
 	e = e->focus_ring(true)
-	e = e->style(.Mt_Neg_40, .My_3, .P_Neg_1p5)
+	e = e->style(.Top_80, .W_Neg_5, .Border_X_32)
 	_ = e
 }
 
@@ -32838,7 +33006,7 @@ s_component_tab :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Content_Normal, .Gap_Px, .Gap_Y_80)
+	e = e->style(.Min_Size_40, .Min_W_Neg_32, .Mr_24)
 	_ = e
 }
 
@@ -32982,7 +33150,7 @@ s_component_tab_bar :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Mb_Auto, .Min_H_Neg_72, .Min_W_5)
+	e = e->style(.Pt_64, .Px_Neg_56, .Right_3p5)
 	_ = e
 }
 
@@ -33155,7 +33323,7 @@ s_component_table :: proc() {
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
 	e = e->with_ix(3)
-	e = e->style(.Pt_Neg_3p5, .Py_2p5, .Right_Neg_20)
+	e = e->style(.Gap_Y_3p5, .H_Neg_2p5, .Left_1)
 	_ = e
 }
 
@@ -33284,7 +33452,7 @@ s_component_table_body :: proc() {
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
 	e = e->with_ix(3)
-	e = e->style(.Bottom_Neg_48, .Gap_Neg_2_5, .Gap_Y_2)
+	e = e->style(.Min_Size_112, .Min_W_Neg_0, .Ml_Neg_80)
 	_ = e
 }
 
@@ -33418,7 +33586,7 @@ s_component_table_caption :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Max_W_80, .Mb_Neg_6, .Min_Size_40)
+	e = e->style(.Pr_5, .Pt_Neg_40, .Py_32)
 	_ = e
 }
 
@@ -33554,7 +33722,7 @@ s_component_table_cell :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.P_Neg_5_6, .Pl_40, .Pr_Neg_3_5)
+	e = e->style(.Border_Y_5, .Flex_1, .Gap_X_3_5)
 	_ = e
 }
 
@@ -33683,7 +33851,7 @@ s_component_table_footer :: proc() {
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
 	e = e->with_ix(3)
-	e = e->style(.Top_Neg_10, .W_Neg_80, .Border_Y_1)
+	e = e->style(.Max_Size_2, .Max_W_Neg_1_3, .Min_H_112)
 	_ = e
 }
 
@@ -33819,7 +33987,7 @@ s_component_table_head :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Left_Neg_2_5, .Max_H_1_6, .Max_Size_Neg_1_12)
+	e = e->style(.My_Neg_1_5, .Pb_11, .Pl_Neg_0p5)
 	_ = e
 }
 
@@ -33948,7 +34116,7 @@ s_component_table_header :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Mr_Neg_1_5, .Mx_128, .My_Neg_1)
+	e = e->style(.Size_Neg_0, .Top_Neg_2_3, .Font_Extralight)
 	_ = e
 }
 
@@ -34079,7 +34247,7 @@ s_component_table_row :: proc() {
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
 	e = e->with_ix(3)
-	e = e->style(.Py_Neg_3, .Rounded_Bl_None, .Size_Neg_10)
+	e = e->style(.Inset_2_4, .Left_Neg_1, .M_Neg_9)
 	_ = e
 }
 
@@ -34223,7 +34391,7 @@ s_component_tag :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Gap_Y_6, .H_Neg_48, .Left_1_2)
+	e = e->style(.Mr_1_5, .Mt_Neg_16, .My_1)
 	_ = e
 }
 
@@ -34515,7 +34683,7 @@ s_component_time_field :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Px_Neg_2_3, .Right_1_5, .Rounded_T_3xl)
+	e = e->style(.H_24, .Inset_Neg_1_4, .Left_Neg_8)
 	_ = e
 }
 
@@ -34649,7 +34817,7 @@ s_component_toolbar :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Gap_Neg_128, .Gap_Y_1, .H_96)
+	e = e->style(.Min_W_4_5, .Ml_Neg_3_5, .Mt_2_4)
 	_ = e
 }
 
@@ -34782,7 +34950,7 @@ s_component_toolbar_group :: proc() {
 	e = e->small()
 	e = e->with_size(gk.Size_Kind.X_Small)
 	e = e->xsmall()
-	e = e->style(.Mb_Neg_1_6, .Min_Size_16, .Min_W_Neg_10)
+	e = e->style(.Pt_Neg_16, .Py_10, .Right_Auto)
 	_ = e
 }
 
@@ -34909,7 +35077,7 @@ s_component_tooltip_tooltip :: proc() {
 	e = e->text_size(gk.px(8))
 	e = e->top(gk.px(8))
 	e = e->w(gk.px(8))
-	e = e->style(.Pb_6, .Pl_Neg_5, .Pt_3p5)
+	e = e->style(.Bottom_96, .Gap_5, .Gap_X_Neg_40)
 	_ = e
 }
 
@@ -35229,6 +35397,7 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	s_component_diff_gutter_marker()
 	s_component_diff_line_range()
 	s_component_diff_parse_options()
+	s_component_diff_span_highlight()
 	s_component_close_panel()
 	s_component_toggle_zoom()
 	s_component_empty()
@@ -35241,6 +35410,8 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	s_component_form()
 	s_component_group_box()
 	s_component_hover_card()
+	s_component_editor()
+	s_component_gutter_style()
 	s_component_input()
 	s_component_input_group()
 	s_component_input_group_addon()
@@ -35346,7 +35517,7 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	s_component_toolbar_group()
 	s_component_tooltip_tooltip()
 	a.runs += 1
-	fmt.printf("gensample: 32507 calls in 431 node types, run %d\n", a.runs)
+	fmt.printf("gensample: 32659 calls in 434 node types, run %d\n", a.runs)
 	return gk.div(.Size_Full)->text("gensample")
 }
 

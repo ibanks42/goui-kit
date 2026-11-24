@@ -62,7 +62,7 @@ INPUT_PAGES := []Page {
 			return gk.div()->w(gk.px(240))->child(gk.textarea(a.input.text))
 		}},
 	{"editor", proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
-			return gk.div()->w(gk.px(480))->h(gk.px(160))->child(gk.editor(a.input.editor))
+			return gk.div()->w(gk.px(480))->h(gk.px(160))->child(gk.base_editor(a.input.editor))
 		}},
 	{"number-input", proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 			return gk.div()->w(gk.px(200))->child(gk.number_input(a.input.number))

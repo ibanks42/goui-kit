@@ -1031,7 +1031,7 @@ path, text)`, then `gk.conflicts(file, cx)`).
   bridge (`gk_editor.ASK_TRAITS`): `HighlightStyleResolver::style(name) -> Option<HighlightStyle>` is
   `editor_text::GkStyles`, the app's procedure asked once per name, unstyled until answered. Note that
   the kit's component inputs set their own editor style on every render; `set_editor_style` is for the
-  base elements (`gk.editor`, `gk.base_input`, `gk.base_textarea`).
+  base elements (`gk.base_editor`, `gk.base_input`, `gk.base_textarea`).
 
 - **Actions in call ops.** A `Box<dyn Action>` argument (`EditorState::route_overlay_action`) is the
   action's id (`gk.action(cx, name)`, `gk.action_of(cx, value)`), which a call op reads as a tape does
@@ -1596,7 +1596,7 @@ component layer's `Panel` once, an entity behind a state handle (Odin `gk.Dock_P
   names are interned (`panel_name` is `&'static str` upstream);
 - `set_active`, `set_zoomed`, `on_added_to`, `on_removed` reach the app's handler as a queued
   `gk.Panel_Event{kind, flag}` (shape `PANEL_EVENT 36`); `gk.panel_emit` emits upstream's
-  `PanelEvent` (zoom in, zoom out, layout changed). The kit (0.9.1 and 0.10.0) zooms tab groups, never a panel,
+  `PanelEvent` (zoom in, zoom out, layout changed). The kit (0.9.1 to 0.11.0) zooms tab groups, never a panel,
   so a panel's ZoomIn is delivered and ignored (tested);
 - **by rule**: a generic `P: Panel` is GkPanel (descriptor `entity crate::dock::GkPanel`, Odin
   `gk.Dock_Panel`), and `Arc<dyn PanelView>` given to the kit is made from a panel handle
@@ -1605,7 +1605,10 @@ component layer's `Panel` once, an entity behind a state handle (Odin `gk.Dock_P
   `panel_view`, `PanelHandle::new`, `from_view`; the trait methods of both `Panel`s and both
   `PanelView`s count bridged (GkPanel's own, or upstream's blanket impl over `Entity<GkPanel>`).
 - `gk.dock_area_skinned(cx, id)` is the kit's styled dock (`DockSkin::dock_area`, whose result
-  pairs the area with its skin, which a call cannot carry), call `DOCK_AREA_SKINNED 147`;
+  pairs the area with its skin, which a call cannot carry), call `DOCK_AREA_SKINNED 147`; its
+  settings are `gk.dock_skin_panel_style`, `dock_skin_toggle_button_visible`,
+  `dock_skin_collapsed_tab_bar_visible`, `dock_skin_split_divider_line_visible` and their `set_`
+  forms (call `DOCK_SKIN`);
   `gk.dock_view(dock)` draws a dock area in a view (node `DOCK_VIEW 33`).
 
 | number | what |
@@ -1938,15 +1941,15 @@ handle; the hit area, cursor and drag stay upstream's.
   bool + Send + Sync>` the library's closure keeps the set's bytes (`crate::values::value_set`), so a
   value holding it reads back as the set (`impl Wire for Box<dyn Fn(&K) -> bool + ..>`). A variant of an
   enum with data whose field is such a set is buildable even when the enum was first met read back
-  (`gk_comp6.set_variants`): `Matcher::Custom` is `gk.Matcher_Custom{v0 = []gk.Naive_Date}`.
+  (`gk_comp6.set_variants`): `Matcher::Custom` is `gk.Matcher_Custom{v0 = []gk.Civil_Date}`.
 - `Matcher::Interval(IntervalMatcher)` and `Range(RangeMatcher)`: their parts have private fields and
-  no reads; they are library values both ways (`gk.Interval_Matcher {before, after: Maybe(Naive_Date)}`,
+  no reads; they are library values both ways (`gk.Interval_Matcher {before, after: Maybe(Civil_Date)}`,
   `gk.Range_Matcher {from, to}`, rt_values.odin), made by the enum's own constructors
-  (`Matcher::interval`, `range`) and destructured, and the library keeps what each was made of, keyed by
-  its 8 bytes, to write it back (a matcher's days cannot be recovered through `Matcher::matched`: the
+  (`Matcher::interval`, `range`), and read back through a struct with the same two
+  `Option<civil::Date>` fields, checked once against parts made with known dates (a matcher's days cannot be recovered through `Matcher::matched`: the
   days it leaves out may be a single day anywhere). With this every variant of Matcher is reachable both
   ways: `CalendarState::disabled_matcher`, `set_disabled_matcher`, `disabled_matcher_ref` and
-  `DatePickerState::disabled_matcher` leave the partial-options table. chrono's NaiveDate is nameable in
+  `DatePickerState::disabled_matcher` leave the partial-options table. jiff's civil::Date is nameable in
   closure types (`gk_lists.THIRD_PARTY`).
 
 ### 11.22 Boxed values
@@ -2822,18 +2825,19 @@ caller).
 
 ### 13.13 Calendar values, durations read back
 
-chrono's `NaiveDate`, `NaiveTime`, `NaiveDateTime` and `Weekday` are plain records both ways
-(`["chrono", Name]`, gen/gk_values.py): Odin `gk.Naive_Date{year, month, day}`,
-`gk.Naive_Time{hour, minute, second, nanosecond}`, `gk.Naive_Date_Time{date, time}`,
-`gk.Weekday` (Mon = 0); wire: i32 year, u32 month, u32 day; u32 hour, minute, second, nanosecond;
-a weekday a u8. Odin's writers (`put_naive_date` and the rest, rt_values.odin) stop on a date or
-time that does not exist ("the date 2026-02-30 does not exist"); the library's `Unwire` impls
-(core/src/values.rs) take what a raw C client sends anyway as the first day of the era or
+jiff's `civil::Date`, `civil::Time`, `civil::DateTime` and `civil::Weekday` (gpui-kit 0.11 moved
+its date family from chrono to jiff) are plain records both ways (`["civil", Name]`,
+gen/gk_values.py): Odin `gk.Civil_Date{year, month, day}`, `gk.Civil_Time{hour, minute, second,
+nanosecond}`, `gk.Civil_Date_Time{date, time}`, `gk.Weekday` (Mon = 0); wire: i32 year, u32 month,
+u32 day; u32 hour, minute, second, nanosecond; a weekday a u8. Odin's writers (`put_civil_date` and
+the rest, rt_values.odin) stop on a date or time that does not exist or that jiff cannot hold
+(years -9999 to 9999) ("the date 2026-02-30 does not exist"); the library's `Unwire` impls
+(core/src/values.rs) take what a raw C client sends anyway as jiff's zero date (0000-01-01) or
 midnight, never a panic. This makes upstream's `Date` and `DateTime` enums buildable: a calendar's,
 a date picker's and a time field's dates and times are written and read
-(`gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})`, `gk.days(cal, cx)`,
+(`gk.set_date(cal, cx, gk.Date_Single{gk.Civil_Date{2024, 2, 29}})`, `gk.days(cal, cx)`,
 `gk.date_time(picker, cx)`, `gk.time(field, cx)`, `gk.date_range_preset_date_time`). core/Cargo.toml
-names chrono at the version gpui-base already links (no new crate).
+names jiff at the version gpui-base already links (no new crate).
 
 A `std::time::Duration` read back (a result or a payload) is i64 nanoseconds, Odin's
 `time.Duration` (it was written as milliseconds in a u32 only).

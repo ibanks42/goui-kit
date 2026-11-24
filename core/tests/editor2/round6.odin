@@ -158,7 +158,7 @@ view6 :: proc(a: ^App, cx: ^gk.Cx) -> (gk.Element, bool) {
 			increment_button(gk.Decorate{style = gk.style_refinement_default()->bg(gk.theme(.Primary)), content = r.plus})->
 			decrement_button(gk.Decorate{content = r.minus})), true
 	case "lsp", "diagnostic", "overlay-keys":
-		return gk.div()->w(gk.px(420))->h(gk.px(120))->child(gk.editor(a.ed)), true
+		return gk.div()->w(gk.px(420))->h(gk.px(120))->child(gk.base_editor(a.ed)), true
 	case "edits", "context-menu":
 		return gk.div()->w(gk.px(220))->child(gk.input(a.inp)), true
 	}

@@ -22,6 +22,8 @@ package gk
 
 import "base:intrinsics"
 import "base:runtime"
+import "core:math"
+import "core:time"
 
 // Motion_Prop is the style property an animation moves: numbers (opacity 0 to 1, positions and
 // sizes in pixels) or colours.
@@ -303,16 +305,18 @@ text_selection_scope :: proc(el: $E, scope: Text_Selection_Scope, loc := #caller
 }
 
 // Transformation is gpui's Transformation of an svg (Svg::with_transformation): a scale (1 is the
-// svg's size), a translation in pixels and a rotation in radians, about the svg's centre. Make one
-// with gk.transform; a zero scale draws nothing.
+// svg's size), a translation in pixels and a rotation in radians, about the svg's centre, and an
+// alpha that multiplies the svg's own (nil is 1, opaque; unlike an element's opacity it applies to
+// the svg alone). Make one with gk.transform; a zero scale draws nothing.
 Transformation :: struct {
 	scale:     [2]f32,
 	translate: [2]f32,
 	rotate:    f32,
+	alpha:     Maybe(f32),
 }
 
-transform :: proc(scale := [2]f32{1, 1}, translate := [2]f32{0, 0}, rotate: f32 = 0) -> Transformation {
-	return {scale, translate, rotate}
+transform :: proc(scale := [2]f32{1, 1}, translate := [2]f32{0, 0}, rotate: f32 = 0, alpha: f32 = 1) -> Transformation {
+	return {scale, translate, rotate, alpha}
 }
 
 @(private)
@@ -322,4 +326,63 @@ put_transformation :: proc(b: ^Tape, t: Transformation) {
 	put_f32(b, t.translate[0])
 	put_f32(b, t.translate[1])
 	put_f32(b, t.rotate)
+	put_f32(b, t.alpha.? or_else 1)
+}
+
+// Svg_Easing is how a value of a Timed_Transformation changes over one pass (gpui's Easing of an
+// svg, not gk.Easing of an animation). Heartbeat is two quick beats then a rest: it reaches `to`
+// at the first beat and is back at `from` by the end of the period.
+Svg_Easing :: enum u8 {
+	Linear,
+	Quadratic,
+	Ease_In_Out,
+	Ease_Out_Quint,
+	Heartbeat,
+}
+
+// Timed_Transformation is gpui's TimedTransformation (Svg::with_timed_transformation): the svg moves
+// from `from` to `to` over every `period`, forever, drawn by the library without a turn of the app
+// (it replaces with_transformation; layout and hit testing keep the svg's place). Each value has
+// its own easing; `alternate` goes back from `to` to `from` within each period instead of jumping;
+// `max_fps` (0: no limit) caps the frames a second asked for while nothing else needs one. Make one
+// with gk.timed_transform or gk.timed_rotation.
+Timed_Transformation :: struct {
+	period:             time.Duration,
+	from, to:           Transformation,
+	scale_easing:       Svg_Easing,
+	translation_easing: Svg_Easing,
+	rotation_easing:    Svg_Easing,
+	alpha_easing:       Svg_Easing,
+	alternate:          bool,
+	max_fps:            f32,
+}
+
+// timed_transform moves from `from` to `to` every `period`, every value with one easing.
+timed_transform :: proc(period: time.Duration, from, to: Transformation, easing := Svg_Easing.Linear, alternate := false, max_fps: f32 = 0) -> Timed_Transformation {
+	return {period, from, to, easing, easing, easing, easing, alternate, max_fps}
+}
+
+// timed_rotation turns `from` clockwise, one full turn every `period` (TimedTransformation::rotation).
+timed_rotation :: proc(period: time.Duration, from := Transformation{scale = {1, 1}}) -> Timed_Transformation {
+	to := from
+	to.rotate += math.TAU
+	return timed_transform(period, from, to)
+}
+
+@(private)
+put_timed_transformation :: proc(b: ^Tape, t: Timed_Transformation) {
+	for e in ([4]Svg_Easing{t.scale_easing, t.translation_easing, t.rotation_easing, t.alpha_easing}) {
+		if u8(e) > u8(max(Svg_Easing)) {
+			stop({}, "gk.Svg_Easing(%d) is not an easing", u8(e))
+		}
+	}
+	put_i64(b, i64(t.period))
+	put_transformation(b, t.from)
+	put_transformation(b, t.to)
+	put_u8(b, u8(t.scale_easing))
+	put_u8(b, u8(t.translation_easing))
+	put_u8(b, u8(t.rotation_easing))
+	put_u8(b, u8(t.alpha_easing))
+	put_u8(b, u8(t.alternate))
+	put_f32(b, t.max_fps)
 }

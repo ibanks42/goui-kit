@@ -623,6 +623,7 @@ pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option
                 source.wanted.insert(key);
             }
             source.missed = true;
+            crate::rt::trace(|| format!("row placeholder source={src} key={key:#x} frame={frame}"));
             if source.miss_frame != frame {
                 source.miss_frame = frame;
                 gk_meter::bump(|c| c.placeholder_frames += 1);

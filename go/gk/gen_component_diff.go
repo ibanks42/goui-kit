@@ -126,7 +126,8 @@ func (e DiffEl) OnAddAnnotation(handler func(cx *Cx, e DiffLineRangeRead)) DiffE
 	return e
 }
 
-// Handles a click on a line's code, outside a text-selection drag.
+// Handles a click on a line's code, outside a text-selection drag. A click that `OnTextClick`
+// claims does not reach this handler.
 //
 // OnLineClick is <gpui_kit::component::diff::Diff>::on_line_click.
 func (e DiffEl) OnLineClick(handler func(cx *Cx, e Event108)) DiffEl {
@@ -144,12 +145,48 @@ func (e DiffEl) OnLineHover(handler func(cx *Cx, e Option[DiffLinePosition])) Di
 	return e
 }
 
+// Handles a click on a character of source text, outside a text-selection drag. The text handler
+// runs first and its return value decides who wins: true claims the click and `OnLineClick` is not
+// called for it; false lets the click fall through to the line handler. A click that lands on no
+// character goes to the line handler directly.
+//
+// OnTextClick is <gpui_kit::component::diff::Diff>::on_text_click.
+func (e DiffEl) OnTextClick(handler func(cx *Cx, e Event121) bool) DiffEl {
+	o := op(e.n, 284)
+	o.u32(register(handler, 121))
+	return e
+}
+
+// Reports the character under the pointer and the held modifiers, or `None` when the pointer is
+// over no source text. Fires as the pointer moves and, while the diff has focus, when a modifier
+// goes down or up with the pointer at rest - so a link can light up on the key alone.
+//
+// OnTextHover is <gpui_kit::component::diff::Diff>::on_text_hover.
+func (e DiffEl) OnTextHover(handler func(cx *Cx, e Event122)) DiffEl {
+	o := op(e.n, 285)
+	o.u32(register(handler, 122))
+	return e
+}
+
 // Wraps long lines at the column width instead of scrolling horizontally. Default is false.
 //
 // SoftWrap is <gpui_kit::component::diff::Diff>::soft_wrap.
 func (e DiffEl) SoftWrap(value bool) DiffEl {
 	o := op(e.n, 264)
 	o.bool(value)
+	return e
+}
+
+// Emphasizes character spans inside lines, such as search matches, over decorations and inline
+// emphasis.
+//
+// SpanHighlights is <gpui_kit::component::diff::Diff>::span_highlights.
+func (e DiffEl) SpanHighlights(highlights []DiffSpanHighlight) DiffEl {
+	o := op(e.n, 282)
+	o.u32(uint32(len(highlights)))
+	for _, x0 := range highlights {
+		o.u32(takeValue(x0.n))
+	}
 	return e
 }
 
@@ -170,6 +207,15 @@ func (e DiffEl) SplitRatio(ratio float32) DiffEl {
 func (e DiffEl) SyntaxHighlight(value bool) DiffEl {
 	o := op(e.n, 265)
 	o.bool(value)
+	return e
+}
+
+// The pointer shown over source text, such as a pointing hand while the hovered span is a link.
+//
+// TextCursor is <gpui_kit::component::diff::Diff>::text_cursor.
+func (e DiffEl) TextCursor(cursor CursorStyle) DiffEl {
+	o := op(e.n, 283)
+	o.u16(uint16(cursor))
 	return e
 }
 
@@ -629,6 +675,24 @@ type DiffFile struct{ n *node }
 
 func (e DiffFile) valueNode() *node { return e.n }
 
+// Parts of a file shown for reference, without changes, each keeping its own line numbers: `(first
+// line, text)` per part, in file order without overlap. A first line below 1 is clamped to 1. Like
+// `gk.NewDiffFileUnchanged` it is a single column in every display mode; the lines between the
+// parts are simply not there.
+//
+// NewDiffFileExcerpts is <gpui_kit::component::diff::DiffFile>::excerpts.
+func NewDiffFileExcerpts(path string, parts []TupleIntString) DiffFile {
+	n := newValue(890)
+	o := nodeArgs(n)
+	o.str(path)
+	o.u32(uint32(len(parts)))
+	for _, x0 := range parts {
+		putUsize(o, x0.V0)
+		o.str(x0.V1)
+	}
+	return DiffFile{n}
+}
+
 // NewDiffFileParseAt is (|patch, index: usize| crate::shim_text::nth(<gpui_kit::component::diff::DiffFile>::parse(patch), index)).
 func NewDiffFileParseAt(patch string, index int) DiffFile {
 	n := newValue(847)
@@ -747,5 +811,49 @@ func NewDiffParseOptionsDefault() DiffParseOptions {
 func (e DiffParseOptions) TruncatedHunks(truncatedHunks bool) DiffParseOptions {
 	o := op(e.n, 256)
 	o.bool(truncatedHunks)
+	return e
+}
+
+// DiffSpanHighlight is gpui_kit::component::diff::DiffSpanHighlight.
+type DiffSpanHighlight struct{ n *node }
+
+func (e DiffSpanHighlight) valueNode() *node { return e.n }
+
+// Highlights `span` of the line at `position`.
+//
+// NewDiffSpanHighlight is <gpui_kit::component::diff::DiffSpanHighlight>::new.
+func NewDiffSpanHighlight(position DiffLinePosition, span Range) DiffSpanHighlight {
+	n := newValue(891)
+	o := nodeArgs(n)
+	putObj(o, position.h)
+	putRange(o, span)
+	return DiffSpanHighlight{n}
+}
+
+// Sets the fill, which defaults to a translucent warning color. A fully transparent fill leaves
+// whatever the line shows beneath the span: for emphasis carried by the text itself, such as a
+// link.
+//
+// WithBackground is <gpui_kit::component::diff::DiffSpanHighlight>::with_background.
+func (e DiffSpanHighlight) WithBackground(background Color) DiffSpanHighlight {
+	o := op(e.n, 256)
+	putColor(o, background)
+	return e
+}
+
+// Sets the text color over the fill, keeping it readable on a strong one.
+//
+// WithForeground is <gpui_kit::component::diff::DiffSpanHighlight>::with_foreground.
+func (e DiffSpanHighlight) WithForeground(foreground Color) DiffSpanHighlight {
+	o := op(e.n, 257)
+	putColor(o, foreground)
+	return e
+}
+
+// Underlines the span in its text color, the way a link reads.
+//
+// WithUnderline is <gpui_kit::component::diff::DiffSpanHighlight>::with_underline.
+func (e DiffSpanHighlight) WithUnderline() DiffSpanHighlight {
+	op(e.n, 258)
 	return e
 }

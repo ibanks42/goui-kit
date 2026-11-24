@@ -43,7 +43,7 @@ pub fn apply_component_searchable_list_item_element(dx: &mut Dx, mut el: gpui_ki
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::searchable_list::SearchableListItemElement>::checked(el, a0) }; }
-            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::searchable_list::SearchableListItemElement>::check_icon(el, a0) }; }
+            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_89(r.u16())); <gpui_kit::component::searchable_list::SearchableListItemElement>::check_icon(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

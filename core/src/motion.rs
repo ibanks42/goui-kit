@@ -343,3 +343,50 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
         None => bad("an animation wraps a styled element (one of gk.Animatable_Element)".into()),
     })
 }
+
+// ------------------------------------------------------------------ svg transformations (13.30)
+
+/// gpui's Transformation of an svg: f32 scale x, y, translation x, y (pixels), rotation (radians),
+/// alpha (1 opaque; Odin writes 1 for a gk.Transformation without one).
+pub fn transformation(r: &mut R) -> gpui_kit::Transformation {
+    let scale = gpui_kit::size(r.f32(), r.f32());
+    let translate = gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32()));
+    let rotate = gpui_kit::radians(r.f32());
+    gpui_kit::Transformation::scale(scale)
+        .with_translation(translate)
+        .with_rotation(rotate)
+        .with_alpha(r.f32())
+}
+
+/// gpui's easing of a timed transformation (Svg_Easing, Linear = 0); an unknown one is Linear.
+fn svg_easing(n: u8) -> gpui_kit::Easing {
+    use gpui_kit::Easing as E;
+    match n {
+        1 => E::Quadratic,
+        2 => E::EaseInOut,
+        3 => E::EaseOutQuint,
+        4 => E::Heartbeat,
+        _ => E::Linear,
+    }
+}
+
+/// gpui's TimedTransformation (Svg::with_timed_transformation): i64 period in nanoseconds (a
+/// negative one is zero: nothing moves), the transformations at the start and the end of each
+/// period, u8 easings of the scale, translation, rotation and alpha, u8 alternate, f32 the most
+/// frames a second it asks for (0: no limit; upstream ignores a value that is not positive).
+pub fn timed_transformation(r: &mut R) -> gpui_kit::TimedTransformation {
+    let period = Duration::from_nanos(r.i64().max(0) as u64);
+    let from = transformation(r);
+    let to = transformation(r);
+    let mut t = gpui_kit::TimedTransformation::new(period)
+        .from(from)
+        .to(to)
+        .with_scale_easing(svg_easing(r.u8()))
+        .with_translation_easing(svg_easing(r.u8()))
+        .with_rotation_easing(svg_easing(r.u8()))
+        .with_alpha_easing(svg_easing(r.u8()));
+    if r.u8() != 0 {
+        t = t.alternate();
+    }
+    t.with_max_fps(r.f32())
+}
