@@ -83,6 +83,21 @@ impl<'a> Dx<'a> {
     /// Decodes node `n` (the argument of a `CHILD` op) into its element.
     pub fn child(&mut self, n: u32) -> AnyElement {
         let (ty, args, first) = self.t.node(n);
+        if ty < 256 {
+            return match crate::hand::node(self, ty, args, first) {
+                Some(el) => el,
+                None => {
+                    eprintln!("gk: unknown node type {ty}");
+                    div().into_any_element()
+                }
+            };
+        }
+        // Fast-path Div / HFlex / VFlex (core family, always linked): skips KEYS_NODE + FAM_REG.
+        if (256..=258).contains(&ty) {
+            return crate::generated::make_gpui_div(self, ty, args, first)
+                .map(|e| e.into_any_element())
+                .unwrap_or_else(|| div().into_any_element());
+        }
         if let Some(el) = crate::generated::node(self, ty, args, first) {
             return el;
         }
@@ -540,7 +555,15 @@ pub fn fire<P: Wire + ?Sized, T: Unwire + Default>(
     window: &mut Window,
     cx: &mut App,
 ) -> T {
-    returned(rt::fire_req(&event_req(h, shape, payload), Some(window), cx))
+    returned(rt::fire_event(
+        h.view,
+        h.generation,
+        h.handler,
+        shape,
+        |buf| payload.put(buf),
+        Some(window),
+        cx,
+    ))
 }
 
 /// `fire` for a closure that receives no window.
@@ -550,7 +573,15 @@ pub fn fire_app<P: Wire + ?Sized, T: Unwire + Default>(
     payload: &P,
     cx: &mut App,
 ) -> T {
-    returned(rt::fire_req(&event_req(h, shape, payload), None, cx))
+    returned(rt::fire_event(
+        h.view,
+        h.generation,
+        h.handler,
+        shape,
+        |buf| payload.put(buf),
+        None,
+        cx,
+    ))
 }
 
 /// `fire` with a payload that is already on the wire, and the handler's return value as it
@@ -911,6 +942,19 @@ pub fn with_tape<T>(
     cx: &mut App,
     f: impl FnOnce(&mut Dx, u32) -> T,
 ) -> T {
+    with_tape_node(tape, view, tape.root, window, cx, f)
+}
+
+/// Runs `f` over a specific `node` of `tape` (a cell inside a table row's tape).
+#[inline]
+pub fn with_tape_node<T>(
+    tape: &Rc<Tape>,
+    view: u64,
+    node: u32,
+    window: &mut Window,
+    cx: &mut App,
+    f: impl FnOnce(&mut Dx, u32) -> T,
+) -> T {
     let mut dx = Dx {
         t: tape,
         ops: tape.ops(),
@@ -918,15 +962,37 @@ pub fn with_tape<T>(
         window,
         cx,
     };
-    let root = tape.root;
-    let t0 = std::time::Instant::now();
-    let out = f(&mut dx, root);
-    let ns = t0.elapsed().as_nanos() as u64;
-    gk_meter::bump(|c| {
-        c.decodes += 1;
-        c.decode_ns += ns;
-    });
-    out
+    timed_decode(|| f(&mut dx, node))
+}
+
+/// Runs a decode and counts it for gk-meter (`decodes`, `decode_ns`). The ship library times one
+/// decode in eight, picked at random, and counts it eight times: reading the clock twice for
+/// every table cell drawn cost about 4 us a frame of the 100,000-row table at 1,000 Hz (two
+/// `clock_gettime` per cell, about 100 cells a frame), main-thread time the Rust reference does
+/// not spend. The diag library times every decode.
+#[inline]
+pub(crate) fn timed_decode<T>(f: impl FnOnce() -> T) -> T {
+    #[cfg(not(feature = "diag"))]
+    {
+        if rt::next_pick() & 7 != 0 {
+            let out = f();
+            gk_meter::bump_decode(0);
+            return out;
+        }
+        let t0 = std::time::Instant::now();
+        let out = f();
+        let ns = t0.elapsed().as_nanos() as u64 * 8;
+        gk_meter::bump_decode(ns);
+        out
+    }
+    #[cfg(feature = "diag")]
+    {
+        let t0 = std::time::Instant::now();
+        let out = f();
+        let ns = t0.elapsed().as_nanos() as u64;
+        gk_meter::bump_decode(ns);
+        out
+    }
 }
 
 // --- view-built closures (docs/PROTOCOLS.md section 11.6) ---------------------------------

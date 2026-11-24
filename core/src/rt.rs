@@ -11,8 +11,8 @@ use crate::ops::*;
 use crate::tape::Tape;
 use crate::wire::{Put, R};
 use gpui_kit::{
-    AnyElement, AnyWindowHandle, App, AppContext, Context, Entity, FocusHandle, IntoElement,
-    Render, SharedString, Subscription, Window, div,
+    AnyWindowHandle, App, AppContext, Context, Entity, FocusHandle, IntoElement, Render,
+    SharedString, Subscription, Window, div,
 };
 use std::any::Any;
 use std::cell::{Cell, RefCell};
@@ -20,7 +20,9 @@ use std::collections::{HashMap, HashSet};
 use std::ffi::c_void;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::rc::Rc;
-use std::sync::atomic::{AtomicBool, Ordering};
+#[cfg(not(feature = "diag"))]
+use std::sync::atomic::AtomicU32;
+use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU64, Ordering};
 use std::time::Instant;
 
 pub type GkCallback = unsafe extern "C" fn(
@@ -31,9 +33,25 @@ pub type GkCallback = unsafe extern "C" fn(
     len: usize,
 ) -> i32;
 
-/// The reply slot of one callback. `gk_reply` copies into it.
+/// The reply slot of one callback. Dynamic bindings with `FEAT_INLINE_REPLY` write `(inline_ptr,
+/// inline_len)` directly and return without a second crossing into `gk_reply`; `gk_reply` clears
+/// those fields and copies into `reply`.
+#[repr(C)]
 pub struct GkCb {
+    pub inline_ptr: *const u8,
+    pub inline_len: usize,
     pub reply: Vec<u8>,
+}
+
+impl GkCb {
+    #[inline]
+    pub fn new() -> Self {
+        GkCb {
+            inline_ptr: std::ptr::null(),
+            inline_len: 0,
+            reply: Vec::new(),
+        }
+    }
 }
 
 pub struct GkErr(pub i32, pub String);
@@ -62,6 +80,9 @@ pub struct StateItem {
 
 pub enum Item {
     View(Entity<GkView>),
+    /// A row of a decoded row source (table row, list item, tree row): never drawn as a GPUI view,
+    /// so no GPUI Entity is created for it. Only its state-dependency subscriptions live here.
+    DecodedRow(#[allow(dead_code)] Vec<Subscription>),
     Window(AnyWindowHandle),
     State(StateItem),
     Rows(Entity<RowStore>),
@@ -97,14 +118,32 @@ fn kind_name(kind: u8) -> &'static str {
     }
 }
 
-thread_local! {
-    static TRACE: bool = std::env::var("GK_TRACE_TURNS").is_ok_and(|v| v == "1");
+static TRACE_STATE: AtomicU8 = AtomicU8::new(0);
+static RELEASE_EPOCH: AtomicU64 = AtomicU64::new(0);
+
+#[inline]
+pub fn release_epoch() -> u64 {
+    RELEASE_EPOCH.load(Ordering::Relaxed)
+}
+
+#[inline]
+fn trace_on() -> bool {
+    match TRACE_STATE.load(Ordering::Relaxed) {
+        1 => false,
+        2 => true,
+        _ => {
+            let on = std::env::var("GK_TRACE_TURNS").is_ok_and(|v| v == "1");
+            TRACE_STATE.store(if on { 2 } else { 1 }, Ordering::Relaxed);
+            on
+        }
+    }
 }
 
 /// GK_TRACE_TURNS=1: one line on stderr per turn, dirty mark, pre-frame hook and accepted tape
 /// (when a change lands in which frame; PROTOCOLS.md 11.32).
+#[inline]
 pub fn trace(what: impl FnOnce() -> String) {
-    if TRACE.with(|t| *t) {
+    if trace_on() {
         eprintln!("gk-trace: {}", what());
     }
 }
@@ -115,25 +154,39 @@ pub struct GkView {
     pub tape: Option<Rc<Tape>>,
     deps: Vec<u64>,
     _subs: Vec<Subscription>,
+    renders: u32,
+    fast_tried: bool,
+    fast: Option<crate::tape::FastTree>,
 }
 
 impl Render for GkView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let t0 = Instant::now();
         let handle = self.handle;
-        let el: AnyElement = match self.tape.clone() {
-            Some(tape) => guard("decoding a view's tape", || {
-                genapi::root(&tape, handle, window, cx)
-            })
-            .unwrap_or_else(|| div().into_any_element()),
-            None => div().into_any_element(),
-        };
-        let ns = t0.elapsed().as_nanos() as u64;
-        gk_meter::bump(|c| {
-            c.decodes += 1;
-            c.decode_ns += ns;
-        });
-        el
+        genapi::timed_decode(|| {
+            let Some(tape) = self.tape.as_ref() else {
+                return div().into_any_element();
+            };
+            let epoch = release_epoch();
+            if let Some(fast) = self.fast.as_ref() {
+                if fast.epoch == epoch {
+                    return guard("decoding a view's tape", || fast.render(cx))
+                        .unwrap_or_else(|| div().into_any_element());
+                }
+                self.fast = None;
+                self.fast_tried = false;
+            } else if self.renders >= 1 && !self.fast_tried {
+                self.fast_tried = true;
+                if let Some(fast) = crate::tape::FastTree::try_build(tape, epoch) {
+                    let out = guard("decoding a view's tape", || fast.render(cx))
+                        .unwrap_or_else(|| div().into_any_element());
+                    self.fast = Some(fast);
+                    return out;
+                }
+            }
+            self.renders = self.renders.saturating_add(1);
+            guard("decoding a view's tape", || genapi::root(tape, handle, window, cx))
+                .unwrap_or_else(|| div().into_any_element())
+        })
     }
 }
 
@@ -175,7 +228,7 @@ pub struct Session {
     /// The window each mounted view is drawn in.
     view_window: IdMap<u64>,
     /// Dirty mounted views per window, in the order they were marked.
-    dirty: IdMap<Vec<u64>>,
+    pub(crate) dirty: IdMap<Vec<u64>>,
     /// Dirty views that are in no window yet.
     unmounted_dirty: Vec<u64>,
     /// Views whose current tape read a state (the tape's dependency list), by state handle.
@@ -197,14 +250,9 @@ pub struct Session {
     pub debug: bool,
     /// Live row sources (core/src/source.rs).
     pub sources: Vec<u64>,
-    /// Row views by the source they belong to.
-    pub row_owner: IdMap<u64>,
-    /// The current tape of each row view, kept here as well as in its entity so a delegate shim
-    /// can draw a row without reading the row's entity (in gpui-fast an entity read while a
-    /// view draws makes that view depend on the entity: a table would depend on every cell it
-    /// drew). Set in `accept`, dropped in `release`.
-    pub row_tapes: IdMap<Rc<Tape>>,
-    /// What a decoded row's tape depended on (its entity is not read: see `accept`).
+    /// Row views by the `(source, key)` they belong to.
+    pub row_owner: IdMap<(u64, u64)>,
+    /// What a decoded row's tape depended on (it has no GPUI entity: see `accept`).
     pub row_deps: IdMap<Vec<u64>>,
 }
 
@@ -216,24 +264,64 @@ struct Scope {
     cb: *mut GkCb,
 }
 
+/// All UI-thread thread-locals in one slot so dynamic-TLS (`cdylib`) pays at most one
+/// `__tls_get_addr` per entry point instead of one per variable.
+struct UiTls {
+    session: RefCell<Option<Session>>,
+    scopes: RefCell<Vec<Scope>>,
+    reply_buf: RefCell<Vec<u8>>,
+    event_buf: RefCell<Vec<u8>>,
+    retired: RefCell<Vec<(u64, u32)>>,
+    quiet_panic: Cell<bool>,
+    panic_msg: RefCell<String>,
+    is_ui: Cell<bool>,
+}
+
 thread_local! {
-    static SESSION: RefCell<Option<Session>> = const { RefCell::new(None) };
-    static SCOPES: RefCell<Vec<Scope>> = const { RefCell::new(Vec::new()) };
-    /// Set while a lease probe runs, so the panic hook stays silent.
-    pub static QUIET_PANIC: Cell<bool> = const { Cell::new(false) };
-    /// The last panic's message and place, written by the panic hook.
-    static PANIC_MSG: RefCell<String> = const { RefCell::new(String::new()) };
-    /// True on the thread that called gk_run.
-    pub static IS_UI: Cell<bool> = const { Cell::new(false) };
+    static UI: UiTls = const {
+        UiTls {
+            session: RefCell::new(None),
+            scopes: RefCell::new(Vec::new()),
+            reply_buf: RefCell::new(Vec::new()),
+            event_buf: RefCell::new(Vec::new()),
+            retired: RefCell::new(Vec::new()),
+            quiet_panic: Cell::new(false),
+            panic_msg: RefCell::new(String::new()),
+            is_ui: Cell::new(false),
+        }
+    };
+}
+
+#[cfg(not(feature = "diag"))]
+static PICK: AtomicU32 = AtomicU32::new(0x9e37_79b9);
+
+#[inline]
+pub fn is_ui() -> bool {
+    UI.with(|u| u.is_ui.get())
+}
+
+#[cfg(not(feature = "diag"))]
+#[inline(always)]
+pub fn next_pick() -> u32 {
+    let mut x = PICK.load(Ordering::Relaxed);
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    PICK.store(x, Ordering::Relaxed);
+    x
+}
+
+pub fn take_reply_buf() -> Vec<u8> {
+    UI.with(|u| std::mem::take(&mut *u.reply_buf.borrow_mut()))
 }
 
 pub static POISONED: AtomicBool = AtomicBool::new(false);
 
 pub fn install(callback: GkCallback, user: *mut c_void) {
     let debug = std::env::var_os("GK_DEBUG").is_some();
-    IS_UI.with(|u| u.set(true));
-    SESSION.with(|s| {
-        *s.borrow_mut() = Some(Session {
+    UI.with(|u| {
+        u.is_ui.set(true);
+        *u.session.borrow_mut() = Some(Session {
             callback,
             user,
             slots: vec![Slot {
@@ -258,14 +346,19 @@ pub fn install(callback: GkCallback, user: *mut c_void) {
             debug,
             sources: Vec::new(),
             row_owner: IdMap::default(),
-            row_tapes: IdMap::default(),
             row_deps: IdMap::default(),
         });
     });
 }
 
+#[inline]
 pub fn with<T>(f: impl FnOnce(&mut Session) -> T) -> T {
-    SESSION.with(|s| f(s.borrow_mut().as_mut().expect("gk: no session; call gk_run first")))
+    UI.with(|u| {
+        f(u.session
+            .borrow_mut()
+            .as_mut()
+            .expect("gk: no session; call gk_run first"))
+    })
 }
 
 // --- the handle table -------------------------------------------------------------------
@@ -357,19 +450,30 @@ impl Session {
             slot.generation = 1;
         }
         self.free.push(index as u32);
+        RELEASE_EPOCH.fetch_add(1, Ordering::Relaxed);
         match kind {
             HK_VIEW => {
-                self.view_window.remove(&handle);
+                let was_mounted = self.view_window.remove(&handle).is_some();
                 for list in self.dirty.values_mut() {
-                    list.retain(|v| *v != handle);
+                    if !list.is_empty() {
+                        list.retain(|v| *v != handle);
+                    }
                 }
-                self.unmounted_dirty.retain(|v| *v != handle);
-                for list in self.dep_views.values_mut() {
-                    list.retain(|v| *v != handle);
+                if !was_mounted && !self.unmounted_dirty.is_empty() {
+                    self.unmounted_dirty.retain(|v| *v != handle);
+                }
+                if let Some(deps) = self.row_deps.remove(&handle) {
+                    for dep in deps {
+                        if let Some(list) = self.dep_views.get_mut(&dep) {
+                            list.retain(|v| *v != handle);
+                        }
+                    }
+                } else if matches!(item, Some(Item::View(_))) && !self.dep_views.is_empty() {
+                    for list in self.dep_views.values_mut() {
+                        list.retain(|v| *v != handle);
+                    }
                 }
                 self.row_owner.remove(&handle);
-                self.row_tapes.remove(&handle);
-                self.row_deps.remove(&handle);
             }
             HK_SOURCE => {
                 self.sources.retain(|s| *s != handle);
@@ -391,6 +495,18 @@ impl Session {
         match self.item(handle, HK_VIEW)? {
             Item::View(e) => Ok(e.clone()),
             _ => err(ERR_STALE_HANDLE, "not a view"),
+        }
+    }
+
+    pub fn has_view(&self, handle: u64) -> bool {
+        matches!(self.item(handle, HK_VIEW), Ok(Item::View(_) | Item::DecodedRow(_)))
+    }
+
+    pub fn set_decoded_subs(&mut self, handle: u64, subs: Vec<Subscription>) {
+        if let Ok(index) = self.slot(handle, HK_VIEW) {
+            if let Some(Item::DecodedRow(s)) = &mut self.slots[index].item {
+                *s = subs;
+            }
         }
     }
 
@@ -443,6 +559,15 @@ impl Session {
         }
     }
 
+    pub fn has_pending_ahead(&self, wh: u64) -> bool {
+        self.sources.iter().any(|&h| {
+            self.item(h, HK_SOURCE).is_ok_and(|item| match item {
+                Item::Source(s) => s.window == wh && s.has_ahead(),
+                _ => false,
+            })
+        })
+    }
+
     /// The number of the frame whose pre-frame hook ran last.
     pub fn frame_no(&self) -> u64 {
         self.frame_no
@@ -486,7 +611,7 @@ pub fn install_panic_hook() {
     ONCE.call_once(|| {
         let previous = std::panic::take_hook();
         std::panic::set_hook(Box::new(move |info| {
-            if QUIET_PANIC.with(|q| q.get()) {
+            if UI.with(|u| u.quiet_panic.get()) {
                 return;
             }
             let what = info
@@ -499,14 +624,14 @@ pub fn install_panic_hook() {
                 .location()
                 .map(|l| format!(" at {}:{}", l.file(), l.line()))
                 .unwrap_or_default();
-            PANIC_MSG.with(|m| *m.borrow_mut() = format!("{what}{place}"));
+            UI.with(|u| *u.panic_msg.borrow_mut() = format!("{what}{place}"));
             previous(info);
         }));
     });
 }
 
 pub fn panic_message() -> String {
-    PANIC_MSG.with(|m| m.borrow().clone())
+    UI.with(|u| u.panic_msg.borrow().clone())
 }
 
 /// Runs a piece of the library that GPUI calls (a render, a listener, a hook, a task). A
@@ -534,7 +659,7 @@ static APP_STOPPED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBoo
 /// the app quits, and the drawing unwinds to the nearest `guard`, which draws nothing more of it.
 /// A binding that exits there never returns. With no binding to tell: the message, exit 2.
 pub fn app_stop(msg: String) -> ! {
-    let session = SESSION.with(|s| s.try_borrow().ok().and_then(|s| s.as_ref().map(|s| (s.callback, s.user))));
+    let session = UI.with(|u| u.session.try_borrow().ok().and_then(|s| s.as_ref().map(|s| (s.callback, s.user))));
     let Some((callback, user)) = session else {
         eprintln!("gk: {msg}");
         std::process::exit(2);
@@ -543,7 +668,7 @@ pub fn app_stop(msg: String) -> ! {
         let mut req = Vec::with_capacity(msg.len() + 5);
         req.put_str(&msg);
         req.put_u8(1);
-        let mut cb = GkCb { reply: Vec::new() };
+        let mut cb = GkCb::new();
         // SAFETY: the callback is the app's, given to gk_run; req and cb live across the call.
         unsafe { callback(user, &mut cb, K_PANIC, req.as_ptr(), req.len()) };
         crate::quit_soon();
@@ -558,11 +683,11 @@ pub fn app_stop(msg: String) -> ! {
 pub fn fatal(what: &str) {
     POISONED.store(true, Ordering::SeqCst);
     let msg = format!("{} (while {what})", panic_message());
-    let session = SESSION.with(|s| s.try_borrow().ok().and_then(|s| s.as_ref().map(|s| (s.callback, s.user))));
+    let session = UI.with(|u| u.session.try_borrow().ok().and_then(|s| s.as_ref().map(|s| (s.callback, s.user))));
     if let Some((callback, user)) = session {
         let mut req = Vec::with_capacity(msg.len() + 4);
         req.put_str(&msg);
-        let mut cb = GkCb { reply: Vec::new() };
+        let mut cb = GkCb::new();
         // SAFETY: the callback is the app's, given to gk_run; req and cb live across the call.
         unsafe { callback(user, &mut cb, K_PANIC, req.as_ptr(), req.len()) };
         crate::quit_soon();
@@ -582,11 +707,11 @@ pub fn fatal(what: &str) {
 /// Whether `cb` is the gk_cb of the callback running now (the innermost turn). A gk_cb kept
 /// from an earlier callback points into a stack frame that has returned.
 pub fn current_cb(cb: *mut GkCb) -> bool {
-    SCOPES.with(|s| s.borrow().last().is_some_and(|t| t.cb == cb))
+    UI.with(|u| u.scopes.borrow().last().is_some_and(|t| t.cb == cb))
 }
 
 pub fn scope<'a>() -> Option<(&'a mut App, Option<&'a mut Window>)> {
-    let top = SCOPES.with(|s| s.borrow().last().copied())?;
+    let top = UI.with(|u| u.scopes.borrow().last().copied())?;
     // SAFETY: see above.
     unsafe { Some((&mut *top.app, top.window.map(|w| &mut *w))) }
 }
@@ -642,38 +767,65 @@ fn parse_reply(b: &[u8]) -> Reply {
     reply
 }
 
-/// One callback into the app: all app code runs inside one of these.
-pub fn turn(kind: u32, req: &[u8], window: Option<&mut Window>, cx: &mut App) -> Reply {
-    let (callback, user) = with(|s| (s.callback, s.user));
+/// Runs one callback into the app and hands its raw reply bytes to `on_reply` while the inline
+/// reply slice (or `cb.reply`) is still live, before recycling `cb.reply`.
+fn turn_raw<T>(
+    kind: u32,
+    req: &[u8],
+    mut window: Option<&mut Window>,
+    cx: &mut App,
+    on_reply: impl FnOnce(&[u8], Option<&mut Window>, &mut App) -> T,
+) -> T {
     trace(|| format!("turn kind={kind} window={}", window.is_some()));
-    let mut cb = GkCb { reply: Vec::new() };
-    SCOPES.with(|s| {
-        s.borrow_mut().push(Scope {
+    let mut cb = GkCb::new();
+    let (callback, user) = UI.with(|u| {
+        let s = u.session.borrow();
+        let s = s.as_ref().expect("gk: no session; call gk_run first");
+        u.scopes.borrow_mut().push(Scope {
             app: cx as *mut App,
-            window: window.map(|w| w as *mut Window),
+            window: window.as_deref_mut().map(|w| w as *mut Window),
             cb: &mut cb as *mut GkCb,
-        })
+        });
+        (s.callback, s.user)
     });
     let t0 = Instant::now();
     // SAFETY: the callback is the app's, given to gk_run; req and cb live across the call.
     let rc = unsafe { callback(user, &mut cb, kind, req.as_ptr(), req.len()) };
     let ns = t0.elapsed().as_nanos() as u64;
-    SCOPES.with(|s| s.borrow_mut().pop());
-    gk_meter::bump(|c| {
-        c.callbacks += 1;
-        c.callback_ns += ns;
-        match kind {
-            K_FRAME => c.frame_turns += 1,
-            K_VIEWS => c.views_turns += 1,
-            K_EVENT => c.event_turns += 1,
-            K_WAKE => c.wake_turns += 1,
-            _ => {}
-        }
+    UI.with(|u| {
+        u.scopes.borrow_mut().pop();
     });
+    gk_meter::bump_turn(kind, ns);
     if rc != 0 {
         eprintln!("gk: callback kind {kind} returned {rc}");
     }
-    parse_reply(&cb.reply)
+    let out = if !cb.inline_ptr.is_null() && cb.inline_len > 0 {
+        // SAFETY: the binding wrote a live slice (Go's rooted replyMem) valid until the next turn.
+        let bytes = unsafe { std::slice::from_raw_parts(cb.inline_ptr, cb.inline_len) };
+        on_reply(bytes, window, cx)
+    } else {
+        on_reply(&cb.reply, window, cx)
+    };
+    if cb.reply.capacity() > 0 && cb.reply.capacity() <= 256 * 1024 {
+        cb.reply.clear();
+        UI.with(|u| {
+            let mut slot = u.reply_buf.borrow_mut();
+            if slot.capacity() < cb.reply.capacity() {
+                *slot = cb.reply;
+            }
+        });
+    }
+    out
+}
+
+/// One callback into the app: all app code runs inside one of these.
+pub fn turn(kind: u32, req: &[u8], window: Option<&mut Window>, cx: &mut App) -> Reply {
+    turn_raw(kind, req, window, cx, |bytes, _, _| parse_reply(bytes))
+}
+
+#[inline]
+fn is_rows_push_op(op: &[u8]) -> bool {
+    op.len() >= 2 && u16::from_le_bytes([op[0], op[1]]) == C_ROWS_PUSH
 }
 
 /// Applies what a reply carries besides its return value and tapes: dirty marks and
@@ -695,6 +847,15 @@ pub fn process_reply(reply: &mut Reply, kind: u32, mut window: Option<&mut Windo
             deferred.len()
         ),
         K_EVENT => {
+            // `C_ROWS_PUSH` updates only gk-capi's internal `RowStore` (never leased during an
+            // event and needs no window). When no earlier deferred writes are queued ahead of it,
+            // apply directly to avoid a `cx.defer` + `AnyWindowHandle::update` round-trip.
+            if deferred.iter().all(|op| is_rows_push_op(op))
+                && with(|s| s.deferred.is_empty())
+            {
+                apply_ops(&deferred, None, cx);
+                return;
+            }
             let wh = window.as_deref().map(|w| w.window_handle());
             let schedule = with(|s| {
                 s.deferred.extend(deferred.into_iter().map(|op| (op, wh)));
@@ -706,7 +867,7 @@ pub fn process_reply(reply: &mut Reply, kind: u32, mut window: Option<&mut Windo
                 cx.defer(apply_deferred);
             }
         }
-        _ => apply_ops(deferred, window, cx),
+        _ => apply_ops(&deferred, window, cx),
     }
 }
 
@@ -732,60 +893,217 @@ fn apply_deferred(cx: &mut App) {
         // none, applies them without one (as before 12 Nov 2026, when every buffered write of an
         // EVENT turn lost its window: gk.close_window(cx) in a handler failed with "this call
         // needs a window" and was dropped).
-        let mut ops = ops.into_iter().peekable();
-        while let Some((op, wh)) = ops.next() {
-            let mut run = vec![op];
-            while let Some((_, next)) = ops.peek() {
-                if *next != wh {
-                    break;
-                }
-                run.push(ops.next().unwrap().0);
+        let mut i = 0;
+        while i < ops.len() {
+            let wh = ops[i].1;
+            let mut j = i + 1;
+            while j < ops.len() && ops[j].1 == wh {
+                j += 1;
             }
-            match wh {
-                Some(any) => {
-                    let mut left = Some(run);
-                    let _ = any.update(cx, |_, window, cx| apply_ops(left.take().unwrap_or_default(), Some(window), cx));
-                    if let Some(run) = left {
-                        apply_ops(run, None, cx);
+            if j - i == 1 {
+                let op = std::slice::from_ref(&ops[i].0);
+                match wh {
+                    Some(any) if !is_rows_push_op(&ops[i].0) => {
+                        let mut ran = false;
+                        let _ = any.update(cx, |_, window, cx| {
+                            ran = true;
+                            apply_ops(op, Some(window), cx);
+                        });
+                        if !ran {
+                            apply_ops(op, None, cx);
+                        }
                     }
+                    _ => apply_ops(op, None, cx),
                 }
-                None => apply_ops(run, None, cx),
+            } else {
+                let run: Vec<Vec<u8>> = ops[i..j].iter().map(|(op, _)| op.clone()).collect();
+                match wh {
+                    Some(any) => {
+                        let mut ran = false;
+                        let _ = any.update(cx, |_, window, cx| {
+                            ran = true;
+                            apply_ops(&run, Some(window), cx);
+                        });
+                        if !ran {
+                            apply_ops(&run, None, cx);
+                        }
+                    }
+                    None => apply_ops(&run, None, cx),
+                }
             }
+            i = j;
         }
     });
 }
 
-fn apply_ops(ops: Vec<Vec<u8>>, mut window: Option<&mut Window>, cx: &mut App) {
+fn apply_ops(ops: &[Vec<u8>], mut window: Option<&mut Window>, cx: &mut App) {
     let mut out = Vec::new();
     for op in ops {
-        gk_meter::bump(|c| c.deferred_ops += 1);
+        gk_meter::bump_deferred(1);
         out.clear();
         if let Err(GkErr(code, msg)) =
-            crate::calls::call(&op, window.as_deref_mut(), cx, &mut out, true)
+            crate::calls::call(op, window.as_deref_mut(), cx, &mut out, true)
         {
-            if code == ERR_STALE_HANDLE || code == ERR_BAD_OP {
-                // A mistake in app code (a released or wrong handle, an op this library does
-                // not know), found after the handler that made it has returned. It stops
-                // here, like every other misuse; it is not left to show wrong content.
-                app_stop(format!(
-                    "a change a handler asked for could not be made: {msg}\n    The write was \
-                     buffered by a handler and applied after it returned, so its line is not known \
-                     here. Run with GK_DEBUG=1: every write is then sent at once and the program \
-                     stops at the line that made it."
-                ));
-            }
-            eprintln!("gk: a change a handler asked for could not be made: {msg}");
+            report_deferred_err(code, msg);
         }
     }
 }
 
+fn report_deferred_err(code: i32, msg: String) {
+    if code == ERR_STALE_HANDLE || code == ERR_BAD_OP {
+        // A mistake in app code (a released or wrong handle, an op this library does
+        // not know), found after the handler that made it has returned. It stops
+        // here, like every other misuse; it is not left to show wrong content.
+        app_stop(format!(
+            "a change a handler asked for could not be made: {msg}\n    The write was \
+             buffered by a handler and applied after it returned, so its line is not known \
+             here. Run with GK_DEBUG=1: every write is then sent at once and the program \
+             stops at the line that made it."
+        ));
+    }
+    eprintln!("gk: a change a handler asked for could not be made: {msg}");
+}
+
+/// One EVENT turn writing header, retired generations, and payload directly into a reusable
+/// buffer (zero allocations in steady state).
+pub fn fire_event(
+    view: u64,
+    generation: u32,
+    handler: u32,
+    shape: u16,
+    put_payload: impl FnOnce(&mut Vec<u8>),
+    window: Option<&mut Window>,
+    cx: &mut App,
+) -> Vec<u8> {
+    fire_inner(
+        |buf| {
+            buf.put_u64(view);
+            buf.put_u32(generation);
+            buf.put_u32(handler);
+            buf.put_u16(shape);
+            put_payload(buf);
+        },
+        window,
+        cx,
+    )
+}
+
 /// One EVENT turn for a request already encoded (view, generation, handler, shape, payload).
+/// Carries the turn's window handle, whether inline view description is allowed (outermost turn
+/// with a window), and retired description generations so the binding can describe pure-Go views
+/// the handler dirtied before returning (one crossing for the frame instead of two).
 /// Returns the handler's return value as bytes (empty: none).
-pub fn fire_req(req: &[u8], mut window: Option<&mut Window>, cx: &mut App) -> Vec<u8> {
+pub fn fire_req(req: &[u8], window: Option<&mut Window>, cx: &mut App) -> Vec<u8> {
+    fire_inner(|buf| buf.extend_from_slice(req), window, cx)
+}
+
+fn fire_inner(
+    write_body: impl FnOnce(&mut Vec<u8>),
+    window: Option<&mut Window>,
+    cx: &mut App,
+) -> Vec<u8> {
     guard("delivering an event", || {
-        let mut reply = turn(K_EVENT, req, window.as_deref_mut(), cx);
-        process_reply(&mut reply, K_EVENT, window.as_deref_mut(), cx);
-        reply.ret
+        let win_handle = window.as_deref().map(|w| w.window_handle());
+        let (wh, mut buf) = UI.with(|u| {
+            let wh = win_handle
+                .and_then(|any| {
+                    u.session
+                        .borrow()
+                        .as_ref()
+                        .expect("gk: no session; call gk_run first")
+                        .window_of(any)
+                })
+                .unwrap_or(0);
+            let outer = u.scopes.borrow().is_empty();
+            let flags: u8 = if outer && wh != 0 { 1 } else { 0 };
+            let mut buf = std::mem::take(&mut *u.event_buf.borrow_mut());
+            buf.clear();
+            buf.put_u64(wh);
+            buf.put_u8(flags);
+            if flags != 0 {
+                put_retired_ui(u, &mut buf);
+            } else {
+                buf.put_u32(0);
+            }
+            (wh, buf)
+        });
+        write_body(&mut buf);
+        let ret = turn_raw(K_EVENT, &buf, window, cx, |bytes, mut window, cx| {
+            let ret = if bytes.is_empty() {
+                Vec::new()
+            } else {
+                let mut r = R::new(bytes);
+                let ret_len = r.u32() as usize;
+                let ret = if ret_len > 0 { r.bytes(ret_len).to_vec() } else { Vec::new() };
+                let n_dirty = r.u32() as usize;
+                let dirty_at = r.i;
+                r.i += n_dirty * 8;
+                let n_def = r.u32() as usize;
+                let def_at = r.i;
+                let mut all_rows_push = n_def > 0;
+                for _ in 0..n_def {
+                    let n = r.u32() as usize;
+                    let op = r.bytes(n);
+                    if !is_rows_push_op(op) {
+                        all_rows_push = false;
+                    }
+                }
+                let n_tapes = r.u32() as usize;
+                if wh != 0 && n_tapes > 0 {
+                    accept_tapes_from(wh, n_tapes, &mut r, cx);
+                }
+                if n_dirty > 0 {
+                    let mut dr = R::at(bytes, dirty_at);
+                    for _ in 0..n_dirty {
+                        mark_dirty(dr.u64(), window.as_deref_mut(), cx);
+                    }
+                }
+                if n_def > 0 {
+                    if all_rows_push && with(|s| s.deferred.is_empty()) {
+                        let mut fr = R::at(bytes, def_at);
+                        for _ in 0..n_def {
+                            let n = fr.u32() as usize;
+                            let op = fr.bytes(n);
+                            gk_meter::bump_deferred(1);
+                            if let Err(GkErr(code, msg)) = crate::hand::rows_push_slice(op, cx) {
+                                report_deferred_err(code, msg);
+                            }
+                        }
+                    } else {
+                        let wh_any = window.as_deref().map(|w| w.window_handle());
+                        let mut fr = R::at(bytes, def_at);
+                        let schedule = with(|s| {
+                            s.deferred.reserve(n_def);
+                            for _ in 0..n_def {
+                                let n = fr.u32() as usize;
+                                s.deferred.push((fr.bytes(n).to_vec(), wh_any));
+                            }
+                            !std::mem::replace(&mut s.deferred_scheduled, true)
+                        });
+                        if schedule {
+                            cx.defer(apply_deferred);
+                        }
+                    }
+                }
+                ret
+            };
+            // If inline view description emptied reply.dirty, pre_frame would otherwise not run on
+            // the next frame; arm it when temporary library objects or retired pins need sweeping.
+            if wh != 0 && crate::objects::needs_sweep() {
+                ensure_hook(wh, window.as_deref_mut(), cx);
+            }
+            ret
+        });
+        if buf.capacity() <= 64 * 1024 {
+            buf.clear();
+            UI.with(|u| {
+                let mut slot = u.event_buf.borrow_mut();
+                if slot.capacity() < buf.capacity() {
+                    *slot = buf;
+                }
+            });
+        }
+        ret
     })
     .unwrap_or_default()
 }
@@ -839,7 +1157,7 @@ pub fn mark_dirty(view: u64, window: Option<&mut Window>, cx: &mut App) {
             Some(w)
         }
         None => {
-            if s.view(view).is_ok() && !s.unmounted_dirty.contains(&view) {
+            if s.has_view(view) && !s.unmounted_dirty.contains(&view) {
                 s.unmounted_dirty.push(view);
             }
             None
@@ -848,26 +1166,6 @@ pub fn mark_dirty(view: u64, window: Option<&mut Window>, cx: &mut App) {
     if let Some(w) = target {
         ensure_hook(w, window, cx);
     }
-}
-
-/// `mark_dirty` for views just made and mounted in window `wh` (the row views a ROWS turn
-/// binds): none of them can be in the dirty list yet, so a batch of a few hundred costs no
-/// search of that list per view.
-pub fn mark_dirty_new(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
-    if views.is_empty() {
-        return;
-    }
-    trace(|| format!("dirty new views={} window={wh:#x}", views.len()));
-    with(|s| {
-        let mut list = s.dirty.remove(&wh).unwrap_or_default();
-        for v in views {
-            if s.view_window.get(v) == Some(&wh) {
-                list.push(*v);
-            }
-        }
-        s.dirty.insert(wh, list);
-    });
-    ensure_hook(wh, Some(window), cx);
 }
 
 /// A state was written through the binding. Inside a pre-frame hook GPUI's observers would
@@ -926,16 +1224,79 @@ fn pre_frame(wh: u64, window: &mut Window, cx: &mut App) {
             (s.frame_handler.contains(&wh), s.frame_no)
         });
         if frame_handler {
-            let mut req = Vec::with_capacity(16);
-            req.put_u64(wh);
-            req.put_u64(frame_no);
-            let mut reply = turn(K_FRAME, &req, Some(&mut *window), cx);
-            // The FRAME turn's writes land here, and the views that read what was written
-            // are marked dirty by `written`, before the VIEWS turn below.
-            process_reply(&mut reply, K_FRAME, Some(&mut *window), cx);
+            let mut req = UI.with(|u| {
+                let mut buf = std::mem::take(&mut *u.event_buf.borrow_mut());
+                buf.clear();
+                buf.put_u64(wh);
+                buf.put_u64(frame_no);
+                {
+                    let mut s = u.session.borrow_mut();
+                    let s = s.as_mut().expect("gk: no session; call gk_run first");
+                    if let Some(pre_dirty) = s.dirty.get_mut(&wh) {
+                        buf.put_u32(pre_dirty.len() as u32);
+                        for &v in pre_dirty.iter() {
+                            buf.put_u64(v);
+                        }
+                        pre_dirty.clear();
+                    } else {
+                        buf.put_u32(0);
+                    }
+                }
+                put_retired_ui(u, &mut buf);
+                buf
+            });
+            let deferred = turn_raw(K_FRAME, &req, Some(&mut *window), cx, |bytes, mut window, cx| {
+                if bytes.is_empty() {
+                    return Vec::new();
+                }
+                let mut r = R::new(bytes);
+                let ret_len = r.u32() as usize;
+                r.i += ret_len;
+                let n_dirty = r.u32() as usize;
+                let dirty_at = r.i;
+                r.i += n_dirty * 8;
+                let n_def = r.u32() as usize;
+                let deferred = if n_def > 0 {
+                    let mut v = Vec::with_capacity(n_def);
+                    for _ in 0..n_def {
+                        let n = r.u32() as usize;
+                        v.push(r.bytes(n).to_vec());
+                    }
+                    v
+                } else {
+                    Vec::new()
+                };
+                let n_tapes = r.u32() as usize;
+                if n_tapes > 0 {
+                    // If the frame handler buffered no deferred writes, the binding described its dirty
+                    // mounted views inline and returned their tapes here (one crossing for the frame).
+                    accept_tapes_from(wh, n_tapes, &mut r, cx);
+                }
+                if n_dirty > 0 {
+                    let mut dr = R::at(bytes, dirty_at);
+                    for _ in 0..n_dirty {
+                        mark_dirty(dr.u64(), window.as_deref_mut(), cx);
+                    }
+                }
+                deferred
+            });
+            if req.capacity() <= 64 * 1024 {
+                req.clear();
+                UI.with(|u| {
+                    let mut slot = u.event_buf.borrow_mut();
+                    if slot.capacity() < req.capacity() {
+                        *slot = req;
+                    }
+                });
+            }
+            if !deferred.is_empty() {
+                // Any buffered writes land here; views that read a written state are marked dirty
+                // by `written`, before the ROWS / VIEWS step below.
+                apply_ops(&deferred, Some(&mut *window), cx);
+            }
         }
-        // Rows drawn as placeholders in the last frame get their views here, marked dirty,
-        // and are described in the VIEWS turn below (docs/PROTOCOLS.md section 9).
+        // Rows drawn as placeholders in the last frame get their views here and are described in
+        // the same ROWS turn (docs/PROTOCOLS.md section 9).
         crate::source::rows_turn(wh, window, cx);
         let dirty = with(|s| s.dirty.remove(&wh).unwrap_or_default());
         trace(|| format!("pre_frame window={wh:#x} frame={frame_no} dirty={}", dirty.len()));
@@ -944,7 +1305,9 @@ fn pre_frame(wh: u64, window: &mut Window, cx: &mut App) {
         }
         let again = with(|s| {
             s.in_hook = None;
-            s.frame_handler.contains(&wh) || s.dirty.get(&wh).is_some_and(|d| !d.is_empty())
+            s.frame_handler.contains(&wh)
+                || s.dirty.get(&wh).is_some_and(|d| !d.is_empty())
+                || s.has_pending_ahead(wh)
         });
         if again {
             ensure_hook(wh, Some(window), cx);
@@ -952,63 +1315,118 @@ fn pre_frame(wh: u64, window: &mut Window, cx: &mut App) {
     });
 }
 
-/// (view, generation) of the descriptions dropped since the last VIEWS turn (`GenPin`'s Drop,
-/// which may run on any thread).
+/// (view, generation) of descriptions dropped off the UI thread (`GenPin`'s Drop may run on any
+/// thread; UI-thread drops go straight into `UI.retired` with no mutex or allocation).
 static RETIRED: std::sync::Mutex<Vec<(u64, u32)>> = std::sync::Mutex::new(Vec::new());
+static HAS_RETIRED: AtomicBool = AtomicBool::new(false);
 
 /// A view's description of this generation is gone (`GenPin`'s Drop): its handler table can go.
 pub fn retire(view: u64, generation: u32) {
-    if let Ok(mut r) = RETIRED.lock() {
-        r.push((view, generation));
+    let on_ui = UI.with(|u| {
+        if u.is_ui.get() {
+            u.retired.borrow_mut().push((view, generation));
+            true
+        } else {
+            false
+        }
+    });
+    if !on_ui {
+        if let Ok(mut r) = RETIRED.lock() {
+            r.push((view, generation));
+            HAS_RETIRED.store(true, Ordering::Release);
+        }
     }
 }
 
-/// One VIEWS turn: the binding runs the view procedure of each listed view (and of views they
-/// slot that have no tape yet) and replies with the tapes that changed. Each changed tape is
-/// set on its entity and that entity alone is notified.
-pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
-    let retired = RETIRED.lock().map(|mut r| std::mem::take(&mut *r)).unwrap_or_default();
-    let mut req = Vec::with_capacity(16 + views.len() * 8 + retired.len() * 12);
-    req.put_u64(wh);
-    req.put_u32(views.len() as u32);
-    for v in views {
-        req.put_u64(*v);
+fn put_retired_ui(u: &UiTls, buf: &mut Vec<u8>) {
+    let mut local = u.retired.borrow_mut();
+    let remote = if HAS_RETIRED.load(Ordering::Acquire) {
+        RETIRED
+            .lock()
+            .map(|mut r| {
+                HAS_RETIRED.store(false, Ordering::Release);
+                std::mem::take(&mut *r)
+            })
+            .unwrap_or_default()
+    } else {
+        Vec::new()
+    };
+    buf.put_u32((local.len() + remote.len()) as u32);
+    for &(view, generation) in local.iter() {
+        buf.put_u64(view);
+        buf.put_u32(generation);
     }
-    // The descriptions dropped since the last VIEWS turn (`GenPin`'s Drop): their handler tables
-    // can go.
-    req.put_u32(retired.len() as u32);
-    for (view, generation) in retired {
-        req.put_u64(view);
-        req.put_u32(generation);
+    local.clear();
+    for (view, generation) in remote {
+        buf.put_u64(view);
+        buf.put_u32(generation);
     }
-    let mut reply = turn(K_VIEWS, &req, Some(&mut *window), cx);
-    // Sources whose watchers must draw again: rows they drew as placeholders arrived, or rows
-    // they show were described again. The first tape of a row bound ahead of the scroll
-    // (`source::want`) was never drawn and redraws nothing: notifying the table for it made
-    // the kit draw every visible cell again for five frames after each batch, which was the
-    // p95 of the table scene (1.15 to 1.19 of Rust; 11 Nov 2026).
+}
+
+/// Takes every `(view, generation)` retired since the last call.
+pub(crate) fn take_retired() -> Vec<(u64, u32)> {
+    let mut out = UI.with(|u| {
+        let mut local = u.retired.borrow_mut();
+        if local.is_empty() {
+            Vec::new()
+        } else {
+            let v = local.clone();
+            local.clear();
+            v
+        }
+    });
+    if HAS_RETIRED.load(Ordering::Acquire) {
+        if let Ok(mut r) = RETIRED.lock() {
+            HAS_RETIRED.store(false, Ordering::Release);
+            out.extend(r.drain(..));
+        }
+    }
+    out
+}
+
+/// Accepts changed tapes returned by a VIEWS, FRAME, EVENT or ROWS turn, notifies their entities,
+/// and notifies row-source watchers whose rows arrived.
+pub(crate) fn accept_tapes(wh: u64, tapes: Vec<(u64, u32, Vec<u8>)>, cx: &mut App) {
+    if tapes.is_empty() {
+        return;
+    }
     let mut sources = Vec::new();
     let mut first = Vec::new();
-    for (view, generation, bytes) in std::mem::take(&mut reply.tapes) {
-        // A row view: its source, whether a shim decodes the source's rows, and whether it had a
-        // tape before this one.
-        let row = with(|s| {
-            let src = s.row_owner.get(&view).copied()?;
-            let decoded = s.source_mut(src).map(|x| x.decoded).unwrap_or(false);
-            Some((src, decoded, s.row_tapes.contains_key(&view)))
-        });
-        if let Err(GkErr(code, msg)) = accept(wh, view, generation, bytes, row.map(|r| r.1), cx) {
+    for (view, generation, bytes) in tapes {
+        if let Err(GkErr(code, msg)) = accept_one(wh, view, generation, bytes, &mut sources, &mut first, cx) {
             eprintln!(
                 "gk: a view's description was refused ({msg}; error {code}); the view keeps what it showed. \
                  The app's go/ folder and the library are from different downloads, or this is a bug in the binding."
             );
-        } else if let Some((src, decoded, had_tape)) = row {
-            let list = if had_tape || !decoded { &mut sources } else { &mut first };
-            if !list.contains(&src) {
-                list.push(src);
-            }
         }
     }
+    finish_accept_tapes(sources, first, cx);
+}
+
+fn accept_tapes_from(wh: u64, n_tapes: usize, r: &mut R, cx: &mut App) {
+    let mut sources = Vec::new();
+    let mut first = Vec::new();
+    for _ in 0..n_tapes {
+        let view = r.u64();
+        let generation = r.u32();
+        let n = r.u32() as usize;
+        let bytes = r.bytes(n).to_vec();
+        if let Err(GkErr(code, msg)) = accept_one(wh, view, generation, bytes, &mut sources, &mut first, cx) {
+            eprintln!(
+                "gk: a view's description was refused ({msg}; error {code}); the view keeps what it showed. \
+                 The app's go/ folder and the library are from different downloads, or this is a bug in the binding."
+            );
+        }
+    }
+    finish_accept_tapes(sources, first, cx);
+}
+
+fn finish_accept_tapes(mut sources: Vec<u64>, first: Vec<u64>, cx: &mut App) {
+    // Sources whose watchers must draw again: rows they drew as placeholders arrived, or rows
+    // they show were described again. The first tape of a row bound ahead of the scroll
+    // (`source::want`) was never drawn and redraws nothing: notifying the table for it made
+    // the kit draw every visible cell again for five frames after each batch, which was the
+    // p95 of the table scene (11 Nov 2026).
     for src in first {
         if crate::source::take_missed(src) && !sources.contains(&src) {
             sources.push(src);
@@ -1017,14 +1435,21 @@ pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
     for src in &sources {
         crate::source::take_missed(*src);
     }
-    // The entities that drew those rows as placeholders draw them now, in this frame.
-    crate::source::notify_watchers(&sources, cx);
-    process_reply(&mut reply, K_VIEWS, Some(window), cx);
+    if !sources.is_empty() {
+        // The entities that drew those rows as placeholders draw them now, in this frame.
+        crate::source::notify_watchers(&sources, cx);
+    }
 }
 
-/// Accepts a view's new tape. `decoded`: the view is a row of a source (Some), whose rows a
-/// delegate shim decodes itself (true).
-fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, decoded: Option<bool>, cx: &mut App) -> GkResult<()> {
+fn accept_one(
+    wh: u64,
+    view: u64,
+    generation: u32,
+    bytes: Vec<u8>,
+    sources: &mut Vec<u64>,
+    first: &mut Vec<u64>,
+    cx: &mut App,
+) -> GkResult<()> {
     trace(|| format!("tape view={view:#x} generation={generation} bytes={}", bytes.len()));
     let n = bytes.len() as u64;
     let mut tape = match Tape::parse(bytes, generation) {
@@ -1034,16 +1459,37 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, decoded: Option<b
             return Err(e);
         }
     };
-    tape.pin = Some(std::sync::Arc::new(crate::tape::GenPin { view, generation }));
-    // A row a delegate shim decodes itself (`Source::decoded`) is never drawn as a view: its
-    // tape goes to the session's table and its entity is left alone unless what it depends on
-    // changed. Updating and notifying it would make the window track one more entity for every
-    // row described (a few hundred per batch while a table scrolls) and drop them the frame
-    // after; its source's watchers redraw instead (`describe`).
-    let is_row = decoded.is_some();
-    let decoded = decoded.unwrap_or(false);
-    let (entity, row_old) = with(|s| -> GkResult<_> {
-        let entity = s.view(view)?;
+    if tape.handlers > 0 {
+        tape.pin = Some(std::sync::Arc::new(crate::tape::GenPin { view, generation }));
+    }
+    // One session borrow: drop `view` from `s.dirty[wh]`, check row ownership, look up the view
+    // entity, and mount any newly slotted child views.
+    let (row, entity_opt, row_old) = with(|s| -> GkResult<(Option<(u64, u64, bool, bool)>, Option<Entity<GkView>>, Vec<u64>)> {
+        if !s.dirty.is_empty() {
+            if let Some(list) = s.dirty.get_mut(&wh) {
+                if !list.is_empty() {
+                    list.retain(|v| *v != view);
+                }
+            }
+        }
+        let row = if s.row_owner.is_empty() {
+            None
+        } else {
+            s.row_owner.get(&view).copied().and_then(|(src, key)| {
+                let source = s.source_mut(src).ok()?;
+                Some((src, key, source.decoded, source.has_tape(key)))
+            })
+        };
+        let decoded = row.is_some_and(|r| r.2);
+        let entity_opt = if decoded {
+            match s.item(view, HK_VIEW)? {
+                Item::DecodedRow(_) => None,
+                Item::View(e) => Some(e.clone()),
+                _ => return err(ERR_STALE_HANDLE, "not a view"),
+            }
+        } else {
+            Some(s.view(view)?)
+        };
         for slot in &tape.slots {
             s.view_window.insert(*slot, wh);
             if let Some(i) = s.unmounted_dirty.iter().position(|v| v == slot) {
@@ -1051,14 +1497,24 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, decoded: Option<b
                 s.dirty.entry(wh).or_default().push(*slot);
             }
         }
-        let row_old = if decoded { s.row_deps.get(&view).cloned().unwrap_or_default() } else { Vec::new() };
-        Ok((entity, row_old))
+        let row_old = if entity_opt.is_none() {
+            s.row_deps.get(&view).cloned().unwrap_or_default()
+        } else {
+            Vec::new()
+        };
+        Ok((row, entity_opt, row_old))
     })?;
-    // Kit state the view procedure read: observe it, so the view is described again when it
-    // changes (section 9; correction 2 of section 1).
+    let decoded = row.is_some_and(|r| r.2);
     let deps = std::mem::take(&mut tape.deps);
-    let old = if decoded { row_old } else { entity.read(cx).deps.clone() };
-    let subs = if old != deps {
+    let deps_changed = match &entity_opt {
+        Some(e) => e.read(cx).deps != deps,
+        None => row_old != deps,
+    };
+    let subs = if deps_changed {
+        let old = match &entity_opt {
+            Some(e) => e.read(cx).deps.clone(),
+            None => row_old,
+        };
         let observers: Vec<_> = with(|s| {
             for dep in &old {
                 if let Some(list) = s.dep_views.get_mut(dep) {
@@ -1077,46 +1533,125 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, decoded: Option<b
     } else {
         None
     };
-    tape.deps = deps.clone();
+    if !deps.is_empty() {
+        tape.deps = deps.clone();
+    }
     let tape = Rc::new(tape);
-    if is_row {
+    if decoded {
+        let (src, key, _, had_tape) = row.unwrap();
+        let mut entity_subs = None;
         with(|s| {
-            s.row_tapes.insert(view, tape.clone());
-            if decoded {
+            if let Ok(source) = s.source_mut(src) {
+                source.set_tape(key, tape);
+            }
+            if entity_opt.is_none() {
                 if deps.is_empty() {
-                    s.row_deps.remove(&view); // read as empty
+                    s.row_deps.remove(&view);
                 } else {
                     s.row_deps.insert(view, deps.clone());
                 }
+                if let Some(subs) = subs {
+                    s.set_decoded_subs(view, subs);
+                }
+            } else {
+                entity_subs = subs;
             }
         });
-    }
-    if decoded {
-        if let Some(subs) = subs {
+        if let (Some(entity), Some(subs)) = (entity_opt, entity_subs) {
             entity.update(cx, |v, _| {
                 v._subs = subs;
                 v.deps = deps;
             });
         }
-        gk_meter::bump(|c| {
-            c.tapes += 1;
-            c.tape_bytes += n;
-        });
-        return Ok(());
-    }
-    entity.update(cx, |v, cx| {
-        v.tape = Some(tape);
-        if let Some(subs) = subs {
-            v._subs = subs;
-            v.deps = deps;
+        let list = if had_tape { sources } else { first };
+        if !list.contains(&src) {
+            list.push(src);
         }
-        cx.notify();
-    });
-    gk_meter::bump(|c| {
-        c.tapes += 1;
-        c.tape_bytes += n;
-    });
+    } else {
+        if let Some((src, key, _, _)) = row {
+            with(|s| {
+                if let Ok(source) = s.source_mut(src) {
+                    source.set_tape(key, tape.clone());
+                }
+            });
+            if !sources.contains(&src) {
+                sources.push(src);
+            }
+        }
+        let entity = entity_opt.unwrap();
+        entity.update(cx, |v, cx| {
+            v.tape = Some(tape);
+            v.renders = 0;
+            v.fast_tried = false;
+            v.fast = None;
+            if let Some(subs) = subs {
+                v._subs = subs;
+                v.deps = deps;
+            }
+            cx.notify();
+        });
+    }
+    gk_meter::bump_tape(n);
     Ok(())
+}
+
+/// One VIEWS turn: the binding runs the view procedure of each listed view (and of views they
+/// slot that have no tape yet) and replies with the tapes that changed. Each changed tape is
+/// set on its entity and that entity alone is notified.
+pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
+    let mut req = UI.with(|u| {
+        let mut buf = std::mem::take(&mut *u.event_buf.borrow_mut());
+        buf.clear();
+        buf.put_u64(wh);
+        buf.put_u32(views.len() as u32);
+        for v in views {
+            buf.put_u64(*v);
+        }
+        // The descriptions dropped since the last turn (`GenPin`'s Drop): their handler tables
+        // can go.
+        put_retired_ui(u, &mut buf);
+        buf
+    });
+    turn_raw(K_VIEWS, &req, Some(&mut *window), cx, |bytes, mut window, cx| {
+        if bytes.is_empty() {
+            return;
+        }
+        let mut r = R::new(bytes);
+        let ret_len = r.u32() as usize;
+        r.i += ret_len;
+        let n_dirty = r.u32() as usize;
+        let dirty_at = r.i;
+        r.i += n_dirty * 8;
+        let n_def = r.u32() as usize;
+        for _ in 0..n_def {
+            let n = r.u32() as usize;
+            r.i += n;
+        }
+        let n_tapes = r.u32() as usize;
+        if n_tapes > 0 {
+            accept_tapes_from(wh, n_tapes, &mut r, cx);
+        }
+        if n_dirty > 0 {
+            let mut dr = R::at(bytes, dirty_at);
+            for _ in 0..n_dirty {
+                mark_dirty(dr.u64(), window.as_deref_mut(), cx);
+            }
+        }
+        if n_def > 0 {
+            eprintln!(
+                "gk: {n_def} write(s) from a view function were refused: a view function may not write"
+            );
+        }
+    });
+    if req.capacity() <= 64 * 1024 {
+        req.clear();
+        UI.with(|u| {
+            let mut slot = u.event_buf.borrow_mut();
+            if slot.capacity() < req.capacity() {
+                *slot = req;
+            }
+        });
+    }
 }
 
 pub fn new_view(cx: &mut App) -> u64 {
@@ -1126,9 +1661,36 @@ pub fn new_view(cx: &mut App) -> u64 {
         tape: None,
         deps: Vec::new(),
         _subs: Vec::new(),
+        renders: 0,
+        fast_tried: false,
+        fast: None,
     });
     with(|s| s.put(handle, Item::View(entity)));
     handle
+}
+
+/// A handle for a row of a decoded row source (no GPUI Entity is created).
+pub fn new_decoded_row() -> u64 {
+    with(|s| s.insert(HK_VIEW, Item::DecodedRow(Vec::new())))
+}
+
+/// Converts already-bound row views of a newly decoded source into `Item::DecodedRow`, dropping
+/// their unneeded GPUI `Entity<GkView>` handles outside the session borrow.
+pub fn convert_to_decoded(views: &[u64]) {
+    let dropped: Vec<Item> = with(|s| {
+        let mut out = Vec::new();
+        for &v in views {
+            if let Ok(index) = s.slot(v, HK_VIEW) {
+                if matches!(s.slots[index].item, Some(Item::View(_))) {
+                    if let Some(old) = s.slots[index].item.replace(Item::DecodedRow(Vec::new())) {
+                        out.push(old);
+                    }
+                }
+            }
+        }
+        out
+    });
+    drop(dropped);
 }
 
 pub fn open_window(width: f32, height: f32, root: u64, cx: &mut App) -> GkResult<u64> {
@@ -1168,7 +1730,9 @@ pub fn open_window_with(options: gpui_kit::WindowOptions, root: u64, cx: &mut Ap
         // views marked dirty) starts with the next frame.
         let again = with(|s| {
             s.in_hook = None;
-            s.frame_handler.contains(&wh) || s.dirty.get(&wh).is_some_and(|d| !d.is_empty())
+            s.frame_handler.contains(&wh)
+                || s.dirty.get(&wh).is_some_and(|d| !d.is_empty())
+                || s.has_pending_ahead(wh)
         });
         if again {
             ensure_hook(wh, Some(window), cx);
@@ -1192,11 +1756,11 @@ pub fn probe<T: 'static, V>(
     f: impl FnOnce(&T) -> V,
 ) -> GkResult<V> {
     // Only the lease is probed quietly; a panic inside `f` is a real one and is reported.
-    QUIET_PANIC.with(|q| q.set(true));
+    UI.with(|u| u.quiet_panic.set(true));
     let got = catch_unwind(AssertUnwindSafe(|| {
         entity.read(cx);
     }));
-    QUIET_PANIC.with(|q| q.set(false));
+    UI.with(|u| u.quiet_panic.set(false));
     let got = got.map(|()| f(entity.read(cx)));
     got.map_err(|_| {
         GkErr(

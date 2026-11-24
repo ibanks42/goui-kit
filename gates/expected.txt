@@ -2,6 +2,3 @@
 # as XFAIL and lets the run pass; a listed gate that passes fails the run until its line is
 # deleted, so this list only shrinks. An entry is added only with the reason it fails and who
 # removes it.
-fps panels-60-64-2-go-ship-60hz | known, not optimized yet: the Go app's p50 is 1.043 to 1.048 x Rust (limit about 1.04) on 2026-11-23; its 2 callbacks a frame cost 25 us and decoding their 2 tapes (8,570 bytes) 30 us, about the whole 52 us it spends over Rust (gates/out/fps/NAME/summary.md). Whoever makes the Go runtime's view turns cheaper removes this line
-fps counter-click-every-frame-go-ship-60hz | known, not optimized yet: the Go app's p50 is 1.065 to 1.072 x Rust (limit 1.036) on 2026-11-23; the click's 2 callbacks a frame cost 19 us and decoding 9 us, the 29 us it spends over Rust. Whoever makes the Go runtime's event and view turns cheaper removes this line
-fps table-scroll-go-ship-60hz | known, not optimized yet: the Go app's p95 is 1.26 to 1.27 x Rust (limit 1.05) on 2026-11-23, p50 passes (1.03); the frames that bind a batch of cells (ROWS turns, 4 tapes a frame on average) cost the Go app about 260 us more at p95. Whoever optimizes the table removes this line

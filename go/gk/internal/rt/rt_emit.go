@@ -9,22 +9,30 @@ import (
 // node is one element or value being described: a node of a view build (or of the value build of
 // a turn, for values made outside a view). Element types hold a pointer to theirs, so an element
 // is one word and giving it to Child does not allocate. A node of an earlier build is caught by
-// its serial.
+// its serial. Pointer-free so the slab is noscan for the Go GC.
 type Node struct {
-	b                 *build
 	serial            uint32
 	idx               uint32
 	args, first, last uint32
 	typ               uint16
 	attached          bool
-	made              *madeAt // GK_DEBUG=1: where it was made
+	valBuild          bool
 }
 
-// madeAt is where an element was made (recorded with GK_DEBUG=1 only, so a node stays small).
+func (n *Node) build() *build {
+	if n.valBuild {
+		return &valb
+	}
+	return &Vb
+}
+
+// madeAt is where an element was made (recorded with GK_DEBUG=1 only, in a side map so Node stays pointer-free).
 type madeAt struct {
 	file string
 	line int
 }
+
+var madeMap map[*Node]madeAt
 
 // Element is an element being described (gk.Div(), kit.Button("ok"), ...).
 type Element interface{ node() *Node }
@@ -84,18 +92,19 @@ func HandleOf(x interface{ handle() uint64 }) uint64 { return x.handle() }
 // build is the tape of one view build (or the value build of a turn): an op stream and a node
 // table. A builder call appends one op and patches the previous op's link.
 type build struct {
-	ops      Tape
-	nodes    []*Node
-	slab     []Node
-	handlers []handlerRec
-	deps     []uint64
-	slots    []uint64
-	view     *viewRec
-	Serial   uint32
-	Active   bool
-	Cur      uint32
-	isValue  bool
-	turn     uint64 // the value build: the outermost turn it belongs to
+	ops       Tape
+	nodes     []*Node
+	slab      []Node
+	handlers  []handlerRec
+	deps      []uint64
+	slots     []uint64
+	view      *viewRec
+	Serial    uint32
+	Active    bool
+	calledLib bool // a gk_call ran during this view build
+	Cur       uint32
+	isValue   bool
+	turn      uint64 // the value build: the outermost turn it belongs to
 }
 
 var (
@@ -128,25 +137,32 @@ func (b *build) reset(serial uint32) {
 	b.handlers = b.handlers[:0]
 	b.deps = b.deps[:0]
 	b.slots = b.slots[:0]
+	b.calledLib = false
 	b.Serial = serial
+	if debug && len(madeMap) > 0 && !b.isValue {
+		clear(madeMap)
+	}
 }
 
 func (b *build) alloc(typ uint16) *Node {
 	if len(b.slab) == cap(b.slab) {
 		b.slab = make([]Node, 0, 256)
 	}
-	b.slab = append(b.slab, Node{b: b, serial: b.Serial, idx: uint32(len(b.nodes)), typ: typ, args: uint32(len(b.ops))})
+	b.slab = append(b.slab, Node{serial: b.Serial, idx: uint32(len(b.nodes)), typ: typ, args: uint32(len(b.ops)), valBuild: b.isValue})
 	n := &b.slab[len(b.slab)-1]
 	b.nodes = append(b.nodes, n)
 	b.Cur = n.idx
 	curBuild = b
 	if debug {
-		m := &madeAt{}
+		var m madeAt
 		_, m.file, m.line, _ = runtime.Caller(3)
 		if f, l, _ := appFrame(3); l != 0 {
 			m.file, m.line = f, l
 		}
-		n.made = m
+		if madeMap == nil {
+			madeMap = map[*Node]madeAt{}
+		}
+		madeMap[n] = m
 	}
 	return n
 }
@@ -164,8 +180,10 @@ func outerTurn() uint64 {
 
 // origin is what the runtime can say about where an element came from, for a stop.
 func origin(n *Node, thisBuild bool) string {
-	if n != nil && thisBuild && n.made != nil && n.made.line != 0 {
-		return fmt.Sprintf("\n    the element was made at %s:%d", n.made.file, n.made.line)
+	if n != nil && thisBuild && debug {
+		if m, ok := madeMap[n]; ok && m.line != 0 {
+			return fmt.Sprintf("\n    the element was made at %s:%d", m.file, m.line)
+		}
 	}
 	s := ""
 	if Vb.Active && Vb.view != nil {
@@ -221,8 +239,9 @@ func NewValue(typ uint16) *Node {
 
 // nodeArgs is where the node just made keeps its constructor's arguments.
 func NodeArgs(n *Node) *Tape {
-	n.args = uint32(len(n.b.ops))
-	return &n.b.ops
+	b := n.build()
+	n.args = uint32(len(b.ops))
+	return &b.ops
 }
 
 // op starts an op of this node and returns the op stream to append its arguments to.
@@ -230,7 +249,7 @@ func Op(n *Node, code uint16) *Tape {
 	if n == nil {
 		Stop("an element that was never made (a zero gk element value) was given a builder: make it with its constructor")
 	}
-	b := n.b
+	b := n.build()
 	if !b.live(n) {
 		Stop("%s%s", staleElement, origin(n, false))
 	}
@@ -264,7 +283,8 @@ func ElemNode(e Element) *Node {
 // attach makes child a child of n (the CHILD op). A node is attached once.
 func Attach(n *Node, child Element) {
 	c := ElemNode(child)
-	if !c.b.live(c) {
+	cb := c.build()
+	if !cb.live(c) {
 		Stop("%s%s", staleElement, origin(c, false))
 	}
 	if c.attached {
@@ -275,7 +295,7 @@ func Attach(n *Node, child Element) {
 	}
 	o := Op(n, EChild)
 	c.attached = true
-	o.U32(c.idx)
+	*o = le.AppendUint32(*o, c.idx)
 }
 
 // take uses an element as an argument (a builder's child or fragment): once, in its build.
@@ -285,13 +305,14 @@ func TakeNode(n *Node, receiver bool) uint32 {
 	if n == nil {
 		Stop("an element that was never made (a zero gk element value, as in var b kit.ButtonEl) was given to a builder: make it with its constructor (kit.Button(..)) in the view function")
 	}
-	if !n.b.live(n) {
+	b := n.build()
+	if !b.live(n) {
 		Stop("%s%s", staleElement, origin(n, false))
 	}
 	if n.attached {
 		Stop("an element was given to a second builder: an element has one place in a view. Make another one for the second place%s", origin(n, true))
 	}
-	if n.idx == n.b.Cur && n.b == curBuild && !receiver {
+	if n.idx == b.Cur && b == curBuild && !receiver {
 		Stop("an element was given as an argument to its own builder (x.Child(x) or the like)%s", origin(n, true))
 	}
 	n.attached = true
@@ -304,13 +325,14 @@ func TakeValue(n *Node) uint32 {
 	if n == nil {
 		Stop("a kit value that was never made (a zero value) was given to a builder: make it with its constructor")
 	}
-	if !n.b.live(n) {
+	b := n.build()
+	if !b.live(n) {
 		Stop("a kit value (a column, a menu item, a style) was used after the function that made it returned: values live for one call. Make it again in each call%s", origin(n, false))
 	}
-	if n.idx == n.b.Cur && n.b == curBuild {
+	if n.idx == b.Cur && b == curBuild {
 		Stop("a value was given as an argument to its own builder%s", origin(n, true))
 	}
-	if curBuild != nil && n.b != curBuild {
+	if curBuild != nil && b != curBuild {
 		Stop("a kit value made outside this view function was given to one of its elements (or the other way round): make it where it is used")
 	}
 	n.attached = true
@@ -323,14 +345,14 @@ func PutVtape(o *Tape, n *Node) {
 	if n == nil {
 		Stop("a kit value that was never made (a zero value) was given to a call: make it with its constructor where it is used")
 	}
-	if !n.b.isValue {
+	b := n.build()
+	if !b.isValue {
 		Stop("a value made in a view function was given to a call: make it in the handler that calls")
 	}
-	if !n.b.live(n) {
+	if !b.live(n) {
 		Stop("a kit value was used after the function that made it returned: values live for one call of init, a handler or a view function. Make it again where it is used")
 	}
 	n.attached = true
-	b := n.b
 	o.U32(uint32(4*4 + 2 + 2 + 4 + len(b.ops) + len(b.nodes)*10))
 	o.U32(tapeMagic)
 	o.U32(uint32(len(b.nodes)))
@@ -353,30 +375,35 @@ func finish(root Element, out Tape) Tape {
 		Stop("a view function returned nil: return the element it built%s", origin(nil, false))
 	}
 	r := root.node()
-	if r == nil || r.b != &Vb || r.serial != Vb.Serial || !Vb.Active {
+	if r == nil || r.valBuild || r.serial != Vb.Serial || !Vb.Active {
 		Stop("a view function returned an element it did not make in this call (one kept from an earlier call, or made by another view): return an element the function built just now%s%s", origin(nil, false), madeHint())
 	}
 	b := &Vb
 	b.Active = false
-	out = out[:0]
-	out.U32(tapeMagic)
-	out.U32(uint32(len(b.nodes)))
-	out.U32(r.idx)
-	out.U32(uint32(len(b.handlers)))
-	out.U16(uint16(len(b.deps)))
+	need := 24 + len(b.deps)*8 + len(b.slots)*8 + len(b.ops) + len(b.nodes)*10
+	if cap(out) < need {
+		out = make(Tape, 0, max(need, 2*cap(out), 512))
+	} else {
+		out = out[:0]
+	}
+	out = le.AppendUint32(out, tapeMagic)
+	out = le.AppendUint32(out, uint32(len(b.nodes)))
+	out = le.AppendUint32(out, r.idx)
+	out = le.AppendUint32(out, uint32(len(b.handlers)))
+	out = le.AppendUint16(out, uint16(len(b.deps)))
 	for _, d := range b.deps {
-		out.U64(d)
+		out = le.AppendUint64(out, d)
 	}
-	out.U16(uint16(len(b.slots)))
+	out = le.AppendUint16(out, uint16(len(b.slots)))
 	for _, s := range b.slots {
-		out.U64(s)
+		out = le.AppendUint64(out, s)
 	}
-	out.U32(uint32(len(b.ops)))
+	out = le.AppendUint32(out, uint32(len(b.ops)))
 	out = append(out, b.ops...)
 	for _, n := range b.nodes {
-		out.U16(n.typ)
-		out.U32(n.args)
-		out.U32(n.first)
+		out = le.AppendUint16(out, n.typ)
+		out = le.AppendUint32(out, n.args)
+		out = le.AppendUint32(out, n.first)
 	}
 	return out
 }
@@ -390,10 +417,11 @@ func Tokens(n *Node, st []Style) {
 		return
 	}
 	o := Op(n, EStyle)
-	o.U16(uint16(len(st)))
+	b := le.AppendUint16(*o, uint16(len(st)))
 	for _, s := range st {
-		o.U16(uint16(s))
+		b = le.AppendUint16(b, uint16(s))
 	}
+	*o = b
 }
 
 func PutText(n *Node, s string) { Op(n, EText).Str(s) }
@@ -402,8 +430,13 @@ func PutText(n *Node, s string) { Op(n, EText).Str(s) }
 func SlotView(n *Node, v View) {
 	Op(n, EChildView).U64(v.h)
 	Vb.slots = append(Vb.slots, v.h)
-	if rec := views.get(v.h); rec != nil && !rec.described && cur != nil {
-		cur.pending = append(cur.pending, rec)
+	if rec := views.get(v.h); rec != nil && cur != nil {
+		if cur.window != 0 {
+			rec.window = cur.window
+		}
+		if !rec.described {
+			cur.pending = append(cur.pending, rec)
+		}
 	}
 }
 
@@ -643,8 +676,13 @@ func PutViewArg(o *Tape, v View) {
 	o.U64(v.h)
 	if Vb.Active && v.h != 0 {
 		Vb.slots = append(Vb.slots, v.h)
-		if rec := views.get(v.h); rec != nil && !rec.described && cur != nil {
-			cur.pending = append(cur.pending, rec)
+		if rec := views.get(v.h); rec != nil && cur != nil {
+			if cur.window != 0 {
+				rec.window = cur.window
+			}
+			if !rec.described {
+				cur.pending = append(cur.pending, rec)
+			}
 		}
 	}
 }

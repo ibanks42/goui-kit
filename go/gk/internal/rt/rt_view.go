@@ -22,7 +22,9 @@ type viewRec struct {
 	old        []oldTable
 	curRetired bool   // the library dropped gen's description: its table is not kept when gen moves on
 	buildNo    uint32 // counts runs of the view function (what a Model's reader list refers to)
+	window     uint64 // the window this view is mounted in (0: unmounted)
 	described  bool
+	readsLib   bool // last build called into the library (state read, object pin, ...)
 	dead       bool
 	// a row view (rt_source.go): the source's row function for one row
 	row   func(*Cx, RowAt) Element
@@ -119,12 +121,14 @@ func releaseView(t *turn, v View) {
 
 func describe(cx *Cx, v *viewRec) {
 	t := cx.t
+	if t.window != 0 {
+		v.window = t.window
+	}
 	buildSerial++
 	v.buildNo++
 	Vb.reset(buildSerial)
 	Vb.view = v
 	Vb.Active = true
-	defer func() { Vb.Active = false }()
 	var root Element
 	if v.row != nil {
 		root = v.row(cx, v.rowAt)
@@ -133,22 +137,29 @@ func describe(cx *Cx, v *viewRec) {
 	}
 	tapeBuf = finish(root, tapeBuf)
 	v.described = true
+	v.readsLib = Vb.calledLib || len(Vb.deps) > 0
 	if v.gen != 0 && bytes.Equal(tapeBuf, v.last) {
 		// An identical tape is dropped: nothing is notified and the generation stays. The handler
 		// table is still replaced in place: same ids, but the closures may have captured new values.
-		v.cur = append(v.cur[:0], Vb.handlers...)
+		if len(Vb.handlers) > 0 || len(v.cur) > 0 {
+			v.cur = append(v.cur[:0], Vb.handlers...)
+		}
 		return
 	}
 	if cap(v.last) < len(tapeBuf) {
 		v.last = tapeMem(len(tapeBuf))
 	}
 	v.last = append(v.last[:0], tapeBuf...)
-	if v.gen != 0 && !v.curRetired {
+	if v.gen != 0 && !v.curRetired && len(v.cur) > 0 {
 		v.old = append(v.old, oldTable{v.gen, v.cur})
 	}
 	v.curRetired = false
 	v.gen++
-	v.cur = append(newTable(), Vb.handlers...)
+	if len(Vb.handlers) > 0 {
+		v.cur = append(newTable(), Vb.handlers...)
+	} else {
+		v.cur = nil
+	}
 	t.tapes.U64(v.h)
 	t.tapes.U32(v.gen)
 	t.tapes.U32(uint32(len(v.last)))
@@ -203,7 +214,12 @@ func retireTable(view uint64, gen uint32) {
 			if len(tablePool) < 64 {
 				tablePool = append(tablePool, o.t[:0])
 			}
-			v.old = append(v.old[:i], v.old[i+1:]...)
+			last := len(v.old) - 1
+			if i != last {
+				copy(v.old[i:], v.old[i+1:])
+			}
+			v.old[last] = oldTable{}
+			v.old = v.old[:last]
 			return
 		}
 	}

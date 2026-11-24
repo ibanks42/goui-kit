@@ -68,6 +68,7 @@ var (
 	libPath                                        string
 	fnInfo, fnRun, fnCall, fnReply, fnPost, fnLast uintptr
 	fnHeadless, fnUseAll, turnCallback             uintptr
+	inlineReply                                    bool
 )
 
 // loadLibrary finds and loads the library, once; every later call returns the first one's answer.
@@ -171,6 +172,7 @@ func readInfo() (rawInfo, bool) {
 	if int(i.size) >= infoSize {
 		ri.abiMajor, ri.abiMinor, ri.apiHash, ri.features = i.abiMajor, i.abiMinor, i.apiHash, i.features
 		ri.versions = string(unsafe.Slice(i.versions, int(i.versionsLen)))
+		inlineReply = i.features&FeatInlineReply != 0
 	}
 	return ri, true
 }
@@ -200,6 +202,12 @@ var (
 // call makes one gk_call. The request is Go memory lent for the call; the result is the
 // library's and valid until the next gk_call, so it is copied out at once.
 func call(req []byte) (int32, []byte) {
+	if Vb.Active {
+		if cur != nil && cur.inInlineEvent {
+			panic(abortInline{})
+		}
+		Vb.calledLib = true
+	}
 	d := callDepth
 	if d >= len(callOut) {
 		Stop("gk_calls nest more than %d deep: a handler that makes a call that runs it again", len(callOut))
@@ -229,7 +237,15 @@ func dynCallback(user, cb, kind, req, n uintptr) uintptr {
 		in = unsafe.Slice(*(**byte)(unsafe.Pointer(&req)), int(n)) // the library's, valid during this call
 	}
 	if r := onTurn(uint32(kind), in); len(r) > 0 {
-		purego.SyscallN(fnReply, cb, uintptr(unsafe.Pointer(&r[0])), uintptr(len(r)))
+		if inlineReply {
+			// GkCb begins with (inline_ptr, inline_len); replyMem is rooted and non-moving
+			// until the next turn's reply, and rt::turn reads it immediately on return.
+			slot := *(**[2]uintptr)(unsafe.Pointer(&cb))
+			slot[0] = uintptr(unsafe.Pointer(&r[0]))
+			slot[1] = uintptr(len(r))
+		} else {
+			purego.SyscallN(fnReply, cb, uintptr(unsafe.Pointer(&r[0])), uintptr(len(r)))
+		}
 	}
 	return 0
 }

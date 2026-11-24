@@ -113,7 +113,7 @@ func NewRowSource(cx *Cx, count int, row func(cx *Cx, at RowAt) Element, opts ..
 	n := r.U32()
 	for range n {
 		key := r.U64()
-		bindRow(rec, key, r.U64())
+		bindRow(rec, key, r.U64(), t.window)
 	}
 	return RowSource{MkH(rec.h)}
 }
@@ -217,13 +217,16 @@ func ScrollTo(cx *Cx, src RowSource, row int) {
 }
 
 // rowRecs is the block row views are taken from: a ROWS turn binds a few hundred at a time.
-var rowRecs []viewRec
+var (
+	rowRecs   []viewRec
+	rowsFresh []uint64
+)
 
-func bindRow(rec *sourceRec, key, view uint64) {
+func bindRow(rec *sourceRec, key, view, window uint64) {
 	if len(rowRecs) == cap(rowRecs) {
 		rowRecs = make([]viewRec, 0, 128)
 	}
-	rowRecs = append(rowRecs, viewRec{h: view, row: rec.row, rowAt: RowAt{int(key >> 32), int(key & 0xffff_ffff)}, src: rec.h})
+	rowRecs = append(rowRecs, viewRec{h: view, window: window, row: rec.row, rowAt: RowAt{int(key >> 32), int(key & 0xffff_ffff)}, src: rec.h})
 	v := &rowRecs[len(rowRecs)-1]
 	views.set(view, v)
 	rec.rows[key] = view
@@ -242,9 +245,13 @@ func unbindRow(view uint64) {
 	deadRows = append(deadRows, v)
 }
 
-// rowsTurn is the ROWS turn: bind the rows the library asks for, forget the ones it evicted. No
-// app code runs in it; the new rows are described in the VIEWS turn that follows.
-func rowsTurn(r *Reader) {
+// rowsTurn is the bind/evict step of the ROWS turn: bind the rows the library asks for, forget
+// the ones it evicted, and return the newly bound views for description in the same turn.
+func rowsTurn(r *Reader, window uint64) []uint64 {
+	var fresh []uint64
+	if depth == 1 {
+		fresh = rowsFresh[:0]
+	}
 	nSources := r.U32()
 	for range nSources {
 		rec := sources[r.U64()] // nil if released meanwhile: its rows are dropped
@@ -253,7 +260,8 @@ func rowsTurn(r *Reader) {
 			key := r.U64()
 			view := r.U64()
 			if rec != nil {
-				bindRow(rec, key, view)
+				bindRow(rec, key, view, window)
+				fresh = append(fresh, view)
 			}
 		}
 		nGone := r.U32()
@@ -261,6 +269,10 @@ func rowsTurn(r *Reader) {
 			unbindRow(r.U64())
 		}
 	}
+	if depth == 1 {
+		rowsFresh = fresh
+	}
+	return fresh
 }
 
 func releaseSource(t *turn, src RowSource) {
@@ -323,13 +335,30 @@ func NewRows(cx *Cx) Rows { return Rows{MkH(StateMake(cx, NewReq(CRowsNew)))} }
 
 // Push appends rows: one buffered op however many rows.
 func (r Rows) Push(cx *Cx, rows ...string) {
-	o := NewReq(CRowsPush)
-	o.U64(r.h)
-	o.U32(uint32(len(rows)))
-	for _, s := range rows {
-		o.Str(s)
+	t := CheckCx(cx)
+	if Vb.Active {
+		Stop("a view function may not write: it only describes what the view shows. Change kit state in a handler, in init or in a frame handler")
 	}
-	StateSet(cx, o)
+	if debug {
+		o := NewReq(CRowsPush)
+		o.U64(r.h)
+		o.U32(uint32(len(rows)))
+		for _, s := range rows {
+			o.Str(s)
+		}
+		MustCall(*o)
+		return
+	}
+	at := len(t.deferred)
+	t.deferred.U32(0)
+	t.deferred.U16(CRowsPush)
+	t.deferred.U64(r.h)
+	t.deferred.U32(uint32(len(rows)))
+	for _, s := range rows {
+		t.deferred.Str(s)
+	}
+	le.PutUint32(t.deferred[at:], uint32(len(t.deferred)-at-4))
+	t.nDefer++
 }
 
 // UniformListEl is a list of equal-height rows (GPUI's uniform_list over Rows, or the runtime's
@@ -376,6 +405,37 @@ func Text(s string) Element {
 }
 
 type textEl struct{ ElCore }
+
+// TableCells builds all cols cells of a table row into one NTableCells node so the entire row
+// travels as a single tape fragment rather than one view per cell.
+func TableCells(cols int, cell func(col int) Element) Element {
+	var stack [16]uint32
+	var ids []uint32
+	if cols <= len(stack) {
+		ids = stack[:cols]
+	} else {
+		ids = make([]uint32, cols)
+	}
+	for col := range cols {
+		el := cell(col)
+		c := ElemNode(el)
+		if !c.build().live(c) {
+			Stop("%s%s", staleElement, origin(c, false))
+		}
+		if c.attached {
+			Stop("an element was given to a second parent: an element has one place in a view. Make another one for the second place (a function that returns it, called twice)%s", origin(c, true))
+		}
+		c.attached = true
+		ids[col] = c.idx
+	}
+	n := NewNode(NTableCells)
+	o := NodeArgs(n)
+	o.U32(uint32(cols))
+	for _, id := range ids {
+		o.U32(id)
+	}
+	return textEl{MkElCore(n)}
+}
 
 // VirtualListEl is gpui-kit's virtual list over a row source (docs/PROTOCOLS.md 13.31): rows of
 // different sizes, each a view described by the source's row function, only those in view drawn.

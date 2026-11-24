@@ -136,6 +136,12 @@ pub fn call(
             Ok(())
         }
         C_TEST_PANIC => panic!("test panic asked for by the app (call op TEST_PANIC)"),
+        // The row store's ops (hand.rs) are the ones a frame sends most (a list that grows on a
+        // click): straight to their module rather than past every other family's.
+        C_ROWS_NEW | C_ROWS_PUSH => match crate::hand::call(op, &mut r, &mut c) {
+            Some(done) => done,
+            None => err(ERR_BAD_OP, format!("unknown call op {op}")),
+        },
         _ => {
             if let Some(done) = crate::app::call(op, &mut r, &mut c) {
                 return done;

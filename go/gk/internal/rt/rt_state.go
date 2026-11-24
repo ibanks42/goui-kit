@@ -211,7 +211,10 @@ func windowOp(cx *Cx, code uint16, w Window, text string) {
 }
 
 // CloseWindow closes a window (after the handler); a zero Window is the turn's own.
-func CloseWindow(cx *Cx, w Window) { windowOp(cx, CWindowClose, w, "") }
+func CloseWindow(cx *Cx, w Window) {
+	CheckCx(cx).skipInline = true
+	windowOp(cx, CWindowClose, w, "")
+}
 
 // SetWindowTitle changes a window's title.
 func SetWindowTitle(cx *Cx, w Window, title string) { windowOp(cx, CWindowSetTitle, w, title) }
@@ -355,7 +358,11 @@ func OnFrame(cx *Cx, f func(cx *Cx)) {
 }
 
 // Quit ends the app.
-func Quit(cx *Cx) { CheckCx(cx).DeferOp(*NewReq(CQuit)) }
+func Quit(cx *Cx) {
+	t := CheckCx(cx)
+	t.skipInline = true
+	t.DeferOp(*NewReq(CQuit))
+}
 
 // handle makes a focus handle something gk.Release takes.
 func (f FocusHandle) handle() uint64 { return f.h }
@@ -404,6 +411,7 @@ func Release(cx *Cx, x any) {
 	if Vb.Active {
 		Stop("a view function may not write: it only describes (gk.Release). Release in a handler, in init or in a frame handler")
 	}
+	t.skipInline = true
 	if hd, ok := x.(Handled); ok {
 		checkNotGone(hd.handle())
 		disown(hd.handle()) // released here: not again with its owner
@@ -514,6 +522,7 @@ func TestFireQueued(cx *Cx, s Handled, h func(cx *Cx, row int), row int) {
 // are applied outside any call.
 func TestPanic(cx *Cx, later bool) {
 	t := CheckCx(cx)
+	t.skipInline = true
 	o := NewReq(CTestPanic)
 	if later && !debug {
 		t.DeferOp(*o)

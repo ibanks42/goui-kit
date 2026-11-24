@@ -751,9 +751,20 @@ class Rust:
         self.add("/// A colour by number, resolved when the tape is decoded: a field of the kit's theme, or")
         self.add("/// (bit 15 set) one of the kit's fixed palette colours. genapi::color calls it for kind 1.")
         self.add("pub fn color_token(t: &gpui_kit::component::ThemeColor, id: u16) -> Option<gpui_kit::Hsla> {")
+        self.add("    if id >= 0x8000 {")
+        self.add("        return palette_color(id);")
+        self.add("    }")
         self.add("    Some(match id {")
         for name, n in sorted(m.theme_nums.items(), key=lambda kv: kv[1]):
             self.add(f"        {n} => t.{name},", ["theme", name])
+        self.add("        _ => return None,")
+        self.add("    })")
+        self.add("}")
+        self.add("")
+        self.add("#[cold]")
+        self.add("#[inline(never)]")
+        self.add("fn palette_color(id: u16) -> Option<gpui_kit::Hsla> {")
+        self.add("    Some(match id {")
         for it in sorted(m.palette, key=lambda i: i["op"]):
             if it["status"] == "bound":
                 self.add(f"        {0x8000 + it['op']} => {it['callee']}(),", ["item", it["id"]])
@@ -785,12 +796,37 @@ class Rust:
         self.add("    }")
         self.add("}")
         self.add("")
+        hot_names = {
+            "flex", "flex_1", "flex_row", "flex_col", "flex_wrap", "flex_shrink_0", "flex_grow",
+            "items_center", "items_start", "items_end", "justify_between", "justify_center",
+            "justify_start", "justify_end", "size_full", "w_full", "h_full",
+            "gap_1", "gap_2", "gap_3", "gap_4", "p_1", "p_2", "p_3", "p_4",
+            "px_1", "px_2", "px_3", "px_4", "py_1", "py_2", "py_3", "py_4",
+            "rounded_sm", "rounded_md", "rounded_lg", "border_1", "overflow_hidden",
+            "relative", "absolute", "cursor_pointer", "truncate",
+            "text_xs", "text_sm", "text_base", "font_medium", "font_semibold", "font_bold",
+            "h_flex", "v_flex",
+        }
+        bound = [it for it in sorted(m.tokens, key=lambda i: i["op"]) if it["status"] == "bound"]
+        hot = [it for it in bound if it["name"] in hot_names]
+        cold = [it for it in bound if it["name"] not in hot_names]
         self.add("pub fn style_token(style: &mut StyleRefinement, token: u16) -> bool {")
         self.add("    let s = W(style);")
         self.add("    let _ = match token {")
-        for it in sorted(m.tokens, key=lambda i: i["op"]):
-            if it["status"] == "bound":
-                self.add(f"        {it['op']} => {it.get('token_of', 'Styled')}::{it['name']}(s),", ["item", it["id"]])
+        for it in hot:
+            self.add(f"        {it['op']} => {it.get('token_of', 'Styled')}::{it['name']}(s),", ["item", it["id"]])
+        self.add("        _ => return style_token_rest(s.0, token),")
+        self.add("    };")
+        self.add("    true")
+        self.add("}")
+        self.add("")
+        self.add("#[cold]")
+        self.add("#[inline(never)]")
+        self.add("fn style_token_rest(style: &mut StyleRefinement, token: u16) -> bool {")
+        self.add("    let s = W(style);")
+        self.add("    let _ = match token {")
+        for it in cold:
+            self.add(f"        {it['op']} => {it.get('token_of', 'Styled')}::{it['name']}(s),", ["item", it["id"]])
         self.add("        _ => return false,")
         self.add("    };")
         self.add("    true")
@@ -821,9 +857,38 @@ class Rust:
             # out once per op. The style-only traits run on one type (W) for every element.
             if not t["via_style"] and not os.environ.get("GK_NO_INLINE"):
                 self.add("#[inline(always)]")
+            hot_styled = {
+                "bg", "text_color", "border_color", "w", "h", "min_w", "min_h", "max_w", "max_h",
+                "size", "p", "px", "py", "pt", "pb", "pl", "pr", "m", "mx", "my", "mt", "mb",
+                "ml", "mr", "gap", "gap_x", "gap_y", "rounded", "border", "opacity", "text_size",
+                "flex_grow", "flex_shrink", "flex_basis",
+            }
+            ordered = sorted(ops, key=lambda i: i["op"])
+            if t["name"] == "Styled" and t["via_style"] and len(ordered) > 40:
+                hot_ops = [it for it in ordered if it["name"] in hot_styled]
+                cold_ops = [it for it in ordered if it["name"] not in hot_styled]
+                self.add(f"pub fn {t['fn']}<E: {bound}>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {{", ["trait", t["key"]])
+                self.add("    match op {")
+                for it in hot_ops:
+                    call = f"<E as {t['path']}>::{it['name']}{gk_app.turbofish(it)}(el%s)" % ("" if not it["args"] else ", %s")
+                    self.add(f"        {it['op']} => {self.arm(it, call, 'return el')}", ["item", it["id"]])
+                self.add(f"        _ => {t['fn']}_rest(el, op, r, dx),")
+                self.add("    }")
+                self.add("}")
+                self.add("#[cold]")
+                self.add("#[inline(never)]")
+                self.add(f"fn {t['fn']}_rest<E: {bound}>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {{")
+                self.add("    match op {")
+                for it in cold_ops:
+                    call = f"<E as {t['path']}>::{it['name']}{gk_app.turbofish(it)}(el%s)" % ("" if not it["args"] else ", %s")
+                    self.add(f"        {it['op']} => {self.arm(it, call, 'return el')}", ["item", it["id"]])
+                self.add("        _ => { bad_op(\"%s\", op); el }" % t["name"])
+                self.add("    }")
+                self.add("}")
+                continue
             self.add(f"pub fn {t['fn']}<E: {bound}>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {{", ["trait", t["key"]])
             self.add("    match op {")
-            for it in sorted(ops, key=lambda i: i["op"]):
+            for it in ordered:
                 call = f"<E as {t['path']}>::{it['name']}{gk_app.turbofish(it)}(el%s)" % ("" if not it["args"] else ", %s")
                 self.add(f"        {it['op']} => {self.arm(it, call, 'return el')}", ["item", it["id"]])
             self.add("        _ => { bad_op(\"%s\", op); el }" % t["name"])

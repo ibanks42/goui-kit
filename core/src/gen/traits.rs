@@ -245,47 +245,21 @@ pub fn tr_style_sized_53<E: gpui_kit::component::StyleSized<E> + gpui_kit::Style
 }
 pub fn tr_styled_3<E: gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
-        16896 => { let a0 = r.f32(); <E as gpui_kit::Styled>::aspect_ratio(el, a0) }
         16897 => { let a0 = <gpui_kit::Fill>::from(genapi::background(r, &*dx.cx)); <E as gpui_kit::Styled>::bg(el, a0) }
         16898 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border(el, a0) }
-        16899 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_b(el, a0) }
         16900 => { let a0 = genapi::color(r, &*dx.cx); <E as gpui_kit::Styled>::border_color(el, a0) }
-        16901 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_l(el, a0) }
-        16902 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_r(el, a0) }
-        16903 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_t(el, a0) }
-        16904 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_x(el, a0) }
-        16905 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_y(el, a0) }
-        16906 => { let a0 = length(r); <E as gpui_kit::Styled>::bottom(el, a0) }
-        16907 => { let a0 = r.u16() as i16; <E as gpui_kit::Styled>::col_end(el, a0) }
-        16908 => { let a0 = r.u16(); <E as gpui_kit::Styled>::col_span(el, a0) }
-        16909 => { let a0 = r.u16() as i16; <E as gpui_kit::Styled>::col_start(el, a0) }
-        16910 => { let a0 = en_7(r.u16()); <E as gpui_kit::Styled>::cursor(el, a0) }
         16911 => { let a0 = length(r); <E as gpui_kit::Styled>::flex_basis(el, a0) }
         16912 => { let a0 = r.f32(); <E as gpui_kit::Styled>::flex_grow(el, a0) }
         16913 => { let a0 = r.f32(); <E as gpui_kit::Styled>::flex_shrink(el, a0) }
-        16914 => { let a0 = gpui_kit::SharedString::new(r.str()); <E as gpui_kit::Styled>::font_family(el, a0) }
-        16915 => { let Some((a0,)) = (|| Some((rc_20(r, dx)?,)))() else { return el }; <E as gpui_kit::Styled>::font_weight(el, a0) }
         16916 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::gap(el, a0) }
         16917 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::gap_x(el, a0) }
         16918 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::gap_y(el, a0) }
-        16919 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols(el, a0) }
-        16920 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols_max_content(el, a0) }
-        16921 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols_min_content(el, a0) }
-        16922 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows(el, a0) }
-        16923 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows_max_content(el, a0) }
-        16924 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows_min_content(el, a0) }
         16925 => { let a0 = length(r); <E as gpui_kit::Styled>::h(el, a0) }
-        16926 => { let a0 = length(r); <E as gpui_kit::Styled>::inset(el, a0) }
-        16927 => { let a0 = length(r); <E as gpui_kit::Styled>::left(el, a0) }
-        16928 => { let a0 = r.u64() as usize; <E as gpui_kit::Styled>::line_clamp(el, a0) }
-        16929 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::line_height(el, a0) }
         16930 => { let a0 = length(r); <E as gpui_kit::Styled>::m(el, a0) }
         16931 => { let a0 = length(r); <E as gpui_kit::Styled>::max_h(el, a0) }
-        16932 => { let a0 = length(r); <E as gpui_kit::Styled>::max_size(el, a0) }
         16933 => { let a0 = length(r); <E as gpui_kit::Styled>::max_w(el, a0) }
         16934 => { let a0 = length(r); <E as gpui_kit::Styled>::mb(el, a0) }
         16935 => { let a0 = length(r); <E as gpui_kit::Styled>::min_h(el, a0) }
-        16936 => { let a0 = length(r); <E as gpui_kit::Styled>::min_size(el, a0) }
         16937 => { let a0 = length(r); <E as gpui_kit::Styled>::min_w(el, a0) }
         16938 => { let a0 = length(r); <E as gpui_kit::Styled>::ml(el, a0) }
         16939 => { let a0 = length(r); <E as gpui_kit::Styled>::mr(el, a0) }
@@ -300,8 +274,45 @@ pub fn tr_styled_3<E: gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) 
         16948 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::pt(el, a0) }
         16949 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::px(el, a0) }
         16950 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::py(el, a0) }
-        16951 => { let a0 = length(r); <E as gpui_kit::Styled>::right(el, a0) }
         16952 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::rounded(el, a0) }
+        16966 => { let a0 = length(r); <E as gpui_kit::Styled>::size(el, a0) }
+        16969 => { let a0 = genapi::color(r, &*dx.cx); <E as gpui_kit::Styled>::text_color(el, a0) }
+        16971 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::text_size(el, a0) }
+        16973 => { let a0 = length(r); <E as gpui_kit::Styled>::w(el, a0) }
+        _ => tr_styled_3_rest(el, op, r, dx),
+    }
+}
+#[cold]
+#[inline(never)]
+fn tr_styled_3_rest<E: gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+    match op {
+        16896 => { let a0 = r.f32(); <E as gpui_kit::Styled>::aspect_ratio(el, a0) }
+        16899 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_b(el, a0) }
+        16901 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_l(el, a0) }
+        16902 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_r(el, a0) }
+        16903 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_t(el, a0) }
+        16904 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_x(el, a0) }
+        16905 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::border_y(el, a0) }
+        16906 => { let a0 = length(r); <E as gpui_kit::Styled>::bottom(el, a0) }
+        16907 => { let a0 = r.u16() as i16; <E as gpui_kit::Styled>::col_end(el, a0) }
+        16908 => { let a0 = r.u16(); <E as gpui_kit::Styled>::col_span(el, a0) }
+        16909 => { let a0 = r.u16() as i16; <E as gpui_kit::Styled>::col_start(el, a0) }
+        16910 => { let a0 = en_7(r.u16()); <E as gpui_kit::Styled>::cursor(el, a0) }
+        16914 => { let a0 = gpui_kit::SharedString::new(r.str()); <E as gpui_kit::Styled>::font_family(el, a0) }
+        16915 => { let Some((a0,)) = (|| Some((rc_20(r, dx)?,)))() else { return el }; <E as gpui_kit::Styled>::font_weight(el, a0) }
+        16919 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols(el, a0) }
+        16920 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols_max_content(el, a0) }
+        16921 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_cols_min_content(el, a0) }
+        16922 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows(el, a0) }
+        16923 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows_max_content(el, a0) }
+        16924 => { let a0 = r.u16(); <E as gpui_kit::Styled>::grid_rows_min_content(el, a0) }
+        16926 => { let a0 = length(r); <E as gpui_kit::Styled>::inset(el, a0) }
+        16927 => { let a0 = length(r); <E as gpui_kit::Styled>::left(el, a0) }
+        16928 => { let a0 = r.u64() as usize; <E as gpui_kit::Styled>::line_clamp(el, a0) }
+        16929 => { let a0 = definite_length(r); <E as gpui_kit::Styled>::line_height(el, a0) }
+        16932 => { let a0 = length(r); <E as gpui_kit::Styled>::max_size(el, a0) }
+        16936 => { let a0 = length(r); <E as gpui_kit::Styled>::min_size(el, a0) }
+        16951 => { let a0 = length(r); <E as gpui_kit::Styled>::right(el, a0) }
         16953 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::rounded_b(el, a0) }
         16954 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::rounded_bl(el, a0) }
         16955 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::rounded_br(el, a0) }
@@ -315,14 +326,10 @@ pub fn tr_styled_3<E: gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) 
         16963 => { let a0 = r.u16() as i16; <E as gpui_kit::Styled>::row_start(el, a0) }
         16964 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::scrollbar_width(el, a0) }
         16965 => { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(rc_12(r, dx)?); } v },)))() else { return el }; <E as gpui_kit::Styled>::shadow(el, a0) }
-        16966 => { let a0 = length(r); <E as gpui_kit::Styled>::size(el, a0) }
         16967 => { let a0 = en_25(r.u16()); <E as gpui_kit::Styled>::text_align(el, a0) }
         16968 => { let a0 = genapi::color(r, &*dx.cx); <E as gpui_kit::Styled>::text_bg(el, a0) }
-        16969 => { let a0 = genapi::color(r, &*dx.cx); <E as gpui_kit::Styled>::text_color(el, a0) }
         16970 => { let a0 = genapi::color(r, &*dx.cx); <E as gpui_kit::Styled>::text_decoration_color(el, a0) }
-        16971 => { let a0 = absolute_length(r); <E as gpui_kit::Styled>::text_size(el, a0) }
         16972 => { let a0 = length(r); <E as gpui_kit::Styled>::top(el, a0) }
-        16973 => { let a0 = length(r); <E as gpui_kit::Styled>::w(el, a0) }
         16974 => { let Some((a0,)) = (|| Some((de_8(r, dx)?,)))() else { return el }; <E as gpui_kit::Styled>::text_overflow(el, a0) }
         16975 => { let a0 = crate::shim_editor::font(r); <E as gpui_kit::Styled>::font(el, a0) }
         16976 => { let Some((a0,)) = (|| Some((rc_19(r, dx)?,)))() else { return el }; <E as gpui_kit::Styled>::font_features(el, a0) }

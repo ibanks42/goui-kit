@@ -6,11 +6,12 @@
 #
 # class  NAME  number
 abi MAJOR 0
-abi MINOR 5
+abi MINOR 6
 
 feat GPUI_FAST 1
 feat DIAG 2
 feat ALL 4
+feat INLINE_REPLY 8
 
 # callback kinds (turns)
 kind INIT 1
@@ -137,6 +138,8 @@ call TREE_SET_ITEMS 52
 call TREE_ENTRY 53
 # the columns of the table state about to be made over a row source: u64 source, the columns
 call TABLE_SOURCE_COLUMNS 55
+# a table row holding its cells in column order: u32 n, u32 child node each
+node TABLE_CELLS 15
 
 # --- input family (track I, docs/PROTOCOLS.md section 9.6): the editor's providers over a
 # row source's request channel, core/src/shim_input.rs and go/gk. Reserved:

@@ -2463,6 +2463,9 @@ impl genapi::Wire for std::sync::Arc<gpui_kit::component::highlighter::Highlight
 /// A colour by number, resolved when the tape is decoded: a field of the kit's theme, or
 /// (bit 15 set) one of the kit's fixed palette colours. genapi::color calls it for kind 1.
 pub fn color_token(t: &gpui_kit::component::ThemeColor, id: u16) -> Option<gpui_kit::Hsla> {
+    if id >= 0x8000 {
+        return palette_color(id);
+    }
     Some(match id {
         1 => t.accent,
         2 => t.accent_foreground,
@@ -2604,6 +2607,14 @@ pub fn color_token(t: &gpui_kit::component::ThemeColor, id: u16) -> Option<gpui_
         138 => t.cyan,
         139 => t.cyan_light,
         140 => t.list_highlight_foreground,
+        _ => return None,
+    })
+}
+
+#[cold]
+#[inline(never)]
+fn palette_color(id: u16) -> Option<gpui_kit::Hsla> {
+    Some(match id {
         32769 => gpui_kit::component::amber_100(),
         32770 => gpui_kit::component::amber_200(),
         32771 => gpui_kit::component::amber_300(),

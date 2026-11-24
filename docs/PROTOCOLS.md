@@ -76,9 +76,9 @@ One callback, `gk_callback(user, cb, kind, req, len)`, on the UI thread.
 |---|---|---|
 | `INIT 1` | empty | once, inside `gk_run` |
 | `WINDOW_INIT 2` | u64 window, u64 root view | inside `open_window`, window in hand |
-| `FRAME 3` | u64 window, u64 frame number | pre-frame hook, only if the app asked (`on_frame`) |
-| `VIEWS 4` | u64 window, u32 n, u64 view each, u32 n, (u64 view, u32 generation) each: the descriptions dropped since the last `VIEWS` turn (section 4) | pre-frame hook, only if a mounted view is dirty |
-| `EVENT 5` | u64 view, u32 generation, u32 handler, u16 shape, payload | a listener, a subscription, a queued event |
+| `FRAME 3` | u64 window, u64 frame number, u32 n, u64 pre-dirty view each, u32 n, (u64 view, u32 generation) retired each | pre-frame hook, only if the app asked (`on_frame`); if the frame handler buffers no writes, the binding describes dirty mounted views inline in the same reply |
+| `VIEWS 4` | u64 window, u32 n, u64 view each, u32 n, (u64 view, u32 generation) each: the descriptions dropped since the last turn (section 4) | pre-frame hook, only if a mounted view is still dirty |
+| `EVENT 5` | u64 window, u8 flags (bit 0: outermost turn with a window, inline describe allowed), u32 n, (u64 view, u32 generation) retired each, u64 view, u32 generation, u32 handler, u16 shape, payload | a listener, a subscription, a queued event; when bit 0 is set, pure-Go dirty mounted views may be described inline in the same reply |
 | `WAKE 7` | empty | after `gk_post`, at most one per turn of the main loop |
 | `PANIC 10` | str message, u8 kind (0 a Rust panic the library caught, 1 a mistake in app code found outside any call; absent: 0) | the binding records it and returns; the library quits the app (section 3) |
 
@@ -87,7 +87,11 @@ One callback, `gk_callback(user, cb, kind, req, len)`, on the UI thread.
 An `EVENT` with view 0 names a *kept handler* (a subscription, a global): `handler` is its
 slot and `generation` the slot's generation.
 
-The reply (`gk_reply`, copied before it returns). An empty reply means all zero. `gk_reply`
+The reply (`gk_reply`, copied before it returns). An empty reply means all zero. When
+`gk_info.features` advertises `GK_FEAT_INLINE_REPLY` (`feat INLINE_REPLY 8`), the callback may
+instead write its reply buffer pointer and byte length directly into the first two pointer-sized
+fields of `gk_cb` (`inline_ptr`, `inline_len`) without calling `gk_reply`; the library parses
+those bytes before returning from the turn and never retains the pointer. `gk_reply`
 accepts only the `gk_cb` of the callback running now (`GK_ERR_NO_CONTEXT` otherwise: one kept
 from an earlier callback points into a stack frame that has returned). A request shorter than
 its op number, or a null one, is `GK_ERR_BAD_OP`; a request or reply whose lengths run past its
@@ -98,7 +102,7 @@ bytes, or a string that is not UTF-8, stops the library (poisoned, the message i
 u32 ret_len, bytes                         the handler's return value in the shape's wire type; 0 = Default
 u32 n, u64 view each                       views to mark dirty
 u32 n, (u32 len, call op bytes) each       buffered writes
-u32 n, (u64 view, u32 generation, u32 len, tape) each     changed tapes (VIEWS and WINDOW_INIT only)
+u32 n, (u64 view, u32 generation, u32 len, tape) each     changed tapes (VIEWS, WINDOW_INIT, FRAME, EVENT, ROWS)
 ```
 
 When buffered writes are applied (DESIGN.md section 7, "When a write lands"):
@@ -397,16 +401,18 @@ view's handle).
 
   ```
   u64 window, u32 n_sources, per source: u64 source,
-      u32 n_new, (u64 key, u64 view) each, u32 n_evicted, (u64 view) each
+      u32 n_new, (u64 key, u64 view) each, u32 n_evicted, (u64 view) each,
+  u32 n_dirty, u64 view each,
+  u32 n_retired, (u64 view, u32 generation) each
   ```
 
   The binding binds each new view to its key (a view record whose procedure is the source's
-  row procedure for that key) and forgets the evicted ones. No app code runs in it; the reply
-  is empty, and a write in it is refused as in `VIEWS`. The library then releases the
-  evicted views and marks the new ones dirty, so the `VIEWS` turn right after describes
-  them, and when their tapes are accepted it notifies every entity that drew the source
-  (`source::watch`), so **the same frame shows them**. A far jump therefore shows
-  placeholders for exactly one frame; scrolling within the overscan shows none.
+  row procedure for that key), forgets the evicted ones, retires the listed handler tables,
+  and describes both the already-dirty views and the newly bound row views in the same reply;
+  a write in it is refused as in `VIEWS`. The library then releases the evicted views, accepts
+  the reply's tapes, and notifies every entity that drew the source (`source::watch`), so
+  **the same frame shows them** in one crossing instead of two (`ROWS` + `VIEWS`). A far jump
+  therefore shows placeholders for exactly one frame; scrolling within the overscan shows none.
 - **The first rows** come with the source: `C_SOURCE_NEW` binds rows `0 ..< initial` at once
   and marks them dirty, so the first frame that draws the source is complete.
 - **Counts and changes.** `gk.set_count(cx, src, n, section)` drops rows at and past `n`
@@ -417,8 +423,8 @@ view's handle).
   columns): a row's number is 32 bits and the two highest are the header and footer. A larger
   count stops in the binding (and is `GK_ERR_BAD_OP` in the library).
 
-Cost: 0 crossings per frame while scrolling through bound rows; one ROWS turn and one VIEWS
-turn per frame that drew placeholders; each row is described once per change.
+Cost: 0 crossings per frame while scrolling through bound rows; one ROWS turn per frame that
+drew placeholders (it describes the new rows inline); each row is described once per change.
 
 ### 9.2 Events and requests
 
@@ -463,8 +469,9 @@ other's lines of `core/wire/ops.txt` (each appends its block at the end of the c
 | `shape` | 14, 15 | 16 to 19 |
 | `node` | 10, 11 | 12 to 15 |
 
-`ABI_MINOR` is 4 from this section on; a family that adds a turn kind or changes a reply
-raises it again.
+`ABI_MINOR` is 4 from this section on (6 after `FRAME`, `EVENT` and `ROWS` began carrying
+retired tables and returning changed tapes inline); a family that adds a turn kind or changes
+a reply raises it again.
 
 ### 9.4 The shared core's API
 

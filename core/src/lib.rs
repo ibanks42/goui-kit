@@ -103,7 +103,8 @@ static INFO: GkInfo = GkInfo {
     api_hash: API_HASH,
     features: (if gpui_kit::GPUI_FAST { FEAT_GPUI_FAST } else { 0 })
         | (if cfg!(feature = "diag") { FEAT_DIAG } else { 0 })
-        | (if cfg!(feature = "all") { FEAT_ALL } else { 0 }),
+        | (if cfg!(feature = "all") { FEAT_ALL } else { 0 })
+        | FEAT_INLINE_REPLY,
     versions: VERSIONS.as_ptr(),
     versions_len: VERSIONS.len(),
 };
@@ -323,7 +324,7 @@ pub extern "C" fn gk_call(
             format!("{} (an earlier panic; the library stays poisoned)", rt::panic_message()),
         );
     }
-    if !rt::IS_UI.with(|u| u.get()) {
+    if !rt::is_ui() {
         return fail(ERR_WRONG_THREAD, "gk_call from a thread that is not the UI thread");
     }
     let Some((cx, window)) = rt::scope() else {
@@ -371,7 +372,7 @@ pub extern "C" fn gk_reply(cb: *mut GkCb, out: *const u8, len: usize) -> i32 {
     // A gk_cb is valid only inside the callback that received it: one kept from an earlier
     // callback points into a stack frame that has returned, and writing through it would
     // corrupt memory. Only the running callback's own is accepted.
-    if !rt::IS_UI.with(|u| u.get()) || !rt::current_cb(cb) {
+    if !rt::is_ui() || !rt::current_cb(cb) {
         return fail(ERR_NO_CONTEXT, "gk_reply with a gk_cb that is not the running callback's (a gk_cb is valid only inside the callback that received it)");
     }
     if out.is_null() && len > 0 {
@@ -381,6 +382,11 @@ pub extern "C" fn gk_reply(cb: *mut GkCb, out: *const u8, len: usize) -> i32 {
     // points to `len` readable bytes.
     unsafe {
         let cb = &mut *cb;
+        cb.inline_ptr = std::ptr::null();
+        cb.inline_len = 0;
+        if cb.reply.capacity() == 0 && len > 0 {
+            cb.reply = rt::take_reply_buf();
+        }
         cb.reply.clear();
         if len > 0 {
             cb.reply.extend_from_slice(std::slice::from_raw_parts(out, len));

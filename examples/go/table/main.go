@@ -1,7 +1,7 @@
 // table: the `table` scene in Go, the same table as ref/src/bin/table.rs:
 // the kit's DataTable with `rows` rows of `cols` columns over a row source
-// whose rows are the cells (docs/PROTOCOLS.md section 9.5). Each cell is a view described once,
-// when it is first drawn near the visible rows, and kept while the table scrolls; the
+// (docs/PROTOCOLS.md section 9.5). Each row is described once into one tape holding its cells,
+// when it is first needed near the visible rows, and kept while the table scrolls; the
 // frame-cost gate scrolls it before every frame with GK_SCROLL (gates/fps.sh table).
 //
 //	table-go [rows] [cols]      (default 100000 6)

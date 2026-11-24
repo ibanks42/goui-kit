@@ -14,6 +14,14 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub fn node(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<AnyElement> {
+    // This file's own elements first: a view of a list or of a text decodes them every time it is
+    // drawn, and none of the families below is any of them.
+    match ty {
+        N_UNIFORM_LIST => return Some(decode_uniform_list(dx, args, first)),
+        N_SOURCE_LIST => return Some(decode_source_list(dx, args, first)),
+        N_TEXT => return Some(SharedString::from(dx.args(args).str()).into_any_element()),
+        _ => {}
+    }
     // The delegate families' own elements (docs/PROTOCOLS.md section 9).
     if let Some(el) = crate::shim_input::node(dx, ty, args, first) {
         return Some(el);
@@ -114,6 +122,22 @@ fn decode_source_list(dx: &mut Dx, args: u32, first: u32) -> AnyElement {
         }
     }
     el.into_any_element()
+}
+
+pub(crate) fn rows_push_slice(op: &[u8], cx: &mut gpui_kit::App) -> GkResult<()> {
+    let mut r = R::new(op);
+    let _ = r.u16(); // C_ROWS_PUSH already checked by caller
+    let entity = rt::with(|s| s.rows(r.u64()))?;
+    let n = r.u32();
+    entity.update(cx, |store, cx| {
+        let mut rows = store.rows.borrow_mut();
+        rows.reserve(n as usize);
+        for _ in 0..n {
+            rows.push(SharedString::from(r.str()));
+        }
+        cx.notify();
+    });
+    Ok(())
 }
 
 pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {

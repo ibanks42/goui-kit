@@ -109,17 +109,16 @@ func putTableColumns(o *rt.Tape, columns []TableColumn) {
 // given to the table.
 type CellAt struct{ Row, Col int }
 
-// NewTableSource makes the row source of a table with rows rows and columns, whose rows are the
-// cells: cell describes one cell, once, and is called again only when the cell is invalidated
-// (gk.InvalidateTable) or what it read changed. gk.TableEvents gives it a handler; gk.Initial is
-// the rows described before the first frame (default 32), gk.Capacity the cells kept (default
-// 4,096). Make the table's state over it with gk.NewTableState(cx, src).Build() right after.
-// Needs a window.
+// NewTableSource makes the row source of a table with rows rows and columns: cell describes one
+// cell, once, and is called again only when the row is invalidated (table.InvalidateTable) or
+// what it read changed. table.Events gives it a handler; gk.Initial is the rows described before
+// the first frame (default 160), gk.Capacity the cells kept (default 4,096). Make the table's
+// state over it with table.NewState(cx, src).Build() right after. Needs a window.
 func NewSource(cx *gk.Cx, rows int, columns []TableColumn, cell func(cx *gk.Cx, at CellAt) gk.Element, opts ...gk.SourceOption) gk.RowSource {
 	if cell == nil {
 		rt.Stop("table.NewSource needs a cell function")
 	}
-	so := rt.SourceOpts{Initial: 32, Capacity: 4096}
+	so := rt.SourceOpts{Initial: 160, Capacity: 4096}
 	for _, o := range opts {
 		o(&so)
 	}
@@ -132,11 +131,17 @@ func NewSource(cx *gk.Cx, rows int, columns []TableColumn, cell func(cx *gk.Cx, 
 	}
 	rec := &rt.TableRec{Rows: rows, Cols: n}
 	row := func(cx *gk.Cx, at gk.RowAt) gk.Element {
-		c := max(rec.Cols, 1)
-		return cell(cx, CellAt{at.Row / c, at.Row % c})
+		return rt.TableCells(rec.Cols, func(col int) gk.Element {
+			return cell(cx, CellAt{at.Row, col})
+		})
 	}
-	all := append(opts[:len(opts):len(opts)], gk.Initial(so.Initial*n), gk.Capacity(max(so.Capacity, 16)))
-	src := gk.NewRowSource(cx, rows*n, row, all...)
+	rowCount, initRows := rows, so.Initial
+	if n == 0 {
+		rowCount, initRows = 0, 0
+	}
+	capRows := max(so.Capacity/max(n, 1), 64)
+	all := append(opts[:len(opts):len(opts)], gk.Initial(initRows), gk.Capacity(capRows))
+	src := gk.NewRowSource(cx, rowCount, row, all...)
 	rt.Tables[rt.H(src.HCore)] = rec
 	o := rt.NewReq(rt.CTableSourceColumns)
 	o.U64(rt.H(src.HCore))
@@ -154,7 +159,7 @@ func tableRecOf(src gk.RowSource) *rt.TableRec {
 }
 
 // SetTableRows changes the number of rows. Rows at and past it are dropped; rows below it keep
-// their cells (gk.InvalidateTable them if their content moved).
+// their cells (table.InvalidateTable them if their content moved).
 func SetTableRows(cx *gk.Cx, src gk.RowSource, rows int) {
 	rec := tableRecOf(src)
 	if rows < 0 {
@@ -163,15 +168,17 @@ func SetTableRows(cx *gk.Cx, src gk.RowSource, rows int) {
 	if rec.Cols > 0 && rows > gk.MaxRows/rec.Cols {
 		rt.Stop("table.SetTableRows was given %d rows of %d columns; a table holds at most %d cells (rows times columns)", rows, rec.Cols, gk.MaxRows)
 	}
-	gk.SetCount(cx, src, rows*rec.Cols)
+	if rec.Cols > 0 {
+		gk.SetCount(cx, src, rows)
+	}
 	rec.Rows = rows
 }
 
 // InvalidateTable has the cells of rows lo to hi (not included) described again before the next
 // frame (after a sort, say).
 func InvalidateTable(cx *gk.Cx, src gk.RowSource, lo, hi int) {
-	rec := tableRecOf(src)
-	gk.Invalidate(cx, src, max(lo, 0)*rec.Cols, max(hi, 0)*rec.Cols)
+	tableRecOf(src)
+	gk.Invalidate(cx, src, max(lo, 0), max(hi, 0))
 }
 
 // SetTableColumns replaces the columns of the table state t over the row source src. With
@@ -188,12 +195,14 @@ func SetTableColumns(cx *gk.Cx, t State, src gk.RowSource, columns []TableColumn
 	rt.CheckCx(cx).DeferOp(*o)
 	if n != rec.Cols {
 		rec.Cols = n
-		gk.SetCount(cx, src, rec.Rows*n)
+		if n > 0 {
+			gk.SetCount(cx, src, rec.Rows)
+		}
 	}
 }
 
 // SetTableKitColumns gives the table over src the kit's own Column values
-// (gk.NewColumn("size", "Size").Width(80).Sortable()), each sent as a value made outside a view:
+// (table.NewColumn("size", "Size").Width(80).Sortable()), each sent as a value made outside a view:
 // before its state is made (no t, right after table.NewSource), or replacing the columns of the
 // table state t. With another number of columns every cell is described again.
 func SetTableKitColumns(cx *gk.Cx, src gk.RowSource, columns []Column, t ...State) {
@@ -224,7 +233,9 @@ func SetTableKitColumns(cx *gk.Cx, src gk.RowSource, columns []Column, t ...Stat
 	}
 	if n != rec.Cols {
 		rec.Cols = n
-		gk.SetCount(cx, src, rec.Rows*n)
+		if n > 0 {
+			gk.SetCount(cx, src, rec.Rows)
+		}
 	}
 }
 

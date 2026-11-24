@@ -17,11 +17,29 @@
 
 use crate::genapi::{self, HandlerRef, Wire};
 use crate::ops::*;
-use crate::rt::{self, GkErr, GkResult, Item, err};
+use crate::rt::{self, GkErr, GkResult, IdMap, Item, err};
+use crate::tape::Tape;
 use crate::wire::{Put, R};
 use futures::channel::oneshot;
 use gpui_kit::{AnyView, App, EntityId, ScrollStrategy, UniformListScrollHandle, Window};
+use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::rc::Rc;
+
+thread_local! {
+    /// Bumped whenever any row source binds, evicts or changes row count, so `GkTableDelegate`
+    /// can skip redundant `rt::with` checks while the bound set is unchanged.
+    static ROWS_EPOCH: Cell<u64> = const { Cell::new(1) };
+}
+
+#[inline]
+pub fn rows_epoch() -> u64 {
+    ROWS_EPOCH.with(|e| e.get())
+}
+
+fn bump_epoch() {
+    ROWS_EPOCH.with(|e| e.set(e.get().wrapping_add(1)));
+}
 
 /// A row's key: `section << 32 | row`. Lists without sections and tables use section 0.
 pub fn key(section: u32, row: u32) -> u64 {
@@ -48,13 +66,15 @@ pub struct Source {
     pub window: u64,
     /// Rows per section.
     pub counts: Vec<usize>,
-    /// Bound rows: key to row view.
-    rows: BTreeMap<u64, u64>,
+    /// Bound rows: key to `(row view handle, accepted tape)`.
+    rows: IdMap<(u64, Option<Rc<Tape>>)>,
     /// Keys asked for while drawing that have no row view yet.
     wanted: BTreeSet<u64>,
-    /// Keys a shim asked for before drawing them (`want`): bound as asked, with no overscan of
-    /// their own (the shim's range already reaches past what it will draw).
+    /// Keys a shim asked for before drawing them (`table_bind_ahead`): bound as asked, with no
+    /// overscan of their own (the shim's range already reaches past what it will draw). Pure
+    /// prefetch is spread across frames (`PREFETCH_PER_FRAME`) starting nearest `ahead_anchor`.
     ahead: BTreeSet<u64>,
+    ahead_anchor: u64,
     /// Most row views kept at once; far ones are evicted beyond it.
     pub capacity: usize,
     /// The kept handler that receives this source's events (slot, generation).
@@ -86,16 +106,45 @@ pub struct Source {
 impl Source {
     /// Every row view this source holds.
     pub fn views(&self) -> Vec<u64> {
-        self.rows.values().copied().collect()
+        self.rows.values().map(|(v, _)| *v).collect()
+    }
+
+    pub(crate) fn has_ahead(&self) -> bool {
+        !self.ahead.is_empty()
+    }
+
+    pub(crate) fn has_tape(&self, key: u64) -> bool {
+        self.rows.get(&key).is_some_and(|(_, t)| t.is_some())
+    }
+
+    pub(crate) fn set_tape(&mut self, key: u64, tape: Rc<Tape>) {
+        if let Some((_, slot)) = self.rows.get_mut(&key) {
+            *slot = Some(tape);
+        }
     }
 
     /// Rows to bind and row views to evict for what was wanted since the last ROWS turn: the
     /// wanted rows of each section and as many again on each side (a viewport of overscan
-    /// each way), the rows asked for ahead (`want`) as they are, the farthest rows evicted
-    /// beyond `capacity`.
+    /// each way), the rows asked for ahead (`table_bind_ahead`) spread across frames when no
+    /// placeholders were drawn, and the farthest rows evicted beyond `capacity`.
     fn plan(&mut self) -> (Vec<u64>, Vec<u64>) {
+        const PREFETCH_PER_FRAME: usize = 24;
         let wanted = std::mem::take(&mut self.wanted);
-        let mut want = std::mem::take(&mut self.ahead);
+        self.ahead.retain(|k| !self.rows.contains_key(k));
+        let mut want = if wanted.is_empty() && self.ahead.len() > PREFETCH_PER_FRAME + 4 {
+            // Spread pure prefetch across frames so no single frame pays for a whole batch.
+            let anchor = self.ahead_anchor;
+            let mut near: Vec<(u64, u64)> = self.ahead.iter().map(|&k| (k.abs_diff(anchor), k)).collect();
+            near.sort_unstable();
+            let mut batch = BTreeSet::new();
+            for (_, k) in near.into_iter().take(PREFETCH_PER_FRAME) {
+                self.ahead.remove(&k);
+                batch.insert(k);
+            }
+            batch
+        } else {
+            std::mem::take(&mut self.ahead)
+        };
         let mut by_section: BTreeMap<u64, (u64, u64, u64)> = BTreeMap::new(); // lo, hi, n
         for k in &wanted {
             let row = k & 0xffff_ffff;
@@ -131,7 +180,7 @@ impl Source {
                 .collect();
             far.sort_unstable_by(|a, b| b.cmp(a));
             for (_, k) in far.into_iter().take(excess) {
-                if let Some(v) = self.rows.remove(&k) {
+                if let Some((v, _)) = self.rows.remove(&k) {
                     evict.push(v);
                 }
             }
@@ -158,7 +207,7 @@ pub fn row(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Row {
         let frame = s.frame_no();
         let source = s.source_mut(src)?;
         match source.rows.get(&key) {
-            Some(v) => Ok((Some(*v), source.window)),
+            Some((v, _)) => Ok((Some(*v), source.window)),
             None => {
                 source.wanted.insert(key);
                 source.missed = true;
@@ -263,9 +312,9 @@ pub fn request<P: Wire + ?Sized>(
 
 // --- the ROWS turn ----------------------------------------------------------------------
 
-/// Runs in the pre-frame hook of window `wh`, after the FRAME turn and before the VIEWS turn:
-/// binds row views to the rows drawn as placeholders in the last frame (and their overscan),
-/// evicts far rows, and marks the new row views dirty so the VIEWS turn describes them.
+/// Runs in the pre-frame hook of window `wh`, after the FRAME turn: binds row views to the
+/// rows drawn as placeholders in the last frame (and their overscan), evicts far rows, and
+/// describes both the new row views and any already-dirty views of `wh` in the same ROWS turn.
 pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
     let plans: Vec<(u64, Vec<u64>, Vec<u64>)> = rt::with(|s| {
         let mut plans = Vec::new();
@@ -273,7 +322,9 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
             if let Ok(source) = s.source_mut(h) {
                 if source.window == wh && (!source.wanted.is_empty() || !source.ahead.is_empty()) {
                     let (bind, evict) = source.plan();
-                    plans.push((h, bind, evict));
+                    if !bind.is_empty() || !evict.is_empty() {
+                        plans.push((h, bind, evict));
+                    }
                 }
             }
         }
@@ -282,10 +333,11 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
     if plans.is_empty() {
         return;
     }
-    let mut req = Vec::with_capacity(64);
+    let pre_dirty = rt::with(|s| s.dirty.remove(&wh).unwrap_or_default());
+    let retired = rt::take_retired();
+    let mut req = Vec::with_capacity(64 + pre_dirty.len() * 8 + retired.len() * 12);
     req.put_u64(wh);
     req.put_u32(plans.len() as u32);
-    let mut fresh = Vec::new();
     for (h, bind, evict) in &plans {
         req.put_u64(*h);
         req.put_u32(bind.len() as u32);
@@ -293,33 +345,44 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
             let view = bind_row(*h, *key, wh, cx);
             req.put_u64(*key);
             req.put_u64(view);
-            fresh.push(view);
         }
         req.put_u32(evict.len() as u32);
         for v in evict {
             req.put_u64(*v);
         }
     }
+    req.put_u32(pre_dirty.len() as u32);
+    for v in &pre_dirty {
+        req.put_u64(*v);
+    }
+    req.put_u32(retired.len() as u32);
+    for (view, generation) in retired {
+        req.put_u64(view);
+        req.put_u32(generation);
+    }
     let mut reply = rt::turn(K_ROWS, &req, Some(&mut *window), cx);
-    rt::process_reply(&mut reply, K_ROWS, Some(&mut *window), cx);
     for (_, _, evict) in plans {
         for v in evict {
             let item = rt::with(|s| s.release(v));
             drop(item);
         }
     }
-    rt::mark_dirty_new(wh, &fresh, window, cx);
+    rt::accept_tapes(wh, std::mem::take(&mut reply.tapes), cx);
+    rt::process_reply(&mut reply, K_ROWS, Some(&mut *window), cx);
+    bump_epoch();
     gk_meter::bump(|c| c.rows_turns += 1);
 }
 
-/// A new row view for `key` of `src`, drawn in window `wh`.
+/// A new row view for `key` of `src`, drawn in window `wh`. Decoded sources get a lightweight
+/// handle with no GPUI `Entity<GkView>` (their tapes are decoded inline by the delegate shim).
 fn bind_row(src: u64, key: u64, wh: u64, cx: &mut App) -> u64 {
-    let view = rt::new_view(cx);
+    let decoded = rt::with(|s| s.source_mut(src).map(|x| x.decoded).unwrap_or(false));
+    let view = if decoded { rt::new_decoded_row() } else { rt::new_view(cx) };
     rt::with(|s| {
         s.mount(view, wh);
-        s.row_owner.insert(view, src);
+        s.row_owner.insert(view, (src, key));
         if let Ok(source) = s.source_mut(src) {
-            source.rows.insert(key, view);
+            source.rows.insert(key, (view, None));
         }
     });
     view
@@ -352,9 +415,10 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
                     Item::Source(Box::new(Source {
                         window: wh,
                         counts: vec![count],
-                        rows: BTreeMap::new(),
+                        rows: IdMap::default(),
                         wanted: BTreeSet::new(),
                         ahead: BTreeSet::new(),
+                        ahead_anchor: 0,
                         capacity,
                         events,
                         watchers: Vec::new(),
@@ -399,13 +463,14 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
                 source.counts[section] = n;
                 let lo = key(section as u32, n.min(u32::MAX as usize) as u32);
                 let hi = key(section as u32 + 1, 0);
-                let keys: Vec<u64> = source.rows.range(lo..hi).map(|(k, _)| *k).collect();
-                Ok(keys.into_iter().filter_map(|k| source.rows.remove(&k)).collect())
+                let keys: Vec<u64> = source.rows.keys().copied().filter(|&k| k >= lo && k < hi).collect();
+                Ok(keys.into_iter().filter_map(|k| source.rows.remove(&k).map(|(v, _)| v)).collect())
             })?;
             for v in gone {
                 let item = rt::with(|s| s.release(v));
                 drop(item);
             }
+            bump_epoch();
             notify_watchers(&[src], c.cx);
             Ok(())
         })(),
@@ -533,7 +598,7 @@ pub fn ctx_key(
         }
         let changed = source.ctxs.get(&k).is_none_or(|(p, _)| *p != print);
         source.ctxs.insert(k, (print, write));
-        Ok((k, if changed { source.rows.get(&k).copied() } else { None }, arm))
+        Ok((k, if changed { source.rows.get(&k).map(|(v, _)| *v) } else { None }, arm))
     });
     let (k, stale, arm) = match found {
         Ok(x) => x,
@@ -575,32 +640,57 @@ fn ctx_get(r: &mut R, c: &mut genapi::Call) -> GkResult<()> {
 
 // --- rows a shim will draw soon (added by the rows family, 11 Nov 2026) ---------------------
 
-/// Asks for rows `lo ..< hi` of `section` to be bound before the next frame without drawing
-/// them: a shim that knows what it will draw next (the rows beside the visible range while a
-/// table scrolls) calls this, so a steady scroll binds rows ahead and never draws a
-/// placeholder. Rows that have a view are skipped; nothing calls the app; a released source
-/// is ignored here (drawing it stops the program in `row`).
-pub fn want(src: u64, section: u32, lo: u32, hi: u32, window: &mut Window, cx: &mut App) {
-    let wh = rt::with(|s| -> Option<u64> {
+/// Checks whether the rows two screens ahead and behind `rows` are bound for a table source, and
+/// if either is missing asks for two screens behind and four screens ahead (clamped to a quarter
+/// of capacity) in one session borrow. Returns `Some((epoch, covered_rows))` so the delegate can
+/// skip re-entering the session for every subsequent row inside `covered_rows` in the same epoch.
+pub fn table_bind_ahead(
+    src: u64,
+    rows: std::ops::Range<usize>,
+    window: &mut Window,
+    cx: &mut App,
+) -> Option<(u64, std::ops::Range<usize>)> {
+    if rows.is_empty() {
+        return None;
+    }
+    let epoch = rows_epoch();
+    let len = rows.len().max(24);
+    let res = rt::with(|s| -> Option<(Option<u64>, std::ops::Range<usize>)> {
         let source = s.source_mut(src).ok()?;
-        let count = source.counts.get(section as usize).copied().unwrap_or(0) as u32;
+        let count = source.counts.first().copied().unwrap_or(0);
+        if count == 0 {
+            return None;
+        }
+        let ahead = (rows.end + 2 * len).min(count - 1);
+        let behind = rows.start.saturating_sub(2 * len);
+        let ahead_k = key(0, ahead as u32);
+        let behind_k = key(0, behind as u32);
+        let miss_ahead = !source.rows.contains_key(&ahead_k) && !source.ahead.contains(&ahead_k);
+        let miss_behind = !source.rows.contains_key(&behind_k) && !source.ahead.contains(&behind_k);
+        crate::rt::trace(|| format!("table rows={rows:?} ahead={ahead} behind={behind} missing={miss_ahead}/{miss_behind}"));
+        if !miss_ahead && !miss_behind {
+            return Some((None, behind..ahead + 1));
+        }
+        source.ahead_anchor = key(0, rows.end.min(count - 1) as u32);
+        let batch = (2 * len).min((source.capacity / 4).max(12));
+        let lo = behind;
+        let hi = (rows.end + 2 * len + batch).min(count);
         let mut any = false;
-        for row in lo..hi.min(count) {
-            let k = key(section, row);
+        for row in lo..hi {
+            let k = key(0, row as u32);
             if !source.rows.contains_key(&k) && source.ahead.insert(k) {
                 any = true;
             }
         }
-        any.then_some(source.window)
+        Some((any.then_some(source.window), lo..hi))
     });
-    if let Some(wh) = wh {
-        rt::ensure_hook(wh, Some(window), cx);
+    if let Some((wh, range)) = res {
+        if let Some(wh) = wh {
+            rt::ensure_hook(wh, Some(window), cx);
+        }
+        return Some((epoch, range));
     }
-}
-
-/// Whether row `key` of `src` has a view now (bound; its tape may not have arrived yet).
-pub fn bound(src: u64, key: u64) -> bool {
-    rt::with(|s| s.source_mut(src).map(|x| x.rows.contains_key(&key)).unwrap_or(false))
+    None
 }
 
 /// The tape of row `key` of `src` and its view's handle, for a shim that decodes the row itself
@@ -608,16 +698,18 @@ pub fn bound(src: u64, key: u64) -> bool {
 /// an entity read while a view draws makes that view depend on the entity, and a table would
 /// depend on every cell it drew. None when the row has no view or no tape yet: it is then a
 /// placeholder for one frame and wanted, as in `row`. A released source stops the program.
-pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option<(std::rc::Rc<crate::tape::Tape>, u64)> {
-    let found = rt::with(|s| -> GkResult<(Option<(std::rc::Rc<crate::tape::Tape>, u64)>, u64)> {
+pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option<(Rc<Tape>, u64)> {
+    let found = rt::with(|s| -> GkResult<(Option<(Rc<Tape>, u64)>, u64)> {
         let frame = s.frame_no();
         let source = s.source_mut(src)?;
         let wh = source.window;
-        let view = source.rows.get(&key).copied();
-        let tape = view.and_then(|v| s.row_tapes.get(&v).map(|t| (t.clone(), v)));
+        let (has_view, tape) = match source.rows.get(&key) {
+            Some((v, Some(t))) => (true, Some((t.clone(), *v))),
+            Some((_, None)) => (true, None),
+            None => (false, None),
+        };
         if tape.is_none() {
-            let source = s.source_mut(src)?;
-            if view.is_none() {
+            if !has_view {
                 source.wanted.insert(key);
             }
             source.missed = true;
@@ -640,13 +732,20 @@ pub fn row_tape(src: u64, key: u64, window: &mut Window, cx: &mut App) -> Option
     }
 }
 
-/// Marks `src` as a source whose rows a shim decodes (`Source::decoded`).
+/// Marks `src` as a source whose rows a shim decodes (`Source::decoded`), and converts any
+/// already-bound undescribed row views into lightweight `DecodedRow` handles.
 pub fn set_decoded(src: u64) {
-    rt::with(|s| {
-        if let Ok(source) = s.source_mut(src) {
-            source.decoded = true;
+    let convert: Vec<u64> = rt::with(|s| {
+        let Ok(source) = s.source_mut(src) else { return Vec::new() };
+        if source.decoded {
+            return Vec::new();
         }
+        source.decoded = true;
+        source.rows.values().filter_map(|(v, t)| t.is_none().then_some(*v)).collect()
     });
+    if !convert.is_empty() {
+        rt::convert_to_decoded(&convert);
+    }
 }
 
 /// gpui-kit's `v_virtual_list` / `h_virtual_list` over a row source (docs/PROTOCOLS.md 13.31): the

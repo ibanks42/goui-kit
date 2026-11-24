@@ -235,7 +235,10 @@ Callback kinds: `INIT`, `WINDOW_INIT`, `FRAME`, `VIEWS`, `EVENT`, `ROWS`, `WAKE`
 Conventions:
 
 - **Memory.** Neither side keeps or frees the other's memory. `req` belongs to the library
-  and is valid during the callback. `gk_reply` copies before it returns. `*res` from
+  and is valid during the callback. `gk_reply` copies before it returns; when `gk_info.features`
+  includes `GK_FEAT_INLINE_REPLY`, the callback may instead store `(ptr, len)` in the first two
+  words of `gk_cb` so the library parses the reply in place on return without copying or a
+  second crossing. `*res` from
   `gk_call` belongs to the library and is valid until the next `gk_call`; both packages copy
   it out at once. This satisfies cgo's pointer rules without pinning (the Go package's static
   build; its default build calls the same functions through purego, GO.md section 8).
@@ -318,6 +321,12 @@ Rules of the format:
   (section 12).
 - **Dependencies.** The header lists the kit entities the view procedure read through
   handles (section 9).
+- **Fast replay of unchanged tapes.** When a `GkView` renders the same tape more than once
+  (for example, parent wrapper views rebuilt on an input event), the runtime lazily compiles a
+  compact `FastTree` (`core/src/tape.rs`) for eligible subtrees (`Div`, `HFlex`, `VFlex`,
+  `ChildView`, `Label`, `Text`, `UniformList`). Each node keeps only its actual style ops,
+  resolves theme colors through `cx.theme()` on every render, and invalidates against a release
+  epoch so handle checks stay exact.
 - A value that is not an element (a style, a column) may be given to any number of builders
   in one view build; an element still attaches once.
 
@@ -342,13 +351,22 @@ dirty marks. The first dirty mark for a window registers that window's pre-frame
 The pre-frame hook, per window:
 
 1. If the app registered a frame handler (`cx->on_frame`), one `FRAME` turn. This is the only
-   way app code runs every frame, and it is opt-in.
-2. If any mounted view of the window is dirty, one `VIEWS` turn. The package runs the view
-   procedure of each dirty mounted view, plus any newly slotted view that has no tape yet,
-   compares each new tape with the view's current one, and replies with the tapes that differ.
-3. For each changed tape Rust does `view.update(cx, |v, cx| { v.set_tape(t); cx.notify() })`.
-   An identical tape notifies nothing.
-4. gpui-fast then draws in the same frame request: it renders exactly the notified views
+   way app code runs every frame, and it is opt-in. If the frame handler buffers no deferred
+   writes, the binding describes any dirty mounted views of that window inline in the same
+   reply, avoiding a separate `VIEWS` crossing.
+2. If any row source drew placeholders in the last frame, one `ROWS` turn that binds the new
+   rows and describes them (plus any already-dirty views) in the same reply.
+3. If any mounted view of the window is still dirty (for example after a `WAKE` turn, after a
+   frame handler that buffered kit-state writes, or after an `EVENT` turn whose dirty view
+   reads kit state), one `VIEWS` turn. The package runs the view procedure of each dirty
+   mounted view, plus any newly slotted view that has no tape yet, compares each new tape with
+   the view's current one, and replies with the tapes that differ. Pure-Go views dirtied by an
+   outermost `EVENT` turn are described inline at the end of that `EVENT` turn, so an input
+   frame needs only one crossing into Go as well.
+4. For each changed tape (from `EVENT`, `FRAME`, `ROWS` or `VIEWS`) Rust does
+   `view.update(cx, |v, cx| { v.set_tape(t); cx.notify() })`. An identical tape notifies
+   nothing.
+5. gpui-fast then draws in the same frame request: it renders exactly the notified views
    (`GkView::render` only decodes) and reuses every other view from the last frame.
 
 What follows from this:
@@ -366,6 +384,21 @@ What follows from this:
 Offscreen (the diag variant on `HeadlessAppContext`, which has no platform frame loop), the
 headless driver calls `Window::simulate_next_frame` before each capture, so the same hook
 runs.
+
+**Slow-cadence Go P refresh.** When the locked Go UI thread spends more than 10 ms inside
+`gk_run` between callbacks (60 Hz and below), Go's `sysmon` retakes its P and pushes it onto
+`sched.pidle`. Because `exitsyscall` increments `syscalltick` and never `schedtick`, the next
+callback's `exitsyscall` wakes `sysmon` into an immediate preemption (`SIGURG` plus
+`stoplockedm()`), adding ~10 us/frame on the main thread. When `GOMAXPROCS > 1`, `sysmon` also
+defers retaking an idle-syscall P until after 10 ms, so a single refresh can race with `sysmon`
+retaking the stale P back onto the top of `sched.pidle`. When consecutive windowed turns arrive
+10 to 250 ms apart, a single background goroutine in `go/gk/internal/rt/rt_keepalive.go` tracks
+the EMA-smoothed frame cadence and runs a two-stage wakeup: a brief nudge 2.0 ms before the
+target (past the 10 ms retake threshold and past the prior frame's render) so `sysmon` finishes
+retaking any stale P, followed by a `runtime.Gosched()` refresh ~550 us before the next
+expected callback (incrementing that P's `schedtick` via the global run queue and parking it at
+the top of `sched.pidle`). At 120 Hz and above (gaps under 10 ms) or offscreen the goroutine is
+never started, and once frames go idle it parks on a channel receive with no periodic wakeups.
 
 **Handler tables.** A handler id is valid for the tape generation it was registered in and
 the one before. The `VIEWS` request tells the package which generations are dead; only then

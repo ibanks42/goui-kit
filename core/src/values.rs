@@ -180,13 +180,21 @@ fn pin(view: u64, build: u32, h: u64) {
     });
     if !old.is_empty() {
         LATER.with(|l| l.borrow_mut().extend(old));
+        HAS_PINS.store(true, std::sync::atomic::Ordering::Relaxed);
     }
-    let again = LATER.with(|l| {
-        let mut l = l.borrow_mut();
-        let n = l.len();
-        l.retain(|x| *x != h);
-        l.len() != n
-    });
+    let again = if HAS_PINS.load(std::sync::atomic::Ordering::Relaxed) {
+        LATER.with(|l| {
+            let mut l = l.borrow_mut();
+            let n = l.len();
+            l.retain(|x| *x != h);
+            if l.is_empty() {
+                HAS_PINS.store(false, std::sync::atomic::Ordering::Relaxed);
+            }
+            l.len() != n
+        })
+    } else {
+        false
+    };
     if again || crate::objects::untemp(h) {
         PINS.with(|p| {
             let mut p = p.borrow_mut();
@@ -198,9 +206,20 @@ fn pin(view: u64, build: u32, h: u64) {
     }
 }
 
+static HAS_PINS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
 /// The handles earlier builds pinned and no build names now (called by `objects::sweep`).
 pub fn sweep_pins() -> Vec<u64> {
+    if !HAS_PINS.swap(false, std::sync::atomic::Ordering::Relaxed) {
+        return Vec::new();
+    }
     LATER.with(|l| std::mem::take(&mut *l.borrow_mut()))
+}
+
+/// Whether any retired view-pinned handles are waiting for the next frame's sweep.
+#[inline]
+pub fn has_pending_pins() -> bool {
+    HAS_PINS.load(std::sync::atomic::Ordering::Relaxed)
 }
 
 /// The runtime's own call ops of the values family.

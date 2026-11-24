@@ -178,11 +178,15 @@ func forget(h uint64) {
 // description the library may keep it, so the collector does not release it.
 func Held(h uint64) uint64 {
 	if !Vb.Active && len(lives) > 0 {
-		if l := lifeOf(h); l != nil {
-			pinned[h] = l
-		}
+		heldSlow(h)
 	}
 	return h
+}
+
+func heldSlow(h uint64) {
+	if l := lifeOf(h); l != nil {
+		pinned[h] = l
+	}
 }
 
 // collected runs on the cleanup goroutine: the handle goes to the UI thread, never to the library.

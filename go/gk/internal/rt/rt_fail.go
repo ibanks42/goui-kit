@@ -132,6 +132,7 @@ func unwindTurns(entry int) {
 	for depth > entry {
 		t := cur
 		t.cx.serial = 0
+		t.inInlineEvent = false
 		cur = t.parent
 		depth--
 	}

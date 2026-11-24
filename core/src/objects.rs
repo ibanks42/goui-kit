@@ -23,6 +23,9 @@ use std::any::{Any, TypeId};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
+use std::sync::atomic::{AtomicBool, Ordering};
+
+static HAS_TEMPS: AtomicBool = AtomicBool::new(false);
 
 /// What a handle of kind OBJ names.
 pub enum ObjItem {
@@ -75,6 +78,7 @@ pub fn obj_new<T: 'static>(v: T) -> u64 {
 pub fn obj_temp<T: 'static>(v: T) -> u64 {
     let h = insert(v);
     TEMPS.with(|t| t.borrow_mut().push(h));
+    HAS_TEMPS.store(true, Ordering::Relaxed);
     h
 }
 
@@ -320,7 +324,14 @@ impl Wire for gpui_kit::Rems {
 /// Releases the temporary handles handed out before this point. Called when a frame begins
 /// (`rt::pre_frame`), after every buffered write of the turns that got them has landed.
 pub fn sweep() {
-    let mut temps = TEMPS.with(|t| std::mem::take(&mut *t.borrow_mut()));
+    if !needs_sweep() {
+        return;
+    }
+    let mut temps = if HAS_TEMPS.swap(false, Ordering::Relaxed) {
+        TEMPS.with(|t| std::mem::take(&mut *t.borrow_mut()))
+    } else {
+        Vec::new()
+    };
     // Handles an earlier build of a view pinned and no build names now (values.rs, OBJ_PIN).
     temps.extend(crate::values::sweep_pins());
     if temps.is_empty() {
@@ -330,13 +341,25 @@ pub fn sweep() {
     drop(items); // outside the session borrow: dropping a kit value may run GPUI code
 }
 
+/// Whether temporary handles or retired view pins are waiting for `sweep` at the next frame.
+#[inline]
+pub fn needs_sweep() -> bool {
+    HAS_TEMPS.load(Ordering::Relaxed) || crate::values::has_pending_pins()
+}
+
 /// Makes a temporary handle kept (it is no longer swept); false when `h` was not temporary.
 /// A view that places one in its elements pins it this way (values.rs, OBJ_PIN).
 pub fn untemp(h: u64) -> bool {
+    if !HAS_TEMPS.load(Ordering::Relaxed) {
+        return false;
+    }
     TEMPS.with(|t| {
         let mut t = t.borrow_mut();
         let n = t.len();
         t.retain(|x| *x != h);
+        if t.is_empty() {
+            HAS_TEMPS.store(false, Ordering::Relaxed);
+        }
         t.len() != n
     })
 }
@@ -348,7 +371,15 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             let h = r.u64();
             Some((|| {
                 rt::with(|s| s.obj(h).map(|_| ())).map_err(stale)?;
-                TEMPS.with(|t| t.borrow_mut().retain(|x| *x != h));
+                if HAS_TEMPS.load(Ordering::Relaxed) {
+                    TEMPS.with(|t| {
+                        let mut t = t.borrow_mut();
+                        t.retain(|x| *x != h);
+                        if t.is_empty() {
+                            HAS_TEMPS.store(false, Ordering::Relaxed);
+                        }
+                    });
+                }
                 Ok(())
             })())
         }

@@ -59,6 +59,12 @@ func lastError() string {
 // call makes one gk_call. The request is Go memory lent for the call (it holds no Go pointers);
 // the result is the library's and valid until the next gk_call, so it is copied out at once.
 func call(req []byte) (int32, []byte) {
+	if Vb.Active {
+		if cur != nil && cur.inInlineEvent {
+			panic(abortInline{})
+		}
+		Vb.calledLib = true
+	}
 	var res *C.uint8_t
 	var n C.size_t
 	rc := C.gk_call((*C.uint8_t)(unsafe.Pointer(&req[0])), C.size_t(len(req)), &res, &n)

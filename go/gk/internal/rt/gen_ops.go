@@ -2,13 +2,14 @@
 
 package rt
 
-const ApiHash uint64 = 0xf54e37f0b1226dc5
+const ApiHash uint64 = 0x0b7f2db689d7f30a
 
 const AbiMajor = 0
-const AbiMinor = 5
+const AbiMinor = 6
 const FeatGpuiFast = 1
 const FeatDiag = 2
 const FeatAll = 4
+const FeatInlineReply = 8
 const KInit = 1
 const KWindowInit = 2
 const KFrame = 3
@@ -93,6 +94,7 @@ const CTableSetColumns = 51
 const CTreeSetItems = 52
 const CTreeEntry = 53
 const CTableSourceColumns = 55
+const NTableCells = 15
 const ShapeProvider = 14
 const CEditorProviders = 32
 const NInputEditor = 10

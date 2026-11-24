@@ -36,6 +36,8 @@ go/gk/rt_api.go               the runtime's names apps use, re-exported by gk (a
 go/gk/<package>/rt_*.go       each package's hand-written pieces (dock/rt_dock.go, table/rt_table.go, ...)
 go/gk/internal/rt/rt_*.go     the runtime, written by hand; rt_thread_{linux,darwin,windows}.go
                               hold what differs per system
+go/gk/internal/goid/          cgo-free current-goroutine identity for fast UI-thread checks on
+                              amd64 and arm64
 go/gk/internal/rt/gen_bases.go  the bases every generated element, value and handle embeds
 go/gk/internal/rt/rt_lib_dyn*.go  the default way to the library: found and loaded at start-up,
                               called through purego (no cgo)
@@ -296,16 +298,20 @@ func main() {
 - **Memory across the C interface**: the library never keeps Go memory past a call. Requests
   are Go byte slices passed for the duration of one C call (`gk_call`); the library's buffers
   are copied out at once (`gk_call`'s result is valid until the next call). A turn's reply is
-  handed to `gk_reply`, which copies it: by default the Go callback calls it before returning (one
-  more call out per turn that has a reply); with `-tags gkstatic` the reply is written into C
+  handed back either via `GK_FEAT_INLINE_REPLY` (by default on purego builds when the library
+  advertises it, writing the reply pointer and length into `gk_cb` with no second crossing and
+  no copy; the library parses it before the callback frame unwinds) or via `gk_reply`, which
+  copies it; with `-tags gkstatic` the reply is written into C
   memory and the C half of the callback (`go/gk/internal/rt/capi.c`) hands it over after the Go
   callback has returned, as cgo's pointer rules require. Handlers, views and states are numbers on
   the C side (handler ids, handles); the Go side keeps the functions in its own tables. `gk.Post`
   passes no payload through C.
-- **Threads**: package `gk` locks the main goroutine to the main OS thread in `init`; `gk.Run`
-  must be called from `main`. Every call taking a `Cx` checks the OS thread (Linux: `gettid`;
-  macOS: `pthread_self` through purego, `pthread_threadid_np` with `-tags gkstatic`; Windows:
-  kernel32's `GetCurrentThreadId`) and that the `Cx` belongs to the call in progress; only
+- **Threads**: package `gk` locks the main goroutine to the main OS thread in `init` (and in
+  `Run`/`RunHeadless`); `gk.Run` must be called from `main`. Every call taking a `Cx` checks
+  that it is on that locked UI goroutine (`go/gk/internal/goid` compares the current goroutine
+  pointer on amd64 and arm64 with no syscall, falling back to OS thread IDs on other targets:
+  Linux `gettid`, macOS `pthread_self`/`pthread_threadid_np`, Windows `GetCurrentThreadId`) and
+  that the `Cx` belongs to the call in progress; only
   `gk.Post` may be called from elsewhere. The library calls the app back (every turn) on that same
   thread, inside `gk_run`: under purego the callback is one `purego.NewCallback` made when the
   library is loaded (purego allows about 2,000 per program and frees none, so one is fine), and it
@@ -444,8 +450,9 @@ Other things to know:
 - The repository's own tests use the default build, so one program runs against either library
   variant (`lib/ship` or `lib/diag`, chosen with `LD_LIBRARY_PATH`); `gates/go-apps.sh` with
   `GK_STATIC=1` builds the apps the static way and checks their sizes.
-- What a turn costs: the library calls the Go callback once per turn either way, and the default
-  build makes one more call out when the turn has a reply (`gk_reply`). purego enters a callback
+- What a turn costs: the library calls the Go callback once per turn either way, and when
+  `GK_FEAT_INLINE_REPLY` is advertised the default purego build returns its reply inline through
+  `gk_cb` with no second crossing (falling back to `gk_reply` otherwise). purego enters a callback
   through reflection, a few microseconds a turn when the caches are cold between frames, so the
   package calls the turn callback directly instead (go/gk/internal/rt/rt_lib_dyn_fastcb.go, on
   Linux and macOS for amd64 and arm64, checked by a probe call when the library loads;

@@ -214,6 +214,22 @@ func isNilFunc(h any) bool {
 	if h == nil {
 		return true
 	}
+	switch f := h.(type) {
+	case func(*Cx, ClickEvent):
+		return f == nil
+	case func(*Cx):
+		return f == nil
+	case func(*Cx, bool):
+		return f == nil
+	case func(*Cx, int):
+		return f == nil
+	case func(*Cx, string):
+		return f == nil
+	case func(*Cx, MouseEvent):
+		return f == nil
+	case func(*Cx, KeyEvent):
+		return f == nil
+	}
 	v := reflect.ValueOf(h)
 	return v.Kind() == reflect.Func && v.IsNil()
 }
@@ -404,15 +420,28 @@ func event(cx *Cx, r *Reader) {
 		}
 		return
 	}
-	info := Shapes[shape]
-	if info.Call == nil || !info.Call(h.fn, cx, r, &t.ret) {
-		// A handler that takes no event fits every shape (a kept handler given where another
-		// shape fires): it runs, and the library gets the default return value.
+	if shape == ShapeClick {
+		if f, ok := h.fn.(func(*Cx, ClickEvent)); ok {
+			f(cx, RdClickEvent(r))
+			goto ran
+		}
+	} else if shape == ShapeUnit {
 		if f, ok := h.fn.(func(*Cx)); ok {
 			f(cx)
 			goto ran
 		}
-		Stop("an event of kind %d arrived for a handler of type %T (%s expected): the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from", shape, h.fn, info.Name)
+	}
+	{
+		info := Shapes[shape]
+		if info.Call == nil || !info.Call(h.fn, cx, r, &t.ret) {
+			// A handler that takes no event fits every shape (a kept handler given where another
+			// shape fires): it runs, and the library gets the default return value.
+			if f, ok := h.fn.(func(*Cx)); ok {
+				f(cx)
+				goto ran
+			}
+			Stop("an event of kind %d arrived for a handler of type %T (%s expected): the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from", shape, h.fn, info.Name)
+		}
 	}
 ran:
 	if view == 0 {

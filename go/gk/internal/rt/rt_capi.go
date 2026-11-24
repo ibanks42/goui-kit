@@ -206,6 +206,9 @@ func onTurn(kind uint32, in []byte) []byte {
 		return nil
 	}
 	endTurn()
+	if pkaActive && depth == 0 && (kind == KFrame || kind == KViews || kind == KEvent || kind == KRows || kind == KWake || kind == KDone) {
+		pkaNoteTurn()
+	}
 	return out
 }
 
@@ -276,14 +279,20 @@ func Run(start func(cx *Cx)) error {
 		// Linux only: macOS and Windows always have their window server.
 		return errors.New("gk: the app has no display to open its window on: DISPLAY and WAYLAND_DISPLAY are unset.\n    Run it in a desktop session (or over ssh -X), or offscreen with GK_SCRIPT=file and the diagnostic library first in LD_LIBRARY_PATH")
 	}
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	if err := begin(start); err != nil {
 		return err
 	}
+	startPKeepAlive()
+	defer stopPKeepAlive()
 	return runResult(enter(false, ""))
 }
 
 // RunHeadless runs the app offscreen under a gk-meter script (the diagnostic library only).
 func RunHeadless(script string, start func(cx *Cx)) error {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	if err := begin(start); err != nil {
 		return err
 	}

@@ -25,6 +25,7 @@ use gpui_kit::{
 use std::cell::{Cell, RefCell};
 use std::fmt::Write as _;
 use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{Duration, Instant};
 
 #[cfg(feature = "diag")]
@@ -61,25 +62,124 @@ pub struct Counters {
     pub placeholder_frames: u64,
 }
 
+/// Lock-free single-writer (UI-thread) storage for `Counters`, avoiding dynamic-TLS
+/// (`__tls_get_addr`) and `RefCell` borrow checks on every `bump` in `cdylib` builds.
+pub struct CounterRefs {
+    callbacks: AtomicU64,
+    calls: AtomicU64,
+    callback_ns: AtomicU64,
+    decode_ns: AtomicU64,
+    decodes: AtomicU64,
+    tapes: AtomicU64,
+    tape_bytes: AtomicU64,
+    frame_turns: AtomicU64,
+    views_turns: AtomicU64,
+    event_turns: AtomicU64,
+    wake_turns: AtomicU64,
+    deferred_ops: AtomicU64,
+    rows_turns: AtomicU64,
+    rows_missing: AtomicU64,
+    placeholder_frames: AtomicU64,
+}
+
+static ATOMIC_COUNTERS: CounterRefs = CounterRefs {
+    callbacks: AtomicU64::new(0),
+    calls: AtomicU64::new(0),
+    callback_ns: AtomicU64::new(0),
+    decode_ns: AtomicU64::new(0),
+    decodes: AtomicU64::new(0),
+    tapes: AtomicU64::new(0),
+    tape_bytes: AtomicU64::new(0),
+    frame_turns: AtomicU64::new(0),
+    views_turns: AtomicU64::new(0),
+    event_turns: AtomicU64::new(0),
+    wake_turns: AtomicU64::new(0),
+    deferred_ops: AtomicU64::new(0),
+    rows_turns: AtomicU64::new(0),
+    rows_missing: AtomicU64::new(0),
+    placeholder_frames: AtomicU64::new(0),
+};
+
+#[inline(always)]
+fn add_ui(a: &AtomicU64, v: u64) {
+    if v != 0 {
+        a.store(a.load(Ordering::Relaxed).wrapping_add(v), Ordering::Relaxed);
+    }
+}
+
+#[inline(always)]
+pub fn bump_decode(ns: u64) {
+    add_ui(&ATOMIC_COUNTERS.decodes, 1);
+    add_ui(&ATOMIC_COUNTERS.decode_ns, ns);
+}
+
+#[inline(always)]
+pub fn bump_tape(bytes: u64) {
+    add_ui(&ATOMIC_COUNTERS.tapes, 1);
+    add_ui(&ATOMIC_COUNTERS.tape_bytes, bytes);
+}
+
+#[inline(always)]
+pub fn bump_deferred(n: u64) {
+    add_ui(&ATOMIC_COUNTERS.deferred_ops, n);
+}
+
+#[inline(always)]
+pub fn bump_turn(kind: u32, ns: u64) {
+    add_ui(&ATOMIC_COUNTERS.callbacks, 1);
+    add_ui(&ATOMIC_COUNTERS.callback_ns, ns);
+    match kind {
+        3 => add_ui(&ATOMIC_COUNTERS.frame_turns, 1),
+        4 => add_ui(&ATOMIC_COUNTERS.views_turns, 1),
+        5 => add_ui(&ATOMIC_COUNTERS.event_turns, 1),
+        7 => add_ui(&ATOMIC_COUNTERS.wake_turns, 1),
+        _ => {}
+    }
+}
+
 thread_local! {
-    static COUNTERS: Cell<Counters> = const { Cell::new(Counters {
-        callbacks: 0, calls: 0, callback_ns: 0, decode_ns: 0, decodes: 0, tapes: 0,
-        tape_bytes: 0, frame_turns: 0, views_turns: 0, event_turns: 0, wake_turns: 0,
-        deferred_ops: 0, rows_turns: 0, rows_missing: 0, placeholder_frames: 0,
-    }) };
     static HEADLESS_SIZE: Cell<Option<(f32, f32)>> = const { Cell::new(None) };
 }
 
+#[inline]
 pub fn bump(f: impl FnOnce(&mut Counters)) {
-    COUNTERS.with(|c| {
-        let mut v = c.get();
-        f(&mut v);
-        c.set(v);
-    });
+    let mut d = Counters::default();
+    f(&mut d);
+    add_ui(&ATOMIC_COUNTERS.callbacks, d.callbacks);
+    add_ui(&ATOMIC_COUNTERS.calls, d.calls);
+    add_ui(&ATOMIC_COUNTERS.callback_ns, d.callback_ns);
+    add_ui(&ATOMIC_COUNTERS.decode_ns, d.decode_ns);
+    add_ui(&ATOMIC_COUNTERS.decodes, d.decodes);
+    add_ui(&ATOMIC_COUNTERS.tapes, d.tapes);
+    add_ui(&ATOMIC_COUNTERS.tape_bytes, d.tape_bytes);
+    add_ui(&ATOMIC_COUNTERS.frame_turns, d.frame_turns);
+    add_ui(&ATOMIC_COUNTERS.views_turns, d.views_turns);
+    add_ui(&ATOMIC_COUNTERS.event_turns, d.event_turns);
+    add_ui(&ATOMIC_COUNTERS.wake_turns, d.wake_turns);
+    add_ui(&ATOMIC_COUNTERS.deferred_ops, d.deferred_ops);
+    add_ui(&ATOMIC_COUNTERS.rows_turns, d.rows_turns);
+    add_ui(&ATOMIC_COUNTERS.rows_missing, d.rows_missing);
+    add_ui(&ATOMIC_COUNTERS.placeholder_frames, d.placeholder_frames);
 }
 
 pub fn counters() -> Counters {
-    COUNTERS.with(|c| c.get())
+    Counters {
+        callbacks: ATOMIC_COUNTERS.callbacks.load(Ordering::Relaxed),
+        calls: ATOMIC_COUNTERS.calls.load(Ordering::Relaxed),
+        callback_ns: ATOMIC_COUNTERS.callback_ns.load(Ordering::Relaxed),
+        decode_ns: ATOMIC_COUNTERS.decode_ns.load(Ordering::Relaxed),
+        decodes: ATOMIC_COUNTERS.decodes.load(Ordering::Relaxed),
+        tapes: ATOMIC_COUNTERS.tapes.load(Ordering::Relaxed),
+        tape_bytes: ATOMIC_COUNTERS.tape_bytes.load(Ordering::Relaxed),
+        frame_turns: ATOMIC_COUNTERS.frame_turns.load(Ordering::Relaxed),
+        views_turns: ATOMIC_COUNTERS.views_turns.load(Ordering::Relaxed),
+        event_turns: ATOMIC_COUNTERS.event_turns.load(Ordering::Relaxed),
+        wake_turns: ATOMIC_COUNTERS.wake_turns.load(Ordering::Relaxed),
+        deferred_ops: ATOMIC_COUNTERS.deferred_ops.load(Ordering::Relaxed),
+        rows_turns: ATOMIC_COUNTERS.rows_turns.load(Ordering::Relaxed),
+        rows_missing: ATOMIC_COUNTERS.rows_missing.load(Ordering::Relaxed),
+        placeholder_frames: ATOMIC_COUNTERS.placeholder_frames.load(Ordering::Relaxed),
+    }
 }
 
 /// CPU time the calling thread has used so far.

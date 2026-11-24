@@ -15,10 +15,12 @@
 //!   `section << 32 | row`; a section's header and footer are rows `HEADER_ROW` and
 //!   `HEADER_ROW + 1` of it. A row's view describes a `ListItem`, decoded here into the value
 //!   the list then marks selected, so selection styling stays the kit's.
-//! - **Table** (`GkTableDelegate`): each cell is a view of its own, key `row * columns + id`
-//!   in section 0, `id` the column's index in the columns the app gave (stable when the user
-//!   moves a column). Cells are retained while the table scrolls; the rows beside the visible
-//!   ones are bound ahead (`source::want`), so a steady scroll draws no placeholder.
+//! - **Table** (`GkTableDelegate`): each row is one decoded row in section 0 (`key = row`),
+//!   whose tape root is `N_TABLE_CELLS` holding all columns' cell subtrees in column id order
+//!   (stable when the user moves a column). No GPUI view entity is created per row or cell;
+//!   `render_td` decodes each cell directly from the row's cached tape, and the rows beside the
+//!   visible ones are bound ahead (`source::table_bind_ahead`), so a steady scroll draws no
+//!   placeholder.
 //! - **Tree** (`tree_item`): row `ix` is the tree's flat entry `ix`; its view describes a
 //!   `ListItem` and reads the entry with `TREE_ENTRY` (a dependency: the row is described again
 //!   when the tree changes).
@@ -27,7 +29,9 @@ use crate::generated;
 use crate::genapi::{self, Call, Dx, GkErr, GkResult, Put, R};
 use crate::ops::*;
 use crate::rt;
-use crate::source::{self, HEADER_ROW, Row};
+use crate::source::{self, HEADER_ROW};
+use crate::tape::{TableCell, Tape};
+use gpui_kit::component::label::Label;
 use gpui_kit::component::list::{ListDelegate, ListItem, ListState};
 use gpui_kit::component::skeleton::Skeleton;
 use gpui_kit::component::table::{Column, ColumnFixed, ColumnGroup, ColumnSort, TableDelegate, TableState};
@@ -40,6 +44,7 @@ use gpui_kit::{
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Range;
+use std::rc::Rc;
 
 // --- what the app pushes besides rows ------------------------------------------------------
 
@@ -375,7 +380,16 @@ fn sort_num(s: ColumnSort) -> u16 {
     }
 }
 
-/// The `TableDelegate` over a row source whose rows are the table's cells.
+/// Cached tape of the row currently being rendered by `DataTable`, cleared in `render_tr` so
+/// columns `1..cols` of the same row avoid repeated session lookups and `Rc` clones.
+enum CurRow {
+    Empty,
+    Missing(usize),
+    Found(usize, Rc<Tape>, u64),
+}
+
+/// The `TableDelegate` over a row source whose rows each hold all columns' cells in one
+/// `N_TABLE_CELLS` tape.
 pub struct GkTableDelegate {
     pub src: u64,
     columns: Vec<Column>,
@@ -384,9 +398,9 @@ pub struct GkTableDelegate {
     x: Extras,
     watched: bool,
     /// The rows `bind_ahead` last asked for and the frame it asked in: they are bound before the
-    /// next frame, so asking again for rows inside them in the same frame is skipped (every row
-    /// drawn asks while the rows ahead are missing).
+    /// next frame, so asking again for rows inside them in the same frame is skipped.
     asked: (u64, Range<usize>),
+    cur_row: CurRow,
     /// What the app pushed besides cells (TABLE_TEXTS, TABLE_ROW_LABELS, TABLE_LOOK).
     look: Look,
 }
@@ -416,9 +430,7 @@ impl GkTableDelegate {
     /// The delegate over `src`, with the columns given for it (TABLE_SOURCE_COLUMNS).
     pub fn from_source(src: u64) -> GkResult<Self> {
         source::count(src, 0)?;
-        if decode_cells() {
-            source::set_decoded(src);
-        }
+        source::set_decoded(src);
         let mut d = GkTableDelegate {
             src,
             columns: Vec::new(),
@@ -426,6 +438,7 @@ impl GkTableDelegate {
             x: Extras::default(),
             watched: false,
             asked: (0, 0..0),
+            cur_row: CurRow::Empty,
             look: Look::default(),
         };
         d.set_columns(SOURCE_COLUMNS.with(|m| m.borrow_mut().remove(&src)).unwrap_or_default());
@@ -435,50 +448,36 @@ impl GkTableDelegate {
     fn set_columns(&mut self, columns: Vec<Column>) {
         self.order = (0..columns.len()).collect();
         self.columns = columns;
+        self.cur_row = CurRow::Empty;
     }
 
     fn id(&self, pos: usize) -> usize {
         self.order.get(pos).copied().unwrap_or(pos)
     }
 
-    fn cell_key(&self, row: usize, id: usize) -> u64 {
-        source::key(0, (row * self.columns.len() + id) as u32)
+    fn row_key(&self, row: usize) -> u64 {
+        source::key(0, row as u32)
     }
 
     /// Binds rows before they are drawn: when the row two screens past `rows` (or before it) has
-    /// no cells, asks for two screens behind and two and a half ahead, all columns, in one ROWS
-    /// turn (`source::want`: the rows not bound yet, with no overscan added). A steady scroll so
-    /// costs one turn of about half a screen of cells every half screen of rows, not one per
-    /// frame. Measured 23 Nov 2026 (the table scene, 100,000 rows): batches of two or three
-    /// screens cost a missed frame or more each at 1,000 Hz and set the p95 at 60 Hz; one screen
-    /// missed a median of 112 frames of 300 at 1,000 Hz against 107 for half a screen (Rust
-    /// 105), and half a screen also had the lower p95 at 60 Hz (987 against 1,017 us). gpui-kit 0.11 on gpui-fast 0.1.19 keeps two viewports of rows
-    /// drawn on each side of the visible ones (the list layer's overscan, grown a few rows a
-    /// frame). `rows` is a visible range the kit reports, or a row drawn now (`render_td`): the
-    /// list layer draws rows beyond the range the kit reports, and bound only from the reported
-    /// ranges such a row was drawn as a placeholder first, which redrew the table for five
-    /// frames.
+    /// no tape, asks for two screens behind and two more screens ahead in one ROWS turn.
     fn bind_ahead(&mut self, rows: Range<usize>, window: &mut Window, cx: &mut Context<TableState<Self>>) {
-        let n = self.columns.len();
-        let count = self.rows_count(cx);
-        if n == 0 || count == 0 || rows.is_empty() {
+        if self.columns.is_empty() || rows.is_empty() {
             return;
         }
-        // The kit also reports short ranges (a few rows, from a measuring pass): a screen is
-        // taken as at least 24 rows.
+        let epoch = source::rows_epoch();
         let len = rows.len().max(24);
-        let ahead = (rows.end + 2 * len).min(count - 1);
         let behind = rows.start.saturating_sub(2 * len);
-        let missing = |row: usize| !source::bound(self.src, self.cell_key(row, n - 1));
-        crate::rt::trace(|| format!("table rows={rows:?} ahead={ahead} behind={behind} missing={}/{}", missing(ahead), missing(behind)));
-        if missing(ahead) || missing(behind) {
-            let frame = rt::with(|s| s.frame_no());
-            let (lo, hi) = (rows.start.saturating_sub(2 * len), (rows.end + 2 * len + len / 2).min(count));
-            if self.asked.0 == frame && self.asked.1.start <= behind && ahead < self.asked.1.end {
-                return;
+        let ahead = rows.end + 2 * len;
+        if self.asked.0 == epoch && self.asked.1.start <= behind && ahead <= self.asked.1.end {
+            return;
+        }
+        if let Some(asked) = source::table_bind_ahead(self.src, rows, window, cx) {
+            if self.asked.0 == asked.0 && asked.1.start <= self.asked.1.end && self.asked.1.start <= asked.1.end {
+                self.asked.1 = self.asked.1.start.min(asked.1.start)..self.asked.1.end.max(asked.1.end);
+            } else {
+                self.asked = asked;
             }
-            self.asked = (frame, lo..hi);
-            source::want(self.src, 0, (lo * n) as u32, (hi * n).min(u32::MAX as usize) as u32, window, cx);
         }
     }
 
@@ -496,10 +495,7 @@ impl TableDelegate for GkTableDelegate {
     }
 
     fn rows_count(&self, _: &App) -> usize {
-        match self.columns.len() {
-            0 => 0,
-            n => count(self.src, 0) / n,
-        }
+        if self.columns.is_empty() { 0 } else { count(self.src, 0) }
     }
 
     fn column(&self, col_ix: usize, _: &App) -> Column {
@@ -537,23 +533,31 @@ impl TableDelegate for GkTableDelegate {
         window: &mut Window,
         cx: &mut Context<TableState<Self>>,
     ) -> impl IntoElement {
-        self.watch(cx);
-        if col_ix == 0 {
-            self.bind_ahead(row_ix..row_ix + 1, window, cx);
-        }
-        let key = self.cell_key(row_ix, self.id(col_ix));
-        if !decode_cells() {
-            return match source::row(self.src, key, window, cx) {
-                Row::View(v) => v.into_any_element(),
-                Row::Missing => div().into_any_element(),
+        let need_fetch = match &self.cur_row {
+            CurRow::Found(r, _, _) | CurRow::Missing(r) => *r != row_ix,
+            CurRow::Empty => true,
+        };
+        if need_fetch {
+            self.watch(cx);
+            self.cur_row = match source::row_tape(self.src, self.row_key(row_ix), window, cx) {
+                Some((tape, view)) => CurRow::Found(row_ix, tape, view),
+                None => CurRow::Missing(row_ix),
             };
         }
-        // The cell's tape decoded here, inside the table's render, as a Rust delegate builds
-        // its cell: no view of its own in the element tree, and its entity is not read.
-        match source::row_tape(self.src, key, window, cx) {
-            Some((tape, view)) => genapi::with_tape(&tape, view, window, cx, |dx: &mut Dx, root| dx.child(root)),
-            None => div().into_any_element(),
+        let CurRow::Found(_, tape, view) = &self.cur_row else {
+            return div().into_any_element();
+        };
+        let col_id = self.id(col_ix);
+        if let Some(cells) = &tape.table_cells {
+            if let Some(cell) = cells.get(col_id) {
+                return match cell {
+                    TableCell::Label(s) => genapi::timed_decode(|| Label::new(s.clone()).into_any_element()),
+                    TableCell::Text(s) => genapi::timed_decode(|| s.clone().into_any_element()),
+                    TableCell::Node(node) => genapi::with_tape_node(tape, *view, *node, window, cx, |dx: &mut Dx, n| dx.child(n)),
+                };
+            }
         }
+        div().into_any_element()
     }
 
     fn move_column(
@@ -668,7 +672,10 @@ impl TableDelegate for GkTableDelegate {
         d
     }
 
-    fn render_tr(&mut self, row_ix: usize, _: &mut Window, _: &mut Context<TableState<Self>>) -> Stateful<Div> {
+    fn render_tr(&mut self, row_ix: usize, window: &mut Window, cx: &mut Context<TableState<Self>>) -> Stateful<Div> {
+        self.watch(cx);
+        self.cur_row = CurRow::Empty;
+        self.bind_ahead(row_ix..row_ix + 1, window, cx);
         let mut d = div().id(("row", row_ix));
         if let Some(st) = &self.look.row_style {
             *d.style() = generated::refined(d.style().clone(), st);
@@ -685,8 +692,7 @@ impl TableDelegate for GkTableDelegate {
         window: &mut Window,
         cx: &mut Context<TableState<Self>>,
     ) -> gpui_kit::component::menu::PopupMenu {
-        let keys: Vec<u64> = (0..self.columns.len()).map(|c| self.cell_key(row_ix, c)).collect();
-        row_menu(self.src, keys, menu, window, cx)
+        table_row_menu(self.src, self.row_key(row_ix), menu, window, cx)
     }
 
     fn render_last_empty_col(&mut self, _: &mut Window, _: &mut Context<TableState<Self>>) -> impl IntoElement {
@@ -776,15 +782,6 @@ fn read_columns(r: &mut R) -> Vec<Column> {
     (0..n).map(|_| read_column(r)).collect()
 }
 
-/// GK_TABLE_CELLS=view draws each cell as its view (gpui-fast retains it); the default decodes
-/// the cell's tape inside the table's render. Read once.
-fn decode_cells() -> bool {
-    thread_local! {
-        static DECODE: bool = std::env::var("GK_TABLE_CELLS").map(|v| v != "view").unwrap_or(true);
-    }
-    DECODE.with(|d| *d)
-}
-
 /// Columns given as the kit's own `Column` values (`TABLE_COLUMN_VALUES`, core/src/objects.rs,
 /// PROTOCOLS.md 13.6): for the table state about to be made over `src`.
 pub(crate) fn source_columns(src: u64, columns: Vec<Column>) -> GkResult<()> {
@@ -860,14 +857,50 @@ fn build_tree(flat: &[(String, String, u32, u8)]) -> Vec<TreeItem> {
 
 // --- elements ------------------------------------------------------------------------------
 
-/// The family's element nodes: ROW_MENU (PROTOCOLS.md 11.24); List, DataTable and Tree are
-/// generated over the shims.
+/// The family's element nodes: ROW_MENU (PROTOCOLS.md 11.24) and TABLE_CELLS; List, DataTable
+/// and Tree are generated over the shims.
 pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> {
-    if ty == N_ROW_MENU {
-        let child = dx.args(args).u32();
-        return Some(dx.child(child));
+    match ty {
+        N_ROW_MENU => {
+            let child = dx.args(args).u32();
+            Some(dx.child(child))
+        }
+        N_TABLE_CELLS => Some(div().into_any_element()),
+        _ => None,
     }
-    None
+}
+
+/// Context menu for a table row whose tape root is `N_TABLE_CELLS`: applies the menu of the first
+/// cell whose root is `N_ROW_MENU`.
+fn table_row_menu(
+    src: u64,
+    key: u64,
+    menu: gpui_kit::component::menu::PopupMenu,
+    window: &mut Window,
+    cx: &mut App,
+) -> gpui_kit::component::menu::PopupMenu {
+    let Some((tape, view)) = source::row_tape(src, key, window, cx) else {
+        return menu;
+    };
+    genapi::with_tape(&tape, view, window, cx, move |dx: &mut Dx, root| {
+        let (ty, args, _) = dx.node(root);
+        if ty != N_TABLE_CELLS {
+            return menu;
+        }
+        let mut a = dx.args(args);
+        let n = a.u32();
+        for _ in 0..n {
+            let cell = a.u32();
+            let (cty, cargs, _) = dx.node(cell);
+            if cty == N_ROW_MENU {
+                let mut ca = dx.args(cargs);
+                let (_, m) = (ca.u32(), ca.u32());
+                let (_, _, first) = dx.node(m);
+                return generated::apply_component_popup_menu(dx, menu, first);
+            }
+        }
+        menu
+    })
 }
 
 // --- per-row menus (docs/PROTOCOLS.md 11.24) ---------------------------------------------------
