@@ -24,6 +24,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -57,7 +59,7 @@ type App struct {
 	askedAt time.Time
 	polls   int
 	barSeen bool
-	inp     gk.InputState
+	inp     editor.InputState
 	fired   int
 }
 
@@ -98,12 +100,12 @@ func (a *App) never(cx *gk.Cx, d gk.PathsDone) {
 // (its Cut/Copy/Paste/Select All menu, or Input::context_menu's), so the app's never runs (mode
 // context-menu-kit). Either way the right press reaches the state: its cursor moves into the text.
 
-func (a *App) menuFired(cx *gk.Cx, e gk.Event114) {
+func (a *App) menuFired(cx *gk.Cx, e editor.Event114) {
 	a.fired++
 	copyAct := gk.NewAction(cx, "input::Copy")
 	actions := 0
 	for _, it := range e.A0.Items {
-		if x, ok := it.(gk.NativeMenuItemAction); ok && x.Action == copyAct {
+		if x, ok := it.(editor.NativeMenuItemAction); ok && x.Action == copyAct {
 			actions++
 		}
 	}
@@ -114,9 +116,9 @@ func (a *App) menuFired(cx *gk.Cx, e gk.Event114) {
 func (a *App) contextMenuView(cx *gk.Cx) gk.Element {
 	box := gk.Div().W(gk.Px(220)).H(gk.Px(32))
 	if a.mode == "context-menu" {
-		box = box.Child(gk.BaseInput(a.inp))
+		box = box.Child(editor.BaseInput(a.inp))
 	} else {
-		box = box.Child(gk.Input(a.inp))
+		box = box.Child(editor.Input(a.inp))
 	}
 	return gk.VFlex(s.SizeFull).Child(box)
 }
@@ -156,7 +158,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	case "context-menu", "context-menu-kit":
 		return a.contextMenuView(cx)
 	}
-	return gk.VFlex(s.SizeFull).Child(gk.Label(fmt.Sprintf("done %d %s", a.done, a.last)))
+	return gk.VFlex(s.SizeFull).Child(kit.Label(fmt.Sprintf("done %d %s", a.done, a.last)))
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -172,7 +174,7 @@ func (a *App) init(cx *gk.Cx) {
 	case "image-in-view", "request-in-view":
 		// misuse checked in view
 	case "context-menu", "context-menu-kit":
-		a.inp = gk.NewInputState(cx).DefaultValue("menu text").Build()
+		a.inp = editor.NewInputState(cx).DefaultValue("menu text").Build()
 		a.inp.OnContextMenu(cx, a.menuFired)
 		gk.After(cx, 10*ms, a.contextMenuCheck)
 	}

@@ -22,7 +22,10 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -30,36 +33,36 @@ type App struct {
 	mode      string
 	root      gk.View
 	src       gk.RowSource
-	table     gk.TableState
-	list      gk.ListState
-	name      gk.InputState
+	table     gktable.State
+	list      gktable.ListState
+	name      editor.InputState
 	clicks    int
 	maxRow    int // the highest row a cell function was asked for
 	described int
 	got       string
 }
 
-func columns() []gk.TableColumn {
-	a := gk.NewTableColumn("a", "A")
+func columns() []gktable.TableColumn {
+	a := gktable.NewTableColumn("a", "A")
 	a.MaxWidth = 400
-	b := gk.NewTableColumn("b", "B")
+	b := gktable.NewTableColumn("b", "B")
 	b.MaxWidth = 400
-	return []gk.TableColumn{a, b}
+	return []gktable.TableColumn{a, b}
 }
 
-func (a *App) cell(cx *gk.Cx, at gk.CellAt) gk.Element {
+func (a *App) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	a.described++
 	a.maxRow = max(a.maxRow, at.Row)
 	if a.mode == "row-reenter" && a.described == 3 {
 		gk.Release(cx, a.src) // re-enters the runtime from a cell function: must stop here
 		fmt.Println("gk-neg row-reenter went on after releasing its own source")
 	}
-	return gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 }
 
-func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	text := fmt.Sprintf("row %d of a list", at.Row)
-	return gk.ListItem(gk.Key("r", at.Row)).Child(gk.Label(text)).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+	return gktable.ListItem(gk.Key("r", at.Row)).Child(kit.Label(text)).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 		gk.SetCount(cx, a.src, 0) // drops this row's view while its handler runs
 		a.got = text              // the captured text must still be intact
 		fmt.Printf("gk-neg row-handler clicked text=%q\n", a.got)
@@ -77,8 +80,8 @@ func (a *App) act(cx *gk.Cx, _ gk.ClickEvent) {
 	}
 }
 
-func (a *App) changed(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); ok {
+func (a *App) changed(cx *gk.Cx, e editor.InputEvent) {
+	if _, ok := e.(editor.InputEventChange); ok {
 		v := a.name.Value(cx)
 		gk.Release(cx, a.name) // its own input, which the view still shows
 		fmt.Printf("gk-neg input-release released in its handler value=%q\n", v)
@@ -88,16 +91,16 @@ func (a *App) changed(cx *gk.Cx, e gk.InputEvent) {
 func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
 	case "table-freed", "row-reenter":
-		a.src = gk.NewTableSource(cx, 1000, columns(), a.cell)
-		a.table = gk.NewTableState(cx, a.src).Build()
+		a.src = gktable.NewSource(cx, 1000, columns(), a.cell)
+		a.table = gktable.NewState(cx, a.src).Build()
 	case "huge-count":
-		a.src = gk.NewTableSource(cx, 3_000_000_000, columns(), a.cell)
-		a.table = gk.NewTableState(cx, a.src).Build()
+		a.src = gktable.NewSource(cx, 3_000_000_000, columns(), a.cell)
+		a.table = gktable.NewState(cx, a.src).Build()
 	case "row-handler":
-		a.src = gk.NewListSource(cx, func() int { return 20 }, a.listRow)
-		a.list = gk.NewListState(cx, a.src).Build()
+		a.src = gktable.NewListSource(cx, func() int { return 20 }, a.listRow)
+		a.list = gktable.NewListState(cx, a.src).Build()
 	default:
-		a.name = gk.NewInputState(cx).Build()
+		a.name = editor.NewInputState(cx).Build()
 		if a.mode == "input-release" {
 			a.name.OnInputEvent(cx, a.changed)
 		}
@@ -108,14 +111,14 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	var body gk.Element
 	switch a.mode {
 	case "table-freed", "row-reenter", "huge-count":
-		body = gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gk.DataTable(a.table))
+		body = gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gktable.DataTable(a.table))
 	case "row-handler":
-		body = gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gk.List(a.list, s.SizeFull))
+		body = gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gktable.List(a.list, s.SizeFull))
 	default:
-		body = gk.Div().W(gk.Px(240)).Child(gk.Input(a.name))
+		body = gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))
 	}
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.HFlex(s.Gap2).Child(gk.Button("act").Label("act").OnClick(a.act))).
+		Child(gk.HFlex(s.Gap2).Child(kit.Button("act").Label("act").OnClick(a.act))).
 		Child(body)
 }
 

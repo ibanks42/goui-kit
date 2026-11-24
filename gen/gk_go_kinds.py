@@ -128,6 +128,8 @@ def put(go, d, v, depth=0):
     m, k = go.m, d[0]
     if k == "civil":
         return [f"put{CIVIL[d[1]]}(o, {v})"]
+    if k == "decorate":  # gk.Decorate is the core package's; its writer, generic, rt's
+        return [f"rt.PutDecorate(o, {v}.Style, {v}.Content)"]
     if k in SIMPLE:
         return [f"{SIMPLE[k][1]}(o, {v})"]
     if k == "cell":
@@ -348,7 +350,7 @@ def emit_files(go):
         go.add("type ItemFunc interface {", "\t" + " |\n\t\t".join(ty for ty, _ in kinds), "}", "")
     else:
         go.add("type ItemFunc interface{ func(cx *Cx) Element }", "")
-    go.add("var itemsKinds = []string{\"\", " + ", ".join(f'"{ty}"' for ty, _ in kinds) + "}", "")
+    go.add("func init() { rt.ItemsKinds = []string{\"\", " + ", ".join(f'"{ty}"' for ty, _ in kinds) + "} }", "")
     go.add("// Items makes the row source of an item function: a function that describes one item of a component",
            "// (a calendar's day, a tree's entry, a popover's content, an input's token), called between frames with",
            "// the values the kit hands that item. The same function given in the same view gives the same source;",

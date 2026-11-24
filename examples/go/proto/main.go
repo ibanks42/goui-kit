@@ -18,7 +18,11 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -30,7 +34,7 @@ type RowID struct {
 type App struct {
 	mode                          string
 	root, side                    gk.View
-	name                          gk.InputState
+	name                          editor.InputState
 	rows                          gk.Rows
 	focus                         gk.FocusHandle
 	sub                           gk.Subscription
@@ -45,8 +49,8 @@ type App struct {
 	described                     map[int]int
 	keptCx                        *gk.Cx
 	keptEl                        gk.Element
-	dlg                           gk.Built[gk.DialogEl]
-	list                          gk.ListState
+	dlg                           gk.Built[overlay.DialogEl]
+	list                          table.ListState
 	dlgDescribed, cancels, dcount int
 }
 
@@ -98,12 +102,12 @@ func (a *App) key(cx *gk.Cx, e gk.KeyEvent) {
 	fmt.Printf("proto key key=%q char=%q has_char=%v held=%v mods=%v\n", e.Key, ch, has, e.IsHeld, e.Modifiers)
 }
 
-func (a *App) inputEvent(cx *gk.Cx, e gk.InputEvent) {
+func (a *App) inputEvent(cx *gk.Cx, e editor.InputEvent) {
 	a.events++
 	switch v := e.(type) {
-	case gk.InputEventChange:
+	case editor.InputEventChange:
 		fmt.Printf("proto input change value=%q\n", a.name.Value(cx))
-	case gk.InputEventPressEnter:
+	case editor.InputEventPressEnter:
 		fmt.Printf("proto input enter secondary=%v shift=%v\n", v.Secondary, v.Shift)
 		if a.mode == "state" {
 			// Read your own write: a read flushes the buffered write first.
@@ -112,9 +116,9 @@ func (a *App) inputEvent(cx *gk.Cx, e gk.InputEvent) {
 			gk.Release(cx, a.sub)
 			fmt.Println("proto unsubscribed")
 		}
-	case gk.InputEventFocus:
+	case editor.InputEventFocus:
 		fmt.Println("proto input focus")
-	case gk.InputEventBlur:
+	case editor.InputEventBlur:
 		fmt.Println("proto input blur")
 	}
 }
@@ -135,7 +139,7 @@ func (a *App) boom(cx *gk.Cx, _ gk.ClickEvent) {
 		a.name.SetValue(cx, "to a released handle") // buffered: fails after this handler
 		fmt.Println("proto stale-write buffered")
 	case "wrong-type":
-		fake := gk.TestInputState(gk.Handle(a.rows))
+		fake := editor.TestInputState(gk.Handle(a.rows))
 		fmt.Printf("proto wrong value=%q\n", fake.Value(cx))
 	case "thread":
 		done := make(chan struct{})
@@ -169,7 +173,7 @@ func (a *App) boom(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.described[at.Row]++
 	row := at.Row
-	return gk.HFlex(s.SizeFull).Child(gk.Button(fmt.Sprintf("row-%d", at.Row)).Label(fmt.Sprintf("row %d", at.Row)).
+	return gk.HFlex(s.SizeFull).Child(kit.Button(fmt.Sprintf("row-%d", at.Row)).Label(fmt.Sprintf("row %d", at.Row)).
 		OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			gk.Quiet(cx)
 			fmt.Printf("proto row clicked row=%d\n", row)
@@ -201,7 +205,7 @@ func (a *App) rowsStep(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) rowsView(cx *gk.Cx) gk.Element {
 	a.views++
 	return gk.VFlex(s.SizeFull, s.P4).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(cell(gk.Button("first").Label("go").OnClick(a.rowsStep))).
+		Child(cell(kit.Button("first").Label("go").OnClick(a.rowsStep))).
 		Child(gk.SourceList("rows", a.src, 24).W(gk.Px(300)).H(gk.Px(240)))
 }
 
@@ -268,7 +272,7 @@ func (a *App) bump(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) sideView(cx *gk.Cx) gk.Element {
 	a.sides++
 	fmt.Printf("proto side view run=%d count=%d\n", a.sides, a.count.Get())
-	return gk.HFlex().Child(gk.Label(fmt.Sprintf("count %d", a.count.Get())))
+	return gk.HFlex().Child(kit.Label(fmt.Sprintf("count %d", a.count.Get())))
 }
 
 // --- background posts ---------------------------------------------------------------------------
@@ -367,16 +371,16 @@ func (a *App) reportMemory(what string) {
 
 // --- a list over a row source (PROTOCOLS.md 9.5) ----------------------------------------------
 
-func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) listRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	a.described[at.Row]++
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.Label(fmt.Sprintf("item %d.%d", at.Section, at.Row)))
+	return table.ListItem(gk.Key("item", at.Row)).Child(kit.Label(fmt.Sprintf("item %d.%d", at.Section, at.Row)))
 }
 
-func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
+func (a *App) listEvent(cx *gk.Cx, e table.ListDelegateEvent) {
 	a.events++
 	ix, has := e.Index.Get()
 	fmt.Printf("proto list %v has=%v section=%d row=%d secondary=%v id=%d query=%q\n", e.Kind, has, ix.Section, ix.Row, e.Secondary, e.ID, e.Query)
-	if e.Kind == gk.ListConfirm {
+	if e.Kind == table.ListConfirm {
 		sel, ok := a.list.SelectedIndex(cx).Get()
 		fmt.Printf("proto list-state read selected_index ok=%v row=%d\n", ok, sel.Row)
 	}
@@ -385,19 +389,19 @@ func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
 func (a *App) listView(cx *gk.Cx) gk.Element {
 	a.views++
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.HFlex(s.Gap2).Child(gk.Button("step").Label("step").OnClick(a.boom))).
-		Child(gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.List(a.list, s.SizeFull)))
+		Child(gk.HFlex(s.Gap2).Child(kit.Button("step").Label("step").OnClick(a.boom))).
+		Child(gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(table.List(a.list, s.SizeFull)))
 }
 
 // --- a dialog over a view-built closure (PROTOCOLS.md 11.6) --------------------------------------
 
-func (a *App) confirmDialog(cx *gk.Cx) gk.DialogEl {
+func (a *App) confirmDialog(cx *gk.Cx) overlay.DialogEl {
 	a.dlgDescribed++
 	fmt.Printf("proto dialog described n=%d count=%d\n", a.dlgDescribed, a.dcount)
 	seen := a.dcount // the count of this description: which tape the kit used
-	return gk.Dialog().
-		Title(gk.Label("Delete?")).
-		Child(gk.Label(fmt.Sprintf("count %d", a.dcount))).
+	return overlay.Dialog().
+		Title(kit.Label("Delete?")).
+		Child(kit.Label(fmt.Sprintf("count %d", a.dcount))).
 		OnCancel(func(cx *gk.Cx, _ gk.ClickEvent) bool {
 			a.cancels++
 			fmt.Printf("proto dialog cancel n=%d seen=%d count=%d\n", a.cancels, seen, a.dcount)
@@ -407,28 +411,28 @@ func (a *App) confirmDialog(cx *gk.Cx) gk.DialogEl {
 
 func (a *App) dialogSteps(cx *gk.Cx) {
 	gk.After(cx, 10*time.Millisecond, func(cx *gk.Cx) {
-		gk.OpenDialog(cx, a.dlg)
+		overlay.OpenDialog(cx, a.dlg)
 		fmt.Println("proto dialog opened")
 	})
 	gk.After(cx, 30*time.Millisecond, func(cx *gk.Cx) {
-		fmt.Printf("proto dialog active=%v\n", gk.HasActiveDialog(cx))
+		fmt.Printf("proto dialog active=%v\n", overlay.HasActiveDialog(cx))
 		a.dcount++
 		gk.Notify(cx, a.dlg.View) // described again while open
 	})
 	gk.After(cx, 50*time.Millisecond, func(cx *gk.Cx) {
-		fmt.Printf("proto dialog closed active=%v\n", gk.HasActiveDialog(cx))
-		gk.OpenDialog(cx, a.dlg) // the same view, opened again
+		fmt.Printf("proto dialog closed active=%v\n", overlay.HasActiveDialog(cx))
+		overlay.OpenDialog(cx, a.dlg) // the same view, opened again
 	})
-	gk.After(cx, 70*time.Millisecond, func(cx *gk.Cx) { gk.CloseDialog(cx) })
+	gk.After(cx, 70*time.Millisecond, func(cx *gk.Cx) { overlay.CloseDialog(cx) })
 	gk.After(cx, 90*time.Millisecond, func(cx *gk.Cx) {
-		fmt.Printf("proto dialog done active=%v described=%d cancels=%d count=%d\n", gk.HasActiveDialog(cx), a.dlgDescribed, a.cancels, a.dcount)
+		fmt.Printf("proto dialog done active=%v described=%d cancels=%d count=%d\n", overlay.HasActiveDialog(cx), a.dlgDescribed, a.cancels, a.dcount)
 	})
 }
 
 // --- the view -----------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
-	a.name = gk.NewInputState(cx).DefaultValue("abc").Build()
+	a.name = editor.NewInputState(cx).DefaultValue("abc").Build()
 	a.rows = gk.NewRows(cx)
 	a.focus = gk.NewFocusHandle(cx)
 	switch a.mode {
@@ -445,9 +449,9 @@ func (a *App) init(cx *gk.Cx) {
 	case "handler-memory":
 		gk.OnFrame(cx, a.memoryFrame)
 	case "list":
-		src := gk.NewListSource(cx, func() int { return 10_000 }, a.listRow, gk.ListEvents(a.listEvent), gk.Initial(20))
-		a.list = gk.NewListState(cx, src).Build()
-		gk.SetDelegateData(cx, a.list, gk.DelegateData{Threshold: 20, PlaceholderHeight: 32})
+		src := table.NewListSource(cx, func() int { return 10_000 }, a.listRow, table.ListEvents(a.listEvent), gk.Initial(20))
+		a.list = table.NewListState(cx, src).Build()
+		table.SetDelegateData(cx, a.list, table.DelegateData{Threshold: 20, PlaceholderHeight: 32})
 	case "dialog":
 		a.dlg = gk.NewBuilt(cx, a.confirmDialog)
 		a.dialogSteps(cx)
@@ -461,7 +465,7 @@ func cell(child gk.Element) gk.Element {
 func (a *App) rootView(cx *gk.Cx) gk.Element {
 	a.views++
 	row := gk.Div(s.Flex, s.FlexRow)
-	first := gk.Button("first").Label("go")
+	first := kit.Button("first").Label("go")
 	switch a.mode {
 	case "handlers":
 		first.OnClick(a.clicked)
@@ -474,10 +478,10 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 		if a.keptEl != nil {
 			row.Child(a.keptEl) // an element of an earlier build: stops
 		}
-		a.keptEl = gk.Label("kept")
+		a.keptEl = kit.Label("kept")
 	}
 	row.Child(cell(first))
-	row.Child(cell(gk.Switch("sw").Checked(a.checked).OnClick(a.toggled)))
+	row.Child(cell(kit.Switch("sw").Checked(a.checked).OnClick(a.toggled)))
 	row.Child(cell(gk.Div().ID("hover").W(gk.Px(80)).H(gk.Px(30)).Bg(gk.HSLA(0.3, 0.5, 0.4, 1)).
 		OnHover(a.hovered).
 		OnClick(a.rowClicked(RowID{5, fmt.Sprintf("row %d", 5)}))))
@@ -495,8 +499,8 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	}
 	col := gk.VFlex(s.SizeFull, s.P4).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(row).
-		Child(gk.Div().W(gk.Px(200)).H(gk.Px(40)).Child(gk.Input(a.name))).
-		Child(gk.Label("echo " + value))
+		Child(gk.Div().W(gk.Px(200)).H(gk.Px(40)).Child(editor.Input(a.name))).
+		Child(kit.Label("echo " + value))
 	if a.mode == "model" || a.mode == "post" {
 		col.ChildView(a.side)
 	}

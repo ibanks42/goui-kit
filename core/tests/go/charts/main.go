@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -28,7 +29,7 @@ type App struct {
 var modes = map[string]func(a *App, cx *gk.Cx){}
 
 func (a *App) rootView(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).Child(gk.Label("charts"))
+	return gk.Div(s.SizeFull).Child(kit.Label("charts"))
 }
 
 func (a *App) init(cx *gk.Cx) {

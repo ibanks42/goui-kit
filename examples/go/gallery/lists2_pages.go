@@ -12,23 +12,27 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	gkeditor "gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
 type lists2Pages struct {
-	select_ gk.SelectState
-	search  gk.SelectState
-	rows    gk.SelectState
-	combo   gk.ComboboxState
-	table   gk.TableState
+	select_ gktable.SelectState
+	search  gktable.SelectState
+	rows    gktable.SelectState
+	combo   gktable.ComboboxState
+	table   gktable.State
 	cells   gk.RowSource
 	values  gk.View // the "Values" group header cell
 	// docs/PROTOCOLS.md 9.14: a code block highlighter the app answers between frames
 	hl   gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]
-	diff gk.DiffState // a patch parsed by DiffFile::parse (PROTOCOLS.md 9.15)
+	diff gkeditor.DiffState // a patch parsed by DiffFile::parse (PROTOCOLS.md 9.15)
 	// docs/PROTOCOLS.md 9.16 to 9.18
-	token    gk.InputState  // an input with a token drawn by the app's item function (9.16)
-	editor   gk.EditorState // diagnostics lent (9.17), a highlighter of the app's (9.18)
+	token    gkeditor.InputState // an input with a token drawn by the app's item function (9.16)
+	editor   gkeditor.State      // diagnostics lent (9.17), a highlighter of the app's (9.18)
 	keywords gk.Highlighter
 }
 
@@ -63,43 +67,43 @@ func lists2PagesInit(a *App, cx *gk.Cx) {
 	p := &a.lists2
 	p.hl = gk.NewAsk(cx, textHighlightSpans)
 	// A patch parsed by the kit: how many files it holds, then each file by its index.
-	n, _ := gk.DiffFileParseCount(cx, diffViewPatch).Value.Get()
-	files := make([]gk.DiffFile, n)
+	n, _ := gkeditor.DiffFileParseCount(cx, diffViewPatch).Value.Get()
+	files := make([]gkeditor.DiffFile, n)
 	for i := range files {
-		files[i] = gk.NewDiffFileParseAt(diffViewPatch, i)
+		files[i] = gkeditor.NewDiffFileParseAt(diffViewPatch, i)
 	}
-	p.diff = gk.NewDiffState(cx, files).Build()
+	p.diff = gkeditor.NewDiffState(cx, files).Build()
 	// a token drawn by an item function of the app's (9.16), a diff's header suffixes, an editor
 	// whose diagnostics are lent and given back (9.17) and whose highlighter is the app's (9.18).
-	p.token = gk.NewInputState(cx).DefaultValue("Hello world").Build()
-	_ = p.token.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gk.NewInlineToken("t1", "world").WithLabel("World"))
+	p.token = gkeditor.NewInputState(cx).DefaultValue("Hello world").Build()
+	_ = p.token.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gkeditor.NewInlineToken("t1", "world").WithLabel("World"))
 	p.keywords = gk.NewHighlighter(cx, editorKeywords, nil)
-	p.editor = gk.NewEditorState(cx).Language("demo").DefaultValue(editorDiagText).Build()
+	p.editor = gkeditor.NewState(cx).Language("demo").DefaultValue(editorDiagText).Build()
 	p.editor.SetHighlighterFactory(cx, p.keywords.Src)
 	if d, ok := p.editor.DiagnosticsMut(cx).Get(); ok {
-		d.Push(cx, gk.NewDiagnostic([2]gk.LspPosition{{Line: 1, Character: 4}, {Line: 1, Character: 10}}, "never called"))
+		d.Push(cx, gkeditor.NewDiagnostic([2]gk.LspPosition{{Line: 1, Character: 4}, {Line: 1, Character: 10}}, "never called"))
 	}
 	src := gk.NewSearchSource(cx, lists2Fruit)
-	p.select_ = gk.NewSelectState(cx, src, gk.Some(gk.Row(4))).Build()
+	p.select_ = gktable.NewSelectState(cx, src, gk.Some(gktable.Row(4))).Build()
 	groups := []gk.SearchGroup{{Title: "Fruit", Items: lists2Fruit}, {Title: "Veg", Items: lists2Veg}}
-	p.search = gk.NewSelectState(cx, gk.NewSearchSourceGroups(cx, groups), gk.NoRow).Searchable(true).Build()
-	p.rows = gk.NewSelectState(cx, gk.NewSearchSourceGroups(cx, groups, gk.SearchRow(lists2Row), gk.SearchHeaders()), gk.NoRow).Build()
-	p.combo = gk.NewComboboxState(cx, gk.NewSearchSource(cx, lists2Fruit), []gk.BaseIndexPath{gk.Row(1)}).Multiple(true).Build()
-	col := func(key, name string, w float32) gk.TableColumn {
-		c := gk.NewTableColumn(key, name)
+	p.search = gktable.NewSelectState(cx, gk.NewSearchSourceGroups(cx, groups), gktable.NoRow).Searchable(true).Build()
+	p.rows = gktable.NewSelectState(cx, gk.NewSearchSourceGroups(cx, groups, gk.SearchRow(lists2Row), gk.SearchHeaders()), gktable.NoRow).Build()
+	p.combo = gktable.NewComboboxState(cx, gk.NewSearchSource(cx, lists2Fruit), []gktable.BaseIndexPath{gktable.Row(1)}).Multiple(true).Build()
+	col := func(key, name string, w float32) gktable.TableColumn {
+		c := gktable.NewTableColumn(key, name)
 		c.Width = w
 		return c
 	}
-	columns := []gk.TableColumn{col("id", "Id", 60), col("name", "Name", 100), col("a", "A", 60)}
-	p.cells = gk.NewTableSource(cx, 6, columns, func(cx *gk.Cx, at gk.CellAt) gk.Element {
-		return gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+	columns := []gktable.TableColumn{col("id", "Id", 60), col("name", "Name", 100), col("a", "A", 60)}
+	p.cells = gktable.NewSource(cx, 6, columns, func(cx *gk.Cx, at gktable.CellAt) gk.Element {
+		return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 	})
-	p.table = gk.NewTableState(cx, p.cells).Build()
-	p.values = gk.NewView(nil, func(cx *gk.Cx) gk.Element { return gk.Label("[values]") })
-	level := []gk.TableGroup{{Label: "Key", Span: 1}, {Label: "Values", Span: 2}}
-	gk.SetTableLook(cx, p.table, gk.TableLook{
-		Groups:      [][]gk.TableGroup{level},
-		GroupViews:  []gk.TableGroupView{{Label: "Values", View: p.values}},
+	p.table = gktable.NewState(cx, p.cells).Build()
+	p.values = gk.NewView(nil, func(cx *gk.Cx) gk.Element { return kit.Label("[values]") })
+	level := []gktable.Group{{Label: "Key", Span: 1}, {Label: "Values", Span: 2}}
+	gktable.SetTableLook(cx, p.table, gktable.Look{
+		Groups:      [][]gktable.Group{level},
+		GroupViews:  []gktable.GroupView{{Label: "Values", View: p.values}},
 		HeaderStyle: gk.Some(gk.NewStyleRefinementDefault().Bg(theme.Secondary)),
 		RowStyle:    gk.Some(gk.NewStyleRefinementDefault().TextColor(theme.MutedForeground)),
 	})
@@ -108,47 +112,47 @@ func lists2PagesInit(a *App, cx *gk.Cx) {
 func lists2Row(cx *gk.Cx, at gk.RowAt) gk.Element {
 	if at.Row == lists2HeaderRow {
 		if at.Section == 0 {
-			return gk.Label("== fruit ==")
+			return kit.Label("== fruit ==")
 		}
-		return gk.Label("== veg ==")
+		return kit.Label("== veg ==")
 	}
 	items := lists2Veg
 	if at.Section == 0 {
 		items = lists2Fruit
 	}
-	return gk.Label(fmt.Sprintf("> %s", items[at.Row].Title))
+	return kit.Label(fmt.Sprintf("> %s", items[at.Row].Title))
 }
 
 func lists2Select(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(220)).Child(gk.Select(a.lists2.select_).Placeholder("Fruit"))
+	return gk.Div().W(gk.Px(220)).Child(gktable.Select(a.lists2.select_).Placeholder("Fruit"))
 }
 
 func lists2SelectSearch(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(220)).Child(gk.Select(a.lists2.search).Placeholder("Food").SearchPlaceholder("Find"))
+	return gk.Div().W(gk.Px(220)).Child(gktable.Select(a.lists2.search).Placeholder("Food").SearchPlaceholder("Find"))
 }
 
 func lists2SelectRows(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(220)).Child(gk.Select(a.lists2.rows).Placeholder("Food"))
+	return gk.Div().W(gk.Px(220)).Child(gktable.Select(a.lists2.rows).Placeholder("Food"))
 }
 
 func lists2Combobox(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(260)).Child(gk.Combobox(a.lists2.combo).Placeholder("Fruit"))
+	return gk.Div().W(gk.Px(260)).Child(gktable.Combobox(a.lists2.combo).Placeholder("Fruit"))
 }
 
 func lists2TableStatic(a *App, cx *gk.Cx) gk.Element {
 	fruit := []string{"Apple", "Banana", "Cherry"}
 	rows := make([]gk.ChildElementNode, len(fruit))
 	for n, f := range fruit {
-		rows[n] = gk.TableRow().Child(gk.TableCell().Child(gk.Text(f))).Child(gk.TableCell().Child(gk.Text(fmt.Sprintf("%d", n*3))))
+		rows[n] = gktable.TableRow().Child(gktable.Cell().Child(gk.Text(f))).Child(gktable.Cell().Child(gk.Text(fmt.Sprintf("%d", n*3))))
 	}
 	return gk.Div().W(gk.Px(360)).Child(
-		gk.Table().
-			Child(gk.TableHeader().Child(gk.TableRow().Child(gk.TableHead().Child(gk.Text("Fruit"))).Child(gk.TableHead().Child(gk.Text("Count"))))).
-			Child(gk.TableBody().Children(rows)))
+		gktable.Table().
+			Child(gktable.Header().Child(gktable.TableRow().Child(gktable.Head().Child(gk.Text("Fruit"))).Child(gktable.Head().Child(gk.Text("Count"))))).
+			Child(gktable.Body().Children(rows)))
 }
 
 func lists2TableLook(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gk.DataTable(a.lists2.table).ScrollbarVisible(false, false))
+	return gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gktable.DataTable(a.lists2.table).ScrollbarVisible(false, false))
 }
 
 // text-highlight: a Markdown code block whose highlights the app gives (an ask, PROTOCOLS.md
@@ -186,28 +190,28 @@ func textHighlightSpans(cx *gk.Cx, b gk.CodeBlock) []gk.TupleRangeHighlightStyle
 }
 
 func textHighlight(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(360)).Child(gk.BaseTextViewMarkdown("hl", textHighlightMD).CodeBlockHighlighter(a.lists2.hl))
+	return gk.Div().W(gk.Px(360)).Child(gkeditor.BaseTextViewMarkdown("hl", textHighlightMD).CodeBlockHighlighter(a.lists2.hl))
 }
 
 // diff-view: a patch parsed by the kit (DiffFile::parse) shown by its Diff.
 const diffViewPatch = "diff --git a/hello.demo b/hello.demo\n--- a/hello.demo\n+++ b/hello.demo\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n"
 
 func diffView(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gk.Diff(a.lists2.diff))
+	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gkeditor.Diff(a.lists2.diff))
 }
 
 // text-token: the input's token drawn by an item function of the app's: the kit's InputToken over
 // the token's context, which the kit hands it (9.16, given with gk.Items since 9.41).
 func textToken(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(260)).Child(gk.Input(a.lists2.token).Token(gk.Items(cx, func(cx *gk.Cx, t gk.InlineTokenContext) gk.Element {
-		return gk.InputToken(t)
+	return gk.Div().W(gk.Px(260)).Child(gkeditor.Input(a.lists2.token).Token(overlay.Items(cx, func(cx *gk.Cx, t gkeditor.InlineTokenContext) gk.Element {
+		return gkeditor.InputToken(t)
 	})))
 }
 
 // diff-header: each file's header ends with its path in brackets, an item function over the file.
 func diffHeader(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gk.Diff(a.lists2.diff).RenderHeaderSuffix(gk.Items(cx, func(cx *gk.Cx, f gk.DiffFileRead) gk.Element {
-		return gk.Label(fmt.Sprintf("[%s]", f.Path(cx)))
+	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gkeditor.Diff(a.lists2.diff).RenderHeaderSuffix(overlay.Items(cx, func(cx *gk.Cx, f gkeditor.DiffFileRead) gk.Element {
+		return kit.Label(fmt.Sprintf("[%s]", f.Path(cx)))
 	})))
 }
 
@@ -224,5 +228,5 @@ func editorKeywords(cx *gk.Cx, q gk.HighlightQuery) []gk.HighlightRun {
 }
 
 func editorDiagnostics(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(480)).Child(gk.CodeEditor(a.lists2.editor, gk.CodeEditorOptions{Height: 160}))
+	return gk.Div().W(gk.Px(480)).Child(gkeditor.CodeEditor(a.lists2.editor, gkeditor.CodeEditorOptions{Height: 160}))
 }

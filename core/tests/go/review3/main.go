@@ -26,6 +26,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	gkdock "gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -60,15 +62,15 @@ type App struct {
 	closed  int
 	pings   int
 	// dock-panel-freed, handle-after-owner
-	dock     gk.DockArea
-	pa, pb   gk.DockPanel
+	dock     gkdock.Area
+	pa, pb   gkdock.Panel
 	paV, pbV gk.View
 	aDrawn   int
 	aAfter   int
 	freed    bool
 	dockGone bool
-	tree     gk.PaneTree
-	dockCtx  gk.DockContext
+	tree     gkdock.PaneTree
+	dockCtx  gkdock.Context
 	hasCtx   bool
 	// reentrant-action
 	l1, l2 gk.ActionListener
@@ -106,7 +108,7 @@ func (c *Child) init(cx *gk.Cx) {
 }
 
 func (c *Child) view(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).Child(gk.Label(fmt.Sprintf("child ticks %d", c.ticks)))
+	return gk.Div(s.SizeFull).Child(kit.Label(fmt.Sprintf("child ticks %d", c.ticks)))
 }
 
 func (a *App) openChild(cx *gk.Cx) {
@@ -174,7 +176,7 @@ func (a *App) secondInit(cx *gk.Cx) {
 
 func (a *App) secondView(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).KeyContext("Second").TrackFocus(a.focus2).
-		OnAction(gk.Act(a.close, a.closeSelf)).Child(gk.Label("second"))
+		OnAction(gk.Act(a.close, a.closeSelf)).Child(kit.Label("second"))
 }
 
 func (a *App) openSecond(cx *gk.Cx) {
@@ -205,7 +207,7 @@ func (a *App) paView(cx *gk.Cx) gk.Element {
 	if a.freed {
 		a.aAfter++
 	}
-	return gk.Div(s.SizeFull).ID("pa").OnClick(a.paClicked).Child(gk.Label("panel a"))
+	return gk.Div(s.SizeFull).ID("pa").OnClick(a.paClicked).Child(kit.Label("panel a"))
 }
 
 func (a *App) paClicked(cx *gk.Cx, _ gk.ClickEvent) {
@@ -215,14 +217,14 @@ func (a *App) paClicked(cx *gk.Cx, _ gk.ClickEvent) {
 }
 
 func (a *App) pbView(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).ID("pb").Child(gk.Label("panel b"))
+	return gk.Div(s.SizeFull).ID("pb").Child(kit.Label("panel b"))
 }
 
 func (a *App) makePanels(cx *gk.Cx) {
 	a.paV = gk.NewView(nil, a.paView)
 	a.pbV = gk.NewView(nil, a.pbView)
-	a.pa = gk.NewPanel(cx, a.paV, gk.PanelData{Name: "a", Title: "A"})
-	a.pb = gk.NewPanel(cx, a.pbV, gk.PanelData{Name: "b", Title: "B"})
+	a.pa = gkdock.NewPanel(cx, a.paV, gkdock.PanelData{Name: "a", Title: "A"})
+	a.pb = gkdock.NewPanel(cx, a.pbV, gkdock.PanelData{Name: "b", Title: "B"})
 }
 
 func (a *App) freePanelView(cx *gk.Cx) {
@@ -234,7 +236,7 @@ func (a *App) freePanelView(cx *gk.Cx) {
 
 func (a *App) relayout(cx *gk.Cx) {
 	gk.Release(cx, a.pa) // the panel itself too, while the dock still holds it
-	a.dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(a.pb))
+	a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(a.pb))
 	gk.Notify(cx, a.root)
 }
 
@@ -243,9 +245,9 @@ func (a *App) reportDock(cx *gk.Cx) {
 }
 
 func (a *App) dockFreedInit(cx *gk.Cx) {
-	a.dock = gk.NewDockAreaSkinned(cx, "review3")
+	a.dock = gkdock.NewAreaSkinned(cx, "review3")
 	a.makePanels(cx)
-	a.dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(a.pa).PanelView(a.pb))
+	a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(a.pa).PanelView(a.pb))
 	gk.After(cx, 30*ms, a.freePanelView)
 	gk.After(cx, 90*ms, a.relayout)
 	gk.After(cx, 150*ms, a.reportDock)
@@ -323,9 +325,9 @@ func (a *App) init(cx *gk.Cx) {
 
 func (a *App) onFrame(cx *gk.Cx) gk.Element {
 	a.frame++
-	root := gk.VFlex(s.SizeFull).Child(gk.Label(fmt.Sprintf("review3 %s", a.mode)))
-	if a.dock != (gk.DockArea{}) && !a.dockGone {
-		root = root.Child(gk.Div(s.Flex1, s.WFull).Child(gk.DockView(a.dock)))
+	root := gk.VFlex(s.SizeFull).Child(kit.Label(fmt.Sprintf("review3 %s", a.mode)))
+	if a.dock != (gkdock.Area{}) && !a.dockGone {
+		root = root.Child(gk.Div(s.Flex1, s.WFull).Child(gkdock.View(a.dock)))
 	}
 	return root
 }

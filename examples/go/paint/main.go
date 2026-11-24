@@ -5,6 +5,7 @@ package main
 
 import (
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -29,14 +30,14 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	area := append(append([][2]float32{{0, 120}}, pts...), [2]float32{576, 120}) // down to the middle line
 	white := gk.HSLA(0, 0, 1, 1)
 	bar := gk.NewLinearGradient(0, gk.NewLinearColorStop(theme.Primary, 0), gk.NewLinearColorStop(violet(1), 1)).InOklab()
-	plot := gk.Plot(
-		gk.NewGrid().X([]float32{144, 288, 432}).Y([]float32{60, 120, 180}).Stroke(theme.Border),
-		gk.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
-		gk.NewPlotLine(pts, 7, glow(0.12)),
-		gk.NewPlotLine(pts, 3, glow(0.25)),
-		gk.NewPlotLine(pts, 1.5, glow(1)),
-		gk.NewPlotQuad(480, 10, 80, 36, bar, gk.QuadStyle{CornerRadius: 6, BorderWidth: 2, BorderColor: white}),
-		gk.NewPlotQuad(283, 103, 10, 10, white, gk.QuadStyle{CornerRadius: 5}),
+	plot := chart.Plot(
+		chart.NewGrid().X([]float32{144, 288, 432}).Y([]float32{60, 120, 180}).Stroke(theme.Border),
+		chart.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
+		chart.NewPlotLine(pts, 7, glow(0.12)),
+		chart.NewPlotLine(pts, 3, glow(0.25)),
+		chart.NewPlotLine(pts, 1.5, glow(1)),
+		chart.NewPlotQuad(480, 10, 80, 36, bar, chart.QuadStyle{CornerRadius: 6, BorderWidth: 2, BorderColor: white}),
+		chart.NewPlotQuad(283, 103, 10, 10, white, chart.QuadStyle{CornerRadius: 5}),
 	)
 	warm := gk.NewLinearGradient(180, gk.NewLinearColorStop(theme.Primary, 0.2), gk.NewLinearColorStop(gk.HSLA(0.1, 0.9, 0.6, 1), 0.9)).InOklab()
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).

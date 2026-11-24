@@ -6,10 +6,13 @@
 //	GK_NEG=expr-func   an expression that calls a function with the wrong arguments: must stop
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+)
 
 func init() {
-	pendingInit["expr-syntax"] = func(a *App, cx *gk.Cx) { a.inp = gk.NewInputState(cx).StepBy("x <").Build() }
-	pendingInit["expr-arg"] = func(a *App, cx *gk.Cx) { a.inp = gk.NewInputState(cx).StepBy("z * 2").Build() }
-	pendingInit["expr-func"] = func(a *App, cx *gk.Cx) { a.inp = gk.NewInputState(cx).StepBy("clamp(x, 1)").Build() }
+	pendingInit["expr-syntax"] = func(a *App, cx *gk.Cx) { a.inp = editor.NewInputState(cx).StepBy("x <").Build() }
+	pendingInit["expr-arg"] = func(a *App, cx *gk.Cx) { a.inp = editor.NewInputState(cx).StepBy("z * 2").Build() }
+	pendingInit["expr-func"] = func(a *App, cx *gk.Cx) { a.inp = editor.NewInputState(cx).StepBy("clamp(x, 1)").Build() }
 }

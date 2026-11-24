@@ -32,14 +32,18 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	mode     string
-	name     gk.InputState
-	zero     gk.InputState
+	name     editor.InputState
+	zero     editor.InputState
 	selected string // stored by a handler
 	kept     string
 	clicks   int
@@ -50,17 +54,17 @@ type App struct {
 }
 
 func (a *App) init(cx *gk.Cx) {
-	b := gk.NewInputState(cx).DefaultValue("typed text")
+	b := editor.NewInputState(cx).DefaultValue("typed text")
 	a.name = b.Build()
 	switch a.mode {
 	case "built":
 		b.Placeholder("again") // the chain was used up by Build
 	case "panel-name":
-		gk.NewPanel(cx, gk.NewView(nil, a.view), gk.PanelData{Title: "Files"}) // no Name
+		dock.NewPanel(cx, gk.NewView(nil, a.view), dock.PanelData{Title: "Files"}) // no Name
 	case "row-write":
 		a.src = gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element {
 			a.name.SetValue(cx, "written by a row") // a row function only describes
-			return gk.Label("row")
+			return kit.Label("row")
 		})
 	}
 }
@@ -107,7 +111,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		for i := range 3 {
 			// A different string in every build, so a stale one would show.
 			title := fmt.Sprintf("item %d of build after %d clicks", i, a.clicks)
-			row.Child(gk.Button(gk.Key("item", i)).Label("item").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+			row.Child(kit.Button(gk.Key("item", i)).Label("item").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 				a.clicks++
 				a.selected = title
 			}))
@@ -116,15 +120,15 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		if a.cx != nil {
 			gk.Notify(a.cx, a.root) // a Cx from an earlier turn
 		}
-		row.Child(gk.Button("b").Label("store").OnClick(a.store))
+		row.Child(kit.Button("b").Label("store").OnClick(a.store))
 	case "element":
 		if a.clicks > 0 {
 			a.old.Text("again") // an element of an earlier build
 		}
 		a.old = gk.Div()
-		row.Child(gk.Button("b").Label("store").OnClick(a.store))
+		row.Child(kit.Button("b").Label("store").OnClick(a.store))
 	case "twice":
-		l := gk.Label("once")
+		l := kit.Label("once")
 		row.Child(l)
 		row.Child(l)
 	case "self":
@@ -134,10 +138,10 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	case "view":
 		row.ChildView(gk.NewView(nil, a.view))
 	case "usize":
-		row.Child(gk.Badge().Count(a.clicks - 1).Child(gk.Label("b")))
+		row.Child(kit.Badge().Count(a.clicks - 1).Child(kit.Label("b")))
 	case "nil":
 		var f func(*gk.Cx, gk.ClickEvent)
-		row.Child(gk.Button("b").Label("nil").OnClick(f))
+		row.Child(kit.Button("b").Label("nil").OnClick(f))
 	case "nil-child":
 		var e gk.Element
 		row.Child(e)
@@ -147,18 +151,18 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 			Total float64
 		}
 		sales := []sale{{"Jan", 3}, {"Feb", 5}}
-		row.Child(gk.BarChart(gk.NewData(sales)).Band("month").Value("Total")) // the field is Month
+		row.Child(chart.BarChart(chart.NewData(sales)).Band("month").Value("Total")) // the field is Month
 	case "row-write":
 		row.Child(gk.SourceList("rows", a.src, 20).H(gk.Px(60)))
 	default:
-		row.Child(gk.Button("b").Label("store").OnClick(a.store))
+		row.Child(kit.Button("b").Label("store").OnClick(a.store))
 	}
 	fmt.Printf("gk-neg view clicks=%d selected=%q kept=%q\n", a.clicks, a.selected, a.kept)
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(row).
-		Child(gk.Label(fmt.Sprintf("selected %s kept %s", a.selected, a.kept)))
+		Child(kit.Label(fmt.Sprintf("selected %s kept %s", a.selected, a.kept)))
 	if a.mode == "release" {
-		col.Child(gk.Div().W(gk.Px(200)).Child(gk.Input(a.name)))
+		col.Child(gk.Div().W(gk.Px(200)).Child(editor.Input(a.name)))
 	}
 	return col
 }

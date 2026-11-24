@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
 )
 
 // Round6 is the state of this file's modes (host.go keeps its own).
@@ -36,28 +37,28 @@ type Round6 struct {
 	plus      gk.RowSource
 	minus     gk.RowSource
 	described int
-	tvs       gk.TextViewState
+	tvs       editor.TextViewState
 	edits     gk.Subscription
 }
 
 func init() {
 	modes["chain"] = &mode{init: chainInit, view: func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(300)).Child(gk.TextView(a.r6.tvs))
+		return gk.Div().W(gk.Px(300)).Child(editor.TextView(a.r6.tvs))
 	}, step: func(a *App, cx *gk.Cx) { fmt.Printf("editor2 chain drawn\n") }, script: "frame\n" + stepScript}
 	modes["overlay-keys"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue("let x = 1\n").Build()
-		a.ed.SetOverlayActionHandler(cx, []gk.TupleInputOverlayKindString{{V0: gk.InputOverlayKindCompletion, V1: "input::Tab"},
-			{V0: gk.InputOverlayKindCodeAction, V1: "input::Escape"}})
+		a.ed = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
+		a.ed.SetOverlayActionHandler(cx, []editor.TupleInputOverlayKindString{{V0: editor.InputOverlayKindCompletion, V1: "input::Tab"},
+			{V0: editor.InputOverlayKindCodeAction, V1: "input::Escape"}})
 	}, view: editorBox, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 overlay-keys routed=%v\n", a.ed.RouteOverlayAction(cx, gk.NewAction(cx, "input::Tab")))
 	}, script: "frame\n" + stepScript}
 	modes["edits"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.inp = gk.NewInputState(cx).DefaultValue("ab").Build()
+		a.inp = editor.NewInputState(cx).DefaultValue("ab").Build()
 		a.r6.edits = a.inp.OnInputEditsEvent(cx, a.onEdits)
 	}, view: inputBox, step: func(a *App, cx *gk.Cx) { fmt.Printf("editor2 %s stepped\n", a.mode) },
 		script: "click 100 72\nkey end\ntype c\nframe\nkey backspace\nframe\n" + stepScript}
 	modes["context-menu"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.inp = gk.NewInputState(cx).DefaultValue("menu text").Build()
+		a.inp = editor.NewInputState(cx).DefaultValue("menu text").Build()
 		a.inp.OnContextMenu(cx, a.onMenu)
 	}, view: inputBox, step: func(a *App, cx *gk.Cx) {
 		caps := a.inp.ContextMenuCapabilities(cx)
@@ -67,32 +68,32 @@ func init() {
 
 // editorBox and inputBox are the bodies of the modes that draw the base editor or an input.
 func editorBox(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(420)).H(gk.Px(120)).Child(gk.BaseEditor(a.ed))
+	return gk.Div().W(gk.Px(420)).H(gk.Px(120)).Child(editor.BaseEditor(a.ed))
 }
 
 func inputBox(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(220)).Child(gk.Input(a.inp))
+	return gk.Div().W(gk.Px(220)).Child(editor.Input(a.inp))
 }
 
 func chainInit(a *App, cx *gk.Cx) {
-	a.r6.tvs = gk.NewTextViewStateMarkdown(cx, "Chain **text**").
-		Motion(gk.NewTextViewMotionDefault().WithStreamFade(200 * time.Millisecond)).Build()
-	d := gk.NewTextViewDefaults(cx).WithStyle(gk.NewBaseTextViewStyleDefault().WithParagraphGap(6)).
+	a.r6.tvs = editor.NewTextViewStateMarkdown(cx, "Chain **text**").
+		Motion(editor.NewTextViewMotionDefault().WithStreamFade(200 * time.Millisecond)).Build()
+	d := editor.NewTextViewDefaults(cx).WithStyle(editor.NewBaseTextViewStyleDefault().WithParagraphGap(6)).
 		WithInheritTextColor(true).Build()
 	fmt.Printf("editor2 chain inherit=%v\n", d.InheritTextColor(cx))
 }
 
-func (a *App) onEdits(cx *gk.Cx, e gk.InputEditsEvent) {
+func (a *App) onEdits(cx *gk.Cx, e editor.InputEditsEvent) {
 	for _, x := range e.Edits {
 		fmt.Printf("editor2 edits start=%d old_end=%d new_end=%d text=%q\n", x.V0.StartByte, x.V0.OldEndByte, x.V0.NewEndByte, x.V1)
 	}
 }
 
-func (a *App) onMenu(cx *gk.Cx, e gk.Event114) {
+func (a *App) onMenu(cx *gk.Cx, e editor.Event114) {
 	cp := gk.NewAction(cx, "input::Copy")
 	actions, same := 0, 0
 	for _, it := range e.A0.Items {
-		if x, ok := it.(gk.NativeMenuItemAction); ok {
+		if x, ok := it.(editor.NativeMenuItemAction); ok {
 			actions++
 			if x.Action == cp {
 				same++

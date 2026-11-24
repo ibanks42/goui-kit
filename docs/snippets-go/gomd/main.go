@@ -8,27 +8,31 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	count int
-	name  gk.InputState // a handle: the kit's InputState lives in the library
+	name  editor.InputState // a handle: the kit's InputState lives in the library
 	root  gk.View
 }
 
-func (a *App) init(cx *gk.Cx) { a.name = gk.NewInputState(cx).Placeholder("Your name").Build() }
+func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
 func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw on return
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(gk.Button("add").Primary().Label("Add").OnClick(a.add)).
-			Child(gk.Label(fmt.Sprintf("clicked %d times", a.count)))).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Input(a.name))).
-		Child(gk.Label("hello " + a.name.Value(cx))) // a read in a view: redrawn when it changes
+			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
+		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
+		Child(kit.Label("hello " + a.name.Value(cx))) // a read in a view: redrawn when it changes
 }
 
 func main() {
@@ -46,7 +50,7 @@ type Bands struct {
 	names       []string
 	win         gk.Window
 	dirty       bool
-	askClose    gk.Built[gk.AlertDialogEl]
+	askClose    gk.Built[overlay.AlertDialogEl]
 }
 
 func (a *Bands) bandIDs() []uint64 {
@@ -66,13 +70,13 @@ gk.Div().ID(gk.Key("band", i)).
 	DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent)).
 	OnDrop(func(cx *gk.Cx, d gk.DragValue) { a.moveBand(int(d.ID), i) })
 
-gk.Plot(gk.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
-	gk.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
-	gk.NewPlotLine(curve, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
+chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
+	chart.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
+	chart.NewPlotLine(curve, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
 
 gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
 	if !a.dirty { return true }
-	gk.OpenAlertDialog(cx, a.askClose) // its OK calls gk.CloseWindow(cx, a.win), which does not ask again
+	overlay.OpenAlertDialog(cx, a.askClose) // its OK calls gk.CloseWindow(cx, a.win), which does not ask again
 	return false
 })
 }

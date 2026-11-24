@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -20,11 +21,11 @@ type App struct {
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(gk.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
-		Child(gk.Label(fmt.Sprintf("%d items", len(a.items))))
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(kit.Label(fmt.Sprintf("%d items", len(a.items))))
 	for _, it := range a.items {
-		col = col.Child(gk.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
+		col = col.Child(kit.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
 	}
 	return col
 }

@@ -10,6 +10,13 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
+	"gpuikit.dev/gk/overlay"
 )
 
 // ambientAll makes every ambient call once and returns how many it made.
@@ -23,7 +30,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	fmt.Println("ambient base_apply_system_reduce_motion")
 	called++
 	{
-		v := gk.BaseAxisGutter(cx, 4)
+		v := chart.BaseAxisGutter(cx, 4)
 		fmt.Printf("ambient base_axis_gutter %v\n", v)
 	}
 	called++
@@ -33,32 +40,32 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.BaseDockSizingClamp(cx, gk.NewDockSizing(gk.DockPlacementCenter), 4)
+		v := dock.BaseDockSizingClamp(cx, dock.NewSizing(dock.PlacementCenter), 4)
 		fmt.Printf("ambient base_dock_sizing_clamp %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseDockSizingSizeFromPointer(cx, gk.NewDockSizing(gk.DockPlacementCenter), gk.GpuiPoint{X: 4, Y: 4})
+		v := dock.BaseDockSizingSizeFromPointer(cx, dock.NewSizing(dock.PlacementCenter), gk.GpuiPoint{X: 4, Y: 4})
 		fmt.Printf("ambient base_dock_sizing_size_from_pointer %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseEaseInCubic(cx, 1.5)
+		v := motion.BaseEaseInCubic(cx, 1.5)
 		fmt.Printf("ambient base_ease_in_cubic %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseEaseInOutCubic(cx, 1.5)
+		v := motion.BaseEaseInOutCubic(cx, 1.5)
 		fmt.Printf("ambient base_ease_in_out_cubic %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseEaseOutCubic(cx, 1.5)
+		v := motion.BaseEaseOutCubic(cx, 1.5)
 		fmt.Printf("ambient base_ease_out_cubic %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseEnabledByDefault(cx)
+		v := motion.BaseEnabledByDefault(cx)
 		fmt.Printf("ambient base_enabled_by_default %v\n", v)
 	}
 	called++
@@ -73,7 +80,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.BaseLastHorizontalScrollClaim(cx)
+		v := base.LastHorizontalScrollClaim(cx)
 		fmt.Printf("ambient base_last_horizontal_scroll_claim %v\n", v)
 	}
 	called++
@@ -83,43 +90,43 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.BaseMeasureTextWidth(cx, "s", 4)
+		v := chart.BaseMeasureTextWidth(cx, "s", 4)
 		fmt.Printf("ambient base_measure_text_width %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseResolvedCorner(cx, gk.AnchorTopLeft, gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
+		v := overlay.BaseResolvedCorner(cx, gk.AnchorTopLeft, gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
 		fmt.Printf("ambient base_resolved_corner %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseSankeyLayout(cx, gk.NewSankeyDefault(), 3, []gk.SankeyLink{gk.NewSankeyLink(3, 3, 1.5)})
+		v := chart.BaseSankeyLayout(cx, chart.NewSankeyDefault(), 3, []chart.SankeyLink{chart.NewSankeyLink(3, 3, 1.5)})
 		fmt.Printf("ambient base_sankey_layout %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseSankeyTopology(cx, gk.NewSankeyDefault(), 3, []gk.SankeyLink{gk.NewSankeyLink(3, 3, 1.5)})
+		v := chart.BaseSankeyTopology(cx, chart.NewSankeyDefault(), 3, []chart.SankeyLink{chart.NewSankeyLink(3, 3, 1.5)})
 		fmt.Printf("ambient base_sankey_topology %v\n", v)
 	}
 	called++
-	gk.BaseSetLanguageConfig(cx, "s", gk.NewLanguageConfigDefault())
+	editor.BaseSetLanguageConfig(cx, "s", editor.NewLanguageConfigDefault())
 	fmt.Println("ambient base_set_language_config")
 	called++
 	gk.BaseSetReduceMotionPreference(cx, gk.ReduceMotionPreferenceSystem)
 	fmt.Println("ambient base_set_reduce_motion_preference")
 	called++
 	{
-		v := gk.BaseStepValue(cx, "s", gk.StepActionDecrement, 1.5, gk.Some[float64](1.5), gk.Some[float64](1.5))
+		v := editor.BaseStepValue(cx, "s", editor.StepActionDecrement, 1.5, gk.Some[float64](1.5), gk.Some[float64](1.5))
 		fmt.Printf("ambient base_step_value %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseTimingSample(cx, gk.NewTiming(250*time.Millisecond), 250*time.Millisecond)
+		v := motion.BaseTimingSample(cx, motion.NewTiming(250*time.Millisecond), 250*time.Millisecond)
 		fmt.Printf("ambient base_timing_sample %v\n", v)
 	}
 	called++
 	{
-		v := gk.BaseTruncateTextToWidth(cx, "s", 4, 1.5)
+		v := chart.BaseTruncateTextToWidth(cx, "s", 4, 1.5)
 		fmt.Printf("ambient base_truncate_text_to_width %v\n", v)
 	}
 	called++
@@ -128,16 +135,16 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 		fmt.Printf("ambient blue %v\n", v)
 	}
 	called++
-	gk.ClearNotifications(cx)
+	overlay.ClearNotifications(cx)
 	fmt.Println("ambient clear_notifications")
 	called++
-	gk.CloseAllDialogs(cx)
+	overlay.CloseAllDialogs(cx)
 	fmt.Println("ambient close_all_dialogs")
 	called++
-	gk.CloseDialog(cx)
+	overlay.CloseDialog(cx)
 	fmt.Println("ambient close_dialog")
 	called++
-	gk.CloseSheet(cx)
+	overlay.CloseSheet(cx)
 	fmt.Println("ambient close_sheet")
 	called++
 	{
@@ -151,22 +158,22 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.DiffFileParseCount(cx, "s")
+		v := editor.DiffFileParseCount(cx, "s")
 		fmt.Printf("ambient diff_file_parse_count %v\n", v)
 	}
 	called++
 	{
-		v := gk.DiffFileParseError(cx, "s")
+		v := editor.DiffFileParseError(cx, "s")
 		fmt.Printf("ambient diff_file_parse_error %v\n", v)
 	}
 	called++
 	{
-		v := gk.DiffFileParseWithCount(cx, "s", gk.NewDiffParseOptionsDefault())
+		v := editor.DiffFileParseWithCount(cx, "s", editor.NewDiffParseOptionsDefault())
 		fmt.Printf("ambient diff_file_parse_with_count %v\n", v)
 	}
 	called++
 	{
-		v := gk.DiffFileParseWithError(cx, "s", gk.NewDiffParseOptionsDefault())
+		v := editor.DiffFileParseWithError(cx, "s", editor.NewDiffParseOptionsDefault())
 		fmt.Printf("ambient diff_file_parse_with_error %v\n", v)
 	}
 	called++
@@ -176,12 +183,12 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.FocusedInput(cx)
+		v := overlay.FocusedInput(cx)
 		fmt.Printf("ambient focused_input %v\n", v)
 	}
 	called++
 	{
-		v := gk.Format(cx, gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
+		v := kit.Format(cx, gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
 		fmt.Printf("ambient format %v\n", v)
 	}
 	called++
@@ -201,17 +208,17 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.HasActiveDialog(cx)
+		v := overlay.HasActiveDialog(cx)
 		fmt.Printf("ambient has_active_dialog %v\n", v)
 	}
 	called++
 	{
-		v := gk.HasActiveSheet(cx)
+		v := overlay.HasActiveSheet(cx)
 		fmt.Printf("ambient has_active_sheet %v\n", v)
 	}
 	called++
 	{
-		v := gk.HasFocusedInput(cx)
+		v := overlay.HasFocusedInput(cx)
 		fmt.Printf("ambient has_focused_input %v\n", v)
 	}
 	called++
@@ -251,7 +258,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.Notifications(cx)
+		v := overlay.Notifications(cx)
 		fmt.Printf("ambient notifications %v\n", v)
 	}
 	called++
@@ -266,17 +273,17 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.Parse(cx, "s")
+		v := editor.Parse(cx, "s")
 		fmt.Printf("ambient parse %v\n", v)
 	}
 	called++
 	{
-		v := gk.ParseConflicts(cx, "s", "s")
+		v := editor.ParseConflicts(cx, "s", "s")
 		fmt.Printf("ambient parse_conflicts %v\n", v)
 	}
 	called++
 	{
-		v := gk.ParseWith(cx, "s", gk.NewDiffParseOptionsDefault())
+		v := editor.ParseWith(cx, "s", editor.NewDiffParseOptionsDefault())
 		fmt.Printf("ambient parse_with %v\n", v)
 	}
 	called++
@@ -290,7 +297,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 		fmt.Printf("ambient purple %v\n", v)
 	}
 	called++
-	gk.PushNotification(cx, "s")
+	overlay.PushNotification(cx, "s")
 	fmt.Println("ambient push_notification")
 	called++
 	{
@@ -316,7 +323,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	gk.SetLocale(cx, "s")
 	fmt.Println("ambient set_locale")
 	called++
-	gk.SetNativeTouchSelection(cx, true)
+	editor.SetNativeTouchSelection(cx, true)
 	fmt.Println("ambient set_native_touch_selection")
 	called++
 	{
@@ -340,7 +347,7 @@ func ambientAll(a *App, cx *gk.Cx) (called int) {
 	}
 	called++
 	{
-		v := gk.TitleBarOptions(cx)
+		v := kit.TitleBarOptions(cx)
 		fmt.Printf("ambient title_bar_options %v\n", v)
 	}
 	called++

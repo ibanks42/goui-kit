@@ -43,7 +43,7 @@ These choices shape everything below. Where a later section seems to disagree, t
 7. **Three platforms: Linux x86-64, macOS (one universal library for Apple silicon and
    Intel) and Windows x86-64.** Nothing in the C interface, the wire format or either
    the package's public API is platform-specific. What differs per system sits in one file per
-   platform (`go/gk/rt_thread_{linux,darwin,windows}.go` for the thread id and how messages name the
+   platform (`go/gk/internal/rt/rt_thread_{linux,darwin,windows}.go` for the thread id and how messages name the
    library). All three libraries are built by CI (section 16). The frame-cost and pixel
    gates run on Linux, where choice 8 is judged; the other platforms run the same code built
    for their target.
@@ -620,7 +620,9 @@ core/           the Rust library, package gk-capi, built as libgpuikit: src/ (th
                 runtime by hand; src/gen/ generated), include/ (C headers), wire/ (the
                 runtime's own opcode table), meter/ (crate gk-meter: measuring and driving,
                 linked into the library and the references), tests/ (protocol tests)
-go/             the Go module gpuikit.dev, package gk: rt_*.go by hand, gen_*.go generated
+go/             the Go module gpuikit.dev: package gk and its packages (motion, table, editor,
+                base, kit, chart, overlay, dock), the runtime in gk/internal/rt; rt_*.go by
+                hand, gen_*.go generated (docs/GO.md section 1)
 examples/       example apps in Go, and the misuse cases
 ref/            pure Rust reference apps for the gates (crate gk-ref)
 gates/          the checks; all.sh runs them and prints one summary table
@@ -650,7 +652,7 @@ committed files.
    names in C and Go, and an opcode from `opcodes.lock` (append-only: a removed item's
    number is retired, never reused).
 3. **Emit.** `make gen` writes the Rust decoders into `core/src/gen/`, the Go package into
-   `go/gk/gen_*.go`, the opcode tables, a sample program that calls every generated function, the coverage table, STATUS.md and the
+   `go/gk/**/gen_*.go`, the opcode tables, a sample program that calls every generated function, the coverage table, STATUS.md and the
    gallery's generated conformance pages. It takes about 2 seconds and needs no Rust.
 4. **Check.** rustc judges the result when the library is built. `gen/round.sh` runs the
    quarantine loop: `cargo check` with JSON diagnostics, every generated arm sits between
@@ -700,7 +702,7 @@ Checks at generation time (they fail before anything is built):
 - coverage falling against `gates/coverage-baseline.json` without `--accept`.
 
 A few parts are hand-written because no rule fits them: the bridges in `core/src/hand.rs` and
-`go/gk/rt_source.go` (a uniform list over rows kept in the library, and `gk.text`, a
+`go/gk/internal/rt/rt_source.go` (a uniform list over rows kept in the library, and `gk.text`, a
 string as an element), and the shims for the input, editor, select and rows families
 (`core/src/shim_*.rs`, `go/gk/rt_*.go`).
 
@@ -833,8 +835,8 @@ gained an alpha and `TimedTransformation` is new (`gk.TimedTransformation`); and
 layer now keeps two viewports of rows drawn on each side and regrows them over several frames
 after a fresh paint, so the table shim binds rows two screens ahead (core/src/shim_rows.rs).
 The kit's styled `component::input::Editor` sits in a `#[doc(hidden)]` module and was missing from
-the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `gk.Editor`
-is now the kit's styled editor and the unstyled one is `gk.BaseEditor`.
+the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `editor.Editor`
+is now the kit's styled editor and the unstyled one is `editor.BaseEditor`.
 
 ## 18. Verification and the frame-rate gate
 

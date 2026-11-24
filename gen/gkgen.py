@@ -322,12 +322,23 @@ def gen(argv):
     go = gk_go.Go(m, go_out)
     go.docs, go.doc_names = docs, doc_names
     go.emit()
-    import gk_tests_go  # noqa: PLC0415 (the generated protocol tests in Go: core/tests/go/gensample, gen, app)
-    gk_tests_go.emit(m, go, REPO)
     n = docs.report()
     print(f"gen: docs: {len(docs.found):,} of {len(docs.asked):,} upstream items have a doc comment, carried into "
           f"Go; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")
-    rs.fam.go_link(go_out)  # each family linked only when the program calls into it (gen/gk_fam.py)
+    # each family linked only when the program calls into it (gen/gk_fam.py), then the flat package
+    # split into its packages (gen/gk_split.py, docs/GO.md section 1)
+    flat = {n: t for n, t in go.files.items() if "/" not in n}
+    uses = rs.fam.go_link(os.path.join(go_out, "internal", "rt"), flat)
+    import gk_split  # noqa: PLC0415
+    sp = gk_split.Split(go, rs.fam, flat)
+    sp.uses = uses
+    sp.run()
+    go.split = sp
+    import gk_tests_go  # noqa: PLC0415 (the generated protocol tests in Go: core/tests/go/gensample, gen, app)
+    gk_tests_go.emit(m, go, REPO)
+    tests = [os.path.join(REPO, "core", "tests", "go", f) for f in ("gensample/main.go", "gen/main.go", "app/gen_ambient.go")]
+    gk_split.gosplit("migrate", os.path.join(gk_split.OUT, "table.json"), *[t for t in tests if os.path.exists(t)])
+    subprocess.run(["gofmt", "-w"] + [t for t in tests if os.path.exists(t)], check=False)
     rows, tot = go.report(os.path.join(OUT, "go-report.md"), family)
     print(f"gen: go: {tot[1]:,} of {tot[0]:,} bound or bridged functions generated into {os.path.relpath(go_out, REPO)} "
           f"({tot[2]:,} not yet: gen/out/go-report.md)")

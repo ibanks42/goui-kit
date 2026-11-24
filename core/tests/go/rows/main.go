@@ -11,10 +11,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -26,11 +29,11 @@ const (
 type App struct {
 	mode      string
 	root      gk.View
-	list      gk.ListState
+	list      gktable.ListState
 	src       gk.RowSource // the list's or table's row source
-	table     gk.TableState
+	table     gktable.State
 	sub       gk.Subscription
-	tree      gk.TreeState
+	tree      gktable.TreeState
 	treeRows  gk.RowSource
 	empty     gk.View
 	loading   gk.View
@@ -49,20 +52,23 @@ func key(section, row int) uint64 {
 }
 
 // variant names an event's variant as the checks expect (Go: the type's name and its fields).
+// pkgQual is the package a value's type is printed with (gk., table., rt.): dropped.
+var pkgQual = regexp.MustCompile(`\b(gk|rt|table|kit|editor|base|chart|overlay|dock|motion)\.`)
+
 func variant(e any) string {
-	return strings.ReplaceAll(fmt.Sprintf("%#v", e), "gk.", "")
+	return pkgQual.ReplaceAllString(fmt.Sprintf("%#v", e), "")
 }
 
 // --- lists ----------------------------------------------------------------------------------
 
-func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	a.described[key(at.Section, at.Row)]++
 	var text string
 	switch {
-	case at.Row == gk.HeaderRow:
+	case at.Row == gktable.HeaderRow:
 		text = fmt.Sprintf("section %d", at.Section)
 		fmt.Printf("rows header section=%d\n", at.Section)
-	case at.Row == gk.FooterRow:
+	case at.Row == gktable.FooterRow:
 		text = fmt.Sprintf("end of %d", at.Section)
 		fmt.Printf("rows footer section=%d\n", at.Section)
 	case a.mode == "list-search" && at.Row < len(a.matches):
@@ -70,18 +76,18 @@ func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
 	default:
 		text = fmt.Sprintf("item %d.%d", at.Section, at.Row)
 	}
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.Label(text))
+	return gktable.ListItem(gk.Key("item", at.Row)).Child(kit.Label(text))
 }
 
-func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
+func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 	a.events++
 	ix, has := e.Index.Get()
 	fmt.Printf("rows list %v has=%v section=%d row=%d secondary=%v id=%d query=%q\n", e.Kind, has, ix.Section, ix.Row, e.Secondary, e.ID, e.Query)
-	if e.Kind == gk.ListConfirm {
+	if e.Kind == gktable.ListConfirm {
 		sel, ok := a.list.SelectedIndex(cx).Get()
 		fmt.Printf("rows list-state read selected_index ok=%v row=%d\n", ok, sel.Row)
 	}
-	if e.Kind == gk.ListSearch {
+	if e.Kind == gktable.ListSearch {
 		// Filter, set the count, then answer: the list's search task completes after it.
 		a.query = e.Query
 		a.matches = a.matches[:0]
@@ -98,7 +104,7 @@ func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
 }
 
 // The list state's own events (the generated subscription).
-func (a *App) listStateEvent(cx *gk.Cx, e gk.ListEvent) {
+func (a *App) listStateEvent(cx *gk.Cx, e gktable.ListEvent) {
 	fmt.Printf("rows list-state %s\n", variant(e))
 }
 
@@ -110,21 +116,21 @@ func (a *App) listStep(cx *gk.Cx, _ gk.ClickEvent) {
 		fmt.Printf("rows table-state scroll_to_row 50000\n")
 		return
 	}
-	d := gk.DelegateData{Threshold: 20}
+	d := gktable.DelegateData{Threshold: 20}
 	d.Empty = a.empty
 	d.LoadingView = a.loading
 	switch a.clicks {
 	case 1:
 		gk.SetCount(cx, a.src, 0)
-		gk.SetDelegateData(cx, a.list, d)
+		gktable.SetDelegateData(cx, a.list, d)
 	case 2:
 		d.Loading = true
 		gk.SetCount(cx, a.src, 50)
-		gk.SetDelegateData(cx, a.list, d)
+		gktable.SetDelegateData(cx, a.list, d)
 	case 3:
 		d.HasMore = true
 		d.Threshold = 10
-		gk.SetDelegateData(cx, a.list, d)
+		gktable.SetDelegateData(cx, a.list, d)
 	}
 	fmt.Printf("rows step=%d\n", a.clicks)
 }
@@ -132,18 +138,18 @@ func (a *App) listStep(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) emptyView(cx *gk.Cx) gk.Element {
 	a.empties++
 	fmt.Printf("rows empty view described n=%d\n", a.empties)
-	return gk.Label("nothing here")
+	return kit.Label("nothing here")
 }
 
 func (a *App) initialView(cx *gk.Cx) gk.Element {
 	fmt.Printf("rows initial view described\n")
-	return gk.Label("type to search")
+	return kit.Label("type to search")
 }
 
 func (a *App) loadingView(cx *gk.Cx) gk.Element {
 	a.loadings++
 	fmt.Printf("rows loading view described n=%d\n", a.loadings)
-	return gk.Label("loading")
+	return kit.Label("loading")
 }
 
 // --- released ---------------------------------------------------------------------------------
@@ -158,31 +164,31 @@ func (a *App) releaseSource(cx *gk.Cx, _ gk.ClickEvent) {
 func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
 	case "list", "list-sections", "released":
-		a.src = gk.NewListSource(cx, func() int { return rowCount }, a.listRow, gk.ListEvents(a.listEvent), gk.Initial(20))
-		a.list = gk.NewListState(cx, a.src).Build()
+		a.src = gktable.NewListSource(cx, func() int { return rowCount }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
+		a.list = gktable.NewListState(cx, a.src).Build()
 		a.sub = a.list.OnListEvent(cx, a.listStateEvent)
-		d := gk.DelegateData{Threshold: 20}
+		d := gktable.DelegateData{Threshold: 20}
 		d.PlaceholderHeight = 32
 		if a.mode == "list-sections" {
 			gk.SetSectionCount(cx, a.src, 0, 5)
 			gk.SetSectionCount(cx, a.src, 1, 3)
 			d.Headers, d.Footers = true, true
 		}
-		gk.SetDelegateData(cx, a.list, d)
+		gktable.SetDelegateData(cx, a.list, d)
 	case "list-search":
 		for i := range rowCount {
 			a.matches = append(a.matches, i)
 		}
-		a.src = gk.NewListSource(cx, func() int { return rowCount }, a.listRow, gk.ListEvents(a.listEvent), gk.Initial(20))
-		a.list = gk.NewListState(cx, a.src).Searchable(true).Build()
+		a.src = gktable.NewListSource(cx, func() int { return rowCount }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
+		a.list = gktable.NewListState(cx, a.src).Searchable(true).Build()
 		// The view a searchable list shows while its query is empty.
 		a.empty = gk.NewView(nil, a.initialView)
-		gk.SetDelegateData(cx, a.list, gk.DelegateData{Threshold: 20, Initial: a.empty})
+		gktable.SetDelegateData(cx, a.list, gktable.DelegateData{Threshold: 20, Initial: a.empty})
 	case "list-states":
 		a.empty = gk.NewView(nil, a.emptyView)
 		a.loading = gk.NewView(nil, a.loadingView)
-		a.src = gk.NewListSource(cx, func() int { return 30 }, a.listRow, gk.ListEvents(a.listEvent), gk.Initial(20))
-		a.list = gk.NewListState(cx, a.src).Build()
+		a.src = gktable.NewListSource(cx, func() int { return 30 }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
+		a.list = gktable.NewListState(cx, a.src).Build()
 	case "table", "table-scroll":
 		a.tableInit(cx)
 	case "tree":
@@ -194,16 +200,16 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	var body gk.Element
 	switch a.mode {
 	case "table", "table-scroll":
-		body = gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gk.DataTable(a.table))
+		body = gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gktable.DataTable(a.table))
 	case "tree":
-		body = gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.Tree(a.tree, a.treeRows, s.SizeFull))
+		body = gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gktable.Tree(a.tree, a.treeRows, s.SizeFull))
 	default:
-		body = gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.List(a.list, s.SizeFull))
+		body = gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gktable.List(a.list, s.SizeFull))
 	}
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2).
-			Child(gk.Button("step").Label("step").OnClick(a.listStep)).
-			Child(gk.Button("release").Label("release").OnClick(a.releaseSource))).
+			Child(kit.Button("step").Label("step").OnClick(a.listStep)).
+			Child(kit.Button("release").Label("release").OnClick(a.releaseSource))).
 		Child(body)
 }
 

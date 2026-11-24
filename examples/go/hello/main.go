@@ -5,17 +5,19 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	count int
-	name  gk.InputState // a handle to the kit's InputState, which lives in the library
+	name  editor.InputState // a handle to the kit's InputState, which lives in the library
 	root  gk.View
 }
 
-func (a *App) init(cx *gk.Cx) { a.name = gk.NewInputState(cx).Placeholder("Your name").Build() }
+func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
 func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw
 
@@ -23,10 +25,10 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
 		Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(gk.Button("add").Primary().Label("Add").OnClick(a.add)).
-			Child(gk.Label(fmt.Sprintf("clicked %d times", a.count)))).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Input(a.name))).
-		Child(gk.Label("hello " + a.name.Value(cx))) // a read: redrawn when it changes
+			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
+		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
+		Child(kit.Label("hello " + a.name.Value(cx))) // a read: redrawn when it changes
 }
 
 func main() {

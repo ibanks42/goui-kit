@@ -21,13 +21,17 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 var r4 struct {
 	tokens                               gk.RowSource
 	tokenRows                            int
-	lent                                 gk.DiagnosticSet
+	lent                                 editor.DiagnosticSet
 	hl                                   gk.Highlighter
 	stylesAsked, foldsAsked, syntaxAsked int
 	prov                                 gk.RowSource
@@ -46,12 +50,12 @@ func init() {
 func rng(r gk.Range) string { return fmt.Sprintf("Range{lo = %d, hi = %d}", r.Lo, r.Hi) }
 
 // Go: an item function is handed the token's context, not its row: the input has one token, row 0.
-func (a *App) r4TokenRow(cx *gk.Cx, t gk.InlineTokenContext) gk.Element {
+func (a *App) r4TokenRow(cx *gk.Cx, t editor.InlineTokenContext) gk.Element {
 	r4.tokenRows++
 	fmt.Printf("lists2 ctx token row=%d range=%s selected=%v disabled=%v readonly=%v label=%q height_ok=%v\n",
 		0, rng(t.Range(cx)), t.IsSelected(cx), t.IsDisabled(cx), t.IsReadonly(cx), t.Token(cx).Label(cx),
 		t.LineHeight(cx) > 0)
-	return gk.InputToken(t)
+	return editor.InputToken(t)
 }
 
 func (a *App) r4Styles(cx *gk.Cx, q gk.HighlightQuery) []gk.HighlightRun {
@@ -79,36 +83,36 @@ func (a *App) r4Syntax(cx *gk.Cx, q gk.SyntaxQuery) gk.SyntaxContext {
 func r4Init(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "ctx-token":
-		a.in1 = gk.NewInputState(cx).DefaultValue("Hello world").Build()
-		_ = a.in1.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gk.NewInlineToken("t1", "world").WithLabel("World"))
-		r4.tokens = gk.Items(cx, a.r4TokenRow)
+		a.in1 = editor.NewInputState(cx).DefaultValue("Hello world").Build()
+		_ = a.in1.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, editor.NewInlineToken("t1", "world").WithLabel("World"))
+		r4.tokens = overlay.Items(cx, a.r4TokenRow)
 	case "lend", "bad-lend":
-		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
+		a.ed = editor.NewState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
 	case "highlight":
 		r4.hl = gk.NewHighlighter(cx, a.r4Styles, a.r4Folds, "demo")
-		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {\n\n}\n").Build()
+		a.ed = editor.NewState(cx).Language("demo").DefaultValue("main :: proc() {\n\n}\n").Build()
 		a.ed.SetHighlighterFactory(cx, r4.hl.Src)
 	case "languages":
 		r4.prov = gk.NewLanguageProvider(cx, []gk.LanguageAlias{{Alias: "od", Name: "demo"}}, a.r4Syntax)
-		gk.BaseSetLanguageProvider(cx, r4.prov)
-		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("x := \n").Build()
+		editor.BaseSetLanguageProvider(cx, r4.prov)
+		a.ed = editor.NewState(cx).Language("demo").DefaultValue("x := \n").Build()
 	case "small":
-		a.tree = gk.NewTreeState(cx).Build()
-		gk.SetTreeItems(cx, a.tree, treeNodes(300))
-		a.treeRows = gk.NewTreeSource(cx, a.driveTreeRow, gk.Initial(8))
+		a.tree = table.NewTreeState(cx).Build()
+		table.SetTreeItems(cx, a.tree, treeNodes(300))
+		a.treeRows = table.NewTreeSource(cx, a.driveTreeRow, gk.Initial(8))
 	}
 }
 
 func r4View(a *App, cx *gk.Cx) gk.Element {
 	switch a.mode {
 	case "ctx-token":
-		return gk.Div().W(gk.Px(260)).Child(gk.Input(a.in1).Token(r4.tokens))
+		return gk.Div().W(gk.Px(260)).Child(editor.Input(a.in1).Token(r4.tokens))
 	case "lend", "bad-lend", "highlight", "languages":
-		return gk.Div().W(gk.Px(400)).Child(gk.CodeEditor(a.ed, gk.CodeEditorOptions{Height: 120}))
+		return gk.Div().W(gk.Px(400)).Child(editor.CodeEditor(a.ed, editor.CodeEditorOptions{Height: 120}))
 	case "small":
-		return gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(gk.Tree(a.tree, a.treeRows, s.SizeFull))
+		return gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(table.Tree(a.tree, a.treeRows, s.SizeFull))
 	}
-	return gk.Label("-")
+	return kit.Label("-")
 }
 
 func r4Step(a *App, cx *gk.Cx) {
@@ -121,8 +125,8 @@ func r4Step(a *App, cx *gk.Cx) {
 			d, ok := a.ed.DiagnosticsMut(cx).Get()
 			fmt.Printf("lists2 lend got=%v empty=%v\n", ok, ok && d.IsEmpty(cx))
 			if ok {
-				d.Push(cx, gk.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 0}, {Line: 0, Character: 4}}, "unused"))
-				d.Push(cx, gk.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 8}, {Line: 0, Character: 12}}, "twice"))
+				d.Push(cx, editor.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 0}, {Line: 0, Character: 4}}, "unused"))
+				d.Push(cx, editor.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 8}, {Line: 0, Character: 12}}, "twice"))
 				r4.lent = d
 			}
 		case 2:
@@ -147,14 +151,14 @@ func r4Step(a *App, cx *gk.Cx) {
 	case "small":
 		switch a.step {
 		case 1:
-			e, ok := gk.DiffFileParseError(cx, "@@ nonsense\n").Get()
-			_, none := gk.DiffFileParseError(cx, diffPatch).Get()
+			e, ok := editor.DiffFileParseError(cx, "@@ nonsense\n").Get()
+			_, none := editor.DiffFileParseError(cx, diffPatch).Get()
 			line, message := -1, ""
 			if ok {
 				line, message = e.Line(cx), e.Message(cx)
 			}
 			fmt.Printf("lists2 small parse-error ok=%v line=%d message=%q good_has_error=%v\n", ok, line, message, none)
-			ranges := gk.BaseHighlightPrefix(cx, "ma", gk.CompletionItem{Label: "main"})
+			ranges := editor.BaseHighlightPrefix(cx, "ma", gk.CompletionItem{Label: "main"})
 			rs := make([]string, len(ranges))
 			for i, r := range ranges {
 				rs[i] = rng(r)

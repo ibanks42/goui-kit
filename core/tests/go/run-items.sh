@@ -31,5 +31,5 @@ GK_PROTO_BIN=items-go run items-combobox 0 'items combobox trigger selected=1 fi
 # A nav stack's page: the handed page with the record of its reads (settled: progress 1).
 GK_PROTO_BIN=items-go run items-nav 0 'items nav page index=0 phase=[A-Za-z_]+ progress=1.0'
 # Misuse: a time field's function given to a calendar stops where the builder is given it (exit 2).
-# Go: the message names gk.Items and Go's function types; the kinds are matched loosely.
-GK_PROTO_BIN=items-go run items-wrong-kind 2 'gk.Items was given a .*TimeFieldSegment'
+# Go: the message names overlay.Items and Go's function types; the kinds are matched loosely.
+GK_PROTO_BIN=items-go run items-wrong-kind 2 'overlay.Items was given a .*TimeFieldSegment'

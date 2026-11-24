@@ -34,7 +34,7 @@ USABLE = ("bound", "bridged")
 
 # Procedures of the runtime that take a value type (the description cannot see them).
 RUNTIME = {
-    "gpui_kit::component::table::Column": "gk.SetTableKitColumns (rt_table.go, PROTOCOLS.md 13.6)",
+    "gpui_kit::component::table::Column": "table.SetTableKitColumns (rt_table.go, PROTOCOLS.md 13.6)",
     # animations and motion values (rt_motion.go, PROTOCOLS.md 13.30)
     "gpui_kit::base::Presence": "gk.Motion(el, gk.MotionValue{prop, gk.AtPresence{presence, from, to}}) (rt_motion.go, PROTOCOLS.md 13.30)",
     "gpui_kit::base::animation::EffectTransition": "gk.Effect(el, effect, id): EffectTransition::apply (rt_kit.go, PROTOCOLS.md 13.30)",

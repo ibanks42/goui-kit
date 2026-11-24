@@ -8,7 +8,14 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	gkbase "gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 var _ = time.Millisecond
@@ -1699,1160 +1706,1160 @@ func confSvgExternal_path(a *App, cx *gk.Cx) gk.Element {
 }
 
 func confBaseAccordionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordion("conf-a")
-	el := gk.BaseAccordion("conf-b")
+	base := gkbase.Accordion("conf-a")
+	el := gkbase.Accordion("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseAccordionItemNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordionItem()
-	el := gk.BaseAccordionItem()
+	base := gkbase.AccordionItem()
+	el := gkbase.AccordionItem()
 	return confPair(base, el)
 }
 
 func confBaseAccordionItemOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordionItem()
-	el := gk.BaseAccordionItem().Open(true)
+	base := gkbase.AccordionItem()
+	el := gkbase.AccordionItem().Open(true)
 	return confPair(base, el)
 }
 
 func confBaseAccordionItemDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordionItem()
-	el := gk.BaseAccordionItem().Disabled(true)
+	base := gkbase.AccordionItem()
+	el := gkbase.AccordionItem().Disabled(true)
 	return confPair(base, el)
 }
 
 func confAccordionPanelNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionPanel()
-	el := gk.AccordionPanel()
+	base := gkbase.AccordionPanel()
+	el := gkbase.AccordionPanel()
 	return confPair(base, el)
 }
 
 func confAccordionPanelOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionPanel()
-	el := gk.AccordionPanel().Open(true)
+	base := gkbase.AccordionPanel()
+	el := gkbase.AccordionPanel().Open(true)
 	return confPair(base, el)
 }
 
 func confAccordionPanelKeep_mounted(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionPanel()
-	el := gk.AccordionPanel().KeepMounted(true)
+	base := gkbase.AccordionPanel()
+	el := gkbase.AccordionPanel().KeepMounted(true)
 	return confPair(base, el)
 }
 
 func confAccordionPanelId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionPanel()
-	el := gk.AccordionPanel().ID("conf-a")
+	base := gkbase.AccordionPanel()
+	el := gkbase.AccordionPanel().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confAccordionTriggerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionTrigger("conf-a")
-	el := gk.AccordionTrigger("conf-b")
+	base := gkbase.AccordionTrigger("conf-a")
+	el := gkbase.AccordionTrigger("conf-b")
 	return confPair(base, el)
 }
 
 func confAccordionTriggerOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionTrigger("conf-a")
-	el := gk.AccordionTrigger("conf-b").Open(true)
+	base := gkbase.AccordionTrigger("conf-a")
+	el := gkbase.AccordionTrigger("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confAccordionTriggerDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionTrigger("conf-a")
-	el := gk.AccordionTrigger("conf-b").Disabled(true)
+	base := gkbase.AccordionTrigger("conf-a")
+	el := gkbase.AccordionTrigger("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confAlertDialogActionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogAction()
-	el := gk.AlertDialogAction()
+	base := overlay.AlertDialogAction()
+	el := overlay.AlertDialogAction()
 	return confPair(base, el)
 }
 
 func confAlertDialogActionDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogAction()
-	el := gk.AlertDialogActionDefault()
+	base := overlay.AlertDialogAction()
+	el := overlay.AlertDialogActionDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogBackdropNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogBackdrop()
-	el := gk.AlertDialogBackdrop()
+	base := overlay.AlertDialogBackdrop()
+	el := overlay.AlertDialogBackdrop()
 	return confPair(base, el)
 }
 
 func confAlertDialogBackdropDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogBackdrop()
-	el := gk.AlertDialogBackdropDefault()
+	base := overlay.AlertDialogBackdrop()
+	el := overlay.AlertDialogBackdropDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogCancelNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogCancel()
-	el := gk.AlertDialogCancel()
+	base := overlay.AlertDialogCancel()
+	el := overlay.AlertDialogCancel()
 	return confPair(base, el)
 }
 
 func confAlertDialogCancelDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogCancel()
-	el := gk.AlertDialogCancelDefault()
+	base := overlay.AlertDialogCancel()
+	el := overlay.AlertDialogCancelDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogCloseNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogClose()
-	el := gk.AlertDialogClose()
+	base := overlay.AlertDialogClose()
+	el := overlay.AlertDialogClose()
 	return confPair(base, el)
 }
 
 func confAlertDialogCloseDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogClose()
-	el := gk.AlertDialogCloseDefault()
+	base := overlay.AlertDialogClose()
+	el := overlay.AlertDialogCloseDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogDescription()
-	el := gk.AlertDialogDescription()
+	base := overlay.AlertDialogDescription()
+	el := overlay.AlertDialogDescription()
 	return confPair(base, el)
 }
 
 func confAlertDialogDescriptionDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogDescription()
-	el := gk.AlertDialogDescriptionDefault()
+	base := overlay.AlertDialogDescription()
+	el := overlay.AlertDialogDescriptionDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogPopupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogPopup()
-	el := gk.AlertDialogPopup()
+	base := overlay.AlertDialogPopup()
+	el := overlay.AlertDialogPopup()
 	return confPair(base, el)
 }
 
 func confAlertDialogPopupDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogPopup()
-	el := gk.AlertDialogPopupDefault()
+	base := overlay.AlertDialogPopup()
+	el := overlay.AlertDialogPopupDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogTitleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogTitle()
-	el := gk.AlertDialogTitle()
+	base := overlay.AlertDialogTitle()
+	el := overlay.AlertDialogTitle()
 	return confPair(base, el)
 }
 
 func confAlertDialogTitleDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogTitle()
-	el := gk.AlertDialogTitleDefault()
+	base := overlay.AlertDialogTitle()
+	el := overlay.AlertDialogTitleDefault()
 	return confPair(base, el)
 }
 
 func confAlertDialogTriggerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AlertDialogTrigger(gk.Div().Text("Child"))
-	el := gk.AlertDialogTrigger(gk.Div().Text("Child"))
+	base := overlay.AlertDialogTrigger(gk.Div().Text("Child"))
+	el := overlay.AlertDialogTrigger(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confBaseAvatarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAvatar()
-	el := gk.BaseAvatar()
+	base := gkbase.Avatar()
+	el := gkbase.Avatar()
 	return confPair(base, el)
 }
 
 func confBaseAvatarDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAvatar()
-	el := gk.BaseAvatarDefault()
+	base := gkbase.Avatar()
+	el := gkbase.AvatarDefault()
 	return confPair(base, el)
 }
 
 func confAvatarFallbackNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AvatarFallback()
-	el := gk.AvatarFallback()
+	base := gkbase.AvatarFallback()
+	el := gkbase.AvatarFallback()
 	return confPair(base, el)
 }
 
 func confAvatarFallbackDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AvatarFallback()
-	el := gk.AvatarFallbackDefault()
+	base := gkbase.AvatarFallback()
+	el := gkbase.AvatarFallbackDefault()
 	return confPair(base, el)
 }
 
 func confBaseButtonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b")
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseButtonDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").Disabled(true)
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseButtonSelected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").Selected(true)
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").Selected(true)
 	return confPair(base, el)
 }
 
 func confBaseButtonAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseButtonTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").TabIndex(3)
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseButtonTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").TabStop(true)
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confBaseButtonFocusable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseButton("conf-a")
-	el := gk.BaseButton("conf-b").Focusable(true)
+	base := gkbase.Button("conf-a")
+	el := gkbase.Button("conf-b").Focusable(true)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b")
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseCheckboxState(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").State(gk.CheckboxStateChecked)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").State(gkbase.CheckboxStateChecked)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").Checked(true)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxIndeterminate(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").Indeterminate(true)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").Indeterminate(true)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").Disabled(true)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseCheckboxTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").TabIndex(3)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseCheckboxTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCheckbox("conf-a")
-	el := gk.BaseCheckbox("conf-b").TabStop(true)
+	base := gkbase.Checkbox("conf-a")
+	el := gkbase.Checkbox("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confCheckboxIndicatorNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CheckboxIndicator()
-	el := gk.CheckboxIndicator()
+	base := gkbase.CheckboxIndicator()
+	el := gkbase.CheckboxIndicator()
 	return confPair(base, el)
 }
 
 func confCheckboxIndicatorDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CheckboxIndicator()
-	el := gk.CheckboxIndicatorDefault()
+	base := gkbase.CheckboxIndicator()
+	el := gkbase.CheckboxIndicatorDefault()
 	return confPair(base, el)
 }
 
 func confCheckboxIndicatorState(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CheckboxIndicator()
-	el := gk.CheckboxIndicator().State(gk.CheckboxStateChecked)
+	base := gkbase.CheckboxIndicator()
+	el := gkbase.CheckboxIndicator().State(gkbase.CheckboxStateChecked)
 	return confPair(base, el)
 }
 
 func confCheckboxIndicatorChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CheckboxIndicator()
-	el := gk.CheckboxIndicator().Checked(true)
+	base := gkbase.CheckboxIndicator()
+	el := gkbase.CheckboxIndicator().Checked(true)
 	return confPair(base, el)
 }
 
 func confCheckboxIndicatorDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CheckboxIndicator()
-	el := gk.CheckboxIndicator().Disabled(true)
+	base := gkbase.CheckboxIndicator()
+	el := gkbase.CheckboxIndicator().Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseCollapsibleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCollapsible()
-	el := gk.BaseCollapsible()
+	base := gkbase.Collapsible()
+	el := gkbase.Collapsible()
 	return confPair(base, el)
 }
 
 func confBaseCollapsibleDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCollapsible()
-	el := gk.BaseCollapsibleDefault()
+	base := gkbase.Collapsible()
+	el := gkbase.CollapsibleDefault()
 	return confPair(base, el)
 }
 
 func confBaseCollapsibleOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCollapsible()
-	el := gk.BaseCollapsible().Open(true)
+	base := gkbase.Collapsible()
+	el := gkbase.Collapsible().Open(true)
 	return confPair(base, el)
 }
 
 func confBaseCollapsibleContent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCollapsible()
-	el := gk.BaseCollapsible().Content(gk.Div().Text("Child"))
+	base := gkbase.Collapsible()
+	el := gkbase.Collapsible().Content(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confBaseCollapsibleReveal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCollapsible()
-	el := gk.BaseCollapsible().Reveal("conf-a", 40)
+	base := gkbase.Collapsible()
+	el := gkbase.Collapsible().Reveal("conf-a", 40)
 	return confPair(base, el)
 }
 
 func confBaseColorPickerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseColorPicker("conf-a")
-	el := gk.BaseColorPicker("conf-b")
+	base := gkbase.ColorPicker("conf-a")
+	el := gkbase.ColorPicker("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseColorPickerOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseColorPicker("conf-a")
-	el := gk.BaseColorPicker("conf-b").Open(true)
+	base := gkbase.ColorPicker("conf-a")
+	el := gkbase.ColorPicker("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confBaseColorPickerDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseColorPicker("conf-a")
-	el := gk.BaseColorPicker("conf-b").Disabled(true)
+	base := gkbase.ColorPicker("conf-a")
+	el := gkbase.ColorPicker("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseColorPickerAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseColorPicker("conf-a")
-	el := gk.BaseColorPicker("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.ColorPicker("conf-a")
+	el := gkbase.ColorPicker("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confColorSwatchNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confColorSwatchSelected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).Selected(true)
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).Selected(true)
 	return confPair(base, el)
 }
 
 func confColorSwatchDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).Disabled(true)
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).Disabled(true)
 	return confPair(base, el)
 }
 
 func confColorSwatchAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).AccessibilityLabel("Sample")
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confColorSwatchTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).TabIndex(3)
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).TabIndex(3)
 	return confPair(base, el)
 }
 
 func confColorSwatchTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
-	el := gk.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).TabStop(true)
+	base := gkbase.ColorSwatch("conf-a", gk.HSLA(0.6, 0.7, 0.5, 1))
+	el := gkbase.ColorSwatch("conf-b", gk.HSLA(0.6, 0.7, 0.5, 1)).TabStop(true)
 	return confPair(base, el)
 }
 
 func confBaseComboboxNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCombobox("conf-a")
-	el := gk.BaseCombobox("conf-b")
+	base := table.BaseCombobox("conf-a")
+	el := table.BaseCombobox("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseComboboxOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCombobox("conf-a")
-	el := gk.BaseCombobox("conf-b").Open(true)
+	base := table.BaseCombobox("conf-a")
+	el := table.BaseCombobox("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confBaseComboboxDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseCombobox("conf-a")
-	el := gk.BaseCombobox("conf-b").Disabled(true)
+	base := table.BaseCombobox("conf-a")
+	el := table.BaseCombobox("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confDialogBackdropNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogBackdrop()
-	el := gk.DialogBackdrop()
+	base := overlay.DialogBackdrop()
+	el := overlay.DialogBackdrop()
 	return confPair(base, el)
 }
 
 func confDialogBackdropDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogBackdrop()
-	el := gk.DialogBackdropDefault()
+	base := overlay.DialogBackdrop()
+	el := overlay.DialogBackdropDefault()
 	return confPair(base, el)
 }
 
 func confBaseDialogCloseNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogClose()
-	el := gk.BaseDialogClose()
+	base := overlay.BaseDialogClose()
+	el := overlay.BaseDialogClose()
 	return confPair(base, el)
 }
 
 func confBaseDialogCloseDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogClose()
-	el := gk.BaseDialogCloseDefault()
+	base := overlay.BaseDialogClose()
+	el := overlay.BaseDialogCloseDefault()
 	return confPair(base, el)
 }
 
 func confBaseDialogDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogDescription()
-	el := gk.BaseDialogDescription()
+	base := overlay.BaseDialogDescription()
+	el := overlay.BaseDialogDescription()
 	return confPair(base, el)
 }
 
 func confBaseDialogDescriptionDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogDescription()
-	el := gk.BaseDialogDescriptionDefault()
+	base := overlay.BaseDialogDescription()
+	el := overlay.BaseDialogDescriptionDefault()
 	return confPair(base, el)
 }
 
 func confDialogPopupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogPopup()
-	el := gk.DialogPopup()
+	base := overlay.DialogPopup()
+	el := overlay.DialogPopup()
 	return confPair(base, el)
 }
 
 func confDialogPopupDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogPopup()
-	el := gk.DialogPopupDefault()
+	base := overlay.DialogPopup()
+	el := overlay.DialogPopupDefault()
 	return confPair(base, el)
 }
 
 func confBaseDialogTitleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogTitle()
-	el := gk.BaseDialogTitle()
+	base := overlay.BaseDialogTitle()
+	el := overlay.BaseDialogTitle()
 	return confPair(base, el)
 }
 
 func confBaseDialogTitleDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseDialogTitle()
-	el := gk.BaseDialogTitleDefault()
+	base := overlay.BaseDialogTitle()
+	el := overlay.BaseDialogTitleDefault()
 	return confPair(base, el)
 }
 
 func confDialogTriggerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogTrigger(gk.Div().Text("Child"))
-	el := gk.DialogTrigger(gk.Div().Text("Child"))
+	base := overlay.DialogTrigger(gk.Div().Text("Child"))
+	el := overlay.DialogTrigger(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confBaseHoverCardNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseHoverCard("conf-a")
-	el := gk.BaseHoverCard("conf-b")
+	base := overlay.BaseHoverCard("conf-a")
+	el := overlay.BaseHoverCard("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseHoverCardAnchor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseHoverCard("conf-a")
-	el := gk.BaseHoverCard("conf-b").Anchor(gk.AnchorTopRight)
+	base := overlay.BaseHoverCard("conf-a")
+	el := overlay.BaseHoverCard("conf-b").Anchor(gk.AnchorTopRight)
 	return confPair(base, el)
 }
 
 func confBaseHoverCardTrigger(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseHoverCard("conf-a")
-	el := gk.BaseHoverCard("conf-b").Trigger(gk.Div().Text("Child"))
+	base := overlay.BaseHoverCard("conf-a")
+	el := overlay.BaseHoverCard("conf-b").Trigger(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confBaseHoverCardOpen_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseHoverCard("conf-a")
-	el := gk.BaseHoverCard("conf-b").OpenDelay(3 * time.Millisecond)
+	base := overlay.BaseHoverCard("conf-a")
+	el := overlay.BaseHoverCard("conf-b").OpenDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confBaseHoverCardClose_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseHoverCard("conf-a")
-	el := gk.BaseHoverCard("conf-b").CloseDelay(3 * time.Millisecond)
+	base := overlay.BaseHoverCard("conf-a")
+	el := overlay.BaseHoverCard("conf-b").CloseDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confInputBaseNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputBase("conf-a")
-	el := gk.InputBase("conf-b")
+	base := editor.InputBase("conf-a")
+	el := editor.InputBase("conf-b")
 	return confPair(base, el)
 }
 
 func confInputBaseFocused(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputBase("conf-a")
-	el := gk.InputBase("conf-b").Focused(true)
+	base := editor.InputBase("conf-a")
+	el := editor.InputBase("conf-b").Focused(true)
 	return confPair(base, el)
 }
 
 func confInputBaseDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputBase("conf-a")
-	el := gk.InputBase("conf-b").Disabled(true)
+	base := editor.InputBase("conf-a")
+	el := editor.InputBase("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confInputBaseAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputBase("conf-a")
-	el := gk.InputBase("conf-b").AccessibilityLabel("Sample")
+	base := editor.InputBase("conf-a")
+	el := editor.InputBase("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseLinkNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link"))
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link"))
 	return confPair(base, el)
 }
 
 func confBaseLinkHref(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link")).Href("Sample")
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link")).Href("Sample")
 	return confPair(base, el)
 }
 
 func confBaseLinkDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link")).Disabled(true)
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link")).Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseLinkAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link")).AccessibilityLabel("Sample")
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link")).AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseLinkTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link")).TabIndex(3)
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link")).TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseLinkTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseLink("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.BaseLink("conf-b").Child(gk.Div().Text("Link")).TabStop(true)
+	base := gkbase.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := gkbase.Link("conf-b").Child(gk.Div().Text("Link")).TabStop(true)
 	return confPair(base, el)
 }
 
 func confMotionRevealNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MotionReveal("conf-a", 40, gk.Div().Text("Child"))
-	el := gk.MotionReveal("conf-b", 40, gk.Div().Text("Child"))
+	base := motion.Reveal("conf-a", 40, gk.Div().Text("Child"))
+	el := motion.Reveal("conf-b", 40, gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confNumberInputTextNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.NumberInputText()
-	el := gk.NumberInputText()
+	base := editor.NumberInputText()
+	el := editor.NumberInputText()
 	return confPair(base, el)
 }
 
 func confNumberInputTextDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.NumberInputText()
-	el := gk.NumberInputTextDefault()
+	base := editor.NumberInputText()
+	el := editor.NumberInputTextDefault()
 	return confPair(base, el)
 }
 
 func confBasePopoverNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b")
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b")
 	return confPair(base, el)
 }
 
 func confBasePopoverAnchor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b").Anchor(gk.AnchorTopRight)
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b").Anchor(gk.AnchorTopRight)
 	return confPair(base, el)
 }
 
 func confBasePopoverOffset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b").Offset(40)
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b").Offset(40)
 	return confPair(base, el)
 }
 
 func confBasePopoverDefault_open(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b").DefaultOpen(true)
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b").DefaultOpen(true)
 	return confPair(base, el)
 }
 
 func confBasePopoverOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b").Open(true)
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confBasePopoverOverlay_closable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BasePopover("conf-a")
-	el := gk.BasePopover("conf-b").OverlayClosable(true)
+	base := overlay.BasePopover("conf-a")
+	el := overlay.BasePopover("conf-b").OverlayClosable(true)
 	return confPair(base, el)
 }
 
 func confPopupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popup("conf-a", gk.Div().Text("Child"))
-	el := gk.Popup("conf-b", gk.Div().Text("Child"))
+	base := overlay.Popup("conf-a", gk.Div().Text("Child"))
+	el := overlay.Popup("conf-b", gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confPopupAnchor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popup("conf-a", gk.Div().Text("Child"))
-	el := gk.Popup("conf-b", gk.Div().Text("Child")).Anchor(gk.AnchorTopRight)
+	base := overlay.Popup("conf-a", gk.Div().Text("Child"))
+	el := overlay.Popup("conf-b", gk.Div().Text("Child")).Anchor(gk.AnchorTopRight)
 	return confPair(base, el)
 }
 
 func confPopupOffset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popup("conf-a", gk.Div().Text("Child"))
-	el := gk.Popup("conf-b", gk.Div().Text("Child")).Offset(40)
+	base := overlay.Popup("conf-a", gk.Div().Text("Child"))
+	el := overlay.Popup("conf-b", gk.Div().Text("Child")).Offset(40)
 	return confPair(base, el)
 }
 
 func confPopupContent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popup("conf-a", gk.Div().Text("Child"))
-	el := gk.Popup("conf-b", gk.Div().Text("Child")).Content(gk.Div().Text("Child"))
+	base := overlay.Popup("conf-a", gk.Div().Text("Child"))
+	el := overlay.Popup("conf-b", gk.Div().Text("Child")).Content(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confBaseProgressNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseProgress("conf-a").Value(40)
-	el := gk.BaseProgress("conf-b").Value(40)
+	base := gkbase.Progress("conf-a").Value(40)
+	el := gkbase.Progress("conf-b").Value(40)
 	return confPair(base, el)
 }
 
 func confBaseProgressValue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseProgress("conf-a").Value(40)
-	el := gk.BaseProgress("conf-b").Value(40)
+	base := gkbase.Progress("conf-a").Value(40)
+	el := gkbase.Progress("conf-b").Value(40)
 	return confPair(base, el)
 }
 
 func confBaseProgressIndeterminate(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseProgress("conf-a").Value(40)
-	el := gk.BaseProgress("conf-b").Value(40).Indeterminate(true)
+	base := gkbase.Progress("conf-a").Value(40)
+	el := gkbase.Progress("conf-b").Value(40).Indeterminate(true)
 	return confPair(base, el)
 }
 
 func confBaseProgressAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseProgress("conf-a").Value(40)
-	el := gk.BaseProgress("conf-b").Value(40).AccessibilityLabel("Sample")
+	base := gkbase.Progress("conf-a").Value(40)
+	el := gkbase.Progress("conf-b").Value(40).AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confProgressIndicatorNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressIndicator()
-	el := gk.ProgressIndicator()
+	base := gkbase.ProgressIndicator()
+	el := gkbase.ProgressIndicator()
 	return confPair(base, el)
 }
 
 func confProgressTrackNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressTrack()
-	el := gk.ProgressTrack()
+	base := gkbase.ProgressTrack()
+	el := gkbase.ProgressTrack()
 	return confPair(base, el)
 }
 
 func confBaseRadioNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b")
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseRadioId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").ID("conf-a")
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").ID("conf-a")
 	return confPair(base, el)
 }
 
 func confBaseRadioChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").Checked(true)
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confBaseRadioDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").Disabled(true)
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseRadioAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseRadioSet_position(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").SetPosition(3, 3)
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").SetPosition(3, 3)
 	return confPair(base, el)
 }
 
 func confBaseRadioTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").TabIndex(3)
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseRadioTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadio("conf-a")
-	el := gk.BaseRadio("conf-b").TabStop(true)
+	base := gkbase.Radio("conf-a")
+	el := gkbase.Radio("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confBaseRadioGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadioGroup("conf-a")
-	el := gk.BaseRadioGroup("conf-b")
+	base := gkbase.RadioGroup("conf-a")
+	el := gkbase.RadioGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseRadioGroupAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseRadioGroup("conf-a")
-	el := gk.BaseRadioGroup("conf-b").Axis(gk.AxisHorizontal)
+	base := gkbase.RadioGroup("conf-a")
+	el := gkbase.RadioGroup("conf-b").Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confResizablePanelGroupH_resizable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ResizablePanelGroup("conf-a")
-	el := gk.HResizable("conf-b")
+	base := gkbase.ResizablePanelGroup("conf-a")
+	el := gkbase.HResizable("conf-b")
 	return confPair(base, el)
 }
 
 func confResizablePanelGroupV_resizable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ResizablePanelGroup("conf-a")
-	el := gk.VResizable("conf-b")
+	base := gkbase.ResizablePanelGroup("conf-a")
+	el := gkbase.VResizable("conf-b")
 	return confPair(base, el)
 }
 
 func confResizablePanelGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ResizablePanelGroup("conf-a")
-	el := gk.ResizablePanelGroup("conf-b")
+	base := gkbase.ResizablePanelGroup("conf-a")
+	el := gkbase.ResizablePanelGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confResizablePanelGroupAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ResizablePanelGroup("conf-a")
-	el := gk.ResizablePanelGroup("conf-b").Axis(gk.AxisHorizontal)
+	base := gkbase.ResizablePanelGroup("conf-a")
+	el := gkbase.ResizablePanelGroup("conf-b").Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confResizablePanelGroupSize(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ResizablePanelGroup("conf-a")
-	el := gk.ResizablePanelGroup("conf-b").Size(40)
+	base := gkbase.ResizablePanelGroup("conf-a")
+	el := gkbase.ResizablePanelGroup("conf-b").Size(40)
 	return confPair(base, el)
 }
 
 func confRoundedFrameCoverUniform(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RoundedFrameCoverUniform(40)
-	el := gk.RoundedFrameCoverUniform(40)
+	base := gkbase.RoundedFrameCoverUniform(40)
+	el := gkbase.RoundedFrameCoverUniform(40)
 	return confPair(base, el)
 }
 
 func confRoundedFrameCoverFrame_border(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RoundedFrameCoverUniform(40)
-	el := gk.RoundedFrameCoverUniform(40).FrameBorder(40)
+	base := gkbase.RoundedFrameCoverUniform(40)
+	el := gkbase.RoundedFrameCoverUniform(40).FrameBorder(40)
 	return confPair(base, el)
 }
 
 func confRoundedFrameCoverBackdrop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RoundedFrameCoverUniform(40)
-	el := gk.RoundedFrameCoverUniform(40).Backdrop(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := gkbase.RoundedFrameCoverUniform(40)
+	el := gkbase.RoundedFrameCoverUniform(40).Backdrop(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confBaseSelectNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSelect("conf-a")
-	el := gk.BaseSelect("conf-b")
+	base := table.BaseSelect("conf-a")
+	el := table.BaseSelect("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseSelectOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSelect("conf-a")
-	el := gk.BaseSelect("conf-b").Open(true)
+	base := table.BaseSelect("conf-a")
+	el := table.BaseSelect("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confBaseSelectDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSelect("conf-a")
-	el := gk.BaseSelect("conf-b").Disabled(true)
+	base := table.BaseSelect("conf-a")
+	el := table.BaseSelect("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseSelectAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSelect("conf-a")
-	el := gk.BaseSelect("conf-b").AccessibilityLabel("Sample")
+	base := table.BaseSelect("conf-a")
+	el := table.BaseSelect("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseSelectAccessibility_value(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSelect("conf-a")
-	el := gk.BaseSelect("conf-b").AccessibilityValue("Sample")
+	base := table.BaseSelect("conf-a")
+	el := table.BaseSelect("conf-b").AccessibilityValue("Sample")
 	return confPair(base, el)
 }
 
 func confSelectableTextNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SelectableText("conf-a", "Sample")
-	el := gk.SelectableText("conf-b", "Sample")
+	base := editor.SelectableText("conf-a", "Sample")
+	el := editor.SelectableText("conf-b", "Sample")
 	return confPair(base, el)
 }
 
 func confSelectableTextDocument_order(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SelectableText("conf-a", "Sample")
-	el := gk.SelectableText("conf-b", "Sample").DocumentOrder(3)
+	base := editor.SelectableText("conf-a", "Sample")
+	el := editor.SelectableText("conf-b", "Sample").DocumentOrder(3)
 	return confPair(base, el)
 }
 
 func confSelectableTextSelection_color(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SelectableText("conf-a", "Sample")
-	el := gk.SelectableText("conf-b", "Sample").SelectionColor(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := editor.SelectableText("conf-a", "Sample")
+	el := editor.SelectableText("conf-b", "Sample").SelectionColor(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confBaseSwitchNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b")
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseSwitchChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b").Checked(true)
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confBaseSwitchDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b").Disabled(true)
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseSwitchAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseSwitchTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b").TabIndex(3)
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseSwitchTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseSwitch("conf-a")
-	el := gk.BaseSwitch("conf-b").TabStop(true)
+	base := gkbase.Switch("conf-a")
+	el := gkbase.Switch("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confSwitchThumbNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SwitchThumb(true)
-	el := gk.SwitchThumb(true)
+	base := gkbase.SwitchThumb(true)
+	el := gkbase.SwitchThumb(true)
 	return confPair(base, el)
 }
 
 func confSwitchThumbDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SwitchThumb(true)
-	el := gk.SwitchThumb(true).Disabled(true)
+	base := gkbase.SwitchThumb(true)
+	el := gkbase.SwitchThumb(true).Disabled(true)
 	return confPair(base, el)
 }
 
 func confSwitchTrackNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SwitchTrack("conf-a")
-	el := gk.SwitchTrack("conf-b")
+	base := gkbase.SwitchTrack("conf-a")
+	el := gkbase.SwitchTrack("conf-b")
 	return confPair(base, el)
 }
 
 func confSwitchTrackChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SwitchTrack("conf-a")
-	el := gk.SwitchTrack("conf-b").Checked(true)
+	base := gkbase.SwitchTrack("conf-a")
+	el := gkbase.SwitchTrack("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confSwitchTrackDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SwitchTrack("conf-a")
-	el := gk.SwitchTrack("conf-b").Disabled(true)
+	base := gkbase.SwitchTrack("conf-a")
+	el := gkbase.SwitchTrack("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseTabNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b")
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTabId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b").ID("conf-a")
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b").ID("conf-a")
 	return confPair(base, el)
 }
 
 func confBaseTabSelected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b").Selected(true)
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b").Selected(true)
 	return confPair(base, el)
 }
 
 func confBaseTabDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b").Disabled(true)
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseTabAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseTabSet_position(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTab("conf-a")
-	el := gk.BaseTab("conf-b").SetPosition(3, 3)
+	base := gkbase.Tab("conf-a")
+	el := gkbase.Tab("conf-b").SetPosition(3, 3)
 	return confPair(base, el)
 }
 
 func confBaseTableNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTable("conf-a")
-	el := gk.BaseTable("conf-b")
+	base := table.BaseTable("conf-a")
+	el := table.BaseTable("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTableRow_count(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTable("conf-a")
-	el := gk.BaseTable("conf-b").RowCount(3)
+	base := table.BaseTable("conf-a")
+	el := table.BaseTable("conf-b").RowCount(3)
 	return confPair(base, el)
 }
 
 func confBaseTableColumn_count(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTable("conf-a")
-	el := gk.BaseTable("conf-b").ColumnCount(3)
+	base := table.BaseTable("conf-a")
+	el := table.BaseTable("conf-b").ColumnCount(3)
 	return confPair(base, el)
 }
 
 func confBaseTableAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTable("conf-a")
-	el := gk.BaseTable("conf-b").AccessibilityLabel("Sample")
+	base := table.BaseTable("conf-a")
+	el := table.BaseTable("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseTableBodyNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableBody("conf-a")
-	el := gk.BaseTableBody("conf-b")
+	base := table.BaseTableBody("conf-a")
+	el := table.BaseTableBody("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTableCaptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableCaption("conf-a")
-	el := gk.BaseTableCaption("conf-b")
+	base := table.BaseTableCaption("conf-a")
+	el := table.BaseTableCaption("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTableCellNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableCell("conf-a", 3)
-	el := gk.BaseTableCell("conf-b", 3)
+	base := table.BaseTableCell("conf-a", 3)
+	el := table.BaseTableCell("conf-b", 3)
 	return confPair(base, el)
 }
 
 func confBaseTableHeadNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableHead("conf-a", 3)
-	el := gk.BaseTableHead("conf-b", 3)
+	base := table.BaseTableHead("conf-a", 3)
+	el := table.BaseTableHead("conf-b", 3)
 	return confPair(base, el)
 }
 
 func confBaseTableHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableHeader("conf-a")
-	el := gk.BaseTableHeader("conf-b")
+	base := table.BaseTableHeader("conf-a")
+	el := table.BaseTableHeader("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTableRowNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTableRow("conf-a", 3)
-	el := gk.BaseTableRow("conf-b", 3)
+	base := table.BaseTableRow("conf-a", 3)
+	el := table.BaseTableRow("conf-b", 3)
 	return confPair(base, el)
 }
 
 func confTabsNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tabs("conf-a")
-	el := gk.Tabs("conf-b")
+	base := gkbase.Tabs("conf-a")
+	el := gkbase.Tabs("conf-b")
 	return confPair(base, el)
 }
 
 func confTabsAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tabs("conf-a")
-	el := gk.Tabs("conf-b").Axis(gk.AxisHorizontal)
+	base := gkbase.Tabs("conf-a")
+	el := gkbase.Tabs("conf-b").Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confBaseTextViewMarkdown(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample")
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample")
 	return confPair(base, el)
 }
 
 func confBaseTextViewHtml(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewHTML("conf-b", "Sample")
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewHTML("conf-b", "Sample")
 	return confPair(base, el)
 }
 
 func confBaseTextViewSelectable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").Selectable(true)
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").Selectable(true)
 	return confPair(base, el)
 }
 
 func confBaseTextViewSelection_format(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").SelectionFormat(gk.SelectionFormatSource)
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").SelectionFormat(editor.SelectionFormatSource)
 	return confPair(base, el)
 }
 
 func confBaseTextViewScrollable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").Scrollable(true)
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").Scrollable(true)
 	return confPair(base, el)
 }
 
 func confBaseTextViewMax_lines(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").MaxLines(3)
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").MaxLines(3)
 	return confPair(base, el)
 }
 
 func confBaseTextViewMarkdown_mdx(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").MarkdownMdx()
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").MarkdownMdx()
 	return confPair(base, el)
 }
 
 func confBaseTextViewMarkdown_raw_html(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTextViewMarkdown("conf-a", "Sample")
-	el := gk.BaseTextViewMarkdown("conf-b", "Sample").MarkdownRawHTML(true)
+	base := editor.BaseTextViewMarkdown("conf-a", "Sample")
+	el := editor.BaseTextViewMarkdown("conf-b", "Sample").MarkdownRawHTML(true)
 	return confPair(base, el)
 }
 
 func confToastNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toast("conf-a")
-	el := gk.Toast("conf-b")
+	base := overlay.Toast("conf-a")
+	el := overlay.Toast("conf-b")
 	return confPair(base, el)
 }
 
 func confToastTransition_status(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toast("conf-a")
-	el := gk.Toast("conf-b").TransitionStatus(gk.ToastTransitionStatusPresent)
+	base := overlay.Toast("conf-a")
+	el := overlay.Toast("conf-b").TransitionStatus(overlay.ToastTransitionStatusPresent)
 	return confPair(base, el)
 }
 
 func confBaseToggleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b")
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseTogglePressed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b").Pressed(true)
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b").Pressed(true)
 	return confPair(base, el)
 }
 
 func confBaseToggleDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b").Disabled(true)
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseToggleAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b").AccessibilityLabel("Sample")
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confBaseToggleTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b").TabIndex(3)
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confBaseToggleTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggle("conf-a")
-	el := gk.BaseToggle("conf-b").TabStop(true)
+	base := gkbase.Toggle("conf-a")
+	el := gkbase.Toggle("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confBaseToggleGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggleGroup("conf-a")
-	el := gk.BaseToggleGroup("conf-b")
+	base := gkbase.ToggleGroup("conf-a")
+	el := gkbase.ToggleGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseToggleGroupAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToggleGroup("conf-a")
-	el := gk.BaseToggleGroup("conf-b").Axis(gk.AxisHorizontal)
+	base := gkbase.ToggleGroup("conf-a")
+	el := gkbase.ToggleGroup("conf-b").Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confBaseToolbarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToolbar("conf-a")
-	el := gk.BaseToolbar("conf-b")
+	base := gkbase.Toolbar("conf-a")
+	el := gkbase.Toolbar("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseToolbarDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToolbar("conf-a")
-	el := gk.BaseToolbar("conf-b").Disabled(true)
+	base := gkbase.Toolbar("conf-a")
+	el := gkbase.Toolbar("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBaseToolbarAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToolbar("conf-a")
-	el := gk.BaseToolbar("conf-b").Axis(gk.AxisHorizontal)
+	base := gkbase.Toolbar("conf-a")
+	el := gkbase.Toolbar("conf-b").Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confBaseToolbarGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToolbarGroup("conf-a")
-	el := gk.BaseToolbarGroup("conf-b")
+	base := gkbase.ToolbarGroup("conf-a")
+	el := gkbase.ToolbarGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confBaseToolbarGroupLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseToolbarGroup("conf-a")
-	el := gk.BaseToolbarGroup("conf-b").Label("Sample")
+	base := gkbase.ToolbarGroup("conf-a")
+	el := gkbase.ToolbarGroup("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confBaseTooltipNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseTooltip("conf-a")
-	el := gk.BaseTooltip("conf-b")
+	base := overlay.BaseTooltip("conf-a")
+	el := overlay.BaseTooltip("conf-b")
 	return confPair(base, el)
 }
 
 func confPlotAppearScopeNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.PlotAppearScope("conf-a", gk.Div().Text("Child"))
-	el := gk.PlotAppearScope("conf-b", gk.Div().Text("Child"))
+	base := chart.PlotAppearScope("conf-a", gk.Div().Text("Child"))
+	el := chart.PlotAppearScope("conf-b", gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
@@ -2875,2390 +2882,2390 @@ func confIconPath(a *App, cx *gk.Cx) gk.Element {
 }
 
 func confTitleBarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TitleBar()
-	el := gk.TitleBar()
+	base := kit.TitleBar()
+	el := kit.TitleBar()
 	return confPair(base, el)
 }
 
 func confWindowBorderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.WindowBorder()
-	el := gk.WindowBorder()
+	base := kit.WindowBorder()
+	el := kit.WindowBorder()
 	return confPair(base, el)
 }
 
 func confWindowBorderDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.WindowBorder()
-	el := gk.WindowBorderDefault()
+	base := kit.WindowBorder()
+	el := kit.WindowBorderDefault()
 	return confPair(base, el)
 }
 
 func confWindowBorderWindow_border(a *App, cx *gk.Cx) gk.Element {
-	base := gk.WindowBorder()
-	el := gk.WindowBorder()
+	base := kit.WindowBorder()
+	el := kit.WindowBorder()
 	return confPair(base, el)
 }
 
 func confWindowBorderShadow_size(a *App, cx *gk.Cx) gk.Element {
-	base := gk.WindowBorder()
-	el := gk.WindowBorder().ShadowSize(40)
+	base := kit.WindowBorder()
+	el := kit.WindowBorder().ShadowSize(40)
 	return confPair(base, el)
 }
 
 func confWindowBorderResize_hit_size(a *App, cx *gk.Cx) gk.Element {
-	base := gk.WindowBorder()
-	el := gk.WindowBorder().ResizeHitSize(40)
+	base := kit.WindowBorder()
+	el := kit.WindowBorder().ResizeHitSize(40)
 	return confPair(base, el)
 }
 
 func confComponentAccordionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Accordion("conf-a")
-	el := gk.Accordion("conf-b")
+	base := kit.Accordion("conf-a")
+	el := kit.Accordion("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentAccordionMultiple(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Accordion("conf-a")
-	el := gk.Accordion("conf-b").Multiple(true)
+	base := kit.Accordion("conf-a")
+	el := kit.Accordion("conf-b").Multiple(true)
 	return confPair(base, el)
 }
 
 func confComponentAccordionBordered(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Accordion("conf-a")
-	el := gk.Accordion("conf-b").Bordered(true)
+	base := kit.Accordion("conf-a")
+	el := kit.Accordion("conf-b").Bordered(true)
 	return confPair(base, el)
 }
 
 func confComponentAccordionDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Accordion("conf-a")
-	el := gk.Accordion("conf-b").Disabled(true)
+	base := kit.Accordion("conf-a")
+	el := kit.Accordion("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confComponentAccordionItemNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionItem()
-	el := gk.AccordionItem()
+	base := kit.AccordionItem()
+	el := kit.AccordionItem()
 	return confPair(base, el)
 }
 
 func confComponentAccordionItemTitle(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionItem()
-	el := gk.AccordionItem().Title(gk.Div().Text("Child"))
+	base := kit.AccordionItem()
+	el := kit.AccordionItem().Title(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentAccordionItemOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionItem()
-	el := gk.AccordionItem().Open(true)
+	base := kit.AccordionItem()
+	el := kit.AccordionItem().Open(true)
 	return confPair(base, el)
 }
 
 func confComponentAccordionItemDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AccordionItem()
-	el := gk.AccordionItem().Disabled(true)
+	base := kit.AccordionItem()
+	el := kit.AccordionItem().Disabled(true)
 	return confPair(base, el)
 }
 
 func confAttachmentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment()
+	base := kit.Attachment()
+	el := kit.Attachment()
 	return confPair(base, el)
 }
 
 func confAttachmentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.AttachmentDefault()
+	base := kit.Attachment()
+	el := kit.AttachmentDefault()
 	return confPair(base, el)
 }
 
 func confAttachmentId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment().ID("conf-a")
+	base := kit.Attachment()
+	el := kit.Attachment().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confAttachmentProgress(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment().Progress(40)
+	base := kit.Attachment()
+	el := kit.Attachment().Progress(40)
 	return confPair(base, el)
 }
 
 func confAttachmentTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment().Tooltip("Sample")
+	base := kit.Attachment()
+	el := kit.Attachment().Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confAttachmentStatus(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment().Status(gk.AttachmentStatusUploading)
+	base := kit.Attachment()
+	el := kit.Attachment().Status(kit.AttachmentStatusUploading)
 	return confPair(base, el)
 }
 
 func confAttachmentAxis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Attachment()
-	el := gk.Attachment().Axis(gk.AxisHorizontal)
+	base := kit.Attachment()
+	el := kit.Attachment().Axis(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confAttachmentActionsNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentActions()
-	el := gk.AttachmentActions()
+	base := kit.AttachmentActions()
+	el := kit.AttachmentActions()
 	return confPair(base, el)
 }
 
 func confAttachmentActionsDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentActions()
-	el := gk.AttachmentActionsDefault()
+	base := kit.AttachmentActions()
+	el := kit.AttachmentActionsDefault()
 	return confPair(base, el)
 }
 
 func confAttachmentContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentContent()
-	el := gk.AttachmentContent()
+	base := kit.AttachmentContent()
+	el := kit.AttachmentContent()
 	return confPair(base, el)
 }
 
 func confAttachmentContentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentContent()
-	el := gk.AttachmentContentDefault()
+	base := kit.AttachmentContent()
+	el := kit.AttachmentContentDefault()
 	return confPair(base, el)
 }
 
 func confAttachmentDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentDescription("Sample")
-	el := gk.AttachmentDescription("Sample")
+	base := kit.AttachmentDescription("Sample")
+	el := kit.AttachmentDescription("Sample")
 	return confPair(base, el)
 }
 
 func confAttachmentDescriptionStatus(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentDescription("Sample")
-	el := gk.AttachmentDescription("Sample").Status(gk.AttachmentStatusUploading)
+	base := kit.AttachmentDescription("Sample")
+	el := kit.AttachmentDescription("Sample").Status(kit.AttachmentStatusUploading)
 	return confPair(base, el)
 }
 
 func confAttachmentGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentGroup("conf-a")
-	el := gk.AttachmentGroup("conf-b")
+	base := kit.AttachmentGroup("conf-a")
+	el := kit.AttachmentGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confAttachmentGroupWith_edge_fade(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentGroup("conf-a")
-	el := gk.AttachmentGroup("conf-b").WithEdgeFade(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.AttachmentGroup("conf-a")
+	el := kit.AttachmentGroup("conf-b").WithEdgeFade(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confAttachmentMediaNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentMedia()
-	el := gk.AttachmentMedia()
+	base := kit.AttachmentMedia()
+	el := kit.AttachmentMedia()
 	return confPair(base, el)
 }
 
 func confAttachmentMediaDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentMedia()
-	el := gk.AttachmentMediaDefault()
+	base := kit.AttachmentMedia()
+	el := kit.AttachmentMediaDefault()
 	return confPair(base, el)
 }
 
 func confAttachmentMediaOverlay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentMedia()
-	el := gk.AttachmentMedia().Overlay(gk.Div().Text("Child"))
+	base := kit.AttachmentMedia()
+	el := kit.AttachmentMedia().Overlay(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confAttachmentTitleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentTitle("Sample")
-	el := gk.AttachmentTitle("Sample")
+	base := kit.AttachmentTitle("Sample")
+	el := kit.AttachmentTitle("Sample")
 	return confPair(base, el)
 }
 
 func confAttachmentTitleStatus(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AttachmentTitle("Sample")
-	el := gk.AttachmentTitle("Sample").Status(gk.AttachmentStatusUploading)
+	base := kit.AttachmentTitle("Sample")
+	el := kit.AttachmentTitle("Sample").Status(kit.AttachmentStatusUploading)
 	return confPair(base, el)
 }
 
 func confComponentAvatarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Avatar().Name("Ada Lovelace")
-	el := gk.Avatar().Name("Ada Lovelace")
+	base := kit.Avatar().Name("Ada Lovelace")
+	el := kit.Avatar().Name("Ada Lovelace")
 	return confPair(base, el)
 }
 
 func confComponentAvatarName(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Avatar().Name("Ada Lovelace")
-	el := gk.Avatar().Name("Sample")
+	base := kit.Avatar().Name("Ada Lovelace")
+	el := kit.Avatar().Name("Sample")
 	return confPair(base, el)
 }
 
 func confAvatarGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AvatarGroup()
-	el := gk.AvatarGroup()
+	base := kit.AvatarGroup()
+	el := kit.AvatarGroup()
 	return confPair(base, el)
 }
 
 func confAvatarGroupLimit(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AvatarGroup()
-	el := gk.AvatarGroup().Limit(3)
+	base := kit.AvatarGroup()
+	el := kit.AvatarGroup().Limit(3)
 	return confPair(base, el)
 }
 
 func confAvatarGroupEllipsis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.AvatarGroup()
-	el := gk.AvatarGroup().Ellipsis()
+	base := kit.AvatarGroup()
+	el := kit.AvatarGroup().Ellipsis()
 	return confPair(base, el)
 }
 
 func confBadgeNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Badge().Count(3)
-	el := gk.Badge().Count(3)
+	base := kit.Badge().Count(3)
+	el := kit.Badge().Count(3)
 	return confPair(base, el)
 }
 
 func confBadgeDot(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Badge().Count(3)
-	el := gk.Badge().Count(3).Dot()
+	base := kit.Badge().Count(3)
+	el := kit.Badge().Count(3).Dot()
 	return confPair(base, el)
 }
 
 func confBadgeCount(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Badge().Count(3)
-	el := gk.Badge().Count(3)
+	base := kit.Badge().Count(3)
+	el := kit.Badge().Count(3)
 	return confPair(base, el)
 }
 
 func confBadgeMax(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Badge().Count(3)
-	el := gk.Badge().Count(3).Max(3)
+	base := kit.Badge().Count(3)
+	el := kit.Badge().Count(3).Max(3)
 	return confPair(base, el)
 }
 
 func confBadgeColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Badge().Count(3)
-	el := gk.Badge().Count(3).Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Badge().Count(3)
+	el := kit.Badge().Count(3).Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confBreadcrumbNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Breadcrumb()
-	el := gk.Breadcrumb()
+	base := kit.Breadcrumb()
+	el := kit.Breadcrumb()
 	return confPair(base, el)
 }
 
 func confBreadcrumbItemNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BreadcrumbItem("Sample")
-	el := gk.BreadcrumbItem("Sample")
+	base := kit.BreadcrumbItem("Sample")
+	el := kit.BreadcrumbItem("Sample")
 	return confPair(base, el)
 }
 
 func confBreadcrumbItemDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BreadcrumbItem("Sample")
-	el := gk.BreadcrumbItem("Sample").Disabled(true)
+	base := kit.BreadcrumbItem("Sample")
+	el := kit.BreadcrumbItem("Sample").Disabled(true)
 	return confPair(base, el)
 }
 
 func confBubbleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Bubble()
-	el := gk.Bubble()
+	base := kit.Bubble()
+	el := kit.Bubble()
 	return confPair(base, el)
 }
 
 func confBubbleDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Bubble()
-	el := gk.BubbleDefault()
+	base := kit.Bubble()
+	el := kit.BubbleDefault()
 	return confPair(base, el)
 }
 
 func confBubbleAlignment(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Bubble()
-	el := gk.Bubble().Alignment(gk.MessageAlignmentEnd)
+	base := kit.Bubble()
+	el := kit.Bubble().Alignment(kit.MessageAlignmentEnd)
 	return confPair(base, el)
 }
 
 func confBubbleWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Bubble()
-	el := gk.Bubble().WithVariant(gk.BubbleVariantSecondary)
+	base := kit.Bubble()
+	el := kit.Bubble().WithVariant(kit.BubbleVariantSecondary)
 	return confPair(base, el)
 }
 
 func confBubbleContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleContent()
-	el := gk.BubbleContent()
+	base := kit.BubbleContent()
+	el := kit.BubbleContent()
 	return confPair(base, el)
 }
 
 func confBubbleContentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleContent()
-	el := gk.BubbleContentDefault()
+	base := kit.BubbleContent()
+	el := kit.BubbleContentDefault()
 	return confPair(base, el)
 }
 
 func confBubbleGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleGroup()
-	el := gk.BubbleGroup()
+	base := kit.BubbleGroup()
+	el := kit.BubbleGroup()
 	return confPair(base, el)
 }
 
 func confBubbleGroupDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleGroup()
-	el := gk.BubbleGroupDefault()
+	base := kit.BubbleGroup()
+	el := kit.BubbleGroupDefault()
 	return confPair(base, el)
 }
 
 func confBubbleReactionsNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleReactions()
-	el := gk.BubbleReactions()
+	base := kit.BubbleReactions()
+	el := kit.BubbleReactions()
 	return confPair(base, el)
 }
 
 func confBubbleReactionsDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleReactions()
-	el := gk.BubbleReactionsDefault()
+	base := kit.BubbleReactions()
+	el := kit.BubbleReactionsDefault()
 	return confPair(base, el)
 }
 
 func confBubbleReactionsSide(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleReactions()
-	el := gk.BubbleReactions().Side(gk.BubbleReactionSideBottom)
+	base := kit.BubbleReactions()
+	el := kit.BubbleReactions().Side(kit.BubbleReactionSideBottom)
 	return confPair(base, el)
 }
 
 func confBubbleReactionsAlignment(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BubbleReactions()
-	el := gk.BubbleReactions().Alignment(gk.MessageAlignmentEnd)
+	base := kit.BubbleReactions()
+	el := kit.BubbleReactions().Alignment(kit.MessageAlignmentEnd)
 	return confPair(base, el)
 }
 
 func confComponentButtonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button")
 	return confPair(base, el)
 }
 
 func confComponentButtonOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Outline()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Outline()
 	return confPair(base, el)
 }
 
 func confComponentButtonLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confComponentButtonAccessibility_id(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").AccessibilityID("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").AccessibilityID("Sample")
 	return confPair(base, el)
 }
 
 func confComponentButtonAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").AccessibilityLabel("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentButtonTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Tooltip("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confComponentButtonTooltip_placement(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TooltipPlacement(gk.PlacementBottom)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TooltipPlacement(gk.PlacementBottom)
 	return confPair(base, el)
 }
 
 func confComponentButtonTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentButtonLoading(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Loading(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Loading(true)
 	return confPair(base, el)
 }
 
 func confComponentButtonCompact(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Compact()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Compact()
 	return confPair(base, el)
 }
 
 func confComponentButtonAria_expanded(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").AriaExpanded(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").AriaExpanded(true)
 	return confPair(base, el)
 }
 
 func confComponentButtonTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TabIndex(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confComponentButtonTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TabStop(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TabStop(true)
 	return confPair(base, el)
 }
 
 func confComponentButtonDropdown_caret(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DropdownCaret(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DropdownCaret(true)
 	return confPair(base, el)
 }
 
 func confComponentButtonToggled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Toggled(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Toggled(true)
 	return confPair(base, el)
 }
 
 func confButtonGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ButtonGroup("conf-a")
-	el := gk.ButtonGroup("conf-b")
+	base := kit.ButtonGroup("conf-a")
+	el := kit.ButtonGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confButtonGroupMultiple(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ButtonGroup("conf-a")
-	el := gk.ButtonGroup("conf-b").Multiple(true)
+	base := kit.ButtonGroup("conf-a")
+	el := kit.ButtonGroup("conf-b").Multiple(true)
 	return confPair(base, el)
 }
 
 func confButtonGroupLayout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ButtonGroup("conf-a")
-	el := gk.ButtonGroup("conf-b").Layout(gk.AxisHorizontal)
+	base := kit.ButtonGroup("conf-a")
+	el := kit.ButtonGroup("conf-b").Layout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confButtonGroupCompact(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ButtonGroup("conf-a")
-	el := gk.ButtonGroup("conf-b").Compact()
+	base := kit.ButtonGroup("conf-a")
+	el := kit.ButtonGroup("conf-b").Compact()
 	return confPair(base, el)
 }
 
 func confButtonGroupOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ButtonGroup("conf-a")
-	el := gk.ButtonGroup("conf-b").Outline()
+	base := kit.ButtonGroup("conf-a")
+	el := kit.ButtonGroup("conf-b").Outline()
 	return confPair(base, el)
 }
 
 func confDropdownButtonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DropdownButton("conf-a")
-	el := gk.DropdownButton("conf-b")
+	base := kit.DropdownButton("conf-a")
+	el := kit.DropdownButton("conf-b")
 	return confPair(base, el)
 }
 
 func confDropdownButtonMenu_accessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DropdownButton("conf-a")
-	el := gk.DropdownButton("conf-b").MenuAccessibilityLabel("Sample")
+	base := kit.DropdownButton("conf-a")
+	el := kit.DropdownButton("conf-b").MenuAccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confDropdownButtonOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DropdownButton("conf-a")
-	el := gk.DropdownButton("conf-b").Outline()
+	base := kit.DropdownButton("conf-a")
+	el := kit.DropdownButton("conf-b").Outline()
 	return confPair(base, el)
 }
 
 func confComponentToggleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b")
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentToggleTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").Tooltip("Sample")
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confComponentToggleTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentToggleLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").Label("Sample")
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confComponentToggleChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").Checked(true)
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confComponentToggleGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToggleGroup("conf-a")
-	el := gk.ToggleGroup("conf-b")
+	base := kit.ToggleGroup("conf-a")
+	el := kit.ToggleGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentToggleGroupSegmented(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToggleGroup("conf-a")
-	el := gk.ToggleGroup("conf-b").Segmented()
+	base := kit.ToggleGroup("conf-a")
+	el := kit.ToggleGroup("conf-b").Segmented()
 	return confPair(base, el)
 }
 
 func confComponentToggleGroupSingle(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToggleGroup("conf-a")
-	el := gk.ToggleGroup("conf-b").Single()
+	base := kit.ToggleGroup("conf-a")
+	el := kit.ToggleGroup("conf-b").Single()
 	return confPair(base, el)
 }
 
 func confCarouselPaginationNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CarouselPagination()
-	el := gk.CarouselPagination()
+	base := kit.CarouselPagination()
+	el := kit.CarouselPagination()
 	return confPair(base, el)
 }
 
 func confCarouselPaginationAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.CarouselPagination()
-	el := gk.CarouselPagination().AccessibilityLabel("Sample")
+	base := kit.CarouselPagination()
+	el := kit.CarouselPagination().AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentCheckboxNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentCheckboxTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").Tooltip("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confComponentCheckboxTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentCheckboxAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AccessibilityLabel("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentCheckboxChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").Checked(true)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confComponentCheckboxIndeterminate(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").Indeterminate(true)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").Indeterminate(true)
 	return confPair(base, el)
 }
 
 func confComponentCheckboxTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").TabStop(true)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confComponentCheckboxTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").TabIndex(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confClipboardNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b")
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b")
 	return confPair(base, el)
 }
 
 func confClipboardLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b").Label("Sample")
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confClipboardTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b").Tooltip("Sample")
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confClipboardTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confClipboardAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b").AccessibilityLabel("Sample")
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confClipboardValue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Clipboard("conf-a")
-	el := gk.Clipboard("conf-b").Value("Sample")
+	base := kit.Clipboard("conf-a")
+	el := kit.Clipboard("conf-b").Value("Sample")
 	return confPair(base, el)
 }
 
 func confComponentCollapsibleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Collapsible()
-	el := gk.Collapsible()
+	base := kit.Collapsible()
+	el := kit.Collapsible()
 	return confPair(base, el)
 }
 
 func confComponentCollapsibleOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Collapsible()
-	el := gk.Collapsible().Open(true)
+	base := kit.Collapsible()
+	el := kit.Collapsible().Open(true)
 	return confPair(base, el)
 }
 
 func confComponentCollapsibleMotion_id(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Collapsible()
-	el := gk.Collapsible().MotionID("conf-a")
+	base := kit.Collapsible()
+	el := kit.Collapsible().MotionID("conf-a")
 	return confPair(base, el)
 }
 
 func confComponentCollapsibleContent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Collapsible()
-	el := gk.Collapsible().Content(gk.Div().Text("Child"))
+	base := kit.Collapsible()
+	el := kit.Collapsible().Content(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confDescriptionListNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList()
+	base := kit.DescriptionList()
+	el := kit.DescriptionList()
 	return confPair(base, el)
 }
 
 func confDescriptionListVertical(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionListVertical()
+	base := kit.DescriptionList()
+	el := kit.DescriptionListVertical()
 	return confPair(base, el)
 }
 
 func confDescriptionListHorizontal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionListHorizontal()
+	base := kit.DescriptionList()
+	el := kit.DescriptionListHorizontal()
 	return confPair(base, el)
 }
 
 func confDescriptionListLabel_width(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList().LabelWidth(gk.Px(40))
+	base := kit.DescriptionList()
+	el := kit.DescriptionList().LabelWidth(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confDescriptionListLayout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList().Layout(gk.AxisHorizontal)
+	base := kit.DescriptionList()
+	el := kit.DescriptionList().Layout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confDescriptionListBordered(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList().Bordered(true)
+	base := kit.DescriptionList()
+	el := kit.DescriptionList().Bordered(true)
 	return confPair(base, el)
 }
 
 func confDescriptionListColumns(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList().Columns(3)
+	base := kit.DescriptionList()
+	el := kit.DescriptionList().Columns(3)
 	return confPair(base, el)
 }
 
 func confDescriptionListSeparator(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DescriptionList()
-	el := gk.DescriptionList().Separator()
+	base := kit.DescriptionList()
+	el := kit.DescriptionList().Separator()
 	return confPair(base, el)
 }
 
 func confDialogActionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogAction()
-	el := gk.DialogAction()
+	base := overlay.DialogAction()
+	el := overlay.DialogAction()
 	return confPair(base, el)
 }
 
 func confComponentDialogCloseNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogClose()
-	el := gk.DialogClose()
+	base := overlay.DialogClose()
+	el := overlay.DialogClose()
 	return confPair(base, el)
 }
 
 func confDialogContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogContent()
-	el := gk.DialogContent()
+	base := overlay.DialogContent()
+	el := overlay.DialogContent()
 	return confPair(base, el)
 }
 
 func confComponentDialogDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogDescription()
-	el := gk.DialogDescription()
+	base := overlay.DialogDescription()
+	el := overlay.DialogDescription()
 	return confPair(base, el)
 }
 
 func confDialogFooterNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogFooter()
-	el := gk.DialogFooter()
+	base := overlay.DialogFooter()
+	el := overlay.DialogFooter()
 	return confPair(base, el)
 }
 
 func confDialogHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogHeader()
-	el := gk.DialogHeader()
+	base := overlay.DialogHeader()
+	el := overlay.DialogHeader()
 	return confPair(base, el)
 }
 
 func confComponentDialogTitleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.DialogTitle()
-	el := gk.DialogTitle()
+	base := overlay.DialogTitle()
+	el := overlay.DialogTitle()
 	return confPair(base, el)
 }
 
 func confEmptyNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Empty()
-	el := gk.Empty()
+	base := kit.Empty()
+	el := kit.Empty()
 	return confPair(base, el)
 }
 
 func confEmptyDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Empty()
-	el := gk.EmptyDefault()
+	base := kit.Empty()
+	el := kit.EmptyDefault()
 	return confPair(base, el)
 }
 
 func confEmptyContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyContent()
-	el := gk.EmptyContent()
+	base := kit.EmptyContent()
+	el := kit.EmptyContent()
 	return confPair(base, el)
 }
 
 func confEmptyContentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyContent()
-	el := gk.EmptyContentDefault()
+	base := kit.EmptyContent()
+	el := kit.EmptyContentDefault()
 	return confPair(base, el)
 }
 
 func confEmptyDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyDescription()
-	el := gk.EmptyDescription()
+	base := kit.EmptyDescription()
+	el := kit.EmptyDescription()
 	return confPair(base, el)
 }
 
 func confEmptyDescriptionDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyDescription()
-	el := gk.EmptyDescriptionDefault()
+	base := kit.EmptyDescription()
+	el := kit.EmptyDescriptionDefault()
 	return confPair(base, el)
 }
 
 func confEmptyHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyHeader()
-	el := gk.EmptyHeader()
+	base := kit.EmptyHeader()
+	el := kit.EmptyHeader()
 	return confPair(base, el)
 }
 
 func confEmptyHeaderDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyHeader()
-	el := gk.EmptyHeaderDefault()
+	base := kit.EmptyHeader()
+	el := kit.EmptyHeaderDefault()
 	return confPair(base, el)
 }
 
 func confEmptyMediaNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyMedia()
-	el := gk.EmptyMedia()
+	base := kit.EmptyMedia()
+	el := kit.EmptyMedia()
 	return confPair(base, el)
 }
 
 func confEmptyMediaDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyMedia()
-	el := gk.EmptyMediaDefault()
+	base := kit.EmptyMedia()
+	el := kit.EmptyMediaDefault()
 	return confPair(base, el)
 }
 
 func confEmptyMediaWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyMedia()
-	el := gk.EmptyMedia().WithVariant(gk.EmptyMediaVariantIcon)
+	base := kit.EmptyMedia()
+	el := kit.EmptyMedia().WithVariant(kit.EmptyMediaVariantIcon)
 	return confPair(base, el)
 }
 
 func confEmptyTitleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyTitle()
-	el := gk.EmptyTitle()
+	base := kit.EmptyTitle()
+	el := kit.EmptyTitle()
 	return confPair(base, el)
 }
 
 func confEmptyTitleDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.EmptyTitle()
-	el := gk.EmptyTitleDefault()
+	base := kit.EmptyTitle()
+	el := kit.EmptyTitleDefault()
 	return confPair(base, el)
 }
 
 func confFieldNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field()
+	base := kit.Field()
+	el := kit.Field()
 	return confPair(base, el)
 }
 
 func confFieldField(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field()
+	base := kit.Field()
+	el := kit.Field()
 	return confPair(base, el)
 }
 
 func confFieldLabel_indent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().LabelIndent(true)
+	base := kit.Field()
+	el := kit.Field().LabelIndent(true)
 	return confPair(base, el)
 }
 
 func confFieldVisible(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().Visible(true)
+	base := kit.Field()
+	el := kit.Field().Visible(true)
 	return confPair(base, el)
 }
 
 func confFieldRequired(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().Required(true)
+	base := kit.Field()
+	el := kit.Field().Required(true)
 	return confPair(base, el)
 }
 
 func confFieldItems_start(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ItemsStart()
+	base := kit.Field()
+	el := kit.Field().ItemsStart()
 	return confPair(base, el)
 }
 
 func confFieldItems_end(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ItemsEnd()
+	base := kit.Field()
+	el := kit.Field().ItemsEnd()
 	return confPair(base, el)
 }
 
 func confFieldItems_center(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ItemsCenter()
+	base := kit.Field()
+	el := kit.Field().ItemsCenter()
 	return confPair(base, el)
 }
 
 func confFieldCol_span(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ColSpan(3)
+	base := kit.Field()
+	el := kit.Field().ColSpan(3)
 	return confPair(base, el)
 }
 
 func confFieldCol_start(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ColStart(3)
+	base := kit.Field()
+	el := kit.Field().ColStart(3)
 	return confPair(base, el)
 }
 
 func confFieldCol_end(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Field()
-	el := gk.Field().ColEnd(3)
+	base := kit.Field()
+	el := kit.Field().ColEnd(3)
 	return confPair(base, el)
 }
 
 func confFormNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form()
+	base := kit.Form()
+	el := kit.Form()
 	return confPair(base, el)
 }
 
 func confFormHorizontal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.FormHorizontal()
+	base := kit.Form()
+	el := kit.FormHorizontal()
 	return confPair(base, el)
 }
 
 func confFormVertical(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.FormVertical()
+	base := kit.Form()
+	el := kit.FormVertical()
 	return confPair(base, el)
 }
 
 func confFormDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.FormDefault()
+	base := kit.Form()
+	el := kit.FormDefault()
 	return confPair(base, el)
 }
 
 func confFormH_form(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.HForm()
+	base := kit.Form()
+	el := kit.HForm()
 	return confPair(base, el)
 }
 
 func confFormV_form(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.VForm()
+	base := kit.Form()
+	el := kit.VForm()
 	return confPair(base, el)
 }
 
 func confFormLayout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form().Layout(gk.AxisHorizontal)
+	base := kit.Form()
+	el := kit.Form().Layout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confFormLabel_layout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form().LabelLayout(gk.AxisHorizontal)
+	base := kit.Form()
+	el := kit.Form().LabelLayout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confFormLabel_width(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form().LabelWidth(40)
+	base := kit.Form()
+	el := kit.Form().LabelWidth(40)
 	return confPair(base, el)
 }
 
 func confFormFooter(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form().Footer(gk.Div().Text("Child"))
+	base := kit.Form()
+	el := kit.Form().Footer(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confFormColumns(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Form()
-	el := gk.Form().Columns(3)
+	base := kit.Form()
+	el := kit.Form().Columns(3)
 	return confPair(base, el)
 }
 
 func confGroupBoxNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox()
+	base := kit.GroupBox()
+	el := kit.GroupBox()
 	return confPair(base, el)
 }
 
 func confGroupBoxId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().ID("conf-a")
+	base := kit.GroupBox()
+	el := kit.GroupBox().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confGroupBoxTitle(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().Title(gk.Div().Text("Child"))
+	base := kit.GroupBox()
+	el := kit.GroupBox().Title(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confGroupBoxFooter(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().Footer(gk.Div().Text("Child"))
+	base := kit.GroupBox()
+	el := kit.GroupBox().Footer(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentHoverCardNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b")
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentHoverCardAnchor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b").Anchor(gk.AnchorTopRight)
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b").Anchor(gk.AnchorTopRight)
 	return confPair(base, el)
 }
 
 func confComponentHoverCardTrigger(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b").Trigger(gk.Div().Text("Child"))
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b").Trigger(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentHoverCardOpen_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b").OpenDelay(3 * time.Millisecond)
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b").OpenDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentHoverCardClose_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b").CloseDelay(3 * time.Millisecond)
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b").CloseDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentHoverCardAppearance(a *App, cx *gk.Cx) gk.Element {
-	base := gk.HoverCard("conf-a")
-	el := gk.HoverCard("conf-b").Appearance(true)
+	base := overlay.HoverCard("conf-a")
+	el := overlay.HoverCard("conf-b").Appearance(true)
 	return confPair(base, el)
 }
 
 func confInputGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroup("conf-a")
-	el := gk.InputGroup("conf-b")
+	base := editor.InputGroup("conf-a")
+	el := editor.InputGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confInputGroupDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroup("conf-a")
-	el := gk.InputGroup("conf-b").Disabled(true)
+	base := editor.InputGroup("conf-a")
+	el := editor.InputGroup("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confInputGroupReadonly(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroup("conf-a")
-	el := gk.InputGroup("conf-b").Readonly(true)
+	base := editor.InputGroup("conf-a")
+	el := editor.InputGroup("conf-b").Readonly(true)
 	return confPair(base, el)
 }
 
 func confInputGroupInvalid(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroup("conf-a")
-	el := gk.InputGroup("conf-b").Invalid(true)
+	base := editor.InputGroup("conf-a")
+	el := editor.InputGroup("conf-b").Invalid(true)
 	return confPair(base, el)
 }
 
 func confInputGroupAria_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroup("conf-a")
-	el := gk.InputGroup("conf-b").AriaLabel("Sample")
+	base := editor.InputGroup("conf-a")
+	el := editor.InputGroup("conf-b").AriaLabel("Sample")
 	return confPair(base, el)
 }
 
 func confInputGroupAddonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupAddon("conf-a")
-	el := gk.InputGroupAddon("conf-b")
+	base := editor.InputGroupAddon("conf-a")
+	el := editor.InputGroupAddon("conf-b")
 	return confPair(base, el)
 }
 
 func confInputGroupAddonAlign(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupAddon("conf-a")
-	el := gk.InputGroupAddon("conf-b").Align(gk.InputGroupAddonAlignmentInlineEnd)
+	base := editor.InputGroupAddon("conf-a")
+	el := editor.InputGroupAddon("conf-b").Align(editor.InputGroupAddonAlignmentInlineEnd)
 	return confPair(base, el)
 }
 
 func confInputGroupButtonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b")
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b")
 	return confPair(base, el)
 }
 
 func confInputGroupButtonLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").Label("Sample")
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confInputGroupButtonAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").AccessibilityLabel("Sample")
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confInputGroupButtonTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").Tooltip("Sample")
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confInputGroupButtonTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confInputGroupButtonLoading(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").Loading(true)
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").Loading(true)
 	return confPair(base, el)
 }
 
 func confInputGroupButtonOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").Outline()
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").Outline()
 	return confPair(base, el)
 }
 
 func confInputGroupButtonTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").TabIndex(3)
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confInputGroupButtonDropdown_caret(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupButton("conf-a")
-	el := gk.InputGroupButton("conf-b").DropdownCaret(true)
+	base := editor.InputGroupButton("conf-a")
+	el := editor.InputGroupButton("conf-b").DropdownCaret(true)
 	return confPair(base, el)
 }
 
 func confInputGroupTextNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupText()
-	el := gk.InputGroupText()
+	base := editor.InputGroupText()
+	el := editor.InputGroupText()
 	return confPair(base, el)
 }
 
 func confInputGroupTextDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.InputGroupText()
-	el := gk.InputGroupTextDefault()
+	base := editor.InputGroupText()
+	el := editor.InputGroupTextDefault()
 	return confPair(base, el)
 }
 
 func confLabelNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Label("Sample")
-	el := gk.Label("Sample")
+	base := kit.Label("Sample")
+	el := kit.Label("Sample")
 	return confPair(base, el)
 }
 
 func confLabelId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Label("Sample")
-	el := gk.Label("Sample").ID("conf-a")
+	base := kit.Label("Sample")
+	el := kit.Label("Sample").ID("conf-a")
 	return confPair(base, el)
 }
 
 func confLabelSecondary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Label("Sample")
-	el := gk.Label("Sample").Secondary("Sample")
+	base := kit.Label("Sample")
+	el := kit.Label("Sample").Secondary("Sample")
 	return confPair(base, el)
 }
 
 func confLabelMasked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Label("Sample")
-	el := gk.Label("Sample").Masked(true)
+	base := kit.Label("Sample")
+	el := kit.Label("Sample").Masked(true)
 	return confPair(base, el)
 }
 
 func confComponentLinkNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Link("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.Link("conf-b").Child(gk.Div().Text("Link"))
+	base := kit.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := kit.Link("conf-b").Child(gk.Div().Text("Link"))
 	return confPair(base, el)
 }
 
 func confComponentLinkHref(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Link("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.Link("conf-b").Child(gk.Div().Text("Link")).Href("Sample")
+	base := kit.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := kit.Link("conf-b").Child(gk.Div().Text("Link")).Href("Sample")
 	return confPair(base, el)
 }
 
 func confComponentLinkDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Link("conf-a").Child(gk.Div().Text("Link"))
-	el := gk.Link("conf-b").Child(gk.Div().Text("Link")).Disabled(true)
+	base := kit.Link("conf-a").Child(gk.Div().Text("Link"))
+	el := kit.Link("conf-b").Child(gk.Div().Text("Link")).Disabled(true)
 	return confPair(base, el)
 }
 
 func confListItemNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b")
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b")
 	return confPair(base, el)
 }
 
 func confListItemSeparator(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b").Separator()
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b").Separator()
 	return confPair(base, el)
 }
 
 func confListItemSelected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b").Selected(true)
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b").Selected(true)
 	return confPair(base, el)
 }
 
 func confListItemConfirmed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b").Confirmed(true)
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b").Confirmed(true)
 	return confPair(base, el)
 }
 
 func confListItemAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b").AccessibilityLabel("Sample")
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confListItemDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ListItem("conf-a")
-	el := gk.ListItem("conf-b").Disabled(true)
+	base := table.ListItem("conf-a")
+	el := table.ListItem("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confMarkerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker()
+	base := kit.Marker()
+	el := kit.Marker()
 	return confPair(base, el)
 }
 
 func confMarkerDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.MarkerDefault()
+	base := kit.Marker()
+	el := kit.MarkerDefault()
 	return confPair(base, el)
 }
 
 func confMarkerId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker().ID("conf-a")
+	base := kit.Marker()
+	el := kit.Marker().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confMarkerWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker().WithVariant(gk.MarkerVariantSeparator)
+	base := kit.Marker()
+	el := kit.Marker().WithVariant(kit.MarkerVariantSeparator)
 	return confPair(base, el)
 }
 
 func confMarkerAlignment(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker().Alignment(gk.MarkerAlignmentCenter)
+	base := kit.Marker()
+	el := kit.Marker().Alignment(kit.MarkerAlignmentCenter)
 	return confPair(base, el)
 }
 
 func confMarkerLoading(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker().Loading(true)
+	base := kit.Marker()
+	el := kit.Marker().Loading(true)
 	return confPair(base, el)
 }
 
 func confMarkerWith_loading_style(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Marker()
-	el := gk.Marker().WithLoadingStyle(gk.MarkerLoadingStyleShimmer)
+	base := kit.Marker()
+	el := kit.Marker().WithLoadingStyle(kit.MarkerLoadingStyleShimmer)
 	return confPair(base, el)
 }
 
 func confMarkerContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MarkerContent()
-	el := gk.MarkerContent()
+	base := kit.MarkerContent()
+	el := kit.MarkerContent()
 	return confPair(base, el)
 }
 
 func confMarkerContentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MarkerContent()
-	el := gk.MarkerContentDefault()
+	base := kit.MarkerContent()
+	el := kit.MarkerContentDefault()
 	return confPair(base, el)
 }
 
 func confMarkerContentText(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MarkerContent()
-	el := gk.MarkerContent().Text("Sample")
+	base := kit.MarkerContent()
+	el := kit.MarkerContent().Text("Sample")
 	return confPair(base, el)
 }
 
 func confMarkerIconNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MarkerIcon()
-	el := gk.MarkerIcon()
+	base := kit.MarkerIcon()
+	el := kit.MarkerIcon()
 	return confPair(base, el)
 }
 
 func confMarkerIconDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MarkerIcon()
-	el := gk.MarkerIconDefault()
+	base := kit.MarkerIcon()
+	el := kit.MarkerIconDefault()
 	return confPair(base, el)
 }
 
 func confMessageNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Message()
-	el := gk.Message()
+	base := kit.Message()
+	el := kit.Message()
 	return confPair(base, el)
 }
 
 func confMessageDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Message()
-	el := gk.MessageDefault()
+	base := kit.Message()
+	el := kit.MessageDefault()
 	return confPair(base, el)
 }
 
 func confMessageAlignment(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Message()
-	el := gk.Message().Alignment(gk.MessageAlignmentEnd)
+	base := kit.Message()
+	el := kit.Message().Alignment(kit.MessageAlignmentEnd)
 	return confPair(base, el)
 }
 
 func confMessageId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Message()
-	el := gk.Message().ID("conf-a")
+	base := kit.Message()
+	el := kit.Message().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confMessageAvatar(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Message()
-	el := gk.Message().Avatar(gk.Div().Text("Child"))
+	base := kit.Message()
+	el := kit.Message().Avatar(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confMessageAvatarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageAvatar()
-	el := gk.MessageAvatar()
+	base := kit.MessageAvatar()
+	el := kit.MessageAvatar()
 	return confPair(base, el)
 }
 
 func confMessageAvatarDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageAvatar()
-	el := gk.MessageAvatarDefault()
+	base := kit.MessageAvatar()
+	el := kit.MessageAvatarDefault()
 	return confPair(base, el)
 }
 
 func confMessageContentNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageContent()
-	el := gk.MessageContent()
+	base := kit.MessageContent()
+	el := kit.MessageContent()
 	return confPair(base, el)
 }
 
 func confMessageContentDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageContent()
-	el := gk.MessageContentDefault()
+	base := kit.MessageContent()
+	el := kit.MessageContentDefault()
 	return confPair(base, el)
 }
 
 func confMessageFooterNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageFooter()
-	el := gk.MessageFooter()
+	base := kit.MessageFooter()
+	el := kit.MessageFooter()
 	return confPair(base, el)
 }
 
 func confMessageFooterDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageFooter()
-	el := gk.MessageFooterDefault()
+	base := kit.MessageFooter()
+	el := kit.MessageFooterDefault()
 	return confPair(base, el)
 }
 
 func confMessageFooterContent_inset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageFooter()
-	el := gk.MessageFooter().ContentInset(true)
+	base := kit.MessageFooter()
+	el := kit.MessageFooter().ContentInset(true)
 	return confPair(base, el)
 }
 
 func confMessageGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageGroup()
-	el := gk.MessageGroup()
+	base := kit.MessageGroup()
+	el := kit.MessageGroup()
 	return confPair(base, el)
 }
 
 func confMessageGroupDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageGroup()
-	el := gk.MessageGroupDefault()
+	base := kit.MessageGroup()
+	el := kit.MessageGroupDefault()
 	return confPair(base, el)
 }
 
 func confMessageHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageHeader()
-	el := gk.MessageHeader()
+	base := kit.MessageHeader()
+	el := kit.MessageHeader()
 	return confPair(base, el)
 }
 
 func confMessageHeaderDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageHeader()
-	el := gk.MessageHeaderDefault()
+	base := kit.MessageHeader()
+	el := kit.MessageHeaderDefault()
 	return confPair(base, el)
 }
 
 func confMessageHeaderContent_inset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.MessageHeader()
-	el := gk.MessageHeader().ContentInset(true)
+	base := kit.MessageHeader()
+	el := kit.MessageHeader().ContentInset(true)
 	return confPair(base, el)
 }
 
 func confComponentPaginationNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Pagination("conf-a")
-	el := gk.Pagination("conf-b")
+	base := kit.Pagination("conf-a")
+	el := kit.Pagination("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentPaginationCurrent_page(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Pagination("conf-a")
-	el := gk.Pagination("conf-b").CurrentPage(3)
+	base := kit.Pagination("conf-a")
+	el := kit.Pagination("conf-b").CurrentPage(3)
 	return confPair(base, el)
 }
 
 func confComponentPaginationTotal_pages(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Pagination("conf-a")
-	el := gk.Pagination("conf-b").TotalPages(3)
+	base := kit.Pagination("conf-a")
+	el := kit.Pagination("conf-b").TotalPages(3)
 	return confPair(base, el)
 }
 
 func confComponentPaginationCompact(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Pagination("conf-a")
-	el := gk.Pagination("conf-b").Compact()
+	base := kit.Pagination("conf-a")
+	el := kit.Pagination("conf-b").Compact()
 	return confPair(base, el)
 }
 
 func confComponentPaginationVisible_pages(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Pagination("conf-a")
-	el := gk.Pagination("conf-b").VisiblePages(3)
+	base := kit.Pagination("conf-a")
+	el := kit.Pagination("conf-b").VisiblePages(3)
 	return confPair(base, el)
 }
 
 func confComponentPopoverNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b")
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentPopoverAnchor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").Anchor(gk.AnchorTopRight)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").Anchor(gk.AnchorTopRight)
 	return confPair(base, el)
 }
 
 func confComponentPopoverOffset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").Offset(40)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").Offset(40)
 	return confPair(base, el)
 }
 
 func confComponentPopoverArrow(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").Arrow(true)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").Arrow(true)
 	return confPair(base, el)
 }
 
 func confComponentPopoverDefault_open(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").DefaultOpen(true)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").DefaultOpen(true)
 	return confPair(base, el)
 }
 
 func confComponentPopoverOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").Open(true)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").Open(true)
 	return confPair(base, el)
 }
 
 func confComponentPopoverOverlay_closable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").OverlayClosable(true)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").OverlayClosable(true)
 	return confPair(base, el)
 }
 
 func confComponentPopoverAppearance(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Popover("conf-a")
-	el := gk.Popover("conf-b").Appearance(true)
+	base := overlay.Popover("conf-a")
+	el := overlay.Popover("conf-b").Appearance(true)
 	return confPair(base, el)
 }
 
 func confComponentProgressNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Progress("conf-a").Value(40)
-	el := gk.Progress("conf-b").Value(40)
+	base := kit.Progress("conf-a").Value(40)
+	el := kit.Progress("conf-b").Value(40)
 	return confPair(base, el)
 }
 
 func confComponentProgressLoading(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Progress("conf-a").Value(40)
-	el := gk.Progress("conf-b").Value(40).Loading(true)
+	base := kit.Progress("conf-a").Value(40)
+	el := kit.Progress("conf-b").Value(40).Loading(true)
 	return confPair(base, el)
 }
 
 func confComponentProgressColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Progress("conf-a").Value(40)
-	el := gk.Progress("conf-b").Value(40).Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Progress("conf-a").Value(40)
+	el := kit.Progress("conf-b").Value(40).Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confComponentProgressValue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Progress("conf-a").Value(40)
-	el := gk.Progress("conf-b").Value(40)
+	base := kit.Progress("conf-a").Value(40)
+	el := kit.Progress("conf-b").Value(40)
 	return confPair(base, el)
 }
 
 func confComponentProgressAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Progress("conf-a").Value(40)
-	el := gk.Progress("conf-b").Value(40).AccessibilityLabel("Sample")
+	base := kit.Progress("conf-a").Value(40)
+	el := kit.Progress("conf-b").Value(40).AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confProgressCircleNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressCircle("conf-a")
-	el := gk.ProgressCircle("conf-b")
+	base := kit.ProgressCircle("conf-a")
+	el := kit.ProgressCircle("conf-b")
 	return confPair(base, el)
 }
 
 func confProgressCircleLoading(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressCircle("conf-a")
-	el := gk.ProgressCircle("conf-b").Loading(true)
+	base := kit.ProgressCircle("conf-a")
+	el := kit.ProgressCircle("conf-b").Loading(true)
 	return confPair(base, el)
 }
 
 func confProgressCircleColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressCircle("conf-a")
-	el := gk.ProgressCircle("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.ProgressCircle("conf-a")
+	el := kit.ProgressCircle("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confProgressCircleValue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressCircle("conf-a")
-	el := gk.ProgressCircle("conf-b").Value(40)
+	base := kit.ProgressCircle("conf-a")
+	el := kit.ProgressCircle("conf-b").Value(40)
 	return confPair(base, el)
 }
 
 func confProgressCircleAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ProgressCircle("conf-a")
-	el := gk.ProgressCircle("conf-b").AccessibilityLabel("Sample")
+	base := kit.ProgressCircle("conf-a")
+	el := kit.ProgressCircle("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confQuestionnaireChoiceDescriptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.QuestionnaireChoiceDescription()
-	el := gk.QuestionnaireChoiceDescription()
+	base := kit.QuestionnaireChoiceDescription()
+	el := kit.QuestionnaireChoiceDescription()
 	return confPair(base, el)
 }
 
 func confQuestionnaireChoiceDescriptionDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.QuestionnaireChoiceDescription()
-	el := gk.QuestionnaireChoiceDescriptionDefault()
+	base := kit.QuestionnaireChoiceDescription()
+	el := kit.QuestionnaireChoiceDescriptionDefault()
 	return confPair(base, el)
 }
 
 func confComponentRadioNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b")
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentRadioTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").Tooltip("Sample")
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confComponentRadioTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentRadioAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").AccessibilityLabel("Sample")
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentRadioChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").Checked(true)
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confComponentRadioDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").Disabled(true)
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confComponentRadioTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").TabIndex(3)
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confComponentRadioTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Radio("conf-a")
-	el := gk.Radio("conf-b").TabStop(true)
+	base := kit.Radio("conf-a")
+	el := kit.Radio("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confComponentRadioGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RadioGroup("conf-a")
-	el := gk.RadioGroup("conf-b")
+	base := kit.RadioGroup("conf-a")
+	el := kit.RadioGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentRadioGroupVertical(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RadioGroup("conf-a")
-	el := gk.RadioGroupVertical("conf-b")
+	base := kit.RadioGroup("conf-a")
+	el := kit.RadioGroupVertical("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentRadioGroupHorizontal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RadioGroup("conf-a")
-	el := gk.RadioGroupHorizontal("conf-b")
+	base := kit.RadioGroup("conf-a")
+	el := kit.RadioGroupHorizontal("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentRadioGroupLayout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RadioGroup("conf-a")
-	el := gk.RadioGroup("conf-b").Layout(gk.AxisHorizontal)
+	base := kit.RadioGroup("conf-a")
+	el := kit.RadioGroup("conf-b").Layout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confComponentRadioGroupDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.RadioGroup("conf-a")
-	el := gk.RadioGroup("conf-b").Disabled(true)
+	base := kit.RadioGroup("conf-a")
+	el := kit.RadioGroup("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confRatingNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Rating("conf-a")
-	el := gk.Rating("conf-b")
+	base := kit.Rating("conf-a")
+	el := kit.Rating("conf-b")
 	return confPair(base, el)
 }
 
 func confRatingDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Rating("conf-a")
-	el := gk.Rating("conf-b").Disabled(true)
+	base := kit.Rating("conf-a")
+	el := kit.Rating("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confRatingColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Rating("conf-a")
-	el := gk.Rating("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Rating("conf-a")
+	el := kit.Rating("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confRatingValue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Rating("conf-a")
-	el := gk.Rating("conf-b").Value(3)
+	base := kit.Rating("conf-a")
+	el := kit.Rating("conf-b").Value(3)
 	return confPair(base, el)
 }
 
 func confRatingMax(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Rating("conf-a")
-	el := gk.Rating("conf-b").Max(3)
+	base := kit.Rating("conf-a")
+	el := kit.Rating("conf-b").Max(3)
 	return confPair(base, el)
 }
 
 func confSearchableListItemElementNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SearchableListItemElement(3)
-	el := gk.SearchableListItemElement(3)
+	base := table.SearchableListItemElement(3)
+	el := table.SearchableListItemElement(3)
 	return confPair(base, el)
 }
 
 func confSearchableListItemElementChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SearchableListItemElement(3)
-	el := gk.SearchableListItemElement(3).Checked(true)
+	base := table.SearchableListItemElement(3)
+	el := table.SearchableListItemElement(3).Checked(true)
 	return confPair(base, el)
 }
 
 func confSeparatorVertical(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorVertical()
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorVertical()
 	return confPair(base, el)
 }
 
 func confSeparatorHorizontal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorHorizontal()
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorHorizontal()
 	return confPair(base, el)
 }
 
 func confSeparatorVertical_dashed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorVerticalDashed()
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorVerticalDashed()
 	return confPair(base, el)
 }
 
 func confSeparatorHorizontal_dashed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorHorizontalDashed()
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorHorizontalDashed()
 	return confPair(base, el)
 }
 
 func confSeparatorLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorVertical().Label("Sample")
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorVertical().Label("Sample")
 	return confPair(base, el)
 }
 
 func confSeparatorColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorVertical().Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorVertical().Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confSeparatorDashed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SeparatorVertical()
-	el := gk.SeparatorVertical().Dashed()
+	base := kit.SeparatorVertical()
+	el := kit.SeparatorVertical().Dashed()
 	return confPair(base, el)
 }
 
 func confSettingsNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Settings("conf-a")
-	el := gk.Settings("conf-b")
+	base := kit.Settings("conf-a")
+	el := kit.Settings("conf-b")
 	return confPair(base, el)
 }
 
 func confSettingsSidebar_width(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Settings("conf-a")
-	el := gk.Settings("conf-b").SidebarWidth(40)
+	base := kit.Settings("conf-a")
+	el := kit.Settings("conf-b").SidebarWidth(40)
 	return confPair(base, el)
 }
 
 func confSettingsWith_group_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Settings("conf-a")
-	el := gk.Settings("conf-b").WithGroupVariant(gk.GroupBoxVariantFill)
+	base := kit.Settings("conf-a")
+	el := kit.Settings("conf-b").WithGroupVariant(kit.GroupBoxVariantFill)
 	return confPair(base, el)
 }
 
 func confShimmerTextNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample")
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample")
 	return confPair(base, el)
 }
 
 func confShimmerTextId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample").ID("conf-a")
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample").ID("conf-a")
 	return confPair(base, el)
 }
 
 func confShimmerTextDuration(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample").Duration(3 * time.Millisecond)
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample").Duration(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confShimmerTextHighlight_color(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample").HighlightColor(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample").HighlightColor(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confShimmerTextReverse(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample").Reverse(true)
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample").Reverse(true)
 	return confPair(base, el)
 }
 
 func confShimmerTextOnce(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ShimmerText("Sample")
-	el := gk.ShimmerText("Sample").Once(true)
+	base := kit.ShimmerText("Sample")
+	el := kit.ShimmerText("Sample").Once(true)
 	return confPair(base, el)
 }
 
 func confComponentSidebarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupedSidebar("conf-a")
-	el := gk.GroupedSidebar("conf-b")
+	base := kit.GroupedSidebar("conf-a")
+	el := kit.GroupedSidebar("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentSidebarSide(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupedSidebar("conf-a")
-	el := gk.GroupedSidebar("conf-b").Side(gk.SideRight)
+	base := kit.GroupedSidebar("conf-a")
+	el := kit.GroupedSidebar("conf-b").Side(gk.SideRight)
 	return confPair(base, el)
 }
 
 func confComponentSidebarCollapsed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupedSidebar("conf-a")
-	el := gk.GroupedSidebar("conf-b").Collapsed(true)
+	base := kit.GroupedSidebar("conf-a")
+	el := kit.GroupedSidebar("conf-b").Collapsed(true)
 	return confPair(base, el)
 }
 
 func confComponentSidebarHeader(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupedSidebar("conf-a")
-	el := gk.GroupedSidebar("conf-b").Header(gk.Div().Text("Child"))
+	base := kit.GroupedSidebar("conf-a")
+	el := kit.GroupedSidebar("conf-b").Header(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentSidebarFooter(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupedSidebar("conf-a")
-	el := gk.GroupedSidebar("conf-b").Footer(gk.Div().Text("Child"))
+	base := kit.GroupedSidebar("conf-a")
+	el := kit.GroupedSidebar("conf-b").Footer(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confSidebarFooterNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarFooter()
-	el := gk.SidebarFooter()
+	base := kit.SidebarFooter()
+	el := kit.SidebarFooter()
 	return confPair(base, el)
 }
 
 func confSidebarHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarHeader()
-	el := gk.SidebarHeader()
+	base := kit.SidebarHeader()
+	el := kit.SidebarHeader()
 	return confPair(base, el)
 }
 
 func confSidebarHeaderDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarHeader()
-	el := gk.SidebarHeaderDefault()
+	base := kit.SidebarHeader()
+	el := kit.SidebarHeaderDefault()
 	return confPair(base, el)
 }
 
 func confSidebarToggleButtonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarToggleButton()
-	el := gk.SidebarToggleButton()
+	base := kit.SidebarToggleButton()
+	el := kit.SidebarToggleButton()
 	return confPair(base, el)
 }
 
 func confSidebarToggleButtonSide(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarToggleButton()
-	el := gk.SidebarToggleButton().Side(gk.SideRight)
+	base := kit.SidebarToggleButton()
+	el := kit.SidebarToggleButton().Side(gk.SideRight)
 	return confPair(base, el)
 }
 
 func confSidebarToggleButtonCollapsed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarToggleButton()
-	el := gk.SidebarToggleButton().Collapsed(true)
+	base := kit.SidebarToggleButton()
+	el := kit.SidebarToggleButton().Collapsed(true)
 	return confPair(base, el)
 }
 
 func confSidebarToggleButtonAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarToggleButton()
-	el := gk.SidebarToggleButton().AccessibilityLabel("Sample")
+	base := kit.SidebarToggleButton()
+	el := kit.SidebarToggleButton().AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confSkeletonNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Skeleton()
-	el := gk.Skeleton()
+	base := kit.Skeleton()
+	el := kit.Skeleton()
 	return confPair(base, el)
 }
 
 func confSkeletonSecondary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Skeleton()
-	el := gk.Skeleton().Secondary()
+	base := kit.Skeleton()
+	el := kit.Skeleton().Secondary()
 	return confPair(base, el)
 }
 
 func confSpinnerNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Spinner()
-	el := gk.Spinner()
+	base := kit.Spinner()
+	el := kit.Spinner()
 	return confPair(base, el)
 }
 
 func confSpinnerColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Spinner()
-	el := gk.Spinner().Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Spinner()
+	el := kit.Spinner().Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStatusBarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.StatusBar()
-	el := gk.StatusBar()
+	base := kit.StatusBar()
+	el := kit.StatusBar()
 	return confPair(base, el)
 }
 
 func confStatusBarLeft(a *App, cx *gk.Cx) gk.Element {
-	base := gk.StatusBar()
-	el := gk.StatusBar().Left(gk.Div().Text("Child"))
+	base := kit.StatusBar()
+	el := kit.StatusBar().Left(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confStatusBarRight(a *App, cx *gk.Cx) gk.Element {
-	base := gk.StatusBar()
-	el := gk.StatusBar().Right(gk.Div().Text("Child"))
+	base := kit.StatusBar()
+	el := kit.StatusBar().Right(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confStepperNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b")
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b")
 	return confPair(base, el)
 }
 
 func confStepperText_center(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b").TextCenter(true)
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b").TextCenter(true)
 	return confPair(base, el)
 }
 
 func confStepperLayout(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b").Layout(gk.AxisHorizontal)
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b").Layout(gk.AxisHorizontal)
 	return confPair(base, el)
 }
 
 func confStepperVertical(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b").Vertical()
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b").Vertical()
 	return confPair(base, el)
 }
 
 func confStepperSelected_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b").SelectedIndex(3)
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b").SelectedIndex(3)
 	return confPair(base, el)
 }
 
 func confStepperDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Stepper("conf-a")
-	el := gk.Stepper("conf-b").Disabled(true)
+	base := kit.Stepper("conf-a")
+	el := kit.Stepper("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confStepperItemNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.StepperItem()
-	el := gk.StepperItem()
+	base := kit.StepperItem()
+	el := kit.StepperItem()
 	return confPair(base, el)
 }
 
 func confStepperItemDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.StepperItem()
-	el := gk.StepperItem().Disabled(true)
+	base := kit.StepperItem()
+	el := kit.StepperItem().Disabled(true)
 	return confPair(base, el)
 }
 
 func confComponentSwitchNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b")
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentSwitchChecked(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").Checked(true)
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").Checked(true)
 	return confPair(base, el)
 }
 
 func confComponentSwitchAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").AccessibilityLabel("Sample")
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentSwitchColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").Color(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confComponentSwitchTooltip(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").Tooltip("Sample")
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").Tooltip("Sample")
 	return confPair(base, el)
 }
 
 func confComponentSwitchTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confComponentSwitchTab_stop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").TabStop(true)
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").TabStop(true)
 	return confPair(base, el)
 }
 
 func confComponentSwitchTab_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Switch("conf-a")
-	el := gk.Switch("conf-b").TabIndex(3)
+	base := kit.Switch("conf-a")
+	el := kit.Switch("conf-b").TabIndex(3)
 	return confPair(base, el)
 }
 
 func confComponentTabNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab()
+	base := kit.Tab()
+	el := kit.Tab()
 	return confPair(base, el)
 }
 
 func confComponentTabDefault(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.TabDefault()
+	base := kit.Tab()
+	el := kit.TabDefault()
 	return confPair(base, el)
 }
 
 func confComponentTabLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Label("Sample")
+	base := kit.Tab()
+	el := kit.Tab().Label("Sample")
 	return confPair(base, el)
 }
 
 func confComponentTabAria_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().AriaLabel("Sample")
+	base := kit.Tab()
+	el := kit.Tab().AriaLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentTabWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().WithVariant(gk.TabVariantOutline)
+	base := kit.Tab()
+	el := kit.Tab().WithVariant(kit.TabVariantOutline)
 	return confPair(base, el)
 }
 
 func confComponentTabPill(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Pill()
+	base := kit.Tab()
+	el := kit.Tab().Pill()
 	return confPair(base, el)
 }
 
 func confComponentTabOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Outline()
+	base := kit.Tab()
+	el := kit.Tab().Outline()
 	return confPair(base, el)
 }
 
 func confComponentTabSegmented(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Segmented()
+	base := kit.Tab()
+	el := kit.Tab().Segmented()
 	return confPair(base, el)
 }
 
 func confComponentTabUnderline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Underline()
+	base := kit.Tab()
+	el := kit.Tab().Underline()
 	return confPair(base, el)
 }
 
 func confComponentTabFolder(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Folder()
+	base := kit.Tab()
+	el := kit.Tab().Folder()
 	return confPair(base, el)
 }
 
 func confComponentTabPrefix(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Prefix(gk.Div().Text("Child"))
+	base := kit.Tab()
+	el := kit.Tab().Prefix(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentTabSuffix(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Suffix(gk.Div().Text("Child"))
+	base := kit.Tab()
+	el := kit.Tab().Suffix(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentTabDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tab()
-	el := gk.Tab().Disabled(true)
+	base := kit.Tab()
+	el := kit.Tab().Disabled(true)
 	return confPair(base, el)
 }
 
 func confTabBarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b")
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b")
 	return confPair(base, el)
 }
 
 func confTabBarWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").WithVariant(gk.TabVariantOutline)
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").WithVariant(kit.TabVariantOutline)
 	return confPair(base, el)
 }
 
 func confTabBarPill(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Pill()
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Pill()
 	return confPair(base, el)
 }
 
 func confTabBarOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Outline()
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Outline()
 	return confPair(base, el)
 }
 
 func confTabBarSegmented(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Segmented()
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Segmented()
 	return confPair(base, el)
 }
 
 func confTabBarUnderline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Underline()
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Underline()
 	return confPair(base, el)
 }
 
 func confTabBarFolder(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Folder()
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Folder()
 	return confPair(base, el)
 }
 
 func confTabBarMenu(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Menu(true)
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Menu(true)
 	return confPair(base, el)
 }
 
 func confTabBarMax_width(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").MaxWidth(40)
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").MaxWidth(40)
 	return confPair(base, el)
 }
 
 func confTabBarPrefix(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Prefix(gk.Div().Text("Child"))
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Prefix(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confTabBarSuffix(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").Suffix(gk.Div().Text("Child"))
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").Suffix(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confTabBarSelected_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").SelectedIndex(3)
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").SelectedIndex(3)
 	return confPair(base, el)
 }
 
 func confTabBarLast_empty_space(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TabBar("conf-a")
-	el := gk.TabBar("conf-b").LastEmptySpace(gk.Div().Text("Child"))
+	base := kit.TabBar("conf-a")
+	el := kit.TabBar("conf-b").LastEmptySpace(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentTableNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Table()
-	el := gk.Table()
+	base := table.Table()
+	el := table.Table()
 	return confPair(base, el)
 }
 
 func confComponentTableAccessibility_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Table()
-	el := gk.Table().AccessibilityLabel("Sample")
+	base := table.Table()
+	el := table.Table().AccessibilityLabel("Sample")
 	return confPair(base, el)
 }
 
 func confComponentTableBodyNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableBody()
-	el := gk.TableBody()
+	base := table.Body()
+	el := table.Body()
 	return confPair(base, el)
 }
 
 func confComponentTableCaptionNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableCaption()
-	el := gk.TableCaption()
+	base := table.Caption()
+	el := table.Caption()
 	return confPair(base, el)
 }
 
 func confComponentTableCellNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableCell()
-	el := gk.TableCell()
+	base := table.Cell()
+	el := table.Cell()
 	return confPair(base, el)
 }
 
 func confComponentTableCellCol_span(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableCell()
-	el := gk.TableCell().ColSpan(3)
+	base := table.Cell()
+	el := table.Cell().ColSpan(3)
 	return confPair(base, el)
 }
 
 func confComponentTableCellText_center(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableCell()
-	el := gk.TableCell().TextCenter()
+	base := table.Cell()
+	el := table.Cell().TextCenter()
 	return confPair(base, el)
 }
 
 func confComponentTableCellText_right(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableCell()
-	el := gk.TableCell().TextRight()
+	base := table.Cell()
+	el := table.Cell().TextRight()
 	return confPair(base, el)
 }
 
 func confTableFooterNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableFooter()
-	el := gk.TableFooter()
+	base := table.Footer()
+	el := table.Footer()
 	return confPair(base, el)
 }
 
 func confComponentTableHeadNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableHead()
-	el := gk.TableHead()
+	base := table.Head()
+	el := table.Head()
 	return confPair(base, el)
 }
 
 func confComponentTableHeadCol_span(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableHead()
-	el := gk.TableHead().ColSpan(3)
+	base := table.Head()
+	el := table.Head().ColSpan(3)
 	return confPair(base, el)
 }
 
 func confComponentTableHeadText_center(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableHead()
-	el := gk.TableHead().TextCenter()
+	base := table.Head()
+	el := table.Head().TextCenter()
 	return confPair(base, el)
 }
 
 func confComponentTableHeadText_right(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableHead()
-	el := gk.TableHead().TextRight()
+	base := table.Head()
+	el := table.Head().TextRight()
 	return confPair(base, el)
 }
 
 func confComponentTableHeaderNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableHeader()
-	el := gk.TableHeader()
+	base := table.Header()
+	el := table.Header()
 	return confPair(base, el)
 }
 
 func confComponentTableRowNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableRow()
-	el := gk.TableRow()
+	base := table.TableRow()
+	el := table.TableRow()
 	return confPair(base, el)
 }
 
 func confComponentTableRowId(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TableRow()
-	el := gk.TableRow().ID("conf-a")
+	base := table.TableRow()
+	el := table.TableRow().ID("conf-a")
 	return confPair(base, el)
 }
 
 func confTagNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.Tag().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.Tag().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagPrimary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagPrimary().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagPrimary().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagSecondary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagSecondary().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagSecondary().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagDanger(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagDanger().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagDanger().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagSuccess(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagSuccess().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagSuccess().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagWarning(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagWarning().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagWarning().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagInfo(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagInfo().Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagInfo().Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagCustom(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagCustom(gk.HSLA(0.6, 0.7, 0.5, 1), gk.HSLA(0.6, 0.7, 0.5, 1), gk.HSLA(0.6, 0.7, 0.5, 1)).Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagCustom(gk.HSLA(0.6, 0.7, 0.5, 1), gk.HSLA(0.6, 0.7, 0.5, 1), gk.HSLA(0.6, 0.7, 0.5, 1)).Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagColor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.TagColor(gk.ColorNameBlack).Child(gk.Div().Text("Tag"))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.TagColor(gk.ColorNameBlack).Child(gk.Div().Text("Tag"))
 	return confPair(base, el)
 }
 
 func confTagOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.Tag().Child(gk.Div().Text("Tag")).Outline()
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.Tag().Child(gk.Div().Text("Tag")).Outline()
 	return confPair(base, el)
 }
 
 func confTagRounded(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.Tag().Child(gk.Div().Text("Tag")).Rounded(gk.Px(40))
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.Tag().Child(gk.Div().Text("Tag")).Rounded(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confTagRounded_full(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Tag().Child(gk.Div().Text("Tag"))
-	el := gk.Tag().Child(gk.Div().Text("Tag")).RoundedFull()
+	base := kit.Tag().Child(gk.Div().Text("Tag"))
+	el := kit.Tag().Child(gk.Div().Text("Tag")).RoundedFull()
 	return confPair(base, el)
 }
 
 func confComponentTextViewMarkdown(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample")
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample")
 	return confPair(base, el)
 }
 
 func confComponentTextViewHtml(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewHTML("conf-b", "Sample")
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewHTML("conf-b", "Sample")
 	return confPair(base, el)
 }
 
 func confComponentTextViewSelectable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").Selectable(true)
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").Selectable(true)
 	return confPair(base, el)
 }
 
 func confComponentTextViewSelection_format(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").SelectionFormat(gk.SelectionFormatSource)
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").SelectionFormat(editor.SelectionFormatSource)
 	return confPair(base, el)
 }
 
 func confComponentTextViewScrollable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").Scrollable(true)
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").Scrollable(true)
 	return confPair(base, el)
 }
 
 func confComponentTextViewStream_fade(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").StreamFade(true)
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").StreamFade(true)
 	return confPair(base, el)
 }
 
 func confComponentTextViewMax_lines(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").MaxLines(3)
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").MaxLines(3)
 	return confPair(base, el)
 }
 
 func confComponentTextViewMarkdown_mdx(a *App, cx *gk.Cx) gk.Element {
-	base := gk.TextViewMarkdown("conf-a", "Sample")
-	el := gk.TextViewMarkdown("conf-b", "Sample").MarkdownMdx()
+	base := editor.TextViewMarkdown("conf-a", "Sample")
+	el := editor.TextViewMarkdown("conf-b", "Sample").MarkdownMdx()
 	return confPair(base, el)
 }
 
 func confComponentToolbarNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toolbar("conf-a")
-	el := gk.Toolbar("conf-b")
+	base := kit.Toolbar("conf-a")
+	el := kit.Toolbar("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentToolbarDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toolbar("conf-a")
-	el := gk.Toolbar("conf-b").Disabled(true)
+	base := kit.Toolbar("conf-a")
+	el := kit.Toolbar("conf-b").Disabled(true)
 	return confPair(base, el)
 }
 
 func confComponentToolbarContent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toolbar("conf-a")
-	el := gk.Toolbar("conf-b").Content(gk.Div().Text("Child"))
+	base := kit.Toolbar("conf-a")
+	el := kit.Toolbar("conf-b").Content(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confComponentToolbarGroupNew(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToolbarGroup("conf-a")
-	el := gk.ToolbarGroup("conf-b")
+	base := kit.ToolbarGroup("conf-a")
+	el := kit.ToolbarGroup("conf-b")
 	return confPair(base, el)
 }
 
 func confComponentToolbarGroupLabel(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToolbarGroup("conf-a")
-	el := gk.ToolbarGroup("conf-b").Label("Sample")
+	base := kit.ToolbarGroup("conf-a")
+	el := kit.ToolbarGroup("conf-b").Label("Sample")
 	return confPair(base, el)
 }
 
 func confComponentToolbarGroupContent(a *App, cx *gk.Cx) gk.Element {
-	base := gk.ToolbarGroup("conf-a")
-	el := gk.ToolbarGroup("conf-b").Content(gk.Div().Text("Child"))
+	base := kit.ToolbarGroup("conf-a")
+	el := kit.ToolbarGroup("conf-b").Content(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confInteractiveElementBlock_mouse_except_scroll(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BlockMouseExceptScroll()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BlockMouseExceptScroll()
 	return confPair(base, el)
 }
 
 func confInteractiveElementGroup(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Group("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Group("Sample")
 	return confPair(base, el)
 }
 
 func confInteractiveElementOcclude(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Occlude()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Occlude()
 	return confPair(base, el)
 }
 
 func confInteractiveElementTab_group(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TabGroup()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TabGroup()
 	return confPair(base, el)
 }
 
@@ -5275,907 +5282,907 @@ func confInteractiveElementTab_stop(a *App, cx *gk.Cx) gk.Element {
 }
 
 func confInteractiveElementWindow_control_area(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").WindowControlArea(gk.WindowControlAreaClose)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").WindowControlArea(gk.WindowControlAreaClose)
 	return confPair(base, el)
 }
 
 func confParentElementChild(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Child(gk.Div().Text("Child"))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Child(gk.Div().Text("Child"))
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAccessibility_id(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AccessibilityID("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AccessibilityID("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_active_descendant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaActiveDescendant()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaActiveDescendant()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_column_count(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaColumnCount(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaColumnCount(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_column_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaColumnIndex(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaColumnIndex(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_description(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaDescription("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaDescription("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_expanded(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaExpanded(true)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaExpanded(true)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_keyshortcuts(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaKeyshortcuts("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaKeyshortcuts("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_label(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaLabel("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaLabel("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_level(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaLevel(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaLevel(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_max_numeric_value(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaMaxNumericValue(40)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaMaxNumericValue(40)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_min_numeric_value(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaMinNumericValue(40)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaMinNumericValue(40)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_numeric_value(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaNumericValue(40)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaNumericValue(40)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_numeric_value_step(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaNumericValueStep(40)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaNumericValueStep(40)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_placeholder(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaPlaceholder("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaPlaceholder("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_position_in_set(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaPositionInSet(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaPositionInSet(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_row_count(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaRowCount(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaRowCount(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_row_index(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaRowIndex(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaRowIndex(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_selected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaSelected(true)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaSelected(true)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_size_of_set(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaSizeOfSet(3)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaSizeOfSet(3)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementAria_value(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").AriaValue("Sample")
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").AriaValue("Sample")
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementFocusable(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").Focusable()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").Focusable()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementHover_listener_mode(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").HoverListenerMode(gk.HoverListenerModeInputModalityIndependent)
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").HoverListenerMode(gk.HoverListenerModeInputModalityIndependent)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementOverflow_scroll(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").OverflowScroll()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").OverflowScroll()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementOverflow_x_scroll(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").OverflowXScroll()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").OverflowXScroll()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementOverflow_y_scroll(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").OverflowYScroll()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").OverflowYScroll()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementRestrict_scroll_to_axis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").RestrictScrollToAxis()
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").RestrictScrollToAxis()
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementRole(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordion("conf-a")
-	el := gk.BaseAccordion("conf-b").Role(gk.RoleTextRun)
+	base := gkbase.Accordion("conf-a")
+	el := gkbase.Accordion("conf-b").Role(gk.RoleTextRun)
 	return confPair(base, el)
 }
 
 func confStatefulInteractiveElementTooltip_show_delay(a *App, cx *gk.Cx) gk.Element {
-	base := gk.BaseAccordion("conf-a")
-	el := gk.BaseAccordion("conf-b").TooltipShowDelay(3 * time.Millisecond)
+	base := gkbase.Accordion("conf-a")
+	el := gkbase.Accordion("conf-b").TooltipShowDelay(3 * time.Millisecond)
 	return confPair(base, el)
 }
 
 func confStyledAspect_ratio(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").AspectRatio(40)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").AspectRatio(40)
 	return confPair(base, el)
 }
 
 func confStyledBg(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Bg(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Bg(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStyledBorder(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Border(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Border(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_b(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderB(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderB(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_color(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderColor(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderColor(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStyledBorder_l(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderL(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderL(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_r(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderR(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderR(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_t(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderT(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderT(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_x(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderX(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderX(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBorder_y(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").BorderY(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").BorderY(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledBottom(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Bottom(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Bottom(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledCol_end(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").ColEnd(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").ColEnd(3)
 	return confPair(base, el)
 }
 
 func confStyledCol_span(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").ColSpan(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").ColSpan(3)
 	return confPair(base, el)
 }
 
 func confStyledCol_start(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").ColStart(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").ColStart(3)
 	return confPair(base, el)
 }
 
 func confStyledCursor(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Cursor(gk.CursorStyleIBeam)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Cursor(gk.CursorStyleIBeam)
 	return confPair(base, el)
 }
 
 func confStyledFlex_basis(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FlexBasis(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FlexBasis(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledFlex_grow(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FlexGrow(40)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FlexGrow(40)
 	return confPair(base, el)
 }
 
 func confStyledFlex_shrink(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FlexShrink(40)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FlexShrink(40)
 	return confPair(base, el)
 }
 
 func confStyledFont_family(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontFamily("Sample")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontFamily("Sample")
 	return confPair(base, el)
 }
 
 func confStyledGap(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Gap(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Gap(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledGap_x(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GapX(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GapX(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledGap_y(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GapY(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GapY(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledGrid_cols(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridCols(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridCols(3)
 	return confPair(base, el)
 }
 
 func confStyledGrid_cols_max_content(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridColsMaxContent(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridColsMaxContent(3)
 	return confPair(base, el)
 }
 
 func confStyledGrid_cols_min_content(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridColsMinContent(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridColsMinContent(3)
 	return confPair(base, el)
 }
 
 func confStyledGrid_rows(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridRows(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridRows(3)
 	return confPair(base, el)
 }
 
 func confStyledGrid_rows_max_content(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridRowsMaxContent(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridRowsMaxContent(3)
 	return confPair(base, el)
 }
 
 func confStyledGrid_rows_min_content(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").GridRowsMinContent(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").GridRowsMinContent(3)
 	return confPair(base, el)
 }
 
 func confStyledH(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").H(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").H(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledInset(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Inset(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Inset(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledLeft(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Left(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Left(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledLine_clamp(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").LineClamp(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").LineClamp(3)
 	return confPair(base, el)
 }
 
 func confStyledLine_height(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").LineHeight(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").LineHeight(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledM(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").M(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").M(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMax_h(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MaxH(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MaxH(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMax_size(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MaxSize(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MaxSize(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMax_w(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MaxW(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MaxW(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMb(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Mb(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Mb(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMin_h(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MinH(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MinH(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMin_size(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MinSize(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MinSize(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMin_w(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").MinW(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").MinW(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMl(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Ml(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Ml(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMr(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Mr(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Mr(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMt(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Mt(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Mt(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMx(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Mx(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Mx(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledMy(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").My(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").My(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledOpacity(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Opacity(40)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Opacity(40)
 	return confPair(base, el)
 }
 
 func confStyledP(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").P(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").P(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPb(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Pb(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Pb(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPl(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Pl(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Pl(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPr(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Pr(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Pr(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPt(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Pt(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Pt(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPx(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Px(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Px(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledPy(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Py(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Py(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRight(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Right(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Right(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Checkbox("conf-a")
-	el := gk.Checkbox("conf-b").Rounded(gk.Px(40))
+	base := kit.Checkbox("conf-a")
+	el := kit.Checkbox("conf-b").Rounded(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_b(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedB(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedB(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_bl(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedBl(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedBl(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_br(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedBr(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedBr(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_l(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedL(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedL(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_r(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedR(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedR(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_t(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedT(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedT(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_tl(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedTl(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedTl(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRounded_tr(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RoundedTr(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RoundedTr(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledRow_end(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RowEnd(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RowEnd(3)
 	return confPair(base, el)
 }
 
 func confStyledRow_span(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RowSpan(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RowSpan(3)
 	return confPair(base, el)
 }
 
 func confStyledRow_start(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").RowStart(3)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").RowStart(3)
 	return confPair(base, el)
 }
 
 func confStyledScrollbar_width(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").ScrollbarWidth(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").ScrollbarWidth(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledSize(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Size(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Size(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledText_align(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TextAlign(gk.TextAlignCenter)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TextAlign(gk.TextAlignCenter)
 	return confPair(base, el)
 }
 
 func confStyledText_bg(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TextBg(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TextBg(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStyledText_color(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TextColor(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TextColor(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStyledText_decoration_color(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TextDecorationColor(gk.HSLA(0.6, 0.7, 0.5, 1))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TextDecorationColor(gk.HSLA(0.6, 0.7, 0.5, 1))
 	return confPair(base, el)
 }
 
 func confStyledText_size(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").TextSize(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").TextSize(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledTop(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Top(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Top(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confStyledW(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").W(gk.Px(40))
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").W(gk.Px(40))
 	return confPair(base, el)
 }
 
 func confDisableableDisabled(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Disabled(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Disabled(true)
 	return confPair(base, el)
 }
 
 func confElementExtKeep_text_selection(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").KeepTextSelection("conf-a")
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").KeepTextSelection("conf-a")
 	return confPair(base, el)
 }
 
 func confFocusableExtFocus_ring(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FocusRing(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FocusRing(true)
 	return confPair(base, el)
 }
 
 func confLogicalStyledExtJustify_flex_end(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").JustifyFlexEnd()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").JustifyFlexEnd()
 	return confPair(base, el)
 }
 
 func confLogicalStyledExtJustify_flex_start(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").JustifyFlexStart()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").JustifyFlexStart()
 	return confPair(base, el)
 }
 
 func confSelectableOpen(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Open(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Open(true)
 	return confPair(base, el)
 }
 
 func confSelectableSecondary_selected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").SecondarySelected(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").SecondarySelected(true)
 	return confPair(base, el)
 }
 
 func confSelectableSelected(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Selected(true)
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Selected(true)
 	return confPair(base, el)
 }
 
 func confStyledExtDebug_blue(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DebugBlue()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DebugBlue()
 	return confPair(base, el)
 }
 
 func confStyledExtDebug_green(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DebugGreen()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DebugGreen()
 	return confPair(base, el)
 }
 
 func confStyledExtDebug_pink(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DebugPink()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DebugPink()
 	return confPair(base, el)
 }
 
 func confStyledExtDebug_red(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DebugRed()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DebugRed()
 	return confPair(base, el)
 }
 
 func confStyledExtDebug_yellow(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").DebugYellow()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").DebugYellow()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_black(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontBlack()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontBlack()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_bold(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontBold()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontBold()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_extrabold(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontExtrabold()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontExtrabold()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_extralight(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontExtralight()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontExtralight()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_light(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontLight()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontLight()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_medium(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontMedium()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontMedium()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_normal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontNormal()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontNormal()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_semibold(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontSemibold()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontSemibold()
 	return confPair(base, el)
 }
 
 func confStyledExtFont_thin(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").FontThin()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").FontThin()
 	return confPair(base, el)
 }
 
 func confStyledExtH_flex(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").HFlex()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").HFlex()
 	return confPair(base, el)
 }
 
 func confStyledExtV_flex(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").VFlex()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").VFlex()
 	return confPair(base, el)
 }
 
 func confCollapsibleCollapsed(a *App, cx *gk.Cx) gk.Element {
-	base := gk.SidebarFooter()
-	el := gk.SidebarFooter().Collapsed(true)
+	base := kit.SidebarFooter()
+	el := kit.SidebarFooter().Collapsed(true)
 	return confPair(base, el)
 }
 
 func confChildElementWith_ix(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Table()
-	el := gk.Table().WithIx(3)
+	base := table.Table()
+	el := table.Table().WithIx(3)
 	return confPair(base, el)
 }
 
 func confSizableLarge(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Large()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Large()
 	return confPair(base, el)
 }
 
 func confSizableSmall(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Small()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Small()
 	return confPair(base, el)
 }
 
 func confSizableXsmall(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Xsmall()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Xsmall()
 	return confPair(base, el)
 }
 
 func confButtonVariantsDanger(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Danger()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Danger()
 	return confPair(base, el)
 }
 
 func confButtonVariantsGhost(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Ghost()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Ghost()
 	return confPair(base, el)
 }
 
 func confButtonVariantsInfo(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Info()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Info()
 	return confPair(base, el)
 }
 
 func confButtonVariantsLink(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Link()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Link()
 	return confPair(base, el)
 }
 
 func confButtonVariantsPrimary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Primary()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Primary()
 	return confPair(base, el)
 }
 
 func confButtonVariantsSecondary(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Secondary()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Secondary()
 	return confPair(base, el)
 }
 
 func confButtonVariantsSuccess(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Success()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Success()
 	return confPair(base, el)
 }
 
 func confButtonVariantsText(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Text()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Text()
 	return confPair(base, el)
 }
 
 func confButtonVariantsWarning(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Button("conf-a").Label("Button")
-	el := gk.Button("conf-b").Label("Button").Warning()
+	base := kit.Button("conf-a").Label("Button")
+	el := kit.Button("conf-b").Label("Button").Warning()
 	return confPair(base, el)
 }
 
 func confToggleVariantsGhost(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").Ghost()
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").Ghost()
 	return confPair(base, el)
 }
 
 func confToggleVariantsOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").Outline()
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").Outline()
 	return confPair(base, el)
 }
 
 func confToggleVariantsWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.Toggle("conf-a")
-	el := gk.Toggle("conf-b").WithVariant(gk.ToggleVariantOutline)
+	base := kit.Toggle("conf-a")
+	el := kit.Toggle("conf-b").WithVariant(kit.ToggleVariantOutline)
 	return confPair(base, el)
 }
 
 func confGroupBoxVariantsFill(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().Fill()
+	base := kit.GroupBox()
+	el := kit.GroupBox().Fill()
 	return confPair(base, el)
 }
 
 func confGroupBoxVariantsNormal(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().Normal()
+	base := kit.GroupBox()
+	el := kit.GroupBox().Normal()
 	return confPair(base, el)
 }
 
 func confGroupBoxVariantsOutline(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().Outline()
+	base := kit.GroupBox()
+	el := kit.GroupBox().Outline()
 	return confPair(base, el)
 }
 
 func confGroupBoxVariantsWith_variant(a *App, cx *gk.Cx) gk.Element {
-	base := gk.GroupBox()
-	el := gk.GroupBox().WithVariant(gk.GroupBoxVariantFill)
+	base := kit.GroupBox()
+	el := kit.GroupBox().WithVariant(kit.GroupBoxVariantFill)
 	return confPair(base, el)
 }

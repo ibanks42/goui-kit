@@ -210,7 +210,7 @@ architectures: $arch_line"
 esac
 engine=$(cat "$root/ship/ENGINE" 2>/dev/null || echo gpui-fast)
 [ "$engine" = gpui ] && engine="upstream GPUI" || engine="gpui-fast $("$py" -c "import json;print(json.load(open('api/coverage.json', encoding='utf-8'))['pin'].get('gpui-fast', '?'))")"
-hash=$(grep -m1 'const apiHash' go/gk/gen_ops.go | grep -o '0x[0-9a-f]*')
+hash=$(grep -m1 'const ApiHash' go/gk/internal/rt/gen_ops.go | grep -o '0x[0-9a-f]*')
 go_v=$(go version 2>/dev/null | awk '{print $3}' | sed 's/^go//' || true)
 cat > "$out/VERSIONS" <<V
 gpuikit $ver for $GK_PLATFORM
@@ -245,13 +245,13 @@ gen_go = texts = 0; n_go = n_texts = 0
 listed = []
 for rel, size in files(out):
     base = rel.rsplit("/", 1)[-1]
-    if rel.startswith("go/gk/") and base.startswith("gen_"): gen_go += size; n_go += 1
+    if rel.startswith("go/gk/") and os.path.basename(rel).startswith("gen_"): gen_go += size; n_go += 1
     elif rel.startswith("licences/texts/"): texts += size; n_texts += 1
     else: listed.append((rel, size))
 for rel, size in sorted(listed): print(f"{size:10d}  ./{rel}")
 crates = len([d for d in os.listdir(os.path.join(out, "licences", "texts")) if d != "_canonical"])
 print(f"{texts:10d}  ./licences/texts/ ({n_texts} licence files of {crates} crates)")
-print(f"{gen_go:10d}  ./go/gk/gen_*.go, ./go/gk/{{s,theme,palette}}/gen_*.go ({n_go} generated files)")
+print(f"{gen_go:10d}  ./go/gk/**/gen_*.go ({n_go} generated files)")
 total = sum(s for _, s in files(out))
 print(f"unpacked: {mb(total)}; download: {mb(os.path.getsize(os.path.join(dst, arc)))} ({arc})")
 P

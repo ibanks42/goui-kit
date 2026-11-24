@@ -14,7 +14,11 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 )
 
 const rows = 200
@@ -24,23 +28,23 @@ type App struct {
 	root   gk.View
 	clicks int
 	// temps
-	input gk.InputState
-	temp  gk.InputPresentation
-	kept  gk.InputPresentation
+	input editor.InputState
+	temp  editor.InputPresentation
+	kept  editor.InputPresentation
 	// list
 	src    gk.RowSource
-	list   gk.ListState
-	scroll gk.VirtualListScrollHandle
+	list   gktable.ListState
+	scroll gktable.VirtualListScrollHandle
 	events int
 	// dialog
-	dialog gk.DialogHandle
+	dialog overlay.DialogHandle
 	// values
-	tree  gk.TreeState
-	grid  gk.GridLayoutState
-	keptV gk.TreeItem
+	tree  gktable.TreeState
+	grid  base.GridLayoutState
+	keptV gktable.TreeItem
 	// columns (objects.go)
 	tsrc  gk.RowSource
-	table gk.TableState
+	table gktable.State
 }
 
 // modes: what a click runs, by mode; some register from objects.go.
@@ -60,7 +64,7 @@ func counts(cx *gk.Cx, what string) {
 func temps(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
-		a.input = gk.NewInputState(cx).Placeholder("type here").Build()
+		a.input = editor.NewInputState(cx).Placeholder("type here").Build()
 		counts(cx, "before")
 		a.temp = a.input.Presentation(cx)
 		a.kept = a.input.Presentation(cx)
@@ -82,7 +86,7 @@ func temps(a *App, cx *gk.Cx) {
 func dialog(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
-		a.dialog = gk.NewDialogHandle(cx, false)
+		a.dialog = overlay.NewDialogHandle(cx, false)
 		fmt.Printf("handles dialog open=%v\n", a.dialog.IsOpen(cx))
 		a.dialog.Open(cx)
 	case 2:
@@ -92,11 +96,11 @@ func dialog(a *App, cx *gk.Cx) {
 	}
 }
 
-func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
-	return gk.ListItem(gk.Key("row", at.Row)).Child(gk.Text(fmt.Sprintf("row %d", at.Row)))
+func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
+	return gktable.ListItem(gk.Key("row", at.Row)).Child(gk.Text(fmt.Sprintf("row %d", at.Row)))
 }
 
-func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
+func (a *App) listEvent(cx *gk.Cx, e gktable.ListDelegateEvent) {
 	a.events++
 }
 
@@ -106,18 +110,18 @@ func list(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
 		// a row source needs a window: made in a handler
-		a.src = gk.NewListSource(cx, func() int { return rows }, a.listRow, gk.ListEvents(a.listEvent), gk.Initial(20))
-		a.list = gk.NewListState(cx, a.src).Build()
+		a.src = gktable.NewListSource(cx, func() int { return rows }, a.listRow, gktable.ListEvents(a.listEvent), gk.Initial(20))
+		a.list = gktable.NewListState(cx, a.src).Build()
 	case 2:
-		a.list.SetSelectedIndex(cx, gk.Some(gk.Row(120)))
-		a.list.ScrollToItem(cx, gk.Row(120), gk.ScrollStrategyTop)
+		a.list.SetSelectedIndex(cx, gk.Some(gktable.Row(120)))
+		a.list.ScrollToItem(cx, gktable.Row(120), gk.ScrollStrategyTop)
 		a.scroll = a.list.ScrollHandle(cx)
 		gk.Retain(cx, a.scroll)
 	case 3:
 		sel, ok := a.list.SelectedIndex(cx).Get()
 		fmt.Printf("handles list selected ok=%v row=%d\n", ok, sel.Row)
 		a.scroll.ScrollToItem(cx, 3, gk.ScrollStrategyTop)
-		a.list.SetSelectedIndex(cx, gk.NoRow)
+		a.list.SetSelectedIndex(cx, gktable.NoRow)
 	case 4:
 		_, ok := a.list.SelectedIndex(cx).Get()
 		fmt.Printf("handles list cleared selected=%v\n", ok)
@@ -129,12 +133,12 @@ func list(a *App, cx *gk.Cx) {
 func values(a *App, cx *gk.Cx) {
 	switch a.clicks {
 	case 1:
-		a.tree = gk.NewTreeState(cx).Build()
-		src := gk.NewTreeItem("src", "src").Expanded(true).Child(gk.NewTreeItem("src/a.rs", "a.rs")).Child(gk.NewTreeItem("src/b.rs", "b.rs"))
-		a.tree.SetItems(cx, []gk.TreeItem{src, gk.NewTreeItem("README", "README")})
-		a.grid = gk.NewGridLayoutState(cx).Build()
-		a.grid.SetAreas(cx, []gk.GridArea{gk.NewGridArea("one").Col(1).Row(2).ColSpan(3), gk.NewGridArea("two")})
-		a.keptV = gk.NewTreeItem("late", "late")
+		a.tree = gktable.NewTreeState(cx).Build()
+		src := gktable.NewTreeItem("src", "src").Expanded(true).Child(gktable.NewTreeItem("src/a.rs", "a.rs")).Child(gktable.NewTreeItem("src/b.rs", "b.rs"))
+		a.tree.SetItems(cx, []gktable.TreeItem{src, gktable.NewTreeItem("README", "README")})
+		a.grid = base.NewGridLayoutState(cx).Build()
+		a.grid.SetAreas(cx, []base.GridArea{base.NewGridArea("one").Col(1).Row(2).ColSpan(3), base.NewGridArea("two")})
+		a.keptV = gktable.NewTreeItem("late", "late")
 	case 2:
 		n := 0
 		for i := range 8 {
@@ -152,7 +156,7 @@ func values(a *App, cx *gk.Cx) {
 		}
 		if a.mode == "obj-stale-value" {
 			fmt.Println("handles giving a value of an earlier turn")
-			a.tree.SetItems(cx, []gk.TreeItem{a.keptV}) // stops: a value lives for the turn that made it
+			a.tree.SetItems(cx, []gktable.TreeItem{a.keptV}) // stops: a value lives for the turn that made it
 		}
 	}
 }
@@ -165,10 +169,10 @@ func init() {
 	modes["obj-values"] = values
 	modes["obj-stale-value"] = values
 	views["obj-list"] = func(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
-		if a.list == (gk.ListState{}) {
+		if a.list == (gktable.ListState{}) {
 			return body
 		}
-		return body.Child(gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.List(a.list, s.SizeFull)))
+		return body.Child(gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gktable.List(a.list, s.SizeFull)))
 	}
 }
 

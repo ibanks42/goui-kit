@@ -14,6 +14,9 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -39,27 +42,27 @@ func init() {
 	}, script: "frame\n" + stepScript}
 	modes["conflict"] = &mode{step: conflictStep, script: "frame\n" + stepScript}
 	modes["fold"] = &mode{init: foldInit, view: func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(420)).Child(gk.CodeEditor(a.ed, gk.CodeEditorOptions{Height: 120}))
+		return gk.Div().W(gk.Px(420)).Child(editor.CodeEditor(a.ed, editor.CodeEditorOptions{Height: 120}))
 	}, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 fold described=%d\n", ed.foldRows)
 	}, script: foldScript()}
 	modes["owner"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue("x").Build()
+		a.ed = editor.NewState(cx).DefaultValue("x").Build()
 	}, view: func(a *App, cx *gk.Cx) gk.Element {
-		body := gk.Div().W(gk.Px(220)).Child(gk.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)).AccessibilityLabel("owned"))
+		body := gk.Div().W(gk.Px(220)).Child(editor.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)).AccessibilityLabel("owned"))
 		fmt.Printf("editor2 owner drawn\n")
 		return body
 	}, script: "frame\nframe\n"}
 	modes["bad-owner"] = &mode{init: func(a *App, cx *gk.Cx) {
 		a.hist = gk.NewHistory(cx).Build()
 	}, view: func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(220)).Child(gk.InputBase("ib").SemanticOwner(gk.EntityID(gk.Handle(a.hist))))
+		return gk.Div().W(gk.Px(220)).Child(editor.InputBase("ib").SemanticOwner(gk.EntityID(gk.Handle(a.hist))))
 	}, script: "frame\nframe\n"}
 	modes["editor-style"] = &mode{init: styleInit, view: editorBox, script: "frame\nadvance 100\nframe\nadvance 100\nframe\nframe\n"}
 }
 
 func conflictStep(a *App, cx *gk.Cx) {
-	f := gk.ParseConflicts(cx, "a.txt", conflictText)
+	f := editor.ParseConflicts(cx, "a.txt", conflictText)
 	file, ok := f.Value.Get()
 	if !ok {
 		fmt.Printf("editor2 conflict parse failed: %s\n", f.Err)
@@ -81,12 +84,12 @@ func conflictStep(a *App, cx *gk.Cx) {
 func (a *App) foldRow(cx *gk.Cx, line int) gk.Element {
 	ed.foldRows++
 	fmt.Printf("editor2 fold row=%d line=%d\n", line, line)
-	return gk.Label("...")
+	return kit.Label("...")
 }
 
 func foldInit(a *App, cx *gk.Cx) {
-	ed.folds = gk.Items(cx, a.foldRow)
-	a.ed = gk.NewEditorState(cx).DefaultValue(foldText).Build()
+	ed.folds = overlay.Items(cx, a.foldRow)
+	a.ed = editor.NewState(cx).DefaultValue(foldText).Build()
 	a.ed.SetFolding(cx, true)
 	a.ed.SetLineNumber(cx, true)
 	a.ed.SetFoldPlaceholderRenderer(cx, gk.Some(ed.folds))
@@ -127,12 +130,12 @@ func (a *App) styleFor(cx *gk.Cx, name string) gk.Option[gk.HighlightStyle] {
 func styleInit(a *App, cx *gk.Cx) {
 	ed.styles = gk.NewAsk(cx, a.styleFor)
 	ed.hl = gk.NewHighlighter(cx, a.keywordRuns, nil, "demo")
-	a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
+	a.ed = editor.NewState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
 	a.ed.SetHighlighterFactory(cx, ed.hl.Src)
-	a.ed.SetEditorStyle(cx, gk.InputEditorStyle{
+	a.ed.SetEditorStyle(cx, editor.InputEditorStyle{
 		Foreground: theme.Foreground, MutedForeground: theme.MutedForeground,
 		Background: theme.Background, Border: theme.Border, Selection: theme.Selection,
-		Caret: theme.Caret, Diagnostics: gk.DiagnosticColors{Error: theme.Danger, Warning: theme.Warning, Info: theme.Info, Hint: theme.Info},
+		Caret: theme.Caret, Diagnostics: editor.DiagnosticColors{Error: theme.Danger, Warning: theme.Warning, Info: theme.Info, Hint: theme.Info},
 		HighlightStyles: ed.styles,
 	})
 }

@@ -11,16 +11,22 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
 type valuesPages struct {
 	band     gk.ScaleBand
-	linear   gk.ScaleLinear
+	linear   chart.ScaleLinear
 	fontSize float32
 	radius   float32
-	cal      gk.CalendarState
+	cal      base.CalendarState
 	scroll   gk.ScrollHandle
 	dropped  string
 	preview  gk.View
@@ -31,11 +37,11 @@ type valuesPages struct {
 	// the components family
 	zoomIn, zoomOut gk.Action
 	handles         gk.RowSource // comp6-resize: the divider the app draws
-	calRange        gk.CalendarState
-	calDays         gk.CalendarState
+	calRange        base.CalendarState
+	calDays         base.CalendarState
 	cells           gk.RowSource // comp6-table-menu
-	table           gk.TableState
-	tree            gk.TreeState // comp6-tree-menu
+	table           gktable.State
+	tree            gktable.TreeState // comp6-tree-menu
 	treeRows        gk.RowSource
 }
 
@@ -62,19 +68,19 @@ var valuesPageTable = []Page{
 	{"comp6-tree-menu", comp6TreeMenu},
 }
 
-var c6Tree = []gk.TreeNode{{ID: "a", Label: "alpha"}, {ID: "b", Label: "beta"}, {ID: "c", Label: "gamma"}}
+var c6Tree = []gktable.TreeNode{{ID: "a", Label: "alpha"}, {ID: "b", Label: "beta"}, {ID: "c", Label: "gamma"}}
 
 func civil(y int32, m, d uint32) gk.CivilDate { return gk.CivilDate{Year: y, Month: m, Day: d} }
 
 func valuesPagesInit(a *App, cx *gk.Cx) {
 	vp := &a.values
 	vp.band = gk.NewScaleBand(cx, []string{"a", "b", "c", "d"}, [2]float32{0, 400}).PaddingInner(0.2).Build()
-	vp.linear = gk.NewScaleLinear(cx, []float64{0, 10}, [2]float32{0, 200})
+	vp.linear = chart.NewScaleLinear(cx, []float64{0, 10}, [2]float32{0, 200})
 	th := gk.ThemeGlobal(cx)
 	vp.fontSize, vp.radius = th.FontSize(cx), th.Radius(cx)
 	// PROTOCOLS.md 13.13, 13.14
-	vp.cal = gk.NewCalendarState(cx).Build()
-	vp.cal.SetDate(cx, gk.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
+	vp.cal = base.NewCalendarState(cx).Build()
+	vp.cal.SetDate(cx, base.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
 	vp.scroll = gk.NewScrollHandle(cx)
 	vp.scroll.SetOffset(cx, gk.GpuiPoint{X: 0, Y: -120})
 	// PROTOCOLS.md 13.19, 13.20
@@ -90,33 +96,33 @@ func valuesPagesInit(a *App, cx *gk.Cx) {
 	// the components family
 	vp.zoomIn = gk.NewAction(cx, "gallery_menu::MenuZoomIn") // the Rust twin's actions (overlay_pages.rs)
 	vp.zoomOut = gk.NewAction(cx, "gallery_menu::MenuZoomOut")
-	vp.handles = gk.Items(cx, a.comp6HandleRow)
-	vp.calRange = gk.NewCalendarState(cx).
-		DisabledMatcher(gk.MatcherRange{Value: gk.RangeMatcher{From: gk.Some(civil(2024, 2, 12)), To: gk.Some(civil(2024, 2, 16))}}).Build()
-	vp.calRange.SetDate(cx, gk.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
-	vp.calDays = gk.NewCalendarState(cx).Build()
-	vp.calDays.SetDisabledMatcher(cx, gk.MatcherCustom{Value: []gk.CivilDate{civil(2024, 2, 5), civil(2024, 2, 20)}})
-	vp.calDays.SetDate(cx, gk.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
-	id, name := gk.NewTableColumn("id", "Id"), gk.NewTableColumn("name", "Name")
+	vp.handles = overlay.Items(cx, a.comp6HandleRow)
+	vp.calRange = base.NewCalendarState(cx).
+		DisabledMatcher(base.MatcherRange{Value: gk.RangeMatcher{From: gk.Some(civil(2024, 2, 12)), To: gk.Some(civil(2024, 2, 16))}}).Build()
+	vp.calRange.SetDate(cx, base.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
+	vp.calDays = base.NewCalendarState(cx).Build()
+	vp.calDays.SetDisabledMatcher(cx, base.MatcherCustom{Value: []gk.CivilDate{civil(2024, 2, 5), civil(2024, 2, 20)}})
+	vp.calDays.SetDate(cx, base.DateSingle{Value: gk.Some(civil(2024, 2, 29))})
+	id, name := gktable.NewTableColumn("id", "Id"), gktable.NewTableColumn("name", "Name")
 	id.Width = 60
-	vp.cells = gk.NewTableSource(cx, 4, []gk.TableColumn{id, name}, a.comp6Cell)
-	vp.table = gk.NewTableState(cx, vp.cells).Build()
-	vp.tree = gk.NewTreeState(cx).Build()
-	gk.SetTreeItems(cx, vp.tree, c6Tree)
-	vp.treeRows = gk.NewTreeSource(cx, a.comp6TreeRow)
+	vp.cells = gktable.NewSource(cx, 4, []gktable.TableColumn{id, name}, a.comp6Cell)
+	vp.table = gktable.NewState(cx, vp.cells).Build()
+	vp.tree = gktable.NewTreeState(cx).Build()
+	gktable.SetTreeItems(cx, vp.tree, c6Tree)
+	vp.treeRows = gktable.NewTreeSource(cx, a.comp6TreeRow)
 }
 
 func valuesSample() gk.Element {
 	return gk.Div(s.Flex, s.FlexCol).Gap(gk.Px(12)).
-		Child(gk.Button("primary").Primary().Label("Primary")).
-		Child(gk.Button("outline").Outline().Label("Outline")).
-		Child(gk.Label("The theme of the whole window")).
-		Child(gk.Switch("sw").Checked(true).Label("Switch"))
+		Child(kit.Button("primary").Primary().Label("Primary")).
+		Child(kit.Button("outline").Outline().Label("Outline")).
+		Child(kit.Label("The theme of the whole window")).
+		Child(kit.Switch("sw").Checked(true).Label("Switch"))
 }
 
 func valuesThemeModePage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div(s.Flex, s.FlexCol).Gap(gk.Px(16)).
-		Child(gk.Button("toggle").Label("Toggle").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.Button("toggle").Label("Toggle").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			if gk.ThemeGlobal(cx).IsDark(cx) {
 				gk.ThemeChange(cx, gk.ThemeModeLight)
 			} else {
@@ -128,7 +134,7 @@ func valuesThemeModePage(a *App, cx *gk.Cx) gk.Element {
 
 func valuesThemeEditPage(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div(s.Flex, s.FlexCol).Gap(gk.Px(16)).
-		Child(gk.Button("toggle").Label("Toggle").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.Button("toggle").Label("Toggle").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			th := gk.ThemeGlobal(cx)
 			if th.Radius(cx) == a.values.radius {
 				th.SetRadius(cx, 0)
@@ -156,7 +162,7 @@ func valuesScalesPage(a *App, cx *gk.Cx) gk.Element {
 
 // calendarDatePage: a calendar whose state was given a date (jiff's civil::Date, PROTOCOLS.md 13.13).
 func calendarDatePage(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(320)).Child(gk.Calendar(a.values.cal))
+	return gk.Div().W(gk.Px(320)).Child(kit.Calendar(a.values.cal))
 }
 
 // valuesSettingsPage: the kit's settings page over fields whose values the library holds (value
@@ -164,17 +170,17 @@ func calendarDatePage(a *App, cx *gk.Cx) gk.Element {
 // between frames.
 func valuesSettingsPage(a *App, cx *gk.Cx) gk.Element {
 	p := &a.values
-	look := gk.NewSettingGroup().Title("Look").
-		Item(gk.NewSettingItem("Dark", gk.NewSettingFieldBoolSwitch(p.dark, func(cx *gk.Cx, v bool) { gk.CellSet(cx, p.dark, v) }).DefaultValue(false))).
-		Item(gk.NewSettingItem("Compact", gk.NewSettingFieldBoolCheckbox(p.compact, func(cx *gk.Cx, v bool) { gk.CellSet(cx, p.compact, v) }))).
-		Item(gk.NewSettingItem("Name", gk.NewSettingFieldTextInput(p.name, func(cx *gk.Cx, v string) { gk.CellSet(cx, p.name, v) }))).
-		Item(gk.NewSettingItem("Size", gk.NewSettingFieldTextDropdown([]gk.TupleStringString{{V0: "s", V1: "Small"}, {V0: "m", V1: "Medium"}}, p.size,
+	look := kit.NewSettingGroup().Title("Look").
+		Item(kit.NewSettingItem("Dark", kit.NewSettingFieldBoolSwitch(p.dark, func(cx *gk.Cx, v bool) { gk.CellSet(cx, p.dark, v) }).DefaultValue(false))).
+		Item(kit.NewSettingItem("Compact", kit.NewSettingFieldBoolCheckbox(p.compact, func(cx *gk.Cx, v bool) { gk.CellSet(cx, p.compact, v) }))).
+		Item(kit.NewSettingItem("Name", kit.NewSettingFieldTextInput(p.name, func(cx *gk.Cx, v string) { gk.CellSet(cx, p.name, v) }))).
+		Item(kit.NewSettingItem("Size", kit.NewSettingFieldTextDropdown([]gk.TupleStringString{{V0: "s", V1: "Small"}, {V0: "m", V1: "Medium"}}, p.size,
 			func(cx *gk.Cx, v string) { gk.CellSet(cx, p.size, v) }))).
-		Item(gk.NewSettingItem("Zoom", gk.NewSettingFieldNumberNumberInput(gk.NumberFieldOptions{Min: 0, Max: 4, Step: 0.5}, p.zoom,
+		Item(kit.NewSettingItem("Zoom", kit.NewSettingFieldNumberNumberInput(kit.NumberFieldOptions{Min: 0, Max: 4, Step: 0.5}, p.zoom,
 			func(cx *gk.Cx, v float64) { gk.CellSet(cx, p.zoom, v) }))).
-		Item(gk.NewSettingItemRender(gk.Div().Child(gk.Label("Rendered by the app"))))
+		Item(kit.NewSettingItemRender(gk.Div().Child(kit.Label("Rendered by the app"))))
 	return gk.Div().W(gk.Px(760)).H(gk.Px(480)).
-		Child(gk.Settings("settings").SidebarSizeRange([2]float32{100, 300}).Page(gk.NewSettingPage("General").Group(look)))
+		Child(kit.Settings("settings").SidebarSizeRange([2]float32{100, 300}).Page(kit.NewSettingPage("General").Group(look)))
 }
 
 // valuesScrollPage: a list scrolled from code through gpui's ScrollHandle, a scrollbar over it
@@ -191,11 +197,11 @@ func valuesScrollPage(a *App, cx *gk.Cx) gk.Element {
 // target that takes the drop and shows a style while the value is over it.
 func valuesDragPage(a *App, cx *gk.Cx) gk.Element {
 	src := gk.Div().ID("src").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).
-		OnDrag(gk.DragValue{ID: 7, Text: "row 7"}, a.values.preview).Child(gk.Label("drag me"))
+		OnDrag(gk.DragValue{ID: 7, Text: "row 7"}, a.values.preview).Child(kit.Label("drag me"))
 	dst := gk.Div().ID("dst").W(gk.Px(200)).H(gk.Px(120)).Bg(theme.Secondary).
 		DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent)).
 		OnDrop(func(cx *gk.Cx, d gk.DragValue) { a.values.dropped = fmt.Sprintf("dropped %d: %s", d.ID, d.Text) }).
-		Child(gk.Label(a.values.dropped))
+		Child(kit.Label(a.values.dropped))
 	return gk.Div(s.Flex).Gap(gk.Px(80)).Child(src).Child(dst)
 }
 
@@ -208,9 +214,9 @@ func valuesShadowPage(a *App, cx *gk.Cx) gk.Element {
 // valuesResizablePage: the kit's resizable panels, a horizontal group of two panels and the
 // kit's handle between them.
 func valuesResizablePage(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(600)).H(gk.Px(200)).Child(gk.KitHResizable("rz").
-		Child(gk.ResizablePanel().Size(200).Child(gk.Div(s.SizeFull).Bg(theme.Muted).Child(gk.Label("left")))).
-		Child(gk.ResizablePanel().Child(gk.Div(s.SizeFull).Child(gk.Label("right")))))
+	return gk.Div().W(gk.Px(600)).H(gk.Px(200)).Child(base.KitHResizable("rz").
+		Child(base.ResizablePanel().Size(200).Child(gk.Div(s.SizeFull).Bg(theme.Muted).Child(kit.Label("left")))).
+		Child(base.ResizablePanel().Child(gk.Div(s.SizeFull).Child(kit.Label("right")))))
 }
 
 // valuesScrollbarDivPage: a div that overflows with the kit's own scrollbar
@@ -220,13 +226,13 @@ func valuesScrollbarDivPage(a *App, cx *gk.Cx) gk.Element {
 	for i := range 20 {
 		list = list.Child(gk.Div().H(gk.Px(24)).Child(gk.Text(fmt.Sprintf("item %d", i))))
 	}
-	return list.OverflowYScrollbar().ID("sd")
+	return kit.DivOverflowYScrollbar(list).ID("sd")
 }
 
 // valuesToolbarPage: a toolbar whose children must be Sizable: buttons, one at a time and as a list.
 func valuesToolbarPage(a *App, cx *gk.Cx) gk.Element {
-	return gk.Toolbar("tb").Child(gk.Button("b1").Label("Bold")).Child(gk.Button("b2").Label("Italic")).
-		Children([]gk.SizableNode{gk.Button("b3").Label("Code"), gk.Button("b4").Label("Wrap")})
+	return kit.Toolbar("tb").Child(kit.Button("b1").Label("Bold")).Child(kit.Button("b2").Label("Italic")).
+		Children([]gk.SizableNode{kit.Button("b3").Label("Code"), kit.Button("b4").Label("Wrap")})
 }
 
 // --- the components family, docs/PROTOCOLS.md 11.17 to 11.24, the twins of
@@ -235,13 +241,13 @@ func valuesToolbarPage(a *App, cx *gk.Cx) gk.Element {
 // disabled dates and a table's and a tree's row menus.
 
 func comp6Tooltip(a *App, cx *gk.Cx) gk.Element {
-	tip := gk.NewKitTooltip("Save the file").KeyBinding(gk.Some(gk.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true}, Key: "s"})))
-	return gk.Div().ID("c6tip").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(gk.Label("Hover me"))
+	tip := overlay.NewKitTooltip("Save the file").KeyBinding(gk.Some(kit.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true}, Key: "s"})))
+	return gk.Div().ID("c6tip").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(kit.Label("Hover me"))
 }
 
 func comp6TooltipElement(a *App, cx *gk.Cx) gk.Element {
-	tip := gk.NewKitTooltipElement(gk.HFlex(s.Gap1).Child(gk.Label("Zoom")).Child(gk.Label("in"))).Action(a.values.zoomIn, gk.Option[string]{})
-	return gk.Div().ID("c6tipe").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(gk.Label("Hover me"))
+	tip := overlay.NewKitTooltipElement(gk.HFlex(s.Gap1).Child(kit.Label("Zoom")).Child(kit.Label("in"))).Action(a.values.zoomIn, gk.Option[string]{})
+	return gk.Div().ID("c6tipe").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(kit.Label("Hover me"))
 }
 
 // comp6TextView: a checkbox's label and an alert's message in Markdown.
@@ -249,13 +255,13 @@ func comp6TooltipElement(a *App, cx *gk.Cx) gk.Element {
 // kit's Into<Text> for a TextView, Text::TextView).
 func comp6TextView(a *App, cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.Gap3).W(gk.Px(400)).
-		Child(gk.Checkbox("c6cb").Checked(true).Label(gk.TextViewMarkdown("c6md1", "A **bold** label"))).
-		Child(gk.Alert("c6al", gk.TextViewMarkdown("c6md2", "An alert in *Markdown*")))
+		Child(kit.Checkbox("c6cb").Checked(true).Label(editor.TextViewMarkdown("c6md1", "A **bold** label"))).
+		Child(kit.Alert("c6al", editor.TextViewMarkdown("c6md2", "An alert in *Markdown*")))
 }
 
 // comp6HandleRow is the divider of the first group: a 3-pixel bar, the primary color while the
 // pointer owns it (an item function, gk.Items).
-func (a *App) comp6HandleRow(cx *gk.Cx, ctx gk.ResizeHandleContext) gk.Element {
+func (a *App) comp6HandleRow(cx *gk.Cx, ctx base.ResizeHandleContext) gk.Element {
 	color := theme.Border
 	if ctx.IsActive {
 		color = theme.Primary
@@ -265,45 +271,45 @@ func (a *App) comp6HandleRow(cx *gk.Cx, ctx gk.ResizeHandleContext) gk.Element {
 
 func comp6Resize(a *App, cx *gk.Cx) gk.Element {
 	group := func(id string, r gk.ResizeHandleRenderer) gk.Element {
-		return gk.Div().W(gk.Px(600)).H(gk.Px(100)).Child(gk.HResizable(id).WithHandleAppearance(r).
-			Child(gk.ResizablePanel().Size(200).Child(gk.Label("left"))).
-			Child(gk.ResizablePanel().Child(gk.Label("right"))))
+		return gk.Div().W(gk.Px(600)).H(gk.Px(100)).Child(base.HResizable(id).WithHandleAppearance(r).
+			Child(base.ResizablePanel().Size(200).Child(kit.Label("left"))).
+			Child(base.ResizablePanel().Child(kit.Label("right"))))
 	}
 	// A handle of its own (ResizeHandle::with_appearance) at the left edge of a band.
 	alone := gk.Div(s.Relative).W(gk.Px(600)).H(gk.Px(40)).Bg(theme.Muted).
-		Child(gk.ResizeHandle("c6h", gk.AxisHorizontal).WithAppearance(a.values.handles))
+		Child(base.ResizeHandle("c6h", gk.AxisHorizontal).WithAppearance(a.values.handles))
 	return gk.VFlex(s.Gap4).Child(group("c6rz", a.values.handles)).
 		Child(group("c6rk", gk.ResizeHandleRendererKitResizeHandleAppearance)).Child(alone)
 }
 
 func comp6CalendarMatcher(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div(s.Flex, s.Gap4).Child(gk.Div().W(gk.Px(320)).Child(gk.Calendar(a.values.calRange))).
-		Child(gk.Div().W(gk.Px(320)).Child(gk.Calendar(a.values.calDays)))
+	return gk.Div(s.Flex, s.Gap4).Child(gk.Div().W(gk.Px(320)).Child(kit.Calendar(a.values.calRange))).
+		Child(gk.Div().W(gk.Px(320)).Child(kit.Calendar(a.values.calDays)))
 }
 
 // comp6Cell is a cell of the menu table; the first column's cell carries its row's menu.
-func (a *App) comp6Cell(cx *gk.Cx, at gk.CellAt) gk.Element {
-	el := gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+func (a *App) comp6Cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
+	el := kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 	if at.Col != 0 {
 		return el
 	}
-	return gk.RowMenu(el, gk.NewPopupMenu().Menu(fmt.Sprintf("Open row %d", at.Row), a.values.zoomIn).
+	return kit.RowMenu(el, kit.NewPopupMenu().Menu(fmt.Sprintf("Open row %d", at.Row), a.values.zoomIn).
 		Menu(fmt.Sprintf("Delete row %d", at.Row), a.values.zoomOut))
 }
 
 func comp6TableMenu(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gk.DataTable(a.values.table).ScrollbarVisible(false, false))
+	return gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gktable.DataTable(a.values.table).ScrollbarVisible(false, false))
 }
 
-func (a *App) comp6TreeRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) comp6TreeRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	label := ""
-	if e, ok := gk.TreeEntryAt(cx, a.values.tree, at.Row); ok {
+	if e, ok := gktable.TreeEntryAt(cx, a.values.tree, at.Row); ok {
 		label = e.Label
 	}
-	item := gk.ListItem(gk.Key("c6tree", at.Row)).Child(gk.Label(label))
-	return gk.RowMenuItem(item, gk.NewPopupMenu().Menu(fmt.Sprintf("Rename %s", label), a.values.zoomIn))
+	item := gktable.ListItem(gk.Key("c6tree", at.Row)).Child(kit.Label(label))
+	return kit.RowMenuItem(item, kit.NewPopupMenu().Menu(fmt.Sprintf("Rename %s", label), a.values.zoomIn))
 }
 
 func comp6TreeMenu(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(300)).H(gk.Px(160)).Child(gk.Tree(a.values.tree, a.values.treeRows).ContextMenu(a.values.treeRows))
+	return gk.Div().W(gk.Px(300)).H(gk.Px(160)).Child(gktable.Tree(a.values.tree, a.values.treeRows).ContextMenu(a.values.treeRows))
 }

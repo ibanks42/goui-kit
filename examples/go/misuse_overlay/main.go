@@ -21,32 +21,35 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	gkdock "gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 )
 
 type App struct {
 	mode  string
 	root  gk.View
-	dlg   gk.Built[gk.DialogEl]
-	dock  gk.DockArea
+	dlg   gk.Built[overlay.DialogEl]
+	dock  gkdock.Area
 	built int
 }
 
-func (a *App) good(cx *gk.Cx) gk.DialogEl {
+func (a *App) good(cx *gk.Cx) overlay.DialogEl {
 	a.built++
-	return gk.Dialog().Title(gk.Label("Fine"))
+	return overlay.Dialog().Title(kit.Label("Fine"))
 }
 
 func (a *App) open(cx *gk.Cx) {
 	switch a.mode {
 	case "built-none":
-		gk.OpenDialog(cx, gk.Built[gk.DialogEl]{})
+		overlay.OpenDialog(cx, gk.Built[overlay.DialogEl]{})
 	case "dock-node":
-		a.dock = gk.NewDockAreaSkinned(cx, "neg")
-		a.dock.SetZoomedIn(cx, gk.NodeID(424242)) // made up: no read handed it out
+		a.dock = gkdock.NewAreaSkinned(cx, "neg")
+		a.dock.SetZoomedIn(cx, gkdock.NodeID(424242)) // made up: no read handed it out
 	default:
 		a.dlg = gk.NewBuilt(cx, a.good)
-		gk.OpenDialog(cx, a.dlg)
+		overlay.OpenDialog(cx, a.dlg)
 	}
 }
 
@@ -54,9 +57,9 @@ func (a *App) later(cx *gk.Cx) {
 	switch a.mode {
 	case "built-freed":
 		gk.Release(cx, a.dlg.View)
-		gk.OpenAlertDialog(cx, gk.NewBuilt(cx, func(cx *gk.Cx) gk.AlertDialogEl { return gk.AlertDialog() }))
+		overlay.OpenAlertDialog(cx, gk.NewBuilt(cx, func(cx *gk.Cx) overlay.AlertDialogEl { return overlay.AlertDialog() }))
 	default:
-		fmt.Printf("gk-neg done mode=%s built=%d active=%v\n", a.mode, a.built, gk.HasActiveDialog(cx))
+		fmt.Printf("gk-neg done mode=%s built=%d active=%v\n", a.mode, a.built, overlay.HasActiveDialog(cx))
 	}
 }
 
@@ -65,9 +68,9 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		gk.NewBuilt(cx, a.good) // a view function may not make views
 	}
 	if a.mode == "dock-register" {
-		gk.RegisterPanel(cx, "x", func(cx *gk.Cx, b gk.PanelBuild) {}) // only in init or a handler
+		gkdock.RegisterPanel(cx, "x", func(cx *gk.Cx, b gkdock.PanelBuild) {}) // only in init or a handler
 	}
-	return gk.Div(s.SizeFull).Child(gk.Label("misuse overlay"))
+	return gk.Div(s.SizeFull).Child(kit.Label("misuse overlay"))
 }
 
 func (a *App) init(cx *gk.Cx) {

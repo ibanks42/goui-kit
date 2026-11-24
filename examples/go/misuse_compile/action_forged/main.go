@@ -2,7 +2,9 @@
 // forged: only gk.NewAction makes one).
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+)
 
 func main() {
 	gk.Run(func(cx *gk.Cx) {

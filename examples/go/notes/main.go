@@ -13,7 +13,12 @@ import (
 	"slices"
 
 	"gpuikit.dev/gk"
+	gkdock "gpuikit.dev/gk/dock"
+	gkeditor "gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -28,10 +33,10 @@ type App struct {
 	made     int // notes made so far, for "Untitled N"
 	dark     bool
 
-	title   gk.InputState // kit state that lives in the library
-	list    gk.ListState
-	dock    gk.DockArea
-	confirm gk.Built[gk.AlertDialogEl]
+	title   gkeditor.InputState // kit state that lives in the library
+	list    table.ListState
+	dock    gkdock.Area
+	confirm gk.Built[overlay.AlertDialogEl]
 
 	newNote, deleteNote, toggleTheme gk.Action // shortcuts, also in the menu (it shows their keys)
 }
@@ -44,25 +49,25 @@ func (a *App) init(cx *gk.Cx) {
 	a.deleteNote = gk.Shortcut(cx, "", a.askDelete) // the menu's item only
 	a.toggleTheme = gk.Shortcut(cx, "ctrl-t", a.switchTheme)
 
-	a.title = gk.NewInputState(cx).Placeholder("Title").Build()
+	a.title = gkeditor.NewInputState(cx).Placeholder("Title").Build()
 	a.title.OnInputEvent(cx, a.titleChanged)
-	a.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.notes) }, a.noteRow)).Build()
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.notes) }, a.noteRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
 	a.confirm = gk.NewBuilt(cx, a.confirmView)
 
-	a.dock = gk.NewDockAreaSkinned(cx, "notes")
-	notes := gk.NewPanel(cx, gk.NewView(nil, a.notesView), gk.PanelData{Name: "notes", Title: "Notes"})
-	editor := gk.NewPanel(cx, gk.NewView(nil, a.editorView), gk.PanelData{Name: "editor", Title: "Editor"})
+	a.dock = gkdock.NewAreaSkinned(cx, "notes")
+	notes := gkdock.NewPanel(cx, gk.NewView(nil, a.notesView), gkdock.PanelData{Name: "notes", Title: "Notes"})
+	editor := gkdock.NewPanel(cx, gk.NewView(nil, a.editorView), gkdock.PanelData{Name: "editor", Title: "Editor"})
 	// PanelView: the kit's PanelHandle over the panel, so the tabs show the titles
-	a.dock.SetDock(cx, gk.DockPlacementLeft, gk.NewDockLayoutTabs().PanelView(notes))
-	a.dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(editor))
+	a.dock.SetDock(cx, gkdock.PlacementLeft, gkdock.NewLayoutTabs().PanelView(notes))
+	a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(editor))
 	a.selectNote(cx, 0)
 }
 
 // --- the views --------------------------------------------------------------------------------
 
-func (a *App) fileMenu() gk.PopupMenu {
-	return gk.NewPopupMenu().
+func (a *App) fileMenu() kit.PopupMenu {
+	return kit.NewPopupMenu().
 		Menu("New note", a.newNote).
 		Menu("Toggle theme", a.toggleTheme).
 		Separator().
@@ -75,49 +80,49 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		themeLabel = "Light theme"
 	}
 	bar := gk.HFlex(s.Gap2, s.ItemsCenter, s.P2, s.BorderB1).BorderColor(theme.Border).
-		Child(gk.DropdownMenu(gk.Button("file").Label("File"), a.fileMenu())).
-		Child(gk.Label(fmt.Sprintf("%d notes", len(a.notes)))).
+		Child(kit.DropdownMenu(kit.Button("file").Label("File"), a.fileMenu())).
+		Child(kit.Label(fmt.Sprintf("%d notes", len(a.notes)))).
 		Child(gk.Div(s.Flex1)).
-		Child(gk.Button("theme").Label(themeLabel).OnClick(a.switchTheme))
+		Child(kit.Button("theme").Label(themeLabel).OnClick(a.switchTheme))
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(bar).
-		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(gk.DockView(a.dock)))
+		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(gkdock.View(a.dock)))
 }
 
 func (a *App) notesView(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).Child(gk.List(a.list).ScrollbarVisible(false))
+	return gk.Div(s.SizeFull).Child(table.List(a.list).ScrollbarVisible(false))
 }
 
-func (a *App) noteRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) noteRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	n := a.notes[at.Row]
-	return gk.ListItem(gk.Key("note", at.Row)).
+	return table.ListItem(gk.Key("note", at.Row)).
 		Child(gk.VFlex().
-			Child(gk.Label(n.Title)).
-			Child(gk.Label(fmt.Sprintf("%d words", n.Words), s.TextSm).TextColor(theme.MutedForeground)))
+			Child(kit.Label(n.Title)).
+			Child(kit.Label(fmt.Sprintf("%d words", n.Words), s.TextSm).TextColor(theme.MutedForeground)))
 }
 
 func (a *App) editorView(cx *gk.Cx) gk.Element {
 	if a.selected < 0 {
-		return gk.VFlex(s.SizeFull, s.P4, s.ItemsCenter).Child(gk.Label("No note selected"))
+		return gk.VFlex(s.SizeFull, s.P4, s.ItemsCenter).Child(kit.Label("No note selected"))
 	}
 	n := a.notes[a.selected]
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
-		Child(gk.Label("Title")).
-		Child(gk.Input(a.title)).
-		Child(gk.Label(fmt.Sprintf("%d words", n.Words))).
+		Child(kit.Label("Title")).
+		Child(gkeditor.Input(a.title)).
+		Child(kit.Label(fmt.Sprintf("%d words", n.Words))).
 		Child(gk.HFlex(s.Gap2).
-			Child(gk.Button("delete").Danger().Label("Delete").OnClick(a.askDelete)))
+			Child(kit.Button("delete").Danger().Label("Delete").OnClick(a.askDelete)))
 }
 
-func (a *App) confirmView(cx *gk.Cx) gk.AlertDialogEl {
+func (a *App) confirmView(cx *gk.Cx) overlay.AlertDialogEl {
 	name := ""
 	if a.selected >= 0 {
 		name = a.notes[a.selected].Title
 	}
-	return gk.AlertDialog().
-		Title(gk.Label(fmt.Sprintf("Delete \"%s\"?", name))).
-		Description(gk.Label("The note will be gone for good.")).
-		Entrance(gk.DialogEntranceNone).
+	return overlay.AlertDialog().
+		Title(kit.Label(fmt.Sprintf("Delete \"%s\"?", name))).
+		Description(kit.Label("The note will be gone for good.")).
+		Entrance(overlay.DialogEntranceNone).
 		ShowCancel(true).
 		OnOk(a.confirmDelete)
 }
@@ -129,21 +134,21 @@ func (a *App) selectNote(cx *gk.Cx, row int) {
 	if row >= 0 {
 		a.title.SetValue(cx, a.notes[row].Title)
 	}
-	gk.SelectRow(cx, a.list, row)
+	table.SelectRow(cx, a.list, row)
 	gk.Refresh(cx)
 }
 
-func (a *App) listEvent(cx *gk.Cx, e gk.ListEvent) {
+func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
 	switch e := e.(type) {
-	case gk.ListEventSelect:
+	case table.ListEventSelect:
 		a.selectNote(cx, e.Row)
-	case gk.ListEventConfirm:
+	case table.ListEventConfirm:
 		a.selectNote(cx, e.Row)
 	}
 }
 
-func (a *App) titleChanged(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); !ok || a.selected < 0 {
+func (a *App) titleChanged(cx *gk.Cx, e gkeditor.InputEvent) {
+	if _, ok := e.(gkeditor.InputEventChange); !ok || a.selected < 0 {
 		return
 	}
 	if title := a.title.Value(cx); title != a.notes[a.selected].Title {
@@ -160,7 +165,7 @@ func (a *App) addNote(cx *gk.Cx) {
 
 func (a *App) askDelete(cx *gk.Cx, _ gk.ClickEvent) {
 	if a.selected >= 0 {
-		gk.OpenAlertDialog(cx, a.confirm)
+		overlay.OpenAlertDialog(cx, a.confirm)
 	}
 }
 

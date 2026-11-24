@@ -14,18 +14,20 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	frame      int
-	name       gk.InputState
+	name       editor.InputState
 	root, echo gk.View
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.name = gk.NewInputState(cx).Placeholder("Name").Build()
+	a.name = editor.NewInputState(cx).Placeholder("Name").Build()
 	gk.OnFrame(cx, a.tick)
 }
 
@@ -38,12 +40,12 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
 		Bg(theme.Background).
 		TextColor(theme.Foreground).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Input(a.name))).
+		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
 		ChildView(a.echo)
 }
 
 func (a *App) echoView(cx *gk.Cx) gk.Element {
-	return gk.HFlex().Child(gk.Label("echo " + a.name.Value(cx)))
+	return gk.HFlex().Child(kit.Label("echo " + a.name.Value(cx)))
 }
 
 func main() {

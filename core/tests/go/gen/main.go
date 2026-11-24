@@ -16,7 +16,15 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 type App struct {
@@ -30,82 +38,82 @@ type App struct {
 	typed                               int
 	events                              int
 	subs                                []gk.Subscription
-	stAudioFormat                       gk.AudioFormat
-	stAutoScroll                        gk.AutoScroll
-	stBaseTable2                        gk.BaseTable2
+	stAudioFormat                       kit.AudioFormat
+	stAutoScroll                        base.AutoScroll
+	stBaseTable2                        editor.BaseTable2
 	stBaseTheme                         gk.BaseTheme
-	stCalendarState                     gk.CalendarState
-	stCarouselState                     gk.CarouselState
-	stCodeActionMenuState               gk.CodeActionMenuState
-	stColorPickerState                  gk.ColorPickerState
-	stCommandState                      gk.CommandState
-	stCompletionMenuState               gk.CompletionMenuState
-	stDatePickerState                   gk.DatePickerState
-	stDialogHandle                      gk.DialogHandle
-	stDiffAnnotation                    gk.DiffAnnotation
-	stDiffLinePosition                  gk.DiffLinePosition
-	stDiscrete                          gk.Discrete
-	stDock                              gk.Dock
-	stDockArea                          gk.DockArea
-	stDropPlaceholderBounds             gk.DropPlaceholderBounds
-	stEditResult                        gk.EditResult
-	stEditorState                       gk.EditorState
-	stGridLayoutState                   gk.GridLayoutState
-	stGutterDecorationCollection        gk.GutterDecorationCollection
+	stCalendarState                     base.CalendarState
+	stCarouselState                     kit.CarouselState
+	stCodeActionMenuState               editor.CodeActionMenuState
+	stColorPickerState                  base.ColorPickerState
+	stCommandState                      table.CommandState
+	stCompletionMenuState               editor.CompletionMenuState
+	stDatePickerState                   kit.DatePickerState
+	stDialogHandle                      overlay.DialogHandle
+	stDiffAnnotation                    editor.DiffAnnotation
+	stDiffLinePosition                  editor.DiffLinePosition
+	stDiscrete                          motion.Discrete
+	stDock                              dock.Dock
+	stDockArea                          dock.Area
+	stDropPlaceholderBounds             dock.DropPlaceholderBounds
+	stEditResult                        dock.EditResult
+	stEditorState                       editor.State
+	stGridLayoutState                   base.GridLayoutState
+	stGutterDecorationCollection        editor.GutterDecorationCollection
 	stHistory                           gk.History
-	stImageNode                         gk.ImageNode
-	stInputContent                      gk.InputContent
-	stInputState                        gk.InputState
-	stMessageScrollerState              gk.MessageScrollerState
-	stNavStackState                     gk.NavStackState
-	stNotification                      gk.Notification
-	stNotificationList                  gk.NotificationList
-	stOtpState                          gk.OtpState
-	stOverviewRulerDecorationCollection gk.OverviewRulerDecorationCollection
-	stPaneTree                          gk.PaneTree
-	stPanelRegistry                     gk.PanelRegistry
-	stPathCache                         gk.PathCache
-	stPathCaches                        gk.PathCaches
-	stPie                               gk.Pie
-	stPlotAppear                        gk.PlotAppear
-	stPopoverState                      gk.PopoverState
-	stQuestionnaireAnswers              gk.QuestionnaireAnswers
-	stQuestionnaireNavigationState      gk.QuestionnaireNavigationState
-	stQuestionnaireSubmission           gk.QuestionnaireSubmission
-	stRangeHighlight                    gk.RangeHighlight
-	stResizableState                    gk.ResizableState
-	stSankeyGraph                       gk.SankeyGraph
+	stImageNode                         editor.ImageNode
+	stInputContent                      editor.InputContent
+	stInputState                        editor.InputState
+	stMessageScrollerState              kit.MessageScrollerState
+	stNavStackState                     base.NavStackState
+	stNotification                      overlay.Notification
+	stNotificationList                  overlay.NotificationList
+	stOtpState                          editor.OtpState
+	stOverviewRulerDecorationCollection editor.OverviewRulerDecorationCollection
+	stPaneTree                          dock.PaneTree
+	stPanelRegistry                     dock.PanelRegistry
+	stPathCache                         chart.PathCache
+	stPathCaches                        chart.PathCaches
+	stPie                               chart.Pie
+	stPlotAppear                        chart.PlotAppear
+	stPopoverState                      overlay.PopoverState
+	stQuestionnaireAnswers              base.QuestionnaireAnswers
+	stQuestionnaireNavigationState      base.QuestionnaireNavigationState
+	stQuestionnaireSubmission           base.QuestionnaireSubmission
+	stRangeHighlight                    editor.RangeHighlight
+	stResizableState                    base.ResizableState
+	stSankeyGraph                       chart.SankeyGraph
 	stScaleBand                         gk.ScaleBand
-	stScaleLinear                       gk.ScaleLinear
+	stScaleLinear                       chart.ScaleLinear
 	stScaleOrdinal                      gk.ScaleOrdinal
 	stScalePoint                        gk.ScalePoint
 	stScrollHandle                      gk.ScrollHandle
-	stSearchMatcher                     gk.SearchMatcher
-	stSearchSession                     gk.SearchSession
-	stSequence                          gk.Sequence
-	stShapeKey                          gk.ShapeKey
-	stSliderState                       gk.SliderState
-	stSpeechState                       gk.SpeechState
-	stStack                             gk.Stack
-	stStagger                           gk.Stagger
-	stStatusColors                      gk.StatusColors
-	stSyntaxColors                      gk.SyntaxColors
-	stSyntaxHighlighter                 gk.SyntaxHighlighter
-	stTableVisibleRange                 gk.TableVisibleRange
-	stTextSelectionHandle               gk.TextSelectionHandle
-	stTextSelectionProjection           gk.TextSelectionProjection
-	stTextViewDefaults                  gk.TextViewDefaults
-	stTextViewState                     gk.TextViewState
-	stTextareaState                     gk.TextareaState
-	stTimeFieldState                    gk.TimeFieldState
-	stToastManager                      gk.ToastManager
-	stToastStackState                   gk.ToastStackState
-	stTooltipDefaults                   gk.TooltipDefaults
-	stTooltipOverlay                    gk.TooltipOverlay
-	stTransitionState                   gk.TransitionState
-	stTreeState                         gk.TreeState
+	stSearchMatcher                     editor.SearchMatcher
+	stSearchSession                     editor.SearchSession
+	stSequence                          motion.Sequence
+	stShapeKey                          chart.ShapeKey
+	stSliderState                       base.SliderState
+	stSpeechState                       kit.SpeechState
+	stStack                             chart.Stack
+	stStagger                           motion.Stagger
+	stStatusColors                      editor.StatusColors
+	stSyntaxColors                      editor.SyntaxColors
+	stSyntaxHighlighter                 editor.SyntaxHighlighter
+	stTableVisibleRange                 table.VisibleRange
+	stTextSelectionHandle               editor.TextSelectionHandle
+	stTextSelectionProjection           editor.TextSelectionProjection
+	stTextViewDefaults                  editor.TextViewDefaults
+	stTextViewState                     editor.TextViewState
+	stTextareaState                     editor.TextareaState
+	stTimeFieldState                    base.TimeFieldState
+	stToastManager                      overlay.ToastManager
+	stToastStackState                   overlay.ToastStackState
+	stTooltipDefaults                   overlay.TooltipDefaults
+	stTooltipOverlay                    overlay.TooltipOverlay
+	stTransitionState                   motion.TransitionState
+	stTreeState                         table.TreeState
 	stUndoHistory                       gk.UndoHistory
-	stVirtualListScrollHandle           gk.VirtualListScrollHandle
+	stVirtualListScrollHandle           table.VirtualListScrollHandle
 }
 
 var app = &App{}
@@ -121,10 +129,10 @@ type sampleRow struct {
 var sampleRows = []sampleRow{{"a", 1, gk.Some(2.0), gk.Color{}}, {"b", 3, gk.Option[float64]{}, gk.Color{}}}
 
 // Handlers that do nothing, one per handler shape a builder takes.
-func noop1(cx *gk.Cx, e gk.ClickEvent) {}
-func noop3(cx *gk.Cx)                  {}
-func noop98(cx *gk.Cx, e string) bool  { return false }
-func noop114(cx *gk.Cx, e gk.Event114) {}
+func noop1(cx *gk.Cx, e gk.ClickEvent)     {}
+func noop3(cx *gk.Cx)                      {}
+func noop98(cx *gk.Cx, e string) bool      { return false }
+func noop114(cx *gk.Cx, e editor.Event114) {}
 
 // wbuf writes values as the Rust Wire impls do (little-endian; a string or list is a u32 length
 // and its items; an Option a u8 flag and the value): the test's encoders write into one.
@@ -189,7 +197,7 @@ func encBackGestureEvent(w *wbuf, v gk.BackGestureEvent) {
 	w.f32(v.Progress)
 }
 
-func encBaseGridArea(w *wbuf, v gk.BaseGridArea) {
+func encBaseGridArea(w *wbuf, v base.BaseGridArea) {
 	w.text(v.ID)
 	w.u64(uint64(v.Col))
 	w.u64(uint64(v.Row))
@@ -212,7 +220,7 @@ func encBaseGridArea(w *wbuf, v gk.BaseGridArea) {
 	w.flag(v.Locked)
 }
 
-func encBaseIndexPath(w *wbuf, v gk.BaseIndexPath) {
+func encBaseIndexPath(w *wbuf, v table.BaseIndexPath) {
 	w.u64(uint64(v.Section))
 	w.u64(uint64(v.Row))
 	w.u64(uint64(v.Column))
@@ -227,9 +235,9 @@ func encCapslock(w *wbuf, v gk.Capslock) {
 	w.flag(v.On)
 }
 
-func encCarouselEvent(w *wbuf, v gk.CarouselEvent) {
+func encCarouselEvent(w *wbuf, v kit.CarouselEvent) {
 	switch x := v.(type) {
-	case gk.CarouselEventChange:
+	case kit.CarouselEventChange:
 		_ = x
 		w.u16(0)
 		w.u64(uint64(x.Value))
@@ -277,9 +285,9 @@ func encClipboardString(w *wbuf, v gk.ClipboardString) {
 	}
 }
 
-func encColorPickerEvent(w *wbuf, v gk.ColorPickerEvent) {
+func encColorPickerEvent(w *wbuf, v base.ColorPickerEvent) {
 	switch x := v.(type) {
-	case gk.ColorPickerEventChange:
+	case base.ColorPickerEventChange:
 		_ = x
 		w.u16(0)
 		if x2, ok := x.Value.Get(); ok {
@@ -296,16 +304,16 @@ func encColorPickerEvent(w *wbuf, v gk.ColorPickerEvent) {
 	}
 }
 
-func encComboboxEvent(w *wbuf, v gk.ComboboxEvent) {
+func encComboboxEvent(w *wbuf, v table.ComboboxEvent) {
 	switch x := v.(type) {
-	case gk.ComboboxEventChange:
+	case table.ComboboxEventChange:
 		_ = x
 		w.u16(0)
 		w.u32(uint32(len(x.Value)))
 		for _, x2 := range x.Value {
 			w.text(x2)
 		}
-	case gk.ComboboxEventConfirm:
+	case table.ComboboxEventConfirm:
 		_ = x
 		w.u16(1)
 		w.u32(uint32(len(x.Value)))
@@ -317,13 +325,13 @@ func encComboboxEvent(w *wbuf, v gk.ComboboxEvent) {
 	}
 }
 
-func encDiffEvent(w *wbuf, v gk.DiffEvent) {
+func encDiffEvent(w *wbuf, v editor.DiffEvent) {
 	switch x := v.(type) {
-	case gk.DiffEventSelectionStarted:
+	case editor.DiffEventSelectionStarted:
 		_ = x
 		w.u16(0)
 		w.u64(hidden(x.Value, 0).Uint())
-	case gk.DiffEventSelectionChanged:
+	case editor.DiffEventSelectionChanged:
 		_ = x
 		w.u16(1)
 		if x2, ok := x.Value.Get(); ok {
@@ -332,19 +340,19 @@ func encDiffEvent(w *wbuf, v gk.DiffEvent) {
 		} else {
 			w.u8(0)
 		}
-	case gk.DiffEventSelectionEnded:
+	case editor.DiffEventSelectionEnded:
 		_ = x
 		w.u16(2)
 		w.u64(hidden(x.Value, 0).Uint())
-	case gk.DiffEventFileExpanded:
+	case editor.DiffEventFileExpanded:
 		_ = x
 		w.u16(3)
 		w.text(x.Value)
-	case gk.DiffEventFileCollapsed:
+	case editor.DiffEventFileCollapsed:
 		_ = x
 		w.u16(4)
 		w.text(x.Value)
-	case gk.DiffEventConflictResolved:
+	case editor.DiffEventConflictResolved:
 		_ = x
 		w.u16(5)
 		w.text(x.V0)
@@ -393,16 +401,16 @@ func encGpuiSize(w *wbuf, v gk.GpuiSize) {
 	w.f32(v.Height)
 }
 
-func encGridLayoutEvent(w *wbuf, v gk.GridLayoutEvent) {
+func encGridLayoutEvent(w *wbuf, v base.GridLayoutEvent) {
 	switch x := v.(type) {
-	case gk.GridLayoutEventChange:
+	case base.GridLayoutEventChange:
 		_ = x
 		w.u16(0)
 		w.u32(uint32(len(x.Value)))
 		for _, x2 := range x.Value {
 			encBaseGridArea(w, x2)
 		}
-	case gk.GridLayoutEventSelect:
+	case base.GridLayoutEventSelect:
 		_ = x
 		w.u16(1)
 		if x2, ok := x.Value.Get(); ok {
@@ -425,7 +433,7 @@ func encImage(w *wbuf, v gk.Image) {
 	w.u64(uint64(v.ID))
 }
 
-func encInputEdit(w *wbuf, v gk.InputEdit) {
+func encInputEdit(w *wbuf, v editor.InputEdit) {
 	w.u64(uint64(v.StartByte))
 	w.u64(uint64(v.OldEndByte))
 	w.u64(uint64(v.NewEndByte))
@@ -434,7 +442,7 @@ func encInputEdit(w *wbuf, v gk.InputEdit) {
 	encPoint(w, v.NewEndPosition)
 }
 
-func encInputEditsEvent(w *wbuf, v gk.InputEditsEvent) {
+func encInputEditsEvent(w *wbuf, v editor.InputEditsEvent) {
 	w.u32(uint32(len(v.Edits)))
 	for _, x1 := range v.Edits {
 		encInputEdit(w, x1.V0)
@@ -442,20 +450,20 @@ func encInputEditsEvent(w *wbuf, v gk.InputEditsEvent) {
 	}
 }
 
-func encInputEvent(w *wbuf, v gk.InputEvent) {
+func encInputEvent(w *wbuf, v editor.InputEvent) {
 	switch x := v.(type) {
-	case gk.InputEventChange:
+	case editor.InputEventChange:
 		_ = x
 		w.u16(0)
-	case gk.InputEventPressEnter:
+	case editor.InputEventPressEnter:
 		_ = x
 		w.u16(1)
 		w.flag(x.Secondary)
 		w.flag(x.Shift)
-	case gk.InputEventFocus:
+	case editor.InputEventFocus:
 		_ = x
 		w.u16(2)
-	case gk.InputEventBlur:
+	case editor.InputEventBlur:
 		_ = x
 		w.u16(3)
 	default:
@@ -463,17 +471,17 @@ func encInputEvent(w *wbuf, v gk.InputEvent) {
 	}
 }
 
-func encListEvent(w *wbuf, v gk.ListEvent) {
+func encListEvent(w *wbuf, v table.ListEvent) {
 	switch x := v.(type) {
-	case gk.ListEventSelect:
+	case table.ListEventSelect:
 		_ = x
 		w.u16(0)
 		encBaseIndexPath(w, x.BaseIndexPath)
-	case gk.ListEventConfirm:
+	case table.ListEventConfirm:
 		_ = x
 		w.u16(1)
 		encBaseIndexPath(w, x.BaseIndexPath)
-	case gk.ListEventCancel:
+	case table.ListEventCancel:
 		_ = x
 		w.u16(2)
 	default:
@@ -532,7 +540,7 @@ func encPinchEvent(w *wbuf, v gk.PinchEvent) {
 	w.u16(uint16(v.Phase))
 }
 
-func encPoint(w *wbuf, v gk.Point) {
+func encPoint(w *wbuf, v editor.Point) {
 	w.u64(uint64(v.Row))
 	w.u64(uint64(v.Column))
 }
@@ -542,7 +550,7 @@ func encPointF32(w *wbuf, v gk.PointF32) {
 	w.f32(v.Y)
 }
 
-func encResolvedPosition(w *wbuf, v gk.ResolvedPosition) {
+func encResolvedPosition(w *wbuf, v overlay.ResolvedPosition) {
 	encBounds(w, v.Bounds)
 	if x1, ok := v.Placement.Get(); ok {
 		w.u8(1)
@@ -575,9 +583,9 @@ func encScrollEvent(w *wbuf, v gk.ScrollEvent) {
 	w.u16(uint16(v.Source))
 }
 
-func encSelectEvent(w *wbuf, v gk.SelectEvent) {
+func encSelectEvent(w *wbuf, v table.SelectEvent) {
 	switch x := v.(type) {
-	case gk.SelectEventConfirm:
+	case table.SelectEventConfirm:
 		_ = x
 		w.u16(0)
 		if x2, ok := x.Value.Get(); ok {
@@ -591,13 +599,13 @@ func encSelectEvent(w *wbuf, v gk.SelectEvent) {
 	}
 }
 
-func encSliderEvent(w *wbuf, v gk.SliderEvent) {
+func encSliderEvent(w *wbuf, v base.SliderEvent) {
 	switch x := v.(type) {
-	case gk.SliderEventChange:
+	case base.SliderEventChange:
 		_ = x
 		w.u16(0)
 		encSliderValue(w, x.Value)
-	case gk.SliderEventRelease:
+	case base.SliderEventRelease:
 		_ = x
 		w.u16(1)
 		encSliderValue(w, x.Value)
@@ -606,13 +614,13 @@ func encSliderEvent(w *wbuf, v gk.SliderEvent) {
 	}
 }
 
-func encSliderValue(w *wbuf, v gk.SliderValue) {
+func encSliderValue(w *wbuf, v base.SliderValue) {
 	switch x := v.(type) {
-	case gk.SliderValueSingle:
+	case base.SliderValueSingle:
 		_ = x
 		w.u16(0)
 		w.f32(x.Value)
-	case gk.SliderValueRange:
+	case base.SliderValueRange:
 		_ = x
 		w.u16(1)
 		w.f32(x.V0)
@@ -622,32 +630,32 @@ func encSliderValue(w *wbuf, v gk.SliderValue) {
 	}
 }
 
-func encSpeechError(w *wbuf, v gk.SpeechError) {
+func encSpeechError(w *wbuf, v kit.SpeechError) {
 	switch x := v.(type) {
-	case gk.SpeechErrorKind:
+	case kit.SpeechErrorKind:
 		w.u16(uint16(x))
 	default:
 		panic(fmt.Sprintf("encSpeechError: a %T the test cannot encode", v))
 	}
 }
 
-func encSpeechEvent(w *wbuf, v gk.SpeechEvent) {
+func encSpeechEvent(w *wbuf, v kit.SpeechEvent) {
 	switch x := v.(type) {
-	case gk.SpeechEventStarted:
+	case kit.SpeechEventStarted:
 		_ = x
 		w.u16(0)
-	case gk.SpeechEventPartial:
+	case kit.SpeechEventPartial:
 		_ = x
 		w.u16(1)
 		w.text(x.Value)
-	case gk.SpeechEventFinal:
+	case kit.SpeechEventFinal:
 		_ = x
 		w.u16(2)
 		w.text(x.Value)
-	case gk.SpeechEventCancelled:
+	case kit.SpeechEventCancelled:
 		_ = x
 		w.u16(3)
-	case gk.SpeechEventError:
+	case kit.SpeechEventError:
 		_ = x
 		w.u16(4)
 		encSpeechError(w, x.Value)
@@ -656,21 +664,21 @@ func encSpeechEvent(w *wbuf, v gk.SpeechEvent) {
 	}
 }
 
-func encTabGroupEvent(w *wbuf, v gk.TabGroupEvent) {
+func encTabGroupEvent(w *wbuf, v dock.TabGroupEvent) {
 	switch x := v.(type) {
-	case gk.TabGroupEventDragDrop:
+	case dock.TabGroupEventDragDrop:
 		_ = x
 		w.u16(1)
 		w.u64(hidden(x.Item, 0).Uint())
 		w.u64(hidden(x.Target, 0).Uint())
-	case gk.TabGroupEventActiveChanged:
+	case dock.TabGroupEventActiveChanged:
 		_ = x
 		w.u16(3)
 		w.u64(uint64(x.Ix))
-	case gk.TabGroupEventZoomIn:
+	case dock.TabGroupEventZoomIn:
 		_ = x
 		w.u16(4)
-	case gk.TabGroupEventZoomOut:
+	case dock.TabGroupEventZoomOut:
 		_ = x
 		w.u16(5)
 	default:
@@ -678,43 +686,43 @@ func encTabGroupEvent(w *wbuf, v gk.TabGroupEvent) {
 	}
 }
 
-func encTableEvent(w *wbuf, v gk.TableEvent) {
+func encTableEvent(w *wbuf, v table.Event) {
 	switch x := v.(type) {
-	case gk.TableEventSelectRow:
+	case table.EventSelectRow:
 		_ = x
 		w.u16(0)
 		w.u64(uint64(x.Value))
-	case gk.TableEventDoubleClickedRow:
+	case table.EventDoubleClickedRow:
 		_ = x
 		w.u16(1)
 		w.u64(uint64(x.Value))
-	case gk.TableEventSelectColumn:
+	case table.EventSelectColumn:
 		_ = x
 		w.u16(2)
 		w.u64(uint64(x.Value))
-	case gk.TableEventSelectCell:
+	case table.EventSelectCell:
 		_ = x
 		w.u16(3)
 		w.u64(uint64(x.V0))
 		w.u64(uint64(x.V1))
-	case gk.TableEventDoubleClickedCell:
+	case table.EventDoubleClickedCell:
 		_ = x
 		w.u16(4)
 		w.u64(uint64(x.V0))
 		w.u64(uint64(x.V1))
-	case gk.TableEventColumnWidthsChanged:
+	case table.EventColumnWidthsChanged:
 		_ = x
 		w.u16(5)
 		w.u32(uint32(len(x.Value)))
 		for _, x2 := range x.Value {
 			w.f32(x2)
 		}
-	case gk.TableEventMoveColumn:
+	case table.EventMoveColumn:
 		_ = x
 		w.u16(6)
 		w.u64(uint64(x.V0))
 		w.u64(uint64(x.V1))
-	case gk.TableEventRightClickedRow:
+	case table.EventRightClickedRow:
 		_ = x
 		w.u16(7)
 		if x2, ok := x.Value.Get(); ok {
@@ -723,12 +731,12 @@ func encTableEvent(w *wbuf, v gk.TableEvent) {
 		} else {
 			w.u8(0)
 		}
-	case gk.TableEventRightClickedCell:
+	case table.EventRightClickedCell:
 		_ = x
 		w.u16(8)
 		w.u64(uint64(x.V0))
 		w.u64(uint64(x.V1))
-	case gk.TableEventClearSelection:
+	case table.EventClearSelection:
 		_ = x
 		w.u16(9)
 	default:
@@ -736,13 +744,13 @@ func encTableEvent(w *wbuf, v gk.TableEvent) {
 	}
 }
 
-func encTreeEvent(w *wbuf, v gk.TreeEvent) {
+func encTreeEvent(w *wbuf, v table.TreeEvent) {
 	switch x := v.(type) {
-	case gk.TreeEventExpanded:
+	case table.TreeEventExpanded:
 		_ = x
 		w.u16(0)
 		w.text(x.Value)
-	case gk.TreeEventCollapsed:
+	case table.TreeEventCollapsed:
 		_ = x
 		w.u16(1)
 		w.text(x.Value)
@@ -849,7 +857,7 @@ func h20(cx *gk.Cx, e gk.Action) {
 }
 
 // shape 64: (bool, DialogChangeReason)
-func h64(cx *gk.Cx, e gk.Event64) {
+func h64(cx *gk.Cx, e overlay.Event64) {
 	w := &wbuf{}
 	w.flag(e.A0)
 	w.u16(uint16(e.A1))
@@ -872,7 +880,7 @@ func h66(cx *gk.Cx, e gk.FileDropEvent) {
 }
 
 // shape 67: (CheckboxState, &ClickEvent)
-func h67(cx *gk.Cx, e gk.Event67) {
+func h67(cx *gk.Cx, e base.Event67) {
 	w := &wbuf{}
 	w.u16(uint16(e.A0))
 	encClick(w, e.A1)
@@ -880,7 +888,7 @@ func h67(cx *gk.Cx, e gk.Event67) {
 }
 
 // shape 68: (StepAction)
-func h68(cx *gk.Cx, e gk.StepAction) {
+func h68(cx *gk.Cx, e editor.StepAction) {
 	w := &wbuf{}
 	w.u16(uint16(e))
 	app.gotBytes(w.b)
@@ -996,7 +1004,7 @@ func h81(cx *gk.Cx, e gk.ScrollEvent) {
 }
 
 // shape 82: (IndexPath)
-func h82(cx *gk.Cx, e gk.BaseIndexPath) {
+func h82(cx *gk.Cx, e table.BaseIndexPath) {
 	w := &wbuf{}
 	encBaseIndexPath(w, e)
 	app.gotBytes(w.b)
@@ -1011,84 +1019,84 @@ func h83(cx *gk.Cx, e gk.Event83) {
 }
 
 // shape 84: (ColorPickerEvent)
-func h84(cx *gk.Cx, e gk.ColorPickerEvent) {
+func h84(cx *gk.Cx, e base.ColorPickerEvent) {
 	w := &wbuf{}
 	encColorPickerEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 85: (GridLayoutEvent)
-func h85(cx *gk.Cx, e gk.GridLayoutEvent) {
+func h85(cx *gk.Cx, e base.GridLayoutEvent) {
 	w := &wbuf{}
 	encGridLayoutEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 86: (TreeEvent)
-func h86(cx *gk.Cx, e gk.TreeEvent) {
+func h86(cx *gk.Cx, e table.TreeEvent) {
 	w := &wbuf{}
 	encTreeEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 88: (TabGroupEvent)
-func h88(cx *gk.Cx, e gk.TabGroupEvent) {
+func h88(cx *gk.Cx, e dock.TabGroupEvent) {
 	w := &wbuf{}
 	encTabGroupEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 90: (SliderEvent)
-func h90(cx *gk.Cx, e gk.SliderEvent) {
+func h90(cx *gk.Cx, e base.SliderEvent) {
 	w := &wbuf{}
 	encSliderEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 91: (CarouselEvent)
-func h91(cx *gk.Cx, e gk.CarouselEvent) {
+func h91(cx *gk.Cx, e kit.CarouselEvent) {
 	w := &wbuf{}
 	encCarouselEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 92: (DiffEvent)
-func h92(cx *gk.Cx, e gk.DiffEvent) {
+func h92(cx *gk.Cx, e editor.DiffEvent) {
 	w := &wbuf{}
 	encDiffEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 93: (SpeechEvent)
-func h93(cx *gk.Cx, e gk.SpeechEvent) {
+func h93(cx *gk.Cx, e kit.SpeechEvent) {
 	w := &wbuf{}
 	encSpeechEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 94: (NavStackEvent)
-func h94(cx *gk.Cx, e gk.NavStackEvent) {
+func h94(cx *gk.Cx, e base.NavStackEvent) {
 	w := &wbuf{}
 	w.u16(uint16(e))
 	app.gotBytes(w.b)
 }
 
 // shape 95: (OtpEvent)
-func h95(cx *gk.Cx, e gk.OtpEvent) {
+func h95(cx *gk.Cx, e editor.OtpEvent) {
 	w := &wbuf{}
 	w.u16(uint16(e))
 	app.gotBytes(w.b)
 }
 
 // shape 96: (ResizablePanelEvent)
-func h96(cx *gk.Cx, e gk.ResizablePanelEvent) {
+func h96(cx *gk.Cx, e base.ResizablePanelEvent) {
 	w := &wbuf{}
 	w.u16(uint16(e))
 	app.gotBytes(w.b)
 }
 
 // shape 97: (InputEvent)
-func h97(cx *gk.Cx, e gk.InputEvent) {
+func h97(cx *gk.Cx, e editor.InputEvent) {
 	w := &wbuf{}
 	encInputEvent(w, e)
 	app.gotBytes(w.b)
@@ -1103,28 +1111,28 @@ func h98(cx *gk.Cx, e string) bool {
 }
 
 // shape 99: (ListEvent)
-func h99(cx *gk.Cx, e gk.ListEvent) {
+func h99(cx *gk.Cx, e table.ListEvent) {
 	w := &wbuf{}
 	encListEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 100: (TableEvent)
-func h100(cx *gk.Cx, e gk.TableEvent) {
+func h100(cx *gk.Cx, e table.Event) {
 	w := &wbuf{}
 	encTableEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 102: (ComboboxEvent<D>)
-func h102(cx *gk.Cx, e gk.ComboboxEvent) {
+func h102(cx *gk.Cx, e table.ComboboxEvent) {
 	w := &wbuf{}
 	encComboboxEvent(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 103: (SelectEvent<D>)
-func h103(cx *gk.Cx, e gk.SelectEvent) {
+func h103(cx *gk.Cx, e table.SelectEvent) {
 	w := &wbuf{}
 	encSelectEvent(w, e)
 	app.gotBytes(w.b)
@@ -1137,7 +1145,7 @@ func h104(cx *gk.Cx) string {
 }
 
 // shape 117: (ResolvedPosition, gpui::Bounds<gpui::Pixels>)
-func h117(cx *gk.Cx, e gk.Event117) {
+func h117(cx *gk.Cx, e overlay.Event117) {
 	w := &wbuf{}
 	encResolvedPosition(w, e.A0)
 	encBounds(w, e.A1)
@@ -1145,62 +1153,62 @@ func h117(cx *gk.Cx, e gk.Event117) {
 }
 
 // shape 118: (ResolvedPosition)
-func h118(cx *gk.Cx, e gk.ResolvedPosition) {
+func h118(cx *gk.Cx, e overlay.ResolvedPosition) {
 	w := &wbuf{}
 	encResolvedPosition(w, e)
 	app.gotBytes(w.b)
 }
 
 // shape 120: (InputEditsEvent)
-func h120(cx *gk.Cx, e gk.InputEditsEvent) {
+func h120(cx *gk.Cx, e editor.InputEditsEvent) {
 	w := &wbuf{}
 	encInputEditsEvent(w, e)
 	app.gotBytes(w.b)
 }
 
-func anyEvent84(cx *gk.Cx, e gk.ColorPickerEvent) {
+func anyEvent84(cx *gk.Cx, e base.ColorPickerEvent) {
 	app.events++
 }
-func anyEvent85(cx *gk.Cx, e gk.GridLayoutEvent) {
+func anyEvent85(cx *gk.Cx, e base.GridLayoutEvent) {
 	app.events++
 }
-func anyEvent86(cx *gk.Cx, e gk.TreeEvent) {
+func anyEvent86(cx *gk.Cx, e table.TreeEvent) {
 	app.events++
 }
-func anyEvent87(cx *gk.Cx, e gk.DockEvent) {
+func anyEvent87(cx *gk.Cx, e dock.Event) {
 	app.events++
 }
-func anyEvent90(cx *gk.Cx, e gk.SliderEvent) {
+func anyEvent90(cx *gk.Cx, e base.SliderEvent) {
 	app.events++
 }
-func anyEvent91(cx *gk.Cx, e gk.CarouselEvent) {
+func anyEvent91(cx *gk.Cx, e kit.CarouselEvent) {
 	app.events++
 }
-func anyEvent93(cx *gk.Cx, e gk.SpeechEvent) {
+func anyEvent93(cx *gk.Cx, e kit.SpeechEvent) {
 	app.events++
 }
-func anyEvent94(cx *gk.Cx, e gk.NavStackEvent) {
+func anyEvent94(cx *gk.Cx, e base.NavStackEvent) {
 	app.events++
 }
-func anyEvent95(cx *gk.Cx, e gk.OtpEvent) {
+func anyEvent95(cx *gk.Cx, e editor.OtpEvent) {
 	app.events++
 }
-func anyEvent96(cx *gk.Cx, e gk.ResizablePanelEvent) {
+func anyEvent96(cx *gk.Cx, e base.ResizablePanelEvent) {
 	app.events++
 }
-func anyEvent97(cx *gk.Cx, e gk.InputEvent) {
+func anyEvent97(cx *gk.Cx, e editor.InputEvent) {
 	app.events++
 }
-func anyEvent110(cx *gk.Cx, e gk.CalendarEvent) {
+func anyEvent110(cx *gk.Cx, e base.CalendarEvent) {
 	app.events++
 }
-func anyEvent111(cx *gk.Cx, e gk.TimeFieldEvent) {
+func anyEvent111(cx *gk.Cx, e base.TimeFieldEvent) {
 	app.events++
 }
-func anyEvent112(cx *gk.Cx, e gk.DatePickerEvent) {
+func anyEvent112(cx *gk.Cx, e kit.DatePickerEvent) {
 	app.events++
 }
-func anyEvent120(cx *gk.Cx, e gk.InputEditsEvent) {
+func anyEvent120(cx *gk.Cx, e editor.InputEditsEvent) {
 	app.events++
 }
 
@@ -1280,16 +1288,16 @@ func (a *App) runShapes(cx *gk.Cx) {
 func (a *App) makeStates(cx *gk.Cx) {
 	// Any_Drag: not made here: no constructor with arguments this test can make
 	// App_Menu_Bar: not made here: no constructor with arguments this test can make
-	a.stAudioFormat = gk.NewAudioFormat(cx, 3, 3)
+	a.stAudioFormat = kit.NewAudioFormat(cx, 3, 3)
 	_ = a.stAudioFormat.Channels(cx)
 	_ = a.stAudioFormat.SampleRate(cx)
 	fmt.Printf("states made Audio_Format builders=0 reads=2 writes=0 calls=0 events=0\n")
-	a.stAutoScroll = gk.NewAutoScrollDefault(cx)
+	a.stAutoScroll = base.NewAutoScrollDefault(cx)
 	_ = a.stAutoScroll.Delta(cx)
 	_ = a.stAutoScroll.IsActive(cx)
 	a.stAutoScroll.Stop(cx)
 	fmt.Printf("states made Auto_Scroll builders=0 reads=2 writes=1 calls=0 events=0\n")
-	a.stBaseTable2 = gk.NewBaseTable2(cx, [][]gk.Paragraph{[]gk.Paragraph{gk.NewParagraphDefault()}}, []gk.ColumnumnAlign{gk.ColumnumnAlignNone})
+	a.stBaseTable2 = editor.NewBaseTable2(cx, [][]editor.Paragraph{[]editor.Paragraph{editor.NewParagraphDefault()}}, []editor.ColumnumnAlign{editor.ColumnumnAlignNone})
 	_ = a.stBaseTable2.ColumnAligns(cx)
 	_ = a.stBaseTable2.Rows(cx)
 	fmt.Printf("states made Base_Table_2 builders=0 reads=2 writes=0 calls=0 events=0\n")
@@ -1303,7 +1311,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stBaseTheme.SetAppearance(cx, gk.ThemeAppearanceLight)
 	fmt.Printf("states made Base_Theme builders=0 reads=6 writes=1 calls=0 events=0\n")
 	// Base_Tree_Entry: not made here: no constructor with arguments this test can make
-	a.stCalendarState = gk.NewCalendarState(cx).DisabledMatcher(gk.MatcherDayOfWeek{Value: []uint32{3}}).YearRange(gk.TupleInt32Int32{V0: 3, V1: 3}).Build()
+	a.stCalendarState = base.NewCalendarState(cx).DisabledMatcher(base.MatcherDayOfWeek{Value: []uint32{3}}).YearRange(gk.TupleInt32Int32{V0: 3, V1: 3}).Build()
 	_ = a.stCalendarState.CurrentMonth(cx)
 	_ = a.stCalendarState.CurrentYear(cx)
 	_ = a.stCalendarState.Date(cx)
@@ -1323,13 +1331,13 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stCalendarState.PrevMonth(cx)
 	a.stCalendarState.SelectMonth(cx, 3)
 	a.stCalendarState.SelectYear(cx, 3)
-	a.stCalendarState.SetDisabledMatcher(cx, gk.MatcherDayOfWeek{Value: []uint32{3}})
+	a.stCalendarState.SetDisabledMatcher(cx, base.MatcherDayOfWeek{Value: []uint32{3}})
 	a.stCalendarState.SetNumberOfMonths(cx, 3)
-	a.stCalendarState.SetView(cx, gk.CalendarViewDay)
+	a.stCalendarState.SetView(cx, base.CalendarViewDay)
 	a.stCalendarState.SetYearRange(cx, gk.TupleInt32Int32{V0: 3, V1: 3})
 	a.subs = append(a.subs, a.stCalendarState.OnCalendarEvent(cx, anyEvent110))
 	fmt.Printf("states made Calendar_State builders=2 reads=13 writes=8 calls=2 events=1\n")
-	a.stCarouselState = gk.NewCarouselState(cx, 3).WithAxis(gk.AxisVertical).WithLooping(true).WithSelectedIndex(3).Build()
+	a.stCarouselState = kit.NewCarouselState(cx, 3).WithAxis(gk.AxisVertical).WithLooping(true).WithSelectedIndex(3).Build()
 	_ = a.stCarouselState.Axis(cx)
 	_ = a.stCarouselState.HasNext(cx)
 	_ = a.stCarouselState.HasPrevious(cx)
@@ -1347,10 +1355,10 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stCarouselState.SetSelectedIndex(cx, 3)
 	a.subs = append(a.subs, a.stCarouselState.OnCarouselEvent(cx, anyEvent91))
 	fmt.Printf("states made Carousel_State builders=3 reads=6 writes=4 calls=5 events=1\n")
-	a.stCodeActionMenuState = gk.NewCodeActionMenuStateDefault(cx)
+	a.stCodeActionMenuState = editor.NewCodeActionMenuStateDefault(cx)
 	_ = a.stCodeActionMenuState.Revision(cx)
 	fmt.Printf("states made Code_Action_Menu_State builders=0 reads=1 writes=0 calls=0 events=0\n")
-	a.stColorPickerState = gk.NewColorPickerState(cx).DefaultValue(gk.HSLA(0.5, 0.25, 0.75, 1)).Build()
+	a.stColorPickerState = base.NewColorPickerState(cx).DefaultValue(gk.HSLA(0.5, 0.25, 0.75, 1)).Build()
 	_ = a.stColorPickerState.ActiveTab(cx)
 	_ = a.stColorPickerState.DisplayedColor(cx)
 	_ = a.stColorPickerState.HexInput(cx)
@@ -1373,7 +1381,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.subs = append(a.subs, a.stColorPickerState.OnColorPickerEvent(cx, anyEvent84))
 	fmt.Printf("states made Color_Picker_State builders=1 reads=7 writes=10 calls=2 events=1\n")
 	// Combobox_State: not made here: its constructor takes a row source (core/tests/rows)
-	a.stCommandState = gk.NewCommandState(cx)
+	a.stCommandState = table.NewCommandState(cx)
 	_ = a.stCommandState.IsLoading(cx)
 	_ = a.stCommandState.MatchedCount(cx)
 	_ = a.stCommandState.Query(cx)
@@ -1381,13 +1389,13 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stCommandState.Focus(cx)
 	a.stCommandState.SetLoading(cx, true)
 	a.stCommandState.SetQuery(cx, "s")
-	a.stCommandState.SetSelectedIndex(cx, gk.Some[gk.BaseIndexPath](gk.BaseIndexPath{Section: 3, Row: 3, Column: 3}))
+	a.stCommandState.SetSelectedIndex(cx, gk.Some[table.BaseIndexPath](table.BaseIndexPath{Section: 3, Row: 3, Column: 3}))
 	fmt.Printf("states made Command_State builders=0 reads=4 writes=4 calls=0 events=0\n")
-	a.stCompletionMenuState = gk.NewCompletionMenuStateDefault(cx)
+	a.stCompletionMenuState = editor.NewCompletionMenuStateDefault(cx)
 	_ = a.stCompletionMenuState.Revision(cx)
 	fmt.Printf("states made Completion_Menu_State builders=0 reads=1 writes=0 calls=0 events=0\n")
 	// Cursor_Blink_Read: not made here: no constructor with arguments this test can make
-	a.stDatePickerState = gk.NewDatePickerState(cx).DateFormat("s").DisabledMatcher(gk.MatcherDayOfWeek{Value: []uint32{3}}).HourCycle(gk.HourCycleH23).NumberOfMonths(3).TimePrecision(gk.TimePrecisionMinute).Build()
+	a.stDatePickerState = kit.NewDatePickerState(cx).DateFormat("s").DisabledMatcher(base.MatcherDayOfWeek{Value: []uint32{3}}).HourCycle(base.HourCycleH23).NumberOfMonths(3).TimePrecision(base.TimePrecisionMinute).Build()
 	_ = a.stDatePickerState.Date(cx)
 	_ = a.stDatePickerState.DateTime(cx)
 	a.stDatePickerState.SetYearRange(cx, gk.TupleInt32Int32{V0: 3, V1: 3})
@@ -1395,12 +1403,12 @@ func (a *App) makeStates(cx *gk.Cx) {
 	fmt.Printf("states made Date_Picker_State builders=5 reads=2 writes=1 calls=0 events=1\n")
 	// Diagnostic_Entry_Rc: not made here: no constructor with arguments this test can make
 	// Diagnostic_Set: not made here: no constructor with arguments this test can make
-	a.stDialogHandle = gk.NewDialogHandle(cx, true)
+	a.stDialogHandle = overlay.NewDialogHandle(cx, true)
 	_ = a.stDialogHandle.IsOpen(cx)
 	a.stDialogHandle.Close(cx)
 	a.stDialogHandle.Open(cx)
 	fmt.Printf("states made Dialog_Handle builders=0 reads=1 writes=2 calls=0 events=0\n")
-	a.stDiffAnnotation = gk.NewDiffAnnotationFile(cx, "id", "s")
+	a.stDiffAnnotation = editor.NewDiffAnnotationFile(cx, "id", "s")
 	_ = a.stDiffAnnotation.ID(cx)
 	_ = a.stDiffAnnotation.Path(cx)
 	_ = a.stDiffAnnotation.Position(cx)
@@ -1408,7 +1416,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Diff_Conflict: not made here: no constructor with arguments this test can make
 	// Diff_File_Read: not made here: no constructor with arguments this test can make
 	// Diff_Gutter_Marker_Read: not made here: no constructor with arguments this test can make
-	a.stDiffLinePosition = gk.NewDiffLinePosition(cx, "s", gk.DiffSideOriginal, 3)
+	a.stDiffLinePosition = editor.NewDiffLinePosition(cx, "s", editor.DiffSideOriginal, 3)
 	_ = a.stDiffLinePosition.Line(cx)
 	_ = a.stDiffLinePosition.Path(cx)
 	_ = a.stDiffLinePosition.Side(cx)
@@ -1417,12 +1425,12 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Diff_Parse_Error: not made here: no constructor with arguments this test can make
 	// Diff_State: not made here: no constructor with arguments this test can make
 	// Diff_Text_Position: not made here: no constructor with arguments this test can make
-	a.stDiscrete = gk.NewDiscrete(cx, 1.5, 1.5)
+	a.stDiscrete = motion.NewDiscrete(cx, 1.5, 1.5)
 	_ = a.stDiscrete.Sample(cx, 1.5)
 	_ = a.stDiscrete.SwitchAt(cx, 1.5)
 	fmt.Printf("states made Discrete builders=0 reads=1 writes=0 calls=1 events=0\n")
 	// Display_Map: not made here: no constructor with arguments this test can make
-	a.stDock = gk.NewDock(cx, 4)
+	a.stDock = dock.NewDock(cx, 4)
 	_ = a.stDock.IsCollapsible(cx)
 	_ = a.stDock.IsOpen(cx)
 	_ = a.stDock.IsResizing(cx)
@@ -1432,43 +1440,43 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stDock.SetResizing(cx, true)
 	a.stDock.SetSize(cx, 4)
 	fmt.Printf("states made Dock builders=0 reads=4 writes=4 calls=0 events=0\n")
-	a.stDockArea = gk.NewDockArea(cx, "s", gk.Some[int](3)).Build()
+	a.stDockArea = dock.NewArea(cx, "s", gk.Some[int](3)).Build()
 	_ = a.stDockArea.Bounds(cx)
-	_ = a.stDockArea.DockSize(cx, gk.DockPlacementCenter)
+	_ = a.stDockArea.DockSize(cx, dock.PlacementCenter)
 	_ = a.stDockArea.Dump(cx)
-	_ = a.stDockArea.HasDock(cx, gk.DockPlacementCenter)
+	_ = a.stDockArea.HasDock(cx, dock.PlacementCenter)
 	_ = a.stDockArea.ID(cx)
-	_ = a.stDockArea.IsDockCollapsible(cx, gk.DockPlacementCenter)
-	_ = a.stDockArea.IsDockOpen(cx, gk.DockPlacementCenter)
-	_ = a.stDockArea.IsEmpty(cx, gk.DockPlacementCenter)
+	_ = a.stDockArea.IsDockCollapsible(cx, dock.PlacementCenter)
+	_ = a.stDockArea.IsDockOpen(cx, dock.PlacementCenter)
+	_ = a.stDockArea.IsEmpty(cx, dock.PlacementCenter)
 	_ = a.stDockArea.IsLocked(cx)
 	_ = a.stDockArea.IsZoomed(cx)
-	_ = a.stDockArea.Layout(cx, gk.DockPlacementCenter)
+	_ = a.stDockArea.Layout(cx, dock.PlacementCenter)
 	_ = a.stDockArea.Version(cx)
 	_ = a.stDockArea.ZoomedGroup(cx)
-	a.stDockArea.RemoveDock(cx, gk.DockPlacementCenter)
-	a.stDockArea.SetDockCollapsible(cx, gk.DockPlacementCenter, true)
-	a.stDockArea.SetDockSize(cx, gk.DockPlacementCenter, 4)
+	a.stDockArea.RemoveDock(cx, dock.PlacementCenter)
+	a.stDockArea.SetDockCollapsible(cx, dock.PlacementCenter, true)
+	a.stDockArea.SetDockSize(cx, dock.PlacementCenter, 4)
 	a.stDockArea.SetLocked(cx, true)
 	a.stDockArea.SetVersion(cx, gk.Some[int](3))
 	a.stDockArea.SetZoomedOut(cx)
-	a.stDockArea.ToggleDock(cx, gk.DockPlacementCenter)
+	a.stDockArea.ToggleDock(cx, dock.PlacementCenter)
 	a.subs = append(a.subs, a.stDockArea.OnDockEvent(cx, anyEvent87))
 	fmt.Printf("states made Dock_Area builders=0 reads=13 writes=7 calls=0 events=1\n")
 	// Dock_Context: not made here: no constructor with arguments this test can make
 	// Dock_State: not made here: no constructor with arguments this test can make
 	// Drag_Panel: not made here: no constructor with arguments this test can make
 	// Drop_Indicator: not made here: no constructor with arguments this test can make
-	a.stDropPlaceholderBounds = gk.NewDropPlaceholderBoundsForPlacement(cx, gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}}, gk.Some[gk.Placement](gk.PlacementTop))
+	a.stDropPlaceholderBounds = dock.NewDropPlaceholderBoundsForPlacement(cx, gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}}, gk.Some[gk.Placement](gk.PlacementTop))
 	_ = a.stDropPlaceholderBounds.Origin(cx)
 	_ = a.stDropPlaceholderBounds.Size(cx)
 	fmt.Printf("states made Drop_Placeholder_Bounds builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Drop_Target: not made here: no constructor with arguments this test can make
-	a.stEditResult = gk.NewEditResultDefault(cx)
+	a.stEditResult = dock.NewEditResultDefault(cx)
 	_ = a.stEditResult.Changed(cx)
 	fmt.Printf("states made Edit_Result builders=0 reads=1 writes=0 calls=0 events=0\n")
 	// Editor_Scrollbar_Context: not made here: no constructor with arguments this test can make
-	a.stEditorState = gk.NewEditorState(cx).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").GutterDecorationsWidth(4).InputAction(gk.TextInputActionUnspecified).Language("s").MaskPattern(gk.MaskPatternNone).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).ScrollBounce(true).ScrollbarPlacement(gk.ScrollbarPlacementBottomRight).Searchable(true).Build()
+	a.stEditorState = editor.NewState(cx).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").GutterDecorationsWidth(4).InputAction(gk.TextInputActionUnspecified).Language("s").MaskPattern(editor.MaskPatternNone).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).ScrollBounce(true).ScrollbarPlacement(gk.ScrollbarPlacementBottomRight).Searchable(true).Build()
 	_ = a.stEditorState.ContentHeightF64(cx)
 	_ = a.stEditorState.ContextMenuCapabilities(cx)
 	_ = a.stEditorState.ContextMenuOffset(cx)
@@ -1479,8 +1487,8 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stEditorState.DisplayMapBufferLineCount(cx)
 	_ = a.stEditorState.DisplayMapBufferLineToDisplayRow(cx, 3)
 	_ = a.stEditorState.DisplayMapBufferLineToDisplayRowRange(cx, 3)
-	_ = a.stEditorState.DisplayMapBufferPosToDisplayPos(cx, gk.BufferPoint{Line: 3, Col: 3})
-	_ = a.stEditorState.DisplayMapDisplayPosToBufferPos(cx, gk.DisplayPoint{Row: 3, Col: 3})
+	_ = a.stEditorState.DisplayMapBufferPosToDisplayPos(cx, editor.BufferPoint{Line: 3, Col: 3})
+	_ = a.stEditorState.DisplayMapDisplayPosToBufferPos(cx, editor.DisplayPoint{Row: 3, Col: 3})
 	_ = a.stEditorState.DisplayMapDisplayRowCount(cx)
 	_ = a.stEditorState.DisplayMapDisplayRowToBufferLine(cx, 3)
 	_ = a.stEditorState.DisplayMapDisplayRowToWrapRow(cx, 3)
@@ -1524,7 +1532,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stEditorState.UnmaskValue(cx)
 	_ = a.stEditorState.Value(cx)
 	_ = a.stEditorState.VisibleRowRange(cx)
-	_ = a.stEditorState.CreateDecorationsCollection(cx, []gk.TextDecoration{gk.TextDecoration{Range: gk.Range{Lo: 1, Hi: 3}, Style: gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)}}})
+	_ = a.stEditorState.CreateDecorationsCollection(cx, []editor.TextDecoration{editor.TextDecoration{Range: gk.Range{Lo: 1, Hi: 3}, Style: gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)}}})
 	_ = a.stEditorState.DiagnosticsMut(cx)
 	_ = a.stEditorState.HasSelectionFocus(cx)
 	_ = a.stEditorState.NextSearchMatch(cx)
@@ -1534,7 +1542,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stEditorState.SetFolded(cx, 3, true)
 	a.stEditorState.AddSelection(cx, gk.Range{Lo: 1, Hi: 3})
 	a.stEditorState.ApplyHighlighterFoldCandidates(cx, []gk.FoldRange{gk.FoldRange{StartLine: 3, EndLine: 3}})
-	a.stEditorState.BeginEdgeDrag(cx, gk.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
+	a.stEditorState.BeginEdgeDrag(cx, editor.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
 	a.stEditorState.Clean(cx)
 	a.stEditorState.ClearDiagnosticPopover(cx)
 	a.stEditorState.ClearHoverState(cx)
@@ -1569,8 +1577,8 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stEditorState.SetHighlighter(cx, "s")
 	a.stEditorState.SetIndentGuides(cx, true)
 	a.stEditorState.SetLineNumber(cx, true)
-	a.stEditorState.SetMaskPattern(cx, gk.MaskPatternNone)
-	a.stEditorState.SetOverlayActionHandler(cx, []gk.TupleInputOverlayKindString{gk.TupleInputOverlayKindString{V0: gk.InputOverlayKindCompletion, V1: "s"}})
+	a.stEditorState.SetMaskPattern(cx, editor.MaskPatternNone)
+	a.stEditorState.SetOverlayActionHandler(cx, []editor.TupleInputOverlayKindString{editor.TupleInputOverlayKindString{V0: editor.InputOverlayKindCompletion, V1: "s"}})
 	a.stEditorState.SetPlaceholder(cx, "s")
 	a.stEditorState.SetReadonly(cx, true)
 	a.stEditorState.SetScrollBeyondLastLine(cx, gk.Some[int](3))
@@ -1586,10 +1594,10 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stEditorState.SetSmartIndent(cx, true)
 	a.stEditorState.SetSoftWrap(cx, true)
 	a.stEditorState.SetSubmitOnEnter(cx, true)
-	a.stEditorState.SetTabSize(cx, gk.TabSize{TabSize: 3, HardTabs: true})
+	a.stEditorState.SetTabSize(cx, editor.TabSize{TabSize: 3, HardTabs: true})
 	a.stEditorState.SetTextAlign(cx, gk.TextAlignLeft)
 	a.stEditorState.SetValue(cx, string("s"))
-	a.stEditorState.SetWrappingIndent(cx, gk.WrappingIndentNone)
+	a.stEditorState.SetWrappingIndent(cx, editor.WrappingIndentNone)
 	a.stEditorState.ShowCompletions(cx)
 	a.stEditorState.ToggleMasked(cx)
 	a.stEditorState.UnfoldAll(cx)
@@ -1599,7 +1607,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.subs = append(a.subs, a.stEditorState.OnInputEditsEvent(cx, anyEvent120))
 	fmt.Printf("states made Editor_State builders=15 reads=55 writes=63 calls=8 events=2\n")
 	// Global_State: not made here: no constructor with arguments this test can make
-	a.stGridLayoutState = gk.NewGridLayoutState(cx).Cols(3).Compaction(gk.Some[gk.Axis](gk.AxisVertical)).Draggable(true).PreventCollision(true).Resizable(true).Build()
+	a.stGridLayoutState = base.NewGridLayoutState(cx).Cols(3).Compaction(gk.Some[gk.Axis](gk.AxisVertical)).Draggable(true).PreventCollision(true).Resizable(true).Build()
 	_ = a.stGridLayoutState.ActiveItem(cx)
 	_ = a.stGridLayoutState.Area(cx, "s")
 	_ = a.stGridLayoutState.Areas(cx)
@@ -1619,7 +1627,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stGridLayoutState.SetSelectedItem(cx, gk.Some[string]("s"))
 	a.subs = append(a.subs, a.stGridLayoutState.OnGridLayoutEvent(cx, anyEvent85))
 	fmt.Printf("states made Grid_Layout_State builders=5 reads=9 writes=6 calls=2 events=1\n")
-	a.stGutterDecorationCollection = gk.NewGutterDecorationCollectionDefault(cx)
+	a.stGutterDecorationCollection = editor.NewGutterDecorationCollectionDefault(cx)
 	_ = a.stGutterDecorationCollection.GetRanges(cx)
 	a.stGutterDecorationCollection.Clear(cx)
 	a.stGutterDecorationCollection.Dispose(cx)
@@ -1640,7 +1648,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	fmt.Printf("states made History builders=1 reads=5 writes=3 calls=3 events=0\n")
 	// Horizontal_Scroll_Claim: not made here: no constructor with arguments this test can make
 	// Hsla_Sliders: not made here: no constructor with arguments this test can make
-	a.stImageNode = gk.NewImageNodeDefault(cx)
+	a.stImageNode = editor.NewImageNodeDefault(cx)
 	_ = a.stImageNode.Title(cx)
 	fmt.Printf("states made Image_Node builders=0 reads=1 writes=0 calls=0 events=0\n")
 	// Inline_Node_Read: not made here: no constructor with arguments this test can make
@@ -1650,13 +1658,13 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Inline_Token_Hover_Event: not made here: no constructor with arguments this test can make
 	// Inline_Token_Read: not made here: no constructor with arguments this test can make
 	// Inline_Token_Span: not made here: no constructor with arguments this test can make
-	a.stInputContent = gk.NewInputContent(cx, "s")
+	a.stInputContent = editor.NewInputContent(cx, "s")
 	_ = a.stInputContent.Text(cx)
 	_ = a.stInputContent.Tokens(cx)
 	fmt.Printf("states made Input_Content builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Input_Context_Menu_Capabilities_Read: not made here: no constructor with arguments this test can make
 	// Input_Presentation: not made here: no constructor with arguments this test can make
-	a.stInputState = gk.NewInputState(cx).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").InputAction(gk.TextInputActionUnspecified).MaskPattern(gk.MaskPatternNone).Masked(true).Max(1.5).Min(1.5).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).Step(gk.NumberStepFixed{Value: 1.5}).Validate(noop98).Build()
+	a.stInputState = editor.NewInputState(cx).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").InputAction(gk.TextInputActionUnspecified).MaskPattern(editor.MaskPatternNone).Masked(true).Max(1.5).Min(1.5).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).Step(editor.NumberStepFixed{Value: 1.5}).Validate(noop98).Build()
 	_ = a.stInputState.Content(cx)
 	_ = a.stInputState.ContentHeightF64(cx)
 	_ = a.stInputState.ContextMenuCapabilities(cx)
@@ -1668,8 +1676,8 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stInputState.DisplayMapBufferLineCount(cx)
 	_ = a.stInputState.DisplayMapBufferLineToDisplayRow(cx, 3)
 	_ = a.stInputState.DisplayMapBufferLineToDisplayRowRange(cx, 3)
-	_ = a.stInputState.DisplayMapBufferPosToDisplayPos(cx, gk.BufferPoint{Line: 3, Col: 3})
-	_ = a.stInputState.DisplayMapDisplayPosToBufferPos(cx, gk.DisplayPoint{Row: 3, Col: 3})
+	_ = a.stInputState.DisplayMapBufferPosToDisplayPos(cx, editor.BufferPoint{Line: 3, Col: 3})
+	_ = a.stInputState.DisplayMapDisplayPosToBufferPos(cx, editor.DisplayPoint{Row: 3, Col: 3})
 	_ = a.stInputState.DisplayMapDisplayRowCount(cx)
 	_ = a.stInputState.DisplayMapDisplayRowToBufferLine(cx, 3)
 	_ = a.stInputState.DisplayMapDisplayRowToWrapRow(cx, 3)
@@ -1716,7 +1724,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stInputState.ReplaceCurrentSearchMatch(cx, "s")
 	a.stInputState.AddSelection(cx, gk.Range{Lo: 1, Hi: 3})
 	a.stInputState.ApplyHighlighterFoldCandidates(cx, []gk.FoldRange{gk.FoldRange{StartLine: 3, EndLine: 3}})
-	a.stInputState.BeginEdgeDrag(cx, gk.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
+	a.stInputState.BeginEdgeDrag(cx, editor.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
 	a.stInputState.Clean(cx)
 	a.stInputState.CloseEditMenu(cx)
 	a.stInputState.CloseSearch(cx)
@@ -1739,7 +1747,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stInputState.SetFoldBackground(cx, gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)))
 	a.stInputState.SetHighlighter(cx, "s")
 	a.stInputState.SetLoading(cx, true)
-	a.stInputState.SetMaskPattern(cx, gk.MaskPatternNone)
+	a.stInputState.SetMaskPattern(cx, editor.MaskPatternNone)
 	a.stInputState.SetMasked(cx, true)
 	a.stInputState.SetMax(cx, gk.Some[float64](1.5))
 	a.stInputState.SetMin(cx, gk.Some[float64](1.5))
@@ -1752,7 +1760,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stInputState.SetSelectedRange(cx, gk.Range{Lo: 1, Hi: 3})
 	a.stInputState.SetSelectedRangeWithDirection(cx, gk.Range{Lo: 1, Hi: 3}, true)
 	a.stInputState.SetShowWhitespaces(cx, true)
-	a.stInputState.SetStep(cx, gk.Some[gk.NumberStep](gk.NumberStepFixed{Value: 1.5}))
+	a.stInputState.SetStep(cx, gk.Some[editor.NumberStep](editor.NumberStepFixed{Value: 1.5}))
 	a.stInputState.SetSubmitOnEnter(cx, true)
 	a.stInputState.SetTextAlign(cx, gk.TextAlignLeft)
 	a.stInputState.SetValidator(cx, noop98)
@@ -1768,7 +1776,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// List_State: not made here: its constructor takes a row source (core/tests/rows)
 	// Markdown_Extensions_Arc: not made here: no constructor with arguments this test can make
 	// Markdown_Node_Read: not made here: no constructor with arguments this test can make
-	a.stMessageScrollerState = gk.NewMessageScrollerState(cx, 3)
+	a.stMessageScrollerState = kit.NewMessageScrollerState(cx, 3)
 	_ = a.stMessageScrollerState.IsFollowingTail(cx)
 	_ = a.stMessageScrollerState.IsScrolledUp(cx)
 	_ = a.stMessageScrollerState.ItemCount(cx)
@@ -1783,27 +1791,27 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stMessageScrollerState.Reset(cx, 3)
 	a.stMessageScrollerState.ScrollToEnd(cx)
 	fmt.Printf("states made Message_Scroller_State builders=0 reads=4 writes=3 calls=6 events=0\n")
-	a.stNavStackState = gk.NewNavStackState(cx)
+	a.stNavStackState = base.NewNavStackState(cx)
 	_ = a.stNavStackState.Current(cx)
 	_ = a.stNavStackState.Depth(cx)
 	_ = a.stNavStackState.ForwardViews(cx)
 	_ = a.stNavStackState.IsEmpty(cx)
 	_ = a.stNavStackState.Views(cx)
-	_ = a.stNavStackState.Forward(cx, gk.NavMotionAnimated)
-	_ = a.stNavStackState.Pop(cx, gk.NavMotionAnimated)
-	_ = a.stNavStackState.PopToRoot(cx, gk.NavMotionAnimated)
+	_ = a.stNavStackState.Forward(cx, base.NavMotionAnimated)
+	_ = a.stNavStackState.Pop(cx, base.NavMotionAnimated)
+	_ = a.stNavStackState.PopToRoot(cx, base.NavMotionAnimated)
 	a.stNavStackState.Clear(cx)
 	a.subs = append(a.subs, a.stNavStackState.OnNavStackEvent(cx, anyEvent94))
 	fmt.Printf("states made Nav_Stack_State builders=0 reads=5 writes=1 calls=3 events=1\n")
-	a.stNotification = gk.NewNotification(cx).Autohide(true).Delivery(gk.NotificationDeliveryInApp).Icon(gk.IconALargeSmall).InAppAndSystem().Message("s").OnClick(noop1).OnClose(noop3).Placement(gk.AnchorTopLeft).System().Title("s").WithType(gk.NotificationTypeInfo).Build()
+	a.stNotification = overlay.NewNotification(cx).Autohide(true).Delivery(gk.NotificationDeliveryInApp).Icon(gk.IconALargeSmall).InAppAndSystem().Message("s").OnClick(noop1).OnClose(noop3).Placement(gk.AnchorTopLeft).System().Title("s").WithType(overlay.NotificationTypeInfo).Build()
 	a.stNotification.Dismiss(cx)
 	fmt.Printf("states made Notification builders=11 reads=0 writes=1 calls=0 events=0\n")
-	a.stNotificationList = gk.NewNotificationList(cx)
+	a.stNotificationList = overlay.NewNotificationList(cx)
 	_ = a.stNotificationList.Notifications(cx)
 	a.stNotificationList.Clear(cx)
 	a.stNotificationList.Push(cx, "s")
 	fmt.Printf("states made Notification_List builders=0 reads=1 writes=2 calls=0 events=0\n")
-	a.stOtpState = gk.NewOtpState(cx, 3).DefaultValue("s").Masked(true).Build()
+	a.stOtpState = editor.NewOtpState(cx, 3).DefaultValue("s").Masked(true).Build()
 	_ = a.stOtpState.CursorVisible(cx)
 	_ = a.stOtpState.IsEmpty(cx)
 	_ = a.stOtpState.IsMasked(cx)
@@ -1814,13 +1822,13 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stOtpState.SetValue(cx, "s")
 	a.subs = append(a.subs, a.stOtpState.OnOtpEvent(cx, anyEvent95))
 	fmt.Printf("states made Otp_State builders=2 reads=5 writes=3 calls=0 events=1\n")
-	a.stOverviewRulerDecorationCollection = gk.NewOverviewRulerDecorationCollectionDefault(cx)
+	a.stOverviewRulerDecorationCollection = editor.NewOverviewRulerDecorationCollectionDefault(cx)
 	_ = a.stOverviewRulerDecorationCollection.GetRanges(cx)
 	a.stOverviewRulerDecorationCollection.Clear(cx)
 	a.stOverviewRulerDecorationCollection.Dispose(cx)
 	fmt.Printf("states made Overview_Ruler_Decoration_Collection builders=0 reads=1 writes=2 calls=0 events=0\n")
 	// Pane_Node: not made here: no constructor with arguments this test can make
-	a.stPaneTree = gk.NewPaneTree(cx, gk.RootKindSplit)
+	a.stPaneTree = dock.NewPaneTree(cx, dock.RootKindSplit)
 	_ = a.stPaneTree.NodeIDs(cx)
 	_ = a.stPaneTree.Panels(cx)
 	_ = a.stPaneTree.Root(cx)
@@ -1828,18 +1836,18 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stPaneTree.Normalize(cx)
 	fmt.Printf("states made Pane_Tree builders=0 reads=4 writes=1 calls=0 events=0\n")
 	// Panel_Handle: not made here: no constructor with arguments this test can make
-	a.stPanelRegistry = gk.NewPanelRegistry(cx)
+	a.stPanelRegistry = dock.NewPanelRegistry(cx)
 	fmt.Printf("states made Panel_Registry builders=0 reads=0 writes=0 calls=0 events=0\n")
 	// Paragraph_Read: not made here: no constructor with arguments this test can make
-	a.stPathCache = gk.NewPathCacheDefault(cx)
+	a.stPathCache = chart.NewPathCacheDefault(cx)
 	_ = a.stPathCache.IsWarm(cx)
 	fmt.Printf("states made Path_Cache builders=0 reads=1 writes=0 calls=0 events=0\n")
-	a.stPathCaches = gk.NewPathCachesDefault(cx)
+	a.stPathCaches = chart.NewPathCachesDefault(cx)
 	fmt.Printf("states made Path_Caches builders=0 reads=0 writes=0 calls=0 events=0\n")
-	a.stPie = gk.NewPie(cx).EndAngle(1.5).PadAngle(1.5).StartAngle(1.5).Value("Gap").Build()
-	_ = a.stPie.Arcs(cx, gk.NewData(sampleRows))
+	a.stPie = chart.NewPie(cx).EndAngle(1.5).PadAngle(1.5).StartAngle(1.5).Value("Gap").Build()
+	_ = a.stPie.Arcs(cx, chart.NewData(sampleRows))
 	fmt.Printf("states made Pie builders=4 reads=1 writes=0 calls=0 events=0\n")
-	a.stPlotAppear = gk.NewPlotAppearComplete(cx)
+	a.stPlotAppear = chart.NewPlotAppearComplete(cx)
 	_ = a.stPlotAppear.IsAppearing(cx)
 	_ = a.stPlotAppear.Progress(cx)
 	_ = a.stPlotAppear.Staggered(cx, 3, 3, 1.5)
@@ -1847,14 +1855,14 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Plot_Label: not made here: no constructor with arguments this test can make
 	// Plot_Motion_Read: not made here: no constructor with arguments this test can make
 	// Plot_Theme_Read: not made here: no constructor with arguments this test can make
-	a.stPopoverState = gk.NewPopoverState(cx, true)
+	a.stPopoverState = overlay.NewPopoverState(cx, true)
 	_ = a.stPopoverState.IsOpen(cx)
 	a.stPopoverState.Dismiss(cx)
 	a.stPopoverState.Show(cx)
 	fmt.Printf("states made Popover_State builders=0 reads=1 writes=2 calls=0 events=0\n")
 	// Questionnaire_Answer_Change: not made here: no constructor with arguments this test can make
 	// Questionnaire_Answer_Read: not made here: no constructor with arguments this test can make
-	a.stQuestionnaireAnswers = gk.NewQuestionnaireAnswersDefault(cx)
+	a.stQuestionnaireAnswers = base.NewQuestionnaireAnswersDefault(cx)
 	_ = a.stQuestionnaireAnswers.Get(cx, "s")
 	_ = a.stQuestionnaireAnswers.IsEmpty(cx)
 	_ = a.stQuestionnaireAnswers.Iter(cx)
@@ -1865,7 +1873,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Questionnaire_Input_Definition_Read: not made here: no constructor with arguments this test can make
 	// Questionnaire_Item_Definition_Read: not made here: no constructor with arguments this test can make
 	// Questionnaire_Item_State: not made here: no constructor with arguments this test can make
-	a.stQuestionnaireNavigationState = gk.NewQuestionnaireNavigationStateDefault(cx)
+	a.stQuestionnaireNavigationState = base.NewQuestionnaireNavigationStateDefault(cx)
 	_ = a.stQuestionnaireNavigationState.IsConfirmable(cx)
 	_ = a.stQuestionnaireNavigationState.IsNextVisible(cx)
 	_ = a.stQuestionnaireNavigationState.IsPreviousVisible(cx)
@@ -1874,18 +1882,18 @@ func (a *App) makeStates(cx *gk.Cx) {
 	fmt.Printf("states made Questionnaire_Navigation_State builders=0 reads=5 writes=0 calls=0 events=0\n")
 	// Questionnaire_Progress_State: not made here: no constructor with arguments this test can make
 	// Questionnaire_State: not made here: no constructor with arguments this test can make
-	a.stQuestionnaireSubmission = gk.NewQuestionnaireSubmissionDefault(cx)
+	a.stQuestionnaireSubmission = base.NewQuestionnaireSubmissionDefault(cx)
 	_ = a.stQuestionnaireSubmission.Answer(cx, "s")
 	_ = a.stQuestionnaireSubmission.Items(cx)
 	fmt.Printf("states made Questionnaire_Submission builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Questionnaire_Submission_Item: not made here: no constructor with arguments this test can make
 	// Range_Decoration_Collection: not made here: no constructor with arguments this test can make
-	a.stRangeHighlight = gk.NewRangeHighlight(cx, gk.Range{Lo: 1, Hi: 3}, gk.HSLA(0.5, 0.25, 0.75, 1))
+	a.stRangeHighlight = editor.NewRangeHighlight(cx, gk.Range{Lo: 1, Hi: 3}, gk.HSLA(0.5, 0.25, 0.75, 1))
 	_ = a.stRangeHighlight.Background(cx)
 	_ = a.stRangeHighlight.Range(cx)
 	fmt.Printf("states made Range_Highlight builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Rendered_Text: not made here: no constructor with arguments this test can make
-	a.stResizableState = gk.NewResizableState(cx)
+	a.stResizableState = base.NewResizableState(cx)
 	_ = a.stResizableState.ContainerSize(cx)
 	_ = a.stResizableState.IsResizing(cx)
 	_ = a.stResizableState.Sizes(cx)
@@ -1897,7 +1905,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.subs = append(a.subs, a.stResizableState.OnResizablePanelEvent(cx, anyEvent96))
 	fmt.Printf("states made Resizable_State builders=0 reads=3 writes=5 calls=0 events=1\n")
 	// Root: not made here: no constructor with arguments this test can make
-	a.stSankeyGraph = gk.NewSankeyGraphDefault(cx)
+	a.stSankeyGraph = chart.NewSankeyGraphDefault(cx)
 	_ = a.stSankeyGraph.LayerCount(cx)
 	fmt.Printf("states made Sankey_Graph builders=0 reads=1 writes=0 calls=0 events=0\n")
 	a.stScaleBand = gk.NewScaleBand(cx, []string{"s"}, [2]float32{1.5, 1.5}).BandCount(3).MaxBandWidth(1.5).PaddingInner(1.5).PaddingOuter(1.5).Build()
@@ -1906,7 +1914,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stScaleBand.Step(cx)
 	_ = a.stScaleBand.Tick(cx, "s")
 	fmt.Printf("states made Scale_Band builders=4 reads=4 writes=0 calls=0 events=0\n")
-	a.stScaleLinear = gk.NewScaleLinear(cx, []float64{1.5}, [2]float32{1.5, 1.5})
+	a.stScaleLinear = chart.NewScaleLinear(cx, []float64{1.5}, [2]float32{1.5, 1.5})
 	_ = a.stScaleLinear.NearestIndex(cx, 1.5)
 	_ = a.stScaleLinear.Tick(cx, 1.5)
 	fmt.Printf("states made Scale_Linear builders=0 reads=2 writes=0 calls=0 events=0\n")
@@ -1928,7 +1936,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	fmt.Printf("states made Scroll_Handle builders=0 reads=3 writes=3 calls=0 events=0\n")
 	// Scrollbar_Motion_Read: not made here: no constructor with arguments this test can make
 	// Scrollbar_Theme_Read: not made here: no constructor with arguments this test can make
-	a.stSearchMatcher = gk.NewSearchMatcher(cx)
+	a.stSearchMatcher = editor.NewSearchMatcher(cx)
 	_ = a.stSearchMatcher.Current(cx)
 	_ = a.stSearchMatcher.CurrentMatchIndex(cx)
 	_ = a.stSearchMatcher.IsEmpty(cx)
@@ -1938,30 +1946,30 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stSearchMatcher.UpdateCursorByOffset(cx, 3)
 	a.stSearchMatcher.UpdateQuery(cx, "s", true)
 	fmt.Printf("states made Search_Matcher builders=0 reads=6 writes=2 calls=0 events=0\n")
-	a.stSearchSession = gk.NewSearchSessionDefault(cx)
+	a.stSearchSession = editor.NewSearchSessionDefault(cx)
 	_ = a.stSearchSession.IsActive(cx)
 	fmt.Printf("states made Search_Session builders=0 reads=1 writes=0 calls=0 events=0\n")
 	// Select_State: not made here: its constructor takes a row source (core/tests/rows)
-	a.stSequence = gk.NewSequence(cx, "id", 1.5).Build()
+	a.stSequence = motion.NewSequence(cx, "id", 1.5).Build()
 	_ = a.stSequence.From(cx)
 	_ = a.stSequence.Steps(cx)
 	_ = a.stSequence.Sample(cx)
 	fmt.Printf("states made Sequence builders=0 reads=2 writes=0 calls=1 events=0\n")
 	// Sequence_Sample: not made here: no constructor with arguments this test can make
 	// Sequence_Step: not made here: no constructor with arguments this test can make
-	a.stShapeKey = gk.NewShapeKey(cx, "s")
+	a.stShapeKey = chart.NewShapeKey(cx, "s")
 	_ = a.stShapeKey.Finish(cx)
 	fmt.Printf("states made Shape_Key builders=0 reads=1 writes=0 calls=0 events=0\n")
-	a.stSliderState = gk.NewSliderState(cx).DefaultValue(gk.SliderValueSingle{Value: 1.5}).Max(1.5).Min(1.5).Scale(gk.SliderScaleLinear).Step(1.5).Build()
+	a.stSliderState = base.NewSliderState(cx).DefaultValue(base.SliderValueSingle{Value: 1.5}).Max(1.5).Min(1.5).Scale(base.SliderScaleLinear).Step(1.5).Build()
 	_ = a.stSliderState.AccessibilityStep(cx)
 	_ = a.stSliderState.MaxValue(cx)
 	_ = a.stSliderState.MinValue(cx)
 	_ = a.stSliderState.StepValue(cx)
 	_ = a.stSliderState.Value(cx)
-	a.stSliderState.SetValue(cx, gk.SliderValueSingle{Value: 1.5})
+	a.stSliderState.SetValue(cx, base.SliderValueSingle{Value: 1.5})
 	a.subs = append(a.subs, a.stSliderState.OnSliderEvent(cx, anyEvent90))
 	fmt.Printf("states made Slider_State builders=5 reads=5 writes=1 calls=0 events=1\n")
-	a.stSpeechState = gk.NewSpeechState(cx).StopTimeout(250 * time.Millisecond).SystemFallback(true).Build()
+	a.stSpeechState = kit.NewSpeechState(cx).StopTimeout(250 * time.Millisecond).SystemFallback(true).Build()
 	_ = a.stSpeechState.HasRecognizer(cx)
 	_ = a.stSpeechState.IsAvailable(cx)
 	_ = a.stSpeechState.Levels(cx)
@@ -1973,13 +1981,13 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stSpeechState.Toggle(cx)
 	a.subs = append(a.subs, a.stSpeechState.OnSpeechEvent(cx, anyEvent93))
 	fmt.Printf("states made Speech_State builders=2 reads=5 writes=4 calls=0 events=1\n")
-	a.stStack = gk.NewStack(cx).Data(gk.NewData(sampleRows)).Keys([]string{"s"}).Value("Gap").Build()
+	a.stStack = chart.NewStack(cx).Data(chart.NewData(sampleRows)).Keys([]string{"s"}).Value("Gap").Build()
 	_ = a.stStack.Series(cx)
 	fmt.Printf("states made Stack builders=3 reads=1 writes=0 calls=0 events=0\n")
-	a.stStagger = gk.NewStagger(cx, 250*time.Millisecond, gk.StaggerOriginFirst)
+	a.stStagger = motion.NewStagger(cx, 250*time.Millisecond, motion.StaggerOriginFirst)
 	_ = a.stStagger.Delay(cx, 3, 3)
 	fmt.Printf("states made Stagger builders=0 reads=1 writes=0 calls=0 events=0\n")
-	a.stStatusColors = gk.NewStatusColorsDefault(cx)
+	a.stStatusColors = editor.NewStatusColorsDefault(cx)
 	_ = a.stStatusColors.Created(cx)
 	_ = a.stStatusColors.Deleted(cx)
 	_ = a.stStatusColors.Error(cx)
@@ -1999,40 +2007,40 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stStatusColors.WarningBackground(cx)
 	_ = a.stStatusColors.WarningBorder(cx)
 	fmt.Printf("states made Status_Colors builders=0 reads=18 writes=0 calls=0 events=0\n")
-	a.stSyntaxColors = gk.NewSyntaxColorsDefault(cx)
+	a.stSyntaxColors = editor.NewSyntaxColorsDefault(cx)
 	_ = a.stSyntaxColors.Style(cx, "s")
 	_ = a.stSyntaxColors.StyleForIndex(cx, 3)
 	fmt.Printf("states made Syntax_Colors builders=0 reads=2 writes=0 calls=0 events=0\n")
-	a.stSyntaxHighlighter = gk.NewSyntaxHighlighter(cx, "s")
+	a.stSyntaxHighlighter = editor.NewSyntaxHighlighter(cx, "s")
 	_ = a.stSyntaxHighlighter.Language(cx)
 	_ = a.stSyntaxHighlighter.Text(cx)
 	fmt.Printf("states made Syntax_Highlighter builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Tab_Group: not made here: no constructor with arguments this test can make
 	// Tab_Group_Context: not made here: no constructor with arguments this test can make
 	// Table_State: not made here: its constructor takes a row source (core/tests/rows)
-	a.stTableVisibleRange = gk.NewTableVisibleRangeDefault(cx)
+	a.stTableVisibleRange = table.NewVisibleRangeDefault(cx)
 	_ = a.stTableVisibleRange.Cols(cx)
 	_ = a.stTableVisibleRange.Rows(cx)
 	fmt.Printf("states made Table_Visible_Range builders=0 reads=2 writes=0 calls=0 events=0\n")
 	// Task_Toggle_Event: not made here: no constructor with arguments this test can make
 	// Text_Decoration_Collection: not made here: no constructor with arguments this test can make
 	// Text_Selection_Endpoint: not made here: no constructor with arguments this test can make
-	a.stTextSelectionHandle = gk.NewTextSelectionHandle(cx, "s")
+	a.stTextSelectionHandle = editor.NewTextSelectionHandle(cx, "s")
 	_ = a.stTextSelectionHandle.HasLocalSelection(cx)
 	_ = a.stTextSelectionHandle.Snapshot(cx)
 	a.stTextSelectionHandle.SetFallbackCopyText(cx, "s")
 	a.stTextSelectionHandle.SetLocalSelection(cx, true)
 	fmt.Printf("states made Text_Selection_Handle builders=0 reads=2 writes=2 calls=0 events=0\n")
-	a.stTextSelectionProjection = gk.NewTextSelectionProjectionDefault(cx)
+	a.stTextSelectionProjection = editor.NewTextSelectionProjectionDefault(cx)
 	fmt.Printf("states made Text_Selection_Projection builders=0 reads=0 writes=0 calls=0 events=0\n")
 	// Text_Selection_Snapshot: not made here: no constructor with arguments this test can make
 	// Text_Selection_Window_Points: not made here: no constructor with arguments this test can make
-	a.stTextViewDefaults = gk.NewTextViewDefaults(cx).WithInheritTextColor(true).Build()
+	a.stTextViewDefaults = editor.NewTextViewDefaults(cx).WithInheritTextColor(true).Build()
 	_ = a.stTextViewDefaults.HasCodeBlockHighlighter(cx)
 	_ = a.stTextViewDefaults.InheritTextColor(cx)
 	a.stTextViewDefaults.Install(cx)
 	fmt.Printf("states made Text_View_Defaults builders=1 reads=2 writes=1 calls=0 events=0\n")
-	a.stTextViewState = gk.NewTextViewStateHTML(cx, "s").Scrollable(true).Selectable(true).SelectionFormat(gk.SelectionFormatPlain).Build()
+	a.stTextViewState = editor.NewTextViewStateHTML(cx, "s").Scrollable(true).Selectable(true).SelectionFormat(editor.SelectionFormatPlain).Build()
 	_ = a.stTextViewState.IsClamped(cx)
 	_ = a.stTextViewState.RenderedText(cx)
 	_ = a.stTextViewState.SelectedSourceRange(cx)
@@ -2045,10 +2053,10 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stTextViewState.SelectAll(cx)
 	a.stTextViewState.SetScrollable(cx, true)
 	a.stTextViewState.SetSelectable(cx, true)
-	a.stTextViewState.SetSelectionFormat(cx, gk.SelectionFormatPlain)
+	a.stTextViewState.SetSelectionFormat(cx, editor.SelectionFormatPlain)
 	a.stTextViewState.SetText(cx, "s")
 	fmt.Printf("states made Text_View_State builders=3 reads=4 writes=9 calls=1 events=0\n")
-	a.stTextareaState = gk.NewTextareaState(cx).AutoGrow(3, 3).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").InputAction(gk.TextInputActionUnspecified).MaskPattern(gk.MaskPatternNone).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).ScrollBounce(true).ScrollbarPlacement(gk.ScrollbarPlacementBottomRight).Searchable(true).Build()
+	a.stTextareaState = editor.NewTextareaState(cx).AutoGrow(3, 3).Autocapitalize(gk.AutocapitalizeNone).Autocorrect(true).CleanOnEscape().ContextMenu(true).CursorSurroundingLines(gk.Some[int](3)).DefaultValue("s").InputAction(gk.TextInputActionUnspecified).MaskPattern(editor.MaskPatternNone).Placeholder("s").ScrollBeyondLastLine(gk.Some[int](3)).ScrollBounce(true).ScrollbarPlacement(gk.ScrollbarPlacementBottomRight).Searchable(true).Build()
 	_ = a.stTextareaState.Content(cx)
 	_ = a.stTextareaState.ContentHeightF64(cx)
 	_ = a.stTextareaState.ContextMenuCapabilities(cx)
@@ -2061,8 +2069,8 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stTextareaState.DisplayMapBufferLineCount(cx)
 	_ = a.stTextareaState.DisplayMapBufferLineToDisplayRow(cx, 3)
 	_ = a.stTextareaState.DisplayMapBufferLineToDisplayRowRange(cx, 3)
-	_ = a.stTextareaState.DisplayMapBufferPosToDisplayPos(cx, gk.BufferPoint{Line: 3, Col: 3})
-	_ = a.stTextareaState.DisplayMapDisplayPosToBufferPos(cx, gk.DisplayPoint{Row: 3, Col: 3})
+	_ = a.stTextareaState.DisplayMapBufferPosToDisplayPos(cx, editor.BufferPoint{Line: 3, Col: 3})
+	_ = a.stTextareaState.DisplayMapDisplayPosToBufferPos(cx, editor.DisplayPoint{Row: 3, Col: 3})
 	_ = a.stTextareaState.DisplayMapDisplayRowCount(cx)
 	_ = a.stTextareaState.DisplayMapDisplayRowToBufferLine(cx, 3)
 	_ = a.stTextareaState.DisplayMapDisplayRowToWrapRow(cx, 3)
@@ -2109,7 +2117,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	_ = a.stTextareaState.ReplaceCurrentSearchMatch(cx, "s")
 	a.stTextareaState.AddSelection(cx, gk.Range{Lo: 1, Hi: 3})
 	a.stTextareaState.ApplyHighlighterFoldCandidates(cx, []gk.FoldRange{gk.FoldRange{StartLine: 3, EndLine: 3}})
-	a.stTextareaState.BeginEdgeDrag(cx, gk.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
+	a.stTextareaState.BeginEdgeDrag(cx, editor.SelectionEdgeStart, gk.GpuiPoint{X: 4, Y: 4})
 	a.stTextareaState.Clean(cx)
 	a.stTextareaState.CloseEditMenu(cx)
 	a.stTextareaState.CloseSearch(cx)
@@ -2129,11 +2137,11 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stTextareaState.SetCleanOnEscape(cx, true)
 	a.stTextareaState.SetContextMenuEnabled(cx, true)
 	a.stTextareaState.SetCursorSurroundingLines(cx, gk.Some[int](3))
-	a.stTextareaState.SetDecorations(cx, []gk.TextDecoration{gk.TextDecoration{Range: gk.Range{Lo: 1, Hi: 3}, Style: gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)}}})
+	a.stTextareaState.SetDecorations(cx, []editor.TextDecoration{editor.TextDecoration{Range: gk.Range{Lo: 1, Hi: 3}, Style: gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)}}})
 	a.stTextareaState.SetDisabled(cx, true)
 	a.stTextareaState.SetFoldBackground(cx, gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)))
 	a.stTextareaState.SetHighlighter(cx, "s")
-	a.stTextareaState.SetMaskPattern(cx, gk.MaskPatternNone)
+	a.stTextareaState.SetMaskPattern(cx, editor.MaskPatternNone)
 	a.stTextareaState.SetPlaceholder(cx, "s")
 	a.stTextareaState.SetReadonly(cx, true)
 	a.stTextareaState.SetRows(cx, 3)
@@ -2149,10 +2157,10 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stTextareaState.SetShowWhitespaces(cx, true)
 	a.stTextareaState.SetSoftWrap(cx, true)
 	a.stTextareaState.SetSubmitOnEnter(cx, true)
-	a.stTextareaState.SetTabSize(cx, gk.TabSize{TabSize: 3, HardTabs: true})
+	a.stTextareaState.SetTabSize(cx, editor.TabSize{TabSize: 3, HardTabs: true})
 	a.stTextareaState.SetTextAlign(cx, gk.TextAlignLeft)
 	a.stTextareaState.SetValue(cx, string("s"))
-	a.stTextareaState.SetWrappingIndent(cx, gk.WrappingIndentNone)
+	a.stTextareaState.SetWrappingIndent(cx, editor.WrappingIndentNone)
 	a.stTextareaState.ToggleMasked(cx)
 	a.stTextareaState.Unselect(cx)
 	a.stTextareaState.UpdateEdgeDrag(cx, gk.GpuiPoint{X: 4, Y: 4})
@@ -2163,37 +2171,37 @@ func (a *App) makeStates(cx *gk.Cx) {
 	// Theme_Color_Arc: not made here: no constructor with arguments this test can make
 	// Theme_Config_Rc: not made here: no constructor with arguments this test can make
 	// Theme_Registry: not made here: no constructor with arguments this test can make
-	a.stTimeFieldState = gk.NewTimeFieldState(cx).HourCycle(gk.HourCycleH23).Precision(gk.TimePrecisionMinute).Build()
+	a.stTimeFieldState = base.NewTimeFieldState(cx).HourCycle(base.HourCycleH23).Precision(base.TimePrecisionMinute).Build()
 	_ = a.stTimeFieldState.SelectedSegment(cx)
 	_ = a.stTimeFieldState.Time(cx)
 	a.stTimeFieldState.Focus(cx)
-	a.stTimeFieldState.SetHourCycle(cx, gk.HourCycleH23)
-	a.stTimeFieldState.SetPrecision(cx, gk.TimePrecisionMinute)
+	a.stTimeFieldState.SetHourCycle(cx, base.HourCycleH23)
+	a.stTimeFieldState.SetPrecision(cx, base.TimePrecisionMinute)
 	a.subs = append(a.subs, a.stTimeFieldState.OnTimeFieldEvent(cx, anyEvent111))
 	fmt.Printf("states made Time_Field_State builders=2 reads=2 writes=3 calls=0 events=1\n")
-	a.stToastManager = gk.NewToastManager(cx, gk.ToastMotion{Duration: 250 * time.Millisecond, ExitDuration: 250 * time.Millisecond, CollapsedPeek: 4, ExpandedGap: 4, CollapsedScaleStep: 1.5, CollapsedVisible: 3})
+	a.stToastManager = overlay.NewToastManager(cx, overlay.ToastMotion{Duration: 250 * time.Millisecond, ExitDuration: 250 * time.Millisecond, CollapsedPeek: 4, ExpandedGap: 4, CollapsedScaleStep: 1.5, CollapsedVisible: 3})
 	_ = a.stToastManager.Get(cx, 3)
 	_ = a.stToastManager.IsEmpty(cx)
 	_ = a.stToastManager.Iter(cx)
 	_ = a.stToastManager.Len(cx)
 	_ = a.stToastManager.Visible(cx, 3)
 	fmt.Printf("states made Toast_Manager builders=0 reads=5 writes=0 calls=0 events=0\n")
-	a.stToastStackState = gk.NewToastStackStateDefault(cx)
+	a.stToastStackState = overlay.NewToastStackStateDefault(cx)
 	_ = a.stToastStackState.IsExpanded(cx)
 	fmt.Printf("states made Toast_Stack_State builders=0 reads=1 writes=0 calls=0 events=0\n")
-	a.stTooltipDefaults = gk.NewTooltipDefaults(cx).WithGracePeriod(250 * time.Millisecond).WithShowDelay(250 * time.Millisecond).Build()
+	a.stTooltipDefaults = overlay.NewTooltipDefaults(cx).WithGracePeriod(250 * time.Millisecond).WithShowDelay(250 * time.Millisecond).Build()
 	_ = a.stTooltipDefaults.GracePeriod(cx)
 	_ = a.stTooltipDefaults.ShowDelay(cx)
 	a.stTooltipDefaults.Install(cx)
 	fmt.Printf("states made Tooltip_Defaults builders=2 reads=2 writes=1 calls=0 events=0\n")
-	a.stTooltipOverlay = gk.NewTooltipOverlay(cx).Build()
+	a.stTooltipOverlay = overlay.NewTooltipOverlay(cx).Build()
 	a.stTooltipOverlay.Hide(cx)
 	a.stTooltipOverlay.RequestHide(cx)
 	fmt.Printf("states made Tooltip_Overlay builders=0 reads=0 writes=2 calls=0 events=0\n")
 	// Touch_Selection_Snapshot: not made here: no constructor with arguments this test can make
-	a.stTransitionState = gk.NewTransitionStateDefault(cx)
+	a.stTransitionState = motion.NewTransitionStateDefault(cx)
 	fmt.Printf("states made Transition_State builders=0 reads=0 writes=0 calls=0 events=0\n")
-	a.stTreeState = gk.NewTreeState(cx).Build()
+	a.stTreeState = table.NewTreeState(cx).Build()
 	_ = a.stTreeState.Entry(cx, 3)
 	_ = a.stTreeState.IndexOf(cx, "s")
 	_ = a.stTreeState.ScrollHandle(cx)
@@ -2204,7 +2212,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stTreeState.RevealItem(cx, "s", gk.ScrollStrategyTop)
 	a.stTreeState.ScrollToItem(cx, 3, gk.ScrollStrategyTop)
 	a.stTreeState.SetSelectedIndex(cx, gk.Some[int](3))
-	a.stTreeState.SetSelectedItem(cx, gk.Some[gk.TreeItem](gk.NewTreeItem("s", "s")))
+	a.stTreeState.SetSelectedItem(cx, gk.Some[table.TreeItem](table.NewTreeItem("s", "s")))
 	a.subs = append(a.subs, a.stTreeState.OnTreeEvent(cx, anyEvent86))
 	fmt.Printf("states made Tree_State builders=0 reads=6 writes=5 calls=0 events=1\n")
 	a.stUndoHistory = gk.NewUndoHistory(cx).GroupInterval(250 * time.Millisecond).MaxUndos(3).Build()
@@ -2219,7 +2227,7 @@ func (a *App) makeStates(cx *gk.Cx) {
 	a.stUndoHistory.SetIgnoring(cx, true)
 	a.stUndoHistory.StartGrouping(cx)
 	fmt.Printf("states made Undo_History builders=2 reads=3 writes=5 calls=2 events=0\n")
-	a.stVirtualListScrollHandle = gk.NewVirtualListScrollHandle(cx)
+	a.stVirtualListScrollHandle = table.NewVirtualListScrollHandle(cx)
 	_ = a.stVirtualListScrollHandle.BaseHandle(cx)
 	a.stVirtualListScrollHandle.ScrollToBottom(cx)
 	a.stVirtualListScrollHandle.ScrollToItem(cx, 3, gk.ScrollStrategyTop)
@@ -2297,7 +2305,7 @@ func (a *App) releaseStates(cx *gk.Cx) {
 	_ = a.stPathCache.IsWarm(cx)
 	gk.Release(cx, a.stPathCache)
 	gk.Release(cx, a.stPathCaches)
-	_ = a.stPie.Arcs(cx, gk.NewData(sampleRows))
+	_ = a.stPie.Arcs(cx, chart.NewData(sampleRows))
 	gk.Release(cx, a.stPie)
 	_ = a.stPlotAppear.IsAppearing(cx)
 	gk.Release(cx, a.stPlotAppear)

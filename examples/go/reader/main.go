@@ -20,7 +20,13 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -54,11 +60,11 @@ type App struct {
 	order     Order
 	summaries bool
 	// kit state
-	list                     gk.ListState
-	search                   gk.InputState
-	font                     gk.SliderState
-	themeSelect, orderSelect gk.SelectState
-	settings                 gk.Built[gk.DialogEl]
+	list                     table.ListState
+	search                   editor.InputState
+	font                     base.SliderState
+	themeSelect, orderSelect table.SelectState
+	settings                 gk.Built[overlay.DialogEl]
 }
 
 // --- loading, on a goroutine ------------------------------------------------------------------
@@ -142,13 +148,13 @@ func (a *App) startLoad(cx *gk.Cx) {
 func (a *App) loaded(cx *gk.Cx, m loaded) {
 	a.loading = false
 	if m.err != nil {
-		gk.PushNotification(cx, m.err.Error())
+		overlay.PushNotification(cx, m.err.Error())
 		gk.Refresh(cx)
 		return
 	}
 	a.articles, a.tabs, a.active = m.articles, nil, -1
 	a.resort(cx) // and refresh
-	gk.PushNotification(cx, fmt.Sprintf("Loaded %d articles in %.0f ms", len(a.articles), float64(m.took)/float64(time.Millisecond)))
+	overlay.PushNotification(cx, fmt.Sprintf("Loaded %d articles in %.0f ms", len(a.articles), float64(m.took)/float64(time.Millisecond)))
 }
 
 // resort: the list's articles, filtered by the search and in the chosen order; then refresh.
@@ -174,12 +180,12 @@ func (a *App) resort(cx *gk.Cx) {
 }
 
 // selectActive selects the open article's row in the list, if the list shows it.
-func (a *App) selectActive(cx *gk.Cx, opts ...gk.SelectOption) {
+func (a *App) selectActive(cx *gk.Cx, opts ...table.SelectOption) {
 	row := -1
 	if a.active >= 0 {
 		row = slices.Index(a.shown, a.tabs[a.active])
 	}
-	gk.SelectRow(cx, a.list, row, opts...)
+	table.SelectRow(cx, a.list, row, opts...)
 	gk.Refresh(cx)
 }
 
@@ -199,31 +205,31 @@ func (a *App) init(cx *gk.Cx) {
 	gk.Shortcut(cx, "alt-down", a.nextArticle)
 	gk.Shortcut(cx, "alt-up", a.prevArticle)
 
-	a.search = gk.NewInputState(cx).Placeholder("Search titles").Build()
-	a.search.OnInputEvent(cx, func(cx *gk.Cx, e gk.InputEvent) {
-		if _, ok := e.(gk.InputEventChange); ok {
+	a.search = editor.NewInputState(cx).Placeholder("Search titles").Build()
+	a.search.OnInputEvent(cx, func(cx *gk.Cx, e editor.InputEvent) {
+		if _, ok := e.(editor.InputEventChange); ok {
 			a.resort(cx)
 		}
 	})
-	a.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.shown) }, a.articleRow)).Build()
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.shown) }, a.articleRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
 
-	a.font = gk.NewSliderState(cx).Min(12).Max(24).Step(1).DefaultValue(a.fontSize).Build()
-	a.font.OnSliderEvent(cx, func(cx *gk.Cx, e gk.SliderEvent) {
-		a.fontSize = gk.SliderNumber(e)
+	a.font = base.NewSliderState(cx).Min(12).Max(24).Step(1).DefaultValue(a.fontSize).Build()
+	a.font.OnSliderEvent(cx, func(cx *gk.Cx, e base.SliderEvent) {
+		a.fontSize = kit.SliderNumber(e)
 		gk.Refresh(cx)
 	})
-	a.themeSelect = gk.NewSelectState(cx, gk.NewSearchSource(cx, themes), gk.NoRow).Build()
+	a.themeSelect = table.NewSelectState(cx, gk.NewSearchSource(cx, themes), table.NoRow).Build()
 	a.themeSelect.SetSelectedValue(cx, "light")
-	a.themeSelect.OnSelectEvent(cx, func(cx *gk.Cx, e gk.SelectEvent) {
-		if v, ok := e.(gk.SelectEventConfirm).Value.Get(); ok {
+	a.themeSelect.OnSelectEvent(cx, func(cx *gk.Cx, e table.SelectEvent) {
+		if v, ok := e.(table.SelectEventConfirm).Value.Get(); ok {
 			a.setDark(cx, v == "dark")
 		}
 	})
-	a.orderSelect = gk.NewSelectState(cx, gk.NewSearchSource(cx, orders), gk.NoRow).Build()
+	a.orderSelect = table.NewSelectState(cx, gk.NewSearchSource(cx, orders), table.NoRow).Build()
 	a.orderSelect.SetSelectedValue(cx, "newest")
-	a.orderSelect.OnSelectEvent(cx, func(cx *gk.Cx, e gk.SelectEvent) {
-		if v, ok := e.(gk.SelectEventConfirm).Value.Get(); ok {
+	a.orderSelect.OnSelectEvent(cx, func(cx *gk.Cx, e table.SelectEvent) {
+		if v, ok := e.(table.SelectEventConfirm).Value.Get(); ok {
 			a.order = map[string]Order{"newest": Newest, "oldest": Oldest, "title": ByTitle}[v]
 			a.resort(cx) // and refresh
 		}
@@ -238,9 +244,9 @@ func (a *App) init(cx *gk.Cx) {
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(a.toolbar()).
-		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(gk.HResizable("split").
-			Child(gk.ResizablePanel().Size(300).Child(a.sidebar())).
-			Child(gk.ResizablePanel().Child(a.readingPane()))))
+		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(base.HResizable("split").
+			Child(base.ResizablePanel().Size(300).Child(a.sidebar())).
+			Child(base.ResizablePanel().Child(a.readingPane()))))
 }
 
 func (a *App) toolbar() gk.Element {
@@ -253,14 +259,14 @@ func (a *App) toolbar() gk.Element {
 		themeIcon, themeTip = gk.IconSun, "Light theme"
 	}
 	return gk.HFlex(s.Gap1, s.ItemsCenter, s.P2, s.BorderB1).BorderColor(theme.Border).
-		Child(gk.Button("reload").Ghost().Icon(gk.IconRefreshCw).Tooltip("Reload the feed").Loading(a.loading).OnClick(a.reload)).
-		Child(gk.Button("prev").Ghost().Icon(gk.IconArrowUp).Tooltip("Previous article").OnClick(a.prevArticle)).
-		Child(gk.Button("next").Ghost().Icon(gk.IconArrowDown).Tooltip("Next article").OnClick(a.nextArticle)).
-		Child(gk.Button("star").Ghost().Icon(star).Tooltip("Star").Disabled(a.active < 0).OnClick(a.toggleStar)).
-		Child(gk.Button("close").Ghost().Icon(gk.IconClose).Tooltip("Close the tab").Disabled(a.active < 0).OnClick(a.closeActive)).
+		Child(kit.Button("reload").Ghost().Icon(gk.IconRefreshCw).Tooltip("Reload the feed").Loading(a.loading).OnClick(a.reload)).
+		Child(kit.Button("prev").Ghost().Icon(gk.IconArrowUp).Tooltip("Previous article").OnClick(a.prevArticle)).
+		Child(kit.Button("next").Ghost().Icon(gk.IconArrowDown).Tooltip("Next article").OnClick(a.nextArticle)).
+		Child(kit.Button("star").Ghost().Icon(star).Tooltip("Star").Disabled(a.active < 0).OnClick(a.toggleStar)).
+		Child(kit.Button("close").Ghost().Icon(gk.IconClose).Tooltip("Close the tab").Disabled(a.active < 0).OnClick(a.closeActive)).
 		Child(gk.Div(s.Flex1)).
-		Child(gk.Button("theme").Ghost().Icon(themeIcon).Tooltip(themeTip).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.setDark(cx, !a.dark) })).
-		Child(gk.Button("settings").Ghost().Icon(gk.IconSettings).Tooltip("Settings").OnClick(a.openSettings))
+		Child(kit.Button("theme").Ghost().Icon(themeIcon).Tooltip(themeTip).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.setDark(cx, !a.dark) })).
+		Child(kit.Button("settings").Ghost().Icon(gk.IconSettings).Tooltip("Settings").OnClick(a.openSettings))
 }
 
 func (a *App) sidebar() gk.Element {
@@ -270,34 +276,34 @@ func (a *App) sidebar() gk.Element {
 			unread++
 		}
 	}
-	var body gk.Element = gk.List(a.list)
+	var body gk.Element = table.List(a.list)
 	if a.loading && len(a.articles) == 0 {
-		body = gk.VFlex(s.SizeFull, s.ItemsCenter, s.JustifyCenter).Child(gk.Label("Loading…"))
+		body = gk.VFlex(s.SizeFull, s.ItemsCenter, s.JustifyCenter).Child(kit.Label("Loading…"))
 	}
 	return gk.VFlex(s.SizeFull, s.Gap2, s.P2).Bg(theme.Sidebar).
-		Child(gk.Input(a.search)).
-		Child(gk.Label(fmt.Sprintf("%d articles, %d unread", len(a.shown), unread), s.TextSm).TextColor(theme.MutedForeground)).
+		Child(editor.Input(a.search)).
+		Child(kit.Label(fmt.Sprintf("%d articles, %d unread", len(a.shown), unread), s.TextSm).TextColor(theme.MutedForeground)).
 		Child(gk.Div(s.Flex1, s.MinH0).Child(body))
 }
 
-func (a *App) articleRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) articleRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	i := a.shown[at.Row]
 	art := a.articles[i]
-	title := gk.Label(art.Title, s.Truncate)
+	title := kit.Label(art.Title, s.Truncate)
 	if !art.Read {
 		title = title.Style(s.FontSemibold)
 	}
 	col := gk.VFlex(s.Flex1, s.MinW0).
 		Child(title).
-		Child(gk.Label(art.Source+" · "+art.Date, s.TextXs).TextColor(theme.MutedForeground))
+		Child(kit.Label(art.Source+" · "+art.Date, s.TextXs).TextColor(theme.MutedForeground))
 	if a.summaries {
-		col = col.Child(gk.Label(summary(art.Body), s.TextXs, s.Truncate).TextColor(theme.MutedForeground))
+		col = col.Child(kit.Label(summary(art.Body), s.TextXs, s.Truncate).TextColor(theme.MutedForeground))
 	}
 	row := gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).Child(col)
 	if art.Starred {
 		row = row.Child(gk.Icon(gk.IconStarFill).TextColor(theme.Warning))
 	}
-	return gk.ListItem(gk.Key("article", i)).Child(row)
+	return table.ListItem(gk.Key("article", i)).Child(row)
 }
 
 // summary is the first line of the article that is not a heading.
@@ -313,43 +319,43 @@ func summary(body string) string {
 func (a *App) readingPane() gk.Element {
 	if a.active < 0 {
 		return gk.VFlex(s.SizeFull, s.ItemsCenter, s.JustifyCenter).
-			Child(gk.Label("Open an article from the list").TextColor(theme.MutedForeground))
+			Child(kit.Label("Open an article from the list").TextColor(theme.MutedForeground))
 	}
-	bar := gk.TabBar("tabs").SelectedIndex(a.active).OnClick(func(cx *gk.Cx, n int) { a.open(cx, a.tabs[n]) })
+	bar := kit.TabBar("tabs").SelectedIndex(a.active).OnClick(func(cx *gk.Cx, n int) { a.open(cx, a.tabs[n]) })
 	for n, t := range a.tabs {
-		bar = bar.Child(gk.Tab().Label(a.articles[t].Title).
-			Suffix(gk.Button(gk.Key("close-tab", n)).Ghost().Xsmall().Icon(gk.IconClose).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		bar = bar.Child(kit.Tab().Label(a.articles[t].Title).
+			Suffix(kit.Button(gk.Key("close-tab", n)).Ghost().Xsmall().Icon(gk.IconClose).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 				gk.StopPropagation(cx) // the tab itself is not clicked
 				a.closeTab(cx, n)
 			})))
 	}
 	i := a.tabs[a.active]
-	page := gk.TextViewMarkdown(gk.Key("article", i), a.articles[i].Body).Scrollable(true).TextSize(gk.Px(a.fontSize))
-	fade := gk.NewEffectTransition(200*time.Millisecond).Fade(0, 1).SlideY(12, 0)
+	page := editor.TextViewMarkdown(gk.Key("article", i), a.articles[i].Body).Scrollable(true).TextSize(gk.Px(a.fontSize))
+	fade := motion.NewEffectTransition(200*time.Millisecond).Fade(0, 1).SlideY(12, 0)
 	return gk.VFlex(s.SizeFull).
 		Child(bar).
-		Child(gk.Div(s.Flex1, s.MinH0, s.P4).Child(gk.Effect(page, fade, fmt.Sprintf("open-%d", a.opened))))
+		Child(gk.Div(s.Flex1, s.MinH0, s.P4).Child(kit.Effect(page, fade, fmt.Sprintf("open-%d", a.opened))))
 }
 
 // --- the settings dialog ----------------------------------------------------------------------
 
-func (a *App) settingsView(cx *gk.Cx) gk.DialogEl {
-	row := func(label string, sel gk.SelectState) gk.Element {
-		return gk.HFlex(s.Gap2, s.ItemsCenter).Child(gk.Label(label).W(gk.Px(120))).Child(gk.Select(sel))
+func (a *App) settingsView(cx *gk.Cx) overlay.DialogEl {
+	row := func(label string, sel table.SelectState) gk.Element {
+		return gk.HFlex(s.Gap2, s.ItemsCenter).Child(kit.Label(label).W(gk.Px(120))).Child(table.Select(sel))
 	}
-	return gk.Dialog().Title(gk.Label("Settings")).
+	return overlay.Dialog().Title(kit.Label("Settings")).
 		Child(gk.VFlex(s.Gap4).
 			Child(gk.VFlex(s.Gap1).
-				Child(gk.Label(fmt.Sprintf("Font size: %.0f px", a.fontSize))).
-				Child(gk.Slider(a.font))).
+				Child(kit.Label(fmt.Sprintf("Font size: %.0f px", a.fontSize))).
+				Child(kit.Slider(a.font))).
 			Child(row("Theme", a.themeSelect)).
 			Child(row("Order", a.orderSelect)).
-			Child(gk.Switch("summaries").Label("Show a summary under each title").Checked(a.summaries).
+			Child(kit.Switch("summaries").Label("Show a summary under each title").Checked(a.summaries).
 				OnClick(func(cx *gk.Cx, on bool) { a.summaries = on; gk.Refresh(cx) }))).
-		Footer(gk.DialogFooter().Child(gk.DialogClose().Trigger(gk.Button("done").Primary().Label("Done"))))
+		Footer(overlay.DialogFooter().Child(overlay.DialogClose().Trigger(kit.Button("done").Primary().Label("Done"))))
 }
 
-func (a *App) openSettings(cx *gk.Cx, _ gk.ClickEvent) { gk.OpenDialog(cx, a.settings) }
+func (a *App) openSettings(cx *gk.Cx, _ gk.ClickEvent) { overlay.OpenDialog(cx, a.settings) }
 
 func (a *App) setDark(cx *gk.Cx, dark bool) {
 	a.dark = dark
@@ -369,11 +375,11 @@ func (a *App) reload(cx *gk.Cx, _ gk.ClickEvent) {
 	gk.Refresh(cx)
 }
 
-func (a *App) listEvent(cx *gk.Cx, e gk.ListEvent) {
+func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
 	switch e := e.(type) {
-	case gk.ListEventConfirm:
+	case table.ListEventConfirm:
 		a.open(cx, a.shown[e.Row])
-	case gk.ListEventSelect:
+	case table.ListEventSelect:
 		a.open(cx, a.shown[e.Row])
 	}
 }
@@ -389,7 +395,7 @@ func (a *App) open(cx *gk.Cx, i int) {
 		a.opened++
 	}
 	a.articles[i].Read = true
-	a.selectActive(cx, gk.ScrollIntoView)
+	a.selectActive(cx, table.ScrollIntoView)
 }
 
 func (a *App) closeTab(cx *gk.Cx, n int) {

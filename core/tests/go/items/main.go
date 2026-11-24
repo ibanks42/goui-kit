@@ -27,24 +27,27 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	mode      string
 	root      gk.View
-	cal       gk.CalendarState
-	tf        gk.TimeFieldState
-	tree      gk.TreeState
-	cmd       gk.CommandState
-	combo     gk.ComboboxState
-	nav       gk.NavStackState
+	cal       base.CalendarState
+	tf        base.TimeFieldState
+	tree      table.TreeState
+	cmd       table.CommandState
+	combo     table.ComboboxState
+	nav       base.NavStackState
 	page      gk.View
 	builds    int
 	described int // item rows described
-	kinds     [gk.CalendarItemKindYear + 1]int
-	segments  [gk.TimeSegmentPeriod + 1]int
+	kinds     [base.CalendarItemKindYear + 1]int
+	segments  [base.TimeSegmentPeriod + 1]int
 	active    int
 	after     int // rows described after the first three frames
 	frames    int
@@ -79,17 +82,17 @@ func (a *App) init(cx *gk.Cx) {
 	gk.OnFrame(cx, a.onFrame)
 	switch a.mode {
 	case "items-calendar", "items-wrong-kind":
-		a.cal = gk.NewCalendarState(cx).Build()
+		a.cal = base.NewCalendarState(cx).Build()
 	case "items-time-field":
-		a.tf = gk.NewTimeFieldState(cx).Build()
+		a.tf = base.NewTimeFieldState(cx).Build()
 	case "items-tree":
-		a.tree = gk.NewTreeState(cx).Items([]gk.TreeItem{gk.NewTreeItem("a", "Alpha"), gk.NewTreeItem("b", "Beta")}).Build()
+		a.tree = table.NewTreeState(cx).Items([]table.TreeItem{table.NewTreeItem("a", "Alpha"), table.NewTreeItem("b", "Beta")}).Build()
 	case "items-command":
-		a.cmd = gk.NewCommandState(cx)
+		a.cmd = table.NewCommandState(cx)
 	case "items-combobox":
-		a.combo = gk.NewComboboxState(cx, gk.NewSearchSource(cx, fruit), []gk.BaseIndexPath{{Row: 1}}).Build() // Pear
+		a.combo = table.NewComboboxState(cx, gk.NewSearchSource(cx, fruit), []table.BaseIndexPath{{Row: 1}}).Build() // Pear
 	case "items-nav":
-		a.nav = gk.NewNavStackState(cx)
+		a.nav = base.NewNavStackState(cx)
 		a.page = gk.NewView(nil, a.pageView)
 	}
 	if f, ok := modeInit[a.mode]; ok {
@@ -102,7 +105,7 @@ func (a *App) pageView(cx *gk.Cx) gk.Element {
 }
 
 func closeView(a *App, cx *gk.Cx, root gk.DivEl) gk.Element {
-	close := gk.BaseDialogClose().Trigger(gk.BaseButton("x").Child(gk.Text("Close")))
+	close := overlay.BaseDialogClose().Trigger(base.Button("x").Child(gk.Text("Close")))
 	return root.Child(close).Child(gk.Text("items close drawn"))
 }
 
@@ -139,10 +142,10 @@ func main() {
 	switch a.mode {
 	case "items-calendar":
 		fmt.Printf("items calendar described=%d days=%d weekdays=%d active=%d after=%d\n", a.described,
-			a.kinds[gk.CalendarItemKindDay], a.kinds[gk.CalendarItemKindWeekday], a.active, a.after)
+			a.kinds[base.CalendarItemKindDay], a.kinds[base.CalendarItemKindWeekday], a.active, a.after)
 	case "items-time-field":
-		fmt.Printf("items time field described=%d hours=%d minutes=%d\n", a.described, a.segments[gk.TimeSegmentHour],
-			a.segments[gk.TimeSegmentMinute])
+		fmt.Printf("items time field described=%d hours=%d minutes=%d\n", a.described, a.segments[base.TimeSegmentHour],
+			a.segments[base.TimeSegmentMinute])
 	}
 	fmt.Printf("items done mode=%s described=%d builds=%d frames=%d\n", a.mode, a.described, a.builds, a.frames)
 }

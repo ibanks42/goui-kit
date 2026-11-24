@@ -945,7 +945,7 @@ fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     let h = r.u64();
     genapi::state::<DockArea>(h)?;
     let skin = SKINS.with(|s| s.borrow().get(&h).cloned()).ok_or_else(|| {
-        genapi::GkErr(ERR_BAD_OP, "this dock area has no skin (make it with gk.NewDockAreaSkinned)".into())
+        genapi::GkErr(ERR_BAD_OP, "this dock area has no skin (make it with dock.NewAreaSkinned)".into())
     })?;
     match r.u8() {
         0 => c.out.put_u16(match skin.panel_style() {

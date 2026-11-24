@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
 )
 
 func view(cx *gk.Cx) gk.Element {
-	return gk.Effect(gk.Text("x"), gk.NewEffectTransition(200*time.Millisecond).Fade(0, 1), "in")
+	return kit.Effect(gk.Text("x"), motion.NewEffectTransition(200*time.Millisecond).Fade(0, 1), "in")
 }
 
 func main() { gk.Run(func(cx *gk.Cx) { gk.OpenWindow(cx, "x", 100, 100, gk.NewView(nil, view)) }) }

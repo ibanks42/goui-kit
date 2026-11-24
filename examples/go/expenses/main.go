@@ -13,7 +13,12 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -38,16 +43,16 @@ type Expense struct {
 
 type App struct {
 	expenses     []Expense
-	what, amount gk.InputState
-	category     gk.SelectState
-	list         gk.ListState
+	what, amount editor.InputState
+	category     table.SelectState
+	list         table.ListState
 	// the fields' messages, "" while a field is valid
 	whatErr, amountErr, categoryErr string
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.what = gk.NewInputState(cx).Placeholder("Coffee, bus ticket, ...").Build()
-	a.amount = gk.NewInputState(cx).Placeholder("0.00").Build()
+	a.what = editor.NewInputState(cx).Placeholder("Coffee, bus ticket, ...").Build()
+	a.amount = editor.NewInputState(cx).Placeholder("0.00").Build()
 	a.what.OnInputEvent(cx, a.fieldEvent)
 	a.amount.OnInputEvent(cx, a.fieldEvent)
 
@@ -55,9 +60,9 @@ func (a *App) init(cx *gk.Cx) {
 	for i, c := range categories {
 		items[i] = gk.SearchItem{Value: c.String()}
 	}
-	a.category = gk.NewSelectState(cx, gk.NewSearchSource(cx, items), gk.NoRow).Build()
-	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ gk.SelectEvent) { a.revalidate(cx) })
-	a.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.expenses) }, a.expenseRow)).Build()
+	a.category = table.NewSelectState(cx, gk.NewSearchSource(cx, items), table.NoRow).Build()
+	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ table.SelectEvent) { a.revalidate(cx) })
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.expenses) }, a.expenseRow)).Build()
 
 	a.expenses = append(a.expenses,
 		Expense{"Groceries", 42.10, Food},
@@ -76,28 +81,28 @@ func (a *App) total() (sum float64) {
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap4).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.ItemsCenter, s.Gap2).
-			Child(gk.Label("Expenses", s.TextXl, s.FontBold)).
+			Child(kit.Label("Expenses", s.TextXl, s.FontBold)).
 			Child(gk.Div(s.Flex1)).
-			Child(gk.Label(fmt.Sprintf("Total %.2f", a.total()), s.FontSemibold))).
+			Child(kit.Label(fmt.Sprintf("Total %.2f", a.total()), s.FontSemibold))).
 		Child(a.form()).
 		Child(gk.HFlex(s.Flex1, s.MinH0, s.Gap4, s.ItemsStart).
-			Child(gk.Div(s.Flex1, s.HFull).Child(gk.List(a.list))).
+			Child(gk.Div(s.Flex1, s.HFull).Child(table.List(a.list))).
 			Child(a.chart()))
 }
 
 func (a *App) form() gk.Element {
-	return gk.Form().Columns(3).
-		Child(field("What", gk.Input(a.what), a.whatErr)).
-		Child(field("Amount", gk.Input(a.amount), a.amountErr)).
-		Child(field("Category", gk.Select(a.category).Placeholder("Choose one"), a.categoryErr)).
-		Footer(gk.Button("add").Primary().Label("Add expense").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.add(cx) }))
+	return kit.Form().Columns(3).
+		Child(field("What", editor.Input(a.what), a.whatErr)).
+		Child(field("Amount", editor.Input(a.amount), a.amountErr)).
+		Child(field("Category", table.Select(a.category).Placeholder("Choose one"), a.categoryErr)).
+		Footer(kit.Button("add").Primary().Label("Add expense").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.add(cx) }))
 }
 
 // field is a form field with its message under it while it has one.
-func field(label string, input gk.Element, message string) gk.FieldEl {
-	f := gk.Field().Label(label).Child(input)
+func field(label string, input gk.Element, message string) kit.FieldEl {
+	f := kit.Field().Label(label).Child(input)
 	if message != "" {
-		f = f.DescriptionFn(gk.Label(message, s.TextXs).TextColor(theme.Danger))
+		f = f.DescriptionFn(kit.Label(message, s.TextXs).TextColor(theme.Danger))
 	}
 	return f
 }
@@ -117,17 +122,17 @@ func (a *App) chart() gk.Element {
 		totals[e.Category].Total += e.Amount
 	}
 	return gk.VFlex(s.Gap2).W(gk.Px(280)).
-		Child(gk.Label("By category", s.FontSemibold)).
-		Child(gk.Div().H(gk.Px(220)).Child(gk.BarChart(gk.NewData(totals)).Band("Category").Value("Total")))
+		Child(kit.Label("By category", s.FontSemibold)).
+		Child(gk.Div().H(gk.Px(220)).Child(chart.BarChart(chart.NewData(totals)).Band("Category").Value("Total")))
 }
 
-func (a *App) expenseRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) expenseRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	row, e := at.Row, a.expenses[at.Row]
-	return gk.ListItem(gk.Key("expense", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
-		Child(gk.Div(s.Flex1).Child(gk.Label(e.What))).
-		Child(gk.TagSecondary(s.TextXs).Text(e.Category.String())).
-		Child(gk.Label(fmt.Sprintf("%.2f", e.Amount)).W(gk.Px(70))).
-		Child(gk.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+	return table.ListItem(gk.Key("expense", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
+		Child(gk.Div(s.Flex1).Child(kit.Label(e.What))).
+		Child(kit.TagSecondary(s.TextXs).Text(e.Category.String())).
+		Child(kit.Label(fmt.Sprintf("%.2f", e.Amount)).W(gk.Px(70))).
+		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			gk.StopPropagation(cx)
 			a.expenses = slices.Delete(a.expenses, row, row+1)
 			gk.Refresh(cx)
@@ -170,17 +175,17 @@ func (a *App) add(cx *gk.Cx) {
 	a.what.SetValue(cx, "")
 	a.amount.SetValue(cx, "")
 	a.what.Focus(cx)
-	gk.SelectRow(cx, a.list, len(a.expenses)-1, gk.ScrollIntoView)
-	gk.PushNotification(cx, fmt.Sprintf("Added %s: %.2f", e.What, e.Amount))
+	table.SelectRow(cx, a.list, len(a.expenses)-1, table.ScrollIntoView)
+	overlay.PushNotification(cx, fmt.Sprintf("Added %s: %.2f", e.What, e.Amount))
 	gk.Refresh(cx)
 }
 
 // fieldEvent: Enter in either field adds; typing clears a message once the field is fixed.
-func (a *App) fieldEvent(cx *gk.Cx, e gk.InputEvent) {
+func (a *App) fieldEvent(cx *gk.Cx, e editor.InputEvent) {
 	switch e.(type) {
-	case gk.InputEventPressEnter:
+	case editor.InputEventPressEnter:
 		a.add(cx)
-	case gk.InputEventChange:
+	case editor.InputEventChange:
 		a.revalidate(cx)
 	}
 }

@@ -340,7 +340,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
     };
     Some(match crate::generated::motion_wrap(dx, child, w) {
         Some(el) => el,
-        None => bad("an animation wraps a styled element (one of gk.Animatable_Element)".into()),
+        None => bad("an animation wraps a styled element (one of gk.AnimatableElement)".into()),
     })
 }
 

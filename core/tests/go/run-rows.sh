@@ -36,12 +36,12 @@ GK_PROTO_BIN=rows-go run list-states 0 \
 # the sort icon sorts (the app invalidates and the cells are described again; the click also
 # selects the column, so the selected row it reads is none), a double click, a column moved and one resized, visible ranges.
 # Go: the delegate's kinds are VisibleRows and MoveColumn; the
-# state's event prints as a Go value (TableEventSelectColumn{Value:0}).
+# state's event prints as a Go value (EventSelectColumn{Value:0}, printed without its package).
 GK_PROTO_BIN=rows-go run table 0 \
   'rows table Select_Row row=0$' 'rows table Select_Row row=1$' 'rows table Select_Row row=99999$' \
   'rows table VisibleRows row=0 ' 'rows table VisibleRows row=999[0-9][0-9] ' \
   'placeholder_frames: 0 ' 'placeholder_frames: 1 ' \
-  'rows table Sort row=0 col=0 to=0 sort=Descending' 'rows table state TableEventSelectColumn\{Value:0\}' 'rows table-state read selected_row ok=false' \
+  'rows table Sort row=0 col=0 to=0 sort=Descending' 'rows table state EventSelectColumn\{Value:0\}' 'rows table-state read selected_row ok=false' \
   'rows table-state scroll_to_row 50000' 'rows table VisibleRows row=500[0-9][0-9] ' 'rows table Double_Clicked_Row ' \
   'rows table MoveColumn row=0 col=1 ' 'rows table Column_Widths ' 'rows done mode=table '
 # A table scrolled by 24 px before each of 120 frames: rows are bound ahead in batches, so no

@@ -127,13 +127,17 @@ CGO_LDFLAGS="-L$G/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -
   script or a Makefile): the first build of the app compiles package `gk` for those flags, about
   12 s, and every rebuild after an edit then takes half a second.
 - The library is linked into the program, and only the components your app actually calls end
-  up in it. Use `gk.Button` and the button code comes along; never touch the charts and
+  up in it. Use `kit.Button` and the button code comes along; never touch the charts and
   they stay out. You don't list or import anything for this. The `-ldflags` part is what tells the
   linker to drop the unused parts: without it the app still works but carries every component
   (about 100 MB instead of about 50 MB for a small app). The program is one file, so shipping it
   means copying that file. [GO.md](GO.md) section 8 explains the details.
-- The app imports `"gpuikit.dev/gk"`, and `"gpuikit.dev/gk/s"`, `"gpuikit.dev/gk/theme"` or
-  `"gpuikit.dev/gk/palette"` when it uses style tokens or colours.
+- The app imports `"gpuikit.dev/gk"` (the app, views, windows, `gk.Div` and the styles), the
+  package of each area it uses (`"gpuikit.dev/gk/kit"` for buttons and labels,
+  `"gpuikit.dev/gk/editor"` for inputs, `"gpuikit.dev/gk/table"` for lists and tables, and
+  `motion`, `chart`, `overlay`, `dock`, `base`; [GO.md](GO.md) section 1 says what is where), and
+  `"gpuikit.dev/gk/s"`, `"gpuikit.dev/gk/theme"` or `"gpuikit.dev/gk/palette"` when it uses style
+  tokens or colors. A program compiles only the packages it imports.
 
 **macOS.** The same, with Apple's spelling of the flag:
 `go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"`. The program has the library inside it,
@@ -186,13 +190,13 @@ Five ideas carry the whole binding, and the steps introduce them one at a time:
 1. **Your state is an ordinary Go struct** (`App`). The binding never copies or owns it; its
    methods are the view and the handlers.
 2. **A view function describes what the window shows** from that state, by calling element
-   constructors such as `gk.Button` and `gk.Label` and chaining builders. It runs again whenever
+   constructors such as `kit.Button` and `kit.Label` and chaining builders. It runs again whenever
    the view needs redrawing, so it only describes: it never changes anything.
 3. **A handler is an ordinary Go function** that changes your state: a method value (`a.addMilk`)
    or a closure, given to an element's builder (`.OnClick`). After it returns, the view it was
    given in is redrawn.
 4. **Kit state** (an input's text, a list's selection and scroll position) lives in the library;
-   your struct keeps a handle to it (`gk.InputState`, `gk.ListState`), made once, in an `init`
+   your struct keeps a handle to it (`editor.InputState`, `table.ListState`), made once, in an `init`
    function.
 5. **`cx *gk.Cx`** is the context of the call you are in (a view, a handler, `init`). Pass it on,
    never store it.
@@ -206,14 +210,15 @@ package main
 
 import (
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 func view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(gk.Label("Nothing to buy yet"))
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Label("Nothing to buy yet"))
 }
 
 func main() {
@@ -254,11 +259,11 @@ type App struct {
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(gk.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
-		Child(gk.Label(fmt.Sprintf("%d items", len(a.items))))
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(kit.Label(fmt.Sprintf("%d items", len(a.items))))
 	for _, it := range a.items {
-		col = col.Child(gk.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
+		col = col.Child(kit.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
 	}
 	return col
 }
@@ -276,7 +281,7 @@ func main() {
 }
 ```
 
-`gk.Button("add-milk")` takes an id: a name that is unique among its siblings, which GPUI uses to
+`kit.Button("add-milk")` takes an id: a name that is unique among its siblings, which GPUI uses to
 keep track of the element between redraws (`gk.Key("item", 3)` makes one from a name and a
 number). `.OnClick(a.addMilk)` gives it a handler: a method value, whose type is the builder's,
 `func(cx *gk.Cx, e gk.ClickEvent)`; a handler that does not fit does not compile. `addMilk`
@@ -295,20 +300,20 @@ hold thousands of items, use the kit's List, which asks you only for the rows it
 ```go
 type App struct {
 	items []Item
-	list  gk.ListState // kit state: it lives in the library; the app keeps the handle
+	list  table.ListState // kit state: it lives in the library; the app keeps the handle
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.items = append(a.items, Item{"Milk", 2}, Item{"Bread", 1}, Item{"Apples", 6})
 	gk.Refresh(cx)
 }
 
-func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	it := a.items[at.Row]
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
-		Child(gk.Div(s.Flex1).Child(gk.Label(it.Name))).
-		Child(gk.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))))
+	return table.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
+		Child(gk.Div(s.Flex1).Child(kit.Label(it.Name))).
+		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))))
 }
 ```
 
@@ -316,7 +321,7 @@ and in the view, and the handler and `main`:
 
 <!-- from: docs/tutorial-go/03-list/main.go -->
 ```go
-		Child(gk.Div(s.Flex1, s.MinH0).Child(gk.List(a.list))).
+		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.list))).
 // ...
 func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {
 	a.items = append(a.items, Item{"Milk", 1})
@@ -332,10 +337,10 @@ func main() {
 ```
 
 - `init` runs once, when the window first shows the view (the first argument of `gk.NewView`).
-  Kit state is made there: `gk.NewListState(cx, source).Build()` makes the list's state in the
+  Kit state is made there: `table.NewListState(cx, source).Build()` makes the list's state in the
   library and returns the handle you keep in `App`.
-- `gk.NewListSource(cx, count, row)` says where rows come from: a function that counts them and
-  one that draws row `at.Row`. `itemRow` returns a `gk.ListItemEl` with whatever you put in it;
+- `table.NewListSource(cx, count, row)` says where rows come from: a function that counts them and
+  one that draws row `at.Row`. `itemRow` returns a `table.ListItemEl` with whatever you put in it;
   here a label and a tag.
 - `gk.Refresh(cx)`, at the end of a handler (or of `init`) that changed what rows show, has every
   view and every visible row described again before the next frame, and the list recounts its rows
@@ -351,16 +356,16 @@ func main() {
 ```go
 type App struct {
 	items   []Item
-	newName gk.InputState
-	list    gk.ListState
+	newName editor.InputState
+	list    table.ListState
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.newName = gk.NewInputState(cx).Placeholder("Add an item and press Enter").Build()
+	a.newName = editor.NewInputState(cx).Placeholder("Add an item and press Enter").Build()
 	a.newName.OnInputEvent(cx, a.newNameEvent)
 // ...
-func (a *App) newNameEvent(cx *gk.Cx, e gk.InputEvent) {
-	if _, enter := e.(gk.InputEventPressEnter); !enter {
+func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
+	if _, enter := e.(editor.InputEventPressEnter); !enter {
 		return
 	}
 	name := strings.TrimSpace(a.newName.Value(cx))
@@ -369,41 +374,41 @@ func (a *App) newNameEvent(cx *gk.Cx, e gk.InputEvent) {
 	}
 	a.items = append(a.items, Item{name, 1})
 	a.newName.SetValue(cx, "")
-	gk.SelectRow(cx, a.list, len(a.items)-1, gk.ScrollIntoView)
+	table.SelectRow(cx, a.list, len(a.items)-1, table.ScrollIntoView)
 	gk.Refresh(cx)
 }
 ```
 
-The input's state is kit state like the list's: made in `init`, shown with `gk.Input(a.newName)`
+The input's state is kit state like the list's: made in `init`, shown with `editor.Input(a.newName)`
 in the view. `.OnInputEvent(cx, a.newNameEvent)` subscribes to its events; the handler gets a
-`gk.InputEvent`, an interface with one struct per event upstream has (`gk.InputEventChange`,
-`gk.InputEventPressEnter`, …), taken apart with a type assertion or a type switch.
+`editor.InputEvent`, an interface with one struct per event upstream has (`editor.InputEventChange`,
+`editor.InputEventPressEnter`, …), taken apart with a type assertion or a type switch.
 
 `a.newName.Value(cx)` reads the text: an ordinary Go string, yours to keep. Writes such as
 `SetValue` are applied after the handler returns, in order.
 
-`gk.SelectRow(cx, a.list, row, gk.ScrollIntoView)` selects a row of the list and scrolls it into
+`table.SelectRow(cx, a.list, row, table.ScrollIntoView)` selects a row of the list and scrolls it into
 view.
 
 ### Step 5: handlers in a row
 
 <!-- from: docs/tutorial-go/05-rows/main.go -->
 ```go
-func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	row, it := at.Row, a.items[at.Row]
-	name := gk.Label(it.Name)
+	name := kit.Label(it.Name)
 	if it.Bought {
 		name = name.Style(s.LineThrough).TextColor(theme.MutedForeground)
 	}
-	return gk.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
-		Child(gk.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
+	return table.ListItem(gk.Key("item", row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
+		Child(kit.Checkbox(gk.Key("bought", row)).Checked(it.Bought).OnClick(func(cx *gk.Cx, bought bool) {
 			gk.StopPropagation(cx) // the row under the checkbox is not clicked as well
 			a.items[row].Bought = bought
 			gk.Refresh(cx)
 		})).
 		Child(gk.Div(s.Flex1).Child(name)).
-		Child(gk.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))).
-		Child(gk.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))).
+		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			gk.StopPropagation(cx)
 			a.items = slices.Delete(a.items, row, row+1)
 			gk.Refresh(cx)
@@ -428,27 +433,27 @@ that edits the item:
 	a.list.OnListEvent(cx, a.listEvent)
 	a.editDialog = gk.NewBuilt(cx, a.editView)
 // ...
-func (a *App) listEvent(cx *gk.Cx, e gk.ListEvent) {
-	if c, ok := e.(gk.ListEventConfirm); ok { // a click on a row, or Enter
+func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
+	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
 		a.openEditor(cx, c.Row)
 	}
 }
 
-func (a *App) editView(cx *gk.Cx) gk.DialogEl {
+func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 	amountBy := func(by int) func(*gk.Cx, gk.ClickEvent) {
 		return func(*gk.Cx, gk.ClickEvent) { a.editAmount = max(1, a.editAmount+by) }
 	}
-	return gk.Dialog().Title(gk.Label("Edit item")).
+	return overlay.Dialog().Title(kit.Label("Edit item")).
 		Child(gk.VFlex(s.Gap3).
-			Child(gk.Input(a.editName)).
+			Child(editor.Input(a.editName)).
 			Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-				Child(gk.Label("Amount")).
-				Child(gk.Button("less").Small().Icon(gk.IconMinus).OnClick(amountBy(-1))).
-				Child(gk.Label(fmt.Sprint(a.editAmount))).
-				Child(gk.Button("more").Small().Icon(gk.IconPlus).OnClick(amountBy(1))))).
-		Footer(gk.DialogFooter().
-			Child(gk.DialogClose().Trigger(gk.Button("cancel").Label("Cancel"))).
-			Child(gk.DialogAction().Child(gk.Button("save").Primary().Label("Save")))).
+				Child(kit.Label("Amount")).
+				Child(kit.Button("less").Small().Icon(gk.IconMinus).OnClick(amountBy(-1))).
+				Child(kit.Label(fmt.Sprint(a.editAmount))).
+				Child(kit.Button("more").Small().Icon(gk.IconPlus).OnClick(amountBy(1))))).
+		Footer(overlay.DialogFooter().
+			Child(overlay.DialogClose().Trigger(kit.Button("cancel").Label("Cancel"))).
+			Child(overlay.DialogAction().Child(kit.Button("save").Primary().Label("Save")))).
 		OnOk(a.saveEdit)
 }
 
@@ -456,7 +461,7 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editing = row
 	a.editAmount = a.items[row].Amount
 	a.editName.SetValue(cx, a.items[row].Name)
-	gk.OpenDialog(cx, a.editDialog)
+	overlay.OpenDialog(cx, a.editDialog)
 	a.editName.Focus(cx)
 }
 
@@ -473,12 +478,12 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 }
 ```
 
-- A dialog is described by a function like a view's, which returns a `gk.DialogEl`.
-  `gk.NewBuilt(cx, a.editView)`, made once in `init` and kept as a `gk.Built[gk.DialogEl]`, makes
-  it a small view of its own, and `gk.OpenDialog` shows it. It is redrawn like any view: the `+`
+- A dialog is described by a function like a view's, which returns a `overlay.DialogEl`.
+  `gk.NewBuilt(cx, a.editView)`, made once in `init` and kept as a `gk.Built[overlay.DialogEl]`, makes
+  it a small view of its own, and `overlay.OpenDialog` shows it. It is redrawn like any view: the `+`
   and `-` buttons change `a.editAmount` and the dialog shows the new number.
-- `.Footer(..)` holds the buttons: `gk.DialogClose().Trigger(button)` closes the dialog, and the
-  button inside `gk.DialogAction()` runs `OnOk`. `OnOk`'s handler returns a `bool`: `true` closes
+- `.Footer(..)` holds the buttons: `overlay.DialogClose().Trigger(button)` closes the dialog, and the
+  button inside `overlay.DialogAction()` runs `OnOk`. `OnOk`'s handler returns a `bool`: `true` closes
   the dialog, `false` keeps it open (an empty name here). Escape closes it too.
 - `amountBy` is a function that makes handlers: a closure per step size. The dialog's input is
   kit state made in `init` like the others (`a.editName`).
@@ -494,13 +499,13 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 	a.clearBought = gk.Shortcut(cx, "ctrl-shift-d", a.removeBought)
 // ...
 func (a *App) toolbar() gk.Element {
-	menu := gk.NewPopupMenu().
+	menu := kit.NewPopupMenu().
 		Menu("New item", a.newItem).
 		Menu("Remove bought items", a.clearBought)
 	return gk.HFlex(s.Gap2, s.ItemsCenter).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
 		Child(gk.Div(s.Flex1)).
-		Child(gk.DropdownMenu(gk.Button("menu").Ghost().Icon(gk.IconMenu), menu))
+		Child(kit.DropdownMenu(kit.Button("menu").Ghost().Icon(gk.IconMenu), menu))
 }
 // ...
 func (a *App) focusNewName(cx *gk.Cx) { a.newName.Focus(cx) }
@@ -514,7 +519,7 @@ func (a *App) removeBought(cx *gk.Cx) {
 `gk.Shortcut(cx, "ctrl-n", a.focusNewName)` binds keys to a handler, app-wide: it works wherever
 the focus is. The handler is a `func(cx *gk.Cx)` or a click handler, so one method can serve a
 button and its keys (step 8 does that). It returns a `gk.Action`, which a menu item takes, and the
-menu then shows the keys next to the item. `gk.DropdownMenu(button, menu)` opens the menu under
+menu then shows the keys next to the item. `kit.DropdownMenu(button, menu)` opens the menu under
 the button. To limit a shortcut to a part of the window, add `gk.WhenIn("Items")` and mark that
 part with `.KeyContext("Items")`.
 
@@ -530,16 +535,16 @@ func (a *App) toolbar() gk.Element {
 	if a.dark {
 		themeLabel, icon = "Light theme", gk.IconSun
 	}
-	menu := gk.NewPopupMenu().
+	menu := kit.NewPopupMenu().
 		Menu("New item", a.newItem).
 		Menu("Remove bought items", a.clearBought).
 		Separator().
 		Menu(themeLabel, a.toggleTheme)
 	return gk.HFlex(s.Gap2, s.ItemsCenter).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
 		Child(gk.Div(s.Flex1)).
-		Child(gk.DropdownMenu(gk.Button("menu").Ghost().Icon(gk.IconMenu), menu)).
-		Child(gk.Button("theme").Ghost().Icon(icon).Tooltip("Toggle the theme").OnClick(a.switchTheme))
+		Child(kit.DropdownMenu(kit.Button("menu").Ghost().Icon(gk.IconMenu), menu)).
+		Child(kit.Button("theme").Ghost().Icon(icon).Tooltip("Toggle the theme").OnClick(a.switchTheme))
 }
 // ...
 func (a *App) switchTheme(cx *gk.Cx, _ gk.ClickEvent) {
@@ -579,7 +584,7 @@ func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {
 			}
 		}
 		if announce {
-			gk.PushNotification(cx, fmt.Sprintf("%s costs %.2f", name, price))
+			overlay.PushNotification(cx, fmt.Sprintf("%s costs %.2f", name, price))
 		}
 		gk.Refresh(cx)
 	})
@@ -593,7 +598,7 @@ func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {
   from it: the function runs on the UI thread. `gk.Post` is the only call of the package any
   goroutine may make; anything else from another goroutine stops the app, naming the line.
 - A posted function, or `done`, redraws nothing by itself: `gk.Refresh(cx)` shows the price.
-- `gk.PushNotification(cx, text)` shows a toast in the corner of the window.
+- `overlay.PushNotification(cx, text)` shows a toast in the corner of the window.
 
 The whole program, `docs/tutorial-go/09-background/main.go`, is 232 lines. That is the tutorial.
 
@@ -618,8 +623,8 @@ from being redrawn.
 | thing | lives | keep it? |
 |---|---|---|
 | your `App` and everything in it | as long as you keep it | yes |
-| `gk.InputState`, `gk.ListState`, `gk.View`, `gk.Action`, `gk.Built[T]` and other handles | until `gk.Release` | yes, in your struct |
-| elements (`gk.Label(..)`, `gk.Button(..)`) | one call of the view function | no: make them on each call |
+| `editor.InputState`, `table.ListState`, `gk.View`, `gk.Action`, `gk.Built[T]` and other handles | until `gk.Release` | yes, in your struct |
+| elements (`kit.Label(..)`, `kit.Button(..)`) | one call of the view function | no: make them on each call |
 | strings from reads and events (`a.newName.Value(cx)`) | always (Go strings are copies) | yes |
 | `*gk.Cx` | the call it was given to | never |
 | what a handler closure captures | as long as the closure | yes: the collector keeps it alive |
@@ -630,7 +635,7 @@ A mistake in using the binding stops the app with exit code 2 and one message th
 wrong, what to do, and the line of your code. For example, making kit state in a view function:
 
 ```
-gk: a view function may not create kit state (it runs on every redraw): create it once in init or in a handler and keep the handle in your state struct, as in a.search = gk.NewInputState(cx).Build()
+gk: a view function may not create kit state (it runs on every redraw): create it once in init or in a handler and keep the handle in your state struct, as in a.search = editor.NewInputState(cx).Build()
     at /home/me/groceries/main.go:61 (main.(*App).view)
 ```
 
@@ -660,14 +665,14 @@ bar chart of the totals per category:
 	for i, c := range categories {
 		items[i] = gk.SearchItem{Value: c.String()}
 	}
-	a.category = gk.NewSelectState(cx, gk.NewSearchSource(cx, items), gk.NoRow).Build()
-	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ gk.SelectEvent) { a.revalidate(cx) })
+	a.category = table.NewSelectState(cx, gk.NewSearchSource(cx, items), table.NoRow).Build()
+	a.category.OnSelectEvent(cx, func(cx *gk.Cx, _ table.SelectEvent) { a.revalidate(cx) })
 // ...
 // field is a form field with its message under it while it has one.
-func field(label string, input gk.Element, message string) gk.FieldEl {
-	f := gk.Field().Label(label).Child(input)
+func field(label string, input gk.Element, message string) kit.FieldEl {
+	f := kit.Field().Label(label).Child(input)
 	if message != "" {
-		f = f.DescriptionFn(gk.Label(message, s.TextXs).TextColor(theme.Danger))
+		f = f.DescriptionFn(kit.Label(message, s.TextXs).TextColor(theme.Danger))
 	}
 	return f
 }
@@ -687,8 +692,8 @@ func (a *App) chart() gk.Element {
 		totals[e.Category].Total += e.Amount
 	}
 	return gk.VFlex(s.Gap2).W(gk.Px(280)).
-		Child(gk.Label("By category", s.FontSemibold)).
-		Child(gk.Div().H(gk.Px(220)).Child(gk.BarChart(gk.NewData(totals)).Band("Category").Value("Total")))
+		Child(kit.Label("By category", s.FontSemibold)).
+		Child(gk.Div().H(gk.Px(220)).Child(chart.BarChart(chart.NewData(totals)).Band("Category").Value("Total")))
 }
 // ...
 	a.categoryErr = "Choose a category"
@@ -698,15 +703,15 @@ func (a *App) chart() gk.Element {
 ```
 
 - A select's items are data: `gk.NewSearchSource(cx, items)` over `gk.SearchItem`s (a value and
-  the title shown; an empty title shows the value), and `gk.NewSelectState` is made over that
+  the title shown; an empty title shows the value), and `table.NewSelectState` is made over that
   source. `.SelectedIndex(cx)` is the chosen row (a `gk.Option`, empty until something is chosen;
   `.Get()` takes it apart); `.SelectedValue(cx)` is its value as text. The last argument of
-  `gk.NewSelectState` preselects a row (`gk.Some(gk.Row(0))` for the first), or is `gk.NoRow`.
-  Wherever a call takes a row of a list (an "index path"), `gk.Row(n)` gives one.
-- A form is fields: `gk.Field().Label(..).Child(any element)`, and `.Description(..)` (text) or
+  `table.NewSelectState` preselects a row (`gk.Some(table.Row(0))` for the first), or is `table.NoRow`.
+  Wherever a call takes a row of a list (an "index path"), `table.Row(n)` gives one.
+- A form is fields: `kit.Field().Label(..).Child(any element)`, and `.Description(..)` (text) or
   `.DescriptionFn(..)` (an element: here a red message) under it. Checking is ordinary code: the
   handler reads the values, sets a message in your state, and the view shows it.
-- A chart takes your rows as they are: `gk.NewData(rows)` over a slice of any struct, whose
+- A chart takes your rows as they are: `chart.NewData(rows)` over a slice of any struct, whose
   exported fields are the columns the builders name (`.Band("Category").Value("Total")`, checked
   when the view runs; a type with a `String` method, like `Category`, is text). The rows are read
   when the chart is made. A chart has no size of its own: put it in a sized `gk.Div`.
@@ -728,6 +733,6 @@ so the program runs there as it is.
   (projects, a task list, filters, search, a JSON file, a goroutine that syncs) and `reader` (3,000
   articles in a virtual list, tabs of Markdown views, a settings dialog with a slider and selects)
   are whole apps written this way; `notes` adds the kit's dock with panels.
-- `go doc gpuikit.dev/gk ButtonEl` (from a module that requires the package), or the generated
-  files themselves, `go/gk/gen_component_*.go`: one per upstream module, each type with its
+- `go doc gpuikit.dev/gk/kit ButtonEl` (from a module that requires the package), or the generated
+  files themselves, `go/gk/<package>/gen_component_*.go`: one per upstream module, each type with its
   constructor and its methods, whose parameter types say what to pass.

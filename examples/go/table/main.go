@@ -13,33 +13,35 @@ import (
 	"strconv"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	rows, cols int
 	src        gk.RowSource
-	table      gk.TableState
+	table      gktable.State
 	root       gk.View
 }
 
-func (a *App) cell(cx *gk.Cx, at gk.CellAt) gk.Element {
-	return gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+func (a *App) cell(cx *gk.Cx, at gktable.CellAt) gk.Element {
+	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 }
 
 func (a *App) init(cx *gk.Cx) {
-	columns := make([]gk.TableColumn, a.cols)
+	columns := make([]gktable.TableColumn, a.cols)
 	for i := range columns {
-		columns[i] = gk.NewTableColumn(fmt.Sprintf("c%d", i), fmt.Sprintf("Column %d", i))
+		columns[i] = gktable.NewTableColumn(fmt.Sprintf("c%d", i), fmt.Sprintf("Column %d", i))
 	}
-	a.src = gk.NewTableSource(cx, a.rows, columns, a.cell)
-	a.table = gk.NewTableState(cx, a.src).Build()
+	a.src = gktable.NewSource(cx, a.rows, columns, a.cell)
+	a.table = gktable.NewState(cx, a.src).Build()
 }
 
 func (a *App) rootView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.DataTable(a.table))
+		Child(gktable.DataTable(a.table))
 }
 
 func arg(i, def int) int {

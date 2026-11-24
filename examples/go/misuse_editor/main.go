@@ -32,6 +32,9 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 )
 
@@ -39,31 +42,31 @@ type App struct {
 	mode  string
 	root  gk.View
 	rows  gk.RowSource
-	ed    gk.EditorState
+	ed    editor.State
 	hist  gk.History
 	drawn int
 	rowed int
 	// 9.30 to 9.37
-	held   []gk.BlockNodeHeld
-	leaf   gk.Option[gk.LeafGeometry]
+	held   []editor.BlockNodeHeld
+	leaf   gk.Option[editor.LeafGeometry]
 	leaves int
-	inp    gk.InputState
+	inp    editor.InputState
 	plus   gk.RowSource
 	// 9.38 to 9.40
-	ext    gk.MarkdownExtensionsArc
-	custom gk.Option[gk.BlockNodeHeld]
+	ext    editor.MarkdownExtensionsArc
+	custom gk.Option[editor.BlockNodeHeld]
 }
 
 const md = "> [!note]\n> inside\n\n```badge\nok\n```\n"
 
 func (a *App) badge(cx *gk.Cx, n gk.MarkdownNodeRead) gk.Element {
 	a.rowed++
-	return gk.Label(n.AsText(cx))
+	return kit.Label(n.AsText(cx))
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.rows = gk.Items(cx, a.badge)
-	a.ed = gk.NewEditorState(cx).DefaultValue("x").Build()
+	a.rows = overlay.Items(cx, a.badge)
+	a.ed = editor.NewState(cx).DefaultValue("x").Build()
 	a.hist = gk.NewHistory(cx).Build()
 	switch a.mode {
 	case "ed-owner-released":
@@ -71,8 +74,8 @@ func (a *App) init(cx *gk.Cx) {
 	case "ed-plugin-freed":
 		gk.Release(cx, a.rows)
 	case "ed6-ok", "ed6-held-stale", "ed6-leaf-stale", "ed6-decorate-freed", "ed6-lent-view":
-		ext := gk.NewMarkdownExtensionsArc(cx, gk.NewMarkdownExtensionsDefault())
-		held, _ := gk.BaseParseMarkdown(cx, "# Kept\n\ntext\n", ext).Value.Get()
+		ext := editor.NewMarkdownExtensionsArc(cx, editor.NewMarkdownExtensionsDefault())
+		held, _ := editor.BaseParseMarkdown(cx, "# Kept\n\ntext\n", ext).Value.Get()
 		for _, h := range held {
 			gk.Retain(cx, h)
 		}
@@ -80,14 +83,14 @@ func (a *App) init(cx *gk.Cx) {
 			gk.Release(cx, held[0])
 		}
 		a.held = held
-		a.inp = gk.NewInputState(cx).DefaultValue("3").Build()
+		a.inp = editor.NewInputState(cx).DefaultValue("3").Build()
 		a.plus = gk.NewRowSource(cx, 0, a.plusRow, gk.Initial(1))
 		if a.mode == "ed6-decorate-freed" {
 			gk.Release(cx, a.plus)
 		}
 	case "ed7-ok", "ed7-custom-unretained":
-		a.ext = gk.NewMarkdownExtensionsArc(cx, gk.NewMarkdownExtensionsDefault().Frontmatter().Plugin(gk.NewFrontmatterPlugin()))
-		held, _ := gk.BaseParseMarkdown(cx, "---\ntitle: kept\n---\n\ntext\n", a.ext).Value.Get()
+		a.ext = editor.NewMarkdownExtensionsArc(cx, editor.NewMarkdownExtensionsDefault().Frontmatter().Plugin(editor.NewFrontmatterPlugin()))
+		held, _ := editor.BaseParseMarkdown(cx, "---\ntitle: kept\n---\n\ntext\n", a.ext).Value.Get()
 		if len(held) > 0 {
 			if a.mode == "ed7-ok" {
 				gk.Retain(cx, held[0])
@@ -98,24 +101,24 @@ func (a *App) init(cx *gk.Cx) {
 }
 
 func (a *App) view7(cx *gk.Cx) gk.Element {
-	blocks := []gk.BlockNode{gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode("mine")).WithLeafKey(7)}}
+	blocks := []editor.BlockNode{editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode("mine")).WithLeafKey(7)}}
 	if c, ok := a.custom.Get(); ok && (a.mode == "ed7-ok" || a.drawn >= 2) {
 		blocks = append(blocks, c) // unretained: swept when the second frame began, so this stops
 	}
-	flows := make([]gk.Option[gk.FlowPosition], len(blocks))
+	flows := make([]gk.Option[editor.FlowPosition], len(blocks))
 	for i := range blocks {
-		flows[i] = gk.Some(gk.NewFlowPositionAt(blocks, i, i == len(blocks)-1))
+		flows[i] = gk.Some(editor.NewFlowPositionAt(blocks, i, i == len(blocks)-1))
 	}
-	rc := gk.NewRenderContextFromApp().WithMarkdownExtensions(a.ext)
-	return gk.VFlex(s.SizeFull, s.P4).Child(gk.BlockHost("doc", blocks, flows, gk.Some(rc), nil, a.leavesLaid))
+	rc := editor.NewRenderContextFromApp().WithMarkdownExtensions(a.ext)
+	return gk.VFlex(s.SizeFull, s.P4).Child(editor.BlockHost("doc", blocks, flows, gk.Some(rc), nil, a.leavesLaid))
 }
 
 func (a *App) plusRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.rowed++
-	return gk.Label("+")
+	return kit.Label("+")
 }
 
-func (a *App) leavesLaid(cx *gk.Cx, e gk.LeafGeometryEvent) {
+func (a *App) leavesLaid(cx *gk.Cx, e editor.LeafGeometryEvent) {
 	for _, l := range e.Leaves {
 		a.leaves += l.Geometry.Len(cx) // read in the handler: correct
 		if a.mode == "ed6-leaf-stale" {
@@ -129,14 +132,14 @@ func (a *App) view6(cx *gk.Cx) gk.Element {
 		_ = g.Len(cx) // a released temporary: stops here
 	}
 	if a.mode == "ed6-lent-view" {
-		a.ed.LspMut(cx, gk.NewLspDefault())
+		a.ed.LspMut(cx, editor.NewLspDefault())
 	}
-	blocks := []gk.BlockNode{gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode("mine")).WithLeafKey(7)}}
+	blocks := []editor.BlockNode{editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode("mine")).WithLeafKey(7)}}
 	for _, h := range a.held {
 		blocks = append(blocks, h)
 	}
-	return gk.VFlex(s.SizeFull, s.P4).Child(gk.BlockHost("doc", blocks, nil, gk.Option[gk.RenderContext]{}, nil, a.leavesLaid)).
-		Child(gk.Div().W(gk.Px(160)).Child(gk.BaseNumberInput(a.inp).IncrementButton(gk.Decorate{Content: a.plus})))
+	return gk.VFlex(s.SizeFull, s.P4).Child(editor.BlockHost("doc", blocks, nil, gk.Option[editor.RenderContext]{}, nil, a.leavesLaid)).
+		Child(gk.Div().W(gk.Px(160)).Child(editor.BaseNumberInput(a.inp).IncrementButton(gk.Decorate{Content: a.plus})))
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
@@ -148,16 +151,16 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		return a.view7(cx)
 	}
 	body := gk.VFlex(s.SizeFull, s.P4)
-	ext := gk.NewMarkdownExtensionsDefault().BlockSurface("note", gk.Div(s.P2).Child(gk.Label("Note")))
-	text := gk.BaseTextViewMarkdown("md", md).MarkdownExtensions(ext).
+	ext := editor.NewMarkdownExtensionsDefault().BlockSurface("note", gk.Div(s.P2).Child(kit.Label("Note")))
+	text := editor.BaseTextViewMarkdown("md", md).MarkdownExtensions(ext).
 		Plugin(gk.MarkdownPlugin{Name: "badge", Match: gk.MarkdownMatchCode, Lang: "badge", Rows: a.rows})
 	switch a.mode {
 	case "ed-ok", "ed-plugin-freed":
-		body = body.Child(text).Child(gk.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)))
+		body = body.Child(text).Child(editor.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)))
 	case "ed-owner":
-		body = body.Child(gk.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.hist)))
+		body = body.Child(editor.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.hist)))
 	case "ed-owner-released":
-		body = body.Child(gk.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)))
+		body = body.Child(editor.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)))
 	}
 	return body
 }

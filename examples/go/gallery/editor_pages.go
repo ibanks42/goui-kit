@@ -22,6 +22,9 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -30,17 +33,17 @@ type editorPages struct {
 	blocks  gk.RowSource // editor5-plugin: the badge blocks
 	inlines gk.RowSource // editor5-plugin: the inline code
 	tips    gk.RowSource // editor5-tooltip: one row per URL
-	held    []gk.BlockNodeHeld
+	held    []editor.BlockNodeHeld
 	// the editor7-* pages
-	number   gk.InputState // editor7-number
+	number   editor.InputState // editor7-number
 	plus     gk.RowSource
 	minus    gk.RowSource
-	scroller gk.MessageScrollerState // editor7-scroller
+	scroller kit.MessageScrollerState // editor7-scroller
 	messages gk.RowSource
 	jump     gk.RowSource
-	lsp      gk.EditorState // editor7-lsp
+	lsp      editor.State // editor7-lsp
 	hl       gk.Ask[gk.TupleStringCompletionItem, []gk.Range]
-	diag     gk.EditorState // editor7-diagnostic
+	diag     editor.State // editor7-diagnostic
 }
 
 const (
@@ -65,37 +68,37 @@ var editorPageTable = []Page{
 }
 
 func editorRowLabel(text string) func(cx *gk.Cx, at gk.RowAt) gk.Element {
-	return func(cx *gk.Cx, at gk.RowAt) gk.Element { return gk.Label(text) }
+	return func(cx *gk.Cx, at gk.RowAt) gk.Element { return kit.Label(text) }
 }
 
 func editorPagesInit(a *App, cx *gk.Cx) {
 	p := &a.editor
-	p.blocks = gk.Items(cx, editorBadgeRow)
-	p.inlines = gk.Items(cx, editorCodeRow)
-	p.tips = gk.Items(cx, editorTipRow)
-	parsed, _ := gk.BaseParseMarkdown(cx, editorHostMD, gk.NewMarkdownExtensionsArc(cx, gk.NewMarkdownExtensionsDefault())).Value.Get()
+	p.blocks = overlay.Items(cx, editorBadgeRow)
+	p.inlines = overlay.Items(cx, editorCodeRow)
+	p.tips = overlay.Items(cx, editorTipRow)
+	parsed, _ := editor.BaseParseMarkdown(cx, editorHostMD, editor.NewMarkdownExtensionsArc(cx, editor.NewMarkdownExtensionsDefault())).Value.Get()
 	for _, b := range parsed {
 		gk.Retain(cx, b)
 		p.held = append(p.held, b)
 	}
 	// the editor7-* pages
-	p.number = gk.NewInputState(cx).DefaultValue("4").Build()
+	p.number = editor.NewInputState(cx).DefaultValue("4").Build()
 	p.plus = gk.NewRowSource(cx, 1, editorRowLabel("+"), gk.Initial(1))
 	p.minus = gk.NewRowSource(cx, 1, editorRowLabel("-"), gk.Initial(1))
-	p.scroller = gk.NewMessageScrollerState(cx, editorMessages)
+	p.scroller = kit.NewMessageScrollerState(cx, editorMessages)
 	p.messages = gk.NewRowSource(cx, editorMessages, func(cx *gk.Cx, at gk.RowAt) gk.Element {
-		return gk.Label(fmt.Sprintf("message %d", at.Row))
+		return kit.Label(fmt.Sprintf("message %d", at.Row))
 	}, gk.Initial(editorMessages))
 	p.jump = gk.NewRowSource(cx, 1, editorRowLabel("latest"), gk.Initial(1))
 	p.hl = gk.NewAsk(cx, editorHighlight)
-	p.lsp = gk.NewEditorState(cx).DefaultValue("fi").Build()
-	p.lsp.LspMut(cx, gk.NewLspDefault().WithCompletionHighlighter(p.hl))
-	p.diag = gk.NewEditorState(cx).DefaultValue("let x = 1\n").Build()
+	p.lsp = editor.NewState(cx).DefaultValue("fi").Build()
+	p.lsp.LspMut(cx, editor.NewLspDefault().WithCompletionHighlighter(p.hl))
+	p.diag = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
 }
 
 func editorSurface(a *App, cx *gk.Cx) gk.Element {
-	ext := gk.NewMarkdownExtensionsDefault().BlockSurface("note", gk.Div(s.P2).Bg(theme.Secondary).Child(gk.Label("Note")))
-	return gk.Div().W(gk.Px(360)).Child(gk.BaseTextViewMarkdown("surface", editorSurfaceMD).MarkdownExtensions(ext))
+	ext := editor.NewMarkdownExtensionsDefault().BlockSurface("note", gk.Div(s.P2).Bg(theme.Secondary).Child(kit.Label("Note")))
+	return gk.Div().W(gk.Px(360)).Child(editor.BaseTextViewMarkdown("surface", editorSurfaceMD).MarkdownExtensions(ext))
 }
 
 func editorHeading(a *App, cx *gk.Cx) gk.Element {
@@ -105,73 +108,73 @@ func editorHeading(a *App, cx *gk.Cx) gk.Element {
 		gk.NewStyleRefinementDefault().TextColor(theme.Danger),
 		gk.NewStyleRefinementDefault().TextColor(theme.Success),
 	}
-	style := gk.NewBaseTextViewStyleDefault().WithHeading(levels)
+	style := editor.NewBaseTextViewStyleDefault().WithHeading(levels)
 	// The next page's text view drawn here first: a plugin's rows are described the frame after
 	// its nodes are parsed, and a page's first shot is taken on its first frame. Laid out with no
 	// height, so this page does not show it.
-	return gk.Div().W(gk.Px(360)).Child(gk.BaseTextViewMarkdown("heading", editorHeadingMD).Style(style)).
+	return gk.Div().W(gk.Px(360)).Child(editor.BaseTextViewMarkdown("heading", editorHeadingMD).Style(style)).
 		Child(gk.Div(s.OverflowHidden).H(gk.Px(0)).Child(editorPlugin(a, cx)))
 }
 
 func editorBadgeRow(cx *gk.Cx, n gk.MarkdownNodeRead) gk.Element {
-	return gk.Label(fmt.Sprintf("[%s]", n.AsText(cx)))
+	return kit.Label(fmt.Sprintf("[%s]", n.AsText(cx)))
 }
 
 // editorCodeRow is an inline plugin's row: the node is the first value the kit hands it (then the
 // inline render context, which this row does not read).
 func editorCodeRow(cx *gk.Cx, n gk.MarkdownNodeRead) gk.Element {
-	return gk.Label(fmt.Sprintf("<%s>", n.AsText(cx)))
+	return kit.Label(fmt.Sprintf("<%s>", n.AsText(cx)))
 }
 
 func editorPlugin(a *App, cx *gk.Cx) gk.Element {
 	p := &a.editor
-	ext := gk.NewMarkdownExtensionsDefault().Frontmatter().Plugin(gk.NewFrontmatterPlugin())
-	return gk.Div().W(gk.Px(420)).Child(gk.BaseTextViewMarkdown("plugin", editorPluginMD).MarkdownExtensions(ext).
+	ext := editor.NewMarkdownExtensionsDefault().Frontmatter().Plugin(editor.NewFrontmatterPlugin())
+	return gk.Div().W(gk.Px(420)).Child(editor.BaseTextViewMarkdown("plugin", editorPluginMD).MarkdownExtensions(ext).
 		Plugin(gk.MarkdownPlugin{Name: "badge", Match: gk.MarkdownMatchCode, Lang: "badge", Rows: p.blocks}).
 		Plugin(gk.MarkdownPlugin{Name: "code", Match: gk.MarkdownMatchInlineCode, Rows: p.inlines, Baseline: 12}))
 }
 
 func editorTipRow(cx *gk.Cx, url string) gk.Element {
-	return gk.Label(fmt.Sprintf("open %s", url))
+	return kit.Label(fmt.Sprintf("open %s", url))
 }
 
 func editorTooltip(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(360)).Child(gk.BaseTextViewMarkdown("tooltip", editorTooltipMD).LinkTooltip(a.editor.tips))
+	return gk.Div().W(gk.Px(360)).Child(editor.BaseTextViewMarkdown("tooltip", editorTooltipMD).LinkTooltip(a.editor.tips))
 }
 
 func editorHost(a *App, cx *gk.Cx) gk.Element {
-	var bs []gk.BlockNode
-	bs = append(bs, gk.BlockNodeHeading{Level: 2, Children: gk.NewParagraphDefault().Push(gk.NewInlineNode("Host")).WithLeafKey(1)})
-	bs = append(bs, gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().
-		Push(gk.NewInlineNode("Hello ").Marks([]gk.TupleRangeTextMark{{V0: gk.Range{Lo: 0, Hi: 5}, V1: gk.NewTextMarkDefault().Bold()}})).
-		Push(gk.NewInlineNode("world")).WithLeafKey(2)})
-	one := []gk.BlockNode{gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode("first")).WithLeafKey(3)}}
-	two := []gk.BlockNode{gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode("second"))}}
-	items := []gk.BlockNode{
-		gk.BlockNodeListItem{Children: one},
-		gk.BlockNodeListItem{Children: two, Checked: gk.Some(true)},
+	var bs []editor.BlockNode
+	bs = append(bs, editor.BlockNodeHeading{Level: 2, Children: editor.NewParagraphDefault().Push(editor.NewInlineNode("Host")).WithLeafKey(1)})
+	bs = append(bs, editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().
+		Push(editor.NewInlineNode("Hello ").Marks([]editor.TupleRangeTextMark{{V0: gk.Range{Lo: 0, Hi: 5}, V1: editor.NewTextMarkDefault().Bold()}})).
+		Push(editor.NewInlineNode("world")).WithLeafKey(2)})
+	one := []editor.BlockNode{editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode("first")).WithLeafKey(3)}}
+	two := []editor.BlockNode{editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode("second"))}}
+	items := []editor.BlockNode{
+		editor.BlockNodeListItem{Children: one},
+		editor.BlockNodeListItem{Children: two, Checked: gk.Some(true)},
 	}
-	bs = append(bs, gk.BlockNodeList{Children: items})
-	bs = append(bs, gk.BlockNodeCodeBlock{Value: gk.NewBaseCodeBlockFromCode("x := 1", gk.Some("demo")).WithLeafKey(4)})
+	bs = append(bs, editor.BlockNodeList{Children: items})
+	bs = append(bs, editor.BlockNodeCodeBlock{Value: editor.NewBaseCodeBlockFromCode("x := 1", gk.Some("demo")).WithLeafKey(4)})
 	for _, h := range a.editor.held {
 		bs = append(bs, h)
 	}
-	decs := []gk.LeafDecoration{{Key: 2, Ranges: []gk.TupleRangeColor{{V0: gk.Range{Lo: 0, Hi: 5}, V1: theme.Selection}}}}
-	return gk.Div().W(gk.Px(420)).Child(gk.BlockHost("editor6-host", bs, nil, gk.Option[gk.RenderContext]{}, decs, nil))
+	decs := []editor.LeafDecoration{{Key: 2, Ranges: []gk.TupleRangeColor{{V0: gk.Range{Lo: 0, Hi: 5}, V1: theme.Selection}}}}
+	return gk.Div().W(gk.Px(420)).Child(editor.BlockHost("editor6-host", bs, nil, gk.Option[editor.RenderContext]{}, decs, nil))
 }
 
 // --- docs/PROTOCOLS.md 9.38 to 9.40
 
 func editorNumber(a *App, cx *gk.Cx) gk.Element {
 	p := &a.editor
-	return gk.Div().W(gk.Px(200)).Child(gk.BaseNumberInput(p.number).
+	return gk.Div().W(gk.Px(200)).Child(editor.BaseNumberInput(p.number).
 		IncrementButton(gk.Decorate{Style: gk.Some(gk.NewStyleRefinementDefault().Bg(theme.Primary)), Content: p.plus}).
 		DecrementButton(gk.Decorate{Content: p.minus}))
 }
 
 func editorScroller(a *App, cx *gk.Cx) gk.Element {
 	p := &a.editor
-	return gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(gk.MessageScroller("scroller", p.scroller, p.messages).Scrollbar(false).
+	return gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(kit.MessageScroller("scroller", p.scroller, p.messages).Scrollbar(false).
 		WithJumpButtonRenderer(gk.Decorate{Style: gk.Some(gk.NewStyleRefinementDefault().Bg(theme.Danger)), Content: p.jump}))
 }
 
@@ -186,16 +189,16 @@ func editorLsp(a *App, cx *gk.Cx) gk.Element {
 		items := []gk.CompletionItem{{Label: "first", Kind: 3, Detail: gk.Some("fn first()")}, {Label: "fifth", Kind: 6}}
 		a.editor.lsp.PresentCompletionItems(cx, 2, "fi", items)
 	}
-	return gk.VFlex(s.Gap2).Child(gk.Button("complete").Label("Complete").OnClick(complete)).
-		Child(gk.Div().W(gk.Px(420)).Child(gk.CodeEditor(a.editor.lsp, gk.CodeEditorOptions{Height: 160})))
+	return gk.VFlex(s.Gap2).Child(kit.Button("complete").Label("Complete").OnClick(complete)).
+		Child(gk.Div().W(gk.Px(420)).Child(editor.CodeEditor(a.editor.lsp, editor.CodeEditorOptions{Height: 160})))
 }
 
 func editorDiagnostic(a *App, cx *gk.Cx) gk.Element {
 	diagnose := func(cx *gk.Cx, _ gk.ClickEvent) {
-		d := gk.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 4}, {Line: 0, Character: 5}}, "unused x").
-			WithSeverity(gk.DiagnosticSeverityWarning)
+		d := editor.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 4}, {Line: 0, Character: 5}}, "unused x").
+			WithSeverity(editor.DiagnosticSeverityWarning)
 		a.editor.diag.PresentDiagnostic(cx, gk.Range{Lo: 4, Hi: 5}, d)
 	}
-	return gk.VFlex(s.Gap2).Child(gk.Button("diagnose").Label("Diagnose").OnClick(diagnose)).
-		Child(gk.Div().W(gk.Px(420)).Child(gk.CodeEditor(a.editor.diag, gk.CodeEditorOptions{Height: 160})))
+	return gk.VFlex(s.Gap2).Child(kit.Button("diagnose").Label("Diagnose").OnClick(diagnose)).
+		Child(gk.Div().W(gk.Px(420)).Child(editor.CodeEditor(a.editor.diag, editor.CodeEditorOptions{Height: 160})))
 }

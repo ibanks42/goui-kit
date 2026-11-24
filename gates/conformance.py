@@ -167,6 +167,18 @@ def go_params(text):
     return out
 
 
+def split_go(text):
+    """The Go page with each gk.X where the split packages hold X now (gen/gosplit migrate), gofmt'ed."""
+    import subprocess  # noqa: PLC0415
+    sys.path.insert(0, os.path.join(REPO, "gen"))
+    import gk_split  # noqa: PLC0415
+    tmp = os.path.join(gk_split.OUT, "conf.go")
+    open(tmp, "w").write(text)
+    gk_split.gosplit("migrate", os.path.join(gk_split.OUT, "table.json"), tmp)
+    subprocess.run(["gofmt", "-w", tmp], check=True)
+    return open(tmp).read()
+
+
 class GoPackage:
     def __init__(self, d):
         src = ""
@@ -239,7 +251,9 @@ def main():
     opt = lambda name: argv[argv.index(name) + 1] if name in argv else None
     api = json.load(gzip.open(os.path.join(REPO, API)))
     items = {i["id"]: i for i in api["items"]}
-    gpkg = GoPackage(os.path.join(REPO, opt("--go-package") or "go/gk"))
+    # the flat package the generator split (gen/gk_split.py): its names are the ones written here,
+    # and gen/gosplit moves them to their packages (split_go below)
+    gpkg = GoPackage(os.path.join(REPO, opt("--go-package") or "gen/out/build.go/flat"))
     skip = {}
     if os.path.exists(os.path.join(REPO, SKIP)):
         for line in open(os.path.join(REPO, SKIP)):
@@ -484,7 +498,7 @@ var confPages = []Page{{
         pend_keep = pend_old if pend_old.endswith("\n") or not pend_old else pend_old + "\n"
     pending = pend_keep + PENDING_BEGIN + "\n" + "".join(l + "\n" for l in go_pending) + PENDING_END + "\n"
 
-    files = {OUT_RS: rust, OUT_TXT: text, OUT_GO: golang, PENDING_GO: pending}
+    files = {OUT_RS: rust, OUT_TXT: text, OUT_GO: split_go(golang), PENDING_GO: pending}
     if "--check" in argv:
         # Fails only when the three committed files disagree with each other (a page in one
         # language and not the list, or a reference built from another list). Being behind

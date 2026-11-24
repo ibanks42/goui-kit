@@ -24,7 +24,7 @@ LOGS  ?= gates/out/logs
 help:
 	@echo "Generate (Python only, a few seconds)"
 	@echo "  make gen            regenerate the bindings from the extracted API in api/rustdoc: the Rust"
-	@echo "                     decoders (core/src/gen), the Go package (go/gk/gen_*), the opcode tables,"
+	@echo "                     decoders (core/src/gen), the Go packages (go/gk/**/gen_*), the opcode tables,"
 	@echo "                     the coverage table and docs/STATUS.md"
 	@echo "  make status         rewrite the coverage table in docs/STATUS.md from api/coverage.json"
 	@echo "  make coverage       check that coverage of the upstream API has not gone down"

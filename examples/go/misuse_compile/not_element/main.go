@@ -1,7 +1,9 @@
 // A number where an element goes.
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+)
 
 func view(cx *gk.Cx) gk.Element { return gk.Div().Child(42) }
 

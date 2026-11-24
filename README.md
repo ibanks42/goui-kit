@@ -5,7 +5,7 @@ Write desktop apps in **Go** with [GPUI](https://www.gpui.rs) and
 component library built on it.
 
 GPUI and GPUI-kit are Rust. This project wraps them in one prebuilt library with a small C
-interface (`libgpuikit`) and puts a native Go package on top: `gpuikit.dev/gk`. The package is
+interface (`libgpuikit`) and puts native Go packages on top: `gpuikit.dev/gk` and one package per area. The packages are
 generated from GPUI-kit's own API, so you get
 the kit's whole component set (buttons, inputs, lists, tables, dialogs, menus, docks, charts,
 editors and more) under names that follow fixed rules from the Rust documentation.
@@ -48,17 +48,19 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	count int
-	name  gk.InputState // a handle to the kit's InputState, which lives in the library
+	name  editor.InputState // a handle to the kit's InputState, which lives in the library
 	root  gk.View
 }
 
-func (a *App) init(cx *gk.Cx) { a.name = gk.NewInputState(cx).Placeholder("Your name").Build() }
+func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
 func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw
 
@@ -66,10 +68,10 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
 		Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(gk.Button("add").Primary().Label("Add").OnClick(a.add)).
-			Child(gk.Label(fmt.Sprintf("clicked %d times", a.count)))).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Input(a.name))).
-		Child(gk.Label("hello " + a.name.Value(cx))) // a read: redrawn when it changes
+			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
+		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
+		Child(kit.Label("hello " + a.name.Value(cx))) // a read: redrawn when it changes
 }
 
 func main() {
@@ -105,7 +107,7 @@ Inside the archive:
 | path | what |
 |---|---|
 | `lib/` | the library, which your app links into itself: `libgpuikit_static.a`, with a small helper naming the system libraries it needs |
-| `go/` | the Go module `gpuikit.dev` (package `gk`, and `s`, `theme`, `palette` for styles and colors) |
+| `go/` | the Go module `gpuikit.dev`: package `gk` (the core) and one package per area (`kit`, `editor`, `table`, `chart`, `overlay`, `dock`, `motion`, `base`), and `s`, `theme`, `palette` for styles and colors |
 | `include/` | the C header, if you want to bind another language |
 | `windows/` | Windows only: the manifest every program needs (see below) |
 | `examples/go/` | six example apps, with a `build.sh` |
@@ -140,8 +142,8 @@ CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.2-linux-x86_64/lib" go build -ldflags="-s -w 
 ```
 
 Your app links the library statically, and **only the components it uses** end up in the
-program: call `gk.Button` and the button code is linked in, never call
-`gk.LineChart` and the chart code is left out. There is nothing to list or import for it. The
+program: call `kit.Button` and the button code is linked in, never call
+`chart.LineChart` and the chart code is left out. There is nothing to list or import for it. The
 `-ldflags` part tells the linker to drop what isn't used
 (Go doesn't let a package ask for that itself), and without it the app still works, it just
 carries every component (about 100 MB instead of about 50 MB for a small app). The result is one

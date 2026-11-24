@@ -21,7 +21,10 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	gktable "gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -39,9 +42,9 @@ type App struct {
 	mode     string
 	root     gk.View
 	src      gk.RowSource
-	sel      gk.SelectState
-	combo    gk.ComboboxState
-	table    gk.TableState
+	sel      gktable.SelectState
+	combo    gktable.ComboboxState
+	table    gktable.State
 	cells    gk.RowSource
 	group    gk.View
 	sub      gk.Subscription
@@ -49,14 +52,14 @@ type App struct {
 	events   int
 	rows     map[uint64]int
 	requests int
-	in1, in2 gk.InputState
+	in1, in2 editor.InputState
 	checks   int // validator calls
-	ed       gk.EditorState
+	ed       editor.State
 	prov     gk.RowSource // the editor's providers' requests
 	asked    map[string]int
 	// drive: a list, a table and a tree selected and scrolled from code
-	list     gk.ListState
-	tree     gk.TreeState
+	list     gktable.ListState
+	tree     gktable.TreeState
 	treeRows gk.RowSource
 	drawn    map[string]int // "list 500", "table 700", "tree 150": rows described
 	kept0    int
@@ -90,20 +93,20 @@ func strs(vs []string) string {
 
 // --- events -------------------------------------------------------------------------------------
 
-func (a *App) selectEvent(cx *gk.Cx, e gk.SelectEvent) {
+func (a *App) selectEvent(cx *gk.Cx, e gktable.SelectEvent) {
 	a.events++
-	c, _ := e.(gk.SelectEventConfirm)
+	c, _ := e.(gktable.SelectEventConfirm)
 	v, has := c.Value.Get()
 	now, ok := a.sel.SelectedValue(cx).Get()
 	fmt.Printf("lists2 select confirm has=%v value=%q now=%q same=%v\n", has, v, now, ok && now == v)
 }
 
-func (a *App) comboEvent(cx *gk.Cx, e gk.ComboboxEvent) {
+func (a *App) comboEvent(cx *gk.Cx, e gktable.ComboboxEvent) {
 	a.events++
 	switch v := e.(type) {
-	case gk.ComboboxEventChange:
+	case gktable.ComboboxEventChange:
 		fmt.Printf("lists2 combobox change values=%s\n", strs(v.Value))
-	case gk.ComboboxEventConfirm:
+	case gktable.ComboboxEventConfirm:
 		fmt.Printf("lists2 combobox confirm values=%s\n", strs(v.Value))
 	}
 }
@@ -121,25 +124,25 @@ func (a *App) searchRequest(cx *gk.Cx, e gk.SearchRequest) {
 // rows: an item's row and a group's header row, each a view described once.
 func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.rows[key(at.Section, at.Row)]++
-	if at.Row == gk.HeaderRow {
+	if at.Row == gktable.HeaderRow {
 		fmt.Printf("lists2 header group=%d\n", at.Section)
 		if at.Section == 0 {
-			return gk.Label("== fruit ==")
+			return kit.Label("== fruit ==")
 		}
-		return gk.Label("== veg ==")
+		return kit.Label("== veg ==")
 	}
 	items := fruit
 	if at.Section != 0 {
 		items = veg
 	}
 	fmt.Printf("lists2 row group=%d row=%d value=%s\n", at.Section, at.Row, items[at.Row].Value)
-	return gk.Label(fmt.Sprintf("> %s", items[at.Row].Title))
+	return kit.Label(fmt.Sprintf("> %s", items[at.Row].Title))
 }
 
 // drive: rows that say which of them were described (drawn after a scroll from code).
-func (a *App) driveListRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) driveListRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	a.drawn[fmt.Sprintf("list %d", at.Row)]++
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.Label(fmt.Sprintf("item %d", at.Row)))
+	return gktable.ListItem(gk.Key("item", at.Row)).Child(kit.Label(fmt.Sprintf("item %d", at.Row)))
 }
 
 func (a *App) drawnRow(what string, row int) bool {
@@ -163,7 +166,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 			v, ok := a.sel.SelectedValue(cx).Get()
 			ix, iok := a.sel.SelectedIndex(cx).Get()
 			fmt.Printf("lists2 select set_selected_value value=%q ok=%v row=%d index_ok=%v\n", v, ok, ix.Row, iok)
-			a.sel.SetSelectedIndex(cx, gk.Some(gk.Row(4)))
+			a.sel.SetSelectedIndex(cx, gk.Some(gktable.Row(4)))
 		case 3:
 			v, _ := a.sel.SelectedValue(cx).Get()
 			fmt.Printf("lists2 select set_selected_index value=%q\n", v)
@@ -175,7 +178,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 			v, ok := a.sel.SelectedValue(cx).Get()
 			ix, _ := a.sel.SelectedIndex(cx).Get()
 			fmt.Printf("lists2 select set_items value=%q ok=%v row=%d\n", v, ok, ix.Row)
-			a.sel.SetSelectedIndex(cx, gk.NoRow)
+			a.sel.SetSelectedIndex(cx, gktable.NoRow)
 		case 5:
 			_, ok := a.sel.SelectedValue(cx).Get()
 			fmt.Printf("lists2 select cleared has=%v\n", ok)
@@ -185,12 +188,12 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 		fmt.Printf("lists2 released source\n")
 	case "status-colors":
 		// A library object with no constructor but Default (PROTOCOLS.md 9.13): its reads.
-		sc := gk.NewStatusColorsDefault(cx)
+		sc := editor.NewStatusColorsDefault(cx)
 		e := sc.Error(cx)
 		fmt.Printf("lists2 status error=%+v warning=%+v\n", e, sc.Warning(cx))
 		fmt.Printf("lists2 status error_opaque=%v error_not_warning=%v created_is_success=%v deleted_is_error=%v border_is_error=%v\n",
 			e.A == 1, e != sc.Warning(cx), sc.Created(cx) == sc.Success(cx), sc.Deleted(cx) == e, sc.ErrorBorder(cx) == e)
-		syn := gk.NewSyntaxColorsDefault(cx)
+		syn := editor.NewSyntaxColorsDefault(cx)
 		_, has := syn.Style(cx, "keyword").Get()
 		_, has0 := syn.StyleForIndex(cx, 0).Get()
 		fmt.Printf("lists2 status syntax keyword=%v index0=%v\n", has, has0)
@@ -200,7 +203,7 @@ func (a *App) stepClicked(cx *gk.Cx, _ gk.ClickEvent) {
 		switch a.step {
 		case 1:
 			// A mask the binding could not set before: the Number variant (a char separator).
-			a.in2.SetMaskPattern(cx, gk.MaskPatternNumber{Separator: gk.Some(','), Fraction: gk.Some(2)})
+			a.in2.SetMaskPattern(cx, editor.MaskPatternNumber{Separator: gk.Some(','), Fraction: gk.Some(2)})
 		case 2:
 			fmt.Printf("lists2 mask pattern=%q number=%q\n", a.in1.Value(cx), a.in2.Value(cx))
 		}
@@ -228,34 +231,34 @@ func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
 	case "select":
 		a.src = gk.NewSearchSource(cx, fruit)
-		a.sel = gk.NewSelectState(cx, a.src, gk.NoRow).Build()
+		a.sel = gktable.NewSelectState(cx, a.src, gktable.NoRow).Build()
 		a.sub = a.sel.OnSelectEvent(cx, a.selectEvent)
 	case "search":
 		a.src = gk.NewSearchSource(cx, fruit)
-		a.sel = gk.NewSelectState(cx, a.src, gk.NoRow).Searchable(true).Build()
+		a.sel = gktable.NewSelectState(cx, a.src, gktable.NoRow).Searchable(true).Build()
 		a.sub = a.sel.OnSelectEvent(cx, a.selectEvent)
 	case "search-requests":
 		a.src = gk.NewSearchSource(cx, fruit, gk.SearchRequests(a.searchRequest))
-		a.sel = gk.NewSelectState(cx, a.src, gk.NoRow).Searchable(true).Build()
+		a.sel = gktable.NewSelectState(cx, a.src, gktable.NoRow).Searchable(true).Build()
 		a.sub = a.sel.OnSelectEvent(cx, a.selectEvent)
 	case "rows", "released":
 		groups := []gk.SearchGroup{{Title: "Fruit", Items: fruit}, {Title: "Veg", Items: veg}}
 		a.src = gk.NewSearchSourceGroups(cx, groups, gk.SearchRow(a.itemRow), gk.SearchHeaders())
-		a.sel = gk.NewSelectState(cx, a.src, gk.NoRow).Build()
+		a.sel = gktable.NewSelectState(cx, a.src, gktable.NoRow).Build()
 		a.sub = a.sel.OnSelectEvent(cx, a.selectEvent)
 	case "bad-source":
-		other := gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element { return gk.Label("x") })
+		other := gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element { return kit.Label("x") })
 		gk.SetSearchItems(cx, other, fruit)
 	case "bad-headers":
 		groups := []gk.SearchGroup{{Title: "Fruit", Items: fruit}}
 		a.src = gk.NewSearchSourceGroups(cx, groups, gk.SearchHeaders())
 	case "mask":
-		a.in1 = gk.NewInputState(cx).MaskPattern("999-999").Build()
-		a.in2 = gk.NewInputState(cx).Build()
+		a.in1 = editor.NewInputState(cx).MaskPattern("999-999").Build()
+		a.in2 = editor.NewInputState(cx).Build()
 	case "validate":
-		a.in1 = gk.NewInputState(cx).Validate(a.noX).Build()
+		a.in1 = editor.NewInputState(cx).Validate(a.noX).Build()
 	case "text":
-		a.in1 = gk.NewInputState(cx).DefaultValue("hello world").Build()
+		a.in1 = editor.NewInputState(cx).DefaultValue("hello world").Build()
 	}
 }
 
@@ -263,34 +266,34 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	var body gk.Element
 	switch a.mode {
 	case "combobox", "will-change":
-		body = gk.Combobox(a.combo).Placeholder("Fruit").W(gk.Px(220))
+		body = gktable.Combobox(a.combo).Placeholder("Fruit").W(gk.Px(220))
 	case "table":
-		body = gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gk.DataTable(a.table))
+		body = gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gktable.DataTable(a.table))
 	case "bad-source", "bad-headers", "display-map", "status-colors", "diff", "kept-gone":
-		body = gk.Label("-")
+		body = kit.Label("-")
 	case "drive":
 		body = gk.HFlex(s.Gap2).
-			Child(gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(gk.List(a.list, s.SizeFull))).
-			Child(gk.Div().W(gk.Px(200)).H(gk.Px(200)).Child(gk.DataTable(a.table))).
-			Child(gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(gk.Tree(a.tree, a.treeRows, s.SizeFull)))
+			Child(gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(gktable.List(a.list, s.SizeFull))).
+			Child(gk.Div().W(gk.Px(200)).H(gk.Px(200)).Child(gktable.DataTable(a.table))).
+			Child(gk.Div().W(gk.Px(120)).H(gk.Px(200)).Child(gktable.Tree(a.tree, a.treeRows, s.SizeFull)))
 	case "expr":
-		body = gk.VFlex(s.Gap2).W(gk.Px(200)).Child(gk.NumberInput(a.in1)).Child(gk.NumberInput(a.in2))
+		body = gk.VFlex(s.Gap2).W(gk.Px(200)).Child(editor.NumberInput(a.in1)).Child(editor.NumberInput(a.in2))
 	case "bad-expr":
-		body = gk.Label("-")
+		body = kit.Label("-")
 	case "mask", "validate", "text", "kept":
-		body = gk.VFlex(s.Gap2).W(gk.Px(220)).Child(gk.Input(a.in1))
+		body = gk.VFlex(s.Gap2).W(gk.Px(220)).Child(editor.Input(a.in1))
 		if a.mode == "mask" {
-			body = gk.VFlex(s.Gap2).W(gk.Px(220)).Child(gk.Input(a.in1)).Child(gk.Input(a.in2))
+			body = gk.VFlex(s.Gap2).W(gk.Px(220)).Child(editor.Input(a.in1)).Child(editor.Input(a.in2))
 		}
 	default:
 		if f, ok := modeView[a.mode]; ok {
 			body = f(a, cx) // ask, providers and the round-4 modes
 		} else {
-			body = gk.Select(a.sel).Placeholder("Fruit").W(gk.Px(220))
+			body = gktable.Select(a.sel).Placeholder("Fruit").W(gk.Px(220))
 		}
 	}
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.HFlex(s.Gap2).Child(gk.Button("step").Label("step").OnClick(a.stepClicked))).
+		Child(gk.HFlex(s.Gap2).Child(kit.Button("step").Label("step").OnClick(a.stepClicked))).
 		Child(body)
 }
 

@@ -19,15 +19,19 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 type App struct {
 	mode  string
 	root  gk.View
 	src   gk.RowSource
-	sel   gk.SelectState
-	inp   gk.InputState
+	sel   table.SelectState
+	inp   editor.InputState
 	drawn int
 }
 
@@ -40,13 +44,13 @@ func (a *App) init(cx *gk.Cx) {
 	switch a.mode {
 	case "sel-ok", "sel-view":
 		a.src = gk.NewSearchSource(cx, items)
-		a.sel = gk.NewSelectState(cx, a.src, gk.NoRow).Build()
+		a.sel = table.NewSelectState(cx, a.src, table.NoRow).Build()
 		a.sel.SetSelectedValue(cx, "b")
 	case "sel-foreign":
-		other := gk.NewRowSource(cx, 1, func(cx *gk.Cx, at gk.RowAt) gk.Element { return gk.Label("x") })
+		other := gk.NewRowSource(cx, 1, func(cx *gk.Cx, at gk.RowAt) gk.Element { return kit.Label("x") })
 		gk.SetSearchItems(cx, other, items)
 	case "kept-view":
-		a.inp = gk.NewInputState(cx).Build()
+		a.inp = editor.NewInputState(cx).Build()
 	default:
 		if f := pendingInit[a.mode]; f != nil {
 			f(a, cx)
@@ -61,11 +65,11 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	case "sel-ok":
 		v, ok := a.sel.SelectedValue(cx).Get()
 		fmt.Printf("gk-neg sel-ok value=%q ok=%v\n", v, ok)
-		body = body.Child(gk.Select(a.sel))
+		body = body.Child(table.Select(a.sel))
 	case "sel-view":
 		gk.SetSearchItems(cx, a.src, items)
 	case "nonzero":
-		_ = gk.NewTransition(200 * time.Millisecond).Easing(gk.EasingSteps{Count: 0, Position: gk.StepPositionJumpEnd})
+		_ = motion.NewTransition(200 * time.Millisecond).Easing(gk.EasingSteps{Count: 0, Position: gk.StepPositionJumpEnd})
 	case "kept-view":
 		a.inp.SetValidator(cx, func(cx *gk.Cx, text string) bool { return true })
 	}

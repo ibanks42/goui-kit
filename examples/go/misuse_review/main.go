@@ -23,6 +23,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	gkdock "gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -37,11 +39,11 @@ type App struct {
 	closed  int
 	act     gk.Action
 	acted   int
-	dock    gk.DockArea
+	dock    gkdock.Area
 	hasDock bool
-	panel   gk.DockPanel
+	panel   gkdock.Panel
 	panelV  gk.View
-	tree    gk.PaneTree
+	tree    gkdock.PaneTree
 }
 
 func (a *App) fire(cx *gk.Cx)                      { a.fired++ }
@@ -50,7 +52,7 @@ func (a *App) closeSecond(cx *gk.Cx)               { gk.CloseWindow(cx, a.second
 func (a *App) secondClosed(cx *gk.Cx, _ gk.Window) { a.closed++ }
 
 func label(text string) func(cx *gk.Cx) gk.Element {
-	return func(cx *gk.Cx) gk.Element { return gk.Div(s.SizeFull).Child(gk.Label(text)) }
+	return func(cx *gk.Cx) gk.Element { return gk.Div(s.SizeFull).Child(kit.Label(text)) }
 }
 
 func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {
@@ -64,7 +66,7 @@ func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {
 			gk.OnWindowClosed(cx, a.second, a.secondClosed)
 			gk.After(cx, 20*time.Millisecond, a.closeSecond)
 			gk.DispatchAction(cx, a.act)
-			gk.SetPanel(cx, a.panel, gk.PanelData{Name: "p", Title: "Renamed"})
+			gkdock.SetPanel(cx, a.panel, gkdock.PanelData{Name: "p", Title: "Renamed"})
 		}
 	case "rv-timer-zero":
 		gk.Every(cx, 0, a.fire)
@@ -78,13 +80,13 @@ func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {
 		}
 	case "rv-temp-later":
 		if a.clicks == 1 {
-			a.tree, _ = a.dock.Layout(cx, gk.DockPlacementCenter).Get() // temporary: not retained
+			a.tree, _ = a.dock.Layout(cx, gkdock.PlacementCenter).Get() // temporary: not retained
 		} else {
 			_ = a.tree.RootKind(cx)
 		}
 	case "rv-panel-released":
 		gk.Release(cx, a.panel)
-		gk.SetPanel(cx, a.panel, gk.PanelData{Name: "p", Title: "after release"})
+		gkdock.SetPanel(cx, a.panel, gkdock.PanelData{Name: "p", Title: "after release"})
 	}
 }
 
@@ -98,9 +100,9 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	}
 	body := gk.VFlex(s.SizeFull).ID("all").OnClick(a.clicked).
 		OnAction(gk.Act(a.act, a.actOn)).
-		Child(gk.Label(fmt.Sprintf("clicks %d", a.clicks)))
+		Child(kit.Label(fmt.Sprintf("clicks %d", a.clicks)))
 	if a.hasDock {
-		body = body.Child(gk.Div(s.Flex1, s.WFull).Child(gk.DockView(a.dock)))
+		body = body.Child(gk.Div(s.Flex1, s.WFull).Child(gkdock.View(a.dock)))
 	}
 	return body
 }
@@ -110,11 +112,11 @@ func (a *App) init(cx *gk.Cx) {
 	gk.OnAppAction(cx, a.act, a.actOn)
 	switch a.mode {
 	case "rv-ok", "rv-temp-later", "rv-panel-released":
-		a.dock = gk.NewDockAreaSkinned(cx, "rv")
+		a.dock = gkdock.NewAreaSkinned(cx, "rv")
 		a.hasDock = true
 		a.panelV = gk.NewView(nil, label("panel"))
-		a.panel = gk.NewPanel(cx, a.panelV, gk.PanelData{Name: "p", Title: "P"})
-		a.dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(a.panel))
+		a.panel = gkdock.NewPanel(cx, a.panelV, gkdock.PanelData{Name: "p", Title: "P"})
+		a.dock.SetCenter(cx, gkdock.NewLayoutTabs().PanelView(a.panel))
 	}
 }
 

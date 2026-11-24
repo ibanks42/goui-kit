@@ -23,6 +23,7 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
 	"gpuikit.dev/gk/s"
 )
 
@@ -30,8 +31,8 @@ const customMD = "---\ntitle: Notes\nowner: me\n---\n\nAfter the front matter.\n
 
 // Round7 is the state of this file's modes.
 var r7 struct {
-	ext        gk.MarkdownExtensionsArc
-	custom     gk.BlockNodeHeld
+	ext        editor.MarkdownExtensionsArc
+	custom     editor.BlockNodeHeld
 	parsed     int
 	tops       map[uint64]float32 // leaf key -> top
 	bottoms    map[uint64]float32 // leaf key -> bottom
@@ -58,33 +59,33 @@ func init() {
 	// kit's code editor (component::input::Editor) installs its own overlay handler each time it renders
 	// (its completion menu takes the menu's actions), replacing the app's.
 	baseEditor := func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(420)).H(gk.Px(160)).Child(gk.BaseEditor(a.ed))
+		return gk.Div().W(gk.Px(420)).H(gk.Px(160)).Child(editor.BaseEditor(a.ed))
 	}
 	// The kit's code editor (component::input::Editor): its overlays draw the completion menu and the
 	// diagnostic popover.
 	codeEditor := func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(420)).Child(gk.CodeEditor(a.ed, gk.CodeEditorOptions{Height: 160}))
+		return gk.Div().W(gk.Px(420)).Child(editor.CodeEditor(a.ed, editor.CodeEditorOptions{Height: 160}))
 	}
 	modes["overlay-fire"] = &mode{init: overlayInit, view: baseEditor, step: overlayStep, script: overlayScript}
 	modes["overlay-control"] = &mode{init: overlayInit, view: baseEditor, step: overlayStep, script: overlayScript}
 	modes["lsp-ask"] = &mode{init: func(a *App, cx *gk.Cx) {
 		r7.hl = gk.NewAsk(cx, a.highlight7)
-		a.ed = gk.NewEditorState(cx).DefaultValue("fi").Build()
-		a.ed.LspMut(cx, gk.NewLspDefault().WithCompletionHighlighter(r7.hl))
+		a.ed = editor.NewState(cx).DefaultValue("fi").Build()
+		a.ed.LspMut(cx, editor.NewLspDefault().WithCompletionHighlighter(r7.hl))
 		a.r6.edits = a.ed.OnInputEditsEvent(cx, a.presentOnEdit)
 	}, view: codeEditor, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 lsp-ask asked=%d\n", r7.asked)
 	}, script: "click 200 72\nframe\ntype x\nframe\nframe\nadvance 100\nframe\nframe\nframe\nframe\n" + stepScript}
 	modes["diagnostic-shown"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue("let x = 1\n").Build()
-		a.ed.PresentDiagnostic(cx, gk.Range{Lo: 4, Hi: 5}, gk.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 4}, {Line: 0, Character: 5}}, "unused x").
-			WithSeverity(gk.DiagnosticSeverityWarning))
+		a.ed = editor.NewState(cx).DefaultValue("let x = 1\n").Build()
+		a.ed.PresentDiagnostic(cx, gk.Range{Lo: 4, Hi: 5}, editor.NewDiagnostic([2]gk.LspPosition{{Line: 0, Character: 4}, {Line: 0, Character: 5}}, "unused x").
+			WithSeverity(editor.DiagnosticSeverityWarning))
 	}, view: codeEditor, step: diagnosticShownStep, script: "frame\nframe\n" + stepScript + stepScript}
 }
 
 func customInit(a *App, cx *gk.Cx) {
-	r7.ext = gk.NewMarkdownExtensionsArc(cx, gk.NewMarkdownExtensionsDefault().Frontmatter().Plugin(gk.NewFrontmatterPlugin()))
-	parsed := gk.BaseParseMarkdown(cx, customMD, r7.ext)
+	r7.ext = editor.NewMarkdownExtensionsArc(cx, editor.NewMarkdownExtensionsDefault().Frontmatter().Plugin(editor.NewFrontmatterPlugin()))
+	parsed := editor.BaseParseMarkdown(cx, customMD, r7.ext)
 	blocks, ok := parsed.Value.Get()
 	r7.parsed = len(blocks)
 	fmt.Printf("editor2 custom parsed ok=%v n=%d\n", ok, len(blocks))
@@ -95,16 +96,16 @@ func customInit(a *App, cx *gk.Cx) {
 }
 
 func overlayInit(a *App, cx *gk.Cx) {
-	a.ed = gk.NewEditorState(cx).DefaultValue("ab").Build()
+	a.ed = editor.NewState(cx).DefaultValue("ab").Build()
 	if a.mode == "overlay-fire" {
-		a.ed.SetOverlayActionHandler(cx, []gk.TupleInputOverlayKindString{{V0: gk.InputOverlayKindCompletion, V1: "input::Enter"}})
+		a.ed.SetOverlayActionHandler(cx, []editor.TupleInputOverlayKindString{{V0: editor.InputOverlayKindCompletion, V1: "input::Enter"}})
 	}
 	a.r6.edits = a.ed.OnInputEditsEvent(cx, a.presentOnEdit)
 }
 
 // presentOnEdit opens the completion menu at the caret once the user typed (the editor is focused then,
 // so a key reaches it): two items, the query the text typed so far.
-func (a *App) presentOnEdit(cx *gk.Cx, e gk.InputEditsEvent) {
+func (a *App) presentOnEdit(cx *gk.Cx, e editor.InputEditsEvent) {
 	if r7.presented || len(e.Edits) == 0 {
 		return
 	}
@@ -121,24 +122,24 @@ func (a *App) highlight7(cx *gk.Cx, key gk.TupleStringCompletionItem) []gk.Range
 	return []gk.Range{{Lo: 0, Hi: min(2, len(key.V1.Label))}}
 }
 
-func para7(text string, key uint64) gk.BlockNode {
-	return gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode(text)).WithLeafKey(key)}
+func para7(text string, key uint64) editor.BlockNode {
+	return editor.BlockNodeParagraph{Value: editor.NewParagraphDefault().Push(editor.NewInlineNode(text)).WithLeafKey(key)}
 }
 
 func customView(a *App, cx *gk.Cx) gk.Element {
-	rc := gk.NewRenderContextFromApp().WithMarkdownExtensions(r7.ext)
-	with := []gk.BlockNode{para7("Before", 1), r7.custom, para7("After", 2)}
-	flows := make([]gk.Option[gk.FlowPosition], len(with))
+	rc := editor.NewRenderContextFromApp().WithMarkdownExtensions(r7.ext)
+	with := []editor.BlockNode{para7("Before", 1), r7.custom, para7("After", 2)}
+	flows := make([]gk.Option[editor.FlowPosition], len(with))
 	for i := range with {
-		flows[i] = gk.Some(gk.NewFlowPositionAt(with, i, i == len(with)-1)) // FlowPosition::at over the held block
+		flows[i] = gk.Some(editor.NewFlowPositionAt(with, i, i == len(with)-1)) // FlowPosition::at over the held block
 	}
-	without := []gk.BlockNode{para7("Before", 3), para7("After", 4)}
+	without := []editor.BlockNode{para7("Before", 3), para7("After", 4)}
 	return gk.HFlex(s.Gap2, s.ItemsStart).
-		Child(gk.Div().W(gk.Px(200)).Child(gk.BlockHost("with", with, flows, gk.Some(rc), nil, a.onLeaves7))).
-		Child(gk.Div().W(gk.Px(200)).Child(gk.BlockHost("without", without, nil, gk.Some(rc), nil, a.onLeaves7)))
+		Child(gk.Div().W(gk.Px(200)).Child(editor.BlockHost("with", with, flows, gk.Some(rc), nil, a.onLeaves7))).
+		Child(gk.Div().W(gk.Px(200)).Child(editor.BlockHost("without", without, nil, gk.Some(rc), nil, a.onLeaves7)))
 }
 
-func (a *App) onLeaves7(cx *gk.Cx, e gk.LeafGeometryEvent) {
+func (a *App) onLeaves7(cx *gk.Cx, e editor.LeafGeometryEvent) {
 	r7.leafEvents++
 	for _, l := range e.Leaves {
 		b := l.Geometry.Bounds(cx)

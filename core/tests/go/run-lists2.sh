@@ -112,7 +112,7 @@ GK_PROTO_BIN=lists2-go run languages 0 'lists2 syntax asked lang=demo offset=[0-
 # Go: the app's line is in round4.go.
 GK_PROTO_BIN=lists2-go run bad-lend 2 'lists2 bad-lend using the lent handle' 'was released' 'at .*lists2/round4.go:[0-9]+'
 # There is no bad-ctx mode (a row's context read for a row no closure drew): an item function
-# is handed its context's values (gk.Items), so there is no read of a context to misuse; not counted.
+# is handed its context's values (overlay.Items), so there is no read of a context to misuse; not counted.
 # Small rules (PROTOCOLS.md 9.19): a patch that does not parse gives the kit's DiffParseError (its line
 # and message), a good one none; BaseHighlightPrefix over an LSP item; a tree's scroll handle is gpui's
 # ScrollHandle, scrolled from code: the rows it scrolls to are described.

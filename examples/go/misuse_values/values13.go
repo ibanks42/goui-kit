@@ -10,18 +10,22 @@
 //	GK_NEG=c6-rules-limits  selection rules whose min is above their max: must stop
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/kit"
+)
 
 func init() {
 	pendingView["val-action-view"] = func(a *App, cx *gk.Cx) {
 		_ = gk.ActionOf(cx, gk.NewCancelDefault())
 	}
 	pendingClick["val-bad-time"] = func(a *App, cx *gk.Cx) {
-		tf := gk.NewTimeFieldState(cx).Build()
+		tf := base.NewTimeFieldState(cx).Build()
 		tf.SetTime(cx, gk.CivilTime{Hour: 24})
 	}
 	pendingClick["c6-rules-source"] = func(a *App, cx *gk.Cx) {
-		other := gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element { return gk.Label("x") })
+		other := gk.NewRowSource(cx, 3, func(cx *gk.Cx, at gk.RowAt) gk.Element { return kit.Label("x") })
 		gk.SearchWillChange(cx, other, gk.SearchRules{Max: 1})
 	}
 	pendingClick["c6-rules-limits"] = func(a *App, cx *gk.Cx) {

@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -14,7 +16,7 @@ import (
 // c6-resize's state: one row per handle the group draws.
 var c6 struct {
 	handles gk.RowSource
-	resizer gk.ResizableState
+	resizer base.ResizableState
 	made    bool // the row source exists
 }
 
@@ -26,8 +28,8 @@ func init() {
 
 // The root view's init (a row source needs the window, which a view's init has).
 func comp6Init(a *App, cx *gk.Cx) {
-	c6.handles = gk.Items(cx, a.handleRow)
-	c6.resizer = gk.NewResizableState(cx)
+	c6.handles = overlay.Items(cx, a.handleRow)
+	c6.resizer = base.NewResizableState(cx)
 	c6.made = true
 }
 
@@ -39,25 +41,25 @@ func axisName(x gk.Axis) string {
 	return "Vertical"
 }
 
-func edgeName(x gk.HandleEdge) string {
-	if x == gk.HandleEdgeTrailing {
+func edgeName(x base.HandleEdge) string {
+	if x == base.HandleEdgeTrailing {
 		return "Trailing"
 	}
 	return "Leading"
 }
 
-func stateName(x gk.ResizeHandleState) string {
+func stateName(x base.ResizeHandleState) string {
 	return [...]string{"Idle", "Hovered", "Pressed", "Dragging"}[x]
 }
 
 // The handle's visible part, drawn from the snapshot of the context the kit hands the renderer.
 // Go: an item function is handed the context, not its row; the group has one divider, row 0.
-func (a *App) handleRow(cx *gk.Cx, ctx gk.ResizeHandleContext) gk.Element {
+func (a *App) handleRow(cx *gk.Cx, ctx base.ResizeHandleContext) gk.Element {
 	edge, hasEdge := ctx.Edge.Get()
 	fmt.Printf("values c6 handle row=%d axis=%s edge=%s has_edge=%v active=%v state=%s\n", 0, axisName(ctx.Axis), edgeName(edge),
 		hasEdge, ctx.IsActive, stateName(ctx.State))
 	color := theme.Border
-	if ctx.IsActive || ctx.State == gk.ResizeHandleStateHovered {
+	if ctx.IsActive || ctx.State == base.ResizeHandleStateHovered {
 		color = theme.Primary
 	}
 	return gk.Div(s.HFull).W(gk.Px(1)).Bg(color)
@@ -67,8 +69,8 @@ func comp6View(a *App, cx *gk.Cx) (gk.Element, bool) {
 	if !c6.made {
 		return nil, false
 	}
-	left := gk.ResizablePanel().Size(200).Child(gk.Text("left"))
-	right := gk.ResizablePanel().Child(gk.Text("right"))
-	group := gk.HResizable("g").WithState(c6.resizer).WithHandleAppearance(c6.handles).Child(left).Child(right)
+	left := base.ResizablePanel().Size(200).Child(gk.Text("left"))
+	right := base.ResizablePanel().Child(gk.Text("right"))
+	group := base.HResizable("g").WithState(c6.resizer).WithHandleAppearance(c6.handles).Child(left).Child(right)
 	return gk.Div(s.SizeFull).Child(group), true
 }

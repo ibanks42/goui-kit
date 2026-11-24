@@ -35,6 +35,8 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -43,10 +45,10 @@ type App struct {
 	mode string
 	root gk.View
 	step int
-	ed   gk.EditorState
-	inp  gk.InputState
+	ed   editor.State
+	inp  editor.InputState
 	hist gk.History
-	coll gk.TextDecorationCollection
+	coll editor.TextDecorationCollection
 	r6   Round6 // round6.go (round7's state is in round7.go)
 }
 
@@ -72,23 +74,23 @@ const stepScript = "click 36 30\nframe\n"
 
 func init() {
 	editorView := func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(420)).H(gk.Px(120)).Child(gk.BaseEditor(a.ed))
+		return gk.Div().W(gk.Px(420)).H(gk.Px(120)).Child(editor.BaseEditor(a.ed))
 	}
 	modes["annotation"] = &mode{step: annotationStep, script: "frame\n" + stepScript}
 	modes["decorations"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue("hello world\n").Build()
+		a.ed = editor.NewState(cx).DefaultValue("hello world\n").Build()
 	}, view: editorView, step: decorationsStep, script: stepScript + stepScript + stepScript}
 	modes["route"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue("hello world\n").Build()
+		a.ed = editor.NewState(cx).DefaultValue("hello world\n").Build()
 	}, view: editorView, step: routeStep, script: "frame\n" + stepScript}
 	modes["display-map"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.ed = gk.NewEditorState(cx).DefaultValue(foldText).Build()
+		a.ed = editor.NewState(cx).DefaultValue(foldText).Build()
 	}, view: editorView, step: displayMapStep, script: "frame\n" + stepScript}
 	modes["mask-variant"] = &mode{init: func(a *App, cx *gk.Cx) {
-		a.inp = gk.NewInputState(cx).Build()
-		a.inp.SetMaskPattern(cx, gk.MaskPatternPattern{Pattern: "999-999"})
+		a.inp = editor.NewInputState(cx).Build()
+		a.inp.SetMaskPattern(cx, editor.MaskPatternPattern{Pattern: "999-999"})
 	}, view: func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(220)).Child(gk.Input(a.inp))
+		return gk.Div().W(gk.Px(220)).Child(editor.Input(a.inp))
 	}, step: func(a *App, cx *gk.Cx) {
 		fmt.Printf("editor2 mask-variant value=%q\n", a.inp.Value(cx))
 	}, script: "click 100 72\ntype 123456\nframe\n" + stepScript}
@@ -113,7 +115,7 @@ func stringsText(ss []string) string {
 }
 
 func annotationStep(a *App, cx *gk.Cx) {
-	an := gk.NewDiffAnnotationFile(cx, "ann-1", "src/a.rs")
+	an := editor.NewDiffAnnotationFile(cx, "ann-1", "src/a.rs")
 	fmt.Printf("editor2 annotation id=%q path=%q\n", an.ID(cx), an.Path(cx))
 }
 
@@ -133,13 +135,13 @@ func displayMapStep(a *App, cx *gk.Cx) {
 func decorationsStep(a *App, cx *gk.Cx) {
 	switch a.step {
 	case 1:
-		first := []gk.TextDecoration{{Range: gk.Range{Lo: 0, Hi: 5}, Style: gk.HighlightStyle{Color: gk.Some(theme.Danger),
+		first := []editor.TextDecoration{{Range: gk.Range{Lo: 0, Hi: 5}, Style: gk.HighlightStyle{Color: gk.Some(theme.Danger),
 			FontWeight: gk.Some(gk.FontWeight{V0: 700})}}}
 		// a call's object is temporary (until the next frame): kept across the steps
 		a.coll = a.ed.CreateDecorationsCollection(cx, first)
 		gk.Retain(cx, a.coll)
 		fmt.Printf("editor2 decorations made ranges=%s\n", rangesText(a.coll.GetRanges(cx)))
-		more := []gk.TextDecoration{{Range: gk.Range{Lo: 6, Hi: 11}, Style: gk.HighlightStyle{BackgroundColor: gk.Some(theme.Accent)}}}
+		more := []editor.TextDecoration{{Range: gk.Range{Lo: 6, Hi: 11}, Style: gk.HighlightStyle{BackgroundColor: gk.Some(theme.Accent)}}}
 		a.coll.Append(cx, more)
 	case 2:
 		fmt.Printf("editor2 decorations appended ranges=%s\n", rangesText(a.coll.GetRanges(cx)))
@@ -156,12 +158,12 @@ func (a *App) init(cx *gk.Cx) {
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
-	var body gk.Element = gk.Label("-")
+	var body gk.Element = kit.Label("-")
 	if m := modes[a.mode]; m.view != nil {
 		body = m.view(a, cx)
 	}
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.HFlex(s.Gap2).Child(gk.Button("step").Label("step").OnClick(a.stepped))).
+		Child(gk.HFlex(s.Gap2).Child(kit.Button("step").Label("step").OnClick(a.stepped))).
 		Child(body)
 }
 

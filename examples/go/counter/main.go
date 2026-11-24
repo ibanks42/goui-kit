@@ -16,6 +16,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -24,13 +26,13 @@ const rows = 10_000
 
 type App struct {
 	count, ticks               int
-	name                       gk.InputState // handles to kit state that lives in the library
+	name                       editor.InputState // handles to kit state that lives in the library
 	rows                       gk.Rows
 	root, controls, echo, list gk.View
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.name = gk.NewInputState(cx).Placeholder("Name").Build()
+	a.name = editor.NewInputState(cx).Placeholder("Name").Build()
 	a.rows = gk.NewRows(cx)
 	all := make([]string, rows)
 	for i := range all {
@@ -50,15 +52,15 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 
 func (a *App) controlsView(cx *gk.Cx) gk.Element {
 	return gk.HFlex(s.Gap2, s.ItemsCenter).
-		Child(gk.Button("add").Primary().Label("Add").OnClick(a.add)).
-		Child(gk.Label(fmt.Sprintf("count %d", a.count+a.ticks))).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Input(a.name)))
+		Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+		Child(kit.Label(fmt.Sprintf("count %d", a.count+a.ticks))).
+		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name)))
 }
 
 // echoView reads kit state through its handle: the library observes the input and has this
 // view described again when it changes.
 func (a *App) echoView(cx *gk.Cx) gk.Element {
-	return gk.HFlex().Child(gk.Label("hello " + a.name.Value(cx)))
+	return gk.HFlex().Child(kit.Label("hello " + a.name.Value(cx)))
 }
 
 func (a *App) listView(cx *gk.Cx) gk.Element {

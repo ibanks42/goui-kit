@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
 )
 
 func init() {
@@ -13,8 +14,8 @@ func init() {
 }
 
 func pinsStart(a *App, cx *gk.Cx) {
-	a.diff = gk.NewDiffState(cx, nil).Build()
-	a.ann = gk.NewDiffAnnotationLine(cx, "a", gk.NewDiffLinePosition(cx, "a.rs", gk.DiffSideModified, 1))
+	a.diff = editor.NewDiffState(cx, nil).Build()
+	a.ann = editor.NewDiffAnnotationLine(cx, "a", editor.NewDiffLinePosition(cx, "a.rs", editor.DiffSideModified, 1))
 	a.child = gk.NewView(nil, a.childView)
 }
 
@@ -36,7 +37,7 @@ func (a *App) childView(cx *gk.Cx) gk.Element {
 	a.builds++
 	body := gk.Div().W(gk.Px(300)).H(gk.Px(200))
 	if p, ok := a.ann.Position(cx).Get(); ok {
-		body = body.Child(gk.Diff(a.diff).GutterMarkers([]gk.DiffGutterMarker{gk.NewDiffGutterMarker("m", p)}))
+		body = body.Child(editor.Diff(a.diff).GutterMarkers([]editor.DiffGutterMarker{editor.NewDiffGutterMarker("m", p)}))
 	}
 	return body
 }

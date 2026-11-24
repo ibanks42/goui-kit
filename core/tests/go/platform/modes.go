@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -18,8 +20,8 @@ import (
 var ov struct {
 	cache   gk.ImageCache
 	anchor  gk.ScrollAnchor
-	scope   gk.TextSelectionScope
-	menubar gk.AppMenuBar
+	scope   motion.TextSelectionScope
+	menubar kit.AppMenuBar
 }
 
 func init() {
@@ -69,7 +71,7 @@ func init() {
 	}
 	inits["scope-zero"] = func(a *App, cx *gk.Cx) {}
 	views["scope-zero"] = func(a *App, cx *gk.Cx) gk.Element {
-		return gk.TextSelectionScopeOf(gk.Div(), gk.TextSelectionScope{}) // stops: no scope
+		return motion.TextSelectionScopeOf(gk.Div(), motion.TextSelectionScope{}) // stops: no scope
 	}
 	inits["real-dialogs"] = func(a *App, cx *gk.Cx) {
 		gk.After(cx, 100*ms, a.realAsk)
@@ -85,7 +87,7 @@ func init() {
 	}
 	views["real-menus"] = func(a *App, cx *gk.Cx) gk.Element {
 		return gk.VFlex(s.SizeFull).Child(gk.Div().H(gk.Px(32)).OnChildrenPrepainted(a.realBarBounds).
-			Child(gk.AppMenuBarView(ov.menubar)))
+			Child(kit.AppMenuBarView(ov.menubar)))
 	}
 }
 
@@ -179,7 +181,7 @@ func (a *App) childInit(cx *gk.Cx) {
 }
 
 func (a *App) childView(cx *gk.Cx) gk.Element {
-	return gk.Label("child")
+	return kit.Label("child")
 }
 
 func (a *App) openChild(cx *gk.Cx) {
@@ -285,16 +287,16 @@ func (a *App) elements(cx *gk.Cx) {
 		fmt.Printf("platform file drop entered at=%.0f,%.0f paths=%s\n", e.Position.X, e.Position.Y, strings.Join(e.Paths, ","))
 	}
 	// Sequence.WithStep: a Transition node in a call op's builder chain (the rule of 9.31)
-	seq := gk.NewSequence(cx, "seq", 10).WithStep(40, gk.NewTransition(200*time.Millisecond)).WithStep(80, gk.NewTransition(100*time.Millisecond)).Build()
+	seq := motion.NewSequence(cx, "seq", 10).WithStep(40, motion.NewTransition(200*time.Millisecond)).WithStep(80, motion.NewTransition(100*time.Millisecond)).Build()
 	steps := seq.Steps(cx)
 	fmt.Printf("platform sequence steps=%d from=%.0f targets=%.0f,%.0f\n", len(steps), seq.From(cx), steps[0].Target(cx), steps[1].Target(cx))
 	gk.Release(cx, seq)
 	ov.cache = gk.NewImageCache(cx)
 	a.scroll = gk.NewScrollHandle(cx)
 	ov.anchor = gk.NewScrollAnchor(cx, a.scroll)
-	ov.scope = gk.NewTextSelectionScopeID(cx)
+	ov.scope = motion.NewTextSelectionScopeID(cx)
 	fmt.Printf("platform objects cache=%v anchor=%v scope=%v\n", ov.cache != gk.ImageCache{}, ov.anchor != gk.ScrollAnchor{},
-		ov.scope != gk.TextSelectionScope{})
+		ov.scope != motion.TextSelectionScope{})
 }
 
 func (a *App) elementsDrawn(cx *gk.Cx) {
@@ -327,7 +329,7 @@ func (a *App) elementsTick(cx *gk.Cx) {
 // scrolled child, synthetic accessibility nodes, a prepaint order, a drag's files.
 func (a *App) elementsView(cx *gk.Cx) gk.Element {
 	if ov.cache == (gk.ImageCache{}) {
-		return gk.Label("waiting")
+		return kit.Label("waiting")
 	}
 	pic := gk.Div().W(gk.Px(20)).H(gk.Px(20)) // the image, until it is released
 	if a.pic != (gk.RenderImage{}) {
@@ -335,11 +337,11 @@ func (a *App) elementsView(cx *gk.Cx) gk.Element {
 	}
 	inner := gk.Div().ID("anchored").AnchorScroll(gk.Some(ov.anchor)).
 		A11ySyntheticChildren([]gk.A11yChild{{Key: "q1", Role: gk.RoleListItem, Label: "first"}, {Key: "q2", Role: gk.RoleListItem, Label: "second"}}).
-		Child(gk.Label("anchored"))
+		Child(kit.Label("anchored"))
 	box := gk.Div().ImageCache(ov.cache).WithDynamicPrepaintOrder([]int{1, 0}).Child(pic).Child(inner)
 	files := gk.Div().ID("files").OnDrag(gk.DragValue{ID: 3, Text: "three"}, gk.View{}).
-		ExternalDragPayload(gk.ExternalDragPayload{Files: []gk.ExternalFile{{Path: "/tmp/a.txt"}}}).Child(gk.Label("files"))
-	return gk.VFlex(s.SizeFull).Child(gk.TextSelectionScopeOf(box, ov.scope)).Child(files)
+		ExternalDragPayload(gk.ExternalDragPayload{Files: []gk.ExternalFile{{Path: "/tmp/a.txt"}}}).Child(kit.Label("files"))
+	return gk.VFlex(s.SizeFull).Child(motion.TextSelectionScopeOf(box, ov.scope)).Child(files)
 }
 
 // drag: a drag of value 7 onto a target that takes 7 (its drop runs, its drag-move handler sees the
@@ -363,7 +365,7 @@ func (a *App) moved(cx *gk.Cx, e gk.DragMoveEvent) {
 }
 
 func (a *App) dragView(cx *gk.Cx) gk.Element {
-	src := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("src").OnDrag(gk.DragValue{ID: 7, Text: "seven"}, gk.View{}).Child(gk.Label("seven"))
+	src := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("src").OnDrag(gk.DragValue{ID: 7, Text: "seven"}, gk.View{}).Child(kit.Label("seven"))
 	t7 := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("t7").Group("targets").CanDrop(gk.DropAccept{IDs: []uint64{7}}).OnDrop(a.dropped7).
 		OnDragMove(a.moved).GroupDragOver("targets", gk.NewStyleRefinementDefault().Bg(theme.Accent))
 	t8 := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("t8").CanDrop(gk.DropAccept{IDs: []uint64{8}}).OnDrop(a.dropped8)
@@ -378,7 +380,7 @@ func (a *App) dragDone(cx *gk.Cx) {
 // one frame, then described (only those in view).
 func (a *App) vlistRow(cx *gk.Cx, at gk.RowAt) gk.Element {
 	a.rowViews++
-	return gk.Label(fmt.Sprintf("row %d", at.Row))
+	return kit.Label(fmt.Sprintf("row %d", at.Row))
 }
 
 func (a *App) vlistInit(cx *gk.Cx) {
@@ -457,7 +459,7 @@ func (a *App) realMenusInit(cx *gk.Cx) {
 	file := []gk.MenuItem{gk.MenuAction{Name: "Open", Action: a.open}, gk.MenuSeparator{}, gk.MenuAction{Name: "Save", Action: a.save}}
 	help := []gk.MenuItem{gk.MenuAction{Name: "About", Action: a.open}}
 	gk.SetMenus(cx, gk.Menu{Name: "File", Items: file}, gk.Menu{Name: "Help", Items: help})
-	ov.menubar = gk.NewAppMenuBar(cx)
+	ov.menubar = kit.NewAppMenuBar(cx)
 }
 
 // The menu bar's bounds when it is laid out in a real window's frame (OnChildrenPrepainted of the

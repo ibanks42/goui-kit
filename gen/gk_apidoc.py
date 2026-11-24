@@ -13,6 +13,7 @@ the styling every element shares (the methods of gk.Div()).
                                        (gates/docs-go.sh)
 Python 3 standard library only.
 """
+import json
 import os
 import re
 import sys
@@ -55,9 +56,21 @@ def short(path):
 # method whose body calls a trait function (tStyledBg) belongs to that trait, and the shared traits
 # are left out. Read before or after gofmt alike (spacing is not significant).
 
-GO_PKG = os.path.join(REPO, "go", "gk")
+# The flat package the generator split (gen/gk_split.py) holds the declarations in the form these
+# patterns read; every name shown is then the one its package gives it now (table.json).
+GO_PKG = os.path.join(REPO, "gen", "out", "build.go", "flat")
+GO_TABLE = os.path.join(REPO, "gen", "out", "build.go", "table.json")
+_NAMES = {}
+
+
+def q(name):
+    """A flat name as an app writes it now: package.Name (gen/gk_split.py)."""
+    if not _NAMES and os.path.exists(GO_TABLE):
+        _NAMES.update(json.load(open(GO_TABLE))["names"])
+    p, n = _NAMES.get(name, ("gk", name))
+    return f"{p}.{n}"
 GO_DOC = os.path.join(REPO, "docs", "API-GO.md")
-GO_BEGIN = "<!-- index:begin (written by gen/gk_apidoc.py from go/gk/gen_*.go; do not edit) -->"
+GO_BEGIN = "<!-- index:begin (written by gen/gk_apidoc.py from the generated Go packages; do not edit) -->"
 GO_DECL = re.compile(r"^// (\w+) is (?:a handle to )?(`?)([\w:<>, ]+?)\2(?:[.,]| \().*\n"
                      r"type (\w+) struct ?\{ ?(n \*node|h uint64) ?\}", re.M)
 GO_FUNC = re.compile(r"^func (?:\((\w+) (\w+)\) )?(\w+)\(", re.M)
@@ -70,9 +83,9 @@ GO_SHARED_PREFIX = ("A11y", "Accessibility", "Aria")
 GO_FIRST = ["".join(w.capitalize() for w in n.split("_")) for n in FIRST]
 # The call that makes the row source a kit state's constructor takes.
 GO_SOURCES = {
-    "ComboboxState": "gk.NewSearchSource(cx, items)",
-    "ListState": "gk.NewListSource(cx, count, row)",
-    "SelectState": "gk.NewSearchSource(cx, items)",
+    "ComboboxState": "NewSearchSource(cx, items)",
+    "ListState": "NewListSource(cx, count, row)",
+    "SelectState": "NewSearchSource(cx, items)",
     "TableState": "delegate",  # no Go table source yet: docs/API-GO.md says so
 }
 
@@ -233,10 +246,13 @@ def go_ctor_text(c, kind, typ):
                 if typ not in GO_SOURCES:
                     raise SystemExit(f"gk_apidoc: {typ}'s constructor {name} takes a RowSource; name the call "
                                      "that makes it in GO_SOURCES")
-                ps = [GO_SOURCES[typ] if x == pm.group(1) else x for x in ps]
-        call = f"gk.{name}({', '.join(ps)})"
+                src = GO_SOURCES[typ]
+                if src != "delegate":
+                    src = q(src.split("(")[0]) + "(" + src.split("(", 1)[1]
+                ps = [src if x == pm.group(1) else x for x in ps]
+        call = f"{q(name)}({', '.join(ps)})"
         return call + ("….Build()" if c[2] else "")
-    return f"gk.{name}({', '.join(ps)})"
+    return f"{q(name)}({', '.join(ps)})"
 
 
 def go_render(files):
@@ -258,12 +274,12 @@ def go_render(files):
             usage = " or ".join(f"`{t}`" for t in made[:3]) + (f" (and {len(made) - 3} more)" if len(made) > 3 else "")
             if not usage:
                 usage = "handed out by the kit (no constructor)"
-            line = f"- **`gk.{e['type']}`** ({short(e['path'])}"
+            line = f"- **`{q(e['type'])}`** ({short(e['path'])}"
             if e["kind"] == "state":
                 line += ", kit state): " + usage
                 shown = states_shown.get(e["type"])
                 if shown:
-                    line += "; shown by " + ", ".join(f"`gk.{s}(state)`" for s in sorted(set(shown)))
+                    line += "; shown by " + ", ".join(f"`{q(s)}(state)`" for s in sorted(set(shown)))
                 parts = []
                 if e["builders"]:
                     parts.append("built with " + go_names_text(e["builders"]))

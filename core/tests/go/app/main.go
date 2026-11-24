@@ -14,6 +14,8 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -112,7 +114,7 @@ func (a *App) actionsView(cx *gk.Cx) gk.Element {
 		CaptureAction(gk.Act(a.save, a.captured)).
 		OnAction(gk.Act(a.save, a.saved)).
 		OnBoxedAction(a.cancel, a.cancelled).
-		Child(gk.Label(fmt.Sprintf("saves %d others %d cancels %d", a.saves, a.others, a.cancels)))
+		Child(kit.Label(fmt.Sprintf("saves %d others %d cancels %d", a.saves, a.others, a.cancels)))
 	if a.mode == "builtin-on-action" {
 		root = root.OnAction(gk.Act(a.cancel, a.saved)) // stops: OnAction takes app actions
 	}
@@ -151,7 +153,7 @@ func (a *App) timersInit(cx *gk.Cx) {
 func (a *App) timersView(cx *gk.Cx) gk.Element {
 	a.described++
 	fmt.Printf("app timers view ticks=%d once=%d\n", a.ticks, a.once)
-	return gk.Div().Child(gk.Label(fmt.Sprintf("ticks %d", a.ticks)))
+	return gk.Div().Child(kit.Label(fmt.Sprintf("ticks %d", a.ticks)))
 }
 
 // --- windows ------------------------------------------------------------------------------------
@@ -183,7 +185,7 @@ func (a *App) readTitle(cx *gk.Cx) {
 
 func (a *App) secondView(cx *gk.Cx) gk.Element {
 	fmt.Println("app second view described")
-	return gk.Div(s.SizeFull).Child(gk.Label("second window"))
+	return gk.Div(s.SizeFull).Child(kit.Label("second window"))
 }
 
 func (a *App) openSecond(cx *gk.Cx) {
@@ -221,13 +223,13 @@ func (a *App) clipboardInit(cx *gk.Cx) {
 
 func (a *App) runAmbient(cx *gk.Cx) {
 	n := ambientAll(a, cx) // gen_ambient.go: every ambient call once
-	fmt.Printf("app ambient called=%d want=%d dialog=%v\n", n, ambientCalls, gk.HasActiveDialog(cx))
+	fmt.Printf("app ambient called=%d want=%d dialog=%v\n", n, ambientCalls, overlay.HasActiveDialog(cx))
 }
 
 func (a *App) ambientView(cx *gk.Cx) gk.Element {
 	c := gk.Blue(cx, 500) // a call that returns a value may run in a view function
 	fmt.Printf("app ambient view blue=%v\n", c)
-	return gk.Div(s.SizeFull).Child(gk.Label("ambient"))
+	return gk.Div(s.SizeFull).Child(kit.Label("ambient"))
 }
 
 // --- PROTOCOLS.md 11.38: a window's close asked, the app's quit, reduced motion, a
@@ -284,7 +286,7 @@ func (a *App) motionReadAgain(cx *gk.Cx) {
 
 func (a *App) motionView(cx *gk.Cx) gk.Element {
 	fmt.Printf("app reduce motion in view=%v\n", gk.ReduceMotion(cx)) // a read a view function may make
-	return gk.Div(s.SizeFull).Child(gk.Label("motion"))
+	return gk.Div(s.SizeFull).Child(kit.Label("motion"))
 }
 
 func (a *App) openIconWindow(cx *gk.Cx) {
@@ -321,7 +323,7 @@ func (a *App) portInit(cx *gk.Cx) {
 // --- the app ------------------------------------------------------------------------------------
 
 func (a *App) plainView(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).Child(gk.Label("app"))
+	return gk.Div(s.SizeFull).Child(kit.Label("app"))
 }
 
 func (a *App) init(cx *gk.Cx) {

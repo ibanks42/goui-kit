@@ -299,7 +299,12 @@ class GoSample:
         if a is None:
             return None
         src = self.make(src_node, depth + 1) if depth < 4 else None
-        return None if src is None else f"{src}.{name}({a})"
+        if src is None:
+            return None
+        lifted = getattr(getattr(self.go, "split", None), "lifted_map", {}).get((src_node["go"], name))
+        if lifted:  # a function of the later package now (gen/gk_split.py rule 4)
+            return f"gk.{lifted}({src}{', ' + a if a else ''})"
+        return f"{src}.{name}({a})"
 
     def make(self, node, depth=0):
         """An expression that constructs a node of this type, by its simplest constructor."""

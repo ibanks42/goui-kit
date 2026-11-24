@@ -2,7 +2,7 @@
 
 This file is the contract between the hand-written runtime and the generated code. It says
 what bytes go over the wire, which Rust module generated Rust may call (`core/src/genapi.rs`),
-and which functions generated Go may call (`go/gk/rt_emit.go`). It is written for people working on the binding itself; you don't need
+and which functions generated Go may call (`go/gk/internal/rt/rt_emit.go`). It is written for people working on the binding itself; you don't need
 it to write an app. For the reasoning behind the design, see [DESIGN.md](DESIGN.md),
 sections 5 to 9 and 11.
 
@@ -323,8 +323,10 @@ pub fn style_token(style: &mut StyleRefinement, token: u16) -> bool;
 `core/src/hand.rs` (a text node, the uniform list over rows, the test call ops) uses only
 `genapi` and is the pattern to copy for hand-written decoders.
 
-**Go: `go/gk/rt_emit.go` only** (same package, so the names are package-private). The header
-of `rt_emit.go` lists the names the runtime leaves to the generated package.
+**Go: `go/gk/internal/rt/rt_emit.go` only.** The generated packages call it as `rt.X` (the runtime
+is an internal package, so the names are exported but no app can import them); the generator
+writes the flat names and gen/gosplit qualifies them (docs/GO.md section 1). The header of
+`rt_emit.go` lists the names the runtime leaves to the generated packages.
 
 ## 8. Status
 
@@ -362,7 +364,7 @@ a frame** (user decision 3). Every trait is implemented once in Rust by a *shim*
 from data the app pushed, draws rows the app described earlier, and turns everything else
 into events or requests delivered between frames. Handlers and kit state follow sections 4
 and 5 unchanged. Sections 9.1 to 9.4 are the shared core, built and tested
-(`core/src/source.rs`, `go/gk/rt_source.go`, test mode `rows`); 9.5 to 9.8 are the two delegate
+(`core/src/source.rs`, `go/gk/internal/rt/rt_source.go`, test mode `rows`); 9.5 to 9.8 are the two delegate
 families built on it.
 
 ### 9.1 Row sources
@@ -474,7 +476,7 @@ pub fn scroll_handle(src: u64) -> GkResult<UniformListScrollHandle>;     // the 
 // genapi: released_shown(msg, what) -> !    a released source a view still draws stops (exit 2)
 ```
 
-Go (`go/gk/rt_source.go`): `gk.RowAt{Section, Row int}`, `gk.RowSource`,
+Go (`go/gk/internal/rt/rt_source.go`): `gk.RowAt{Section, Row int}`, `gk.RowSource`,
 `gk.NewRowSource(cx, count, row func(cx *gk.Cx, at gk.RowAt) gk.Element, opts...)` (options
 `gk.Initial`, `gk.Capacity`, `gk.CountFunc`), `gk.SetCount`, `gk.SetSectionCount`,
 `gk.Invalidate`, `gk.Answer`, `gk.ScrollTo`, `gk.Release`.
@@ -498,7 +500,7 @@ is described again when they change), may not write, and registers handlers.
   task completes when the app answers, after it has set the new counts. `loading`,
   `has_more`, `load_more_threshold` are data.
 - **`TableDelegate`** → `GkTableDelegate { src }`: `columns_count` and `column(ix)` are data
-  (the kit's `Column` is plain data: `gk.set_columns(cx, table, []gk.Column)`), `rows_count`
+  (the kit's `Column` is plain data: `gk.set_columns(cx, table, []table.Column)`), `rows_count`
   is the source's count. A row's view describes the whole row: its root is a
   `gk.table_row()` node whose children are the cells in column order; `render_tr(row)` gives
   the row view and `render_td(row, col)` decodes child `col` of that row's tape with the row
@@ -517,7 +519,7 @@ is described again when they change), may not write, and registers handlers.
 - **States.** `ListState<GkListDelegate>`, `TableState<GkTableDelegate>`: instantiated by the
   generator rule of 9.6 (`"ListState<crate::shim_rows::GkListDelegate> as ListState"`), so
   their 17 + 34 methods (scroll, select, column widths) are generated. Go:
-  `gk.NewListState(cx, src)` makes the state over a row source; `gk.List(state)` is the element.
+  `table.NewListState(cx, src)` makes the state over a row source; `table.List(state)` is the element.
 
 ### 9.6 Input family: InputState, EditorState, providers
 
@@ -545,7 +547,7 @@ is described again when they change), may not write, and registers handlers.
   the emitters; the rows family only adds its lines.
   The Rust type is `gpui_kit::base::input::InputBaseState<gpui_kit::base::input::InputMode>`,
   the same `TypeId` as the alias, so handles stay compatible, and the generated names give
-  the calls (`gk.NewInputState(cx).Placeholder(..).Build()`, `s.Value(cx)`, `s.SetValue`, ...)
+  the calls (`editor.NewInputState(cx).Placeholder(..).Build()`, `s.Value(cx)`, `s.SetValue`, ...)
   working.
 - **Providers.** The `Lsp` of an input holds `Rc<dyn CompletionProvider>` and the like. Each
   provider is a shim over a row source used only for its request channel (count 0):
@@ -569,7 +571,7 @@ is described again when they change), may not write, and registers handlers.
 ### 9.7 Where each family's code lives
 
 The shared row-source core is `core/src/source.rs`, the ROWS hook in `core/src/rt.rs`, and
-`go/gk/rt_source.go`, with the numbers of 9.3 and the test mode `rows`. The library's
+`go/gk/internal/rt/rt_source.go`, with the numbers of 9.3 and the test mode `rows`. The library's
 dispatch already asks both families (`calls.rs` asks `shim_input::call` and
 `shim_rows::call`, `hand.rs` asks their `node`), so adding to a family doesn't mean editing a
 dispatch file.
@@ -577,7 +579,7 @@ dispatch file.
 | | input family | rows family |
 |---|---|---|
 | Rust | `core/src/shim_input.rs` | `core/src/shim_rows.rs` |
-| Go | `go/gk/rt_editor.go` | `go/gk/rt_rows.go`, `go/gk/rt_table.go` |
+| Go | `go/gk/editor/rt_editor.go` | `go/gk/table/rt_rows.go`, `go/gk/table/rt_table.go` |
 | generator | the `[instantiate] states` rule in `gen/gk_model.py`, `gen/gk_rust.py`, `gen/gk_go.py` | its lines in `states` and its `[traits.role]` lines in `api/overrides.toml` |
 | numbers (`core/wire/ops.txt`) | call 32-47, shape 14-15, node 10-11 | call 48-63, shape 16-19, node 12-15 |
 | tests | `core/tests/go/input/`, `core/tests/go/run-input.sh` | `core/tests/go/rows/`, `core/tests/go/run-rows.sh` |
@@ -1006,7 +1008,7 @@ A variant of an enum with data that the binding cannot build field by field, bec
 fields are private types (`MaskPattern::Pattern { pattern, tokens: Vec<MaskToken> }`), is made by the
 enum's constructor whose parameters are named as some of its fields, when `[editor] variants` in
 `api/overrides.toml` names the pair (`"MaskPattern::Pattern" = "new"`; `gk_editor.variant_ctors`): the
-variant's fields are the constructor's parameters (Go `gk.MaskPatternPattern{Pattern: "999-999"}`),
+variant's fields are the constructor's parameters (Go `editor.MaskPatternPattern{Pattern: "999-999"}`),
 and the decoder calls the constructor (`<MaskPattern>::new(&*pattern)`). Every variant of `MaskPattern`
 is now reachable (`set_mask_pattern`, `mask_pattern` of the three input states: None, Pattern,
 Number; before, Pattern only through the `&str` member of the Into set), and the function leaves the
@@ -1022,9 +1024,9 @@ tree and, around the blocks' prepaint, collects each keyed text leaf's geometry.
 does both, as one protocol:
 
 ```
-gk.BlockHost(id string, blocks []gk.BlockNode, flows []gk.Option[gk.FlowPosition],
-             renderContext gk.Option[gk.RenderContext], decorations []gk.LeafDecoration,
-             onGeometry func(cx *gk.Cx, e gk.LeafGeometryEvent)) gk.Element
+editor.BlockHost(id string, blocks []editor.BlockNode, flows []gk.Option[editor.FlowPosition],
+             renderContext gk.Option[editor.RenderContext], decorations []editor.LeafDecoration,
+             onGeometry func(cx *gk.Cx, e editor.LeafGeometryEvent)) gk.Element
 ```
 
 - **Rendering.** Each block is drawn as TextView draws it (`BlockNode::render`) inside a `div` with the
@@ -1174,7 +1176,7 @@ held values as fully given in the in direction when a usable function returns it
 `FlowPosition::at` and `collect_leaf_geometry` leave the partial-options table (2 -> 0).
 
 Test: mode `custom` of `core/tests/go/editor2` parses front matter, places the held Custom block
-between two keyed paragraphs of the app in `gk.BlockHost`, with flows from `gk.flow_position_at` over that
+between two keyed paragraphs of the app in `editor.BlockHost`, with flows from `gk.flow_position_at` over that
 list, and reads the leaves' geometry: the paragraph after it lies lower than in a host without it. Misuse:
 `ed7-ok` (kept by `gk.retain`) and `ed7-custom-unretained` (not kept, placed a frame later: stops).
 
@@ -1210,13 +1212,13 @@ These bindings are exercised by running them, not only by checking that the call
 33 functions were skipped as `item-render-closure`: closures upstream calls while it draws one item of
 a component, handing it something 9.16 could not read. They are bound by one rule (`gen/gk_items.py`,
 hooked into `closure_desc` where 9.16's rule refuses a closure with values, and where no other rule took
-a closure that returns a value); the runtime is `core/src/items.rs` and `go/gk/rt_gen_items.go`.
+a closure that returns a value); the runtime is `core/src/items.rs` and `go/gk/internal/rt/rt_gen_items.go`.
 
 **What the app writes.** One function per kind of item, whose parameters are the values upstream hands,
-typed, given with `gk.Items(cx, f)` (`go/gk/rt_gen_items.go` shows a calendar's day). `gk.Items` takes
+typed, given with `overlay.Items(cx, f)` (`go/gk/internal/rt/rt_gen_items.go` shows a calendar's day). `overlay.Items` takes
 only a function of a kind some closure of the kit calls (checked by the compiler). It makes the row
 source of a function on first use and gives the same one after, so it may be called in a view function.
-The builder still takes a `gk.RowSource`; a source `gk.Items` made for one kind and given to a closure
+The builder still takes a `gk.RowSource`; a source `overlay.Items` made for one kind and given to a closure
 of another stops where it is given.
 
 **Rows.** As 9.16: each call of the closure in a frame is a row, keyed by its order in the frame, or by
@@ -1279,7 +1281,7 @@ the first frames and none after), `items-time-field` (a handed segment placed in
 
 ## 11. App protocols: actions, key bindings, timers, windows, the clipboard
 
-Runtime: `core/src/app.rs`, `go/gk/rt_app.go`;
+Runtime: `core/src/app.rs`, `go/gk/internal/rt/rt_app.go`;
 generator rules: `gen/gk_app.py` (hooked into `gen/gk_model.py` at two points); numbers: the
 app block of `core/wire/ops.txt` (call 64-111, shape 20-27, node 16-23, hkind 9-10); tests:
 `core/tests/go/app`, `core/tests/go/run-app.sh`.
@@ -1411,7 +1413,7 @@ chooses), `ActiveTheme::theme` (the theme global, an object by the rule of secti
 
 ### 11.6 View-built closures, described values, fallible calls
 
-Runtime: `core/src/overlay.rs`, `go/gk/rt_built.go`; rules: `gen/gk_overlay.py` (hooked into
+Runtime: `core/src/overlay.rs`, `go/gk/internal/rt/rt_built.go`; rules: `gen/gk_overlay.py` (hooked into
 `gen/gk_model.py` at `scan_types`, after classification, `closure_desc`, `resolved`, `state_method`
 and `call_bad`, and into the two emitters' `dec`/`put_ret`, `otype`/`put`); numbers: the overlays
 block of `core/wire/ops.txt` (call 144-175, shape 36-43, node 32-39, hkind 11); tests:
@@ -1421,9 +1423,9 @@ block of `core/wire/ops.txt` (call 144-175, shape 36-43, node 32-39, hkind 11); 
 T + 'static`, given to a **call op** is view-built (descriptor `viewbuild`; in an element op the
 same closure stays a `build` over a fragment of the view's own tape, section 12 of DESIGN.md):
 
-- Go: `gk.NewBuilt(cx, render func(cx *gk.Cx) T) gk.Built[T]` (`go/gk/rt_built.go`): a view, kept
-  until the app releases it. Its root is the node render returns (`gk.Dialog().Title(..)`). The
-  call takes it typed: `gk.OpenDialog(cx, b)` takes a `gk.Built[gk.DialogEl]`, so a function
+- Go: `gk.NewBuilt(cx, render func(cx *gk.Cx) T) gk.Built[T]` (`go/gk/internal/rt/rt_built.go`): a view, kept
+  until the app releases it. Its root is the node render returns (`overlay.Dialog().Title(..)`). The
+  call takes it typed: `overlay.OpenDialog(cx, b)` takes a `gk.Built[overlay.DialogEl]`, so a function
   returning another type does not compile. Not in a view function (it makes a view).
 - Wire: the view's `u64` handle. Rust: `crate::overlay::ViewBuild::take(view, c, &[ctor node
   types], "T")?` checks the handle, mounts the view in the turn's window (the first open window for
@@ -1451,7 +1453,7 @@ Div's tables), `SidebarMenuItem::context_menu` and the other menus' builders.
 node (`[node] types = ["Sheet", "PopupMenu"]`): its `self -> Self` methods are its ops (`menu(label,
 action)` with an action of 11.1, `separator`, `label`, `link`, `menu_with_check`, `menu_element`
 with a fragment, `item`, `min_w`..). It has no public constructor: Go starts it with
-`gk.NewPopupMenu()`, a constructor the library never runs on its own (`overlay::described`, not
+`kit.NewPopupMenu()`, a constructor the library never runs on its own (`overlay::described`, not
 counted). `PopupMenu::submenu(label, window, cx: &mut Context<Self>, f)` is
 `overlay::submenu(menu, label, window, cx: &mut App, f)`: the child is built at once with
 `PopupMenu::build` and attached with `item(PopupMenuItem::submenu(..))`, which upstream wires to its
@@ -1461,7 +1463,7 @@ mutator, `is_empty` as a builder read.
 **The dropdown button.** `DropdownMenu::dropdown_menu` on the kit's Button returns
 `DropdownMenuPopover<Button>`, which has no public path, so generated Rust cannot name it: node
 `DROPDOWN_BUTTON 32` of the library (`u32 button node, u32 menu node`), Go
-`gk.DropdownMenu(gk.Button(..).Label(..), gk.NewPopupMenu().Menu(..))`; counted bridged by
+`kit.DropdownMenu(kit.Button(..).Label(..), kit.NewPopupMenu().Menu(..))`; counted bridged by
 `gk_overlay.LIBRARY_NODES`.
 
 **Fallible calls.** `Result<(), E>` as a call's result is `opt<str>` on the wire (the
@@ -1481,14 +1483,14 @@ nothing takes one), the `*_with_icon` items (`Icon` is entity state: "a state ob
 
 ### 11.7 Dock panels as views of the app
 
-Runtime: `core/src/dock.rs`, `go/gk/rt_dock.go`; rules: `gen/gk_overlay.py` (`panel_entity`,
+Runtime: `core/src/dock.rs`, `go/gk/dock/rt_dock.go`; rules: `gen/gk_overlay.py` (`panel_entity`,
 `panel_view`, `mark_panel_traits`, hooked into `Model.resolved` and the emitters); tests: mode
 `dock` of `core/tests/go/overlay`; gallery: page `dock-panels`.
 
 `GkPanel { view: Entity<GkView>, focus, data, events }` implements gpui-base's `Panel` and the
-component layer's `Panel` once, an entity behind a state handle (Go `gk.DockPanel`):
+component layer's `Panel` once, an entity behind a state handle (Go `dock.Panel`):
 
-- its render is the app's view (`gk.NewPanel(cx, view, gk.PanelData{..}, opts...)`; the view is mounted
+- its render is the app's view (`dock.NewPanel(cx, view, dock.PanelData{..}, opts...)`; the view is mounted
   in the turn's window and described like any view, its handlers and dependencies its own);
 - `panel_name`, `tab_name`, `title`, `closable`, `zoomable`, `visible`, `inner_padding`,
   `title_bar` answer from `Panel_Data` the app pushed (`gk.panel_set`, buffered; the panel entity
@@ -1499,7 +1501,7 @@ component layer's `Panel` once, an entity behind a state handle (Go `gk.DockPane
   `PanelEvent` (zoom in, zoom out, layout changed). The kit (0.9.1 to 0.11.0) zooms tab groups, never a panel,
   so a panel's ZoomIn is delivered and ignored (tested);
 - **by rule**: a generic `P: Panel` is GkPanel (descriptor `entity crate::dock::GkPanel`, Go
-  `gk.DockPanel`), and `Arc<dyn PanelView>` given to the kit is made from a panel handle
+  `dock.Panel`), and `Arc<dyn PanelView>` given to the kit is made from a panel handle
   (descriptor `panelview base|kit`: gpui-base and the component layer each have a `PanelView`).
   This binds `DockArea::add_panel`, `add_panel_view`, `remove_panel`, `DockLayout::panel`,
   `panel_view`, `PanelHandle::new`, `from_view`; the trait methods of both `Panel`s and both
@@ -1536,7 +1538,7 @@ a window's title back on macOS only (`PlatformWindow::get_title`).
 
 ### 11.8 What the dock hands out, saved layouts, a panel's own title bar
 
-Runtime: `core/src/dock.rs`, `core/src/overlay.rs`, `go/gk/rt_dock.go`;
+Runtime: `core/src/dock.rs`, `core/src/overlay.rs`, `go/gk/dock/rt_dock.go`;
 rules: `gen/gk_overlay.py` (`resolved`, `mark_handed`, `LIBRARY_CALLS`,
 hooked into `Model.resolved`, the settle step's state filter, `uses_protocol`, and the two emitters'
 `dec`, `put_ret`, `otype`, `put` and state emission at one line each); numbers: the dock lines of
@@ -1624,7 +1626,7 @@ does not list), the toast manager and tooltip families.
 
 ### 11.9 Dock renderers over app views keyed by node
 
-Runtime: `core/src/dock.rs` (`GkRenderer`), `go/gk/rt_dock.go`; rules: `gen/gk_overlay.py`
+Runtime: `core/src/dock.rs` (`GkRenderer`), `go/gk/dock/rt_dock.go`; rules: `gen/gk_overlay.py`
 (`resolved4`, `after_classify4`, `LIBRARY_HANDOUTS`); tests: mode `render` of `core/tests/go/overlay`;
 gallery page `dock-renderer`.
 
@@ -1679,7 +1681,7 @@ Counted bridged: the 13 methods of the two renderer traits (`GkRenderer`), `Dock
 
 `std::time::Instant` has no number of its own. Both ways it is the time since the library's clock
 began (the first time anything read it), i64 nanoseconds on the wire, `time.Duration` in Go
-(descriptor `["dock", "instant"]`; `crate::overlay::instant`, `put_instant`); `gk.ClockNow(cx)` reads
+(descriptor `["dock", "instant"]`; `crate::overlay::instant`, `put_instant`); `kit.ClockNow(cx)` reads
 the clock (call `CLOCK_NOW 159`). The offscreen runner's simulated clock does not move it: it is the
 process's monotonic clock.
 
@@ -1699,7 +1701,7 @@ Also bound by the clock: `HorizontalScrollClaim::at` (values family).
 `Popover::trigger<T: Selectable + IntoElement>` (the kit's and gpui-base's) takes an element that
 also shows a selected state. A kit trait whose implementors are node types is one of them (`[lists]
 unions`, the rule of 9.12): `"Selectable" = "Selectable_Element"`, a union of the kit's
-eleven Selectable elements (`gk.Button(..)`, `gk.Tab(..)`, `gk.ListItem(..)`, ..). Upstream's popover sets the trigger's selected state from its own.
+eleven Selectable elements (`kit.Button(..)`, `kit.Tab(..)`, `table.ListItem(..)`, ..). Upstream's popover sets the trigger's selected state from its own.
 
 ### 11.12 Popovers, dialogs and menus driven from code
 
@@ -1788,7 +1790,7 @@ kit's own Tooltip (`gpui_kit::component::tooltip::Tooltip`), which is a value no
 types`): its constructors `new(impl Into<Text>)` and `element(Fn(&mut Window, &mut App) -> E)` (a
 fragment of the view) and its builders `key_binding(Option<Kbd>)`, `action(&dyn Action, Option<&str>)`
 and the Styled ones are ops of the view's tape, decoded in the view build. Go: the argument is
-`gk.ViewOrTooltip`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)`. Wire:
+`gk.ViewOrTooltip`: a `gk.View`, `overlay.NewKitTooltip(text)` or `overlay.NewKitTooltipElement(el)`. Wire:
 `u8 kind`, then `u64 view` (kind 0; 0 = an empty view) or `u32 node` (kind 1). Rust
 (`crate::views_after::tooltip_view`): the node is kept with the view's tape (`Frag`) and built each
 time upstream asks for the tooltip (the pointer rests on the element), then `Tooltip::build(window,
@@ -1875,7 +1877,7 @@ applies the menu node's ops to the menu upstream hands in (as 11.6's view-built 
 the menu's handlers are the row view's own. A row with no view yet, or no menu, opens nothing
 (upstream's empty menu). `GkTableDelegate::context_menu` counts bridged (`[shims]`); `Tree::context_menu`
 takes the tree's row source (`[rows]`: `crate::shim_rows::tree_menu`, Go
-`gk.Tree(..).ContextMenu(rows)`). `gk.RowMenu(el, menu)` wraps a tree's or list's row (call it last). Gallery pages `comp6-table-menu`, `comp6-tree-menu`.
+`table.Tree(..).ContextMenu(rows)`). `kit.RowMenu(el, menu)` wraps a tree's or list's row (call it last). Gallery pages `comp6-table-menu`, `comp6-tree-menu`.
 
 ### 11.25 Rules for a selection change
 
@@ -1929,7 +1931,7 @@ pages `comp6-*` (values_pages and chart_pages, .go and .rs).
 ### 11.30 Requests that answer later; file dialogs, prompts, the menu bar, URLs
 
 DESIGN.md section 11's "requests that answer later", built. Runtime: `core/src/platform.rs`,
-`go/gk/rt_platform.go` (platform-neutral; nothing Linux-only crosses the C interface); numbers:
+`go/gk/internal/rt/rt_platform.go` (platform-neutral; nothing Linux-only crosses the C interface); numbers:
 the end of `core/wire/ops.txt` (call 82-89, shape 22-23 of the app block); tests:
 `core/tests/go/platform`, `core/tests/go/run-platform.sh`.
 
@@ -2079,7 +2081,7 @@ What writing the todo example needed.
   number. `gk.list_source` is a procedure group: the count is an `int` or a `proc(s: ^S) -> int`. A
   view not drawn in a window is described when it is drawn next (5.2's rule), so a closed dialog's view
   is not described by a refresh.
-- `gk.SelectRow(cx, list, row)` (rt_rows.go) is `List_State::set_selected_index` with a row, or
+- `table.SelectRow(cx, list, row)` (rt_rows.go) is `List_State::set_selected_index` with a row, or
   none for a negative row.
 
 ### 11.34 Icons, posted lists, early posts
@@ -2102,8 +2104,8 @@ What writing the reader example needed.
   procedure as before; a post made while it runs (a thread started by a view's init that posts at once)
   waits for its WAKE turn, which has the app's first window (11.33). If the INIT turn leaves posts in
   the queue, it asks for a wake.
-- `gk.SelectRow` with scrolling also calls `List_State::scroll_to_item(row, Nearest)`;
-  `gk.SliderNumber(e)` is the number of a `Slider_Event` or `Slider_Value` (a range's
+- `table.SelectRow` with scrolling also calls `List_State::scroll_to_item(row, Nearest)`;
+  `kit.SliderNumber(e)` is the number of a `Slider_Event` or `Slider_Value` (a range's
   start), upstream's `SliderValue::start`.
 - Not bound yet: pushing a notification built with `gk.notification(cx)`. The way
   proposed is an Into set member made of a kit state's builder chain, decoded into a value where the
@@ -2156,7 +2158,7 @@ What writing the reader example needed.
 ### 11.37 The Go front end: the same protocols
 
 No change to the wire or the library. The Go package (`go/gk`, docs/GO.md) speaks every protocol of
-this file through the same seven C functions; its emitter interface is `go/gk/rt_emit.go` (the Go
+this file through the same seven C functions; its emitter interface is `go/gk/internal/rt/rt_emit.go` (the Go
 column of section 7). Differences in the binding only:
 
 - **Handlers** are Go functions of the shape's type, stored in the view's handler table as values;
@@ -2219,13 +2221,13 @@ misuse case `gradient_color`); should one reach `genapi::color` anyway, the libr
 first stop and says so.
 
 **Hand-written families of the Go package** (no wire change; the Go emitter, `gen/gk_go.py`, and
-`go/gk/rt_platform.go`, `rt_data.go`):
+`go/gk/internal/rt/rt_platform.go`, `rt_data.go`):
 
 | family | Go |
 |---|---|
-| described plots (12.6, 12.14) | `gk.Plot(parts...)`, `gk.PlotWith(gk.PlotOptions{ID: "x", NotInteractive: true, Appear: 2}, parts...)`; `gk.PlotPart`, generated in `gen_plot.go` |
+| described plots (12.6, 12.14) | `chart.Plot(parts...)`, `chart.PlotWith(chart.PlotOptions{ID: "x", NotInteractive: true, Appear: 2}, parts...)`; `gk.PlotPart`, generated in `gen_plot.go` |
 | drag and drop (13.20) | `.OnDrag(gk.DragValue{ID: 7, Text: ".."}, preview)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.NewStyleRefinementDefault().Bg(..))`, `.CanDrop(gk.DropAccept{IDs: []uint64{7}})` (descriptors `libval` `Drag_Value`, `dragview`, `dragstyle`, `dropaccept`) |
-| an element's tooltip (11.17) | `.Tooltip(v)` with `gk.ViewOrTooltip`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)` (descriptor `viewany`) |
+| an element's tooltip (11.17) | `.Tooltip(v)` with `gk.ViewOrTooltip`: a `gk.View`, `overlay.NewKitTooltip(text)` or `overlay.NewKitTooltipElement(el)` (descriptor `viewany`) |
 | image sources (13.31) | `gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}}`, `gk.ImageSourceRender{Value: img}` of `img := gk.NewRenderImage(cx, gk.PixelImage{..})`, `gk.ImageSourceCustom`, `gk.ResourceURI`, `gk.ResourcePath` (descriptors `imagebytes`, `pixelimage`, `customimage`, `uri`, `arcpath`); a `gk.PixelImage` whose bytes are not width x height x 4 stops, and so does an image made in a view function |
 | the menu bar (11.30) | `gk.SetMenus(cx, gk.Menu{Name: .., Items: []gk.MenuItem{gk.MenuAction{..}, gk.MenuSeparator{}, gk.MenuSubmenu{..}, gk.MenuServices{..}}})`, `gk.Menus(cx)` |
 
@@ -2243,7 +2245,7 @@ other types are generic over the type of the app's data (`LineChart<T, X, Y>`,
 (`x(|d| d.month.clone())`). App code never runs in the middle of a frame (decision 3), so the
 binding instantiates each generic type once, for a row of a table of the app's own data that
 the library keeps, and answers every such closure from that row. Code: `core/src/data.rs`,
-`core/src/plot.rs`, `go/gk/rt_data.go`; generator rules in `gen/gk_model.py`
+`core/src/plot.rs`, `go/gk/chart/rt_data.go`; generator rules in `gen/gk_model.py`
 (`instantiate_many`, `data_closure`, `datum_arg`, `ret_kind`, `paints`), `gen/gk_rust.py`
 (`data_closure`, `paint_part`), `gen/gk_go.py`.
 
@@ -2274,7 +2276,7 @@ where F: Fn(&T, ..) -> B`) is chosen by the closure's return type and counts as 
 
 `[instantiate] data` names the library types that stand for one row: `crate::data::Datum`. A
 parameter that takes rows (`impl IntoIterator<Item = T>`, `Vec<T>`, `&[T]`) is the descriptor
-`data`. In Go it is a `gk.Data`, made by `gk.NewData(rows)` from a slice of structs; each exported
+`data`. In Go it is a `chart.Data`, made by `chart.NewData(rows)` from a slice of structs; each exported
 field is a column:
 
 | Go field | column kind | wire |
@@ -2286,7 +2288,7 @@ field is a column:
 | `gk.Option` or a pointer of a number | `Opt` 3 | u8 presence, f64 |
 
 Wire: `u16 columns, (u8 kind, str name) each, u32 rows`, then the rows one after the other, each
-column in its kind. A field of any other type stops at the `gk.NewData` line. The library keeps the
+column in its kind. A field of any other type stops at the `chart.NewData` line. The library keeps the
 rows in columns (`data::Table`) and hands upstream one `Datum` per row (the table and the row's
 index). The rows are copied into the tape each time the view is described, as a Rust app clones
 its rows into the chart it builds in `render`.
@@ -2402,7 +2404,7 @@ would need a description of the tooltip and of the hover targets, which no part 
 objects instantiated by `[values] objects` (13.8) for a row of a data table (12.2), `Pie<Datum>` and
 `Stack<Datum>`, and their closures over a row are answered from the row (12.3):
 
-- Rows and row closures in a call op: a `gk.Data` argument (`Pie::arcs(&[T])`, `Stack::data`) and
+- Rows and row closures in a call op: a `chart.Data` argument (`Pie::arcs(&[T])`, `Stack::data`) and
   `field` / `format` closures are call-safe (gk_overlay.view_built). In a builder chain of an
   object's constructor, which has no app context, the rows are read without one (`data::rows_plain`:
   a theme colour in them is transparent). The checks of a column run in a view only.
@@ -2425,7 +2427,7 @@ of values the binding builds, not a number, text or a colour that 12.3's `field`
 `SankeyChart::labels(Fn(&T, f64) -> Vec<SankeyLabel>)`, `Bar::label(Fn(&T, Point<Pixels>) ->
 Vec<Text>)`, `BarChart::fill_gradient(Fn(&T, RangeInclusive<f32>, &dyn Fn(f32) -> f32) ->
 [LinearColorStop; 2])`. The app gives the list for each row in advance, row i's at index i (Go
-`[][]gk.SankeyLabel`, `[][]gk.Text`, `[][2]gk.LinearColorStop`; `["rowvals", out, wrap, ptypes,
+`[][]chart.SankeyLabel`, `[][]gk.Text`, `[][2]gk.LinearColorStop`; `["rowvals", out, wrap, ptypes,
 accessor, at]`), decoded where the chart is (value nodes in the view's tape, colours against the
 theme); the closure answers with a clone of the row's list (`crate::plot::row_value`; past the end, the
 type's default). The closure's other arguments (the node's throughput, the bar's position, the value
@@ -2447,8 +2449,8 @@ ones; `core/src/plot.rs` `part` decodes them before `generated::paint_part`):
 
 | node | wire | Go |
 |---|---|---|
-| `PLOT_PATH 29` | `u8 kind` (0 a stroked polyline, 1 a filled polygon, closed), `f32 width`, `u32 n`, `(f32 x, f32 y)` each, a fill (11.38) | `gk.NewPlotLine(points, width, fill)`, `gk.NewPlotArea(points, fill)` -> `gk.PlotPath` |
-| `PLOT_QUAD 30` | `f32 x, y, w, h, f32 corner radius`, a fill, `f32 border width`, a colour | `gk.NewPlotQuad(x, y, w, h, fill, gk.QuadStyle{..})` -> `gk.PlotQuad` |
+| `PLOT_PATH 29` | `u8 kind` (0 a stroked polyline, 1 a filled polygon, closed), `f32 width`, `u32 n`, `(f32 x, f32 y)` each, a fill (11.38) | `chart.NewPlotLine(points, width, fill)`, `chart.NewPlotArea(points, fill)` -> `chart.PlotPath` |
+| `PLOT_QUAD 30` | `f32 x, y, w, h, f32 corner radius`, a fill, `f32 border width`, a colour | `chart.NewPlotQuad(x, y, w, h, fill, chart.QuadStyle{..})` -> `chart.PlotQuad` |
 
 Points are `[][2]float32`, pixels from the plot's top left; the library adds the plot's
 `bounds.origin`, as a Rust paint does. A path of fewer than two points paints nothing. The colours (theme
@@ -2464,7 +2466,7 @@ line).
 Two general protocols that the generator binds whole families
 through: kit values that are not entities, held by the library behind a handle (13.1 to 13.5),
 and builder values made in a handler or in init, given to a call op (13.6). Runtime:
-`core/src/objects.rs`, `go/gk/rt_state.go`; generator: `classify_object`,
+`core/src/objects.rs`, `go/gk/internal/rt/rt_state.go`; generator: `classify_object`,
 `object_method`, `reach_objects`, `call_desc` in `gen/gk_model.py`, `obj_calls` in
 `gen/gk_rust.py`, `gen/gk_go.py`. Tests: `core/tests/go/handles`
 (`run-handles.sh`), and every object type with a constructor is made, read, written and
@@ -2580,7 +2582,7 @@ Rust (`genapi`, re-exported from `objects.rs`): `obj_new`, `obj_temp`, `obj_glob
 
 Code: `gen/gk_values.py` (hooked into `gen/gk_model.py`,
 `gk_rust.py`, `gk_go.py` and `gkgen.py` at one line each), `core/src/values.rs`,
-`go/gk/rt_gen_values.go`; numbers: the values block of `core/wire/ops.txt` (call 208-239, shape
+`go/gk/internal/rt/rt_gen_values.go`; numbers: the values block of `core/wire/ops.txt` (call 208-239, shape
 52-59, node 48-55, hkind 13); tests: `core/tests/go/values` (`run-values.sh`), the gallery's
 `values-*` pages, `examples/go/misuse_values`.
 
@@ -2875,7 +2877,7 @@ Tests: modes `val-drag` (a drag from a source onto a target runs the drop handle
 
 ### 13.30 Animations and motion values; accessibility roles; type-changing wrappers
 
-Runtime: `core/src/motion.rs`, `go/gk/rt_motion.go`; generator: `gen/gk_values.py`
+Runtime: `core/src/motion.rs`, `go/gk/motion/rt_motion.go`; generator: `gen/gk_values.py`
 (`animatable`, `motion_wrappers`, `MOTION_ITEMS`, `access_role`); node `ANIMATED 48`.
 
 App code never runs while a frame is drawn (DESIGN.md decision 3), and upstream's animators are
@@ -2912,9 +2914,9 @@ Properties (`gk.Motion_Prop`): opacity, top, left, right, bottom, width, height,
 and bg, text colour, border colour (colours: a value is a `gk.Color`, theme colours resolved as the tape
 is decoded). The package refuses at the app's line a colour for a number, a number for a colour, a
 spring or keyframes on a colour, a bounce of a bounce, an animation of 0 ms, a track's step past the
-chain. Go: `gk.WithAnimation(el, id, gk.Animation{..}, gk.Track{..})`, `gk.Effect(el,
-gk.NewEffectTransition(d).Fade(0, 1), key)`, `gk.Motion(el, gk.MotionValue{..})`, `gk.FocusTrap`
-(`go/gk/rt_motion.go`).
+chain. Go: `motion.WithAnimation(el, id, motion.Animation{..}, motion.Track{..})`, `kit.Effect(el,
+motion.NewEffectTransition(d).Fade(0, 1), key)`, `motion.Motion(el, motion.Value{..})`, `motion.FocusTrap`
+(`go/gk/motion/rt_motion.go`).
 
 Counted bridged where the runtime calls upstream (`MOTION_ITEMS`): `transition`, `spring`,
 `animate_keyframes`, `Presence::sample`, `TransitionState::sample` (also a call of its object, made by
@@ -2934,7 +2936,7 @@ fixed-time frames: the offscreen clock moves only on `advance`), byte-identical 
 ### 13.31 gpui's element leftovers: closures given as data, objects the library makes, image sources as bytes
 
 Runtime: `core/src/platform.rs`, `core/src/source.rs` (`virtual_list`), `core/src/motion.rs`
-(kind 5); Go: `go/gk/rt_platform.go`, `rt_source.go`, `rt_motion.go`; generator: `gen/gk_app.py`
+(kind 5); Go: `go/gk/internal/rt/rt_platform.go`, `rt_source.go`, `rt_motion.go`; generator: `gen/gk_app.py`
 (hooked from gk_model `closure_desc`, gk_values `resolved` and `runtime_items`, gk_rust
 `dec`, the handler payload and trait ops, and gk_go); wire: the end of `core/wire/ops.txt`
 (call 90-94, node 16 of the app block); tests: `core/tests/go/platform` modes `elements`, `drag`, `vlist`,

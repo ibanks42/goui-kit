@@ -17,8 +17,13 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/palette"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -84,10 +89,10 @@ type App struct {
 	status   string
 	dirty    int // changes not yet "synced"
 
-	search, newProject, editTitle, editDue gk.InputState
-	projectList, taskList                  gk.ListState
-	editDialog                             gk.Built[gk.DialogEl]
-	confirm                                gk.Built[gk.AlertDialogEl]
+	search, newProject, editTitle, editDue editor.InputState
+	projectList, taskList                  table.ListState
+	editDialog                             gk.Built[overlay.DialogEl]
+	confirm                                gk.Built[overlay.AlertDialogEl]
 
 	newTask, deleteTask, find, toggleTheme gk.Action // shortcuts, also in the menu
 }
@@ -147,7 +152,7 @@ func (a *App) refilter(cx *gk.Cx) {
 		}
 		a.visible = append(a.visible, i)
 	}
-	gk.SelectRow(cx, a.taskList, row, gk.ScrollIntoView) // a task added at the end is shown
+	table.SelectRow(cx, a.taskList, row, table.ScrollIntoView) // a task added at the end is shown
 }
 
 // --- init -------------------------------------------------------------------------------------
@@ -163,19 +168,19 @@ func (a *App) init(cx *gk.Cx) {
 	a.find = gk.Shortcut(cx, "ctrl-f", func(cx *gk.Cx) { a.search.Focus(cx) })
 	a.toggleTheme = gk.Shortcut(cx, "ctrl-t", a.switchTheme)
 
-	a.search = gk.NewInputState(cx).Placeholder("Search tasks").Build()
+	a.search = editor.NewInputState(cx).Placeholder("Search tasks").Build()
 	a.search.OnInputEvent(cx, a.searchChanged)
-	a.newProject = gk.NewInputState(cx).Placeholder("New project").Build()
+	a.newProject = editor.NewInputState(cx).Placeholder("New project").Build()
 	a.newProject.OnInputEvent(cx, a.newProjectEvent)
-	a.editTitle = gk.NewInputState(cx).Placeholder("What needs doing?").Build()
-	a.editDue = gk.NewInputState(cx).Placeholder("Due date, e.g. 2026-11-20").Build()
+	a.editTitle = editor.NewInputState(cx).Placeholder("What needs doing?").Build()
+	a.editDue = editor.NewInputState(cx).Placeholder("Due date, e.g. 2026-11-20").Build()
 	a.editDialog = gk.NewBuilt(cx, a.editView)
 	a.confirm = gk.NewBuilt(cx, a.confirmView)
 
-	a.projectList = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.projects) }, a.projectRow)).Build()
+	a.projectList = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.projects) }, a.projectRow)).Build()
 	a.projectList.OnListEvent(cx, a.projectEvent)
-	gk.SelectRow(cx, a.projectList, a.current)
-	a.taskList = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.visible) }, a.taskRow)).Build()
+	table.SelectRow(cx, a.projectList, a.current)
+	a.taskList = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.visible) }, a.taskRow)).Build()
 	a.taskList.OnListEvent(cx, a.taskEvent)
 
 	a.status = "not synced yet"
@@ -193,7 +198,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 			open++
 		}
 	}
-	fileMenu := gk.NewPopupMenu().
+	fileMenu := kit.NewPopupMenu().
 		Menu("New task", a.newTask).
 		Menu("Find", a.find).
 		Menu("Toggle theme", a.toggleTheme).
@@ -204,26 +209,26 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		icon, tip = gk.IconSun, "Light theme"
 	}
 	bar := gk.HFlex(s.Gap2, s.ItemsCenter, s.P2, s.BorderB1).BorderColor(theme.Border).
-		Child(gk.DropdownMenu(gk.Button("file").Label("File"), fileMenu)).
-		Child(gk.Label(fmt.Sprintf("%s: %d open", a.projects[a.current].Name, open))).
+		Child(kit.DropdownMenu(kit.Button("file").Label("File"), fileMenu)).
+		Child(kit.Label(fmt.Sprintf("%s: %d open", a.projects[a.current].Name, open))).
 		Child(gk.Div(s.Flex1)).
-		Child(gk.Label(a.status, s.TextSm).TextColor(theme.MutedForeground)).
-		Child(gk.Button("theme").Ghost().Icon(icon).Tooltip(tip).OnClick(a.switchTheme))
+		Child(kit.Label(a.status, s.TextSm).TextColor(theme.MutedForeground)).
+		Child(kit.Button("theme").Ghost().Icon(icon).Tooltip(tip).OnClick(a.switchTheme))
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(bar).
-		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(gk.HResizable("split").
-			Child(gk.ResizablePanel().Size(220).Child(a.projectsPane())).
-			Child(gk.ResizablePanel().Child(a.tasksPane()))))
+		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(base.HResizable("split").
+			Child(base.ResizablePanel().Size(220).Child(a.projectsPane())).
+			Child(base.ResizablePanel().Child(a.tasksPane()))))
 }
 
 func (a *App) projectsPane() gk.Element {
 	return gk.VFlex(s.SizeFull, s.Gap2, s.P2).Bg(theme.Sidebar).
-		Child(gk.Label("Projects", s.TextSm).TextColor(theme.MutedForeground)).
-		Child(gk.Div(s.Flex1, s.MinH0).Child(gk.List(a.projectList).ScrollbarVisible(false))).
-		Child(gk.Input(a.newProject))
+		Child(kit.Label("Projects", s.TextSm).TextColor(theme.MutedForeground)).
+		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.projectList).ScrollbarVisible(false))).
+		Child(editor.Input(a.newProject))
 }
 
-func (a *App) projectRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) projectRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	p := a.projects[at.Row]
 	open := 0
 	for _, t := range p.Tasks {
@@ -231,46 +236,46 @@ func (a *App) projectRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
 			open++
 		}
 	}
-	return gk.ListItem(gk.Key("project", at.Row)).
+	return table.ListItem(gk.Key("project", at.Row)).
 		Child(gk.HFlex(s.WFull, s.JustifyBetween).
-			Child(gk.Label(p.Name)).
-			Child(gk.Label(fmt.Sprint(open), s.TextSm).TextColor(theme.MutedForeground)))
+			Child(kit.Label(p.Name)).
+			Child(kit.Label(fmt.Sprint(open), s.TextSm).TextColor(theme.MutedForeground)))
 }
 
 func (a *App) tasksPane() gk.Element {
 	filters := gk.HFlex(s.Gap1)
 	for _, f := range []Filter{All, Active, Done} {
-		filters = filters.Child(gk.Button(gk.Key("filter", int(f))).Small().Ghost().
+		filters = filters.Child(kit.Button(gk.Key("filter", int(f))).Small().Ghost().
 			Selected(a.filter == f).Label(f.String()).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
 			a.filter = f
 			a.refilter(cx)
 			gk.Refresh(cx)
 		}))
 	}
-	var body gk.Element = gk.List(a.taskList)
+	var body gk.Element = table.List(a.taskList)
 	if len(a.visible) == 0 {
 		body = gk.VFlex(s.SizeFull, s.ItemsCenter, s.JustifyCenter).
-			Child(gk.Label("Nothing here").TextColor(theme.MutedForeground))
+			Child(kit.Label("Nothing here").TextColor(theme.MutedForeground))
 	}
 	return gk.VFlex(s.SizeFull, s.Gap2, s.P2).KeyContext("Tasks").
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
 			Child(filters).
-			Child(gk.Div(s.Flex1).Child(gk.Input(a.search).Prefix(gk.Icon(gk.IconSearch)))).
-			Child(gk.Button("add").Primary().Small().Icon(gk.IconPlus).Label("New task").OnClick(a.addTask))).
+			Child(gk.Div(s.Flex1).Child(editor.Input(a.search).Prefix(gk.Icon(gk.IconSearch)))).
+			Child(kit.Button("add").Primary().Small().Icon(gk.IconPlus).Label("New task").OnClick(a.addTask))).
 		Child(gk.Div(s.Flex1, s.MinH0).Child(body))
 }
 
 // taskRow is one task: a checkbox, the priority's colour, the title (a double click edits it)
 // and the due date as a tag, red when overdue and amber when due today.
-func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	i := a.visible[at.Row]
 	t := (*a.tasks())[i]
-	title := gk.Label(t.Title)
+	title := kit.Label(t.Title)
 	if t.Done {
 		title = title.Style(s.LineThrough).TextColor(theme.MutedForeground)
 	}
 	row := gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
-		Child(gk.Checkbox(gk.Key("done", i)).Checked(t.Done).OnClick(func(cx *gk.Cx, done bool) {
+		Child(kit.Checkbox(gk.Key("done", i)).Checked(t.Done).OnClick(func(cx *gk.Cx, done bool) {
 			gk.StopPropagation(cx) // the row is not selected by the click
 			(*a.tasks())[i].Done = done
 			a.changed(cx)
@@ -283,39 +288,39 @@ func (a *App) taskRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
 		}))
 	if t.Due != "" {
 		today := time.Now().Format(time.DateOnly)
-		tag := gk.TagSecondary(s.TextXs)
+		tag := kit.TagSecondary(s.TextXs)
 		if !t.Done && t.Due < today {
-			tag = gk.TagDanger(s.TextXs)
+			tag = kit.TagDanger(s.TextXs)
 		} else if t.Due == today {
-			tag = gk.TagWarning(s.TextXs)
+			tag = kit.TagWarning(s.TextXs)
 		}
 		row = row.Child(tag.Text(t.Due))
 	}
-	return gk.ListItem(gk.Key("task", i)).Child(row)
+	return table.ListItem(gk.Key("task", i)).Child(row)
 }
 
 // --- the edit dialog --------------------------------------------------------------------------
 
-func (a *App) editView(cx *gk.Cx) gk.DialogEl {
+func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
 	prios := gk.HFlex(s.Gap1)
 	for _, p := range priorities {
-		prios = prios.Child(gk.Button(gk.Key("prio", int(p))).Small().Outline().
+		prios = prios.Child(kit.Button(gk.Key("prio", int(p))).Small().Outline().
 			Selected(a.editPrio == p).Label(p.String()).OnClick(func(*gk.Cx, gk.ClickEvent) { a.editPrio = p }))
 	}
 	title := "Edit task"
 	if a.editing < 0 {
 		title = "New task"
 	}
-	return gk.Dialog().
-		Title(gk.Label(title)).
+	return overlay.Dialog().
+		Title(kit.Label(title)).
 		Child(gk.VFlex(s.Gap3).
-			Child(gk.Input(a.editTitle)).
-			Child(gk.Input(a.editDue)).
-			Child(gk.HFlex(s.Gap2, s.ItemsCenter).Child(gk.Label("Priority")).Child(prios))).
-		Footer(gk.DialogFooter().
-			Child(gk.DialogClose().Trigger(gk.Button("cancel").Label("Cancel"))).
-			Child(gk.DialogAction().Child(gk.Button("ok").Primary().Label("Save")))).
-		Entrance(gk.DialogEntranceNone).
+			Child(editor.Input(a.editTitle)).
+			Child(editor.Input(a.editDue)).
+			Child(gk.HFlex(s.Gap2, s.ItemsCenter).Child(kit.Label("Priority")).Child(prios))).
+		Footer(overlay.DialogFooter().
+			Child(overlay.DialogClose().Trigger(kit.Button("cancel").Label("Cancel"))).
+			Child(overlay.DialogAction().Child(kit.Button("ok").Primary().Label("Save")))).
+		Entrance(overlay.DialogEntranceNone).
 		OnOk(a.saveEdit)
 }
 
@@ -328,7 +333,7 @@ func (a *App) openEditor(cx *gk.Cx, task int) {
 	a.editTitle.SetValue(cx, t.Title)
 	a.editDue.SetValue(cx, t.Due)
 	a.editPrio = t.Priority
-	gk.OpenDialog(cx, a.editDialog)
+	overlay.OpenDialog(cx, a.editDialog)
 	a.editTitle.Focus(cx)
 }
 
@@ -352,57 +357,57 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 
 func (a *App) addTask(cx *gk.Cx, _ gk.ClickEvent) { a.openEditor(cx, -1) }
 
-func (a *App) searchChanged(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); ok {
+func (a *App) searchChanged(cx *gk.Cx, e editor.InputEvent) {
+	if _, ok := e.(editor.InputEventChange); ok {
 		a.refilter(cx)
 		gk.Refresh(cx)
 	}
 }
 
-func (a *App) projectEvent(cx *gk.Cx, e gk.ListEvent) {
-	if c, ok := e.(gk.ListEventConfirm); ok && c.Row != a.current {
+func (a *App) projectEvent(cx *gk.Cx, e table.ListEvent) {
+	if c, ok := e.(table.ListEventConfirm); ok && c.Row != a.current {
 		a.current, a.selected = c.Row, -1
 		a.refilter(cx)
 		gk.Refresh(cx)
 	}
 }
 
-func (a *App) taskEvent(cx *gk.Cx, e gk.ListEvent) {
+func (a *App) taskEvent(cx *gk.Cx, e table.ListEvent) {
 	switch e := e.(type) {
-	case gk.ListEventSelect:
+	case table.ListEventSelect:
 		a.selected = a.visible[e.Row]
-	case gk.ListEventConfirm:
+	case table.ListEventConfirm:
 		a.selected = a.visible[e.Row] // a click; Enter as well
 	}
 }
 
-func (a *App) newProjectEvent(cx *gk.Cx, e gk.InputEvent) {
+func (a *App) newProjectEvent(cx *gk.Cx, e editor.InputEvent) {
 	name := strings.TrimSpace(a.newProject.Value(cx))
-	if _, enter := e.(gk.InputEventPressEnter); !enter || name == "" {
+	if _, enter := e.(editor.InputEventPressEnter); !enter || name == "" {
 		return
 	}
 	a.projects = append(a.projects, Project{Name: name})
 	a.newProject.SetValue(cx, "")
 	a.current, a.selected = len(a.projects)-1, -1
-	gk.SelectRow(cx, a.projectList, a.current)
+	table.SelectRow(cx, a.projectList, a.current)
 	a.changed(cx)
 }
 
 func (a *App) askDelete(cx *gk.Cx) {
 	if a.selected >= 0 {
-		gk.OpenAlertDialog(cx, a.confirm)
+		overlay.OpenAlertDialog(cx, a.confirm)
 	}
 }
 
-func (a *App) confirmView(cx *gk.Cx) gk.AlertDialogEl {
+func (a *App) confirmView(cx *gk.Cx) overlay.AlertDialogEl {
 	name := ""
 	if a.selected >= 0 {
 		name = (*a.tasks())[a.selected].Title
 	}
-	return gk.AlertDialog().
-		Title(gk.Label(fmt.Sprintf("Delete \"%s\"?", name))).
-		Description(gk.Label("This cannot be undone.")).
-		Entrance(gk.DialogEntranceNone).
+	return overlay.AlertDialog().
+		Title(kit.Label(fmt.Sprintf("Delete \"%s\"?", name))).
+		Description(kit.Label("This cannot be undone.")).
+		Entrance(overlay.DialogEntranceNone).
 		ShowCancel(true).
 		OnOk(func(cx *gk.Cx, _ gk.ClickEvent) bool {
 			if a.selected >= 0 {

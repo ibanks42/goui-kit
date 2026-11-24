@@ -6,26 +6,27 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/dock"
 )
 
 // --- handle-after-owner -------------------------------------------------------------------------
 
-var renderer gk.DockRenderer
+var renderer dock.Renderer
 
-func (a *App) askedRender(cx *gk.Cx, q gk.DockRender) {
+func (a *App) askedRender(cx *gk.Cx, q dock.Render) {
 	switch q.Hook {
-	case gk.HookDock:
+	case dock.HookDock:
 		if !a.hasCtx {
 			gk.Retain(cx, q.Dock) // a temporary handed with the request: kept past it
 			a.dockCtx = q.Dock
 			a.hasCtx = true
 		}
 	}
-	gk.DockRenderAnswer(cx, q.Renderer, q.Hook, q.Key, gk.View{}) // upstream's own drawing
+	dock.RenderAnswer(cx, q.Renderer, q.Hook, q.Key, gk.View{}) // upstream's own drawing
 }
 
 func (a *App) keepAndDrop(cx *gk.Cx) {
-	tree, ok := a.dock.Layout(cx, gk.DockPlacementLeft).Get()
+	tree, ok := a.dock.Layout(cx, dock.PlacementLeft).Get()
 	if ok {
 		gk.Retain(cx, tree)
 		a.tree = tree
@@ -42,7 +43,7 @@ func (a *App) keepAndDrop(cx *gk.Cx) {
 
 func (a *App) useAfterOwner(cx *gk.Cx) {
 	n := -1
-	if a.tree != (gk.PaneTree{}) {
+	if a.tree != (dock.PaneTree{}) {
 		n = len(a.tree.Panels(cx))
 	}
 	open := false
@@ -55,10 +56,10 @@ func (a *App) useAfterOwner(cx *gk.Cx) {
 
 func (a *App) handleOwnerInit(cx *gk.Cx) {
 	a.makePanels(cx)
-	renderer = gk.NewDockRenderer(cx, gk.DockHooks(gk.HookDock), a.askedRender)
-	a.dock = gk.NewDockArea(cx, "review3-owner", gk.Option[int]{}).WithRenderer(renderer).Build()
-	a.dock.SetCenter(cx, gk.NewDockLayoutTabs().Panel(a.pb))
-	a.dock.SetDock(cx, gk.DockPlacementLeft, gk.NewDockLayoutTabs().Panel(a.pa))
+	renderer = dock.NewRenderer(cx, dock.Hooks(dock.HookDock), a.askedRender)
+	a.dock = dock.NewArea(cx, "review3-owner", gk.Option[int]{}).WithRenderer(renderer).Build()
+	a.dock.SetCenter(cx, dock.NewLayoutTabs().Panel(a.pb))
+	a.dock.SetDock(cx, dock.PlacementLeft, dock.NewLayoutTabs().Panel(a.pa))
 	gk.After(cx, 40*ms, a.keepAndDrop)
 	gk.After(cx, 100*ms, a.useAfterOwner)
 }

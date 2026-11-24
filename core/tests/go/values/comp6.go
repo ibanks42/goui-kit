@@ -17,6 +17,8 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/table"
 )
 
 func init() {
@@ -24,12 +26,12 @@ func init() {
 }
 
 func chains(a *App, cx *gk.Cx) {
-	picker := gk.NewColorPickerState(cx).DefaultValue(gk.HSLA(0.5, 1, 0.5, 1)).Build()
+	picker := base.NewColorPickerState(cx).DefaultValue(gk.HSLA(0.5, 1, 0.5, 1)).Build()
 	v, has := picker.Value(cx).Get()
 	fmt.Printf("values c6 chains picker has=%v h=%.2f\n", has, v.H)
-	grid := gk.NewGridLayoutState(cx).DefaultAreas([]gk.GridArea{gk.NewGridArea("a"), gk.NewGridArea("b")}).Build()
+	grid := base.NewGridLayoutState(cx).DefaultAreas([]base.GridArea{base.NewGridArea("a"), base.NewGridArea("b")}).Build()
 	fmt.Printf("values c6 chains grid areas=%d\n", len(grid.Areas(cx)))
-	tree := gk.NewTreeState(cx).Items([]gk.TreeItem{gk.NewTreeItem("r", "root").Expanded(true).Child(gk.NewTreeItem("c", "child"))}).Build()
+	tree := table.NewTreeState(cx).Items([]table.TreeItem{table.NewTreeItem("r", "root").Expanded(true).Child(table.NewTreeItem("c", "child"))}).Build()
 	e0 := tree.Entry(cx, 0).Valid()
 	e1 := tree.Entry(cx, 1).Valid()
 	e2 := tree.Entry(cx, 2).Valid()

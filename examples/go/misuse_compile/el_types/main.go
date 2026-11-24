@@ -1,10 +1,13 @@
 // A button where a label is expected: element types are distinct.
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+)
 
 func view(cx *gk.Cx) gk.Element {
-	var l gk.LabelEl = gk.Button("b")
+	var l kit.LabelEl = kit.Button("b")
 	return l
 }
 

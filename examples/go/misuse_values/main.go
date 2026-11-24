@@ -19,7 +19,9 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 type App struct {
@@ -30,7 +32,7 @@ type App struct {
 	scroll  gk.ScrollHandle
 	clicks  int
 	drawn   int
-	tip     gk.KitTooltip // c6-tooltip-kept: made in a handler, kept past its turn
+	tip     overlay.KitTooltip // c6-tooltip-kept: made in a handler, kept past its turn
 }
 
 // The modes of values13.go add their steps here.
@@ -48,12 +50,12 @@ func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {
 			a.hasBand = true
 		}
 	case "val-self":
-		t := gk.NewTreeItem("a", "A")
+		t := table.NewTreeItem("a", "A")
 		t = t.Child(t)
 	case "val-scroll-freed":
 		gk.Release(cx, a.scroll)
 	case "c6-tooltip-kept":
-		a.tip = gk.NewKitTooltip("made in a handler")
+		a.tip = overlay.NewKitTooltip("made in a handler")
 	default:
 		if f := pendingClick[a.mode]; f != nil {
 			f(a, cx)
@@ -71,7 +73,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 			body = body.Child(gk.Text(fmt.Sprintf("y at %.0f", x)))
 		}
 	case "val-self-view":
-		t := gk.NewTreeItem("a", "A")
+		t := table.NewTreeItem("a", "A")
 		t = t.Child(t)
 	case "val-write-view":
 		gk.ThemeGlobal(cx).SetFontSize(cx, 20)

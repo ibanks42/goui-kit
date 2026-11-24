@@ -3,10 +3,14 @@
 // gk.NewBuilt over a func returning a gk.LabelEl is a gk.Built[gk.LabelEl]).
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
+)
 
 func main() {
 	gk.Run(func(cx *gk.Cx) {
-		gk.OpenDialog(cx, gk.NewBuilt(cx, func(cx *gk.Cx) gk.LabelEl { return gk.Label("not a dialog") }))
+		overlay.OpenDialog(cx, gk.NewBuilt(cx, func(cx *gk.Cx) kit.LabelEl { return kit.Label("not a dialog") }))
 	})
 }

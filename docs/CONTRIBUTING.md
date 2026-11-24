@@ -11,7 +11,9 @@ you don't need any of this. Grab a prebuilt download and follow
   (`core/include/gpuikit.h`). It compiles to `libgpuikit.so`, `libgpuikit.dylib` or `gpuikit.dll`.
 - **The generator** (`gen/`) is Python. It reads GPUI-kit's API (extracted from rustdoc, committed
   in `api/rustdoc/`) and writes the Rust decoders in `core/src/gen/` and the Go package's
-  `go/gk/gen_*.go`. The `rt_*` and `kit_*` files next to them are written by hand.
+  `go/gk/**/gen_*.go` (one package per area, docs/GO.md section 1: gen/gk_split.py places each
+  declaration and gen/gosplit, a small Go program, rewrites the names). The `rt_*` files next to
+  them are written by hand; the runtime itself is `go/gk/internal/rt`.
 - **The reference apps** (`ref/`) are the example apps written in plain Rust. The tests draw the
   Go apps and these Rust apps and compare the pixels.
 - **The tests** (`gates/` and `core/tests/`) are shell and Python scripts.

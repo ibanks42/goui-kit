@@ -2,7 +2,9 @@
 // func(cx, bool) does not compile.
 package main
 
-import "gpuikit.dev/gk"
+import (
+	"gpuikit.dev/gk"
+)
 
 func main() {
 	gk.Run(func(cx *gk.Cx) {

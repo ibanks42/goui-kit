@@ -22,6 +22,8 @@ import (
 	"strconv"
 
 	"gpuikit.dev/gk"
+	gkeditor "gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -33,7 +35,7 @@ type App struct {
 	page  int
 	count int  // clicks on the current page's button
 	flag  bool // the current page's checkbox or switch
-	name  gk.InputState
+	name  gkeditor.InputState
 	rows  gk.Rows
 
 	input   inputPages   // input_pages.go
@@ -89,7 +91,7 @@ func findPage(id string) (Page, bool) {
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.name = gk.NewInputState(cx).Placeholder("Name").Build()
+	a.name = gkeditor.NewInputState(cx).Placeholder("Name").Build()
 	a.rows = gk.NewRows(cx)
 	all := make([]string, rowsCount)
 	for i := range all {
@@ -131,14 +133,14 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	if p, ok := findPage(id); ok {
 		content = p.Build(a, cx)
 	} else {
-		content = gk.Label("not bound in Go yet")
+		content = kit.Label("not bound in Go yet")
 	}
 	return gk.VFlex(s.SizeFull).
 		Bg(theme.Background).
 		TextColor(theme.Foreground).
 		Child(gk.HFlex(s.P4, s.Gap3, s.ItemsCenter).
-			Child(gk.Button("next").Label("Next").OnClick(a.next)).
-			Child(gk.Label(fmt.Sprintf("%d/%d %s", a.page+1, len(pageIDs), id)))).
+			Child(kit.Button("next").Label("Next").OnClick(a.next)).
+			Child(kit.Label(fmt.Sprintf("%d/%d %s", a.page+1, len(pageIDs), id)))).
 		Child(gk.Div(s.WFull, s.P4).Child(content))
 }
 

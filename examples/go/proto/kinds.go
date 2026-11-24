@@ -13,17 +13,22 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
 type kindsApp struct {
 	mode                   string
 	root                   gk.View
-	cal                    gk.CalendarState
-	tree                   gk.TreeState
+	cal                    base.CalendarState
+	tree                   table.TreeState
 	label, img             gk.Ask[string, string]
-	calLabel               gk.Ask[gk.TupleCalendarItemKindInt32, string]
+	calLabel               gk.Ask[base.TupleCalendarItemKindInt32, string]
 	hl                     gk.Ask[gk.CodeBlock, []gk.TupleRangeHighlightStyle]
 	cache                  gk.ImageCache
 	anchor                 gk.ScrollAnchor
@@ -62,9 +67,9 @@ func kindsMain(mode string) bool {
 
 // jiff's calendar values both ways (PROTOCOLS.md 13.13; core/tests/values dates).
 func (a *kindsApp) dates(cx *gk.Cx) {
-	cal := gk.NewCalendarState(cx).Build()
-	cal.SetDate(cx, gk.DateSingle{Value: gk.Some(gk.CivilDate{Year: 2024, Month: 2, Day: 29})})
-	d, _ := cal.Date(cx).(gk.DateSingle).Value.Get()
+	cal := base.NewCalendarState(cx).Build()
+	cal.SetDate(cx, base.DateSingle{Value: gk.Some(gk.CivilDate{Year: 2024, Month: 2, Day: 29})})
+	d, _ := cal.Date(cx).(base.DateSingle).Value.Get()
 	today := cal.Today(cx)
 	weeks := cal.Days(cx)
 	wl := 0
@@ -73,19 +78,19 @@ func (a *kindsApp) dates(cx *gk.Cx) {
 	}
 	fmt.Printf("kinds calendar date=%d-%02d-%02d today_ok=%v weeks=%d week_len=%d\n", d.Year, d.Month, d.Day,
 		today.Year >= 2024 && today.Month >= 1 && today.Month <= 12, len(weeks), wl)
-	ok := cal.ApplyDate(cx, gk.DateRange{V0: gk.Some(gk.CivilDate{Year: 2026, Month: 1, Day: 5}), V1: gk.Some(gk.CivilDate{Year: 2026, Month: 1, Day: 9})})
-	r, _ := cal.Date(cx).(gk.DateRange)
+	ok := cal.ApplyDate(cx, base.DateRange{V0: gk.Some(gk.CivilDate{Year: 2026, Month: 1, Day: 5}), V1: gk.Some(gk.CivilDate{Year: 2026, Month: 1, Day: 9})})
+	r, _ := cal.Date(cx).(base.DateRange)
 	st, _ := r.V0.Get()
 	en, _ := r.V1.Get()
 	fmt.Printf("kinds calendar range applied=%v start=%d-%02d-%02d end=%d\n", ok, st.Year, st.Month, st.Day, en.Day)
-	cal2 := gk.NewCalendarState(cx).Build()
+	cal2 := base.NewCalendarState(cx).Build()
 	sel := cal2.SelectDate(cx, gk.CivilDate{Year: 2026, Month: 3, Day: 14})
-	if one, isOne := cal2.Date(cx).(gk.DateSingle); isOne {
+	if one, isOne := cal2.Date(cx).(base.DateSingle); isOne {
 		d, _ = one.Value.Get()
 	}
 	gk.Release(cx, cal2)
 	fmt.Printf("kinds calendar select=%v date=%d-%02d-%02d\n", sel, d.Year, d.Month, d.Day)
-	tf := gk.NewTimeFieldState(cx).Build()
+	tf := base.NewTimeFieldState(cx).Build()
 	tf.SetTime(cx, gk.CivilTime{Hour: 23, Minute: 59})
 	t := tf.Time(cx)
 	fmt.Printf("kinds time %02d:%02d:%02d\n", t.Hour, t.Minute, t.Second)
@@ -120,25 +125,25 @@ func (a *kindsApp) results(cx *gk.Cx) {
 	_, err = gk.TryParseColor(cx, "nope").Result()
 	fmt.Printf("kinds color bad err=%v\n", err != nil)
 	patch := "--- a/x.txt\n+++ b/x.txt\n@@ -1 +1 @@\n-old\n+new\n--- a/y.txt\n+++ b/y.txt\n@@ -1 +1 @@\n-a\n+b\n"
-	n, err := gk.DiffFileParseCount(cx, patch).Result()
+	n, err := editor.DiffFileParseCount(cx, patch).Result()
 	fmt.Printf("kinds diff count=%d err=%v\n", n, err)
 	fmt.Printf("kinds expr ok=%q bad=%q args=%q\n", gk.ExprCheck("x < 10 ? 1 : min(x, 2)", 1), gk.ExprCheck("x +", 1), gk.ExprCheck("y", 1))
 }
 
 // --- item functions and asks (PROTOCOLS.md 9.14, 9.41) ---------------------------------------------
 
-func (a *kindsApp) day(cx *gk.Cx, item gk.CalendarItemEl, st gk.BaseCalendarItemState) gk.Element {
+func (a *kindsApp) day(cx *gk.Cx, item base.CalendarItemEl, st base.CalendarItemState) gk.Element {
 	a.described++
 	switch st.Kind {
-	case gk.CalendarItemKindDay:
+	case base.CalendarItemKindDay:
 		a.days++
-	case gk.CalendarItemKindWeekday:
+	case base.CalendarItemKindWeekday:
 		a.wdays++
 	}
 	if st.IsActive {
 		a.active++
 	}
-	if st.Kind != gk.CalendarItemKindDay {
+	if st.Kind != base.CalendarItemKindDay {
 		return item
 	}
 	bg := theme.Background
@@ -148,13 +153,13 @@ func (a *kindsApp) day(cx *gk.Cx, item gk.CalendarItemEl, st gk.BaseCalendarItem
 	return item.Style(s.RoundedFull).Bg(bg)
 }
 
-func (a *kindsApp) entry(cx *gk.Cx, ix int, e gk.TreeEntryReads, st gk.BaseTreeEntryState) gk.Element {
+func (a *kindsApp) entry(cx *gk.Cx, ix int, e base.TreeEntryReads, st base.TreeEntryState) gk.Element {
 	a.described++
 	fmt.Printf("kinds tree row ix=%d label=%s depth=%d folder=%v selected=%v\n", ix, e.Item.Label, e.Depth, e.IsFolder, st.IsSelected)
 	return gk.Div(s.H6, s.Px2).Child(gk.Text(fmt.Sprintf("%s (%d)", e.Item.Label, ix)))
 }
 
-func (a *kindsApp) dayLabel(cx *gk.Cx, k gk.TupleCalendarItemKindInt32) string {
+func (a *kindsApp) dayLabel(cx *gk.Cx, k base.TupleCalendarItemKindInt32) string {
 	a.labels++
 	return fmt.Sprintf("L%d", k.V1)
 }
@@ -187,15 +192,15 @@ func (a *kindsApp) init(cx *gk.Cx) {
 		a.cells(cx)
 		a.results(cx)
 	case "kinds-bad-date":
-		cal := gk.NewCalendarState(cx).Build()
+		cal := base.NewCalendarState(cx).Build()
 		fmt.Println("kinds writing February 30")
-		cal.SetDate(cx, gk.DateSingle{Value: gk.Some(gk.CivilDate{Year: 2026, Month: 2, Day: 30})})
+		cal.SetDate(cx, base.DateSingle{Value: gk.Some(gk.CivilDate{Year: 2026, Month: 2, Day: 30})})
 		fmt.Println("kinds not stopped")
 	case "kinds-items", "kinds-label", "kinds-wrong-kind":
-		a.cal = gk.NewCalendarState(cx).Build()
+		a.cal = base.NewCalendarState(cx).Build()
 		a.calLabel = gk.NewAsk(cx, a.dayLabel)
 	case "kinds-tree":
-		a.tree = gk.NewTreeState(cx).Items([]gk.TreeItem{gk.NewTreeItem("a", "Alpha"), gk.NewTreeItem("b", "Beta")}).Build()
+		a.tree = table.NewTreeState(cx).Items([]table.TreeItem{table.NewTreeItem("a", "Alpha"), table.NewTreeItem("b", "Beta")}).Build()
 	case "kinds-elements":
 		a.hl = gk.NewAsk(cx, a.highlight)
 		a.img = gk.NewAsk(cx, a.image)
@@ -208,18 +213,18 @@ func (a *kindsApp) view(cx *gk.Cx) gk.Element {
 	root := gk.Div(s.SizeFull, s.P2).Bg(theme.Background).TextColor(theme.Foreground)
 	switch a.mode {
 	case "kinds-items", "kinds-label":
-		cal := gk.BaseCalendar("cal", a.cal).FirstDayOfWeek(gk.WeekdaySun).Item(gk.Items(cx, a.day))
+		cal := base.Calendar("cal", a.cal).FirstDayOfWeek(gk.WeekdaySun).Item(overlay.Items(cx, a.day))
 		if a.mode == "kinds-label" {
 			cal = cal.Label(a.calLabel)
 		}
 		return root.Child(cal)
 	case "kinds-wrong-kind":
-		return root.Child(gk.BaseCalendar("cal", a.cal).Item(gk.Items(cx, a.entry)))
+		return root.Child(base.Calendar("cal", a.cal).Item(overlay.Items(cx, a.entry)))
 	case "kinds-tree":
-		tree := gk.BaseTree(a.tree, s.SizeFull).ListStyle(gk.NewStyleRefinementDefault(s.SizeFull))
-		return root.Child(gk.Div().H(gk.Px(200)).Child(tree.Item(gk.Items(cx, a.entry))))
+		tree := table.BaseTree(a.tree, s.SizeFull).ListStyle(gk.NewStyleRefinementDefault(s.SizeFull))
+		return root.Child(gk.Div().H(gk.Px(200)).Child(tree.Item(overlay.Items(cx, a.entry))))
 	case "kinds-bad-expr":
-		return root.Child(gk.Spinner().Ease("x +"))
+		return root.Child(kit.Spinner().Ease("x +"))
 	case "kinds-elements":
 		t := gk.NewTransformation().Scaled(0.5, 0.5).Translated(2, 3).Rotated(0.25).WithAlpha(0.5)
 		return root.
@@ -234,7 +239,7 @@ func (a *kindsApp) view(cx *gk.Cx) gk.Element {
 				A11ySyntheticChildren([]gk.A11yChild{{Key: "q1", Role: gk.RoleListItem, Label: "Q1: 12"}}).
 				ExternalDragPayload(gk.ExternalDragPayload{Files: []gk.ExternalFile{{Path: "/nonexistent/a.txt"}}}).
 				Child(gk.Text("anchored"))).
-			Child(gk.Div().W(gk.Px(400)).Child(gk.BaseTextViewMarkdown("md", "```go\nfunc x\n```\n\n![pic](pic.png)\n").
+			Child(gk.Div().W(gk.Px(400)).Child(editor.BaseTextViewMarkdown("md", "```go\nfunc x\n```\n\n![pic](pic.png)\n").
 				CodeBlockHighlighter(a.hl).ImageSource(a.img)))
 	}
 	return root

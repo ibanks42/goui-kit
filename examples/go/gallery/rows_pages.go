@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	gktable "gpuikit.dev/gk/table"
 )
 
 const (
@@ -19,17 +21,17 @@ const (
 )
 
 type rowsPages struct {
-	list     gk.ListState
-	table    gk.TableState
+	list     gktable.ListState
+	table    gktable.State
 	cells    gk.RowSource // the table's
-	tree     gk.TreeState
+	tree     gktable.TreeState
 	treeRows gk.RowSource
 	desc     bool // the table's rows in descending order of their id
 }
 
 var rowsPageTable = []Page{{"rows-list", rowsList}, {"rows-table", rowsTable}, {"rows-tree", rowsTreePage}}
 
-var rowsTree = []gk.TreeNode{
+var rowsTree = []gktable.TreeNode{
 	{ID: "docs", Label: "docs", Depth: 0},
 	{ID: "docs/guide", Label: "guide.md", Depth: 1},
 	{ID: "docs/api", Label: "api.md", Depth: 1},
@@ -41,52 +43,52 @@ var rowsTree = []gk.TreeNode{
 
 func rowsPagesInit(a *App, cx *gk.Cx) {
 	p := &a.rowsFam
-	p.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return listRows }, rowsListRow)).Build()
-	id := gk.NewTableColumn("id", "Id")
-	id.Sort = gk.Some(gk.ColumnSortDefault)
-	columns := []gk.TableColumn{id, gk.NewTableColumn("a", "A"), gk.NewTableColumn("b", "B"), gk.NewTableColumn("c", "C")}
-	p.cells = gk.NewTableSource(cx, tableRows, columns, a.rowsCell, gk.TableEvents(a.rowsTableEvent))
-	p.table = gk.NewTableState(cx, p.cells).Build()
-	p.tree = gk.NewTreeState(cx).Build()
-	gk.SetTreeItems(cx, p.tree, rowsTree)
-	p.treeRows = gk.NewTreeSource(cx, a.rowsTreeRow)
+	p.list = gktable.NewListState(cx, gktable.NewListSource(cx, func() int { return listRows }, rowsListRow)).Build()
+	id := gktable.NewTableColumn("id", "Id")
+	id.Sort = gk.Some(gktable.ColumnSortDefault)
+	columns := []gktable.TableColumn{id, gktable.NewTableColumn("a", "A"), gktable.NewTableColumn("b", "B"), gktable.NewTableColumn("c", "C")}
+	p.cells = gktable.NewSource(cx, tableRows, columns, a.rowsCell, gktable.Events(a.rowsTableEvent))
+	p.table = gktable.NewState(cx, p.cells).Build()
+	p.tree = gktable.NewTreeState(cx).Build()
+	gktable.SetTreeItems(cx, p.tree, rowsTree)
+	p.treeRows = gktable.NewTreeSource(cx, a.rowsTreeRow)
 }
 
-func (a *App) rowsCell(cx *gk.Cx, at gk.CellAt) gk.Element {
+func (a *App) rowsCell(cx *gk.Cx, at gktable.CellAt) gk.Element {
 	row := at.Row
 	if a.rowsFam.desc {
 		row = tableRows - 1 - at.Row
 	}
-	return gk.Label(fmt.Sprintf("%d:%d", row, at.Col))
+	return kit.Label(fmt.Sprintf("%d:%d", row, at.Col))
 }
 
-func (a *App) rowsTableEvent(cx *gk.Cx, e gk.TableDelegateEvent) {
-	if e.Kind == gk.TableSort {
-		a.rowsFam.desc = e.Sort == gk.ColumnSortDescending
-		gk.InvalidateTable(cx, a.rowsFam.cells, 0, tableRows)
+func (a *App) rowsTableEvent(cx *gk.Cx, e gktable.DelegateEvent) {
+	if e.Kind == gktable.Sort {
+		a.rowsFam.desc = e.Sort == gktable.ColumnSortDescending
+		gktable.InvalidateTable(cx, a.rowsFam.cells, 0, tableRows)
 	}
 }
 
-func (a *App) rowsTreeRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) rowsTreeRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
 	text := ""
-	if e, ok := gk.TreeEntryAt(cx, a.rowsFam.tree, at.Row); ok {
+	if e, ok := gktable.TreeEntryAt(cx, a.rowsFam.tree, at.Row); ok {
 		text = strings.Repeat("  ", e.Depth) + e.Label
 	}
-	return gk.ListItem(gk.Key("tree", at.Row)).Child(gk.Label(text))
+	return gktable.ListItem(gk.Key("tree", at.Row)).Child(kit.Label(text))
 }
 
-func rowsListRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.Label(fmt.Sprintf("row %d", at.Row)))
+func rowsListRow(cx *gk.Cx, at gk.RowAt) gktable.ListItemEl {
+	return gktable.ListItem(gk.Key("item", at.Row)).Child(kit.Label(fmt.Sprintf("row %d", at.Row)))
 }
 
 func rowsList(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.List(a.rowsFam.list).ScrollbarVisible(false))
+	return gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gktable.List(a.rowsFam.list).ScrollbarVisible(false))
 }
 
 func rowsTable(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gk.DataTable(a.rowsFam.table).ScrollbarVisible(false, false))
+	return gk.Div().W(gk.Px(440)).H(gk.Px(240)).Child(gktable.DataTable(a.rowsFam.table).ScrollbarVisible(false, false))
 }
 
 func rowsTreePage(a *App, cx *gk.Cx) gk.Element {
-	return gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gk.Tree(a.rowsFam.tree, a.rowsFam.treeRows))
+	return gk.Div().W(gk.Px(300)).H(gk.Px(240)).Child(gktable.Tree(a.rowsFam.tree, a.rowsFam.treeRows))
 }

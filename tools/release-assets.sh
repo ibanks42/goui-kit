@@ -24,8 +24,8 @@ ver=${1:?usage: release-assets.sh VERSION DIR [COMMIT]}; dir=${2:?DIR}; commit=$
 fail() { echo "release-assets: FAIL: $*" >&2; exit 1; }
 want=$(grep -m1 '^version' "$repo/Cargo.toml" | cut -d'"' -f2)
 [ "$ver" = "$want" ] || fail "version $ver, but tools/dist.sh writes $want (Cargo.toml): tag v$want, or change the version first"
-hash=$(grep -m1 'const apiHash' "$repo/go/gk/gen_ops.go" | grep -o '0x[0-9a-f]*')
-[ -n "$hash" ] || fail "no apiHash in go/gk/gen_ops.go"
+hash=$(grep -m1 'const ApiHash' "$repo/go/gk/internal/rt/gen_ops.go" | grep -o '0x[0-9a-f]*')
+[ -n "$hash" ] || fail "no ApiHash in go/gk/internal/rt/gen_ops.go"
 platforms=(linux-x86_64 macos-universal windows-x86_64)
 expected=()
 for p in "${platforms[@]}"; do

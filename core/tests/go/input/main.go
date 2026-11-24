@@ -17,6 +17,7 @@ import (
 	"strconv"
 
 	"gpuikit.dev/gk"
+	gkeditor "gpuikit.dev/gk/editor"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -24,11 +25,11 @@ import (
 type App struct {
 	mode   string
 	root   gk.View
-	input  gk.InputState
-	text   gk.TextareaState
-	editor gk.EditorState
-	number gk.InputState
-	otp    gk.OtpState
+	input  gkeditor.InputState
+	text   gkeditor.TextareaState
+	editor gkeditor.State
+	number gkeditor.InputState
+	otp    gkeditor.OtpState
 	focus  gk.FocusHandle
 	subs   [4]gk.Subscription
 	frame  int
@@ -43,55 +44,55 @@ type App struct {
 
 // The checks expect an enum value printed by its name.
 var (
-	stepNames = map[gk.StepAction]string{gk.StepActionIncrement: "Increment", gk.StepActionDecrement: "Decrement"}
-	otpNames  = map[gk.OtpEvent]string{gk.OtpEventChange: "Change", gk.OtpEventComplete: "Complete", gk.OtpEventFocus: "Focus", gk.OtpEventBlur: "Blur"}
+	stepNames = map[gkeditor.StepAction]string{gkeditor.StepActionIncrement: "Increment", gkeditor.StepActionDecrement: "Decrement"}
+	otpNames  = map[gkeditor.OtpEvent]string{gkeditor.OtpEventChange: "Change", gkeditor.OtpEventComplete: "Complete", gkeditor.OtpEventFocus: "Focus", gkeditor.OtpEventBlur: "Blur"}
 )
 
 // --- events -------------------------------------------------------------------------------------
 
-func (a *App) inputEvent(cx *gk.Cx, e gk.InputEvent) {
+func (a *App) inputEvent(cx *gk.Cx, e gkeditor.InputEvent) {
 	a.events++
 	switch v := e.(type) {
-	case gk.InputEventChange:
+	case gkeditor.InputEventChange:
 		fmt.Printf("input change value=%q cursor=%d\n", a.input.Value(cx), a.input.Cursor(cx))
-	case gk.InputEventPressEnter:
+	case gkeditor.InputEventPressEnter:
 		fmt.Printf("input enter secondary=%v shift=%v value=%q\n", v.Secondary, v.Shift, a.input.Value(cx))
-	case gk.InputEventFocus:
+	case gkeditor.InputEventFocus:
 		fmt.Println("input focus")
-	case gk.InputEventBlur:
+	case gkeditor.InputEventBlur:
 		fmt.Println("input blur")
 	}
 }
 
-func (a *App) textEvent(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); ok {
+func (a *App) textEvent(cx *gk.Cx, e gkeditor.InputEvent) {
+	if _, ok := e.(gkeditor.InputEventChange); ok {
 		fmt.Printf("textarea change value=%q multi=%v\n", a.text.Value(cx), a.text.IsMultiLine(cx))
 	}
 }
 
-func (a *App) editorEvent(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); ok {
+func (a *App) editorEvent(cx *gk.Cx, e gkeditor.InputEvent) {
+	if _, ok := e.(gkeditor.InputEventChange); ok {
 		fmt.Printf("editor change value=%q code=%v\n", a.editor.Value(cx), a.editor.IsCodeEditor(cx))
 	}
 }
 
-func (a *App) numberEvent(cx *gk.Cx, e gk.InputEvent) {
-	if _, ok := e.(gk.InputEventChange); ok {
+func (a *App) numberEvent(cx *gk.Cx, e gkeditor.InputEvent) {
+	if _, ok := e.(gkeditor.InputEventChange); ok {
 		fmt.Printf("number change value=%q\n", a.number.Value(cx))
 	}
 }
 
-func (a *App) otpEvent(cx *gk.Cx, e gk.OtpEvent) {
+func (a *App) otpEvent(cx *gk.Cx, e gkeditor.OtpEvent) {
 	fmt.Printf("otp event=%s value=%q\n", otpNames[e], a.otp.Value(cx))
 }
 
 // The handler shape (StepAction) -> () of base::NumberInput::on_step.
-func (a *App) stepped(cx *gk.Cx, e gk.StepAction) {
+func (a *App) stepped(cx *gk.Cx, e gkeditor.StepAction) {
 	a.steps++
 	fmt.Printf("number step action=%s n=%d\n", stepNames[e], a.steps)
 	v, _ := strconv.Atoi(a.number.Value(cx))
 	by := -2
-	if e == gk.StepActionIncrement {
+	if e == gkeditor.StepActionIncrement {
 		by = 2
 	}
 	a.number.SetValue(cx, fmt.Sprintf("%d", v+by))
@@ -125,9 +126,9 @@ func (a *App) groupClicked(cx *gk.Cx, e gk.ClickEvent) {
 
 func (a *App) linksView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Div().W(gk.Px(300)).Child(gk.TextViewMarkdown("md", "see [the link](https://example.com/x) here").OnLinkClick(a.linkClicked))).
-		Child(gk.Div().W(gk.Px(300)).Child(gk.InputGroup("g").Input(gk.Input(a.input)).
-			Addon(gk.InputGroupAddon("a").Child(gk.InputGroupButton("go").Label("Go").OnClick(a.groupClicked)))))
+		Child(gk.Div().W(gk.Px(300)).Child(gkeditor.TextViewMarkdown("md", "see [the link](https://example.com/x) here").OnLinkClick(a.linkClicked))).
+		Child(gk.Div().W(gk.Px(300)).Child(gkeditor.InputGroup("g").Input(gkeditor.Input(a.input)).
+			Addon(gkeditor.InputGroupAddon("a").Child(gkeditor.InputGroupButton("go").Label("Go").OnClick(a.groupClicked)))))
 }
 
 func (a *App) focusAway(cx *gk.Cx, e gk.MouseEvent) {
@@ -205,11 +206,11 @@ func (a *App) calls(cx *gk.Cx) {
 // --- the view -----------------------------------------------------------------------------------
 
 func (a *App) init(cx *gk.Cx) {
-	a.input = gk.NewInputState(cx).Placeholder("Name").Build()
-	a.text = gk.NewTextareaState(cx).AutoGrow(2, 4).Searchable(true).Build()
-	a.editor = gk.NewEditorState(cx).Language("rust").Build()
-	a.number = gk.NewInputState(cx).Min(0).Max(10).Step(float64(2)).DefaultValue("4").Build()
-	a.otp = gk.NewOtpState(cx, 4).Build()
+	a.input = gkeditor.NewInputState(cx).Placeholder("Name").Build()
+	a.text = gkeditor.NewTextareaState(cx).AutoGrow(2, 4).Searchable(true).Build()
+	a.editor = gkeditor.NewState(cx).Language("rust").Build()
+	a.number = gkeditor.NewInputState(cx).Min(0).Max(10).Step(float64(2)).DefaultValue("4").Build()
+	a.otp = gkeditor.NewOtpState(cx, 4).Build()
 	a.focus = gk.NewFocusHandle(cx)
 	a.subs[0] = a.input.OnInputEvent(cx, a.inputEvent)
 	a.subs[1] = a.text.OnInputEvent(cx, a.textEvent)
@@ -238,7 +239,7 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	if a.mode == "call-in-view" {
 		a.text.ReplaceAllSearchMatches(cx, "x") // a view may not update kit state
 	}
-	input := gk.Input(a.input)
+	input := gkeditor.Input(a.input)
 	if a.mode == "paste" {
 		input = input.OnPaste(a.pasted)
 	}
@@ -246,19 +247,19 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 	// otherwise.
 	var editor gk.Element
 	if a.mode == "providers" {
-		editor = gk.CodeEditor(a.editor, gk.CodeEditorOptions{Height: 90})
+		editor = gkeditor.CodeEditor(a.editor, gkeditor.CodeEditorOptions{Height: 90})
 	} else {
-		editor = gk.BaseEditor(a.editor)
+		editor = gkeditor.BaseEditor(a.editor)
 	}
 	// base::NumberInput: its buttons call on_step, which replaces upstream's own stepping, so
 	// the handler steps the value itself.
-	number := gk.BaseNumberInput(a.number).Input(gk.BaseInput(a.number)).OnStep(a.stepped)
+	number := gkeditor.BaseNumberInput(a.number).Input(gkeditor.BaseInput(a.number)).OnStep(a.stepped)
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap2).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.Div().W(gk.Px(240)).Child(input)).
-		Child(gk.Div().W(gk.Px(240)).Child(gk.Textarea(a.text))).
+		Child(gk.Div().W(gk.Px(240)).Child(gkeditor.Textarea(a.text))).
 		Child(gk.Div().W(gk.Px(400)).H(gk.Px(90)).Child(editor)).
 		Child(gk.Div().W(gk.Px(200)).Child(number)).
-		Child(gk.OtpInput(a.otp)).
+		Child(gkeditor.OtpInput(a.otp)).
 		Child(gk.Div().W(gk.Px(120)).H(gk.Px(24)).Bg(gk.HSLA(0.6, 0.5, 0.4, 1)).TrackFocus(a.focus).
 			OnMouseDown(gk.MouseButtonLeft, a.focusAway))
 }

@@ -19,7 +19,12 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -29,13 +34,13 @@ type App struct {
 	child  gk.View
 	clicks int
 	// pins
-	diff   gk.DiffState
-	ann    gk.DiffAnnotation
+	diff   editor.DiffState
+	ann    editor.DiffAnnotation
 	builds int
 	// PROTOCOLS.md 13.13 to 13.16
 	scroll gk.ScrollHandle
-	quest  gk.QuestionnaireState
-	picker gk.ColorPickerState
+	quest  base.QuestionnaireState
+	picker base.ColorPickerState
 	events int
 	tip    gk.View
 	tips   int
@@ -102,7 +107,7 @@ func scales(a *App, cx *gk.Cx) {
 	_, missing := band.Tick(cx, "zz").Get()
 	fmt.Printf("values band width_ok=%v step_ok=%v order=%v missing=%v nearest=%d\n",
 		bw > 0 && bw < 100, st >= bw, ta < tc, !missing, band.NearestIndex(cx, tc))
-	lin := gk.NewScaleLinear(cx, []float64{0, 100}, [2]float32{0, 200})
+	lin := chart.NewScaleLinear(cx, []float64{0, 100}, [2]float32{0, 200})
 	t0, _ := lin.Tick(cx, 0).Get()
 	t50, _ := lin.Tick(cx, 50).Get()
 	t100, _ := lin.Tick(cx, 100).Get()
@@ -123,7 +128,7 @@ func scales(a *App, cx *gk.Cx) {
 
 // Misuse: a value made in a handler given as an argument to its own builder (exit 2).
 func selfArg(a *App, cx *gk.Cx) {
-	t := gk.NewTreeItem("a", "A")
+	t := table.NewTreeItem("a", "A")
 	fmt.Println("values giving a value to its own builder")
 	t = t.Child(t)
 	fmt.Println("values not stopped")
@@ -142,7 +147,7 @@ func clipboardClick(a *App, cx *gk.Cx) {
 }
 
 func clipboardBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
-	return body.Child(gk.Clipboard("copy").ValueFn(a.copyValue))
+	return body.Child(kit.Clipboard("copy").ValueFn(a.copyValue))
 }
 
 // gpui's ScrollHandle as a library object (PROTOCOLS.md 13.14): tracked by a scrolling div, its
@@ -171,12 +176,12 @@ func scrollBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
 // Kit values read back (PROTOCOLS.md 13.15): a questionnaire's answer, its item definitions and the
 // answers object, each a copy behind a temporary handle with the type's reads.
 func readback(a *App, cx *gk.Cx) {
-	color := gk.NewQuestionnaireItemDefinition("color", "Favourite colour").WithRequired(true).
-		WithChoice(gk.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(gk.NewQuestionnaireChoiceDefinition("blue", "Blue"))
-	a.quest = gk.NewQuestionnaireState(cx, []gk.QuestionnaireItemDefinition{color}).Build()
+	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").WithRequired(true).
+		WithChoice(base.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(base.NewQuestionnaireChoiceDefinition("blue", "Blue"))
+	a.quest = base.NewQuestionnaireState(cx, []base.QuestionnaireItemDefinition{color}).Build()
 	_ = a.quest.OnQuestionnaireEvent(cx, a.questEvent)
 	q := a.quest
-	err := q.SetAnswer(cx, "color", gk.NewQuestionnaireAnswer().WithChoices([]string{"blue"}))
+	err := q.SetAnswer(cx, "color", base.NewQuestionnaireAnswer().WithChoices([]string{"blue"}))
 	e := ""
 	if err != nil {
 		e = err.Error()
@@ -211,9 +216,9 @@ func readback(a *App, cx *gk.Cx) {
 }
 
 // The questionnaire's event: an answer change hands out a QuestionnaireAnswerChange object.
-func (a *App) questEvent(cx *gk.Cx, ev gk.QuestionnaireEvent) {
+func (a *App) questEvent(cx *gk.Cx, ev base.QuestionnaireEvent) {
 	switch e := ev.(type) {
-	case gk.QuestionnaireEventAnswerChanged:
+	case base.QuestionnaireEventAnswerChanged:
 		a.events++
 		ch := e.Value.Answer(cx).Choices(cx)
 		fmt.Printf("values event answer_changed item=%s choices=%d\n", e.Value.Item(cx), len(ch))
@@ -222,7 +227,7 @@ func (a *App) questEvent(cx *gk.Cx, ev gk.QuestionnaireEvent) {
 
 // Kit state a read hands out (PROTOCOLS.md 13.16): a colour picker's sliders, each a SliderState.
 func handed(a *App, cx *gk.Cx) {
-	a.picker = gk.NewColorPickerState(cx).Build()
+	a.picker = base.NewColorPickerState(cx).Build()
 	sl := a.picker.Sliders(cx)
 	hue := sl.Hue(cx)
 	again := sl.Hue(cx)
@@ -241,7 +246,7 @@ func ambient(a *App, cx *gk.Cx) {
 func (a *App) tipView(cx *gk.Cx) gk.Element {
 	a.tips++
 	fmt.Printf("values tooltip view described n=%d\n", a.tips)
-	return gk.Div().Child(gk.Label("a tooltip from Go"))
+	return gk.Div().Child(kit.Label("a tooltip from Go"))
 }
 
 func tooltipBody(a *App, cx *gk.Cx, body gk.StatefulDivEl) gk.StatefulDivEl {
@@ -286,16 +291,16 @@ func dragView(a *App, cx *gk.Cx) (gk.Element, bool) {
 
 // The questionnaire driven by simulated input: a choice clicked (AnswerChanged), submitted (Submit).
 func questEventsStart(a *App, cx *gk.Cx) {
-	color := gk.NewQuestionnaireItemDefinition("color", "Favourite colour").
-		WithChoice(gk.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(gk.NewQuestionnaireChoiceDefinition("blue", "Blue"))
-	a.quest = gk.NewQuestionnaireState(cx, []gk.QuestionnaireItemDefinition{color}).Build()
+	color := base.NewQuestionnaireItemDefinition("color", "Favourite colour").
+		WithChoice(base.NewQuestionnaireChoiceDefinition("red", "Red")).WithChoice(base.NewQuestionnaireChoiceDefinition("blue", "Blue"))
+	a.quest = base.NewQuestionnaireState(cx, []base.QuestionnaireItemDefinition{color}).Build()
 	_ = a.quest.OnQuestionnaireEvent(cx, a.questEvent2)
 	gk.Notify(cx, a.root) // its state needs the window
 }
 
-func (a *App) questEvent2(cx *gk.Cx, ev gk.QuestionnaireEvent) {
+func (a *App) questEvent2(cx *gk.Cx, ev base.QuestionnaireEvent) {
 	switch e := ev.(type) {
-	case gk.QuestionnaireEventAnswerChanged:
+	case base.QuestionnaireEventAnswerChanged:
 		a.answers++
 		ch := e.Value.Answer(cx).Choices(cx)
 		first := ""
@@ -303,7 +308,7 @@ func (a *App) questEvent2(cx *gk.Cx, ev gk.QuestionnaireEvent) {
 			first = ch[0]
 		}
 		fmt.Printf("values quest answer_changed item=%s choice=%s\n", e.Value.Item(cx), first)
-	case gk.QuestionnaireEventSubmit:
+	case base.QuestionnaireEventSubmit:
 		a.submits++
 		fmt.Printf("values quest submit\n")
 	}
@@ -314,11 +319,11 @@ func questPage(a *App, cx *gk.Cx) (gk.Element, bool) {
 	if gk.Handle(q) == 0 {
 		return gk.Div(), true // the first description, inside OpenWindow: the state needs the window first
 	}
-	choices := gk.QuestionnaireChoices(q, "color").
-		Child(gk.QuestionnaireChoice(q, "color", "red").W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Red"))).
-		Child(gk.QuestionnaireChoice(q, "color", "blue").W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Blue")))
-	return gk.Div(s.SizeFull).Child(gk.Questionnaire(q).Child(gk.QuestionnaireItem(q, "color").Child(choices)).
-		Child(gk.QuestionnaireSubmit(q).W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Submit")))), true
+	choices := kit.QuestionnaireChoices(q, "color").
+		Child(kit.QuestionnaireChoice(q, "color", "red").W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Red"))).
+		Child(kit.QuestionnaireChoice(q, "color", "blue").W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Blue")))
+	return gk.Div(s.SizeFull).Child(kit.Questionnaire(q).Child(kit.QuestionnaireItem(q, "color").Child(choices)).
+		Child(kit.QuestionnaireSubmit(q).W(gk.Px(200)).H(gk.Px(40)).Child(gk.Text("Submit")))), true
 }
 
 func (a *App) clicked(cx *gk.Cx, _ gk.ClickEvent) {

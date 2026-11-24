@@ -24,9 +24,9 @@ Needs `lib/diag` from `make lib`; binaries go to `bin/FAMILY-go`, logs to
 - Runtime misuse checks that are compile errors in Go (a handler of the wrong shape) are
   examples/go/misuse_compile's business (gates/go-misuse.sh); the fragment says so in a comment.
   So is a misuse the Go API cannot express (lists2's bad-ctx: a row's context read for a row no
-  closure drew; an item function made by gk.Items is handed its values, there is no read of a
+  closure drew; an item function made by overlay.Items is handed its values, there is no read of a
   context).
-- Item functions: Go hands the values to the function gk.Items made the source of
+- Item functions: Go hands the values to the function overlay.Items made the source of
   (`func(cx *gk.Cx, ctx gk.ResizeHandleContext) gk.Element`); such a function gets no row number,
   so a check that prints a row prints the row the test knows (one item: 0) or numbers the rows in
   the order they are first described.

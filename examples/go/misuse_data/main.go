@@ -17,6 +17,7 @@ import (
 	"os"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -41,7 +42,7 @@ type App struct {
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	a.drawn++
-	c := gk.LineChart(gk.NewData(rows)).Appear(false).X("Month")
+	c := chart.LineChart(chart.NewData(rows)).Appear(false).X("Month")
 	switch a.mode {
 	case "data-ok":
 		c = c.Y("Desktop").YTickFormat("{:.0}").TooltipValue("{:.1} of {Month}")
@@ -56,7 +57,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	case "data-row":
 		c = c.Y("Desktop").YTickFormat("{Month}")
 	case "data-field":
-		c = gk.LineChart(gk.NewData([]bad{{"Jan", nil}})).X("Month")
+		c = chart.LineChart(chart.NewData([]bad{{"Jan", nil}})).X("Month")
 	}
 	return gk.Div(s.SizeFull).Bg(theme.Background).Child(gk.Div().W(gk.Px(300)).H(gk.Px(200)).Child(c))
 }

@@ -20,13 +20,15 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
 
 type App struct {
 	root                   gk.View
-	menubar                gk.AppMenuBar
+	menubar                kit.AppMenuBar
 	open, save, quit, site gk.Action
 	path, text, status     string
 	changes                int // a new id for the status line's animation each time it changes
@@ -123,22 +125,22 @@ func (a *App) init(cx *gk.Cx) {
 			gk.MenuAction{Name: "Quit", Action: a.quit},
 		}},
 		gk.Menu{Name: "Help", Items: []gk.MenuItem{gk.MenuAction{Name: "Website", Action: a.site}}})
-	a.menubar = gk.NewAppMenuBar(cx)
+	a.menubar = kit.NewAppMenuBar(cx)
 	a.setStatus("File > Open… (ctrl-o) to read a text file")
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
-	status := gk.Div(s.Relative, s.TextSm).H(gk.Px(24)).TextColor(theme.MutedForeground).Child(gk.Label(a.status))
-	enter := gk.NewEffectTransition(250*time.Millisecond).Fade(0, 1).SlideY(8, 0)
+	status := gk.Div(s.Relative, s.TextSm).H(gk.Px(24)).TextColor(theme.MutedForeground).Child(kit.Label(a.status))
+	enter := motion.NewEffectTransition(250*time.Millisecond).Fade(0, 1).SlideY(8, 0)
 	text := a.text
 	if text == "" {
 		text = "(no file)"
 	}
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Div(s.FlexNone).H(gk.Px(32)).Child(gk.AppMenuBarView(a.menubar))).
+		Child(gk.Div(s.FlexNone).H(gk.Px(32)).Child(kit.AppMenuBarView(a.menubar))).
 		Child(gk.VFlex(s.Flex1, s.P4, s.Gap2).
-			Child(gk.Div(s.Flex1, s.Border1, s.P2, s.OverflowHidden).BorderColor(theme.Border).Child(gk.Label(text))).
-			Child(gk.Effect(status, enter, fmt.Sprintf("status-%d", a.changes))))
+			Child(gk.Div(s.Flex1, s.Border1, s.P2, s.OverflowHidden).BorderColor(theme.Border).Child(kit.Label(text))).
+			Child(kit.Effect(status, enter, fmt.Sprintf("status-%d", a.changes))))
 }
 
 func main() {

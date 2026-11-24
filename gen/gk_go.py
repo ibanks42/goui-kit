@@ -79,6 +79,7 @@ class Go:
         self.m, self.out = m, outdir
         self.docs = self.doc_names = None  # gk_doc.Docs and its link resolver (gkgen.py sets them)
         self.names = {}
+        self.claim_base = {}  # a claimed name -> (its base, its crate): gk_split.py names per package
         self.collisions = []
         self.files = {}
         self.lines = []
@@ -94,14 +95,23 @@ class Go:
         self.need_readers = set()
         prefixes = m.ov.get("go", {}).get("enum_prefix", {})
         self.enum_prefix = prefixes
-        for fn in sorted(os.listdir(outdir)) if os.path.isdir(outdir) else []:
-            if fn.endswith(".go") and not fn.startswith("gen_"):
-                text = open(os.path.join(outdir, fn)).read()
-                for name in re.findall(r"(?m)^(?:func|type|var|const)\s+([A-Z]\w*)", text):
-                    self.names.setdefault(name, "hand " + fn)
+        # every package's hand-written names (gen/gk_split.py), and their flat spellings
+        hand = []
+        for root, _, fns in sorted(os.walk(outdir)) if os.path.isdir(outdir) else []:
+            hand += [os.path.join(root, fn) for fn in sorted(fns)]
+        import gk_split  # noqa: PLC0415
+        legacy = gk_split.hand_decls()[1]  # flat name -> (package, name now)
+        back = {v: k for k, v in legacy.items()}
+        for path in hand:
+            fn = os.path.relpath(path, outdir)
+            if fn.endswith(".go") and not os.path.basename(fn).startswith("gen_"):
+                text = open(path).read()
+                pkg = (re.search(r"(?m)^package (\w+)", text) or [None, ""])[1]
+                found = re.findall(r"(?m)^(?:func|type|var|const)\s+([A-Z]\w*)", text)
                 for block in re.findall(r"(?ms)^(?:const|var) \((.*?)^\)", text):
-                    for name in re.findall(r"(?m)^\t([A-Z]\w*)", block):
-                        self.names.setdefault(name, "hand " + fn)
+                    found += re.findall(r"(?m)^\t([A-Z]\w*)", block)
+                for name in found:  # by the flat spelling it had
+                    self.names.setdefault(back.get((pkg, name), name), "hand " + fn)
         self.name_all()
 
     # ------------------------------------------------------------ names
@@ -111,12 +121,14 @@ class Go:
         for c in (base, pre + base):
             if self.names.get(c, key) == key:
                 self.names[c] = key
+                self.claim_base[c] = (base, crate)
                 return c
         n = 2
         while f"{pre}{base}{n}" in self.names:
             n += 1
         self.collisions.append((base, key, self.names.get(pre + base)))
         self.names[f"{pre}{base}{n}"] = key
+        self.claim_base[f"{pre}{base}{n}"] = (base, crate)
         return f"{pre}{base}{n}"
 
     def name_all(self):
@@ -524,13 +536,13 @@ class Go:
             return f"{self.gtype(d, out)}{{{self.rd(d[1], out)}, {self.rd(d[1], out)}}}"
         if k == "tuple":
             t = self.gtype(d, out)
-            return f"{t}{{" + ", ".join(self.rd(x, out) for x in d[1]) + "}"
+            return f"{t}{{" + ", ".join(f"V{n}: {self.rd(x, out)}" for n, x in enumerate(d[1])) + "}"
         if k in ("entity", "handle", "shim", "rows", "datum_rows", "obj"):
             return f"{self.gtype(d, out)}{{h: r.u64()}}"
         if k == "action":
             if d[1] == "listener":
                 raise Unsup("action listener read back")
-            return "Action{id: r.u32()}"
+            return "rt.MkAction(r.u32())"
         if k == "result":
             return "rdResult(r)"
         if k == "libval" and d[2] in GO_LIBVALS:
@@ -651,14 +663,13 @@ class Go:
         # ---- types (last: the items above asked for tuples, readers and handle types)
         self.types()
         self.tokens()
-        os.makedirs(self.out, exist_ok=True)
-        for f in os.listdir(self.out):
-            if f.startswith("gen_") and f.endswith(".go") and f not in self.files and f != "gen_ops.go":  # core/wire/gen.py's
-                os.remove(os.path.join(self.out, f))
+        # the token packages are written as they are; the flat package gk is split by gen/gk_split.py
         for name, text in self.files.items():
-            path = os.path.join(self.out, name)
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            open(path, "w").write(text)
+            if "/" in name:
+                path = os.path.join(self.out, name)
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                if not os.path.exists(path) or open(path).read() != text:
+                    open(path, "w").write(text)
 
     # ------------------------------------------------------------ nodes
 
@@ -858,7 +869,7 @@ class Go:
                 return [f"// {name} subscribes a handler to the state's {ev['name']} events; gk.Release ends it.",
                         f"func (s {S}) {name}(cx *Cx, h {H}) Subscription {{",
                         f"\tslot, gen := keepHandler(cx, h, {sh['num']})", f"\to := newReq({ev['op']})", "\to.u64(s.h)",
-                        "\to.u32(slot)", "\to.u32(gen)", f"\tr := stateGet(s.h, cx, o)", "\treturn Subscription{h: r.u64(), slot: slot}", "}", ""]
+                        "\to.u32(slot)", "\to.u32(gen)", f"\tr := stateGet(s.h, cx, o)", "\treturn rt.MkSubscription(r.u64(), slot)", "}", ""]
             lines = self.try_item(ev, sub)
             if lines:
                 names.add(name)
@@ -876,7 +887,7 @@ class Go:
                              f"\to := b.sb.op({it['op']})" if body else f"\tb.sb.op({it['op']})"]
                     return lines + ["\t" + x for x in body] + ["\treturn b", "}", ""]
                 self.add(*self.try_item(it, bl))
-            self.add(f"// Build makes the {st['name']}.", f"func (b {B}) Build() {S} {{ return {S}{{b.sb.build()}} }}", "")
+            self.add(f"// Build makes the {st['name']}.", f"func (b {B}) Build() {S} {{ return {S}{{HCore: rt.MkH(b.sb.build())}} }}", "")
         for it in sorted([i for i in st["ctors"] if ok(i) and "go" in i], key=lambda i: i["go"]):
             def ct(it=it):
                 lines = [self.doc(it, it["go"]), f"func {it['go']}({', '.join(self.params(it, ['cx *Cx']))}) {B} {{",
@@ -885,7 +896,7 @@ class Go:
                 if builders:
                     lines += ["\treturn " + B + "{newStateBuilder(cx, o)}", "}", ""]
                 else:
-                    lines += ["\to.u16(0) // no builder ops follow", f"\treturn {S}{{stateMake(cx, o)}}", "}", ""]
+                    lines += ["\to.u16(0) // no builder ops follow", f"\treturn {S}{{HCore: rt.MkH(stateMake(cx, o))}}", "}", ""]
                 return lines
             self.add(*self.try_item(it, ct))
         for it in sorted([i for i in st.get("globals", []) + st.get("statics", []) if ok(i) and "go" in i], key=lambda i: i["go"]):
@@ -999,13 +1010,13 @@ class Go:
                     callexpr = f"ret.bool({callexpr})"
                 elif R == "string":
                     callexpr = f"ret.str({callexpr})"
-                reg.append(f'\tshapes[{sh["num"]}] = shapeInfo{{name: "{H}", call: func(h any, cx *Cx, r *reader, ret *tape) bool {{')
-                reg += [f"\t\tf, ok := h.({H})", "\t\tif !ok {", "\t\t\treturn false", "\t\t}", f"\t\t{callexpr}", "\t\treturn true", "\t}}"]
+                reg += ["func init() {", f'\trt.RegisterShape({sh["num"]}, rt.ShapeInfo{{Name: "{H}", Call: func(h any, cx *Cx, r *reader, ret *tape) bool {{']
+                reg += [f"\t\tf, ok := h.({H})", "\t\tif !ok {", "\t\t\treturn false", "\t\t}", f"\t\t{callexpr}", "\t\treturn true", "\t}})", "}", ""]
                 sh["go_ok"] = True
             except Unsup as e:
                 sh["go_ok"] = False
                 sh["go_why"] = str(e)
-        self.add("func init() {", *reg, "}", "")
+        self.add(*reg)  # one init per shape: each lives in the package of its payload's types (gen/gk_split.py)
         for name, (ts, ds) in sorted(self.tuples.items()):
             self.add(f"type {name} struct {{", *[f"\tV{n} {t}" for n, t in enumerate(ts)], "}", "")
         for name, rt in sorted(self.handles.items()):
@@ -1172,7 +1183,7 @@ class Go:
             lines = [f"func put{E}(o *tape, v {E}) {{", "\tswitch x := v.(type) {" if puts else "\tswitch v.(type) {"]
             for V, body in puts:
                 lines += [f"\tcase {V}:", "\t\t_ = x"] + ["\t\t" + b for b in body]
-            lines += ["\tdefault:", f"\t\tstop(\"a nil or unknown {E} was given to a builder: give one of its variants (gk.{E}...)\")", "\t}", "}", ""]
+            lines += ["\tdefault:", f"\t\tstop(\"a nil or unknown gk.{E} was given to a builder: give one of its variants (gk.{E}...)\")", "\t}", "}", ""]
             self.add(*lines)
 
     def into(self, rt, s):

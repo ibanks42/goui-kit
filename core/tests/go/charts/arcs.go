@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
 )
 
 type Visit struct {
@@ -26,8 +27,8 @@ func init() {
 
 func pie(a *App, cx *gk.Cx) {
 	rows := []Visit{{"jan", 10, gk.Some(1.0)}, {"feb", 30, gk.Option[float64]{}}, {"mar", 20, gk.Some(2.0)}}
-	p := gk.NewPie(cx).Value("Visits").Build()
-	arcs := p.Arcs(cx, gk.NewData(rows))
+	p := chart.NewPie(cx).Value("Visits").Build()
+	arcs := p.Arcs(cx, chart.NewData(rows))
 	var total float32
 	for _, x := range arcs {
 		total += x.EndAngle - x.StartAngle
@@ -36,8 +37,8 @@ func pie(a *App, cx *gk.Cx) {
 		arcs[0].Value, arcs[1].Value, arcs[2].Value)
 	fmt.Printf("overlay-charts pie sweep=%.4f order=%d,%d,%d\n", total, arcs[0].Index, arcs[1].Index, arcs[2].Index)
 	// a gap (an Option without a value) is no slice: the pie of the gap column has two arcs
-	g := gk.NewPie(cx).Value("Gap").StartAngle(0).EndAngle(3.14159265).PadAngle(0).Build()
-	ga := g.Arcs(cx, gk.NewData(rows))
+	g := chart.NewPie(cx).Value("Gap").StartAngle(0).EndAngle(3.14159265).PadAngle(0).Build()
+	ga := g.Arcs(cx, chart.NewData(rows))
 	end := float32(0)
 	if len(ga) > 0 {
 		end = ga[len(ga)-1].EndAngle
@@ -51,13 +52,13 @@ func pie(a *App, cx *gk.Cx) {
 func stack(a *App, cx *gk.Cx) {
 	rows := []Fruit{{"jan", 1, 2}, {"feb", 3, 4}}
 	keys := []string{"Apples", "Pears"}
-	st := gk.NewStack(cx).Data(gk.NewData(rows)).Keys(keys).Value("").Build()
+	st := chart.NewStack(cx).Data(chart.NewData(rows)).Keys(keys).Value("").Build()
 	series := st.Series(cx)
 	fmt.Printf("overlay-charts stack series=%d keys=%s,%s\n", len(series), series[0].Key, series[1].Key)
 	p := series[1].Points
 	fmt.Printf("overlay-charts stack pears jan=%v..%v feb=%v..%v rows=%d,%d\n", p[0].Y0, p[0].Y1, p[1].Y0, p[1].Y1, p[0].Row, p[1].Row)
 	// a named column: every key reads it
-	t := gk.NewStack(cx).Data(gk.NewData(rows)).Keys(keys).Value("Apples").Build()
+	t := chart.NewStack(cx).Data(chart.NewData(rows)).Keys(keys).Value("Apples").Build()
 	q := t.Series(cx)[1].Points
 	fmt.Printf("overlay-charts stack named feb=%v..%v\n", q[1].Y0, q[1].Y1)
 	fmt.Println("overlay-charts done mode=stack")

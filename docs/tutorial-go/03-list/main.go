@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -16,28 +18,28 @@ type Item struct {
 
 type App struct {
 	items []Item
-	list  gk.ListState // kit state: it lives in the library; the app keeps the handle
+	list  table.ListState // kit state: it lives in the library; the app keeps the handle
 }
 
 func (a *App) init(cx *gk.Cx) {
-	a.list = gk.NewListState(cx, gk.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
+	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.items = append(a.items, Item{"Milk", 2}, Item{"Bread", 1}, Item{"Apples", 6})
 	gk.Refresh(cx)
 }
 
-func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	it := a.items[at.Row]
-	return gk.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
-		Child(gk.Div(s.Flex1).Child(gk.Label(it.Name))).
-		Child(gk.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))))
+	return table.ListItem(gk.Key("item", at.Row)).Child(gk.HFlex(s.WFull, s.Gap2, s.ItemsCenter).
+		Child(gk.Div(s.Flex1).Child(kit.Label(it.Name))).
+		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))))
 }
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
-		Child(gk.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(gk.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
-		Child(gk.Div(s.Flex1, s.MinH0).Child(gk.List(a.list))).
-		Child(gk.Label(fmt.Sprintf("%d items", len(a.items)), s.TextSm).TextColor(theme.MutedForeground))
+		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.list))).
+		Child(kit.Label(fmt.Sprintf("%d items", len(a.items)), s.TextSm).TextColor(theme.MutedForeground))
 }
 
 func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {

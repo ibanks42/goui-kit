@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -67,9 +68,9 @@ func resetDark(cx *gk.Cx) {
 // new value, which writes the cell; the page reads it while it draws; the app's fragment is drawn and
 // its handler runs (and sees the cell written).
 func settingsPage(a *App, cx *gk.Cx) (gk.Element, bool) {
-	sw := gk.NewSettingFieldBoolSwitch(cells.dark, setDark).OnReset(cells.dirty, resetDark)
+	sw := kit.NewSettingFieldBoolSwitch(cells.dark, setDark).OnReset(cells.dirty, resetDark)
 	frag := gk.Div().W(gk.Px(200)).H(gk.Px(40)).ID("frag").OnClick(fragClick).Child(gk.Text("fragment"))
-	group := gk.NewSettingGroup().Title("Look").Item(gk.NewSettingItem("Dark", sw)).Item(gk.NewSettingItemRender(frag))
-	return gk.Div(s.SizeFull).Child(gk.Settings("s").SidebarSizeRange([2]float32{100, 300}).
-		Page(gk.NewSettingPage("General").Group(group))), true
+	group := kit.NewSettingGroup().Title("Look").Item(kit.NewSettingItem("Dark", sw)).Item(kit.NewSettingItemRender(frag))
+	return gk.Div(s.SizeFull).Child(kit.Settings("s").SidebarSizeRange([2]float32{100, 300}).
+		Page(kit.NewSettingPage("General").Group(group))), true
 }

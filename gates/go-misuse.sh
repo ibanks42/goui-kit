@@ -74,7 +74,7 @@ NEG_BIN=misuse_rows
 run table-freed 2 'a view shows a row source through a handle that cannot be used'
 run row-reenter 2 'a view function may not write: it only describes \(gk.Release\)'
 run row-handler 0 'gk-neg row-handler clicked text="row 0 of a list"'
-run huge-count 2 'gk.NewTableSource was given 3000000000 rows of 2 columns; a table holds at most'
+run huge-count 2 'table.NewSource was given 3000000000 rows of 2 columns; a table holds at most'
 run input-release 2 'a view shows a .*InputBaseState<.*InputMode> through a handle that cannot be used'
 # The data protocol (examples/go/misuse_data). A column
 # is an exported field, named as the field is (Month, Desktop).
@@ -94,7 +94,7 @@ run built-freed 2 'a view shows a Dialog \(the view gk.NewBuilt made\) through a
 run built-view 2 'gk.NewBuilt in a view function'
 run built-none 2 'no view given: make it with gk.NewBuilt'
 run dock-node 2 'node id 424242 was never handed out by the dock'
-run dock-register 2 'gk.RegisterPanel in a view function'
+run dock-register 2 'dock.RegisterPanel in a view function'
 # The values family (examples/go/misuse_values).
 NEG_BIN=misuse_values
 run val-ok 0 'gk-neg done mode=val-ok drawn=[0-9]* clicks=2'
@@ -157,18 +157,18 @@ compile() { # case pattern
 compile handler_type 'cannot use func\(cx \*gk.Cx, e gk.ClickEvent\) \{.*\} .* as func\(cx \*gk.Cx, e bool\) value'
 compile not_element 'cannot use 42 .* as gk.Element value'
 compile token_color 'cannot use s.Gap2 .* as gk.Color value'
-compile el_types 'cannot use gk.Button\("b"\) .* as gk.LabelEl value'
+compile el_types 'cannot use kit.Button\("b"\) .* as kit.LabelEl value'
 compile no_method 'OnClick undefined'
 compile value_child 'cannot use gk.NewStyleRefinementDefault\(\) .* as gk.Element value'
-compile effect_target 'gk.Text\("x"\) .* does not implement gk.AnimatableElement'
+compile effect_target 'gk.Text\("x"\) .* does not implement (gk|rt).AnimatableElement'
 compile shortcut_type 'does not satisfy gk.ShortcutHandler'
 # The port round (PROTOCOLS.md 11.38): .Bg takes a gk.Fill (a colour or a gradient); a gradient fits
 # nowhere a single colour goes.
-compile fill_token 'cannot use s.Gap2 .* as gk.Fill value.*does not implement gk.Fill'
+compile fill_token 'cannot use s.Gap2 .* as gk.Fill value.*does not implement (gk|rt).Fill'
 compile gradient_color 'cannot use g .* as gk.Color value'
 # Lent text assigned to a string: impossible in Go, InputState.Value returns a string (a copy),
 # so keeping it is correct (the keep mode above).
-compile built_root 'cannot use gk.NewBuilt\(cx, .*\) .*gk.Built\[gk.LabelEl\].* as gk.Built\[gk.DialogEl\] value'
+compile built_root 'cannot use gk.NewBuilt\(cx, .*\) .*gk.Built\[kit.LabelEl\].* as gk.Built\[overlay.DialogEl\] value'
 compile action_forged 'cannot refer to unexported field id in struct literal of type gk.Action'
 # No display and no script: GPUI would wait without a word; gk.Run says so (exit 1).
 total=$((total + 1))

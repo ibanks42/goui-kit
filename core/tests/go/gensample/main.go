@@ -11,7 +11,15 @@ import (
 	"time"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/base"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/dock"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/motion"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
+	"gpuikit.dev/gk/table"
 )
 
 type App struct {
@@ -33,50 +41,50 @@ type sampleRow struct {
 var sampleRows = []sampleRow{{"a", 1, gk.Some(2.0), gk.Color{}}, {"b", 3, gk.Option[float64]{}, gk.Color{}}}
 
 // Handlers that do nothing, one per handler shape a builder takes.
-func noop1(cx *gk.Cx, e gk.ClickEvent)                    {}
-func noop3(cx *gk.Cx)                                     {}
-func noop4(cx *gk.Cx, e bool)                             {}
-func noop5(cx *gk.Cx, e int)                              {}
-func noop6(cx *gk.Cx, e string)                           {}
-func noop7(cx *gk.Cx, e gk.KeyEvent)                      {}
-func noop8(cx *gk.Cx, e gk.ClickEvent) bool               { return false }
-func noop9(cx *gk.Cx, e gk.MouseEvent)                    {}
-func noop10(cx *gk.Cx, e float64)                         {}
-func noop20(cx *gk.Cx, e gk.Action)                       {}
-func noop64(cx *gk.Cx, e gk.Event64)                      {}
-func noop65(cx *gk.Cx, e gk.Event65)                      {}
-func noop66(cx *gk.Cx, e gk.FileDropEvent)                {}
-func noop67(cx *gk.Cx, e gk.Event67)                      {}
-func noop68(cx *gk.Cx, e gk.StepAction)                   {}
-func noop69(cx *gk.Cx, e gk.Event69)                      {}
-func noop70(cx *gk.Cx, e gk.Event70)                      {}
-func noop71(cx *gk.Cx, e []bool)                          {}
-func noop72(cx *gk.Cx, e []int)                           {}
-func noop73(cx *gk.Cx, e []gk.Bounds)                     {}
-func noop74(cx *gk.Cx, e gk.BackGestureEvent)             {}
-func noop75(cx *gk.Cx, e gk.Bounds)                       {}
-func noop76(cx *gk.Cx, e gk.ClipboardItem) bool           { return false }
-func noop77(cx *gk.Cx, e gk.ModifiersChangedEvent)        {}
-func noop78(cx *gk.Cx, e gk.MouseExitEvent)               {}
-func noop79(cx *gk.Cx, e gk.MousePressureEvent)           {}
-func noop80(cx *gk.Cx, e gk.PinchEvent)                   {}
-func noop81(cx *gk.Cx, e gk.ScrollEvent)                  {}
-func noop82(cx *gk.Cx, e gk.BaseIndexPath)                {}
-func noop83(cx *gk.Cx, e gk.Event83)                      {}
-func noop104(cx *gk.Cx) string                            { return "" }
-func noop105(cx *gk.Cx, e gk.TaskToggleEvent)             {}
-func noop106(cx *gk.Cx, e gk.InlineTokenClickEvent)       {}
-func noop107(cx *gk.Cx, e gk.InlineTokenHoverEvent)       {}
-func noop108(cx *gk.Cx, e gk.Event108)                    {}
-func noop109(cx *gk.Cx, e gk.Option[gk.DiffLinePosition]) {}
-func noop113(cx *gk.Cx, e gk.DiffLineRangeRead)           {}
-func noop115(cx *gk.Cx, e gk.ResizableState)              {}
-func noop116(cx *gk.Cx, e gk.DragValue)                   {}
-func noop117(cx *gk.Cx, e gk.Event117)                    {}
-func noop118(cx *gk.Cx, e gk.ResolvedPosition)            {}
-func noop119(cx *gk.Cx, e gk.DragMoveEvent)               {}
-func noop121(cx *gk.Cx, e gk.Event121) bool               { return false }
-func noop122(cx *gk.Cx, e gk.Event122)                    {}
+func noop1(cx *gk.Cx, e gk.ClickEvent)                        {}
+func noop3(cx *gk.Cx)                                         {}
+func noop4(cx *gk.Cx, e bool)                                 {}
+func noop5(cx *gk.Cx, e int)                                  {}
+func noop6(cx *gk.Cx, e string)                               {}
+func noop7(cx *gk.Cx, e gk.KeyEvent)                          {}
+func noop8(cx *gk.Cx, e gk.ClickEvent) bool                   { return false }
+func noop9(cx *gk.Cx, e gk.MouseEvent)                        {}
+func noop10(cx *gk.Cx, e float64)                             {}
+func noop20(cx *gk.Cx, e gk.Action)                           {}
+func noop64(cx *gk.Cx, e overlay.Event64)                     {}
+func noop65(cx *gk.Cx, e gk.Event65)                          {}
+func noop66(cx *gk.Cx, e gk.FileDropEvent)                    {}
+func noop67(cx *gk.Cx, e base.Event67)                        {}
+func noop68(cx *gk.Cx, e editor.StepAction)                   {}
+func noop69(cx *gk.Cx, e gk.Event69)                          {}
+func noop70(cx *gk.Cx, e gk.Event70)                          {}
+func noop71(cx *gk.Cx, e []bool)                              {}
+func noop72(cx *gk.Cx, e []int)                               {}
+func noop73(cx *gk.Cx, e []gk.Bounds)                         {}
+func noop74(cx *gk.Cx, e gk.BackGestureEvent)                 {}
+func noop75(cx *gk.Cx, e gk.Bounds)                           {}
+func noop76(cx *gk.Cx, e gk.ClipboardItem) bool               { return false }
+func noop77(cx *gk.Cx, e gk.ModifiersChangedEvent)            {}
+func noop78(cx *gk.Cx, e gk.MouseExitEvent)                   {}
+func noop79(cx *gk.Cx, e gk.MousePressureEvent)               {}
+func noop80(cx *gk.Cx, e gk.PinchEvent)                       {}
+func noop81(cx *gk.Cx, e gk.ScrollEvent)                      {}
+func noop82(cx *gk.Cx, e table.BaseIndexPath)                 {}
+func noop83(cx *gk.Cx, e gk.Event83)                          {}
+func noop104(cx *gk.Cx) string                                { return "" }
+func noop105(cx *gk.Cx, e editor.TaskToggleEvent)             {}
+func noop106(cx *gk.Cx, e editor.InlineTokenClickEvent)       {}
+func noop107(cx *gk.Cx, e editor.InlineTokenHoverEvent)       {}
+func noop108(cx *gk.Cx, e editor.Event108)                    {}
+func noop109(cx *gk.Cx, e gk.Option[editor.DiffLinePosition]) {}
+func noop113(cx *gk.Cx, e editor.DiffLineRangeRead)           {}
+func noop115(cx *gk.Cx, e base.ResizableState)                {}
+func noop116(cx *gk.Cx, e gk.DragValue)                       {}
+func noop117(cx *gk.Cx, e overlay.Event117)                   {}
+func noop118(cx *gk.Cx, e overlay.ResolvedPosition)           {}
+func noop119(cx *gk.Cx, e gk.DragMoveEvent)                   {}
+func noop121(cx *gk.Cx, e editor.Event121) bool               { return false }
+func noop122(cx *gk.Cx, e editor.Event122)                    {}
 
 func sGpuiDiv() {
 	_ = gk.HFlex()
@@ -376,7 +384,7 @@ func sGpuiImg() {
 
 func sGpuiStatefulDiv() {
 	_ = gk.HFlex().ID("id")
-	_ = gk.GridDragHandle(gk.GridLayoutState{}, "s")
+	_ = base.GridDragHandle(base.GridLayoutState{}, "s")
 	e := gk.HFlex().ID("id")
 	e = e.AspectRatio(1.5)
 	e = e.Bg(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -755,8 +763,8 @@ func sGpuiSVG() {
 }
 
 func sBaseAccordion() {
-	_ = gk.BaseAccordion("id")
-	e := gk.BaseAccordion("id")
+	_ = base.Accordion("id")
+	e := base.Accordion("id")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -956,8 +964,8 @@ func sBaseAccordion() {
 }
 
 func sBaseAccordionHeader() {
-	_ = gk.AccordionHeader(gk.AccordionTrigger("id"))
-	e := gk.AccordionHeader(gk.AccordionTrigger("id"))
+	_ = base.AccordionHeader(base.AccordionTrigger("id"))
+	e := base.AccordionHeader(base.AccordionTrigger("id"))
 	e = e.ID("id")
 	e = e.Level(3)
 	e = e.KeepTextSelection("id")
@@ -1084,12 +1092,12 @@ func sBaseAccordionHeader() {
 }
 
 func sBaseAccordionItem() {
-	_ = gk.BaseAccordionItem()
-	e := gk.BaseAccordionItem()
+	_ = base.AccordionItem()
+	e := base.AccordionItem()
 	e = e.Disabled(true)
-	e = e.Header(gk.AccordionHeader(gk.AccordionTrigger("id")))
+	e = e.Header(base.AccordionHeader(base.AccordionTrigger("id")))
 	e = e.Open(true)
-	e = e.Panel(gk.AccordionPanel())
+	e = e.Panel(base.AccordionPanel())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -1214,8 +1222,8 @@ func sBaseAccordionItem() {
 }
 
 func sBaseAccordionPanel() {
-	_ = gk.AccordionPanel()
-	e := gk.AccordionPanel()
+	_ = base.AccordionPanel()
+	e := base.AccordionPanel()
 	e = e.ID("id")
 	e = e.KeepMounted(true)
 	e = e.Open(true)
@@ -1343,8 +1351,8 @@ func sBaseAccordionPanel() {
 }
 
 func sBaseAccordionTrigger() {
-	_ = gk.AccordionTrigger("id")
-	e := gk.AccordionTrigger("id")
+	_ = base.AccordionTrigger("id")
+	e := base.AccordionTrigger("id")
 	e = e.Disabled(true)
 	e = e.OnChange(noop65)
 	e = e.Open(true)
@@ -1547,12 +1555,12 @@ func sBaseAccordionTrigger() {
 }
 
 func sBaseAlertDialog() {
-	_ = gk.BaseAlertDialog()
-	e := gk.BaseAlertDialog()
+	_ = overlay.BaseAlertDialog()
+	e := overlay.BaseAlertDialog()
 	e = e.Backdrop(gk.Div())
 	e = e.CloseOnEscape(true)
 	e = e.DismissBelowY(4)
-	e = e.Handle(gk.DialogHandle{})
+	e = e.Handle(overlay.DialogHandle{})
 	e = e.OnCancel(noop8)
 	e = e.OnClose(noop1)
 	e = e.OnOk(noop8)
@@ -1683,9 +1691,9 @@ func sBaseAlertDialog() {
 }
 
 func sBaseAlertDialogAction() {
-	_ = gk.AlertDialogActionDefault()
-	_ = gk.AlertDialogAction()
-	e := gk.AlertDialogActionDefault()
+	_ = overlay.AlertDialogActionDefault()
+	_ = overlay.AlertDialogAction()
+	e := overlay.AlertDialogActionDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -1810,9 +1818,9 @@ func sBaseAlertDialogAction() {
 }
 
 func sBaseAlertDialogBackdrop() {
-	_ = gk.AlertDialogBackdropDefault()
-	_ = gk.AlertDialogBackdrop()
-	e := gk.AlertDialogBackdropDefault()
+	_ = overlay.AlertDialogBackdropDefault()
+	_ = overlay.AlertDialogBackdrop()
+	e := overlay.AlertDialogBackdropDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -1937,9 +1945,9 @@ func sBaseAlertDialogBackdrop() {
 }
 
 func sBaseAlertDialogCancel() {
-	_ = gk.AlertDialogCancelDefault()
-	_ = gk.AlertDialogCancel()
-	e := gk.AlertDialogCancelDefault()
+	_ = overlay.AlertDialogCancelDefault()
+	_ = overlay.AlertDialogCancel()
+	e := overlay.AlertDialogCancelDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2064,9 +2072,9 @@ func sBaseAlertDialogCancel() {
 }
 
 func sBaseAlertDialogClose() {
-	_ = gk.AlertDialogCloseDefault()
-	_ = gk.AlertDialogClose()
-	e := gk.AlertDialogCloseDefault()
+	_ = overlay.AlertDialogCloseDefault()
+	_ = overlay.AlertDialogClose()
+	e := overlay.AlertDialogCloseDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2191,9 +2199,9 @@ func sBaseAlertDialogClose() {
 }
 
 func sBaseAlertDialogDescription() {
-	_ = gk.AlertDialogDescriptionDefault()
-	_ = gk.AlertDialogDescription()
-	e := gk.AlertDialogDescriptionDefault()
+	_ = overlay.AlertDialogDescriptionDefault()
+	_ = overlay.AlertDialogDescription()
+	e := overlay.AlertDialogDescriptionDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2318,9 +2326,9 @@ func sBaseAlertDialogDescription() {
 }
 
 func sBaseAlertDialogPopup() {
-	_ = gk.AlertDialogPopupDefault()
-	_ = gk.AlertDialogPopup()
-	e := gk.AlertDialogPopupDefault()
+	_ = overlay.AlertDialogPopupDefault()
+	_ = overlay.AlertDialogPopup()
+	e := overlay.AlertDialogPopupDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2445,9 +2453,9 @@ func sBaseAlertDialogPopup() {
 }
 
 func sBaseAlertDialogTitle() {
-	_ = gk.AlertDialogTitleDefault()
-	_ = gk.AlertDialogTitle()
-	e := gk.AlertDialogTitleDefault()
+	_ = overlay.AlertDialogTitleDefault()
+	_ = overlay.AlertDialogTitle()
+	e := overlay.AlertDialogTitleDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2572,19 +2580,19 @@ func sBaseAlertDialogTitle() {
 }
 
 func sBaseAlertDialogTrigger() {
-	_ = gk.AlertDialogTrigger(gk.Div())
-	e := gk.AlertDialogTrigger(gk.Div())
-	e = e.Handle(gk.DialogHandle{})
+	_ = overlay.AlertDialogTrigger(gk.Div())
+	e := overlay.AlertDialogTrigger(gk.Div())
+	e = e.Handle(overlay.DialogHandle{})
 	e = e.OnOpen(noop3)
 	_ = e
 }
 
 func sBaseAvatar() {
-	_ = gk.BaseAvatarDefault()
-	_ = gk.BaseAvatar()
-	e := gk.BaseAvatarDefault()
-	e = e.Fallback(gk.AvatarFallbackDefault())
-	e = e.Image(gk.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}}))
+	_ = base.AvatarDefault()
+	_ = base.Avatar()
+	e := base.AvatarDefault()
+	e = e.Fallback(base.AvatarFallbackDefault())
+	e = e.Image(base.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}}))
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
 	e = e.FlexRowDir()
@@ -2746,9 +2754,9 @@ func sBaseAvatar() {
 }
 
 func sBaseAvatarFallback() {
-	_ = gk.AvatarFallbackDefault()
-	_ = gk.AvatarFallback()
-	e := gk.AvatarFallbackDefault()
+	_ = base.AvatarFallbackDefault()
+	_ = base.AvatarFallback()
+	e := base.AvatarFallbackDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -2873,8 +2881,8 @@ func sBaseAvatarFallback() {
 }
 
 func sBaseAvatarImage() {
-	_ = gk.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
-	e := gk.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
+	_ = base.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
+	e := base.AvatarImage(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
 	e = e.FlexRowDir()
@@ -3036,15 +3044,15 @@ func sBaseAvatarImage() {
 }
 
 func sBaseButton() {
-	_ = gk.BaseButton("id")
-	e := gk.BaseButton("id")
+	_ = base.Button("id")
+	e := base.Button("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.Focusable(true)
 	e = e.OnClick(noop1)
 	e = e.Role(gk.RoleOverrideImplicit)
 	e = e.Selected(true)
-	e = e.Styles(gk.NewButtonStylesDefault())
+	e = e.Styles(base.NewButtonStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.TrackFocus(gk.FocusHandle{})
@@ -3243,16 +3251,16 @@ func sBaseButton() {
 }
 
 func sBaseButtonStyles() {
-	_ = gk.NewButtonStylesDefault()
-	e := gk.NewButtonStylesDefault()
+	_ = base.NewButtonStylesDefault()
+	e := base.NewButtonStylesDefault()
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Selected(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseCalendar() {
-	_ = gk.BaseCalendar("id", gk.CalendarState{})
-	e := gk.BaseCalendar("id", gk.CalendarState{})
+	_ = base.Calendar("id", base.CalendarState{})
+	e := base.Calendar("id", base.CalendarState{})
 	e = e.NumberOfMonths(3)
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
@@ -3374,16 +3382,16 @@ func sBaseCalendar() {
 }
 
 func sBaseCheckbox() {
-	_ = gk.BaseCheckbox("id")
-	e := gk.BaseCheckbox("id")
+	_ = base.Checkbox("id")
+	e := base.Checkbox("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Disabled(true)
 	e = e.Indeterminate(true)
 	e = e.OnChange(noop67)
 	e = e.Role(gk.RoleOverrideImplicit)
-	e = e.State(gk.CheckboxStateUnchecked)
-	e = e.Styles(gk.NewCheckboxStylesDefault())
+	e = e.State(base.CheckboxStateUnchecked)
+	e = e.Styles(base.NewCheckboxStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.TrackFocus(gk.FocusHandle{})
@@ -3582,13 +3590,13 @@ func sBaseCheckbox() {
 }
 
 func sBaseCheckboxIndicator() {
-	_ = gk.CheckboxIndicatorDefault()
-	_ = gk.CheckboxIndicator()
-	e := gk.CheckboxIndicatorDefault()
+	_ = base.CheckboxIndicatorDefault()
+	_ = base.CheckboxIndicator()
+	e := base.CheckboxIndicatorDefault()
 	e = e.Checked(true)
 	e = e.Disabled(true)
-	e = e.State(gk.CheckboxStateUnchecked)
-	e = e.Styles(gk.NewCheckboxIndicatorStylesDefault())
+	e = e.State(base.CheckboxStateUnchecked)
+	e = e.Styles(base.NewCheckboxIndicatorStylesDefault())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -3713,8 +3721,8 @@ func sBaseCheckboxIndicator() {
 }
 
 func sBaseCheckboxIndicatorStyles() {
-	_ = gk.NewCheckboxIndicatorStylesDefault()
-	e := gk.NewCheckboxIndicatorStylesDefault()
+	_ = base.NewCheckboxIndicatorStylesDefault()
+	e := base.NewCheckboxIndicatorStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Indeterminate(gk.NewStateStyleDefault())
@@ -3722,8 +3730,8 @@ func sBaseCheckboxIndicatorStyles() {
 }
 
 func sBaseCheckboxStyles() {
-	_ = gk.NewCheckboxStylesDefault()
-	e := gk.NewCheckboxStylesDefault()
+	_ = base.NewCheckboxStylesDefault()
+	e := base.NewCheckboxStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Indeterminate(gk.NewStateStyleDefault())
@@ -3731,9 +3739,9 @@ func sBaseCheckboxStyles() {
 }
 
 func sBaseCollapsible() {
-	_ = gk.BaseCollapsibleDefault()
-	_ = gk.BaseCollapsible()
-	e := gk.BaseCollapsibleDefault()
+	_ = base.CollapsibleDefault()
+	_ = base.Collapsible()
+	e := base.CollapsibleDefault()
 	e = e.Content(gk.Div())
 	e = e.Open(true)
 	e = e.Reveal("id", 1.5)
@@ -3861,8 +3869,8 @@ func sBaseCollapsible() {
 }
 
 func sBaseColorPicker() {
-	_ = gk.BaseColorPicker("id")
-	e := gk.BaseColorPicker("id")
+	_ = base.ColorPicker("id")
+	e := base.ColorPicker("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.OnOpenChange(noop4)
@@ -4066,8 +4074,8 @@ func sBaseColorPicker() {
 }
 
 func sBaseColorSwatch() {
-	_ = gk.ColorSwatch("id", gk.HSLA(0.5, 0.25, 0.75, 1))
-	e := gk.ColorSwatch("id", gk.HSLA(0.5, 0.25, 0.75, 1))
+	_ = base.ColorSwatch("id", gk.HSLA(0.5, 0.25, 0.75, 1))
+	e := base.ColorSwatch("id", gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.OnClick(noop70)
@@ -4270,8 +4278,8 @@ func sBaseColorSwatch() {
 }
 
 func sBaseCombobox() {
-	_ = gk.BaseCombobox("id")
-	e := gk.BaseCombobox("id")
+	_ = table.BaseCombobox("id")
+	e := table.BaseCombobox("id")
 	e = e.ContentFocusHandle(gk.FocusHandle{})
 	e = e.Disabled(true)
 	e = e.FocusHandle(gk.FocusHandle{})
@@ -4403,8 +4411,8 @@ func sBaseCombobox() {
 }
 
 func sBaseDatePicker() {
-	_ = gk.BaseDatePicker("id", gk.FocusHandle{})
-	e := gk.BaseDatePicker("id", gk.FocusHandle{})
+	_ = base.DatePicker("id", gk.FocusHandle{})
+	e := base.DatePicker("id", gk.FocusHandle{})
 	e = e.Disabled(true)
 	e = e.OnOpenChange(noop4)
 	e = e.Open(true)
@@ -4607,20 +4615,20 @@ func sBaseDatePicker() {
 }
 
 func sBaseDecrement() {
-	_ = gk.NewDecrementDefault()
-	e := gk.NewDecrementDefault()
+	_ = editor.NewDecrementDefault()
+	e := editor.NewDecrementDefault()
 	_ = e
 }
 
 func sBaseDialog() {
-	_ = gk.BaseDialog()
-	e := gk.BaseDialog()
+	_ = overlay.BaseDialog()
+	e := overlay.BaseDialog()
 	e = e.AccessibilityLabel("s")
 	e = e.Backdrop(gk.Div())
 	e = e.CloseOnBackdropPress(true)
 	e = e.CloseOnEscape(true)
 	e = e.DismissBelowY(4)
-	e = e.Handle(gk.DialogHandle{})
+	e = e.Handle(overlay.DialogHandle{})
 	e = e.OnCancel(noop8)
 	e = e.OnClose(noop1)
 	e = e.OnOk(noop8)
@@ -4751,9 +4759,9 @@ func sBaseDialog() {
 }
 
 func sBaseDialogBackdrop() {
-	_ = gk.DialogBackdropDefault()
-	_ = gk.DialogBackdrop()
-	e := gk.DialogBackdropDefault()
+	_ = overlay.DialogBackdropDefault()
+	_ = overlay.DialogBackdrop()
+	e := overlay.DialogBackdropDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -4878,10 +4886,10 @@ func sBaseDialogBackdrop() {
 }
 
 func sBaseDialogClose() {
-	_ = gk.BaseDialogCloseDefault()
-	_ = gk.BaseDialogClose()
-	e := gk.BaseDialogCloseDefault()
-	e = e.Trigger(gk.BaseButton("id"))
+	_ = overlay.BaseDialogCloseDefault()
+	_ = overlay.BaseDialogClose()
+	e := overlay.BaseDialogCloseDefault()
+	e = e.Trigger(base.Button("id"))
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -5006,9 +5014,9 @@ func sBaseDialogClose() {
 }
 
 func sBaseDialogDescription() {
-	_ = gk.BaseDialogDescriptionDefault()
-	_ = gk.BaseDialogDescription()
-	e := gk.BaseDialogDescriptionDefault()
+	_ = overlay.BaseDialogDescriptionDefault()
+	_ = overlay.BaseDialogDescription()
+	e := overlay.BaseDialogDescriptionDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -5133,9 +5141,9 @@ func sBaseDialogDescription() {
 }
 
 func sBaseDialogPopup() {
-	_ = gk.DialogPopupDefault()
-	_ = gk.DialogPopup()
-	e := gk.DialogPopupDefault()
+	_ = overlay.DialogPopupDefault()
+	_ = overlay.DialogPopup()
+	e := overlay.DialogPopupDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -5260,9 +5268,9 @@ func sBaseDialogPopup() {
 }
 
 func sBaseDialogTitle() {
-	_ = gk.BaseDialogTitleDefault()
-	_ = gk.BaseDialogTitle()
-	e := gk.BaseDialogTitleDefault()
+	_ = overlay.BaseDialogTitleDefault()
+	_ = overlay.BaseDialogTitle()
+	e := overlay.BaseDialogTitleDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -5387,22 +5395,22 @@ func sBaseDialogTitle() {
 }
 
 func sBaseDialogTrigger() {
-	_ = gk.DialogTrigger(gk.Div())
-	e := gk.DialogTrigger(gk.Div())
-	e = e.Handle(gk.DialogHandle{})
+	_ = overlay.DialogTrigger(gk.Div())
+	e := overlay.DialogTrigger(gk.Div())
+	e = e.Handle(overlay.DialogHandle{})
 	e = e.OnOpen(noop3)
 	_ = e
 }
 
 func sBaseEditor() {
-	_ = gk.BaseEditor(gk.EditorState{})
-	e := gk.BaseEditor(gk.EditorState{})
+	_ = editor.BaseEditor(editor.State{})
+	e := editor.BaseEditor(editor.State{})
 	_ = e
 }
 
 func sBaseGridArea() {
-	_ = gk.NewGridArea("s")
-	e := gk.NewGridArea("s")
+	_ = base.NewGridArea("s")
+	e := base.NewGridArea("s")
 	e = e.Col(3)
 	e = e.ColSpan(3)
 	e = e.Locked(true)
@@ -5414,8 +5422,8 @@ func sBaseGridArea() {
 }
 
 func sBaseGridItem() {
-	_ = gk.NewGridItem("s")
-	e := gk.NewGridItem("s")
+	_ = base.NewGridItem("s")
+	e := base.NewGridItem("s")
 	e = e.AccessibilityLabel("s")
 	e = e.DragHandleOnly(true)
 	e = e.KeepTextSelection("id")
@@ -5542,20 +5550,20 @@ func sBaseGridItem() {
 }
 
 func sBaseGridLayout() {
-	_ = gk.GridLayout("id", gk.GridLayoutState{})
-	_ = gk.KitGridLayout("id", gk.GridLayoutState{})
-	e := gk.GridLayout("id", gk.GridLayoutState{})
+	_ = base.GridLayout("id", base.GridLayoutState{})
+	_ = base.KitGridLayout("id", base.GridLayoutState{})
+	e := base.GridLayout("id", base.GridLayoutState{})
 	e = e.AccessibilityLabel("s")
 	e = e.DraggingItem(gk.NewStateStyleDefault())
 	e = e.FocusedItem(gk.NewStateStyleDefault())
-	e = e.Item(gk.NewGridItem("s"))
-	e = e.Items([]gk.GridItem{gk.NewGridItem("s")})
+	e = e.Item(base.NewGridItem("s"))
+	e = e.Items([]base.GridItem{base.NewGridItem("s")})
 	e = e.Placeholder(gk.Div())
 	e = e.Reflow(3)
 	e = e.ResizeHandle(gk.Div())
 	e = e.RowHeight(1)
 	e = e.SelectedItem(gk.NewStateStyleDefault())
-	e = e.Transition(gk.NewTransition(250 * time.Millisecond))
+	e = e.Transition(motion.NewTransition(250 * time.Millisecond))
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
 	e = e.FlexRowDir()
@@ -5676,8 +5684,8 @@ func sBaseGridLayout() {
 }
 
 func sBaseHoverCard() {
-	_ = gk.BaseHoverCard("id")
-	e := gk.BaseHoverCard("id")
+	_ = overlay.BaseHoverCard("id")
+	e := overlay.BaseHoverCard("id")
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.CloseDelay(250 * time.Millisecond)
 	e = e.OnOpenChange(noop4)
@@ -5803,27 +5811,27 @@ func sBaseHoverCard() {
 }
 
 func sBaseIncrement() {
-	_ = gk.NewIncrementDefault()
-	e := gk.NewIncrementDefault()
+	_ = editor.NewIncrementDefault()
+	e := editor.NewIncrementDefault()
 	_ = e
 }
 
 func sBaseInput() {
-	_ = gk.BaseInput(gk.InputState{})
-	e := gk.BaseInput(gk.InputState{})
+	_ = editor.BaseInput(editor.InputState{})
+	e := editor.BaseInput(editor.InputState{})
 	e = e.OnTokenClick(noop106)
 	e = e.OnTokenHover(noop107)
 	_ = e
 }
 
 func sBaseInputBase() {
-	_ = gk.InputBase("id")
-	e := gk.InputBase("id")
+	_ = editor.InputBase("id")
+	e := editor.InputBase("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.Focused(true)
 	e = e.Role(gk.RoleOverrideImplicit)
-	e = e.Styles(gk.NewInputStylesDefault())
+	e = e.Styles(editor.NewInputStylesDefault())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -6022,22 +6030,22 @@ func sBaseInputBase() {
 }
 
 func sBaseInputStyles() {
-	_ = gk.NewInputStylesDefault()
-	e := gk.NewInputStylesDefault()
+	_ = editor.NewInputStylesDefault()
+	e := editor.NewInputStylesDefault()
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Focused(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseLink() {
-	_ = gk.BaseLink("id")
-	e := gk.BaseLink("id")
+	_ = base.Link("id")
+	e := base.Link("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.Href("s")
 	e = e.OnActivate(noop1)
 	e = e.OpenWith(noop83)
-	e = e.Styles(gk.NewLinkStylesDefault())
+	e = e.Styles(base.NewLinkStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.KeepTextSelection("id")
@@ -6237,21 +6245,21 @@ func sBaseLink() {
 }
 
 func sBaseLinkStyles() {
-	_ = gk.NewLinkStylesDefault()
-	e := gk.NewLinkStylesDefault()
+	_ = base.NewLinkStylesDefault()
+	e := base.NewLinkStylesDefault()
 	e = e.Disabled(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseListSettings() {
-	_ = gk.NewListSettingsDefault()
-	e := gk.NewListSettingsDefault()
+	_ = table.NewListSettingsDefault()
+	e := table.NewListSettingsDefault()
 	_ = e
 }
 
 func sBaseMarkdownExtensions() {
-	_ = gk.NewMarkdownExtensionsDefault()
-	e := gk.NewMarkdownExtensionsDefault()
+	_ = editor.NewMarkdownExtensionsDefault()
+	e := editor.NewMarkdownExtensionsDefault()
 	e = e.Frontmatter()
 	e = e.Mdx()
 	e = e.ParserRevision(3)
@@ -6260,15 +6268,15 @@ func sBaseMarkdownExtensions() {
 }
 
 func sBaseMotionReveal() {
-	_ = gk.MotionReveal("id", 1.5, gk.Div())
-	e := gk.MotionReveal("id", 1.5, gk.Div())
+	_ = motion.Reveal("id", 1.5, gk.Div())
+	e := motion.Reveal("id", 1.5, gk.Div())
 	_ = e
 }
 
 func sBaseNavStack() {
-	_ = gk.NavStack(gk.NavStackState{})
-	e := gk.NavStack(gk.NavStackState{})
-	e = e.Transition(gk.NewTransition(250 * time.Millisecond))
+	_ = base.NavStack(base.NavStackState{})
+	e := base.NavStack(base.NavStackState{})
+	e = e.Transition(motion.NewTransition(250 * time.Millisecond))
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
 	e = e.FlexRowDir()
@@ -6389,8 +6397,8 @@ func sBaseNavStack() {
 }
 
 func sBaseNumberInput() {
-	_ = gk.BaseNumberInput(gk.InputState{})
-	e := gk.BaseNumberInput(gk.InputState{})
+	_ = editor.BaseNumberInput(editor.InputState{})
+	e := editor.BaseNumberInput(editor.InputState{})
 	e = e.AccessibilityLabel("s")
 	e = e.ControlsRight()
 	e = e.Disabled(true)
@@ -6521,9 +6529,9 @@ func sBaseNumberInput() {
 }
 
 func sBaseNumberInputText() {
-	_ = gk.NumberInputTextDefault()
-	_ = gk.NumberInputText()
-	e := gk.NumberInputTextDefault()
+	_ = editor.NumberInputTextDefault()
+	_ = editor.NumberInputText()
+	e := editor.NumberInputTextDefault()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -6648,8 +6656,8 @@ func sBaseNumberInputText() {
 }
 
 func sBaseOtpInput() {
-	_ = gk.BaseOtpInput(gk.OtpState{})
-	e := gk.BaseOtpInput(gk.OtpState{})
+	_ = editor.BaseOtpInput(editor.OtpState{})
+	e := editor.BaseOtpInput(editor.OtpState{})
 	e = e.Disabled(true)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -6775,8 +6783,8 @@ func sBaseOtpInput() {
 }
 
 func sBasePagination() {
-	_ = gk.BasePagination("id", gk.NewPaginationState(3, 3))
-	e := gk.BasePagination("id", gk.NewPaginationState(3, 3))
+	_ = base.Pagination("id", base.NewPaginationState(3, 3))
+	e := base.Pagination("id", base.NewPaginationState(3, 3))
 	e = e.AccessibilityLabel("s")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -6977,8 +6985,8 @@ func sBasePagination() {
 }
 
 func sBasePaginationState() {
-	_ = gk.NewPaginationState(3, 3)
-	e := gk.NewPaginationState(3, 3)
+	_ = base.NewPaginationState(3, 3)
+	e := base.NewPaginationState(3, 3)
 	e = e.Disabled(true)
 	e = e.OnChange(noop5)
 	e = e.VisiblePages(3)
@@ -6986,12 +6994,12 @@ func sBasePaginationState() {
 }
 
 func sBasePlotMotion() {
-	_ = gk.NewPlotMotionDefault()
-	e := gk.NewPlotMotionDefault()
-	e = e.WithAppear(gk.NewTransition(250 * time.Millisecond))
-	e = e.WithEnter(gk.NewTransition(250 * time.Millisecond))
-	e = e.WithExit(gk.NewTransition(250 * time.Millisecond))
-	e = e.WithPointer(gk.NewSpring(250 * time.Millisecond))
+	_ = chart.NewPlotMotionDefault()
+	e := chart.NewPlotMotionDefault()
+	e = e.WithAppear(motion.NewTransition(250 * time.Millisecond))
+	e = e.WithEnter(motion.NewTransition(250 * time.Millisecond))
+	e = e.WithExit(motion.NewTransition(250 * time.Millisecond))
+	e = e.WithPointer(motion.NewSpring(250 * time.Millisecond))
 	_ = e
 }
 
@@ -6999,13 +7007,13 @@ func sBasePlotTheme() {
 	_ = gk.NewPlotThemeDefault()
 	_ = gk.NewPlotTheme()
 	e := gk.NewPlotThemeDefault()
-	e = e.WithMotion(gk.NewPlotMotionDefault())
+	e = e.WithMotion(chart.NewPlotMotionDefault())
 	_ = e
 }
 
 func sBasePopover() {
-	_ = gk.BasePopover("id")
-	e := gk.BasePopover("id")
+	_ = overlay.BasePopover("id")
+	e := overlay.BasePopover("id")
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.DefaultOpen(true)
 	e = e.MouseButton(gk.MouseButtonLeft)
@@ -7135,8 +7143,8 @@ func sBasePopover() {
 }
 
 func sBasePopup() {
-	_ = gk.Popup("id", gk.Div())
-	e := gk.Popup("id", gk.Div())
+	_ = overlay.Popup("id", gk.Div())
+	e := overlay.Popup("id", gk.Div())
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.Content(gk.Div())
 	e = e.Offset(4)
@@ -7336,10 +7344,10 @@ func sBasePopup() {
 }
 
 func sBasePositioner() {
-	_ = gk.PositionerCorner(gk.AnchorTopLeft, gk.GpuiPoint{X: 4, Y: 4})
-	_ = gk.PositionerSide(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
-	e := gk.PositionerSide(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
-	e = e.Align(gk.AlignStart)
+	_ = overlay.PositionerCorner(gk.AnchorTopLeft, gk.GpuiPoint{X: 4, Y: 4})
+	_ = overlay.PositionerSide(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
+	e := overlay.PositionerSide(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
+	e = e.Align(overlay.AlignStart)
 	e = e.Margin(4)
 	e = e.Occlude()
 	e = e.Offset(4)
@@ -7354,15 +7362,15 @@ func sBasePositioner() {
 }
 
 func sBasePresence() {
-	_ = gk.NewPresence("id", true)
-	e := gk.NewPresence("id", true)
-	e = e.Transition(gk.NewTransition(250 * time.Millisecond))
+	_ = motion.NewPresence("id", true)
+	e := motion.NewPresence("id", true)
+	e = e.Transition(motion.NewTransition(250 * time.Millisecond))
 	_ = e
 }
 
 func sBaseProgress() {
-	_ = gk.BaseProgress("id")
-	e := gk.BaseProgress("id")
+	_ = base.Progress("id")
+	e := base.Progress("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Indeterminate(true)
 	e = e.Value(1.5)
@@ -7565,8 +7573,8 @@ func sBaseProgress() {
 }
 
 func sBaseProgressIndicator() {
-	_ = gk.ProgressIndicator()
-	e := gk.ProgressIndicator()
+	_ = base.ProgressIndicator()
+	e := base.ProgressIndicator()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -7691,8 +7699,8 @@ func sBaseProgressIndicator() {
 }
 
 func sBaseProgressTrack() {
-	_ = gk.ProgressTrack()
-	e := gk.ProgressTrack()
+	_ = base.ProgressTrack()
+	e := base.ProgressTrack()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -7817,15 +7825,15 @@ func sBaseProgressTrack() {
 }
 
 func sBaseRadio() {
-	_ = gk.BaseRadio("id")
-	e := gk.BaseRadio("id")
+	_ = base.Radio("id")
+	e := base.Radio("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Disabled(true)
 	e = e.ID("id")
 	e = e.OnChange(noop65)
 	e = e.SetPosition(3, 3)
-	e = e.Styles(gk.NewRadioStylesDefault())
+	e = e.Styles(base.NewRadioStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.TrackFocus(gk.FocusHandle{})
@@ -8025,8 +8033,8 @@ func sBaseRadio() {
 }
 
 func sBaseRadioGroup() {
-	_ = gk.BaseRadioGroup("id")
-	e := gk.BaseRadioGroup("id")
+	_ = base.RadioGroup("id")
+	e := base.RadioGroup("id")
 	e = e.Axis(gk.AxisVertical)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -8227,16 +8235,16 @@ func sBaseRadioGroup() {
 }
 
 func sBaseRadioStyles() {
-	_ = gk.NewRadioStylesDefault()
-	e := gk.NewRadioStylesDefault()
+	_ = base.NewRadioStylesDefault()
+	e := base.NewRadioStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseResizablePanel() {
-	_ = gk.ResizablePanel()
-	e := gk.ResizablePanel()
+	_ = base.ResizablePanel()
+	e := base.ResizablePanel()
 	e = e.Fixed()
 	e = e.Size(4)
 	e = e.Visible(true)
@@ -8363,18 +8371,18 @@ func sBaseResizablePanel() {
 }
 
 func sBaseResizablePanelGroup() {
-	_ = gk.ResizablePanelGroup("id")
-	_ = gk.HResizable("id")
-	_ = gk.VResizable("id")
-	_ = gk.KitHResizable("id")
-	_ = gk.KitVResizable("id")
-	e := gk.ResizablePanelGroup("id")
+	_ = base.ResizablePanelGroup("id")
+	_ = base.HResizable("id")
+	_ = base.VResizable("id")
+	_ = base.KitHResizable("id")
+	_ = base.KitVResizable("id")
+	e := base.ResizablePanelGroup("id")
 	e = e.Axis(gk.AxisVertical)
-	e = e.Child(gk.ResizablePanel())
-	e = e.Children([]gk.ResizablePanelEl{gk.ResizablePanel()})
+	e = e.Child(base.ResizablePanel())
+	e = e.Children([]base.ResizablePanelEl{base.ResizablePanel()})
 	e = e.OnResize(noop115)
 	e = e.Size(4)
-	e = e.WithState(gk.ResizableState{})
+	e = e.WithState(base.ResizableState{})
 	_ = e
 }
 
@@ -8385,10 +8393,10 @@ func sBaseResizableTheme() {
 }
 
 func sBaseResizeHandle() {
-	_ = gk.ResizeHandle("id", gk.AxisVertical)
-	_ = gk.KitResizeHandle("id", gk.AxisVertical)
-	e := gk.ResizeHandle("id", gk.AxisVertical)
-	e = e.Inside(gk.HandleEdgeLeading)
+	_ = base.ResizeHandle("id", gk.AxisVertical)
+	_ = base.KitResizeHandle("id", gk.AxisVertical)
+	e := base.ResizeHandle("id", gk.AxisVertical)
+	e = e.Inside(base.HandleEdgeLeading)
 	e = e.BlockMouseExceptScroll()
 	e = e.CaptureAction(gk.Act(sampleAct, func(cx *gk.Cx, a gk.Action) {}))
 	e = e.CaptureAnyMouseDown(noop9)
@@ -8470,26 +8478,26 @@ func sBaseResizeHandle() {
 }
 
 func sBaseRoundedFrameCover() {
-	_ = gk.RoundedFrameCoverUniform(4)
-	e := gk.RoundedFrameCoverUniform(4)
+	_ = base.RoundedFrameCoverUniform(4)
+	e := base.RoundedFrameCoverUniform(4)
 	e = e.Backdrop(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.FrameBorder(4)
 	_ = e
 }
 
 func sBaseScrollBounce() {
-	_ = gk.ScrollBounce("id", gk.ScrollHandle{}, gk.Div())
-	e := gk.ScrollBounce("id", gk.ScrollHandle{}, gk.Div())
+	_ = motion.ScrollBounce("id", gk.ScrollHandle{}, gk.Div())
+	e := motion.ScrollBounce("id", gk.ScrollHandle{}, gk.Div())
 	e = e.Enabled(true)
-	e = e.Motion(gk.NewScrollBounceMotionDefault())
+	e = e.Motion(motion.NewScrollBounceMotionDefault())
 	e = e.OnScroll(noop3)
 	e = e.ScrollWheel(true)
 	_ = e
 }
 
 func sBaseScrollBounceMotion() {
-	_ = gk.NewScrollBounceMotionDefault()
-	e := gk.NewScrollBounceMotionDefault()
+	_ = motion.NewScrollBounceMotionDefault()
+	e := motion.NewScrollBounceMotionDefault()
 	e = e.WithMaxStretch(1.5)
 	e = e.WithResponse(250 * time.Millisecond)
 	e = e.WithTracking(1.5)
@@ -8497,9 +8505,9 @@ func sBaseScrollBounceMotion() {
 }
 
 func sBaseScrollableMask() {
-	_ = gk.ScrollableMask(gk.AxisVertical, gk.ScrollHandle{})
-	_ = gk.ScrollableMaskVerticalWheel(gk.ScrollHandle{})
-	e := gk.ScrollableMaskVerticalWheel(gk.ScrollHandle{})
+	_ = base.ScrollableMask(gk.AxisVertical, gk.ScrollHandle{})
+	_ = base.ScrollableMaskVerticalWheel(gk.ScrollHandle{})
+	e := base.ScrollableMaskVerticalWheel(gk.ScrollHandle{})
 	e = e.Debug()
 	e = e.ID("id")
 	_ = e
@@ -8576,8 +8584,8 @@ func sBaseScrollbarTrackStyle() {
 }
 
 func sBaseSelect() {
-	_ = gk.BaseSelect("id")
-	e := gk.BaseSelect("id")
+	_ = table.BaseSelect("id")
+	e := table.BaseSelect("id")
 	e = e.AccessibilityLabel("s")
 	e = e.AccessibilityValue("s")
 	e = e.ContentFocusHandle(gk.FocusHandle{})
@@ -8711,9 +8719,9 @@ func sBaseSelect() {
 }
 
 func sBaseSelectableText() {
-	_ = gk.SelectableText("id", "s")
-	_ = gk.SelectableTextWithHandle("id", gk.TextSelectionHandle{}, "s")
-	e := gk.SelectableText("id", "s")
+	_ = editor.SelectableText("id", "s")
+	_ = editor.SelectableTextWithHandle("id", editor.TextSelectionHandle{}, "s")
+	e := editor.SelectableText("id", "s")
 	e = e.DocumentOrder(3)
 	e = e.Highlights([]gk.TupleRangeHighlightStyle{gk.TupleRangeHighlightStyle{V0: gk.Range{Lo: 1, Hi: 3}, V1: gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)}}})
 	e = e.OnReveal(noop75)
@@ -8729,8 +8737,8 @@ func sBaseSemanticThemeTokens() {
 }
 
 func sBaseSheet() {
-	_ = gk.BaseSheet()
-	e := gk.BaseSheet()
+	_ = overlay.BaseSheet()
+	e := overlay.BaseSheet()
 	e = e.OnClose(noop1)
 	e = e.Overlay(gk.Div())
 	e = e.OverlayClosable(true)
@@ -8855,8 +8863,8 @@ func sBaseSheet() {
 }
 
 func sBaseSlider() {
-	_ = gk.BaseSlider(gk.SliderState{})
-	e := gk.BaseSlider(gk.SliderState{})
+	_ = base.Slider(base.SliderState{})
+	e := base.Slider(base.SliderState{})
 	e = e.AccessibilityLabel("s")
 	e = e.Axis(gk.AxisVertical)
 	e = e.Disabled(true)
@@ -8987,8 +8995,8 @@ func sBaseSlider() {
 }
 
 func sBaseSliderIndicator() {
-	_ = gk.SliderIndicator(gk.SliderState{})
-	e := gk.SliderIndicator(gk.SliderState{})
+	_ = base.SliderIndicator(base.SliderState{})
+	e := base.SliderIndicator(base.SliderState{})
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -9188,8 +9196,8 @@ func sBaseSliderIndicator() {
 }
 
 func sBaseSliderThumb() {
-	_ = gk.SliderThumb(gk.SliderState{})
-	e := gk.SliderThumb(gk.SliderState{})
+	_ = base.SliderThumb(base.SliderState{})
+	e := base.SliderThumb(base.SliderState{})
 	e = e.Axis(gk.AxisVertical)
 	e = e.Disabled(true)
 	e = e.Start(true)
@@ -9392,8 +9400,8 @@ func sBaseSliderThumb() {
 }
 
 func sBaseSliderTrack() {
-	_ = gk.SliderTrack(gk.SliderState{})
-	e := gk.SliderTrack(gk.SliderState{})
+	_ = base.SliderTrack(base.SliderState{})
+	e := base.SliderTrack(base.SliderState{})
 	e = e.Axis(gk.AxisVertical)
 	e = e.Disabled(true)
 	e = e.KeepTextSelection("id")
@@ -9561,9 +9569,9 @@ func sBaseSliderTrack() {
 }
 
 func sBaseSpring() {
-	_ = gk.NewSpring(250 * time.Millisecond)
-	_ = gk.NewPointerSpring()
-	e := gk.NewSpring(250 * time.Millisecond)
+	_ = motion.NewSpring(250 * time.Millisecond)
+	_ = motion.NewPointerSpring()
+	e := motion.NewSpring(250 * time.Millisecond)
 	e = e.WithDamping(1.5)
 	e = e.WithEpsilon(1.5)
 	e = e.WithTravel(true)
@@ -9693,13 +9701,13 @@ func sBaseStateStyle() {
 }
 
 func sBaseSwitch() {
-	_ = gk.BaseSwitch("id")
-	e := gk.BaseSwitch("id")
+	_ = base.Switch("id")
+	e := base.Switch("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Disabled(true)
 	e = e.OnChange(noop65)
-	e = e.Styles(gk.NewSwitchStylesDefault())
+	e = e.Styles(base.NewSwitchStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.TrackFocus(gk.FocusHandle{})
@@ -9899,18 +9907,18 @@ func sBaseSwitch() {
 }
 
 func sBaseSwitchStyles() {
-	_ = gk.NewSwitchStylesDefault()
-	e := gk.NewSwitchStylesDefault()
+	_ = base.NewSwitchStylesDefault()
+	e := base.NewSwitchStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseSwitchThumb() {
-	_ = gk.SwitchThumb(true)
-	e := gk.SwitchThumb(true)
+	_ = base.SwitchThumb(true)
+	e := base.SwitchThumb(true)
 	e = e.Disabled(true)
-	e = e.Styles(gk.NewSwitchThumbStylesDefault())
+	e = e.Styles(base.NewSwitchThumbStylesDefault())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -10035,19 +10043,19 @@ func sBaseSwitchThumb() {
 }
 
 func sBaseSwitchThumbStyles() {
-	_ = gk.NewSwitchThumbStylesDefault()
-	e := gk.NewSwitchThumbStylesDefault()
+	_ = base.NewSwitchThumbStylesDefault()
+	e := base.NewSwitchThumbStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseSwitchTrack() {
-	_ = gk.SwitchTrack("id")
-	e := gk.SwitchTrack("id")
+	_ = base.SwitchTrack("id")
+	e := base.SwitchTrack("id")
 	e = e.Checked(true)
 	e = e.Disabled(true)
-	e = e.Styles(gk.NewSwitchTrackStylesDefault())
+	e = e.Styles(base.NewSwitchTrackStylesDefault())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -10247,23 +10255,23 @@ func sBaseSwitchTrack() {
 }
 
 func sBaseSwitchTrackStyles() {
-	_ = gk.NewSwitchTrackStylesDefault()
-	e := gk.NewSwitchTrackStylesDefault()
+	_ = base.NewSwitchTrackStylesDefault()
+	e := base.NewSwitchTrackStylesDefault()
 	e = e.Checked(gk.NewStateStyleDefault())
 	e = e.Disabled(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseTab() {
-	_ = gk.BaseTab("id")
-	e := gk.BaseTab("id")
+	_ = base.Tab("id")
+	e := base.Tab("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.ID("id")
 	e = e.OnClick(noop1)
 	e = e.Selected(true)
 	e = e.SetPosition(3, 3)
-	e = e.Styles(gk.NewTabStylesDefault())
+	e = e.Styles(base.NewTabStylesDefault())
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -10462,16 +10470,16 @@ func sBaseTab() {
 }
 
 func sBaseTabStyles() {
-	_ = gk.NewTabStylesDefault()
-	e := gk.NewTabStylesDefault()
+	_ = base.NewTabStylesDefault()
+	e := base.NewTabStylesDefault()
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Selected(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseTable() {
-	_ = gk.BaseTable("id")
-	e := gk.BaseTable("id")
+	_ = table.BaseTable("id")
+	e := table.BaseTable("id")
 	e = e.AccessibilityLabel("s")
 	e = e.ColumnCount(3)
 	e = e.RowCount(3)
@@ -10674,8 +10682,8 @@ func sBaseTable() {
 }
 
 func sBaseTableBody() {
-	_ = gk.BaseTableBody("id")
-	e := gk.BaseTableBody("id")
+	_ = table.BaseTableBody("id")
+	e := table.BaseTableBody("id")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -10875,8 +10883,8 @@ func sBaseTableBody() {
 }
 
 func sBaseTableCaption() {
-	_ = gk.BaseTableCaption("id")
-	e := gk.BaseTableCaption("id")
+	_ = table.BaseTableCaption("id")
+	e := table.BaseTableCaption("id")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -11076,8 +11084,8 @@ func sBaseTableCaption() {
 }
 
 func sBaseTableCell() {
-	_ = gk.BaseTableCell("id", 3)
-	e := gk.BaseTableCell("id", 3)
+	_ = table.BaseTableCell("id", 3)
+	e := table.BaseTableCell("id", 3)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -11277,8 +11285,8 @@ func sBaseTableCell() {
 }
 
 func sBaseTableHead() {
-	_ = gk.BaseTableHead("id", 3)
-	e := gk.BaseTableHead("id", 3)
+	_ = table.BaseTableHead("id", 3)
+	e := table.BaseTableHead("id", 3)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -11478,8 +11486,8 @@ func sBaseTableHead() {
 }
 
 func sBaseTableHeader() {
-	_ = gk.BaseTableHeader("id")
-	e := gk.BaseTableHeader("id")
+	_ = table.BaseTableHeader("id")
+	e := table.BaseTableHeader("id")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -11679,8 +11687,8 @@ func sBaseTableHeader() {
 }
 
 func sBaseTableRow() {
-	_ = gk.BaseTableRow("id", 3)
-	e := gk.BaseTableRow("id", 3)
+	_ = table.BaseTableRow("id", 3)
+	e := table.BaseTableRow("id", 3)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -11880,8 +11888,8 @@ func sBaseTableRow() {
 }
 
 func sBaseTabs() {
-	_ = gk.Tabs("id")
-	e := gk.Tabs("id")
+	_ = base.Tabs("id")
+	e := base.Tabs("id")
 	e = e.Axis(gk.AxisVertical)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -12082,27 +12090,27 @@ func sBaseTabs() {
 }
 
 func sBaseTextView() {
-	_ = gk.BaseTextViewHTML("id", "s")
-	_ = gk.BaseTextViewMarkdown("id", "s")
-	_ = gk.BaseTextView(gk.TextViewState{})
-	_ = gk.BaseHTML("s")
-	_ = gk.BaseMarkdown("s")
-	e := gk.BaseTextView(gk.TextViewState{})
+	_ = editor.BaseTextViewHTML("id", "s")
+	_ = editor.BaseTextViewMarkdown("id", "s")
+	_ = editor.BaseTextView(editor.TextViewState{})
+	_ = editor.BaseHTML("s")
+	_ = editor.BaseMarkdown("s")
+	e := editor.BaseTextView(editor.TextViewState{})
 	e = e.BlockquoteStyle(gk.NewStyleRefinementDefault())
 	e = e.InlineCodeStyle(gk.NewStyleRefinementDefault())
 	e = e.ListStyle(gk.NewStyleRefinementDefault())
-	e = e.MarkdownExtensions(gk.NewMarkdownExtensionsDefault())
+	e = e.MarkdownExtensions(editor.NewMarkdownExtensionsDefault())
 	e = e.MarkdownMdx()
 	e = e.MarkdownRawHTML(true)
 	e = e.MaxLines(3)
-	e = e.Motion(gk.NewTextViewMotionDefault())
+	e = e.Motion(editor.NewTextViewMotionDefault())
 	e = e.OnLinkClick(noop83)
 	e = e.OnReveal(noop75)
 	e = e.OnTaskToggle(noop105)
 	e = e.Scrollable(true)
 	e = e.Selectable(true)
-	e = e.SelectionFormat(gk.SelectionFormatPlain)
-	e = e.Style(gk.NewBaseTextViewStyleDefault())
+	e = e.SelectionFormat(editor.SelectionFormatPlain)
+	e = e.Style(editor.NewBaseTextViewStyleDefault())
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
 	e = e.FlexRowDir()
@@ -12222,8 +12230,8 @@ func sBaseTextView() {
 }
 
 func sBaseTextViewMotion() {
-	_ = gk.NewTextViewMotionDefault()
-	e := gk.NewTextViewMotionDefault()
+	_ = editor.NewTextViewMotionDefault()
+	e := editor.NewTextViewMotionDefault()
 	e = e.WithStreamFade(250 * time.Millisecond)
 	e = e.WithStreamFadeEasing(gk.EasingLinear)
 	e = e.WithStreamFadeStagger(250 * time.Millisecond)
@@ -12231,9 +12239,9 @@ func sBaseTextViewMotion() {
 }
 
 func sBaseTextViewStyle() {
-	_ = gk.NewBaseTextViewStyleDefault()
-	_ = gk.NewBaseTextViewStyleFromTheme(gk.BaseTheme{})
-	e := gk.NewBaseTextViewStyleDefault()
+	_ = editor.NewBaseTextViewStyleDefault()
+	_ = editor.NewBaseTextViewStyleFromTheme(gk.BaseTheme{})
+	e := editor.NewBaseTextViewStyleDefault()
 	e = e.WithBlockquoteStyle(gk.NewStyleRefinementDefault())
 	e = e.WithBorder(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.WithCodeBackground(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -12255,16 +12263,16 @@ func sBaseTextViewStyle() {
 }
 
 func sBaseTextarea() {
-	_ = gk.BaseTextarea(gk.TextareaState{})
-	e := gk.BaseTextarea(gk.TextareaState{})
+	_ = editor.BaseTextarea(editor.TextareaState{})
+	e := editor.BaseTextarea(editor.TextareaState{})
 	e = e.OnTokenClick(noop106)
 	e = e.OnTokenHover(noop107)
 	_ = e
 }
 
 func sBaseTimeField() {
-	_ = gk.BaseTimeField("id", gk.TimeFieldState{})
-	e := gk.BaseTimeField("id", gk.TimeFieldState{})
+	_ = base.TimeField("id", base.TimeFieldState{})
+	e := base.TimeField("id", base.TimeFieldState{})
 	e = e.Disabled(true)
 	e = e.Separator("s")
 	e = e.BorderE(gk.Px(8))
@@ -12387,19 +12395,19 @@ func sBaseTimeField() {
 }
 
 func sBaseTiming() {
-	_ = gk.NewTiming(250 * time.Millisecond)
-	e := gk.NewTiming(250 * time.Millisecond)
+	_ = motion.NewTiming(250 * time.Millisecond)
+	e := motion.NewTiming(250 * time.Millisecond)
 	e = e.Delay(gk.SignedDurationPositive{Value: 250 * time.Millisecond})
-	e = e.Direction(gk.PlaybackDirectionNormal)
+	e = e.Direction(motion.PlaybackDirectionNormal)
 	e = e.Ease(gk.EasingLinear)
-	e = e.Iterations(gk.IterationCountInfinite)
+	e = e.Iterations(motion.IterationCountInfinite)
 	_ = e
 }
 
 func sBaseToast() {
-	_ = gk.Toast("id")
-	e := gk.Toast("id")
-	e = e.TransitionStatus(gk.ToastTransitionStatusStarting)
+	_ = overlay.Toast("id")
+	e := overlay.Toast("id")
+	e = e.TransitionStatus(overlay.ToastTransitionStatusStarting)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -12599,11 +12607,11 @@ func sBaseToast() {
 }
 
 func sBaseToastStack() {
-	_ = gk.ToastStack("id", gk.ToastStackState{})
-	e := gk.ToastStack("id", gk.ToastStackState{})
+	_ = overlay.ToastStack("id", overlay.ToastStackState{})
+	e := overlay.ToastStack("id", overlay.ToastStackState{})
 	e = e.FocusHandle(gk.FocusHandle{})
 	e = e.Item("id", gk.Div())
-	e = e.Motion(gk.ToastMotion{Duration: 250 * time.Millisecond, ExitDuration: 250 * time.Millisecond, CollapsedPeek: 4, ExpandedGap: 4, CollapsedScaleStep: 1.5, CollapsedVisible: 3})
+	e = e.Motion(overlay.ToastMotion{Duration: 250 * time.Millisecond, ExitDuration: 250 * time.Millisecond, CollapsedPeek: 4, ExpandedGap: 4, CollapsedScaleStep: 1.5, CollapsedVisible: 3})
 	e = e.Placement(gk.AnchorTopLeft)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -12804,13 +12812,13 @@ func sBaseToastStack() {
 }
 
 func sBaseToggle() {
-	_ = gk.BaseToggle("id")
-	e := gk.BaseToggle("id")
+	_ = base.Toggle("id")
+	e := base.Toggle("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.OnChange(noop65)
 	e = e.Pressed(true)
-	e = e.Styles(gk.NewToggleStylesDefault())
+	e = e.Styles(base.NewToggleStylesDefault())
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.TrackFocus(gk.FocusHandle{})
@@ -13010,8 +13018,8 @@ func sBaseToggle() {
 }
 
 func sBaseToggleGroup() {
-	_ = gk.BaseToggleGroup("id")
-	e := gk.BaseToggleGroup("id")
+	_ = base.ToggleGroup("id")
+	e := base.ToggleGroup("id")
 	e = e.Axis(gk.AxisVertical)
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -13212,16 +13220,16 @@ func sBaseToggleGroup() {
 }
 
 func sBaseToggleStyles() {
-	_ = gk.NewToggleStylesDefault()
-	e := gk.NewToggleStylesDefault()
+	_ = base.NewToggleStylesDefault()
+	e := base.NewToggleStylesDefault()
 	e = e.Disabled(gk.NewStateStyleDefault())
 	e = e.Pressed(gk.NewStateStyleDefault())
 	_ = e
 }
 
 func sBaseToolbar() {
-	_ = gk.BaseToolbar("id")
-	e := gk.BaseToolbar("id")
+	_ = base.Toolbar("id")
+	e := base.Toolbar("id")
 	e = e.Axis(gk.AxisVertical)
 	e = e.Disabled(true)
 	e = e.KeepTextSelection("id")
@@ -13423,8 +13431,8 @@ func sBaseToolbar() {
 }
 
 func sBaseToolbarGroup() {
-	_ = gk.BaseToolbarGroup("id")
-	e := gk.BaseToolbarGroup("id")
+	_ = base.ToolbarGroup("id")
+	e := base.ToolbarGroup("id")
 	e = e.Label("s")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
@@ -13625,8 +13633,8 @@ func sBaseToolbarGroup() {
 }
 
 func sBaseTooltip() {
-	_ = gk.BaseTooltip("id")
-	e := gk.BaseTooltip("id")
+	_ = overlay.BaseTooltip("id")
+	e := overlay.BaseTooltip("id")
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.BorderE(gk.Px(8))
@@ -13751,8 +13759,8 @@ func sBaseTooltip() {
 }
 
 func sBaseTooltipPositioner() {
-	_ = gk.TooltipPositioner(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
-	e := gk.TooltipPositioner(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
+	_ = overlay.TooltipPositioner(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
+	e := overlay.TooltipPositioner(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
 	e = e.Offset(4)
 	e = e.Placement(gk.PlacementTop)
 	e = e.KeepTextSelection("id")
@@ -13763,14 +13771,14 @@ func sBaseTooltipPositioner() {
 }
 
 func sBaseTouchHandleLayout() {
-	_ = gk.NewTouchHandleLayoutDefault()
-	e := gk.NewTouchHandleLayoutDefault()
+	_ = editor.NewTouchHandleLayoutDefault()
+	e := editor.NewTouchHandleLayoutDefault()
 	_ = e
 }
 
 func sBaseTransition() {
-	_ = gk.NewTransition(250 * time.Millisecond)
-	e := gk.NewTransition(250 * time.Millisecond)
+	_ = motion.NewTransition(250 * time.Millisecond)
+	e := motion.NewTransition(250 * time.Millisecond)
 	e = e.Delay(gk.SignedDurationPositive{Value: 250 * time.Millisecond})
 	e = e.Easing(gk.EasingLinear)
 	e = e.ReducedMotion(gk.ReducedMotionFinish)
@@ -13778,8 +13786,8 @@ func sBaseTransition() {
 }
 
 func sBaseTree() {
-	_ = gk.BaseTree(gk.TreeState{})
-	e := gk.BaseTree(gk.TreeState{})
+	_ = table.BaseTree(table.TreeState{})
+	e := table.BaseTree(table.TreeState{})
 	e = e.ListStyle(gk.NewStyleRefinementDefault())
 	e = e.BorderE(gk.Px(8))
 	e = e.BorderS(gk.Px(8))
@@ -13901,10 +13909,10 @@ func sBaseTree() {
 }
 
 func sBaseTreeItem() {
-	_ = gk.NewTreeItem("s", "s")
-	e := gk.NewTreeItem("s", "s")
-	e = e.Child(gk.NewTreeItem("s", "s"))
-	e = e.Children([]gk.TreeItem{gk.NewTreeItem("s", "s")})
+	_ = table.NewTreeItem("s", "s")
+	e := table.NewTreeItem("s", "s")
+	e = e.Child(table.NewTreeItem("s", "s"))
+	e = e.Children([]table.TreeItem{table.NewTreeItem("s", "s")})
 	e = e.Disabled(true)
 	e = e.Expanded(true)
 	_ = e
@@ -13977,8 +13985,8 @@ func sBaseSelectUp() {
 }
 
 func sBaseEffectTransition() {
-	_ = gk.NewEffectTransition(250 * time.Millisecond)
-	e := gk.NewEffectTransition(250 * time.Millisecond)
+	_ = motion.NewEffectTransition(250 * time.Millisecond)
+	e := motion.NewEffectTransition(250 * time.Millisecond)
 	e = e.Fade(1.5, 1.5)
 	e = e.Height(4, 4)
 	e = e.SlideX(4, 4)
@@ -13988,19 +13996,19 @@ func sBaseEffectTransition() {
 }
 
 func sBaseDockLayout() {
-	_ = gk.NewDockLayoutHSplit()
-	_ = gk.NewDockLayoutTabs()
-	_ = gk.NewDockLayoutVSplit()
-	e := gk.NewDockLayoutHSplit()
+	_ = dock.NewLayoutHSplit()
+	_ = dock.NewLayoutTabs()
+	_ = dock.NewLayoutVSplit()
+	e := dock.NewLayoutHSplit()
 	e = e.ActiveIndex(3)
-	e = e.Child(gk.NewDockLayoutHSplit(), gk.Some[float32](4))
-	e = e.Panel(gk.DockPanel{})
+	e = e.Child(dock.NewLayoutHSplit(), gk.Some[float32](4))
+	e = e.Panel(dock.Panel{})
 	_ = e
 }
 
 func sBaseDockSizing() {
-	_ = gk.NewDockSizing(gk.DockPlacementCenter)
-	e := gk.NewDockSizing(gk.DockPlacementCenter)
+	_ = dock.NewSizing(dock.PlacementCenter)
+	e := dock.NewSizing(dock.PlacementCenter)
 	e = e.WithAreaBounds(gk.Bounds{Origin: gk.GpuiPoint{X: 4, Y: 4}, Size: gk.GpuiSize{Width: 4, Height: 4}})
 	e = e.WithAreaHeight(4)
 	e = e.WithAreaWidth(4)
@@ -14009,211 +14017,211 @@ func sBaseDockSizing() {
 }
 
 func sBaseGrowHeight() {
-	_ = gk.NewGrowHeightDefault()
-	e := gk.NewGrowHeightDefault()
+	_ = base.NewGrowHeightDefault()
+	e := base.NewGrowHeightDefault()
 	_ = e
 }
 
 func sBaseGrowWidth() {
-	_ = gk.NewGrowWidthDefault()
-	e := gk.NewGrowWidthDefault()
+	_ = base.NewGrowWidthDefault()
+	e := base.NewGrowWidthDefault()
 	_ = e
 }
 
 func sBaseMoveDown() {
-	_ = gk.NewMoveDownDefault()
-	e := gk.NewMoveDownDefault()
+	_ = base.NewMoveDownDefault()
+	e := base.NewMoveDownDefault()
 	_ = e
 }
 
 func sBaseMoveLeft() {
-	_ = gk.NewMoveLeftDefault()
-	e := gk.NewMoveLeftDefault()
+	_ = base.NewMoveLeftDefault()
+	e := base.NewMoveLeftDefault()
 	_ = e
 }
 
 func sBaseMoveRight() {
-	_ = gk.NewMoveRightDefault()
-	e := gk.NewMoveRightDefault()
+	_ = base.NewMoveRightDefault()
+	e := base.NewMoveRightDefault()
 	_ = e
 }
 
 func sBaseMoveUp() {
-	_ = gk.NewMoveUpDefault()
-	e := gk.NewMoveUpDefault()
+	_ = base.NewMoveUpDefault()
+	e := base.NewMoveUpDefault()
 	_ = e
 }
 
 func sBaseSelectNextItem() {
-	_ = gk.NewSelectNextItemDefault()
-	e := gk.NewSelectNextItemDefault()
+	_ = base.NewSelectNextItemDefault()
+	e := base.NewSelectNextItemDefault()
 	_ = e
 }
 
 func sBaseSelectPreviousItem() {
-	_ = gk.NewSelectPreviousItemDefault()
-	e := gk.NewSelectPreviousItemDefault()
+	_ = base.NewSelectPreviousItemDefault()
+	e := base.NewSelectPreviousItemDefault()
 	_ = e
 }
 
 func sBaseShrinkHeight() {
-	_ = gk.NewShrinkHeightDefault()
-	e := gk.NewShrinkHeightDefault()
+	_ = base.NewShrinkHeightDefault()
+	e := base.NewShrinkHeightDefault()
 	_ = e
 }
 
 func sBaseShrinkWidth() {
-	_ = gk.NewShrinkWidthDefault()
-	e := gk.NewShrinkWidthDefault()
+	_ = base.NewShrinkWidthDefault()
+	e := base.NewShrinkWidthDefault()
 	_ = e
 }
 
 func sBaseActivateToken() {
-	_ = gk.NewActivateTokenDefault()
-	e := gk.NewActivateTokenDefault()
+	_ = editor.NewActivateTokenDefault()
+	e := editor.NewActivateTokenDefault()
 	_ = e
 }
 
 func sBaseAddCursorAbove() {
-	_ = gk.NewAddCursorAboveDefault()
-	e := gk.NewAddCursorAboveDefault()
+	_ = editor.NewAddCursorAboveDefault()
+	e := editor.NewAddCursorAboveDefault()
 	_ = e
 }
 
 func sBaseAddCursorBelow() {
-	_ = gk.NewAddCursorBelowDefault()
-	e := gk.NewAddCursorBelowDefault()
+	_ = editor.NewAddCursorBelowDefault()
+	e := editor.NewAddCursorBelowDefault()
 	_ = e
 }
 
 func sBaseAutoClosingPair() {
-	_ = gk.NewAutoClosingPair("s", "s")
-	e := gk.NewAutoClosingPair("s", "s")
+	_ = editor.NewAutoClosingPair("s", "s")
+	e := editor.NewAutoClosingPair("s", "s")
 	e = e.NotIn([]gk.SyntaxContext{gk.SyntaxContextCode})
 	_ = e
 }
 
 func sBaseBackspace() {
-	_ = gk.NewBackspaceDefault()
-	e := gk.NewBackspaceDefault()
+	_ = editor.NewBackspaceDefault()
+	e := editor.NewBackspaceDefault()
 	_ = e
 }
 
 func sBaseBracketPair() {
-	_ = gk.NewBracketPair("s", "s")
-	e := gk.NewBracketPair("s", "s")
+	_ = editor.NewBracketPair("s", "s")
+	e := editor.NewBracketPair("s", "s")
 	_ = e
 }
 
 func sBaseCopy() {
-	_ = gk.NewCopyDefault()
-	e := gk.NewCopyDefault()
+	_ = editor.NewCopyDefault()
+	e := editor.NewCopyDefault()
 	_ = e
 }
 
 func sBaseCursorBlink() {
-	_ = gk.NewCursorBlinkDefault()
-	_ = gk.NewCursorBlinkBlinking(250 * time.Millisecond)
-	_ = gk.NewCursorBlinkSteady()
-	e := gk.NewCursorBlinkDefault()
+	_ = editor.NewCursorBlinkDefault()
+	_ = editor.NewCursorBlinkBlinking(250 * time.Millisecond)
+	_ = editor.NewCursorBlinkSteady()
+	e := editor.NewCursorBlinkDefault()
 	e = e.WithIdleTimeout(250 * time.Millisecond)
 	_ = e
 }
 
 func sBaseCut() {
-	_ = gk.NewCutDefault()
-	e := gk.NewCutDefault()
+	_ = editor.NewCutDefault()
+	e := editor.NewCutDefault()
 	_ = e
 }
 
 func sBaseDelete() {
-	_ = gk.NewDeleteDefault()
-	e := gk.NewDeleteDefault()
+	_ = editor.NewDeleteDefault()
+	e := editor.NewDeleteDefault()
 	_ = e
 }
 
 func sBaseDeleteToBeginningOfLine() {
-	_ = gk.NewDeleteToBeginningOfLineDefault()
-	e := gk.NewDeleteToBeginningOfLineDefault()
+	_ = editor.NewDeleteToBeginningOfLineDefault()
+	e := editor.NewDeleteToBeginningOfLineDefault()
 	_ = e
 }
 
 func sBaseDeleteToEndOfLine() {
-	_ = gk.NewDeleteToEndOfLineDefault()
-	e := gk.NewDeleteToEndOfLineDefault()
+	_ = editor.NewDeleteToEndOfLineDefault()
+	e := editor.NewDeleteToEndOfLineDefault()
 	_ = e
 }
 
 func sBaseDeleteToNextWordEnd() {
-	_ = gk.NewDeleteToNextWordEndDefault()
-	e := gk.NewDeleteToNextWordEndDefault()
+	_ = editor.NewDeleteToNextWordEndDefault()
+	e := editor.NewDeleteToNextWordEndDefault()
 	_ = e
 }
 
 func sBaseDeleteToPreviousWordStart() {
-	_ = gk.NewDeleteToPreviousWordStartDefault()
-	e := gk.NewDeleteToPreviousWordStartDefault()
+	_ = editor.NewDeleteToPreviousWordStartDefault()
+	e := editor.NewDeleteToPreviousWordStartDefault()
 	_ = e
 }
 
 func sBaseDiagnostic() {
-	_ = gk.NewDiagnosticDefault()
-	e := gk.NewDiagnosticDefault()
+	_ = editor.NewDiagnosticDefault()
+	e := editor.NewDiagnosticDefault()
 	e = e.WithCode("s")
-	e = e.WithSeverity(gk.DiagnosticSeverityHint)
+	e = e.WithSeverity(editor.DiagnosticSeverityHint)
 	e = e.WithSource("s")
 	_ = e
 }
 
 func sBaseEscape() {
-	_ = gk.NewEscapeDefault()
-	e := gk.NewEscapeDefault()
+	_ = editor.NewEscapeDefault()
+	e := editor.NewEscapeDefault()
 	_ = e
 }
 
 func sBaseGoToDefinition() {
-	_ = gk.NewGoToDefinitionDefault()
-	e := gk.NewGoToDefinitionDefault()
+	_ = editor.NewGoToDefinitionDefault()
+	e := editor.NewGoToDefinitionDefault()
 	_ = e
 }
 
 func sBaseGutterDecoration() {
-	_ = gk.NewGutterDecorationDefault()
-	_ = gk.NewGutterDecoration(gk.Range{Lo: 1, Hi: 3})
-	e := gk.NewGutterDecorationDefault()
+	_ = editor.NewGutterDecorationDefault()
+	_ = editor.NewGutterDecoration(gk.Range{Lo: 1, Hi: 3})
+	e := editor.NewGutterDecorationDefault()
 	e = e.WithColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.WithFoldedColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	_ = e
 }
 
 func sBaseIndent() {
-	_ = gk.NewIndentDefault()
-	e := gk.NewIndentDefault()
+	_ = editor.NewIndentDefault()
+	e := editor.NewIndentDefault()
 	_ = e
 }
 
 func sBaseIndentInline() {
-	_ = gk.NewIndentInlineDefault()
-	e := gk.NewIndentInlineDefault()
+	_ = editor.NewIndentInlineDefault()
+	e := editor.NewIndentInlineDefault()
 	_ = e
 }
 
 func sBaseIndentationRules() {
-	_ = gk.NewIndentationRulesDefault()
-	e := gk.NewIndentationRulesDefault()
+	_ = editor.NewIndentationRulesDefault()
+	e := editor.NewIndentationRulesDefault()
 	_ = e
 }
 
 func sBaseInlineToken() {
-	_ = gk.NewInlineToken("s", "s")
-	e := gk.NewInlineToken("s", "s")
+	_ = editor.NewInlineToken("s", "s")
+	e := editor.NewInlineToken("s", "s")
 	e = e.WithLabel("s")
 	_ = e
 }
 
 func sBaseInputAccessibility() {
-	_ = gk.NewInputAccessibility(gk.Some[gk.Role](gk.RoleUnknown))
-	e := gk.NewInputAccessibility(gk.Some[gk.Role](gk.RoleUnknown))
+	_ = editor.NewInputAccessibility(gk.Some[gk.Role](gk.RoleUnknown))
+	e := editor.NewInputAccessibility(gk.Some[gk.Role](gk.RoleUnknown))
 	e = e.WithAccessibilityID(gk.Some[string]("s"))
 	e = e.WithLabel(gk.Some[string]("s"))
 	e = e.WithPlaceholder(gk.Some[string]("s"))
@@ -14222,242 +14230,242 @@ func sBaseInputAccessibility() {
 }
 
 func sBaseLsp() {
-	_ = gk.NewLspDefault()
-	e := gk.NewLspDefault()
+	_ = editor.NewLspDefault()
+	e := editor.NewLspDefault()
 	_ = e
 }
 
 func sBaseMoveDownInput() {
-	_ = gk.NewBaseMoveDownDefault()
-	e := gk.NewBaseMoveDownDefault()
+	_ = editor.NewBaseMoveDownDefault()
+	e := editor.NewBaseMoveDownDefault()
 	_ = e
 }
 
 func sBaseMoveEnd() {
-	_ = gk.NewMoveEndDefault()
-	e := gk.NewMoveEndDefault()
+	_ = editor.NewMoveEndDefault()
+	e := editor.NewMoveEndDefault()
 	_ = e
 }
 
 func sBaseMoveHome() {
-	_ = gk.NewMoveHomeDefault()
-	e := gk.NewMoveHomeDefault()
+	_ = editor.NewMoveHomeDefault()
+	e := editor.NewMoveHomeDefault()
 	_ = e
 }
 
 func sBaseMoveLeftInput() {
-	_ = gk.NewBaseMoveLeftDefault()
-	e := gk.NewBaseMoveLeftDefault()
+	_ = editor.NewBaseMoveLeftDefault()
+	e := editor.NewBaseMoveLeftDefault()
 	_ = e
 }
 
 func sBaseMovePageDown() {
-	_ = gk.NewMovePageDownDefault()
-	e := gk.NewMovePageDownDefault()
+	_ = editor.NewMovePageDownDefault()
+	e := editor.NewMovePageDownDefault()
 	_ = e
 }
 
 func sBaseMovePageUp() {
-	_ = gk.NewMovePageUpDefault()
-	e := gk.NewMovePageUpDefault()
+	_ = editor.NewMovePageUpDefault()
+	e := editor.NewMovePageUpDefault()
 	_ = e
 }
 
 func sBaseMoveRightInput() {
-	_ = gk.NewBaseMoveRightDefault()
-	e := gk.NewBaseMoveRightDefault()
+	_ = editor.NewBaseMoveRightDefault()
+	e := editor.NewBaseMoveRightDefault()
 	_ = e
 }
 
 func sBaseMoveToEnd() {
-	_ = gk.NewMoveToEndDefault()
-	e := gk.NewMoveToEndDefault()
+	_ = editor.NewMoveToEndDefault()
+	e := editor.NewMoveToEndDefault()
 	_ = e
 }
 
 func sBaseMoveToEndOfLine() {
-	_ = gk.NewMoveToEndOfLineDefault()
-	e := gk.NewMoveToEndOfLineDefault()
+	_ = editor.NewMoveToEndOfLineDefault()
+	e := editor.NewMoveToEndOfLineDefault()
 	_ = e
 }
 
 func sBaseMoveToNextWord() {
-	_ = gk.NewMoveToNextWordDefault()
-	e := gk.NewMoveToNextWordDefault()
+	_ = editor.NewMoveToNextWordDefault()
+	e := editor.NewMoveToNextWordDefault()
 	_ = e
 }
 
 func sBaseMoveToPreviousWord() {
-	_ = gk.NewMoveToPreviousWordDefault()
-	e := gk.NewMoveToPreviousWordDefault()
+	_ = editor.NewMoveToPreviousWordDefault()
+	e := editor.NewMoveToPreviousWordDefault()
 	_ = e
 }
 
 func sBaseMoveToStart() {
-	_ = gk.NewMoveToStartDefault()
-	e := gk.NewMoveToStartDefault()
+	_ = editor.NewMoveToStartDefault()
+	e := editor.NewMoveToStartDefault()
 	_ = e
 }
 
 func sBaseMoveToStartOfLine() {
-	_ = gk.NewMoveToStartOfLineDefault()
-	e := gk.NewMoveToStartOfLineDefault()
+	_ = editor.NewMoveToStartOfLineDefault()
+	e := editor.NewMoveToStartOfLineDefault()
 	_ = e
 }
 
 func sBaseMoveUpInput() {
-	_ = gk.NewBaseMoveUpDefault()
-	e := gk.NewBaseMoveUpDefault()
+	_ = editor.NewBaseMoveUpDefault()
+	e := editor.NewBaseMoveUpDefault()
 	_ = e
 }
 
 func sBaseOutdent() {
-	_ = gk.NewOutdentDefault()
-	e := gk.NewOutdentDefault()
+	_ = editor.NewOutdentDefault()
+	e := editor.NewOutdentDefault()
 	_ = e
 }
 
 func sBaseOutdentInline() {
-	_ = gk.NewOutdentInlineDefault()
-	e := gk.NewOutdentInlineDefault()
+	_ = editor.NewOutdentInlineDefault()
+	e := editor.NewOutdentInlineDefault()
 	_ = e
 }
 
 func sBaseOverviewRulerDecoration() {
-	_ = gk.NewOverviewRulerDecorationDefault()
-	_ = gk.NewOverviewRulerDecoration(gk.Range{Lo: 1, Hi: 3})
-	e := gk.NewOverviewRulerDecorationDefault()
+	_ = editor.NewOverviewRulerDecorationDefault()
+	_ = editor.NewOverviewRulerDecoration(gk.Range{Lo: 1, Hi: 3})
+	e := editor.NewOverviewRulerDecorationDefault()
 	e = e.WithColor(gk.HSLA(0.5, 0.25, 0.75, 1))
-	e = e.WithLane(gk.OverviewRulerLaneLeft)
+	e = e.WithLane(editor.OverviewRulerLaneLeft)
 	_ = e
 }
 
 func sBasePaste() {
-	_ = gk.NewPasteDefault()
-	e := gk.NewPasteDefault()
+	_ = editor.NewPasteDefault()
+	e := editor.NewPasteDefault()
 	_ = e
 }
 
 func sBaseRangeDecoration() {
-	_ = gk.NewRangeDecoration(gk.Range{Lo: 1, Hi: 3})
-	e := gk.NewRangeDecoration(gk.Range{Lo: 1, Hi: 3})
+	_ = editor.NewRangeDecoration(gk.Range{Lo: 1, Hi: 3})
+	e := editor.NewRangeDecoration(gk.Range{Lo: 1, Hi: 3})
 	e = e.WithColor(gk.HSLA(0.5, 0.25, 0.75, 1))
-	e = e.WithStyle(gk.RangeDecorationStyleFill)
+	e = e.WithStyle(editor.RangeDecorationStyleFill)
 	_ = e
 }
 
 func sBaseRedo() {
-	_ = gk.NewRedoDefault()
-	e := gk.NewRedoDefault()
+	_ = editor.NewRedoDefault()
+	e := editor.NewRedoDefault()
 	_ = e
 }
 
 func sBaseReplace() {
-	_ = gk.NewReplaceDefault()
-	e := gk.NewReplaceDefault()
+	_ = editor.NewReplaceDefault()
+	e := editor.NewReplaceDefault()
 	_ = e
 }
 
 func sBaseSearch() {
-	_ = gk.NewSearchDefault()
-	e := gk.NewSearchDefault()
+	_ = editor.NewSearchDefault()
+	e := editor.NewSearchDefault()
 	_ = e
 }
 
 func sBaseSelectAll() {
-	_ = gk.NewSelectAllDefault()
-	e := gk.NewSelectAllDefault()
+	_ = editor.NewSelectAllDefault()
+	e := editor.NewSelectAllDefault()
 	_ = e
 }
 
 func sBaseSelectToEnd() {
-	_ = gk.NewSelectToEndDefault()
-	e := gk.NewSelectToEndDefault()
+	_ = editor.NewSelectToEndDefault()
+	e := editor.NewSelectToEndDefault()
 	_ = e
 }
 
 func sBaseSelectToEndOfLine() {
-	_ = gk.NewSelectToEndOfLineDefault()
-	e := gk.NewSelectToEndOfLineDefault()
+	_ = editor.NewSelectToEndOfLineDefault()
+	e := editor.NewSelectToEndOfLineDefault()
 	_ = e
 }
 
 func sBaseSelectToNextWordEnd() {
-	_ = gk.NewSelectToNextWordEndDefault()
-	e := gk.NewSelectToNextWordEndDefault()
+	_ = editor.NewSelectToNextWordEndDefault()
+	e := editor.NewSelectToNextWordEndDefault()
 	_ = e
 }
 
 func sBaseSelectToPreviousWordStart() {
-	_ = gk.NewSelectToPreviousWordStartDefault()
-	e := gk.NewSelectToPreviousWordStartDefault()
+	_ = editor.NewSelectToPreviousWordStartDefault()
+	e := editor.NewSelectToPreviousWordStartDefault()
 	_ = e
 }
 
 func sBaseSelectToStart() {
-	_ = gk.NewSelectToStartDefault()
-	e := gk.NewSelectToStartDefault()
+	_ = editor.NewSelectToStartDefault()
+	e := editor.NewSelectToStartDefault()
 	_ = e
 }
 
 func sBaseSelectToStartOfLine() {
-	_ = gk.NewSelectToStartOfLineDefault()
-	e := gk.NewSelectToStartOfLineDefault()
+	_ = editor.NewSelectToStartOfLineDefault()
+	e := editor.NewSelectToStartOfLineDefault()
 	_ = e
 }
 
 func sBaseShowCharacterPalette() {
-	_ = gk.NewShowCharacterPaletteDefault()
-	e := gk.NewShowCharacterPaletteDefault()
+	_ = editor.NewShowCharacterPaletteDefault()
+	e := editor.NewShowCharacterPaletteDefault()
 	_ = e
 }
 
 func sBaseShowCompletions() {
-	_ = gk.NewShowCompletionsDefault()
-	e := gk.NewShowCompletionsDefault()
+	_ = editor.NewShowCompletionsDefault()
+	e := editor.NewShowCompletionsDefault()
 	_ = e
 }
 
 func sBaseTextareaExtras() {
-	_ = gk.NewTextareaExtrasDefault()
-	e := gk.NewTextareaExtrasDefault()
+	_ = editor.NewTextareaExtrasDefault()
+	e := editor.NewTextareaExtrasDefault()
 	_ = e
 }
 
 func sBaseToggleCodeActions() {
-	_ = gk.NewToggleCodeActionsDefault()
-	e := gk.NewToggleCodeActionsDefault()
+	_ = editor.NewToggleCodeActionsDefault()
+	e := editor.NewToggleCodeActionsDefault()
 	_ = e
 }
 
 func sBaseUndo() {
-	_ = gk.NewUndoDefault()
-	e := gk.NewUndoDefault()
+	_ = editor.NewUndoDefault()
+	e := editor.NewUndoDefault()
 	_ = e
 }
 
 func sBaseLanguageConfig() {
-	_ = gk.NewLanguageConfigDefault()
-	e := gk.NewLanguageConfigDefault()
+	_ = editor.NewLanguageConfigDefault()
+	e := editor.NewLanguageConfigDefault()
 	e = e.AutoCloseBefore("s")
-	e = e.AutoClosingPairs([]gk.AutoClosingPair{gk.NewAutoClosingPair("s", "s")})
-	e = e.Brackets([]gk.BracketPair{gk.NewBracketPair("s", "s")})
-	e = e.IndentationRules(gk.NewIndentationRulesDefault())
+	e = e.AutoClosingPairs([]editor.AutoClosingPair{editor.NewAutoClosingPair("s", "s")})
+	e = e.Brackets([]editor.BracketPair{editor.NewBracketPair("s", "s")})
+	e = e.IndentationRules(editor.NewIndentationRulesDefault())
 	_ = e
 }
 
 func sBaseAxisText() {
-	_ = gk.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))
-	e := gk.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))
+	_ = chart.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))
+	e := chart.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Align(gk.TextAlignLeft)
 	e = e.FontSize(4)
 	_ = e
 }
 
 func sBaseGrid() {
-	_ = gk.NewGridDefault()
-	_ = gk.NewGrid()
-	e := gk.NewGridDefault()
+	_ = chart.NewGridDefault()
+	_ = chart.NewGrid()
+	e := chart.NewGridDefault()
 	e = e.DashArray([]float32{4})
 	e = e.Stroke(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.X([]float32{4})
@@ -14466,30 +14474,30 @@ func sBaseGrid() {
 }
 
 func sBasePlotAppearScope() {
-	_ = gk.PlotAppearScope("id", gk.Div())
-	e := gk.PlotAppearScope("id", gk.Div())
+	_ = chart.PlotAppearScope("id", gk.Div())
+	e := chart.PlotAppearScope("id", gk.Div())
 	_ = e
 }
 
 func sBasePlotAxis() {
-	_ = gk.NewPlotAxisDefault()
-	_ = gk.NewPlotAxis()
-	e := gk.NewPlotAxisDefault()
+	_ = chart.NewPlotAxisDefault()
+	_ = chart.NewPlotAxis()
+	e := chart.NewPlotAxisDefault()
 	e = e.Stroke(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.X(4)
 	e = e.XAxis(true)
-	e = e.XLabel([]gk.AxisText{gk.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))})
-	e = e.XLabelSide(gk.AxisLabelSideEnd)
+	e = e.XLabel([]chart.AxisText{chart.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))})
+	e = e.XLabelSide(chart.AxisLabelSideEnd)
 	e = e.Y(4)
 	e = e.YAxis(true)
-	e = e.YLabel([]gk.AxisText{gk.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))})
-	e = e.YLabelSide(gk.AxisLabelSideEnd)
+	e = e.YLabel([]chart.AxisText{chart.NewAxisText("s", 4, gk.HSLA(0.5, 0.25, 0.75, 1))})
+	e = e.YLabelSide(chart.AxisLabelSideEnd)
 	_ = e
 }
 
 func sBaseText() {
-	_ = gk.NewBaseText("s", gk.GpuiPoint{X: 4, Y: 4}, gk.HSLA(0.5, 0.25, 0.75, 1))
-	e := gk.NewBaseText("s", gk.GpuiPoint{X: 4, Y: 4}, gk.HSLA(0.5, 0.25, 0.75, 1))
+	_ = chart.NewBaseText("s", gk.GpuiPoint{X: 4, Y: 4}, gk.HSLA(0.5, 0.25, 0.75, 1))
+	e := chart.NewBaseText("s", gk.GpuiPoint{X: 4, Y: 4}, gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Align(gk.TextAlignLeft)
 	e = e.FontSize(4)
 	e = e.FontWeight(gk.FontWeight{V0: 1.5})
@@ -14497,11 +14505,11 @@ func sBaseText() {
 }
 
 func sBaseAreaShape() {
-	_ = gk.NewAreaShapeDefault()
-	_ = gk.NewAreaShape()
-	e := gk.NewAreaShapeDefault()
-	e = e.Curve(gk.CurveNatural)
-	e = e.Data(gk.NewData(sampleRows))
+	_ = chart.NewAreaShapeDefault()
+	_ = chart.NewAreaShape()
+	e := chart.NewAreaShapeDefault()
+	e = e.Curve(chart.CurveNatural)
+	e = e.Data(chart.NewData(sampleRows))
 	e = e.Fill(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Stroke(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.X("Gap")
@@ -14511,26 +14519,26 @@ func sBaseAreaShape() {
 }
 
 func sBaseBarShape() {
-	_ = gk.NewBarShapeDefault()
-	_ = gk.NewBarShape()
-	e := gk.NewBarShapeDefault()
-	e = e.Alignment(gk.BarAlignmentBottom)
+	_ = chart.NewBarShapeDefault()
+	_ = chart.NewBarShape()
+	e := chart.NewBarShapeDefault()
+	e = e.Alignment(chart.BarAlignmentBottom)
 	e = e.BandWidth(1.5)
 	e = e.Base("Value")
 	e = e.CornerRadii(gk.Corners{TopLeft: 4, TopRight: 4, BottomRight: 4, BottomLeft: 4})
 	e = e.Cross("Gap")
-	e = e.Data(gk.NewData(sampleRows))
+	e = e.Data(chart.NewData(sampleRows))
 	e = e.Fill("Color")
 	e = e.Value("Gap")
 	_ = e
 }
 
 func sBaseLineShape() {
-	_ = gk.NewLineShapeDefault()
-	_ = gk.NewLineShape()
-	e := gk.NewLineShapeDefault()
-	e = e.Curve(gk.CurveNatural)
-	e = e.Data(gk.NewData(sampleRows))
+	_ = chart.NewLineShapeDefault()
+	_ = chart.NewLineShape()
+	e := chart.NewLineShapeDefault()
+	e = e.Curve(chart.CurveNatural)
+	e = e.Data(chart.NewData(sampleRows))
 	e = e.Dot()
 	e = e.DotFill(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.DotSize(4)
@@ -14543,12 +14551,12 @@ func sBaseLineShape() {
 }
 
 func sBaseRadialLineShape() {
-	_ = gk.NewRadialLineShapeDefault()
-	_ = gk.NewRadialLineShape()
-	e := gk.NewRadialLineShapeDefault()
+	_ = chart.NewRadialLineShapeDefault()
+	_ = chart.NewRadialLineShape()
+	e := chart.NewRadialLineShapeDefault()
 	e = e.Angle("Gap")
 	e = e.Closed()
-	e = e.Data(gk.NewData(sampleRows))
+	e = e.Data(chart.NewData(sampleRows))
 	e = e.Dot()
 	e = e.DotFill(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.DotSize(4)
@@ -14561,37 +14569,37 @@ func sBaseRadialLineShape() {
 }
 
 func sBaseSankey() {
-	_ = gk.NewSankeyDefault()
-	_ = gk.NewSankey()
-	e := gk.NewSankeyDefault()
+	_ = chart.NewSankeyDefault()
+	_ = chart.NewSankey()
+	e := chart.NewSankeyDefault()
 	e = e.Extent(1.5, 1.5, 1.5, 1.5)
 	e = e.Iterations(3)
-	e = e.NodeAlign(gk.SankeyAlignLeft)
+	e = e.NodeAlign(chart.SankeyAlignLeft)
 	e = e.NodePadding(1.5)
 	e = e.NodeWidth(1.5)
 	e = e.Size(1.5, 1.5)
-	e = e.ValueScale(gk.SankeyValueScaleLinear)
+	e = e.ValueScale(chart.SankeyValueScaleLinear)
 	_ = e
 }
 
 func sBaseSankeyLink() {
-	_ = gk.NewSankeyLink(3, 3, 1.5)
-	e := gk.NewSankeyLink(3, 3, 1.5)
+	_ = chart.NewSankeyLink(3, 3, 1.5)
+	e := chart.NewSankeyLink(3, 3, 1.5)
 	_ = e
 }
 
 func sBaseQuestionnaireAnswer() {
-	_ = gk.NewQuestionnaireAnswerDefault()
-	_ = gk.NewQuestionnaireAnswer()
-	e := gk.NewQuestionnaireAnswerDefault()
+	_ = base.NewQuestionnaireAnswerDefault()
+	_ = base.NewQuestionnaireAnswer()
+	e := base.NewQuestionnaireAnswerDefault()
 	e = e.WithChoices([]string{"s"})
 	e = e.WithFreeform("s")
 	_ = e
 }
 
 func sBaseQuestionnaireChoiceDefinition() {
-	_ = gk.NewQuestionnaireChoiceDefinition("s", "s")
-	e := gk.NewQuestionnaireChoiceDefinition("s", "s")
+	_ = base.NewQuestionnaireChoiceDefinition("s", "s")
+	e := base.NewQuestionnaireChoiceDefinition("s", "s")
 	e = e.WithDefaultSelected(true)
 	e = e.WithDescription("s")
 	e = e.WithDisabled(true)
@@ -14599,95 +14607,95 @@ func sBaseQuestionnaireChoiceDefinition() {
 }
 
 func sBaseQuestionnaireInputDefinition() {
-	_ = gk.NewQuestionnaireInputDefinition(gk.InputState{}, "s")
-	e := gk.NewQuestionnaireInputDefinition(gk.InputState{}, "s")
+	_ = base.NewQuestionnaireInputDefinition(editor.InputState{}, "s")
+	e := base.NewQuestionnaireInputDefinition(editor.InputState{}, "s")
 	e = e.WithDisabled(true)
 	_ = e
 }
 
 func sBaseQuestionnaireItemDefinition() {
-	_ = gk.NewQuestionnaireItemDefinition("s", "s")
-	e := gk.NewQuestionnaireItemDefinition("s", "s")
-	e = e.WithChoice(gk.NewQuestionnaireChoiceDefinition("s", "s"))
-	e = e.WithChoices([]gk.QuestionnaireChoiceDefinition{gk.NewQuestionnaireChoiceDefinition("s", "s")})
+	_ = base.NewQuestionnaireItemDefinition("s", "s")
+	e := base.NewQuestionnaireItemDefinition("s", "s")
+	e = e.WithChoice(base.NewQuestionnaireChoiceDefinition("s", "s"))
+	e = e.WithChoices([]base.QuestionnaireChoiceDefinition{base.NewQuestionnaireChoiceDefinition("s", "s")})
 	e = e.WithDescription("s")
 	e = e.WithDisabled(true)
-	e = e.WithInput(gk.NewQuestionnaireInputDefinition(gk.InputState{}, "s"))
+	e = e.WithInput(base.NewQuestionnaireInputDefinition(editor.InputState{}, "s"))
 	e = e.WithMultiple(true)
 	e = e.WithRequired(true)
 	_ = e
 }
 
 func sBaseCodeBlock() {
-	_ = gk.NewBaseCodeBlockFromCode("s", gk.Some[string]("s"))
-	_ = gk.NewBaseCodeBlock("s", gk.Some[string]("s"), gk.Some[gk.Span](gk.Span{Start: 3, End: 3}))
-	e := gk.NewBaseCodeBlockFromCode("s", gk.Some[string]("s"))
+	_ = editor.NewBaseCodeBlockFromCode("s", gk.Some[string]("s"))
+	_ = editor.NewBaseCodeBlock("s", gk.Some[string]("s"), gk.Some[editor.Span](editor.Span{Start: 3, End: 3}))
+	e := editor.NewBaseCodeBlockFromCode("s", gk.Some[string]("s"))
 	e = e.WithLeafKey(3)
 	e = e.WithMeta(gk.Some[string]("s"))
 	_ = e
 }
 
 func sBaseLinkText() {
-	_ = gk.NewBaseLink2("s")
-	e := gk.NewBaseLink2("s")
+	_ = editor.NewBaseLink2("s")
+	e := editor.NewBaseLink2("s")
 	e = e.Title("s")
 	e = e.URL("s")
 	_ = e
 }
 
 func sBaseBlockState() {
-	_ = gk.NewBlockStateDefault()
-	e := gk.NewBlockStateDefault()
+	_ = editor.NewBlockStateDefault()
+	e := editor.NewBlockStateDefault()
 	_ = e
 }
 
 func sBaseFlowPosition() {
-	_ = gk.NewFlowPositionAt([]gk.BlockNode{gk.BlockNodeUnknown}, 3, true)
-	e := gk.NewFlowPositionAt([]gk.BlockNode{gk.BlockNodeUnknown}, 3, true)
+	_ = editor.NewFlowPositionAt([]editor.BlockNode{editor.BlockNodeUnknown}, 3, true)
+	e := editor.NewFlowPositionAt([]editor.BlockNode{editor.BlockNodeUnknown}, 3, true)
 	e = e.First(true)
 	e = e.Last(true)
 	_ = e
 }
 
 func sBaseInlineNode() {
-	_ = gk.NewInlineNodeDefault()
-	_ = gk.NewInlineNodeImage(gk.ImageNode{})
-	_ = gk.NewInlineNode("s")
-	e := gk.NewInlineNodeDefault()
-	e = e.Marks([]gk.TupleRangeTextMark{gk.TupleRangeTextMark{V0: gk.Range{Lo: 1, Hi: 3}, V1: gk.NewTextMarkDefault()}})
+	_ = editor.NewInlineNodeDefault()
+	_ = editor.NewInlineNodeImage(editor.ImageNode{})
+	_ = editor.NewInlineNode("s")
+	e := editor.NewInlineNodeDefault()
+	e = e.Marks([]editor.TupleRangeTextMark{editor.TupleRangeTextMark{V0: gk.Range{Lo: 1, Hi: 3}, V1: editor.NewTextMarkDefault()}})
 	_ = e
 }
 
 func sBaseParagraph() {
-	_ = gk.NewParagraphDefault()
-	e := gk.NewParagraphDefault()
-	e = e.Push(gk.NewInlineNodeDefault())
+	_ = editor.NewParagraphDefault()
+	e := editor.NewParagraphDefault()
+	e = e.Push(editor.NewInlineNodeDefault())
 	e = e.WithLeafKey(3)
 	_ = e
 }
 
 func sBaseRenderContext() {
-	_ = gk.NewRenderContextFromApp()
-	_ = gk.NewRenderContext(gk.NewBaseTextViewStyleDefault())
-	e := gk.NewRenderContextFromApp()
+	_ = editor.NewRenderContextFromApp()
+	_ = editor.NewRenderContext(editor.NewBaseTextViewStyleDefault())
+	e := editor.NewRenderContextFromApp()
 	e = e.OnLinkClick(noop83)
 	e = e.WithBodyFontSize(4)
 	e = e.WithForegroundRanges(3, []gk.TupleRangeColor{gk.TupleRangeColor{V0: gk.Range{Lo: 1, Hi: 3}, V1: gk.HSLA(0.5, 0.25, 0.75, 1)}})
-	e = e.WithLinkReference("s", gk.LinkMark{URL: "s", Identifier: gk.Some[string]("s"), Title: gk.Some[string]("s")})
-	e = e.WithMarkdownExtensions(gk.MarkdownExtensionsArc{})
-	e = e.WithStyle(gk.NewBaseTextViewStyleDefault())
+	e = e.WithLinkReference("s", editor.LinkMark{URL: "s", Identifier: gk.Some[string]("s"), Title: gk.Some[string]("s")})
+	e = e.WithMarkdownExtensions(editor.MarkdownExtensionsArc{})
+	e = e.WithStyle(editor.NewBaseTextViewStyleDefault())
 	_ = e
 }
 
 func sBaseTextMark() {
-	_ = gk.NewTextMarkDefault()
-	e := gk.NewTextMarkDefault()
+	_ = editor.NewTextMarkDefault()
+	e := editor.NewTextMarkDefault()
 	e = e.Bold()
 	e = e.Code()
 	e = e.Highlight(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Italic()
-	e = e.Link(gk.LinkMark{URL: "s", Identifier: gk.Some[string]("s"), Title: gk.Some[string]("s")})
-	e = e.Merge(gk.NewTextMarkDefault())
+	e = e.Link(editor.LinkMark{URL: "s", Identifier: gk.Some[string]("s"), Title: gk.Some[string]("s")})
+	e = e.Merge(editor.NewTextMarkDefault())
 	e = e.Strikethrough()
 	e = e.Underline()
 	_ = e
@@ -14851,8 +14859,8 @@ func sComponentThemeConfig() {
 }
 
 func sComponentTitleBar() {
-	_ = gk.TitleBar()
-	e := gk.TitleBar()
+	_ = kit.TitleBar()
+	e := kit.TitleBar()
 	e = e.OnCloseWindow(noop1)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -14981,10 +14989,10 @@ func sComponentTitleBar() {
 }
 
 func sComponentWindowBorder() {
-	_ = gk.WindowBorderDefault()
-	_ = gk.WindowBorder()
-	_ = gk.KitWindowBorder()
-	e := gk.WindowBorderDefault()
+	_ = kit.WindowBorderDefault()
+	_ = kit.WindowBorder()
+	_ = kit.KitWindowBorder()
+	e := kit.WindowBorderDefault()
 	e = e.ResizeHitSize(4)
 	e = e.ShadowSize(4)
 	e = e.KeepTextSelection("id")
@@ -14995,11 +15003,11 @@ func sComponentWindowBorder() {
 }
 
 func sComponentAccordion() {
-	_ = gk.Accordion("id")
-	e := gk.Accordion("id")
+	_ = kit.Accordion("id")
+	e := kit.Accordion("id")
 	e = e.Bordered(true)
 	e = e.Disabled(true)
-	e = e.Item(gk.AccordionItem())
+	e = e.Item(kit.AccordionItem())
 	e = e.Multiple(true)
 	e = e.OnToggleClick(noop72)
 	e = e.PopoverStyle()
@@ -15128,8 +15136,8 @@ func sComponentAccordion() {
 }
 
 func sComponentAccordionItem() {
-	_ = gk.AccordionItem()
-	e := gk.AccordionItem()
+	_ = kit.AccordionItem()
+	e := kit.AccordionItem()
 	e = e.ContentStyle(gk.NewStyleRefinementDefault())
 	e = e.Disabled(true)
 	e = e.Hover(gk.NewStyleRefinementDefault())
@@ -15268,18 +15276,18 @@ func sComponentAccordionItem() {
 }
 
 func sComponentAlert() {
-	_ = gk.AlertError("id", gk.KitTextString{Value: "s"})
-	_ = gk.AlertInfo("id", gk.KitTextString{Value: "s"})
-	_ = gk.Alert("id", gk.KitTextString{Value: "s"})
-	_ = gk.AlertSuccess("id", gk.KitTextString{Value: "s"})
-	_ = gk.AlertWarning("id", gk.KitTextString{Value: "s"})
-	e := gk.AlertError("id", gk.KitTextString{Value: "s"})
+	_ = kit.AlertError("id", editor.KitTextString{Value: "s"})
+	_ = kit.AlertInfo("id", editor.KitTextString{Value: "s"})
+	_ = kit.Alert("id", editor.KitTextString{Value: "s"})
+	_ = kit.AlertSuccess("id", editor.KitTextString{Value: "s"})
+	_ = kit.AlertWarning("id", editor.KitTextString{Value: "s"})
+	e := kit.AlertError("id", editor.KitTextString{Value: "s"})
 	e = e.Banner()
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.OnClose(noop1)
 	e = e.Title("s")
 	e = e.Visible(true)
-	e = e.WithVariant(gk.AlertVariantDefault)
+	e = e.WithVariant(kit.AlertVariantDefault)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -15406,19 +15414,19 @@ func sComponentAlert() {
 }
 
 func sComponentAttachment() {
-	_ = gk.AttachmentDefault()
-	_ = gk.Attachment()
-	e := gk.AttachmentDefault()
-	e = e.Actions(gk.AttachmentActionsDefault())
+	_ = kit.AttachmentDefault()
+	_ = kit.Attachment()
+	e := kit.AttachmentDefault()
+	e = e.Actions(kit.AttachmentActionsDefault())
 	e = e.Axis(gk.AxisVertical)
-	e = e.Content(gk.AttachmentContentDefault())
+	e = e.Content(kit.AttachmentContentDefault())
 	e = e.ID("id")
-	e = e.Media(gk.AttachmentMediaDefault())
+	e = e.Media(kit.AttachmentMediaDefault())
 	e = e.OnClick(noop1)
 	e = e.OnRemove(noop1)
 	e = e.OnRetry(noop1)
 	e = e.Progress(1.5)
-	e = e.Status(gk.AttachmentStatusPending)
+	e = e.Status(kit.AttachmentStatusPending)
 	e = e.Tooltip("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -15546,9 +15554,9 @@ func sComponentAttachment() {
 }
 
 func sComponentAttachmentActions() {
-	_ = gk.AttachmentActionsDefault()
-	_ = gk.AttachmentActions()
-	e := gk.AttachmentActionsDefault()
+	_ = kit.AttachmentActionsDefault()
+	_ = kit.AttachmentActions()
+	e := kit.AttachmentActionsDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -15676,11 +15684,11 @@ func sComponentAttachmentActions() {
 }
 
 func sComponentAttachmentContent() {
-	_ = gk.AttachmentContentDefault()
-	_ = gk.AttachmentContent()
-	e := gk.AttachmentContentDefault()
-	e = e.Description(gk.AttachmentDescription("s"))
-	e = e.Title(gk.AttachmentTitle("s"))
+	_ = kit.AttachmentContentDefault()
+	_ = kit.AttachmentContent()
+	e := kit.AttachmentContentDefault()
+	e = e.Description(kit.AttachmentDescription("s"))
+	e = e.Title(kit.AttachmentTitle("s"))
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -15808,9 +15816,9 @@ func sComponentAttachmentContent() {
 }
 
 func sComponentAttachmentDescription() {
-	_ = gk.AttachmentDescription("s")
-	e := gk.AttachmentDescription("s")
-	e = e.Status(gk.AttachmentStatusPending)
+	_ = kit.AttachmentDescription("s")
+	e := kit.AttachmentDescription("s")
+	e = e.Status(kit.AttachmentStatusPending)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -15933,8 +15941,8 @@ func sComponentAttachmentDescription() {
 }
 
 func sComponentAttachmentGroup() {
-	_ = gk.AttachmentGroup("id")
-	e := gk.AttachmentGroup("id")
+	_ = kit.AttachmentGroup("id")
+	e := kit.AttachmentGroup("id")
 	e = e.TrackScroll(gk.ScrollHandle{})
 	e = e.WithEdgeFade(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.PopoverStyle()
@@ -16064,9 +16072,9 @@ func sComponentAttachmentGroup() {
 }
 
 func sComponentAttachmentMedia() {
-	_ = gk.AttachmentMediaDefault()
-	_ = gk.AttachmentMedia()
-	e := gk.AttachmentMediaDefault()
+	_ = kit.AttachmentMediaDefault()
+	_ = kit.AttachmentMedia()
+	e := kit.AttachmentMediaDefault()
 	e = e.Overlay(gk.Div())
 	e = e.Src(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
 	e = e.PopoverStyle()
@@ -16200,10 +16208,10 @@ func sComponentAttachmentMedia() {
 }
 
 func sComponentAttachmentTitle() {
-	_ = gk.AttachmentTitle("s")
-	e := gk.AttachmentTitle("s")
-	e = e.Status(gk.AttachmentStatusPending)
-	e = e.WithShimmerStyle(gk.NewShimmerStyleDefault())
+	_ = kit.AttachmentTitle("s")
+	e := kit.AttachmentTitle("s")
+	e = e.Status(kit.AttachmentStatusPending)
+	e = e.WithShimmerStyle(kit.NewShimmerStyleDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -16326,8 +16334,8 @@ func sComponentAttachmentTitle() {
 }
 
 func sComponentAvatar() {
-	_ = gk.Avatar()
-	e := gk.Avatar()
+	_ = kit.Avatar()
+	e := kit.Avatar()
 	e = e.Name("s")
 	e = e.Placeholder(gk.IconALargeSmall)
 	e = e.Src(gk.ImageSourceResource{Value: gk.ResourceEmbedded{Value: "s"}})
@@ -16498,10 +16506,10 @@ func sComponentAvatar() {
 }
 
 func sComponentAvatarGroup() {
-	_ = gk.AvatarGroup()
-	e := gk.AvatarGroup()
-	e = e.Child(gk.Avatar())
-	e = e.Children([]gk.AvatarEl{gk.Avatar()})
+	_ = kit.AvatarGroup()
+	e := kit.AvatarGroup()
+	e = e.Child(kit.Avatar())
+	e = e.Children([]kit.AvatarEl{kit.Avatar()})
 	e = e.Ellipsis()
 	e = e.Limit(3)
 	e = e.PopoverStyle()
@@ -16671,8 +16679,8 @@ func sComponentAvatarGroup() {
 }
 
 func sComponentBadge() {
-	_ = gk.Badge()
-	e := gk.Badge()
+	_ = kit.Badge()
+	e := kit.Badge()
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Count(3)
 	e = e.Dot()
@@ -16690,10 +16698,10 @@ func sComponentBadge() {
 }
 
 func sComponentBreadcrumb() {
-	_ = gk.Breadcrumb()
-	e := gk.Breadcrumb()
-	e = e.Child(gk.BreadcrumbItem("s"))
-	e = e.Children([]gk.BreadcrumbItemInto{gk.BreadcrumbItem("s")})
+	_ = kit.Breadcrumb()
+	e := kit.Breadcrumb()
+	e = e.Child(kit.BreadcrumbItem("s"))
+	e = e.Children([]kit.BreadcrumbItemInto{kit.BreadcrumbItem("s")})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -16816,8 +16824,8 @@ func sComponentBreadcrumb() {
 }
 
 func sComponentBreadcrumbItem() {
-	_ = gk.BreadcrumbItem("s")
-	e := gk.BreadcrumbItem("s")
+	_ = kit.BreadcrumbItem("s")
+	e := kit.BreadcrumbItem("s")
 	e = e.Disabled(true)
 	e = e.OnClick(noop1)
 	e = e.PopoverStyle()
@@ -16942,13 +16950,13 @@ func sComponentBreadcrumbItem() {
 }
 
 func sComponentBubble() {
-	_ = gk.BubbleDefault()
-	_ = gk.Bubble()
-	e := gk.BubbleDefault()
-	e = e.Alignment(gk.MessageAlignmentStart)
-	e = e.Content(gk.BubbleContentDefault())
-	e = e.Reactions(gk.BubbleReactionsDefault())
-	e = e.WithVariant(gk.BubbleVariantFilled)
+	_ = kit.BubbleDefault()
+	_ = kit.Bubble()
+	e := kit.BubbleDefault()
+	e = e.Alignment(kit.MessageAlignmentStart)
+	e = e.Content(kit.BubbleContentDefault())
+	e = e.Reactions(kit.BubbleReactionsDefault())
+	e = e.WithVariant(kit.BubbleVariantFilled)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -17076,9 +17084,9 @@ func sComponentBubble() {
 }
 
 func sComponentBubbleContent() {
-	_ = gk.BubbleContentDefault()
-	_ = gk.BubbleContent()
-	e := gk.BubbleContentDefault()
+	_ = kit.BubbleContentDefault()
+	_ = kit.BubbleContent()
+	e := kit.BubbleContentDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -17206,9 +17214,9 @@ func sComponentBubbleContent() {
 }
 
 func sComponentBubbleGroup() {
-	_ = gk.BubbleGroupDefault()
-	_ = gk.BubbleGroup()
-	e := gk.BubbleGroupDefault()
+	_ = kit.BubbleGroupDefault()
+	_ = kit.BubbleGroup()
+	e := kit.BubbleGroupDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -17336,12 +17344,12 @@ func sComponentBubbleGroup() {
 }
 
 func sComponentBubbleReactions() {
-	_ = gk.BubbleReactionsDefault()
-	_ = gk.BubbleReactions()
-	e := gk.BubbleReactionsDefault()
-	e = e.Action(gk.Button("id"))
-	e = e.Alignment(gk.MessageAlignmentStart)
-	e = e.Side(gk.BubbleReactionSideTop)
+	_ = kit.BubbleReactionsDefault()
+	_ = kit.BubbleReactions()
+	e := kit.BubbleReactionsDefault()
+	e = e.Action(kit.Button("id"))
+	e = e.Alignment(kit.MessageAlignmentStart)
+	e = e.Side(kit.BubbleReactionSideTop)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -17469,8 +17477,8 @@ func sComponentBubbleReactions() {
 }
 
 func sComponentButton() {
-	_ = gk.Button("id")
-	e := gk.Button("id")
+	_ = kit.Button("id")
+	e := kit.Button("id")
 	e = e.AccessibilityID("s")
 	e = e.AccessibilityLabel("s")
 	e = e.AriaExpanded(true)
@@ -17484,7 +17492,7 @@ func sComponentButton() {
 	e = e.OnHover(noop4)
 	e = e.Outline()
 	e = e.Role(gk.RoleOverrideImplicit)
-	e = e.Rounded(gk.ButtonRoundedNone)
+	e = e.Rounded(kit.ButtonRoundedNone)
 	e = e.TabIndex(3)
 	e = e.TabStop(true)
 	e = e.Toggled(true)
@@ -17543,7 +17551,7 @@ func sComponentButton() {
 	e = e.Small()
 	e = e.WithSize(gk.SizeXSmall)
 	e = e.Xsmall()
-	e = e.Custom(gk.NewButtonCustomVariant())
+	e = e.Custom(kit.NewButtonCustomVariant())
 	e = e.Danger()
 	e = e.Ghost()
 	e = e.Info()
@@ -17677,8 +17685,8 @@ func sComponentButton() {
 }
 
 func sComponentButtonCustomVariant() {
-	_ = gk.NewButtonCustomVariant()
-	e := gk.NewButtonCustomVariant()
+	_ = kit.NewButtonCustomVariant()
+	e := kit.NewButtonCustomVariant()
 	e = e.Active(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Foreground(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -17688,10 +17696,10 @@ func sComponentButtonCustomVariant() {
 }
 
 func sComponentButtonGroup() {
-	_ = gk.ButtonGroup("id")
-	e := gk.ButtonGroup("id")
-	e = e.Child(gk.Button("id"))
-	e = e.Children([]gk.ButtonEl{gk.Button("id")})
+	_ = kit.ButtonGroup("id")
+	e := kit.ButtonGroup("id")
+	e = e.Child(kit.Button("id"))
+	e = e.Children([]kit.ButtonEl{kit.Button("id")})
 	e = e.Compact()
 	e = e.Layout(gk.AxisVertical)
 	e = e.Multiple(true)
@@ -17819,7 +17827,7 @@ func sComponentButtonGroup() {
 	e = e.TextSize(gk.Px(8))
 	e = e.Top(gk.Px(8))
 	e = e.W(gk.Px(8))
-	e = e.Custom(gk.NewButtonCustomVariant())
+	e = e.Custom(kit.NewButtonCustomVariant())
 	e = e.Danger()
 	e = e.Ghost()
 	e = e.Info()
@@ -17835,11 +17843,11 @@ func sComponentButtonGroup() {
 }
 
 func sComponentDropdownButton() {
-	_ = gk.DropdownButton("id")
-	e := gk.DropdownButton("id")
-	e = e.Button(gk.Button("id"))
-	e = e.DropdownMenu(gk.NewPopupMenu())
-	e = e.DropdownMenuWithAnchor(gk.AnchorTopLeft, gk.NewPopupMenu())
+	_ = kit.DropdownButton("id")
+	e := kit.DropdownButton("id")
+	e = e.Button(kit.Button("id"))
+	e = e.DropdownMenu(kit.NewPopupMenu())
+	e = e.DropdownMenuWithAnchor(gk.AnchorTopLeft, kit.NewPopupMenu())
 	e = e.MenuAccessibilityLabel("s")
 	e = e.Outline()
 	e = e.PopoverStyle()
@@ -17964,7 +17972,7 @@ func sComponentDropdownButton() {
 	e = e.Small()
 	e = e.WithSize(gk.SizeXSmall)
 	e = e.Xsmall()
-	e = e.Custom(gk.NewButtonCustomVariant())
+	e = e.Custom(kit.NewButtonCustomVariant())
 	e = e.Danger()
 	e = e.Ghost()
 	e = e.Info()
@@ -17983,8 +17991,8 @@ func sComponentDropdownButton() {
 }
 
 func sComponentToggle() {
-	_ = gk.Toggle("id")
-	e := gk.Toggle("id")
+	_ = kit.Toggle("id")
+	e := kit.Toggle("id")
 	e = e.Checked(true)
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.Label("s")
@@ -18034,7 +18042,7 @@ func sComponentToggle() {
 	e = e.VFlex()
 	e = e.Ghost()
 	e = e.Outline()
-	e = e.WithVariant(gk.ToggleVariantGhost)
+	e = e.WithVariant(kit.ToggleVariantGhost)
 	e = e.Child(gk.Div())
 	e = e.Children(gk.Div())
 	e = e.Disabled(true)
@@ -18126,10 +18134,10 @@ func sComponentToggle() {
 }
 
 func sComponentToggleGroup() {
-	_ = gk.ToggleGroup("id")
-	e := gk.ToggleGroup("id")
-	e = e.Child(gk.Toggle("id"))
-	e = e.Children([]gk.ToggleEl{gk.Toggle("id")})
+	_ = kit.ToggleGroup("id")
+	e := kit.ToggleGroup("id")
+	e = e.Child(kit.Toggle("id"))
+	e = e.Children([]kit.ToggleEl{kit.Toggle("id")})
 	e = e.OnClick(noop71)
 	e = e.Segmented()
 	e = e.Single()
@@ -18177,7 +18185,7 @@ func sComponentToggleGroup() {
 	e = e.Xsmall()
 	e = e.Ghost()
 	e = e.Outline()
-	e = e.WithVariant(gk.ToggleVariantGhost)
+	e = e.WithVariant(kit.ToggleVariantGhost)
 	e = e.Disabled(true)
 	e = e.AspectRatio(1.5)
 	e = e.Bg(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -18263,8 +18271,8 @@ func sComponentToggleGroup() {
 }
 
 func sComponentCalendar() {
-	_ = gk.Calendar(gk.CalendarState{})
-	e := gk.Calendar(gk.CalendarState{})
+	_ = kit.Calendar(base.CalendarState{})
+	e := kit.Calendar(base.CalendarState{})
 	e = e.NumberOfMonths(3)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -18392,8 +18400,8 @@ func sComponentCalendar() {
 }
 
 func sComponentCarousel() {
-	_ = gk.Carousel("id", gk.CarouselState{})
-	e := gk.Carousel("id", gk.CarouselState{})
+	_ = kit.Carousel("id", kit.CarouselState{})
+	e := kit.Carousel("id", kit.CarouselState{})
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -18523,8 +18531,8 @@ func sComponentCarousel() {
 }
 
 func sComponentCarouselContent() {
-	_ = gk.CarouselContent(gk.CarouselState{})
-	e := gk.CarouselContent(gk.CarouselState{})
+	_ = kit.CarouselContent(kit.CarouselState{})
+	e := kit.CarouselContent(kit.CarouselState{})
 	e = e.TrackStyle(gk.NewStyleRefinementDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -18653,8 +18661,8 @@ func sComponentCarouselContent() {
 }
 
 func sComponentCarouselItem() {
-	_ = gk.CarouselItem("id", 3, gk.CarouselState{})
-	e := gk.CarouselItem("id", 3, gk.CarouselState{})
+	_ = kit.CarouselItem("id", 3, kit.CarouselState{})
+	e := kit.CarouselItem("id", 3, kit.CarouselState{})
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -18783,8 +18791,8 @@ func sComponentCarouselItem() {
 }
 
 func sComponentCarouselNext() {
-	_ = gk.CarouselNext(gk.CarouselState{})
-	e := gk.CarouselNext(gk.CarouselState{})
+	_ = kit.CarouselNext(kit.CarouselState{})
+	e := kit.CarouselNext(kit.CarouselState{})
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -18917,8 +18925,8 @@ func sComponentCarouselNext() {
 }
 
 func sComponentCarouselPagination() {
-	_ = gk.CarouselPagination()
-	e := gk.CarouselPagination()
+	_ = kit.CarouselPagination()
+	e := kit.CarouselPagination()
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -19047,8 +19055,8 @@ func sComponentCarouselPagination() {
 }
 
 func sComponentCarouselPaginationItem() {
-	_ = gk.CarouselPaginationItem("id", 3, gk.CarouselState{})
-	e := gk.CarouselPaginationItem("id", 3, gk.CarouselState{})
+	_ = kit.CarouselPaginationItem("id", 3, kit.CarouselState{})
+	e := kit.CarouselPaginationItem("id", 3, kit.CarouselState{})
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -19181,8 +19189,8 @@ func sComponentCarouselPaginationItem() {
 }
 
 func sComponentCarouselPrevious() {
-	_ = gk.CarouselPrevious(gk.CarouselState{})
-	e := gk.CarouselPrevious(gk.CarouselState{})
+	_ = kit.CarouselPrevious(kit.CarouselState{})
+	e := kit.CarouselPrevious(kit.CarouselState{})
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -19315,8 +19323,8 @@ func sComponentCarouselPrevious() {
 }
 
 func sComponentAreaChart() {
-	_ = gk.AreaChart(gk.NewData(sampleRows))
-	e := gk.AreaChart(gk.NewData(sampleRows))
+	_ = chart.AreaChart(chart.NewData(sampleRows))
+	e := chart.AreaChart(chart.NewData(sampleRows))
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Fill(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -19341,7 +19349,7 @@ func sComponentAreaChart() {
 	e = e.XTickCount(3)
 	e = e.Y("Value")
 	e = e.YAxis(true)
-	e = e.YAxisLabelPlacement(gk.AxisLabelPlacementOutside)
+	e = e.YAxisLabelPlacement(chart.AxisLabelPlacementOutside)
 	e = e.YDomain(1.5, 1.5)
 	e = e.YPadding(1.5, 1.5)
 	e = e.YTickCount(3)
@@ -19350,9 +19358,9 @@ func sComponentAreaChart() {
 }
 
 func sComponentBarChart() {
-	_ = gk.BarChart(gk.NewData(sampleRows))
-	e := gk.BarChart(gk.NewData(sampleRows))
-	e = e.Alignment(gk.BarAlignmentBottom)
+	_ = chart.BarChart(chart.NewData(sampleRows))
+	e := chart.BarChart(chart.NewData(sampleRows))
+	e = e.Alignment(chart.BarAlignmentBottom)
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Band("Label")
@@ -19378,15 +19386,15 @@ func sComponentBarChart() {
 	e = e.TooltipValueColor("Color")
 	e = e.Value("Value")
 	e = e.ValueAxis(true)
-	e = e.ValueAxisLabelPlacement(gk.AxisLabelPlacementOutside)
+	e = e.ValueAxisLabelPlacement(chart.AxisLabelPlacementOutside)
 	e = e.ValueTickCount(3)
 	e = e.ValueTickFormat("{:.1}")
 	_ = e
 }
 
 func sComponentCandlestickChart() {
-	_ = gk.CandlestickChart(gk.NewData(sampleRows))
-	e := gk.CandlestickChart(gk.NewData(sampleRows))
+	_ = chart.CandlestickChart(chart.NewData(sampleRows))
+	e := chart.CandlestickChart(chart.NewData(sampleRows))
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Bearish(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -19410,8 +19418,8 @@ func sComponentCandlestickChart() {
 }
 
 func sComponentLineChart() {
-	_ = gk.LineChart(gk.NewData(sampleRows))
-	e := gk.LineChart(gk.NewData(sampleRows))
+	_ = chart.LineChart(chart.NewData(sampleRows))
+	e := chart.LineChart(chart.NewData(sampleRows))
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Dot()
@@ -19436,7 +19444,7 @@ func sComponentLineChart() {
 	e = e.XTickCount(3)
 	e = e.Y("Value")
 	e = e.YAxis(true)
-	e = e.YAxisLabelPlacement(gk.AxisLabelPlacementOutside)
+	e = e.YAxisLabelPlacement(chart.AxisLabelPlacementOutside)
 	e = e.YDomain(1.5, 1.5)
 	e = e.YPadding(1.5, 1.5)
 	e = e.YTickCount(3)
@@ -19445,8 +19453,8 @@ func sComponentLineChart() {
 }
 
 func sComponentPieChart() {
-	_ = gk.PieChart(gk.NewData(sampleRows))
-	e := gk.PieChart(gk.NewData(sampleRows))
+	_ = chart.PieChart(chart.NewData(sampleRows))
+	e := chart.PieChart(chart.NewData(sampleRows))
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Color("Color")
@@ -19470,8 +19478,8 @@ func sComponentPieChart() {
 }
 
 func sComponentRadarChart() {
-	_ = gk.RadarChart(gk.NewData(sampleRows))
-	e := gk.RadarChart(gk.NewData(sampleRows))
+	_ = chart.RadarChart(chart.NewData(sampleRows))
+	e := chart.RadarChart(chart.NewData(sampleRows))
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.Dot()
@@ -19495,8 +19503,8 @@ func sComponentRadarChart() {
 }
 
 func sComponentSankeyChart() {
-	_ = gk.SankeyChart(gk.NewData(sampleRows), []gk.SankeyLink{gk.NewSankeyLink(3, 3, 1.5)})
-	e := gk.SankeyChart(gk.NewData(sampleRows), []gk.SankeyLink{gk.NewSankeyLink(3, 3, 1.5)})
+	_ = chart.SankeyChart(chart.NewData(sampleRows), []chart.SankeyLink{chart.NewSankeyLink(3, 3, 1.5)})
+	e := chart.SankeyChart(chart.NewData(sampleRows), []chart.SankeyLink{chart.NewSankeyLink(3, 3, 1.5)})
 	e = e.Appear(true)
 	e = e.AppearKey("s")
 	e = e.ID("id")
@@ -19505,7 +19513,7 @@ func sComponentSankeyChart() {
 	e = e.LabelGap(1.5)
 	e = e.LinkOpacity(1.5)
 	e = e.MinLinkWidth(1.5)
-	e = e.NodeAlign(gk.SankeyAlignLeft)
+	e = e.NodeAlign(chart.SankeyAlignLeft)
 	e = e.NodeColor("Color")
 	e = e.NodeCornerRadius(4)
 	e = e.NodeLabel("Label")
@@ -19514,25 +19522,25 @@ func sComponentSankeyChart() {
 	e = e.TooltipName("Label")
 	e = e.TooltipValue("{Label} {:.1}")
 	e = e.ValueLabel("{Label} {:.1}")
-	e = e.ValueScale(gk.SankeyValueScaleLinear)
+	e = e.ValueScale(chart.SankeyValueScaleLinear)
 	_ = e
 }
 
 func sComponentSankeyLabel() {
-	_ = gk.NewSankeyLabel("s")
-	e := gk.NewSankeyLabel("s")
+	_ = chart.NewSankeyLabel("s")
+	e := chart.NewSankeyLabel("s")
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.FontSize(1.5)
 	_ = e
 }
 
 func sComponentCheckbox() {
-	_ = gk.Checkbox("id")
-	e := gk.Checkbox("id")
+	_ = kit.Checkbox("id")
+	e := kit.Checkbox("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Indeterminate(true)
-	e = e.Label(gk.KitTextString{Value: "s"})
+	e = e.Label(editor.KitTextString{Value: "s"})
 	e = e.OnChange(noop4)
 	e = e.OnClick(noop4)
 	e = e.Role(gk.RoleOverrideImplicit)
@@ -19746,8 +19754,8 @@ func sComponentCheckbox() {
 }
 
 func sComponentClipboard() {
-	_ = gk.Clipboard("id")
-	e := gk.Clipboard("id")
+	_ = kit.Clipboard("id")
+	e := kit.Clipboard("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Label("s")
 	e = e.OnCopied(noop6)
@@ -19763,8 +19771,8 @@ func sComponentClipboard() {
 }
 
 func sComponentCollapsible() {
-	_ = gk.Collapsible()
-	e := gk.Collapsible()
+	_ = kit.Collapsible()
+	e := kit.Collapsible()
 	e = e.Content(gk.Div())
 	e = e.MotionID("id")
 	e = e.Open(true)
@@ -19895,8 +19903,8 @@ func sComponentCollapsible() {
 }
 
 func sComponentColorPicker() {
-	_ = gk.ColorPicker(gk.ColorPickerState{})
-	e := gk.ColorPicker(gk.ColorPickerState{})
+	_ = kit.ColorPicker(base.ColorPickerState{})
+	e := kit.ColorPicker(base.ColorPickerState{})
 	e = e.AccessibilityLabel("s")
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.FeaturedColors([]gk.Color{gk.HSLA(0.5, 0.25, 0.75, 1)})
@@ -20028,8 +20036,8 @@ func sComponentColorPicker() {
 }
 
 func sComponentColorSelect() {
-	_ = gk.ColorSelect(gk.ColorPickerState{})
-	e := gk.ColorSelect(gk.ColorPickerState{})
+	_ = kit.ColorSelect(base.ColorPickerState{})
+	e := kit.ColorSelect(base.ColorPickerState{})
 	e = e.AccessibilityLabel("s")
 	e = e.FeaturedColors([]gk.Color{gk.HSLA(0.5, 0.25, 0.75, 1)})
 	e = e.Placeholder("s")
@@ -20159,15 +20167,15 @@ func sComponentColorSelect() {
 }
 
 func sComponentCaret() {
-	_ = gk.Caret(gk.SizeXSmall)
-	e := gk.Caret(gk.SizeXSmall)
+	_ = table.Caret(gk.SizeXSmall)
+	e := table.Caret(gk.SizeXSmall)
 	e = e.TextColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	_ = e
 }
 
 func sComponentCombobox() {
-	_ = gk.Combobox(gk.ComboboxState{})
-	e := gk.Combobox(gk.ComboboxState{})
+	_ = table.Combobox(table.ComboboxState{})
+	e := table.Combobox(table.ComboboxState{})
 	e = e.Appearance(true)
 	e = e.CheckIcon(gk.IconALargeSmall)
 	e = e.Cleanable(true)
@@ -20306,14 +20314,14 @@ func sComponentCombobox() {
 }
 
 func sComponentCommand() {
-	_ = gk.Command(gk.CommandState{})
-	e := gk.Command(gk.CommandState{})
+	_ = table.Command(table.CommandState{})
+	e := table.Command(table.CommandState{})
 	e = e.Bordered(true)
 	e = e.Filterable(true)
-	e = e.Group(gk.NewCommandGroup())
+	e = e.Group(table.NewCommandGroup())
 	e = e.HighlightMatches(true)
-	e = e.Item(gk.NewCommandItemDefault())
-	e = e.Items([]gk.CommandItem{gk.NewCommandItemDefault()})
+	e = e.Item(table.NewCommandItemDefault())
+	e = e.Items([]table.CommandItem{table.NewCommandItemDefault()})
 	e = e.MaxH(gk.Px(8))
 	e = e.OnCancel(noop3)
 	e = e.OnConfirm(noop82)
@@ -20444,18 +20452,18 @@ func sComponentCommand() {
 }
 
 func sComponentCommandGroup() {
-	_ = gk.NewCommandGroup()
-	e := gk.NewCommandGroup()
-	e = e.Item(gk.NewCommandItemDefault())
-	e = e.Items([]gk.CommandItem{gk.NewCommandItemDefault()})
+	_ = table.NewCommandGroup()
+	e := table.NewCommandGroup()
+	e = e.Item(table.NewCommandItemDefault())
+	e = e.Items([]table.CommandItem{table.NewCommandItemDefault()})
 	e = e.Label("s")
 	_ = e
 }
 
 func sComponentCommandItem() {
-	_ = gk.NewCommandItemDefault()
-	_ = gk.NewCommandItem()
-	e := gk.NewCommandItemDefault()
+	_ = table.NewCommandItemDefault()
+	_ = table.NewCommandItem()
+	e := table.NewCommandItemDefault()
 	e = e.Action(sampleAct)
 	e = e.Checked(true)
 	e = e.Child(gk.Div())
@@ -20467,8 +20475,8 @@ func sComponentCommandItem() {
 }
 
 func sComponentDatePicker() {
-	_ = gk.DatePicker(gk.DatePickerState{})
-	e := gk.DatePicker(gk.DatePickerState{})
+	_ = kit.DatePicker(kit.DatePickerState{})
+	e := kit.DatePicker(kit.DatePickerState{})
 	e = e.Appearance(true)
 	e = e.Cleanable(true)
 	e = e.NumberOfMonths(3)
@@ -20601,15 +20609,15 @@ func sComponentDatePicker() {
 }
 
 func sComponentDescriptionList() {
-	_ = gk.DescriptionListHorizontal()
-	_ = gk.DescriptionList()
-	_ = gk.DescriptionListVertical()
-	e := gk.DescriptionListHorizontal()
+	_ = kit.DescriptionListHorizontal()
+	_ = kit.DescriptionList()
+	_ = kit.DescriptionListVertical()
+	e := kit.DescriptionListHorizontal()
 	e = e.Bordered(true)
-	e = e.Child(gk.DescriptionItemSeparator)
-	e = e.Children([]gk.DescriptionItem{gk.DescriptionItemSeparator})
+	e = e.Child(kit.DescriptionItemSeparator)
+	e = e.Children([]kit.DescriptionItem{kit.DescriptionItemSeparator})
 	e = e.Columns(3)
-	e = e.Item(gk.DescriptionTextString{Value: "s"}, gk.DescriptionTextString{Value: "s"}, 3)
+	e = e.Item(kit.DescriptionTextString{Value: "s"}, kit.DescriptionTextString{Value: "s"}, 3)
 	e = e.LabelWidth(gk.Px(8))
 	e = e.Layout(gk.AxisVertical)
 	e = e.Separator()
@@ -20621,17 +20629,17 @@ func sComponentDescriptionList() {
 }
 
 func sComponentAlertDialog() {
-	_ = gk.AlertDialog()
-	e := gk.AlertDialog()
-	e = e.ButtonProps(gk.NewDialogButtonPropsDefault())
+	_ = overlay.AlertDialog()
+	e := overlay.AlertDialog()
+	e = e.ButtonProps(overlay.NewDialogButtonPropsDefault())
 	e = e.CancelText("s")
 	e = e.CancelVariant(gk.ButtonVariantDefault)
 	e = e.Centered()
 	e = e.CloseButton(true)
 	e = e.Confirm()
-	e = e.Content(gk.DialogContent())
+	e = e.Content(overlay.DialogContent())
 	e = e.Description(gk.Div())
-	e = e.Entrance(gk.DialogEntranceSlideDown)
+	e = e.Entrance(overlay.DialogEntranceSlideDown)
 	e = e.Footer(gk.Div())
 	e = e.Icon(gk.Div())
 	e = e.Keyboard(true)
@@ -20772,13 +20780,13 @@ func sComponentAlertDialog() {
 }
 
 func sComponentDialog() {
-	_ = gk.Dialog()
-	e := gk.Dialog()
-	e = e.ButtonProps(gk.NewDialogButtonPropsDefault())
+	_ = overlay.Dialog()
+	e := overlay.Dialog()
+	e = e.ButtonProps(overlay.NewDialogButtonPropsDefault())
 	e = e.Centered()
 	e = e.CloseButton(true)
-	e = e.Content(gk.DialogContent())
-	e = e.Entrance(gk.DialogEntranceSlideDown)
+	e = e.Content(overlay.DialogContent())
+	e = e.Entrance(overlay.DialogEntranceSlideDown)
 	e = e.Footer(gk.Div())
 	e = e.Keyboard(true)
 	e = e.MarginTop(4)
@@ -20917,8 +20925,8 @@ func sComponentDialog() {
 }
 
 func sComponentDialogAction() {
-	_ = gk.DialogAction()
-	e := gk.DialogAction()
+	_ = overlay.DialogAction()
+	e := overlay.DialogAction()
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.Child(gk.Div())
@@ -20927,8 +20935,8 @@ func sComponentDialogAction() {
 }
 
 func sComponentDialogButtonProps() {
-	_ = gk.NewDialogButtonPropsDefault()
-	e := gk.NewDialogButtonPropsDefault()
+	_ = overlay.NewDialogButtonPropsDefault()
+	e := overlay.NewDialogButtonPropsDefault()
 	e = e.CancelText("s")
 	e = e.CancelVariant(gk.ButtonVariantDefault)
 	e = e.OkText("s")
@@ -20940,9 +20948,9 @@ func sComponentDialogButtonProps() {
 }
 
 func sComponentDialogClose() {
-	_ = gk.DialogClose()
-	e := gk.DialogClose()
-	e = e.Trigger(gk.Button("id"))
+	_ = overlay.DialogClose()
+	e := overlay.DialogClose()
+	e = e.Trigger(kit.Button("id"))
 	e = e.KeepTextSelection("id")
 	e = e.OnPrepaint(noop75)
 	e = e.Child(gk.Div())
@@ -20951,8 +20959,8 @@ func sComponentDialogClose() {
 }
 
 func sComponentDialogContent() {
-	_ = gk.DialogContent()
-	e := gk.DialogContent()
+	_ = overlay.DialogContent()
+	e := overlay.DialogContent()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21080,8 +21088,8 @@ func sComponentDialogContent() {
 }
 
 func sComponentDialogDescription() {
-	_ = gk.DialogDescription()
-	e := gk.DialogDescription()
+	_ = overlay.DialogDescription()
+	e := overlay.DialogDescription()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21209,8 +21217,8 @@ func sComponentDialogDescription() {
 }
 
 func sComponentDialogFooter() {
-	_ = gk.DialogFooter()
-	e := gk.DialogFooter()
+	_ = overlay.DialogFooter()
+	e := overlay.DialogFooter()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21338,8 +21346,8 @@ func sComponentDialogFooter() {
 }
 
 func sComponentDialogHeader() {
-	_ = gk.DialogHeader()
-	e := gk.DialogHeader()
+	_ = overlay.DialogHeader()
+	e := overlay.DialogHeader()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21467,8 +21475,8 @@ func sComponentDialogHeader() {
 }
 
 func sComponentDialogTitle() {
-	_ = gk.DialogTitle()
-	e := gk.DialogTitle()
+	_ = overlay.DialogTitle()
+	e := overlay.DialogTitle()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21596,16 +21604,16 @@ func sComponentDialogTitle() {
 }
 
 func sComponentDiff() {
-	_ = gk.Diff(gk.DiffState{})
-	e := gk.Diff(gk.DiffState{})
-	e = e.Annotations([]gk.DiffAnnotation{gk.DiffAnnotation{}})
+	_ = editor.Diff(editor.DiffState{})
+	e := editor.Diff(editor.DiffState{})
+	e = e.Annotations([]editor.DiffAnnotation{editor.DiffAnnotation{}})
 	e = e.ChangeBackground(true)
-	e = e.ChangeIndicator(gk.DiffChangeIndicatorSigns)
-	e = e.Decorations([]gk.DiffDecoration{gk.NewDiffDecoration(gk.NewDiffLineRange("s", gk.DiffSideOriginal, 3, 3))})
-	e = e.GutterMarkers([]gk.DiffGutterMarker{gk.NewDiffGutterMarker("id", gk.DiffLinePosition{})})
+	e = e.ChangeIndicator(editor.DiffChangeIndicatorSigns)
+	e = e.Decorations([]editor.DiffDecoration{editor.NewDiffDecoration(editor.NewDiffLineRange("s", editor.DiffSideOriginal, 3, 3))})
+	e = e.GutterMarkers([]editor.DiffGutterMarker{editor.NewDiffGutterMarker("id", editor.DiffLinePosition{})})
 	e = e.HeaderVisible(true)
-	e = e.HoverHighlight(gk.DiffHoverHighlightNone)
-	e = e.HunkSeparator(gk.DiffHunkSeparatorMetadata)
+	e = e.HoverHighlight(editor.DiffHoverHighlightNone)
+	e = e.HunkSeparator(editor.DiffHunkSeparatorMetadata)
 	e = e.LineNumber(true)
 	e = e.OnAddAnnotation(noop113)
 	e = e.OnLineClick(noop108)
@@ -21613,7 +21621,7 @@ func sComponentDiff() {
 	e = e.OnTextClick(noop121)
 	e = e.OnTextHover(noop122)
 	e = e.SoftWrap(true)
-	e = e.SpanHighlights([]gk.DiffSpanHighlight{gk.NewDiffSpanHighlight(gk.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})})
+	e = e.SpanHighlights([]editor.DiffSpanHighlight{editor.NewDiffSpanHighlight(editor.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})})
 	e = e.SplitRatio(1.5)
 	e = e.SyntaxHighlight(true)
 	e = e.TextCursor(gk.CursorStyleArrow)
@@ -21739,47 +21747,47 @@ func sComponentDiff() {
 }
 
 func sComponentDiffDecoration() {
-	_ = gk.NewDiffDecoration(gk.NewDiffLineRange("s", gk.DiffSideOriginal, 3, 3))
-	e := gk.NewDiffDecoration(gk.NewDiffLineRange("s", gk.DiffSideOriginal, 3, 3))
+	_ = editor.NewDiffDecoration(editor.NewDiffLineRange("s", editor.DiffSideOriginal, 3, 3))
+	e := editor.NewDiffDecoration(editor.NewDiffLineRange("s", editor.DiffSideOriginal, 3, 3))
 	e = e.WithBackground(gk.HSLA(0.5, 0.25, 0.75, 1))
 	_ = e
 }
 
 func sComponentDiffFile() {
-	_ = gk.NewDiffFileExcerpts("s", []gk.TupleIntString{gk.TupleIntString{V0: 3, V1: "s"}})
-	_ = gk.NewDiffFileParseAt("s", 3)
-	_ = gk.NewDiffFileParseWithAt("s", gk.NewDiffParseOptionsDefault(), 3)
-	_ = gk.NewDiffFileUnchanged("s", "s")
-	e := gk.NewDiffFileExcerpts("s", []gk.TupleIntString{gk.TupleIntString{V0: 3, V1: "s"}})
+	_ = editor.NewDiffFileExcerpts("s", []gk.TupleIntString{gk.TupleIntString{V0: 3, V1: "s"}})
+	_ = editor.NewDiffFileParseAt("s", 3)
+	_ = editor.NewDiffFileParseWithAt("s", editor.NewDiffParseOptionsDefault(), 3)
+	_ = editor.NewDiffFileUnchanged("s", "s")
+	e := editor.NewDiffFileExcerpts("s", []gk.TupleIntString{gk.TupleIntString{V0: 3, V1: "s"}})
 	e = e.WithLanguage("s")
 	_ = e
 }
 
 func sComponentDiffGutterMarker() {
-	_ = gk.NewDiffGutterMarker("id", gk.DiffLinePosition{})
-	e := gk.NewDiffGutterMarker("id", gk.DiffLinePosition{})
+	_ = editor.NewDiffGutterMarker("id", editor.DiffLinePosition{})
+	e := editor.NewDiffGutterMarker("id", editor.DiffLinePosition{})
 	e = e.WithLabel("s")
 	_ = e
 }
 
 func sComponentDiffLineRange() {
-	_ = gk.NewDiffLineRange("s", gk.DiffSideOriginal, 3, 3)
-	e := gk.NewDiffLineRange("s", gk.DiffSideOriginal, 3, 3)
-	e = e.WithEndSide(gk.DiffSideOriginal)
+	_ = editor.NewDiffLineRange("s", editor.DiffSideOriginal, 3, 3)
+	e := editor.NewDiffLineRange("s", editor.DiffSideOriginal, 3, 3)
+	e = e.WithEndSide(editor.DiffSideOriginal)
 	_ = e
 }
 
 func sComponentDiffParseOptions() {
-	_ = gk.NewDiffParseOptionsDefault()
-	_ = gk.NewDiffParseOptions()
-	e := gk.NewDiffParseOptionsDefault()
+	_ = editor.NewDiffParseOptionsDefault()
+	_ = editor.NewDiffParseOptions()
+	e := editor.NewDiffParseOptionsDefault()
 	e = e.TruncatedHunks(true)
 	_ = e
 }
 
 func sComponentDiffSpanHighlight() {
-	_ = gk.NewDiffSpanHighlight(gk.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})
-	e := gk.NewDiffSpanHighlight(gk.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})
+	_ = editor.NewDiffSpanHighlight(editor.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})
+	e := editor.NewDiffSpanHighlight(editor.DiffLinePosition{}, gk.Range{Lo: 1, Hi: 3})
 	e = e.WithBackground(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.WithForeground(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.WithUnderline()
@@ -21787,23 +21795,23 @@ func sComponentDiffSpanHighlight() {
 }
 
 func sComponentClosePanel() {
-	_ = gk.NewClosePanelDefault()
-	e := gk.NewClosePanelDefault()
+	_ = dock.NewClosePanelDefault()
+	e := dock.NewClosePanelDefault()
 	_ = e
 }
 
 func sComponentToggleZoom() {
-	_ = gk.NewToggleZoomDefault()
-	e := gk.NewToggleZoomDefault()
+	_ = dock.NewToggleZoomDefault()
+	e := dock.NewToggleZoomDefault()
 	_ = e
 }
 
 func sComponentEmpty() {
-	_ = gk.EmptyDefault()
-	_ = gk.Empty()
-	e := gk.EmptyDefault()
-	e = e.Content(gk.EmptyContentDefault())
-	e = e.Header(gk.EmptyHeaderDefault())
+	_ = kit.EmptyDefault()
+	_ = kit.Empty()
+	e := kit.EmptyDefault()
+	e = e.Content(kit.EmptyContentDefault())
+	e = e.Header(kit.EmptyHeaderDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -21931,9 +21939,9 @@ func sComponentEmpty() {
 }
 
 func sComponentEmptyContent() {
-	_ = gk.EmptyContentDefault()
-	_ = gk.EmptyContent()
-	e := gk.EmptyContentDefault()
+	_ = kit.EmptyContentDefault()
+	_ = kit.EmptyContent()
+	e := kit.EmptyContentDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -22061,9 +22069,9 @@ func sComponentEmptyContent() {
 }
 
 func sComponentEmptyDescription() {
-	_ = gk.EmptyDescriptionDefault()
-	_ = gk.EmptyDescription()
-	e := gk.EmptyDescriptionDefault()
+	_ = kit.EmptyDescriptionDefault()
+	_ = kit.EmptyDescription()
+	e := kit.EmptyDescriptionDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -22191,12 +22199,12 @@ func sComponentEmptyDescription() {
 }
 
 func sComponentEmptyHeader() {
-	_ = gk.EmptyHeaderDefault()
-	_ = gk.EmptyHeader()
-	e := gk.EmptyHeaderDefault()
-	e = e.Description(gk.EmptyDescriptionDefault())
-	e = e.Media(gk.EmptyMediaDefault())
-	e = e.Title(gk.EmptyTitleDefault())
+	_ = kit.EmptyHeaderDefault()
+	_ = kit.EmptyHeader()
+	e := kit.EmptyHeaderDefault()
+	e = e.Description(kit.EmptyDescriptionDefault())
+	e = e.Media(kit.EmptyMediaDefault())
+	e = e.Title(kit.EmptyTitleDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -22319,10 +22327,10 @@ func sComponentEmptyHeader() {
 }
 
 func sComponentEmptyMedia() {
-	_ = gk.EmptyMediaDefault()
-	_ = gk.EmptyMedia()
-	e := gk.EmptyMediaDefault()
-	e = e.WithVariant(gk.EmptyMediaVariantDefault)
+	_ = kit.EmptyMediaDefault()
+	_ = kit.EmptyMedia()
+	e := kit.EmptyMediaDefault()
+	e = e.WithVariant(kit.EmptyMediaVariantDefault)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -22450,9 +22458,9 @@ func sComponentEmptyMedia() {
 }
 
 func sComponentEmptyTitle() {
-	_ = gk.EmptyTitleDefault()
-	_ = gk.EmptyTitle()
-	e := gk.EmptyTitleDefault()
+	_ = kit.EmptyTitleDefault()
+	_ = kit.EmptyTitle()
+	e := kit.EmptyTitleDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -22580,18 +22588,18 @@ func sComponentEmptyTitle() {
 }
 
 func sComponentField() {
-	_ = gk.Field()
-	_ = gk.KitField()
-	e := gk.Field()
+	_ = kit.Field()
+	_ = kit.KitField()
+	e := kit.Field()
 	e = e.ColEnd(3)
 	e = e.ColSpan(3)
 	e = e.ColStart(3)
-	e = e.Description(gk.FieldBuilderString{Value: "s"})
+	e = e.Description(kit.FieldBuilderString{Value: "s"})
 	e = e.DescriptionFn(gk.Div())
 	e = e.ItemsCenter()
 	e = e.ItemsEnd()
 	e = e.ItemsStart()
-	e = e.Label(gk.FieldBuilderString{Value: "s"})
+	e = e.Label(kit.FieldBuilderString{Value: "s"})
 	e = e.LabelFn(gk.Div())
 	e = e.LabelIndent(true)
 	e = e.Required(true)
@@ -22720,15 +22728,15 @@ func sComponentField() {
 }
 
 func sComponentForm() {
-	_ = gk.FormDefault()
-	_ = gk.FormHorizontal()
-	_ = gk.Form()
-	_ = gk.FormVertical()
-	_ = gk.HForm()
-	_ = gk.VForm()
-	e := gk.FormDefault()
-	e = e.Child(gk.Field())
-	e = e.Children([]gk.FieldEl{gk.Field()})
+	_ = kit.FormDefault()
+	_ = kit.FormHorizontal()
+	_ = kit.Form()
+	_ = kit.FormVertical()
+	_ = kit.HForm()
+	_ = kit.VForm()
+	e := kit.FormDefault()
+	e = e.Child(kit.Field())
+	e = e.Children([]kit.FieldEl{kit.Field()})
 	e = e.Columns(3)
 	e = e.Footer(gk.Div())
 	e = e.LabelLayout(gk.AxisVertical)
@@ -22861,8 +22869,8 @@ func sComponentForm() {
 }
 
 func sComponentGroupBox() {
-	_ = gk.GroupBox()
-	e := gk.GroupBox()
+	_ = kit.GroupBox()
+	e := kit.GroupBox()
 	e = e.ContentStyle(gk.NewStyleRefinementDefault())
 	e = e.Footer(gk.Div())
 	e = e.ID("id")
@@ -22993,14 +23001,14 @@ func sComponentGroupBox() {
 	e = e.Fill()
 	e = e.Normal()
 	e = e.Outline()
-	e = e.WithVariant(gk.GroupBoxVariantNormal)
+	e = e.WithVariant(kit.GroupBoxVariantNormal)
 	e = e.Style(s.WNeg48, s.BorderX24, s.CursorCopy)
 	_ = e
 }
 
 func sComponentHoverCard() {
-	_ = gk.HoverCard("id")
-	e := gk.HoverCard("id")
+	_ = overlay.HoverCard("id")
+	e := overlay.HoverCard("id")
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.Appearance(true)
 	e = e.CloseDelay(250 * time.Millisecond)
@@ -23135,14 +23143,14 @@ func sComponentHoverCard() {
 }
 
 func sComponentEditor() {
-	_ = gk.Editor(gk.EditorState{})
-	e := gk.Editor(gk.EditorState{})
+	_ = editor.Editor(editor.State{})
+	e := editor.Editor(editor.State{})
 	e = e.Appearance(true)
 	e = e.AriaLabel("s")
 	e = e.Bordered(true)
-	e = e.ContextMenu(gk.NewNativeMenuDefault())
+	e = e.ContextMenu(editor.NewNativeMenuDefault())
 	e = e.Disabled(true)
-	e = e.GutterStyle(gk.NewGutterStyleDefault())
+	e = e.GutterStyle(editor.NewGutterStyleDefault())
 	e = e.H(gk.Px(8))
 	e = e.OnPaste(noop76)
 	e = e.Readonly(true)
@@ -23273,8 +23281,8 @@ func sComponentEditor() {
 }
 
 func sComponentGutterStyle() {
-	_ = gk.NewGutterStyleDefault()
-	e := gk.NewGutterStyleDefault()
+	_ = editor.NewGutterStyleDefault()
+	e := editor.NewGutterStyleDefault()
 	e = e.WithActiveLineNumberColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.WithGap(gk.Px(8))
 	e = e.WithLineNumberColor(gk.HSLA(0.5, 0.25, 0.75, 1))
@@ -23284,21 +23292,21 @@ func sComponentGutterStyle() {
 }
 
 func sComponentInput() {
-	_ = gk.Input(gk.InputState{})
-	e := gk.Input(gk.InputState{})
+	_ = editor.Input(editor.InputState{})
+	e := editor.Input(editor.InputState{})
 	e = e.AccessibilityID("s")
 	e = e.Appearance(true)
 	e = e.AriaLabel("s")
 	e = e.Bordered(true)
 	e = e.Cleanable(true)
-	e = e.ContentType(gk.InputContentTypeName)
-	e = e.ContextMenu(gk.NewNativeMenuDefault())
+	e = e.ContentType(editor.InputContentTypeName)
+	e = e.ContextMenu(editor.NewNativeMenuDefault())
 	e = e.Disabled(true)
 	e = e.FocusBordered(true)
 	e = e.H(gk.Px(8))
 	e = e.HFull()
 	e = e.ID("id")
-	e = e.List(gk.ListState{})
+	e = e.List(table.ListState{})
 	e = e.MaskToggle()
 	e = e.OnPaste(noop76)
 	e = e.OnTokenClick(noop106)
@@ -23437,12 +23445,12 @@ func sComponentInput() {
 }
 
 func sComponentInputGroup() {
-	_ = gk.InputGroup("id")
-	e := gk.InputGroup("id")
-	e = e.Addon(gk.InputGroupAddon("id"))
+	_ = editor.InputGroup("id")
+	e := editor.InputGroup("id")
+	e = e.Addon(editor.InputGroupAddon("id"))
 	e = e.AriaLabel("s")
 	e = e.Disabled(true)
-	e = e.Input(gk.Input(gk.InputState{}))
+	e = e.Input(editor.Input(editor.InputState{}))
 	e = e.Invalid(true)
 	e = e.Readonly(true)
 	e = e.PopoverStyle()
@@ -23572,9 +23580,9 @@ func sComponentInputGroup() {
 }
 
 func sComponentInputGroupAddon() {
-	_ = gk.InputGroupAddon("id")
-	e := gk.InputGroupAddon("id")
-	e = e.Align(gk.InputGroupAddonAlignmentInlineStart)
+	_ = editor.InputGroupAddon("id")
+	e := editor.InputGroupAddon("id")
+	e = e.Align(editor.InputGroupAddonAlignmentInlineStart)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -23702,8 +23710,8 @@ func sComponentInputGroupAddon() {
 }
 
 func sComponentInputGroupButton() {
-	_ = gk.InputGroupButton("id")
-	e := gk.InputGroupButton("id")
+	_ = editor.InputGroupButton("id")
+	e := editor.InputGroupButton("id")
 	e = e.AccessibilityLabel("s")
 	e = e.DropdownCaret(true)
 	e = e.Icon(gk.IconALargeSmall)
@@ -23760,7 +23768,7 @@ func sComponentInputGroupButton() {
 	e = e.Small()
 	e = e.WithSize(gk.SizeXSmall)
 	e = e.Xsmall()
-	e = e.Custom(gk.NewButtonCustomVariant())
+	e = e.Custom(kit.NewButtonCustomVariant())
 	e = e.Danger()
 	e = e.Ghost()
 	e = e.Info()
@@ -23901,9 +23909,9 @@ func sComponentInputGroupButton() {
 }
 
 func sComponentInputGroupText() {
-	_ = gk.InputGroupTextDefault()
-	_ = gk.InputGroupText()
-	e := gk.InputGroupTextDefault()
+	_ = editor.InputGroupTextDefault()
+	_ = editor.InputGroupText()
+	e := editor.InputGroupTextDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -24031,8 +24039,8 @@ func sComponentInputGroupText() {
 }
 
 func sComponentInputToken() {
-	_ = gk.InputToken(gk.InlineTokenContext{})
-	e := gk.InputToken(gk.InlineTokenContext{})
+	_ = editor.InputToken(editor.InlineTokenContext{})
+	e := editor.InputToken(editor.InlineTokenContext{})
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -24156,8 +24164,8 @@ func sComponentInputToken() {
 }
 
 func sComponentNumberInput() {
-	_ = gk.NumberInput(gk.InputState{})
-	e := gk.NumberInput(gk.InputState{})
+	_ = editor.NumberInput(editor.InputState{})
+	e := editor.NumberInput(editor.InputState{})
 	e = e.AccessibilityLabel("s")
 	e = e.Appearance(true)
 	e = e.Placeholder("s")
@@ -24292,8 +24300,8 @@ func sComponentNumberInput() {
 }
 
 func sComponentOtpInput() {
-	_ = gk.OtpInput(gk.OtpState{})
-	e := gk.OtpInput(gk.OtpState{})
+	_ = editor.OtpInput(editor.OtpState{})
+	e := editor.OtpInput(editor.OtpState{})
 	e = e.Groups(3)
 	e = e.Disabled(true)
 	e = e.FocusRing(true)
@@ -24305,13 +24313,13 @@ func sComponentOtpInput() {
 }
 
 func sComponentTextarea() {
-	_ = gk.Textarea(gk.TextareaState{})
-	e := gk.Textarea(gk.TextareaState{})
+	_ = editor.Textarea(editor.TextareaState{})
+	e := editor.Textarea(editor.TextareaState{})
 	e = e.AccessibilityID("s")
 	e = e.Appearance(true)
 	e = e.AriaLabel("s")
 	e = e.Bordered(true)
-	e = e.ContextMenu(gk.NewNativeMenuDefault())
+	e = e.ContextMenu(editor.NewNativeMenuDefault())
 	e = e.Disabled(true)
 	e = e.H(gk.Px(8))
 	e = e.OnPaste(noop76)
@@ -24445,8 +24453,8 @@ func sComponentTextarea() {
 }
 
 func sComponentKbd() {
-	_ = gk.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
-	e := gk.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
+	_ = kit.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
+	e := kit.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})
 	e = e.Appearance(true)
 	e = e.Outline()
 	e = e.PopoverStyle()
@@ -24571,9 +24579,9 @@ func sComponentKbd() {
 }
 
 func sComponentLabel() {
-	_ = gk.Label("s")
-	e := gk.Label("s")
-	e = e.Highlights(gk.HighlightsMatchPrefix{Value: "s"})
+	_ = kit.Label("s")
+	e := kit.Label("s")
+	e = e.Highlights(kit.HighlightsMatchPrefix{Value: "s"})
 	e = e.ID("id")
 	e = e.Masked(true)
 	e = e.Secondary("s")
@@ -24699,8 +24707,8 @@ func sComponentLabel() {
 }
 
 func sComponentLink() {
-	_ = gk.Link("id")
-	e := gk.Link("id")
+	_ = kit.Link("id")
+	e := kit.Link("id")
 	e = e.Disabled(true)
 	e = e.Href("s")
 	e = e.OnClick(noop1)
@@ -24831,8 +24839,8 @@ func sComponentLink() {
 }
 
 func sComponentList() {
-	_ = gk.List(gk.ListState{})
-	e := gk.List(gk.ListState{})
+	_ = table.List(table.ListState{})
+	e := table.List(table.ListState{})
 	e = e.ScrollBounce(true)
 	e = e.ScrollbarVisible(true)
 	e = e.SearchPlaceholder("s")
@@ -24962,8 +24970,8 @@ func sComponentList() {
 }
 
 func sComponentListItem() {
-	_ = gk.ListItem("id")
-	e := gk.ListItem("id")
+	_ = table.ListItem("id")
+	e := table.ListItem("id")
 	e = e.AccessibilityLabel("s")
 	e = e.CheckIcon(gk.IconALargeSmall)
 	e = e.Confirmed(true)
@@ -25176,19 +25184,19 @@ func sComponentListItem() {
 }
 
 func sComponentMarker() {
-	_ = gk.MarkerDefault()
-	_ = gk.Marker()
-	e := gk.MarkerDefault()
-	e = e.Alignment(gk.MarkerAlignmentStart)
-	e = e.Content(gk.MarkerContentDefault())
-	e = e.Icon(gk.MarkerIconDefault())
+	_ = kit.MarkerDefault()
+	_ = kit.Marker()
+	e := kit.MarkerDefault()
+	e = e.Alignment(kit.MarkerAlignmentStart)
+	e = e.Content(kit.MarkerContentDefault())
+	e = e.Icon(kit.MarkerIconDefault())
 	e = e.ID("id")
 	e = e.Loading(true)
 	e = e.Role(gk.RoleOverrideImplicit)
 	e = e.SeparatorStyle(gk.NewStyleRefinementDefault())
-	e = e.WithLoadingStyle(gk.MarkerLoadingStyleSpinner)
-	e = e.WithShimmerStyle(gk.NewShimmerStyleDefault())
-	e = e.WithVariant(gk.MarkerVariantPlain)
+	e = e.WithLoadingStyle(kit.MarkerLoadingStyleSpinner)
+	e = e.WithShimmerStyle(kit.NewShimmerStyleDefault())
+	e = e.WithVariant(kit.MarkerVariantPlain)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -25316,9 +25324,9 @@ func sComponentMarker() {
 }
 
 func sComponentMarkerContent() {
-	_ = gk.MarkerContentDefault()
-	_ = gk.MarkerContent()
-	e := gk.MarkerContentDefault()
+	_ = kit.MarkerContentDefault()
+	_ = kit.MarkerContent()
+	e := kit.MarkerContentDefault()
 	e = e.Text("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -25447,9 +25455,9 @@ func sComponentMarkerContent() {
 }
 
 func sComponentMarkerIcon() {
-	_ = gk.MarkerIconDefault()
-	_ = gk.MarkerIcon()
-	e := gk.MarkerIconDefault()
+	_ = kit.MarkerIconDefault()
+	_ = kit.MarkerIcon()
+	e := kit.MarkerIconDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -25577,8 +25585,8 @@ func sComponentMarkerIcon() {
 }
 
 func sComponentContextMenuDiv() {
-	_ = gk.HFlex().ContextMenu(gk.NewPopupMenu())
-	e := gk.HFlex().ContextMenu(gk.NewPopupMenu())
+	_ = kit.DivContextMenu(gk.HFlex(), kit.NewPopupMenu())
+	e := kit.DivContextMenu(gk.HFlex(), kit.NewPopupMenu())
 	e = e.AspectRatio(1.5)
 	e = e.Bg(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Border(gk.Px(8))
@@ -25665,12 +25673,12 @@ func sComponentContextMenuDiv() {
 }
 
 func sComponentPopupMenu() {
-	_ = gk.NewPopupMenu()
-	e := gk.NewPopupMenu()
+	_ = kit.NewPopupMenu()
+	e := kit.NewPopupMenu()
 	e = e.ActionContext(gk.FocusHandle{})
 	e = e.CheckSide(gk.SideLeft)
 	e = e.ExternalLinkIcon(true)
-	e = e.Item(gk.NewPopupMenuItemSeparator())
+	e = e.Item(kit.NewPopupMenuItemSeparator())
 	e = e.Label("s")
 	e = e.Link("s", "s")
 	e = e.LinkWithDisabled("s", "s", true)
@@ -25691,18 +25699,18 @@ func sComponentPopupMenu() {
 	e = e.MinW(4)
 	e = e.Scrollable(true)
 	e = e.Separator()
-	e = e.Submenu("s", gk.NewPopupMenu())
-	e = e.SubmenuWithIcon(gk.Some[gk.IconEl](gk.IconDefault()), "s", gk.NewPopupMenu())
+	e = e.Submenu("s", kit.NewPopupMenu())
+	e = e.SubmenuWithIcon(gk.Some[gk.IconEl](gk.IconDefault()), "s", kit.NewPopupMenu())
 	_ = e
 }
 
 func sComponentPopupMenuItem() {
-	_ = gk.NewPopupMenuItemElement(gk.Div())
-	_ = gk.NewPopupMenuItemLabel("s")
-	_ = gk.NewPopupMenuItemLink("s", "s")
-	_ = gk.NewPopupMenuItem("s")
-	_ = gk.NewPopupMenuItemSeparator()
-	e := gk.NewPopupMenuItemSeparator()
+	_ = kit.NewPopupMenuItemElement(gk.Div())
+	_ = kit.NewPopupMenuItemLabel("s")
+	_ = kit.NewPopupMenuItemLink("s", "s")
+	_ = kit.NewPopupMenuItem("s")
+	_ = kit.NewPopupMenuItemSeparator()
+	e := kit.NewPopupMenuItemSeparator()
 	e = e.Action(sampleAct)
 	e = e.Checked(true)
 	e = e.Disabled(true)
@@ -25712,15 +25720,15 @@ func sComponentPopupMenuItem() {
 }
 
 func sComponentMessage() {
-	_ = gk.MessageDefault()
-	_ = gk.Message()
-	e := gk.MessageDefault()
-	e = e.Alignment(gk.MessageAlignmentStart)
+	_ = kit.MessageDefault()
+	_ = kit.Message()
+	e := kit.MessageDefault()
+	e = e.Alignment(kit.MessageAlignmentStart)
 	e = e.Avatar(gk.Div())
-	e = e.AvatarSlot(gk.MessageAvatarDefault())
-	e = e.Content(gk.MessageContentDefault())
-	e = e.Footer(gk.MessageFooterDefault())
-	e = e.Header(gk.MessageHeaderDefault())
+	e = e.AvatarSlot(kit.MessageAvatarDefault())
+	e = e.Content(kit.MessageContentDefault())
+	e = e.Footer(kit.MessageFooterDefault())
+	e = e.Header(kit.MessageHeaderDefault())
 	e = e.ID("id")
 	e = e.Role(gk.RoleOverrideImplicit)
 	e = e.WithStackStyle(gk.NewStyleRefinementDefault())
@@ -25846,9 +25854,9 @@ func sComponentMessage() {
 }
 
 func sComponentMessageAvatar() {
-	_ = gk.MessageAvatarDefault()
-	_ = gk.MessageAvatar()
-	e := gk.MessageAvatarDefault()
+	_ = kit.MessageAvatarDefault()
+	_ = kit.MessageAvatar()
+	e := kit.MessageAvatarDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -25976,10 +25984,10 @@ func sComponentMessageAvatar() {
 }
 
 func sComponentMessageContent() {
-	_ = gk.MessageContentDefault()
-	_ = gk.MessageContent()
-	e := gk.MessageContentDefault()
-	e = e.Bubble(gk.BubbleDefault())
+	_ = kit.MessageContentDefault()
+	_ = kit.MessageContent()
+	e := kit.MessageContentDefault()
+	e = e.Bubble(kit.BubbleDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -26107,9 +26115,9 @@ func sComponentMessageContent() {
 }
 
 func sComponentMessageFooter() {
-	_ = gk.MessageFooterDefault()
-	_ = gk.MessageFooter()
-	e := gk.MessageFooterDefault()
+	_ = kit.MessageFooterDefault()
+	_ = kit.MessageFooter()
+	e := kit.MessageFooterDefault()
 	e = e.ContentInset(true)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -26238,9 +26246,9 @@ func sComponentMessageFooter() {
 }
 
 func sComponentMessageGroup() {
-	_ = gk.MessageGroupDefault()
-	_ = gk.MessageGroup()
-	e := gk.MessageGroupDefault()
+	_ = kit.MessageGroupDefault()
+	_ = kit.MessageGroup()
+	e := kit.MessageGroupDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -26368,9 +26376,9 @@ func sComponentMessageGroup() {
 }
 
 func sComponentMessageHeader() {
-	_ = gk.MessageHeaderDefault()
-	_ = gk.MessageHeader()
-	e := gk.MessageHeaderDefault()
+	_ = kit.MessageHeaderDefault()
+	_ = kit.MessageHeader()
+	e := kit.MessageHeaderDefault()
 	e = e.ContentInset(true)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -26499,9 +26507,9 @@ func sComponentMessageHeader() {
 }
 
 func sComponentNativeMenu() {
-	_ = gk.NewNativeMenuDefault()
-	_ = gk.NewNativeMenu()
-	e := gk.NewNativeMenuDefault()
+	_ = editor.NewNativeMenuDefault()
+	_ = editor.NewNativeMenu()
+	e := editor.NewNativeMenuDefault()
 	e = e.Menu("s", sampleAct)
 	e = e.MenuWithCheck("s", true, sampleAct)
 	e = e.MenuWithDisabled("s", true, sampleAct)
@@ -26509,19 +26517,19 @@ func sComponentNativeMenu() {
 	e = e.MenuWithIconAndDisabled("s", gk.IconALargeSmall, sampleAct, true)
 	e = e.MenuWithIconDisabled("s", gk.IconALargeSmall, true, sampleAct)
 	e = e.Separator()
-	e = e.Submenu("s", gk.NewNativeMenuDefault())
+	e = e.Submenu("s", editor.NewNativeMenuDefault())
 	_ = e
 }
 
 func sComponentNotificationSettings() {
-	_ = gk.NewNotificationSettingsDefault()
-	e := gk.NewNotificationSettingsDefault()
+	_ = overlay.NewNotificationSettingsDefault()
+	e := overlay.NewNotificationSettingsDefault()
 	_ = e
 }
 
 func sComponentPagination() {
-	_ = gk.Pagination("id")
-	e := gk.Pagination("id")
+	_ = kit.Pagination("id")
+	e := kit.Pagination("id")
 	e = e.Compact()
 	e = e.CurrentPage(3)
 	e = e.OnClick(noop5)
@@ -26654,8 +26662,8 @@ func sComponentPagination() {
 }
 
 func sComponentCrossLine() {
-	_ = gk.CrossLine(gk.GpuiPoint{X: 4, Y: 4})
-	e := gk.CrossLine(gk.GpuiPoint{X: 4, Y: 4})
+	_ = chart.CrossLine(gk.GpuiPoint{X: 4, Y: 4})
+	e := chart.CrossLine(gk.GpuiPoint{X: 4, Y: 4})
 	e = e.Band(4)
 	e = e.Both()
 	e = e.HSpan(1.5, 1.5)
@@ -26667,8 +26675,8 @@ func sComponentCrossLine() {
 }
 
 func sComponentDot() {
-	_ = gk.Dot(gk.GpuiPoint{X: 4, Y: 4})
-	e := gk.Dot(gk.GpuiPoint{X: 4, Y: 4})
+	_ = chart.Dot(gk.GpuiPoint{X: 4, Y: 4})
+	e := chart.Dot(gk.GpuiPoint{X: 4, Y: 4})
 	e = e.Fill(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Halo(4)
 	e = e.Size(4)
@@ -26677,11 +26685,11 @@ func sComponentDot() {
 }
 
 func sComponentTooltip() {
-	_ = gk.Tooltip(gk.GpuiPoint{X: 4, Y: 4}, gk.GpuiSize{Width: 4, Height: 4})
-	e := gk.Tooltip(gk.GpuiPoint{X: 4, Y: 4}, gk.GpuiSize{Width: 4, Height: 4})
+	_ = chart.Tooltip(gk.GpuiPoint{X: 4, Y: 4}, gk.GpuiSize{Width: 4, Height: 4})
+	e := chart.Tooltip(gk.GpuiPoint{X: 4, Y: 4}, gk.GpuiSize{Width: 4, Height: 4})
 	e = e.Appearance(true)
-	e = e.CrossLine(gk.CrossLine(gk.GpuiPoint{X: 4, Y: 4}))
-	e = e.Dots([]gk.DotEl{gk.Dot(gk.GpuiPoint{X: 4, Y: 4})})
+	e = e.CrossLine(chart.CrossLine(gk.GpuiPoint{X: 4, Y: 4}))
+	e = e.Dots([]chart.DotEl{chart.Dot(gk.GpuiPoint{X: 4, Y: 4})})
 	e = e.Gap(4)
 	e = e.Glide(true)
 	e = e.PlainRow("s", "s")
@@ -26815,8 +26823,8 @@ func sComponentTooltip() {
 }
 
 func sComponentPopover() {
-	_ = gk.Popover("id")
-	e := gk.Popover("id")
+	_ = overlay.Popover("id")
+	e := overlay.Popover("id")
 	e = e.Anchor(gk.AnchorTopLeft)
 	e = e.Appearance(true)
 	e = e.Arrow(true)
@@ -26955,8 +26963,8 @@ func sComponentPopover() {
 }
 
 func sComponentProgress() {
-	_ = gk.Progress("id")
-	e := gk.Progress("id")
+	_ = kit.Progress("id")
+	e := kit.Progress("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Loading(true)
@@ -27087,8 +27095,8 @@ func sComponentProgress() {
 }
 
 func sComponentProgressCircle() {
-	_ = gk.ProgressCircle("id")
-	e := gk.ProgressCircle("id")
+	_ = kit.ProgressCircle("id")
+	e := kit.ProgressCircle("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Loading(true)
@@ -27224,8 +27232,8 @@ func sComponentProgressCircle() {
 }
 
 func sComponentQuestionnaire() {
-	_ = gk.Questionnaire(gk.QuestionnaireState{})
-	e := gk.Questionnaire(gk.QuestionnaireState{})
+	_ = kit.Questionnaire(base.QuestionnaireState{})
+	e := kit.Questionnaire(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -27357,8 +27365,8 @@ func sComponentQuestionnaire() {
 }
 
 func sComponentQuestionnaireActions() {
-	_ = gk.QuestionnaireActions(gk.QuestionnaireState{})
-	e := gk.QuestionnaireActions(gk.QuestionnaireState{})
+	_ = kit.QuestionnaireActions(base.QuestionnaireState{})
+	e := kit.QuestionnaireActions(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -27490,8 +27498,8 @@ func sComponentQuestionnaireActions() {
 }
 
 func sComponentQuestionnaireChoice() {
-	_ = gk.QuestionnaireChoice(gk.QuestionnaireState{}, "s", "s")
-	e := gk.QuestionnaireChoice(gk.QuestionnaireState{}, "s", "s")
+	_ = kit.QuestionnaireChoice(base.QuestionnaireState{}, "s", "s")
+	e := kit.QuestionnaireChoice(base.QuestionnaireState{}, "s", "s")
 	e = e.ContentStyle(gk.NewStyleRefinementDefault())
 	e = e.IndicatorStyle(gk.NewStyleRefinementDefault())
 	e = e.ShortcutStyle(gk.NewStyleRefinementDefault())
@@ -27626,9 +27634,9 @@ func sComponentQuestionnaireChoice() {
 }
 
 func sComponentQuestionnaireChoiceDescription() {
-	_ = gk.QuestionnaireChoiceDescriptionDefault()
-	_ = gk.QuestionnaireChoiceDescription()
-	e := gk.QuestionnaireChoiceDescriptionDefault()
+	_ = kit.QuestionnaireChoiceDescriptionDefault()
+	_ = kit.QuestionnaireChoiceDescription()
+	e := kit.QuestionnaireChoiceDescriptionDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -27760,8 +27768,8 @@ func sComponentQuestionnaireChoiceDescription() {
 }
 
 func sComponentQuestionnaireChoices() {
-	_ = gk.QuestionnaireChoices(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireChoices(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireChoices(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireChoices(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -27893,8 +27901,8 @@ func sComponentQuestionnaireChoices() {
 }
 
 func sComponentQuestionnaireDescription() {
-	_ = gk.QuestionnaireDescription(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireDescription(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireDescription(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireDescription(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28026,8 +28034,8 @@ func sComponentQuestionnaireDescription() {
 }
 
 func sComponentQuestionnaireError() {
-	_ = gk.QuestionnaireError(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireError(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireError(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireError(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28159,8 +28167,8 @@ func sComponentQuestionnaireError() {
 }
 
 func sComponentQuestionnaireInput() {
-	_ = gk.QuestionnaireInput(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireInput(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireInput(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireInput(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -28287,8 +28295,8 @@ func sComponentQuestionnaireInput() {
 }
 
 func sComponentQuestionnaireItem() {
-	_ = gk.QuestionnaireItem(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireItem(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireItem(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireItem(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28420,8 +28428,8 @@ func sComponentQuestionnaireItem() {
 }
 
 func sComponentQuestionnaireNext() {
-	_ = gk.QuestionnaireNext(gk.QuestionnaireState{})
-	e := gk.QuestionnaireNext(gk.QuestionnaireState{})
+	_ = kit.QuestionnaireNext(base.QuestionnaireState{})
+	e := kit.QuestionnaireNext(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28553,8 +28561,8 @@ func sComponentQuestionnaireNext() {
 }
 
 func sComponentQuestionnairePrevious() {
-	_ = gk.QuestionnairePrevious(gk.QuestionnaireState{})
-	e := gk.QuestionnairePrevious(gk.QuestionnaireState{})
+	_ = kit.QuestionnairePrevious(base.QuestionnaireState{})
+	e := kit.QuestionnairePrevious(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28686,8 +28694,8 @@ func sComponentQuestionnairePrevious() {
 }
 
 func sComponentQuestionnaireProgress() {
-	_ = gk.QuestionnaireProgress(gk.QuestionnaireState{})
-	e := gk.QuestionnaireProgress(gk.QuestionnaireState{})
+	_ = kit.QuestionnaireProgress(base.QuestionnaireState{})
+	e := kit.QuestionnaireProgress(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28819,8 +28827,8 @@ func sComponentQuestionnaireProgress() {
 }
 
 func sComponentQuestionnaireSkip() {
-	_ = gk.QuestionnaireSkip(gk.QuestionnaireState{})
-	e := gk.QuestionnaireSkip(gk.QuestionnaireState{})
+	_ = kit.QuestionnaireSkip(base.QuestionnaireState{})
+	e := kit.QuestionnaireSkip(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -28952,8 +28960,8 @@ func sComponentQuestionnaireSkip() {
 }
 
 func sComponentQuestionnaireSubmit() {
-	_ = gk.QuestionnaireSubmit(gk.QuestionnaireState{})
-	e := gk.QuestionnaireSubmit(gk.QuestionnaireState{})
+	_ = kit.QuestionnaireSubmit(base.QuestionnaireState{})
+	e := kit.QuestionnaireSubmit(base.QuestionnaireState{})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -29085,8 +29093,8 @@ func sComponentQuestionnaireSubmit() {
 }
 
 func sComponentQuestionnaireTitle() {
-	_ = gk.QuestionnaireTitle(gk.QuestionnaireState{}, "s")
-	e := gk.QuestionnaireTitle(gk.QuestionnaireState{}, "s")
+	_ = kit.QuestionnaireTitle(base.QuestionnaireState{}, "s")
+	e := kit.QuestionnaireTitle(base.QuestionnaireState{}, "s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -29218,12 +29226,12 @@ func sComponentQuestionnaireTitle() {
 }
 
 func sComponentRadio() {
-	_ = gk.Radio("id")
-	e := gk.Radio("id")
+	_ = kit.Radio("id")
+	e := kit.Radio("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Disabled(true)
-	e = e.Label(gk.KitTextString{Value: "s"})
+	e = e.Label(editor.KitTextString{Value: "s"})
 	e = e.OnChange(noop4)
 	e = e.OnClick(noop4)
 	e = e.TabIndex(3)
@@ -29433,12 +29441,12 @@ func sComponentRadio() {
 }
 
 func sComponentRadioGroup() {
-	_ = gk.RadioGroupHorizontal("id")
-	_ = gk.RadioGroup("id")
-	_ = gk.RadioGroupVertical("id")
-	e := gk.RadioGroupHorizontal("id")
-	e = e.Child(gk.Radio("id"))
-	e = e.Children([]gk.RadioInto{gk.Radio("id")})
+	_ = kit.RadioGroupHorizontal("id")
+	_ = kit.RadioGroup("id")
+	_ = kit.RadioGroupVertical("id")
+	e := kit.RadioGroupHorizontal("id")
+	e = e.Child(kit.Radio("id"))
+	e = e.Children([]kit.RadioInto{kit.Radio("id")})
 	e = e.Disabled(true)
 	e = e.Layout(gk.AxisVertical)
 	e = e.OnChange(noop5)
@@ -29566,8 +29574,8 @@ func sComponentRadioGroup() {
 }
 
 func sComponentRating() {
-	_ = gk.Rating("id")
-	e := gk.Rating("id")
+	_ = kit.Rating("id")
+	e := kit.Rating("id")
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Disabled(true)
 	e = e.Max(3)
@@ -29699,10 +29707,10 @@ func sComponentRating() {
 }
 
 func sComponentScrollableDiv() {
-	_ = gk.HFlex().OverflowScrollbar()
-	_ = gk.HFlex().OverflowXScrollbar()
-	_ = gk.HFlex().OverflowYScrollbar()
-	e := gk.HFlex().OverflowScrollbar()
+	_ = kit.DivOverflowScrollbar(gk.HFlex())
+	_ = kit.DivOverflowXScrollbar(gk.HFlex())
+	_ = kit.DivOverflowYScrollbar(gk.HFlex())
+	e := kit.DivOverflowScrollbar(gk.HFlex())
 	e = e.ID("id")
 	e = e.ScrollBounce(true)
 	e = e.PopoverStyle()
@@ -29873,8 +29881,8 @@ func sComponentScrollableDiv() {
 }
 
 func sComponentSearchableListItemElement() {
-	_ = gk.SearchableListItemElement(3)
-	e := gk.SearchableListItemElement(3)
+	_ = table.SearchableListItemElement(3)
+	e := table.SearchableListItemElement(3)
 	e = e.CheckIcon(gk.IconALargeSmall)
 	e = e.Checked(true)
 	e = e.PopoverStyle()
@@ -30012,8 +30020,8 @@ func sComponentSearchableListItemElement() {
 }
 
 func sComponentSelect() {
-	_ = gk.Select(gk.SelectState{})
-	e := gk.Select(gk.SelectState{})
+	_ = table.Select(table.SelectState{})
+	e := table.Select(table.SelectState{})
 	e = e.AccessibilityLabel("s")
 	e = e.Appearance(true)
 	e = e.Cleanable(true)
@@ -30154,11 +30162,11 @@ func sComponentSelect() {
 }
 
 func sComponentSeparator() {
-	_ = gk.SeparatorHorizontal()
-	_ = gk.SeparatorHorizontalDashed()
-	_ = gk.SeparatorVertical()
-	_ = gk.SeparatorVerticalDashed()
-	e := gk.SeparatorHorizontal()
+	_ = kit.SeparatorHorizontal()
+	_ = kit.SeparatorHorizontalDashed()
+	_ = kit.SeparatorVertical()
+	_ = kit.SeparatorVerticalDashed()
+	e := kit.SeparatorHorizontal()
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Dashed()
 	e = e.Label("s")
@@ -30284,9 +30292,9 @@ func sComponentSeparator() {
 }
 
 func sComponentSettingFieldText() {
-	_ = gk.NewSettingFieldTextElement(gk.Div())
-	_ = gk.NewSettingFieldTextRender(gk.Div())
-	e := gk.NewSettingFieldTextElement(gk.Div())
+	_ = kit.NewSettingFieldTextElement(gk.Div())
+	_ = kit.NewSettingFieldTextRender(gk.Div())
+	e := kit.NewSettingFieldTextElement(gk.Div())
 	e = e.DefaultValue("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -30410,14 +30418,14 @@ func sComponentSettingFieldText() {
 }
 
 func sComponentSettingGroup() {
-	_ = gk.NewSettingGroup()
-	e := gk.NewSettingGroup()
+	_ = kit.NewSettingGroup()
+	e := kit.NewSettingGroup()
 	e = e.Description("s")
 	e = e.Footer(gk.Div())
-	e = e.Item(gk.NewSettingItemRender(gk.Div()))
-	e = e.Items([]gk.SettingItem{gk.NewSettingItemRender(gk.Div())})
+	e = e.Item(kit.NewSettingItemRender(gk.Div()))
+	e = e.Items([]kit.SettingItem{kit.NewSettingItemRender(gk.Div())})
 	e = e.Title("s")
-	e = e.Variant(gk.GroupBoxVariantNormal)
+	e = e.Variant(kit.GroupBoxVariantNormal)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -30540,9 +30548,9 @@ func sComponentSettingGroup() {
 }
 
 func sComponentSettingItem() {
-	_ = gk.NewSettingItemRender(gk.Div())
-	e := gk.NewSettingItemRender(gk.Div())
-	e = e.Description(gk.KitTextString{Value: "s"})
+	_ = kit.NewSettingItemRender(gk.Div())
+	e := kit.NewSettingItemRender(gk.Div())
+	e = e.Description(editor.KitTextString{Value: "s"})
 	e = e.Disabled(true)
 	e = e.Keywords([]string{"s"})
 	e = e.Layout(gk.AxisVertical)
@@ -30550,12 +30558,12 @@ func sComponentSettingItem() {
 }
 
 func sComponentSettingPage() {
-	_ = gk.NewSettingPage("s")
-	e := gk.NewSettingPage("s")
+	_ = kit.NewSettingPage("s")
+	e := kit.NewSettingPage("s")
 	e = e.DefaultOpen(true)
 	e = e.Description("s")
-	e = e.Group(gk.NewSettingGroup())
-	e = e.Groups([]gk.SettingGroup{gk.NewSettingGroup()})
+	e = e.Group(kit.NewSettingGroup())
+	e = e.Groups([]kit.SettingGroup{kit.NewSettingGroup()})
 	e = e.HeaderStyle(gk.NewStyleRefinementDefault())
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.Resettable(true)
@@ -30565,15 +30573,15 @@ func sComponentSettingPage() {
 }
 
 func sComponentSettings() {
-	_ = gk.Settings("id")
-	e := gk.Settings("id")
-	e = e.DefaultSelectedIndex(gk.SelectIndex{PageIx: 3, GroupIx: gk.Some[int](3)})
+	_ = kit.Settings("id")
+	e := kit.Settings("id")
+	e = e.DefaultSelectedIndex(kit.SelectIndex{PageIx: 3, GroupIx: gk.Some[int](3)})
 	e = e.HeaderStyle(gk.NewStyleRefinementDefault())
-	e = e.Page(gk.NewSettingPage("s"))
-	e = e.Pages([]gk.SettingPage{gk.NewSettingPage("s")})
+	e = e.Page(kit.NewSettingPage("s"))
+	e = e.Pages([]kit.SettingPage{kit.NewSettingPage("s")})
 	e = e.SidebarStyle(gk.NewStyleRefinementDefault())
 	e = e.SidebarWidth(4)
-	e = e.WithGroupVariant(gk.GroupBoxVariantNormal)
+	e = e.WithGroupVariant(kit.GroupBoxVariantNormal)
 	e = e.Large()
 	e = e.Small()
 	e = e.WithSize(gk.SizeXSmall)
@@ -30582,8 +30590,8 @@ func sComponentSettings() {
 }
 
 func sComponentSheet() {
-	_ = gk.Sheet()
-	e := gk.Sheet()
+	_ = overlay.Sheet()
+	e := overlay.Sheet()
 	e = e.Footer(gk.Div())
 	e = e.OnClose(noop1)
 	e = e.Overlay(true)
@@ -30717,33 +30725,33 @@ func sComponentSheet() {
 }
 
 func sComponentSheetSettings() {
-	_ = gk.NewSheetSettingsDefault()
-	e := gk.NewSheetSettingsDefault()
+	_ = overlay.NewSheetSettingsDefault()
+	e := overlay.NewSheetSettingsDefault()
 	_ = e
 }
 
 func sComponentShimmerStyle() {
-	_ = gk.NewShimmerStyleDefault()
-	_ = gk.NewShimmerStyle()
-	e := gk.NewShimmerStyleDefault()
+	_ = kit.NewShimmerStyleDefault()
+	_ = kit.NewShimmerStyle()
+	e := kit.NewShimmerStyleDefault()
 	e = e.Duration(250 * time.Millisecond)
 	e = e.HighlightColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Once(true)
 	e = e.Reverse(true)
-	e = e.Spread(gk.ShimmerSpreadRelative{Value: 1.5})
+	e = e.Spread(kit.ShimmerSpreadRelative{Value: 1.5})
 	_ = e
 }
 
 func sComponentShimmerText() {
-	_ = gk.ShimmerText("s")
-	e := gk.ShimmerText("s")
+	_ = kit.ShimmerText("s")
+	e := kit.ShimmerText("s")
 	e = e.Duration(250 * time.Millisecond)
 	e = e.HighlightColor(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.ID("id")
 	e = e.Once(true)
 	e = e.Reverse(true)
-	e = e.Spread(gk.ShimmerSpreadRelative{Value: 1.5})
-	e = e.WithShimmerStyle(gk.NewShimmerStyleDefault())
+	e = e.Spread(kit.ShimmerSpreadRelative{Value: 1.5})
+	e = e.WithShimmerStyle(kit.NewShimmerStyleDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -30866,12 +30874,12 @@ func sComponentShimmerText() {
 }
 
 func sComponentGroupedSidebar() {
-	_ = gk.GroupedSidebar("id")
-	e := gk.GroupedSidebar("id")
-	e = e.Child(gk.NewSidebarGroup("s"))
-	e = e.Children([]gk.SidebarGroup{gk.NewSidebarGroup("s")})
+	_ = kit.GroupedSidebar("id")
+	e := kit.GroupedSidebar("id")
+	e = e.Child(kit.NewSidebarGroup("s"))
+	e = e.Children([]kit.SidebarGroup{kit.NewSidebarGroup("s")})
 	e = e.Collapsed(true)
-	e = e.Collapsible(gk.SidebarCollapsibleIcon)
+	e = e.Collapsible(kit.SidebarCollapsibleIcon)
 	e = e.Footer(gk.Div())
 	e = e.Header(gk.Div())
 	e = e.Side(gk.SideLeft)
@@ -30997,12 +31005,12 @@ func sComponentGroupedSidebar() {
 }
 
 func sComponentSidebar() {
-	_ = gk.Sidebar("id")
-	e := gk.Sidebar("id")
-	e = e.Child(gk.NewSidebarMenu())
-	e = e.Children([]gk.SidebarMenu{gk.NewSidebarMenu()})
+	_ = kit.Sidebar("id")
+	e := kit.Sidebar("id")
+	e = e.Child(kit.NewSidebarMenu())
+	e = e.Children([]kit.SidebarMenu{kit.NewSidebarMenu()})
 	e = e.Collapsed(true)
-	e = e.Collapsible(gk.SidebarCollapsibleIcon)
+	e = e.Collapsible(kit.SidebarCollapsibleIcon)
 	e = e.Footer(gk.Div())
 	e = e.Header(gk.Div())
 	e = e.Side(gk.SideLeft)
@@ -31128,8 +31136,8 @@ func sComponentSidebar() {
 }
 
 func sComponentSidebarFooter() {
-	_ = gk.SidebarFooter()
-	e := gk.SidebarFooter()
+	_ = kit.SidebarFooter()
+	e := kit.SidebarFooter()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -31302,19 +31310,19 @@ func sComponentSidebarFooter() {
 }
 
 func sComponentSidebarGroup() {
-	_ = gk.NewSidebarGroup("s")
-	e := gk.NewSidebarGroup("s")
-	e = e.Child(gk.NewSidebarMenu())
-	e = e.Children([]gk.SidebarMenu{gk.NewSidebarMenu()})
+	_ = kit.NewSidebarGroup("s")
+	e := kit.NewSidebarGroup("s")
+	e = e.Child(kit.NewSidebarMenu())
+	e = e.Children([]kit.SidebarMenu{kit.NewSidebarMenu()})
 	e = e.Suffix(gk.Div())
 	e = e.Collapsed(true)
 	_ = e
 }
 
 func sComponentSidebarHeader() {
-	_ = gk.SidebarHeaderDefault()
-	_ = gk.SidebarHeader()
-	e := gk.SidebarHeaderDefault()
+	_ = kit.SidebarHeaderDefault()
+	_ = kit.SidebarHeader()
+	e := kit.SidebarHeaderDefault()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -31487,10 +31495,10 @@ func sComponentSidebarHeader() {
 }
 
 func sComponentSidebarMenu() {
-	_ = gk.NewSidebarMenu()
-	e := gk.NewSidebarMenu()
-	e = e.Child(gk.NewSidebarMenuItem("s"))
-	e = e.Children([]gk.SidebarMenuItem{gk.NewSidebarMenuItem("s")})
+	_ = kit.NewSidebarMenu()
+	e := kit.NewSidebarMenu()
+	e = e.Child(kit.NewSidebarMenuItem("s"))
+	e = e.Children([]kit.SidebarMenuItem{kit.NewSidebarMenuItem("s")})
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -31614,15 +31622,15 @@ func sComponentSidebarMenu() {
 }
 
 func sComponentSidebarMenuItem() {
-	_ = gk.NewSidebarMenuItem("s")
-	e := gk.NewSidebarMenuItem("s")
+	_ = kit.NewSidebarMenuItem("s")
+	e := kit.NewSidebarMenuItem("s")
 	e = e.AccessibilityLabel("s")
 	e = e.Active(true)
-	e = e.Children([]gk.SidebarMenuItem{gk.NewSidebarMenuItem("s")})
+	e = e.Children([]kit.SidebarMenuItem{kit.NewSidebarMenuItem("s")})
 	e = e.ClickToOpen(true)
 	e = e.ClickToToggle(true)
 	e = e.Collapsed(true)
-	e = e.ContextMenu(gk.NewPopupMenu())
+	e = e.ContextMenu(kit.NewPopupMenu())
 	e = e.DefaultOpen(true)
 	e = e.Disable(true)
 	e = e.Icon(gk.IconALargeSmall)
@@ -31751,8 +31759,8 @@ func sComponentSidebarMenuItem() {
 }
 
 func sComponentSidebarToggleButton() {
-	_ = gk.SidebarToggleButton()
-	e := gk.SidebarToggleButton()
+	_ = kit.SidebarToggleButton()
+	e := kit.SidebarToggleButton()
 	e = e.AccessibilityLabel("s")
 	e = e.Collapsed(true)
 	e = e.OnClick(noop1)
@@ -31761,8 +31769,8 @@ func sComponentSidebarToggleButton() {
 }
 
 func sComponentSkeleton() {
-	_ = gk.Skeleton()
-	e := gk.Skeleton()
+	_ = kit.Skeleton()
+	e := kit.Skeleton()
 	e = e.Secondary()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -31886,8 +31894,8 @@ func sComponentSkeleton() {
 }
 
 func sComponentSlider() {
-	_ = gk.Slider(gk.SliderState{})
-	e := gk.Slider(gk.SliderState{})
+	_ = kit.Slider(base.SliderState{})
+	e := kit.Slider(base.SliderState{})
 	e = e.AccessibilityLabel("s")
 	e = e.Disabled(true)
 	e = e.Horizontal()
@@ -32017,8 +32025,8 @@ func sComponentSlider() {
 }
 
 func sComponentSpeechButton() {
-	_ = gk.SpeechButton(gk.SpeechState{})
-	e := gk.SpeechButton(gk.SpeechState{})
+	_ = kit.SpeechButton(kit.SpeechState{})
+	e := kit.SpeechButton(kit.SpeechState{})
 	e = e.ShowWhenUnsupported(true)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -32147,8 +32155,8 @@ func sComponentSpeechButton() {
 }
 
 func sComponentSpeechIndicator() {
-	_ = gk.SpeechIndicator(gk.SpeechState{})
-	e := gk.SpeechIndicator(gk.SpeechState{})
+	_ = kit.SpeechIndicator(kit.SpeechState{})
+	e := kit.SpeechIndicator(kit.SpeechState{})
 	e = e.Large()
 	e = e.Small()
 	e = e.WithSize(gk.SizeXSmall)
@@ -32157,8 +32165,8 @@ func sComponentSpeechIndicator() {
 }
 
 func sComponentSpeechWaveform() {
-	_ = gk.SpeechWaveform(gk.SpeechState{})
-	e := gk.SpeechWaveform(gk.SpeechState{})
+	_ = kit.SpeechWaveform(kit.SpeechState{})
+	e := kit.SpeechWaveform(kit.SpeechState{})
 	e = e.Liquid()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -32286,8 +32294,8 @@ func sComponentSpeechWaveform() {
 }
 
 func sComponentSpinner() {
-	_ = gk.Spinner()
-	e := gk.Spinner()
+	_ = kit.Spinner()
+	e := kit.Spinner()
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.Large()
@@ -32298,8 +32306,8 @@ func sComponentSpinner() {
 }
 
 func sComponentStatusBar() {
-	_ = gk.StatusBar()
-	e := gk.StatusBar()
+	_ = kit.StatusBar()
+	e := kit.StatusBar()
 	e = e.Left(gk.Div())
 	e = e.Right(gk.Div())
 	e = e.PopoverStyle()
@@ -32427,11 +32435,11 @@ func sComponentStatusBar() {
 }
 
 func sComponentStepper() {
-	_ = gk.Stepper("id")
-	e := gk.Stepper("id")
+	_ = kit.Stepper("id")
+	e := kit.Stepper("id")
 	e = e.Disabled(true)
-	e = e.Item(gk.StepperItem())
-	e = e.Items([]gk.StepperItemEl{gk.StepperItem()})
+	e = e.Item(kit.StepperItem())
+	e = e.Items([]kit.StepperItemEl{kit.StepperItem()})
 	e = e.Layout(gk.AxisVertical)
 	e = e.OnClick(noop5)
 	e = e.SelectedIndex(3)
@@ -32563,8 +32571,8 @@ func sComponentStepper() {
 }
 
 func sComponentStepperItem() {
-	_ = gk.StepperItem()
-	e := gk.StepperItem()
+	_ = kit.StepperItem()
+	e := kit.StepperItem()
 	e = e.Disabled(true)
 	e = e.Icon(gk.IconALargeSmall)
 	e = e.PopoverStyle()
@@ -32698,12 +32706,12 @@ func sComponentStepperItem() {
 }
 
 func sComponentSwitch() {
-	_ = gk.Switch("id")
-	e := gk.Switch("id")
+	_ = kit.Switch("id")
+	e := kit.Switch("id")
 	e = e.AccessibilityLabel("s")
 	e = e.Checked(true)
 	e = e.Color(gk.HSLA(0.5, 0.25, 0.75, 1))
-	e = e.Label(gk.KitTextString{Value: "s"})
+	e = e.Label(editor.KitTextString{Value: "s"})
 	e = e.OnChange(noop4)
 	e = e.OnClick(noop4)
 	e = e.TabIndex(3)
@@ -32838,9 +32846,9 @@ func sComponentSwitch() {
 }
 
 func sComponentTab() {
-	_ = gk.TabDefault()
-	_ = gk.Tab()
-	e := gk.TabDefault()
+	_ = kit.TabDefault()
+	_ = kit.Tab()
+	e := kit.TabDefault()
 	e = e.AriaLabel("s")
 	e = e.Disabled(true)
 	e = e.Folder()
@@ -32853,7 +32861,7 @@ func sComponentTab() {
 	e = e.Segmented()
 	e = e.Suffix(gk.Div())
 	e = e.Underline()
-	e = e.WithVariant(gk.TabVariantTab)
+	e = e.WithVariant(kit.TabVariantTab)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -33061,10 +33069,10 @@ func sComponentTab() {
 }
 
 func sComponentTabBar() {
-	_ = gk.TabBar("id")
-	e := gk.TabBar("id")
-	e = e.Child(gk.TabDefault())
-	e = e.Children([]gk.TabInto{gk.TabDefault()})
+	_ = kit.TabBar("id")
+	e := kit.TabBar("id")
+	e = e.Child(kit.TabDefault())
+	e = e.Children([]kit.TabInto{kit.TabDefault()})
 	e = e.Folder()
 	e = e.LastEmptySpace(gk.Div())
 	e = e.MaxWidth(4)
@@ -33078,7 +33086,7 @@ func sComponentTabBar() {
 	e = e.Suffix(gk.Div())
 	e = e.TrackScroll(gk.ScrollHandle{})
 	e = e.Underline()
-	e = e.WithVariant(gk.TabVariantTab)
+	e = e.WithVariant(kit.TabVariantTab)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -33205,12 +33213,12 @@ func sComponentTabBar() {
 }
 
 func sComponentColumn() {
-	_ = gk.NewColumnDefault()
-	_ = gk.NewColumn("s", "s")
-	e := gk.NewColumnDefault()
+	_ = table.NewColumnDefault()
+	_ = table.NewColumn("s", "s")
+	e := table.NewColumnDefault()
 	e = e.Ascending()
 	e = e.Descending()
-	e = e.Fixed(gk.ColumnFixedLeft)
+	e = e.Fixed(table.ColumnFixedLeft)
 	e = e.FixedLeft()
 	e = e.FixedRight()
 	e = e.MaxWidth(4)
@@ -33220,7 +33228,7 @@ func sComponentColumn() {
 	e = e.Paddings(gk.GpuiEdges{Top: 4, Right: 4, Bottom: 4, Left: 4})
 	e = e.Resizable(true)
 	e = e.Selectable(true)
-	e = e.Sort(gk.ColumnSortDefault)
+	e = e.Sort(table.ColumnSortDefault)
 	e = e.Sortable()
 	e = e.TextCenter()
 	e = e.TextRight()
@@ -33229,8 +33237,8 @@ func sComponentColumn() {
 }
 
 func sComponentDataTable() {
-	_ = gk.DataTable(gk.TableState{})
-	e := gk.DataTable(gk.TableState{})
+	_ = table.DataTable(table.State{})
+	e := table.DataTable(table.State{})
 	e = e.AccessibilityLabel("s")
 	e = e.Bordered(true)
 	e = e.FixedColsBorder(true)
@@ -33248,8 +33256,8 @@ func sComponentDataTable() {
 }
 
 func sComponentTable() {
-	_ = gk.Table()
-	e := gk.Table()
+	_ = table.Table()
+	e := table.Table()
 	e = e.AccessibilityLabel("s")
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -33378,8 +33386,8 @@ func sComponentTable() {
 }
 
 func sComponentTableBody() {
-	_ = gk.TableBody()
-	e := gk.TableBody()
+	_ = table.Body()
+	e := table.Body()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -33507,8 +33515,8 @@ func sComponentTableBody() {
 }
 
 func sComponentTableCaption() {
-	_ = gk.TableCaption()
-	e := gk.TableCaption()
+	_ = table.Caption()
+	e := table.Caption()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -33641,8 +33649,8 @@ func sComponentTableCaption() {
 }
 
 func sComponentTableCell() {
-	_ = gk.TableCell()
-	e := gk.TableCell()
+	_ = table.Cell()
+	e := table.Cell()
 	e = e.ColSpan(3)
 	e = e.TextCenter()
 	e = e.TextRight()
@@ -33777,8 +33785,8 @@ func sComponentTableCell() {
 }
 
 func sComponentTableFooter() {
-	_ = gk.TableFooter()
-	e := gk.TableFooter()
+	_ = table.Footer()
+	e := table.Footer()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -33906,8 +33914,8 @@ func sComponentTableFooter() {
 }
 
 func sComponentTableHead() {
-	_ = gk.TableHead()
-	e := gk.TableHead()
+	_ = table.Head()
+	e := table.Head()
 	e = e.ColSpan(3)
 	e = e.TextCenter()
 	e = e.TextRight()
@@ -34042,8 +34050,8 @@ func sComponentTableHead() {
 }
 
 func sComponentTableHeader() {
-	_ = gk.TableHeader()
-	e := gk.TableHeader()
+	_ = table.Header()
+	e := table.Header()
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -34171,8 +34179,8 @@ func sComponentTableHeader() {
 }
 
 func sComponentTableRow() {
-	_ = gk.TableRow()
-	e := gk.TableRow()
+	_ = table.TableRow()
+	e := table.TableRow()
 	e = e.Hover(gk.NewStyleRefinementDefault())
 	e = e.ID("id")
 	e = e.PopoverStyle()
@@ -34302,20 +34310,20 @@ func sComponentTableRow() {
 }
 
 func sComponentTag() {
-	_ = gk.TagColor(gk.ColorNameWhite)
-	_ = gk.TagCustom(gk.HSLA(0.5, 0.25, 0.75, 1), gk.HSLA(0.5, 0.25, 0.75, 1), gk.HSLA(0.5, 0.25, 0.75, 1))
-	_ = gk.TagDanger()
-	_ = gk.TagInfo()
-	_ = gk.Tag()
-	_ = gk.TagPrimary()
-	_ = gk.TagSecondary()
-	_ = gk.TagSuccess()
-	_ = gk.TagWarning()
-	e := gk.TagDanger()
+	_ = kit.TagColor(gk.ColorNameWhite)
+	_ = kit.TagCustom(gk.HSLA(0.5, 0.25, 0.75, 1), gk.HSLA(0.5, 0.25, 0.75, 1), gk.HSLA(0.5, 0.25, 0.75, 1))
+	_ = kit.TagDanger()
+	_ = kit.TagInfo()
+	_ = kit.Tag()
+	_ = kit.TagPrimary()
+	_ = kit.TagSecondary()
+	_ = kit.TagSuccess()
+	_ = kit.TagWarning()
+	e := kit.TagDanger()
 	e = e.Outline()
 	e = e.Rounded(gk.Px(8))
 	e = e.RoundedFull()
-	e = e.WithVariant(gk.TagVariantPrimary)
+	e = e.WithVariant(kit.TagVariantPrimary)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.FocusRingStyle()
@@ -34446,35 +34454,35 @@ func sComponentTag() {
 }
 
 func sComponentFrontmatterPlugin() {
-	_ = gk.NewFrontmatterPluginDefault()
-	_ = gk.NewFrontmatterPlugin()
-	e := gk.NewFrontmatterPluginDefault()
+	_ = editor.NewFrontmatterPluginDefault()
+	_ = editor.NewFrontmatterPlugin()
+	e := editor.NewFrontmatterPluginDefault()
 	_ = e
 }
 
 func sComponentTextView() {
-	_ = gk.NewFrontmatterPluginDefault().Setup(gk.NewFrontmatterPluginDefault().Setup(gk.NewFrontmatterPluginDefault().Setup(gk.TextView(gk.TextViewState{}))))
-	_ = gk.TextViewHTML("id", "s")
-	_ = gk.TextViewMarkdown("id", "s")
-	_ = gk.TextView(gk.TextViewState{})
-	_ = gk.HTML("s")
-	_ = gk.Markdown("s")
-	e := gk.NewFrontmatterPluginDefault().Setup(gk.NewFrontmatterPluginDefault().Setup(gk.NewFrontmatterPluginDefault().Setup(gk.NewFrontmatterPluginDefault().Setup(gk.TextView(gk.TextViewState{})))))
+	_ = editor.NewFrontmatterPluginDefault().Setup(editor.NewFrontmatterPluginDefault().Setup(editor.NewFrontmatterPluginDefault().Setup(editor.TextView(editor.TextViewState{}))))
+	_ = editor.TextViewHTML("id", "s")
+	_ = editor.TextViewMarkdown("id", "s")
+	_ = editor.TextView(editor.TextViewState{})
+	_ = editor.HTML("s")
+	_ = editor.Markdown("s")
+	e := editor.NewFrontmatterPluginDefault().Setup(editor.NewFrontmatterPluginDefault().Setup(editor.NewFrontmatterPluginDefault().Setup(editor.NewFrontmatterPluginDefault().Setup(editor.TextView(editor.TextViewState{})))))
 	e = e.BlockquoteStyle(gk.NewStyleRefinementDefault())
 	e = e.InlineCodeStyle(gk.NewStyleRefinementDefault())
 	e = e.ListStyle(gk.NewStyleRefinementDefault())
-	e = e.MarkdownExtensions(gk.NewMarkdownExtensionsDefault())
+	e = e.MarkdownExtensions(editor.NewMarkdownExtensionsDefault())
 	e = e.MarkdownMdx()
 	e = e.MaxLines(3)
-	e = e.Motion(gk.NewTextViewMotionDefault())
+	e = e.Motion(editor.NewTextViewMotionDefault())
 	e = e.OnLinkClick(noop83)
 	e = e.OnReveal(noop75)
 	e = e.OnTaskToggle(noop105)
 	e = e.Scrollable(true)
 	e = e.Selectable(true)
-	e = e.SelectionFormat(gk.SelectionFormatPlain)
+	e = e.SelectionFormat(editor.SelectionFormatPlain)
 	e = e.StreamFade(true)
-	e = e.Style(gk.NewTextViewStyleDefault())
+	e = e.Style(editor.NewTextViewStyleDefault())
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))
@@ -34596,8 +34604,8 @@ func sComponentTextView() {
 }
 
 func sComponentTextViewStyle() {
-	_ = gk.NewTextViewStyleDefault()
-	e := gk.NewTextViewStyleDefault()
+	_ = editor.NewTextViewStyleDefault()
+	e := editor.NewTextViewStyleDefault()
 	e = e.CodeBlock(gk.NewStyleRefinementDefault())
 	e = e.InlineCode(gk.HighlightStyle{Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), FontWeight: gk.Some[gk.FontWeight](gk.FontWeight{V0: 1.5}), FontStyle: gk.Some[gk.FontStyle](gk.FontStyleNormal), BackgroundColor: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Underline: gk.Some[gk.UnderlineStyle](gk.UnderlineStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1)), Wavy: true}), Strikethrough: gk.Some[gk.StrikethroughStyle](gk.StrikethroughStyle{Thickness: 4, Color: gk.Some[gk.Color](gk.HSLA(0.5, 0.25, 0.75, 1))}), FadeOut: gk.Some[float32](1.5)})
 	e = e.ParagraphGap(1)
@@ -34608,8 +34616,8 @@ func sComponentTextViewStyle() {
 }
 
 func sComponentTimeField() {
-	_ = gk.TimeField(gk.TimeFieldState{})
-	e := gk.TimeField(gk.TimeFieldState{})
+	_ = kit.TimeField(base.TimeFieldState{})
+	e := kit.TimeField(base.TimeFieldState{})
 	e = e.Invalid(true)
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
@@ -34738,8 +34746,8 @@ func sComponentTimeField() {
 }
 
 func sComponentToolbar() {
-	_ = gk.Toolbar("id")
-	e := gk.Toolbar("id")
+	_ = kit.Toolbar("id")
+	e := kit.Toolbar("id")
 	e = e.Content(gk.Div())
 	e = e.Contents([]gk.Element{gk.Div()})
 	e = e.Disabled(true)
@@ -34872,8 +34880,8 @@ func sComponentToolbar() {
 }
 
 func sComponentToolbarGroup() {
-	_ = gk.ToolbarGroup("id")
-	e := gk.ToolbarGroup("id")
+	_ = kit.ToolbarGroup("id")
+	e := kit.ToolbarGroup("id")
 	e = e.Content(gk.Div())
 	e = e.Label("s")
 	e = e.PopoverStyle()
@@ -35005,11 +35013,11 @@ func sComponentToolbarGroup() {
 }
 
 func sComponentTooltipTooltip() {
-	_ = gk.NewKitTooltipElement(gk.Div())
-	_ = gk.NewKitTooltip(gk.KitTextString{Value: "s"})
-	e := gk.NewKitTooltipElement(gk.Div())
+	_ = overlay.NewKitTooltipElement(gk.Div())
+	_ = overlay.NewKitTooltip(editor.KitTextString{Value: "s"})
+	e := overlay.NewKitTooltipElement(gk.Div())
 	e = e.Action(sampleAct, gk.Some[string]("s"))
-	e = e.KeyBinding(gk.Some[gk.KbdEl](gk.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})))
+	e = e.KeyBinding(gk.Some[kit.KbdEl](kit.Kbd(gk.Keystroke{Modifiers: gk.Modifiers{Control: true, Alt: true, Shift: true, Platform: true, Function: true}, Key: "s", KeyChar: gk.Some[string]("s")})))
 	e = e.PopoverStyle()
 	e = e.RoundedFullStyle()
 	e = e.BorderE(gk.Px(8))

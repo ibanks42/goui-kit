@@ -568,7 +568,7 @@ fn ctx_get(r: &mut R, c: &mut genapi::Call) -> GkResult<()> {
         }
         None => err(
             ERR_BAD_OP,
-            format!("row {row} of this row source was never drawn by an element closure over a context (gk.Items)"),
+            format!("row {row} of this row source was never drawn by an element closure over a context (overlay.Items)"),
         ),
     }
 }

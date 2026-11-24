@@ -14,6 +14,9 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/chart"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/overlay"
 	"gpuikit.dev/gk/s"
 	"gpuikit.dev/gk/theme"
 )
@@ -104,7 +107,7 @@ func (a *App) motionReadAgain(cx *gk.Cx) {
 
 func (a *App) secondView(cx *gk.Cx) gk.Element {
 	fmt.Println("port second view described")
-	return gk.Div(s.SizeFull).Child(gk.Label("second window"))
+	return gk.Div(s.SizeFull).Child(kit.Label("second window"))
 }
 
 func (a *App) openIconWindow(cx *gk.Cx) {
@@ -126,7 +129,7 @@ func (a *App) previewView(cx *gk.Cx) gk.Element {
 	if a.previews == 1 {
 		fmt.Println("port drag preview described")
 	}
-	return gk.Div().Px(gk.Px(8)).Bg(theme.Accent).Child(gk.Label("dragging"))
+	return gk.Div().Px(gk.Px(8)).Bg(theme.Accent).Child(kit.Label("dragging"))
 }
 
 func (a *App) dropped7(cx *gk.Cx, d gk.DragValue) {
@@ -140,7 +143,7 @@ func (a *App) dropped8(cx *gk.Cx, d gk.DragValue) {
 }
 
 func (a *App) dragView(cx *gk.Cx) gk.Element {
-	src := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("src").OnDrag(gk.DragValue{ID: 7, Text: "seven"}, a.preview).Child(gk.Label("seven"))
+	src := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("src").OnDrag(gk.DragValue{ID: 7, Text: "seven"}, a.preview).Child(kit.Label("seven"))
 	t7 := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("t7").CanDrop(gk.DropAccept{IDs: []uint64{7}}).OnDrop(a.dropped7).
 		DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent))
 	t8 := gk.Div().W(gk.Px(100)).H(gk.Px(100)).ID("t8").CanDrop(gk.DropAccept{IDs: []uint64{8}}).OnDrop(a.dropped8)
@@ -199,7 +202,7 @@ var redPixels = gk.PixelImage{Width: 2, Height: 1, RGBA: []byte{255, 0, 0, 255, 
 
 // imagesView is described again on every tick (its label changes): the same gk.RenderImage each time.
 func (a *App) imagesView(cx *gk.Cx) gk.Element {
-	row := gk.HFlex(s.Gap2).Child(gk.Label(fmt.Sprintf("tick %d", a.nTicks))).
+	row := gk.HFlex(s.Gap2).Child(kit.Label(fmt.Sprintf("tick %d", a.nTicks))).
 		Child(gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: iconPNG}}).W(gk.Px(40)).H(gk.Px(40)))
 	if a.red != (gk.RenderImage{}) {
 		row = row.Child(gk.Img(gk.ImageSourceRender{Value: a.red}).W(gk.Px(40)).H(gk.Px(20))).
@@ -246,12 +249,12 @@ func (a *App) imagesGone(cx *gk.Cx) {
 // menuView shows a dropdown with an item that has its own click handler (A) and one that runs an
 // action (B), beside a label that changes on every tick, so each redraw is a new description.
 func (a *App) menuView(cx *gk.Cx) gk.Element {
-	menu := gk.NewPopupMenu().
-		Item(gk.NewPopupMenuItem("Alpha").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.menuA++ })).
+	menu := kit.NewPopupMenu().
+		Item(kit.NewPopupMenuItem("Alpha").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.menuA++ })).
 		Menu("Bravo", a.menuAct)
 	return gk.HFlex(s.Gap2, s.P2).
-		Child(gk.DropdownMenu(gk.Button("menu").Label("Menu"), menu)).
-		Child(gk.Label(fmt.Sprintf("ticks %d", a.menuTicks)))
+		Child(kit.DropdownMenu(kit.Button("menu").Label("Menu"), menu)).
+		Child(kit.Label(fmt.Sprintf("ticks %d", a.menuTicks)))
 }
 
 func (a *App) menuInit(cx *gk.Cx) {
@@ -276,15 +279,15 @@ func (a *App) tipView(cx *gk.Cx) gk.Element {
 	if a.tips == 1 {
 		fmt.Println("port tooltip view described")
 	}
-	return gk.Div().P(gk.Px(6)).Bg(theme.Popover).Child(gk.Label("a view as the tooltip"))
+	return gk.Div().P(gk.Px(6)).Bg(theme.Popover).Child(kit.Label("a view as the tooltip"))
 }
 
 func (a *App) tooltipView(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.Gap4, s.P4).
-		Child(gk.Div().ID("viewtip").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(a.tip).Child(gk.Label("view"))).
+		Child(gk.Div().ID("viewtip").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(a.tip).Child(kit.Label("view"))).
 		Child(gk.Div().ID("kittip").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).
-			Tooltip(gk.NewKitTooltipElement(gk.HFlex(s.Gap1).Child(gk.Icon(gk.IconInfo)).Child(gk.Label("custom content")))).Child(gk.Label("kit"))).
-		Child(gk.Div().ID("texttip").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(gk.NewKitTooltip("plain text")).Child(gk.Label("text")))
+			Tooltip(overlay.NewKitTooltipElement(gk.HFlex(s.Gap1).Child(gk.Icon(gk.IconInfo)).Child(kit.Label("custom content")))).Child(kit.Label("kit"))).
+		Child(gk.Div().ID("texttip").W(gk.Px(120)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(overlay.NewKitTooltip("plain text")).Child(kit.Label("text")))
 }
 
 // --- a plot of paths and quads (12.6, 12.17) ------------------------------------------------------------------------
@@ -292,12 +295,12 @@ func (a *App) tooltipView(cx *gk.Cx) gk.Element {
 func (a *App) plotView(cx *gk.Cx) gk.Element {
 	a.plotted++
 	pts := [][2]float32{{0, 80}, {40, 20}, {80, 60}, {120, 10}}
-	return gk.Div().W(gk.Px(200)).H(gk.Px(100)).Child(gk.PlotWith(gk.PlotOptions{ID: "port-plot", NotInteractive: true},
-		gk.NewGrid().Y([]float32{50}).Stroke(theme.Border),
-		gk.NewPlotArea(pts, gk.HSLA(0.6, 0.5, 0.5, 0.2)),
-		gk.NewPlotLine(pts, 2, gk.NewLinearGradient(90, gk.NewLinearColorStop(theme.Primary, 0), gk.NewLinearColorStop(gk.HSLA(0.8, 0.5, 0.5, 1), 1))),
-		gk.NewPlotQuad(150, 40, 20, 20, theme.Accent, gk.QuadStyle{CornerRadius: 4, BorderWidth: 1, BorderColor: theme.Border}),
-		gk.NewPlotLine(pts[:1], 2, theme.Primary), // one point: nothing painted
+	return gk.Div().W(gk.Px(200)).H(gk.Px(100)).Child(chart.PlotWith(chart.PlotOptions{ID: "port-plot", NotInteractive: true},
+		chart.NewGrid().Y([]float32{50}).Stroke(theme.Border),
+		chart.NewPlotArea(pts, gk.HSLA(0.6, 0.5, 0.5, 0.2)),
+		chart.NewPlotLine(pts, 2, gk.NewLinearGradient(90, gk.NewLinearColorStop(theme.Primary, 0), gk.NewLinearColorStop(gk.HSLA(0.8, 0.5, 0.5, 1), 1))),
+		chart.NewPlotQuad(150, 40, 20, 20, theme.Accent, chart.QuadStyle{CornerRadius: 4, BorderWidth: 1, BorderColor: theme.Border}),
+		chart.NewPlotLine(pts[:1], 2, theme.Primary), // one point: nothing painted
 	))
 }
 
@@ -313,12 +316,12 @@ func (a *App) fillNil(cx *gk.Cx) gk.Element {
 // --- the app ------------------------------------------------------------------------------------------------------------
 
 func (a *App) plain(cx *gk.Cx) gk.Element {
-	return gk.Div(s.SizeFull).Bg(theme.Background).Child(gk.Label("port"))
+	return gk.Div(s.SizeFull).Bg(theme.Background).Child(kit.Label("port"))
 }
 
 func (a *App) motionView(cx *gk.Cx) gk.Element {
 	fmt.Printf("port reduce motion in view=%v\n", gk.ReduceMotion(cx)) // a read a view function may make
-	return gk.Div(s.SizeFull).Child(gk.Label("motion"))
+	return gk.Div(s.SizeFull).Child(kit.Label("motion"))
 }
 
 func (a *App) init(cx *gk.Cx) {

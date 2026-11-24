@@ -17,6 +17,9 @@ import (
 	"strings"
 
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/editor"
+	"gpuikit.dev/gk/kit"
+	"gpuikit.dev/gk/table"
 	"gpuikit.dev/gk/theme"
 )
 
@@ -29,11 +32,11 @@ func init() {
 	}
 	modeView["ask"] = func(a *App, cx *gk.Cx) gk.Element {
 		return gk.Div().W(gk.Px(400)).Child(
-			gk.BaseTextViewMarkdown("md", "```demo\nproc x\n```\n\n![pic](pic.png)\n").
+			editor.BaseTextViewMarkdown("md", "```demo\nproc x\n```\n\n![pic](pic.png)\n").
 				CodeBlockHighlighter(askState.hl).ImageSource(askState.img))
 	}
 	modeView["providers"] = func(a *App, cx *gk.Cx) gk.Element {
-		return gk.Div().W(gk.Px(400)).Child(gk.CodeEditor(a.ed, gk.CodeEditorOptions{Height: 120}))
+		return gk.Div().W(gk.Px(400)).Child(editor.CodeEditor(a.ed, editor.CodeEditorOptions{Height: 120}))
 	}
 }
 
@@ -45,7 +48,7 @@ var askState struct {
 	imgCalls int
 }
 
-var columns = []gk.TableColumn{
+var columns = []table.TableColumn{
 	{Key: "id", Name: "Id", Width: 60, Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 400},
 	{Key: "name", Name: "Name", Width: 100, Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 400},
 	{Key: "a", Name: "A", Width: 60, Resizable: true, Movable: true, Selectable: true, MinWidth: 20, MaxWidth: 400},
@@ -55,28 +58,28 @@ const diffPatch = "--- a/a.txt\n+++ b/a.txt\n@@ -1,2 +1,2 @@\n one\n-two\n+2\n--
 
 func (a *App) groupView(cx *gk.Cx) gk.Element {
 	fmt.Printf("lists2 group view described\n")
-	return gk.Label("[values]")
+	return kit.Label("[values]")
 }
 
-func (a *App) cell(cx *gk.Cx, at gk.CellAt) gk.Element {
-	return gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+func (a *App) cell(cx *gk.Cx, at table.CellAt) gk.Element {
+	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 }
 
-func (a *App) driveCell(cx *gk.Cx, at gk.CellAt) gk.Element {
+func (a *App) driveCell(cx *gk.Cx, at table.CellAt) gk.Element {
 	a.drawn[fmt.Sprintf("table %d", at.Row)]++
-	return gk.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
+	return kit.Label(fmt.Sprintf("%d:%d", at.Row, at.Col))
 }
 
-func (a *App) driveTreeRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
+func (a *App) driveTreeRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 	a.drawn[fmt.Sprintf("tree %d", at.Row)]++
-	e, _ := gk.TreeEntryAt(cx, a.tree, at.Row)
-	return gk.ListItem(gk.Key("tree", at.Row)).Child(gk.Label(e.Label))
+	e, _ := table.TreeEntryAt(cx, a.tree, at.Row)
+	return table.ListItem(gk.Key("tree", at.Row)).Child(kit.Label(e.Label))
 }
 
-func treeNodes(n int) []gk.TreeNode {
-	nodes := make([]gk.TreeNode, n)
+func treeNodes(n int) []table.TreeNode {
+	nodes := make([]table.TreeNode, n)
 	for i := range nodes {
-		nodes[i] = gk.TreeNode{ID: fmt.Sprintf("n%d", i), Label: fmt.Sprintf("node %d", i)}
+		nodes[i] = table.TreeNode{ID: fmt.Sprintf("n%d", i), Label: fmt.Sprintf("node %d", i)}
 	}
 	return nodes
 }
@@ -96,36 +99,36 @@ func (a *App) askImage(cx *gk.Cx, uri string) string {
 }
 
 // providers: every question of the editor's providers, answered at once.
-func (a *App) providerEvent(cx *gk.Cx, e gk.ProviderEvent) {
+func (a *App) providerEvent(cx *gk.Cx, e editor.ProviderEvent) {
 	name := ""
 	switch q := e.Request.(type) {
-	case gk.ProviderCompletions:
+	case editor.ProviderCompletions:
 		name = "completions"
-		gk.AnswerCompletions(cx, a.prov, e.ID, gk.CompletionResponse{Items: []gk.CompletionItem{{Label: "alpha"}, {Label: "beta"}}})
-	case gk.ProviderHover:
+		editor.AnswerCompletions(cx, a.prov, e.ID, editor.CompletionResponse{Items: []gk.CompletionItem{{Label: "alpha"}, {Label: "beta"}}})
+	case editor.ProviderHover:
 		name = "hover"
-		gk.AnswerHover(cx, a.prov, e.ID, gk.Option[string]{})
-	case gk.ProviderDefinitions:
+		editor.AnswerHover(cx, a.prov, e.ID, gk.Option[string]{})
+	case editor.ProviderDefinitions:
 		name = "definitions"
-		defs := []gk.Definition{{URI: "file:///a.demo", Target: gk.TextRange{EndChar: 5}, Selection: gk.TextRange{EndChar: 5}}}
-		gk.AnswerDefinitions(cx, a.prov, e.ID, defs)
-	case gk.ProviderColors:
+		defs := []editor.Definition{{URI: "file:///a.demo", Target: editor.TextRange{EndChar: 5}, Selection: editor.TextRange{EndChar: 5}}}
+		editor.AnswerDefinitions(cx, a.prov, e.ID, defs)
+	case editor.ProviderColors:
 		name = "colors"
-		cols := []gk.DocumentColor{{Range: gk.TextRange{EndChar: 1}, RGBA: [4]float32{1, 0, 0, 1}}}
-		gk.AnswerColors(cx, a.prov, e.ID, cols)
-	case gk.ProviderCodeActions:
+		cols := []editor.DocumentColor{{Range: editor.TextRange{EndChar: 1}, RGBA: [4]float32{1, 0, 0, 1}}}
+		editor.AnswerColors(cx, a.prov, e.ID, cols)
+	case editor.ProviderCodeActions:
 		name = "code-actions"
-		acts := []gk.CodeAction{{Title: "Fix it", Kind: "quickfix", ID: "fix-1"}}
-		gk.AnswerCodeActions(cx, a.prov, e.ID, acts)
-	case gk.ProviderPerform:
+		acts := []editor.CodeAction{{Title: "Fix it", Kind: "quickfix", ID: "fix-1"}}
+		editor.AnswerCodeActions(cx, a.prov, e.ID, acts)
+	case editor.ProviderPerform:
 		name = fmt.Sprintf("perform id=%s", q.ID)
-		gk.AnswerPerformed(cx, a.prov, e.ID)
-	case gk.ProviderTokens:
+		editor.AnswerPerformed(cx, a.prov, e.ID)
+	case editor.ProviderTokens:
 		name = "tokens"
-		gk.AnswerTokens(cx, a.prov, e.ID, []uint32{0, 0, 1, 0, 0})
-	case gk.ProviderInline:
+		editor.AnswerTokens(cx, a.prov, e.ID, []uint32{0, 0, 1, 0, 0})
+	case editor.ProviderInline:
 		name = "inline"
-		gk.AnswerInline(cx, a.prov, e.ID, gk.Some("lpha"))
+		editor.AnswerInline(cx, a.prov, e.ID, gk.Some("lpha"))
 	}
 	a.asked[name]++
 	fmt.Printf("lists2 provider %s id=%d\n", name, e.ID)
@@ -135,47 +138,47 @@ func pInit(a *App, cx *gk.Cx) {
 	switch a.mode {
 	case "combobox":
 		a.src = gk.NewSearchSource(cx, fruit)
-		a.combo = gk.NewComboboxState(cx, a.src, []gk.BaseIndexPath{gk.Row(1)}).Multiple(true).Build()
+		a.combo = table.NewComboboxState(cx, a.src, []table.BaseIndexPath{table.Row(1)}).Multiple(true).Build()
 		a.sub = a.combo.OnComboboxEvent(cx, a.comboEvent)
 	case "will-change":
 		// The combobox mode's start, with rules (PROTOCOLS.md 11.25): Cherry, which Down and Enter add
 		// there, is blocked here; Banana is locked.
 		a.src = gk.NewSearchSource(cx, fruit)
-		a.combo = gk.NewComboboxState(cx, a.src, []gk.BaseIndexPath{gk.Row(1)}).Multiple(true).Build()
+		a.combo = table.NewComboboxState(cx, a.src, []table.BaseIndexPath{table.Row(1)}).Multiple(true).Build()
 		a.sub = a.combo.OnComboboxEvent(cx, a.comboEvent)
 		gk.SearchWillChange(cx, a.src, gk.SearchRules{Locked: []string{"banana"}, Blocked: []string{"cherry"}})
 	case "table":
-		a.cells = gk.NewTableSource(cx, 20, columns, a.cell, gk.Initial(8))
-		a.table = gk.NewTableState(cx, a.cells).Build()
+		a.cells = table.NewSource(cx, 20, columns, a.cell, gk.Initial(8))
+		a.table = table.NewState(cx, a.cells).Build()
 		a.group = gk.NewView(nil, a.groupView)
 	case "ask":
 		askState.hl = gk.NewAsk(cx, a.askHighlight)
 		askState.img = gk.NewAsk(cx, a.askImage)
 	case "kept":
 		a.kept0 = gk.TestKeptCount()
-		a.in1 = gk.NewInputState(cx).Validate(a.noX).Build()
-		a.in2 = gk.NewInputState(cx).Build()
+		a.in1 = editor.NewInputState(cx).Validate(a.noX).Build()
+		a.in2 = editor.NewInputState(cx).Build()
 	case "drive":
-		a.src = gk.NewListSource(cx, func() int { return 1000 }, a.driveListRow, gk.Initial(20))
-		a.list = gk.NewListState(cx, a.src).Build()
-		a.cells = gk.NewTableSource(cx, 1000, columns, a.driveCell, gk.Initial(12))
-		a.table = gk.NewTableState(cx, a.cells).Build()
-		a.tree = gk.NewTreeState(cx).Build()
-		gk.SetTreeItems(cx, a.tree, treeNodes(300))
-		a.treeRows = gk.NewTreeSource(cx, a.driveTreeRow, gk.Initial(8))
+		a.src = table.NewListSource(cx, func() int { return 1000 }, a.driveListRow, gk.Initial(20))
+		a.list = table.NewListState(cx, a.src).Build()
+		a.cells = table.NewSource(cx, 1000, columns, a.driveCell, gk.Initial(12))
+		a.table = table.NewState(cx, a.cells).Build()
+		a.tree = table.NewTreeState(cx).Build()
+		table.SetTreeItems(cx, a.tree, treeNodes(300))
+		a.treeRows = table.NewTreeSource(cx, a.driveTreeRow, gk.Initial(8))
 	case "expr":
 		// Steps of 1 below 10 and of 10 from there: an expression the library evaluates.
-		a.in1 = gk.NewInputState(cx).DefaultValue("9").StepBy("x < 10 ? 1 : 10").Build()
+		a.in1 = editor.NewInputState(cx).DefaultValue("9").StepBy("x < 10 ? 1 : 10").Build()
 		// The same as NumberStep's ByValue variant, which the binding could not give before.
-		a.in2 = gk.NewInputState(cx).DefaultValue("3").Build()
-		a.in2.SetStep(cx, gk.Some[gk.NumberStep](gk.NumberStepByValue{Value: "y == 1 ? x : 0.5"})) // Increment doubles, Decrement takes 0.5
+		a.in2 = editor.NewInputState(cx).DefaultValue("3").Build()
+		a.in2.SetStep(cx, gk.Some[editor.NumberStep](editor.NumberStepByValue{Value: "y == 1 ? x : 0.5"})) // Increment doubles, Decrement takes 0.5
 	case "bad-expr":
-		a.in1 = gk.NewInputState(cx).StepBy("x < 10 ? 1").Build()
+		a.in1 = editor.NewInputState(cx).StepBy("x < 10 ? 1").Build()
 	case "providers":
-		a.ed = gk.NewEditorState(cx).Language("rust").Build()
-		a.prov = gk.EditorProviders(cx, a.ed, a.providerEvent, gk.ProvidersOptions{Triggers: gk.Some("."),
-			Which: gk.ProvideCompletions | gk.ProvideHover | gk.ProvideDefinitions | gk.ProvideDocumentColors |
-				gk.ProvideCodeActions | gk.ProvideSemanticTokens | gk.ProvideInlineCompletions,
+		a.ed = editor.NewState(cx).Language("rust").Build()
+		a.prov = editor.Providers(cx, a.ed, a.providerEvent, editor.ProvidersOptions{Triggers: gk.Some("."),
+			Which: editor.ProvideCompletions | editor.ProvideHover | editor.ProvideDefinitions | editor.ProvideDocumentColors |
+				editor.ProvideCodeActions | editor.ProvideSemanticTokens | editor.ProvideInlineCompletions,
 			CodeActionID: "lists2", InlineDebounceMs: 50, TokenTypes: []string{"keyword"}})
 	}
 }
@@ -194,10 +197,10 @@ func pStep(a *App, cx *gk.Cx) {
 				first, row = sel[0].V1.Title, sel[0].V0.Row
 			}
 			fmt.Printf("lists2 combobox initial values=%s n=%d first=%s row=%d\n", strs(vs), len(sel), first, row)
-			added := a.combo.AddSelectedIndex(cx, gk.Row(0))
-			again := a.combo.AddSelectedIndex(cx, gk.Row(0))
+			added := a.combo.AddSelectedIndex(cx, table.Row(0))
+			again := a.combo.AddSelectedIndex(cx, table.Row(0))
 			fmt.Printf("lists2 combobox add first=%v again=%v values=%s\n", added, again, strs(a.combo.SelectedValues(cx)))
-			removed := a.combo.RemoveSelectedIndex(cx, gk.BaseIndexPath{Row: 1})
+			removed := a.combo.RemoveSelectedIndex(cx, table.BaseIndexPath{Row: 1})
 			fmt.Printf("lists2 combobox remove=%v values=%s\n", removed, strs(a.combo.SelectedValues(cx)))
 			a.combo.SetSelectedValues(cx, []string{"apple", "mango"})
 			a.combo.SetQuery(cx, "an")
@@ -212,12 +215,12 @@ func pStep(a *App, cx *gk.Cx) {
 		switch a.step {
 		case 1:
 			texts := [][]string{{"0", "zero", "a0"}, {"1", "one", "a1"}}
-			gk.SetTableTexts(cx, a.table, 0, texts, false)
-			gk.SetTableRowLabels(cx, a.table, []gk.TableRowLabel{{Row: 1, Label: "the first row"}})
-			gk.SetTableLook(cx, a.table, gk.TableLook{
-				Fit:         []gk.TableFit{{Col: 1, Width: 150}},
-				Groups:      [][]gk.TableGroup{{{Label: "Key", Span: 1}, {Label: "Values", Span: 2}}},
-				GroupViews:  []gk.TableGroupView{{Label: "Values", View: a.group}},
+			table.SetTableTexts(cx, a.table, 0, texts, false)
+			table.SetTableRowLabels(cx, a.table, []table.RowLabel{{Row: 1, Label: "the first row"}})
+			table.SetTableLook(cx, a.table, table.Look{
+				Fit:         []table.Fit{{Col: 1, Width: 150}},
+				Groups:      [][]table.Group{{{Label: "Key", Span: 1}, {Label: "Values", Span: 2}}},
+				GroupViews:  []table.GroupView{{Label: "Values", View: a.group}},
 				HeaderStyle: gk.Some(gk.NewStyleRefinementDefault().Bg(theme.Secondary)),
 				RowStyle:    gk.Some(gk.NewStyleRefinementDefault().TextColor(theme.MutedForeground)),
 			})
@@ -238,8 +241,8 @@ func pStep(a *App, cx *gk.Cx) {
 		case 1:
 			// Select and scroll each from code (generated state calls).
 			fmt.Printf("lists2 drive before list=%v table=%v tree=%v\n", a.drawnRow("list", 500), a.drawnRow("table", 700), a.drawnRow("tree", 150))
-			a.list.SetSelectedIndex(cx, gk.Some(gk.Row(500)))
-			a.list.ScrollToItem(cx, gk.Row(500), gk.ScrollStrategyTop)
+			a.list.SetSelectedIndex(cx, gk.Some(table.Row(500)))
+			a.list.ScrollToItem(cx, table.Row(500), gk.ScrollStrategyTop)
 			a.table.SetSelectedRow(cx, 700)
 			a.table.ScrollToRow(cx, 700)
 			a.tree.SetSelectedIndex(cx, gk.Some(150))
@@ -276,21 +279,21 @@ func pStep(a *App, cx *gk.Cx) {
 	case "diff":
 		// A patch parsed by the kit: the count, each file by its index, a diff state over them;
 		// a patch that does not parse gives the kit's error.
-		n := gk.DiffFileParseCount(cx, diffPatch)
+		n := editor.DiffFileParseCount(cx, diffPatch)
 		count, _ := n.Value.Get()
-		bad := gk.DiffFileParseCount(cx, "@@ nonsense\n")
+		bad := editor.DiffFileParseCount(cx, "@@ nonsense\n")
 		fmt.Printf("lists2 diff count=%d ok=%v bad_ok=%v bad_err=%q\n", count, n.OK, bad.OK, bad.Err)
-		files := make([]gk.DiffFile, count)
+		files := make([]editor.DiffFile, count)
 		for i := range files {
-			files[i] = gk.NewDiffFileParseAt(diffPatch, i)
+			files[i] = editor.NewDiffFileParseAt(diffPatch, i)
 		}
-		st := gk.NewDiffState(cx, files).Build()
+		st := editor.NewDiffState(cx, files).Build()
 		gk.Release(cx, st)
 		fmt.Printf("lists2 diff state made\n")
 	case "expr":
 		fmt.Printf("lists2 expr step_by=%q by_value=%q\n", a.in1.Value(cx), a.in2.Value(cx))
 	case "display-map":
-		dm := gk.NewDisplayMap(cx, gk.Font{Family: "Inter"}, 14, gk.Option[float32]{})
+		dm := editor.NewDisplayMap(cx, gk.Font{Family: "Inter"}, 14, gk.Option[float32]{})
 		dm.SetFoldCandidates(cx, []gk.FoldRange{})
 		dm.SetFont(cx, gk.Font{Family: "Inter", Weight: 700}, 16)
 		fmt.Printf("lists2 display-map lines=%d rows=%d wraps=%d text=%q folded=%v candidate=%v\n",

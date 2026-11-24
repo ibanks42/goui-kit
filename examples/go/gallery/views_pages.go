@@ -7,6 +7,7 @@ package main
 
 import (
 	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
 )
 
@@ -26,39 +27,39 @@ func viewsPagesInit(a *App, cx *gk.Cx) {
 }
 
 func viewsSidebarGroups(a *App, cx *gk.Cx) gk.Element {
-	later := []gk.SidebarMenu{
-		gk.NewSidebarMenu().Child(gk.NewSidebarMenuItem("Archive")),
-		gk.NewSidebarMenu().Child(gk.NewSidebarMenuItem("Trash")),
+	later := []kit.SidebarMenu{
+		kit.NewSidebarMenu().Child(kit.NewSidebarMenuItem("Archive")),
+		kit.NewSidebarMenu().Child(kit.NewSidebarMenuItem("Trash")),
 	}
-	groups := []gk.SidebarGroup{gk.NewSidebarGroup("Later").Children(later).Collapsed(true)}
+	groups := []kit.SidebarGroup{kit.NewSidebarGroup("Later").Children(later).Collapsed(true)}
 	return gk.Div().W(gk.Px(240)).H(gk.Px(300)).Child(
-		gk.GroupedSidebar("gsb").Side(gk.SideLeft).Collapsible(false).Collapsed(false).Header(gk.Label("Mail")).
-			Child(gk.NewSidebarGroup("Inbox").
-				Child(gk.NewSidebarMenu().Child(gk.NewSidebarMenuItem("Unread").Active(true)).Child(gk.NewSidebarMenuItem("Flagged")))).
+		kit.GroupedSidebar("gsb").Side(gk.SideLeft).Collapsible(false).Collapsed(false).Header(kit.Label("Mail")).
+			Child(kit.NewSidebarGroup("Inbox").
+				Child(kit.NewSidebarMenu().Child(kit.NewSidebarMenuItem("Unread").Active(true)).Child(kit.NewSidebarMenuItem("Flagged")))).
 			Children(groups))
 }
 
 func viewsSubmenuIcon(a *App, cx *gk.Cx) gk.Element {
 	v := &a.views
-	zoom := gk.NewPopupMenu().Menu("Zoom in", v.zoomIn).Menu("Zoom out", v.zoomOut)
-	plain := gk.NewPopupMenu().Menu("Zoom in", v.zoomIn).Menu("Zoom out", v.zoomOut)
-	return gk.Div(s.Border1).W(gk.Px(300)).H(gk.Px(120)).
-		Child(gk.Label("Right-click here")).
-		ContextMenu(gk.NewPopupMenu().
+	zoom := kit.NewPopupMenu().Menu("Zoom in", v.zoomIn).Menu("Zoom out", v.zoomOut)
+	plain := kit.NewPopupMenu().Menu("Zoom in", v.zoomIn).Menu("Zoom out", v.zoomOut)
+	return kit.DivContextMenu(gk.Div(s.Border1).W(gk.Px(300)).H(gk.Px(120)).
+		Child(kit.Label("Right-click here")),
+		kit.NewPopupMenu().
 			SubmenuWithIcon(gk.Some(gk.Icon(gk.IconFolder)), "Zoom", zoom).
 			SubmenuWithIcon(gk.Option[gk.IconEl]{}, "Plain", plain))
 }
 
 func viewsMenuItems(a *App, cx *gk.Cx) gk.Element {
 	v := &a.views
-	items := gk.NewPopupMenu().
-		Item(gk.NewPopupMenuItem("Copy").Icon(gk.IconCopy).Action(v.zoomIn)).
-		Item(gk.NewPopupMenuItemSeparator()).
-		Item(gk.NewPopupMenuItemLabel("Section")).
-		Item(gk.NewPopupMenuItem("Checked").Checked(true).Action(v.zoomOut)).
-		Item(gk.NewPopupMenuItem("Off").Disabled(true)).
-		Item(gk.NewPopupMenuItem("Count").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.count++ })).
-		Item(gk.NewPopupMenuItemElement(gk.Label("an element"))).
-		Item(gk.NewPopupMenuItemLink("Docs", "https://example.com"))
-	return gk.Div(s.Border1).W(gk.Px(300)).H(gk.Px(120)).Child(gk.Label("Right-click here")).ContextMenu(items)
+	items := kit.NewPopupMenu().
+		Item(kit.NewPopupMenuItem("Copy").Icon(gk.IconCopy).Action(v.zoomIn)).
+		Item(kit.NewPopupMenuItemSeparator()).
+		Item(kit.NewPopupMenuItemLabel("Section")).
+		Item(kit.NewPopupMenuItem("Checked").Checked(true).Action(v.zoomOut)).
+		Item(kit.NewPopupMenuItem("Off").Disabled(true)).
+		Item(kit.NewPopupMenuItem("Count").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.count++ })).
+		Item(kit.NewPopupMenuItemElement(kit.Label("an element"))).
+		Item(kit.NewPopupMenuItemLink("Docs", "https://example.com"))
+	return kit.DivContextMenu(gk.Div(s.Border1).W(gk.Px(300)).H(gk.Px(120)).Child(kit.Label("Right-click here")), items)
 }
