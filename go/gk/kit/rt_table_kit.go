@@ -1,9 +1,9 @@
 package kit
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // RowMenu attaches a context PopupMenu to any row element el.

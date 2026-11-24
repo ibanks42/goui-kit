@@ -3,8 +3,8 @@
 package chart
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AreaChartEl is gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>.

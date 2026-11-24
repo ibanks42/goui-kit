@@ -5,9 +5,9 @@
 package dock
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/kit"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/kit"
 )
 
 // PanelData configures a dock panel's persistent identity, title bar, flags,

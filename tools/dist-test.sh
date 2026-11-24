@@ -9,7 +9,7 @@
 #   build-tree paths cannot mask missing libraries or broken rpaths.
 # - Real window lifecycle: sets `GK_FRAMES=5,30` so the app opens a real window, renders
 #   30 frames, and exits cleanly with status 0 within a 120-second watchdog timeout.
-# - macOS universal check: verifies `libgpuikit_static.a` and `libgpuikit.dylib` each carry
+# - macOS universal check: verifies `libgouikit_static.a` and `libgouikit.dylib` each carry
 #   both `arm64` and `x86_64` slices, checks the host binary's Mach-O slice via `lipo -archs`,
 #   cross-compiles `hello` for the non-host architecture (using `GOARCH` + `CC="clang -arch ..."`
 #   for static cgo), and executes the x86_64 build under Rosetta 2 when available on Apple Silicon.
@@ -27,7 +27,7 @@ case "$(uname -s)" in
   Darwin) os=macos; ext=.bin ;;
   *) os=linux; ext=.bin ;;
 esac
-out=$(dirname "$dl")/test-$(basename "$dl" | sed 's/^gpuikit-[^-]*-//')
+out=$(dirname "$dl")/test-$(basename "$dl" | sed 's/^goui-kit-[^-]*-//')
 rm -rf "$out"; mkdir -p "$out"
 # Run a command with a 120-second watchdog so a hung GUI window fails cleanly instead of blocking CI.
 limit() { "$@" & local pid=$! rc=0; ( sleep 120; kill $pid 2> /dev/null ) & local w=$!
@@ -51,7 +51,7 @@ run() {
 }
 other=
 if [ $os = macos ]; then
-  for f in "$dl/lib/libgpuikit_static.a" "$dl/lib/libgpuikit.dylib"; do
+  for f in "$dl/lib/libgouikit_static.a" "$dl/lib/libgouikit.dylib"; do
     lipo -info "$f"
     got=$(lipo -archs "$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
     [ "$got" = "arm64 x86_64 " ] || { echo "dist-test: FAIL $f has the slices '$got', not arm64 and x86_64"; exit 1; }
@@ -78,7 +78,7 @@ arch_of() {
 for lang in "$@"; do
   case $lang in
     go)
-      case $os in windows) so=$dl/lib/gpuikit.dll ;; macos) so=$dl/lib/libgpuikit.dylib ;; *) so=$dl/lib/libgpuikit.so ;; esac
+      case $os in windows) so=$dl/lib/gouikit.dll ;; macos) so=$dl/lib/libgouikit.dylib ;; *) so=$dl/lib/libgouikit.so ;; esac
       for mode in shared static; do
         st=; [ $mode = static ] && st=1
         h=$dl/examples/go/hello$ext

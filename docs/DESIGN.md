@@ -1,6 +1,6 @@
 # Architecture and Design
 
-This document explains the architectural decisions behind `gpui-kit-bindings`, the alternatives that were evaluated and rejected, the per-frame performance model (including how parity with pure Rust is measured by `gk-meter` and `gates/fps.sh`), the safety and lifetime invariants across the FFI boundary, and the end-to-end code generation pipeline.
+This document explains the architectural decisions behind `goui-kit`, the alternatives that were evaluated and rejected, the per-frame performance model (including how parity with pure Rust is measured by `gk-meter` and `gates/fps.sh`), the safety and lifetime invariants across the FFI boundary, and the end-to-end code generation pipeline.
 
 ---
 
@@ -61,7 +61,7 @@ Instead, every upstream synchronous-draw callback maps onto one of five zero-mid
 
 ### 2.4 Default `purego` Dynamic Loading vs. Cgo-Only Builds
 
-**Decision**: Default builds (`!gkstatic`) set `CGO_ENABLED=0` and load `libgpuikit.so` / `libgpuikit.dylib` / `gpuikit.dll` at startup via `github.com/ebitengine/purego`. An opt-in `-tags gkstatic` build links `libgpuikit_static.a` through cgo with linker dead-stripping (`--gc-sections` / `-dead_strip` / `ld.lld`).
+**Decision**: Default builds (`!gkstatic`) set `CGO_ENABLED=0` and load `libgouikit.so` / `libgouikit.dylib` / `gouikit.dll` at startup via `github.com/ebitengine/purego`. An opt-in `-tags gkstatic` build links `libgouikit_static.a` through cgo with linker dead-stripping (`--gc-sections` / `-dead_strip` / `ld.lld`).
 
 **Rejected alternatives**:
 
@@ -127,7 +127,7 @@ Tracing the exact work on both sides of the boundary clarifies where time goes a
 
 Performance is verified by automated gates rather than ad-hoc runs:
 
-- **`core/meter/` (`gk-meter`)**: Linked identically into both `libgpuikit` and the pure-Rust reference apps (`ref/`). Measures per-frame main-thread CPU time (`CLOCK_THREAD_CPUTIME_ID` on Unix, `GetThreadTimes` on Windows), inter-frame wall time, boundary counters (`callbacks`, `calls`, `callback_ns`, `decode_ns`, `tapes`, `tape_bytes`, per-turn-kind counts, `deferred_ops`, `rows_missing`, `placeholder_frames`), and in `diag` builds `gpui-fast`'s `Window::layout_stats()` (`views_built`, `views_reused`, `build_ns`, `prepaint_ns`, `paint_ns`). Also drives deterministic synthetic input (`GK_FRAMES`, `GK_CLICK`, `GK_SCROLL`, `GK_SIZE`).
+- **`core/meter/` (`gk-meter`)**: Linked identically into both `libgouikit` and the pure-Rust reference apps (`ref/`). Measures per-frame main-thread CPU time (`CLOCK_THREAD_CPUTIME_ID` on Unix, `GetThreadTimes` on Windows), inter-frame wall time, boundary counters (`callbacks`, `calls`, `callback_ns`, `decode_ns`, `tapes`, `tape_bytes`, per-turn-kind counts, `deferred_ops`, `rows_missing`, `placeholder_frames`), and in `diag` builds `gpui-fast`'s `Window::layout_stats()` (`views_built`, `views_reused`, `build_ns`, `prepaint_ns`, `paint_ns`). Also drives deterministic synthetic input (`GK_FRAMES`, `GK_CLICK`, `GK_SCROLL`, `GK_SIZE`).
 - **`gates/fps.sh` + `gates/fps-summary.py`**: Runs matched Go and Rust binaries in interleaved rounds (`rust`, `go`, `rust2`) under a private headless compositor (`gates/display.sh`: `kwin_wayland` at 60 Hz, `gamescope` up to 1,000 Hz, or `xvfb` at 60 Hz). Any round where the two Rust baselines drift by more than 5% (`|rust2/rust - 1| > 0.05`) is dropped as host jitter. The gate passes when Go's median frame CPU time is within `GK_BAR` (default `1.03`, i.e., 3% of Rust) plus the measured Rust-vs-Rust noise floor (`max(|median - 1|, 1.2533 * MAD_sigma / sqrt(n))`).
 - **`gates/counter.sh`**: Measures click-every-frame responsiveness and retained-view rebuild counts against the Rust counter reference.
 - **`gates/memory.sh`**: Drives sustained open/close, scroll, and allocation/release loops and checks that RSS and live handle counts plateau without leaks (including a leak-detector self-test in full `make gates`).
@@ -171,7 +171,7 @@ Neither Go panics nor Rust panics ever unwind across the `extern "C"` boundary:
 
 - **Go panics**: Recovered at the callback wrapper, wrapped in `*gk.PanicError` (preserving original `Value`, `Unwrap()` for `error` values, and stack trace), followed by `C_QUIT` via `gk_call`. Once `gk_run` exits cleanly, `gk.Run` re-panics with `*gk.PanicError`.
 - **Rust panics**: Every C export and GPUI closure runs inside `std::panic::catch_unwind` (`rt::guard`). A panic inside `gk_call` poisons the session and returns `GK_ERR_POISONED`; a panic outside `gk_call` poisons the session, delivers `K_PANIC` (`is_app_stop = 0`), and calls `quit_soon()`. Go returns `*gk.LibraryError` from `gk.Run`.
-- **App contract violations**: Return `*gk.Error` from `gk.Run` with the offending Go file, line, and function. Nothing in `gpuikit.dev` calls `os.Exit`, so deferred cleanup in `main` always runs.
+- **App contract violations**: Return `*gk.Error` from `gk.Run` with the offending Go file, line, and function. Nothing in `github.com/ibanks42/goui-kit` calls `os.Exit`, so deferred cleanup in `main` always runs.
 
 All 92 misuse behaviors (runtime `*gk.Error` cases and compile-time type rejections) are verified by `gates/go-misuse.sh` and `examples/go/misuse*`.
 
@@ -215,7 +215,7 @@ api/rustdoc/*.json.gz + docs.json.gz  (committed snapshot)
 1. **Deterministic, fail-closed classification**: Every public upstream item must either match a generator rule, appear in `api/overrides.toml`, or be explicitly excluded with a documented reason. Unmatched signatures fail `make gen` immediately and write `gen/out/no-rule.md`.
 2. **One-line-per-item Rust emission & automatic quarantine**: `gk_rust.py` puts every generated item on a single line and records `(file, line) -> item_id` in `gen/out/lines.json`. `gen/round.sh` runs `cargo check --release -p gk-capi` and automatically quarantines any item whose generated Rust fails to compile into `api/quarantine.json`, generating `gen/out/report.md` so upstream bumps remain incremental and diagnosable.
 3. **Acyclic Go package partitioning (`gen/gk_split.py`)**: Places declarations into family packages (`gk`, `motion`, `table`, `editor`, `base`, `kit`, `chart`, `overlay`, `dock`, plus `s`, `theme`, `palette`), moving referenced types downward and constructors upward so imports form a strict DAG with zero cycles, and emitting `internal/rt/gen_use.go` per-family registration calls for static linker dead-stripping.
-4. **Append-only ABI integrity**: `api/opcodes.lock` never reuses retired numbers, and `API_HASH` (64-bit FNV-1a over `ops.txt` + `opcodes.lock`) guarantees that a mismatched `libgpuikit` and Go module reject each other on the very first handshake call (`GK_ERR_VERSION`).
+4. **Append-only ABI integrity**: `api/opcodes.lock` never reuses retired numbers, and `API_HASH` (64-bit FNV-1a over `ops.txt` + `opcodes.lock`) guarantees that a mismatched `libgouikit` and Go module reject each other on the very first handshake call (`GK_ERR_VERSION`).
 ### 5.2 Static Per-Family Dead-Stripping Architecture
 
 Static Go binaries (`-tags gkstatic`) must not pay the binary-size cost of unused GPUI-kit subsystems (such as charts, docks, or the code editor) when an application only draws a few buttons and labels.

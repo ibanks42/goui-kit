@@ -117,7 +117,7 @@ def main(argv):
     def category(dso, sym):
         if dso.startswith("[anonymous") or "gallium" in dso or "LLVM" in dso or "libGL" in dso or "libEGL" in dso or "nvidia" in dso or "vulkan" in dso:
             return "software rendering (llvmpipe, its JIT code, GL)"
-        if sym.startswith(("gpuikit::", "<gpuikit::")) or dso.endswith("-go"):
+        if sym.startswith(("gouikit::", "<gouikit::")) or dso.endswith("-go"):
             return "the binding: decoders, runtime, the Go app"
         if "gk_meter" in sym:
             return "the meter (both)"

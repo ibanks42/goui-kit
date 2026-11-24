@@ -3,8 +3,8 @@
 package dock
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // DockLayout is gpui_kit::base::dock::DockLayout.

@@ -215,7 +215,7 @@ func refs(files []string) error {
 }
 
 type table struct {
-	Module string               `json:"module"` // Go module path prefix (gpuikit.dev).
+	Module string               `json:"module"` // Go module path prefix (github.com/ibanks42/goui-kit).
 	Pkgs   map[string]string    `json:"pkgs"`   // Short package name to full import path.
 	Names  map[string][2]string `json:"names"`  // Flat symbol name to [targetPkg, targetName].
 	Local  []string             `json:"local"`  // Unexported helpers duplicated into each using package.

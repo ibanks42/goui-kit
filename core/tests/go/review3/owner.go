@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/dock"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/dock"
 )
 
 var renderer dock.Renderer

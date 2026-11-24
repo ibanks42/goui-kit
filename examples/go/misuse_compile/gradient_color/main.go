@@ -2,7 +2,7 @@
 package main
 
 import (
-	"gpuikit.dev/gk"
+	"github.com/ibanks42/goui-kit/gk"
 )
 
 func view(cx *gk.Cx) gk.Element {

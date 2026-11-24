@@ -1,4 +1,4 @@
-# Top-level build, code-generation, and verification targets for gpui-kit-bindings.
+# Top-level build, code-generation, and verification targets for goui-kit.
 # Typical workflow:
 #   1. `make gen`        regenerate Rust decoders, Go packages, conformance pages, and API audits.
 #   2. `make lib`        compile the Rust core (`lib/ship` and `lib/diag`) and Rust reference apps.

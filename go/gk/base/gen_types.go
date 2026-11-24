@@ -3,10 +3,10 @@
 package base
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // CalendarItemKind is gpui_kit::base::CalendarItemKind.
@@ -999,7 +999,7 @@ func rdCalendarEvent(r *rt.Reader) CalendarEvent {
 	case 0:
 		return CalendarEventSelected{Value: rdDate(r)}
 	}
-	rt.Stop("an event of type CalendarEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type CalendarEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1008,7 +1008,7 @@ func rdColorPickerEvent(r *rt.Reader) ColorPickerEvent {
 	case 0:
 		return ColorPickerEventChange{Value: rt.RdOpt(r, func(r *rt.Reader) gk.Hsla { return rt.RdHsla(r) })}
 	}
-	rt.Stop("an event of type ColorPickerEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type ColorPickerEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1019,7 +1019,7 @@ func rdDate(r *rt.Reader) Date {
 	case 1:
 		return DateRange{V0: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDate { return rt.RdCivilDate(r) }), V1: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDate { return rt.RdCivilDate(r) })}
 	}
-	rt.Stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1030,7 +1030,7 @@ func rdGridLayoutEvent(r *rt.Reader) GridLayoutEvent {
 	case 1:
 		return GridLayoutEventSelect{Value: rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })}
 	}
-	rt.Stop("an event of type GridLayoutEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type GridLayoutEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1045,7 +1045,7 @@ func rdMatcher(r *rt.Reader) Matcher {
 	case 3:
 		return MatcherCustom{Value: rt.RdList(r, func(r *rt.Reader) gk.CivilDate { return rt.RdCivilDate(r) })}
 	}
-	rt.Stop("an event of type Matcher arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type Matcher arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1054,7 +1054,7 @@ func rdTimeFieldEvent(r *rt.Reader) TimeFieldEvent {
 	case 0:
 		return TimeFieldEventChange{Value: rt.RdCivilTime(r)}
 	}
-	rt.Stop("an event of type TimeFieldEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TimeFieldEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1069,7 +1069,7 @@ func rdQuestionnaireEvent(r *rt.Reader) QuestionnaireEvent {
 	case 3:
 		return QuestionnaireEventSubmit{Value: QuestionnaireSubmission{HCore: rt.MkH(r.U64())}}
 	}
-	rt.Stop("an event of type QuestionnaireEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type QuestionnaireEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1082,7 +1082,7 @@ func rdQuestionnaireValidationError(r *rt.Reader) QuestionnaireValidationError {
 	case 2:
 		return QuestionnaireValidationErrorMessage{Value: r.Str()}
 	}
-	rt.Stop("an event of type QuestionnaireValidationError arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type QuestionnaireValidationError arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1093,7 +1093,7 @@ func rdSliderEvent(r *rt.Reader) SliderEvent {
 	case 1:
 		return SliderEventRelease{Value: rdSliderValue(r)}
 	}
-	rt.Stop("an event of type SliderEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type SliderEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1104,7 +1104,7 @@ func rdSliderValue(r *rt.Reader) SliderValue {
 	case 1:
 		return SliderValueRange{V0: r.F32(), V1: r.F32()}
 	}
-	rt.Stop("an event of type SliderValue arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type SliderValue arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 

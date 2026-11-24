@@ -1,8 +1,8 @@
-# gpui-kit-bindings
+# goui-kit
 
 Go bindings for the Rust desktop UI stack [GPUI-kit](https://gpui-kit.com) (0.11.0), running on `gpui-fast` (0.1.19) by default and also buildable on upstream GPUI (`gpui-pre` 0.3.14).
 
-The Rust side compiles into a single prebuilt library (`libgpuikit`) behind seven C functions and one callback. Go applications build against the `gpuikit.dev` module without installing Rust or a C compiler.
+The Rust side compiles into a single prebuilt library (`libgouikit`) behind seven C functions and one callback. Go applications build against the `github.com/ibanks42/goui-kit` module without installing Rust or a C compiler.
 
 ## Quick Example
 
@@ -15,11 +15,11 @@ import (
 	"fmt"
 	"log"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type App struct {
@@ -65,7 +65,7 @@ Go code never calls into GPUI on every rendered pixel or inside the middle of a 
 - **Views write byte tapes.** When a view is dirty, Go runs its view function once and encodes the resulting element tree into a compact little-endian byte buffer (a tape). If the new tape matches the previous one byte-for-byte, the binding skips notifying the library.
 - **Rust owns the real UI tree.** The library stores each view's tape on a GPUI entity (`GkView`) and decodes it into real GPUI-kit elements when GPUI builds that view. Unchanged views stay retained by `gpui-fast`.
 - **All Go code runs in turns on the UI thread.** Events, timers, frame hooks, and background completions arrive through a single callback. Background goroutines hand work back to the UI thread with `gk.Go` or `gk.Post`.
-- **Two linking modes.** By default, Go binaries load `libgpuikit.so`, `libgpuikit.dylib`, or `gpuikit.dll` at startup using `purego` with `CGO_ENABLED=0`, so no C compiler is required and standard `GOOS`/`GOARCH` cross-compilation works. Building with `-tags gkstatic` links `libgpuikit_static.a` via cgo and lets the linker discard unused component families.
+- **Two linking modes.** By default, Go binaries load `libgouikit.so`, `libgouikit.dylib`, or `gouikit.dll` at startup using `purego` with `CGO_ENABLED=0`, so no C compiler is required and standard `GOOS`/`GOARCH` cross-compilation works. Building with `-tags gkstatic` links `libgouikit_static.a` via cgo and lets the linker discard unused component families.
 
 ## Building From This Repository
 
@@ -99,7 +99,7 @@ App developers using a release archive only need Go 1.27 or newer. To build and 
 | Path | Contents |
 |---|---|
 | `core/` | Rust C ABI library (`gk-capi`), tape decoder, runtime shims, wire tables (`core/wire/ops.txt`), and frame meter (`core/meter/`). |
-| `go/` | The `gpuikit.dev` Go module: `gk` plus sub-packages (`kit`, `editor`, `table`, `overlay`, `chart`, `dock`, `motion`, `base`, `s`, `theme`, `palette`) and `internal/rt`. |
+| `go/` | The `github.com/ibanks42/goui-kit` Go module: `gk` plus sub-packages (`kit`, `editor`, `table`, `overlay`, `chart`, `dock`, `motion`, `base`, `s`, `theme`, `palette`) and `internal/rt`. |
 | `gen/` | Python 3 code generator that turns the rustdoc JSON extract in `api/rustdoc/` into Rust decoders, Go packages, and API indexes. |
 | `api/` | Committed rustdoc extract, `overrides.toml`, append-only `opcodes.lock`, `quarantine.json`, and machine-generated `coverage.json`. |
 | `examples/go/` | Example applications (`hello`, `counter`, `notes`, `todo`, `reader`, `expenses`, `files`, `paint`, `panels`, `table`, `writerule`), the component gallery, protocol tests, and misuse tests. |

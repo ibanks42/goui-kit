@@ -3,8 +3,8 @@
 package editor
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // BaseTable2 is a handle to gpui_kit::base::text::editor_host::Table, a runtime-owned library object.

@@ -10,7 +10,7 @@ import (
 
 // macOS shared library filename and dynamic loader environment variable.
 const (
-	libName       = "libgpuikit.dylib"
+	libName       = "libgouikit.dylib"
 	loaderPathVar = "DYLD_LIBRARY_PATH"
 )
 

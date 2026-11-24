@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- Windows application manifest embedded via gpuikit.rc.
+<!-- Windows application manifest embedded via gouikit.rc.
      Enables Per-Monitor V2 DPI awareness, SegmentHeap, Common Controls v6,
      and standard user execution privileges for Windows 10 and later hosts. -->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">

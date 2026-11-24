@@ -3,10 +3,10 @@
 # Defaults to: hello counter panels.
 #
 # Environment variables:
-#   GK_LIB        Directory containing libgpuikit (default: lib/ship).
+#   GK_LIB        Directory containing libgouikit (default: lib/ship).
 #   OUT           Output directory for binaries (default: bin).
 #   SUFFIX        Optional suffix appended to each output binary name.
-#   GK_STATIC=1   Link libgpuikit_static.a via cgo (-tags=gkstatic) instead of purego.
+#   GK_STATIC=1   Link libgouikit_static.a via cgo (-tags=gkstatic) instead of purego.
 #   GOBUILDFLAGS  Extra flags passed to `go build`.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)

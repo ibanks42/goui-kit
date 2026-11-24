@@ -7,10 +7,10 @@ import (
 	"log"
 	"os"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 type App struct {

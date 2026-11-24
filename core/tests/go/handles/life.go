@@ -5,10 +5,10 @@ import (
 	"runtime"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/dock"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/dock"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 // lifeChild owns nested state, focus, row-source, and child-view handles so

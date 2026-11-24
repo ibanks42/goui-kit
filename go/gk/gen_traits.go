@@ -5,7 +5,7 @@ package gk
 import (
 	"time"
 
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // tInteractiveElementBlockMouseExceptScroll: gpui_kit::InteractiveElement::block_mouse_except_scroll.

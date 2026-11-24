@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // columns defines the 5-column table schema used by the `table` and `table-scroll` modes.

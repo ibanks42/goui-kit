@@ -3,8 +3,8 @@
 package chart
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // NewPlotMotionDefault calls <gpui_kit::base::PlotMotion as Default>::default.

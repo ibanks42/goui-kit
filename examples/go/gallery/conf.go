@@ -7,15 +7,15 @@ package main
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	gkbase "gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	gkbase "github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 var _ = time.Millisecond

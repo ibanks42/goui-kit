@@ -1,6 +1,6 @@
 # Wire and Runtime Protocols
 
-This document is the complete specification for `libgpuikit` (`core/`), the C ABI library that exposes GPUI and GPUI-kit to foreign front ends. A front-end author in any language (Go, Zig, C, Swift, Python, and so on) should be able to implement a conformant binding from this specification, `core/include/gpuikit.h`, `core/wire/ops.txt`, and `api/opcodes.lock` without reading the Rust source.
+This document is the complete specification for `libgouikit` (`core/`), the C ABI library that exposes GPUI and GPUI-kit to foreign front ends. A front-end author in any language (Go, Zig, C, Swift, Python, and so on) should be able to implement a conformant binding from this specification, `core/include/gouikit.h`, `core/wire/ops.txt`, and `api/opcodes.lock` without reading the Rust source.
 
 The specification is organized from the lowest layer (C exports and byte primitives) up through turns, tapes, handles, and each domain protocol family, ending with error handling and a front-end implementation checklist.
 
@@ -80,7 +80,7 @@ where `<scope>` is empty for global tables (`node`, `call`, `shape`, `style`, `t
 
 ## 2. C ABI and Handshake
 
-The complete C interface is declared in `core/include/gpuikit.h`. It contains 7 exported C functions (plus `gk_use_all` and per-family `gk_use_<family>` registration symbols).
+The complete C interface is declared in `core/include/gouikit.h`. It contains 7 exported C functions (plus `gk_use_all` and per-family `gk_use_<family>` registration symbols).
 
 ### 2.1 Struct Layouts (`#[repr(C)]`)
 
@@ -1335,7 +1335,7 @@ Offset  Hex Bytes                       Meaning
 
 ## 15. Complete Wire Type Mapping for Generated Descriptors
 
-Front-end code generators targeting `libgpuikit` consume the intermediate model produced by `gen/gk_model.py`. Every wire descriptor in that model maps deterministically to the following byte encoding on both sides of the boundary:
+Front-end code generators targeting `libgouikit` consume the intermediate model produced by `gen/gk_model.py`. Every wire descriptor in that model maps deterministically to the following byte encoding on both sides of the boundary:
 
 | Model Descriptor | In Tape / Call Args (Front End -> Library) | In Call Results / Events (Library -> Front End) |
 |---|---|---|
@@ -1401,7 +1401,7 @@ Every C function returning `int32_t` uses these codes from `core/wire/ops.txt`:
 
 ### 16.1 Session State Machine and Fault Recovery
 
-A front end interacts with `libgpuikit` through five lifecycle states:
+A front end interacts with `libgouikit` through five lifecycle states:
 
 1. **Unstarted**: Only `gk_info_get()` and `gk_use_all()` (or `gk_use_<family>()`) are valid. `gk_call`, `gk_reply`, and `gk_post` return `GK_ERR_NO_CONTEXT`.
 2. **Starting (`gk_run` / `gk_headless_run` handshake)**: Validates `gk_app` (`size`, `abi_major`, `abi_minor`, `api_hash`, non-NULL `callback`). Any mismatch returns `GK_ERR_VERSION` immediately without entering GPUI. Re-entrant `gk_run` returns `GK_ERR_BUSY`.
@@ -1414,7 +1414,7 @@ A front end interacts with `libgpuikit` through five lifecycle states:
 
 ### 16.2 New Front-End Implementation Checklist
 
-To bring up a new language front end against `libgpuikit`:
+To bring up a new language front end against `libgouikit`:
 
 1. **Generate constants** from `core/wire/ops.txt` and `api/opcodes.lock` (matching `API_HASH` with FNV-1a 64-bit).
 2. **Load and verify**: resolve the 7 C functions (+ `gk_use_all` for dynamic builds), check `gk_info_get()` magic/ABI/hash, lock the UI OS thread, and enter `gk_run`.

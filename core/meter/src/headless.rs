@@ -1,6 +1,6 @@
 //! Headless script runner for offscreen rendering, synthetic input, and screenshot capture.
 //!
-//! Used under the `diag` feature by both `libgpuikit` and the pure-Rust reference apps to drive
+//! Used under the `diag` feature by both `libgouikit` and the pure-Rust reference apps to drive
 //! deterministic frame-by-frame test sessions without an X11 or Wayland display.
 
 use gpui_kit::{AnyWindowHandle, App, HeadlessAppContext, Keystroke, Window, point, px};

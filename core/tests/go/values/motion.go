@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"gpuikit.dev/gk"
-	gkmotion "gpuikit.dev/gk/motion"
+	"github.com/ibanks42/goui-kit/gk"
+	gkmotion "github.com/ibanks42/goui-kit/gk/motion"
 )
 
 func init() {

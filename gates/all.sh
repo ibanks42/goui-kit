@@ -53,7 +53,7 @@ step() {
 }
 
 echo "machine: $(free -g | awk 'NR==2{print "available " $7 " GB"}'), load$(uptime | sed 's/.*load average://'); tier $tier" | tee -a "$log"
-echo "judged: library ${from#"$repo"/}/ship/libgpuikit.so of $(date -r "$from/ship/libgpuikit.so" '+%-d %b %H:%M') (sha256 $(sha256sum "$snap/ship/libgpuikit.so" | cut -c1-12)), copied at $(date +%H:%M); Go package and examples at commit $(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git -C "$repo" diff --quiet -- go examples 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')" | tee -a "$log"
+echo "judged: library ${from#"$repo"/}/ship/libgouikit.so of $(date -r "$from/ship/libgouikit.so" '+%-d %b %H:%M') (sha256 $(sha256sum "$snap/ship/libgouikit.so" | cut -c1-12)), copied at $(date +%H:%M); Go package and examples at commit $(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git -C "$repo" diff --quiet -- go examples 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')" | tee -a "$log"
 
 # Functional, safety, pixel, session, docs, conformance, gallery, latency, and README gates.
 step build-go "$here/go.sh" build

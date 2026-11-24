@@ -5,7 +5,7 @@ package motion
 import (
 	"time"
 
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // EffectTransition is gpui_kit::base::animation::EffectTransition.

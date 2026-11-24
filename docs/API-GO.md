@@ -13,18 +13,18 @@ project's tests compile, so none of them is out of date.
 
 ## Where things are
 
-- `import "gpuikit.dev/gk"` is the core (the app, views, windows, gpui's elements, the theme), and
+- `import "github.com/ibanks42/goui-kit/gk"` is the core (the app, views, windows, gpui's elements, the theme), and
   each area has its package: `gk/motion`, `gk/table`, `gk/editor`, `gk/base` (the unstyled
   primitives), `gk/kit` (the other components), `gk/chart`, `gk/overlay` and `gk/dock`
   ([GO.md](GO.md) section 1 says what goes where), with three small packages beside them:
-  `gpuikit.dev/gk/s` (the style tokens, `s.Gap3`), `gpuikit.dev/gk/theme` (the theme's colors,
-  `theme.Background`) and `gpuikit.dev/gk/palette` (fixed colors, `palette.Blue500`). The index
+  `github.com/ibanks42/goui-kit/gk/s` (the style tokens, `s.Gap3`), `github.com/ibanks42/goui-kit/gk/theme` (the theme's colors,
+  `theme.Background`) and `github.com/ibanks42/goui-kit/gk/palette` (fixed colors, `palette.Blue500`). The index
   below names every type with its package.
 - `go/gk/<package>/gen_component_NAME.go` holds the types of upstream's `gpui_kit::component::NAME` module,
   `gen_base_*.go` the unstyled primitives of `gpui_kit::base`, `gen_state.go` every kit state type
   (handles), `gen_types.go` the enums, records and events. Every type and method has a doc comment
   naming its upstream path (`// ButtonEl is gpui_kit::component::button::Button.`), so searching the
-  package (or `go doc gpuikit.dev/gk/kit ButtonEl`) for the upstream name finds it.
+  package (or `go doc github.com/ibanks42/goui-kit/gk/kit ButtonEl`) for the upstream name finds it.
 - `rt_*.go` (in `go/gk` and each package; the runtime itself in `go/gk/internal/rt`) is the hand-written part: `gk.Run`, `gk.NewView`, `gk.Refresh`, `gk.Post`, `gk.Go`,
   `gk.Shortcut`, `table.NewListSource` and the other functions that have no single upstream
   counterpart.

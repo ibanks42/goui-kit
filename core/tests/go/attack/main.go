@@ -1,13 +1,13 @@
-// Command attack drives libgpuikit's raw C ABI directly via cgo to verify that
+// Command attack drives libgouikit's raw C ABI directly via cgo to verify that
 // malformed, forged, off-thread, and out-of-turn calls fail with documented
 // error codes instead of crashing or corrupting state.
 package main
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/../../../include
-#cgo LDFLAGS: -lgpuikit
+#cgo LDFLAGS: -lgouikit
 #include <stdlib.h>
-#include "gpuikit.h"
+#include "gouikit.h"
 int32_t attack_run(const uint8_t *script, size_t len);
 */
 import "C"

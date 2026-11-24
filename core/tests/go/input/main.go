@@ -17,10 +17,10 @@ import (
 	"os"
 	"strconv"
 
-	"gpuikit.dev/gk"
-	gkeditor "gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	gkeditor "github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type App struct {

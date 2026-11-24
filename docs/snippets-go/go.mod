@@ -1,9 +1,9 @@
-module gpuikit.dev/snippets
+module github.com/ibanks42/goui-kit/snippets
 
 go 1.27
 
-require gpuikit.dev v0.0.0
+require github.com/ibanks42/goui-kit v0.0.0
 
 require github.com/ebitengine/purego v0.11.3 // indirect
 
-replace gpuikit.dev => ../../go
+replace github.com/ibanks42/goui-kit => ../../go

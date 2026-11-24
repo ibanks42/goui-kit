@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/chart"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/chart"
 )
 
 // Visit holds sample row fields for pie arc layout tests, including an optional Gap field.

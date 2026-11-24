@@ -3,9 +3,9 @@
 package kit
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // SliderEl is gpui_kit::component::slider::Slider.

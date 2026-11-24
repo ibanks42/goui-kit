@@ -5,11 +5,11 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	gkchart "gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	gkchart "github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type chartMonth struct {

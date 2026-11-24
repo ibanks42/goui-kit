@@ -8,12 +8,12 @@ import (
 	"os"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 type App struct {

@@ -3,8 +3,8 @@
 package chart
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // The space below (or above) an x-axis line that tick labels of `font_size` need: the gap

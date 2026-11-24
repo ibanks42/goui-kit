@@ -1,6 +1,6 @@
 # Go protocol tests
 
-This directory contains the Go-side protocol test suites driven against the diagnostic build of `libgpuikit` (`lib/diag`). Each suite selects individual test scenarios via the `GK_PROTO` environment variable and verifies exit codes and structured stdout assertions.
+This directory contains the Go-side protocol test suites driven against the diagnostic build of `libgouikit` (`lib/diag`). Each suite selects individual test scenarios via the `GK_PROTO` environment variable and verifies exit codes and structured stdout assertions.
 
 ## Running the suite
 

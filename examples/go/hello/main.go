@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type App struct {

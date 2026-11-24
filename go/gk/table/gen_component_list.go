@@ -5,8 +5,8 @@ package table
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // ListEl is gpui_kit::component::list::List<crate::shim_rows::GkListDelegate>.

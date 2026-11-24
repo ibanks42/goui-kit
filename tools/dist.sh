@@ -13,11 +13,11 @@
 #   GK_COMMIT     Fallback source commit hash written into `VERSIONS` when building
 #                 outside a git checkout (for example in a CI tarball job).
 #
-# Layout of the produced archive (`gpuikit-<ver>-<platform>/`):
+# Layout of the produced archive (`goui-kit-<ver>-<platform>/`):
 #   lib/          ship shared and static libraries plus linker helper scripts/import libs
 #   windows/      (Windows only) DPI/Common-Controls v6 manifest and .rc resource script
-#   go/           self-contained Go module `gpuikit.dev` (`go.mod`, `go.sum`, `gk/**`)
-#   include/      C ABI headers (`gpuikit.h`, `gk_ops.h`) for non-Go consumers
+#   go/           self-contained Go module `github.com/ibanks42/goui-kit` (`go.mod`, `go.sum`, `gk/**`)
+#   include/      C ABI headers (`gouikit.h`, `gk_ops.h`) for non-Go consumers
 #   examples/go/  six starter apps plus a standalone `examples/go/build.sh` script
 #   docs/         Go guides (`GETTING-STARTED-GO.md`, `API-GO.md`, `GO.md`), tutorial, snippets
 #   licences/     `THIRD_PARTY.md` and verbatim third-party crate license texts
@@ -49,13 +49,13 @@ fi
 # - `probe`: shared library inspected for OS/glibc minimums, NEEDED deps, and `shared library sha256`.
 # - `ext`: executable suffix shown in generated README examples.
 case "$GK_PLATFORM" in
-  linux-x86_64) libs=(libgpuikit.so libgpuikit_static.a libgpuikit_sys.so); main=libgpuikit_static.a; probe=libgpuikit.so; ext=.bin ;;
-  macos-universal) libs=(libgpuikit.dylib libgpuikit_static.a); main=libgpuikit_static.a; probe=libgpuikit.dylib; ext=.bin ;;
-  windows-x86_64) libs=(gpuikit.dll libgpuikit_static.a libgpuikit_sys.a); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
+  linux-x86_64) libs=(libgouikit.so libgouikit_static.a libgouikit_sys.so); main=libgouikit_static.a; probe=libgouikit.so; ext=.bin ;;
+  macos-universal) libs=(libgouikit.dylib libgouikit_static.a); main=libgouikit_static.a; probe=libgouikit.dylib; ext=.bin ;;
+  windows-x86_64) libs=(gouikit.dll libgouikit_static.a libgouikit_sys.a); main=libgouikit_static.a; probe=gouikit.dll; ext=.exe ;;
   *) echo "dist.sh: GK_PLATFORM is linux-x86_64, macos-universal or windows-x86_64" >&2; exit 2 ;;
 esac
 ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
-name=gpuikit-$ver-$GK_PLATFORM
+name=goui-kit-$ver-$GK_PLATFORM
 out=$dst/$name
 sha256() { if command -v sha256sum > /dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -c1-64; }
 # Pre-flight validation: verify every required library exists, confirm macOS binaries are
@@ -64,7 +64,7 @@ for f in "${libs[@]}"; do
   [ -f "$root/ship/$f" ] || { echo "dist.sh: $root/ship/$f is missing (make lib, or tools/build-lib.sh ship on $GK_PLATFORM)" >&2; exit 1; }
 done
 if [ "$GK_PLATFORM" = macos-universal ]; then
-  for f in libgpuikit_static.a libgpuikit.dylib; do
+  for f in libgouikit_static.a libgouikit.dylib; do
     got=$(lipo -archs "$root/ship/$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
     [ "$got" = "arm64 x86_64 " ] || { echo "dist.sh: $root/ship/$f has the slices '$got', not arm64 and x86_64 (tools/build-lib.sh builds both)" >&2; exit 1; }
   done
@@ -75,12 +75,12 @@ mkdir -p "$out/lib" "$out/go" "$out/include" "$out/examples/go" "$out/docs"
 for f in "${libs[@]}"; do cp "$root/ship/$f" "$out/lib/"; done
 # Copy Windows manifest and resource script alongside lib/ for users embedding DPI/Common-Controls metadata.
 if [ "$GK_PLATFORM" = windows-x86_64 ]; then
-  mkdir -p "$out/windows"; cp core/windows/gpuikit.manifest core/windows/gpuikit.rc "$out/windows/"
+  mkdir -p "$out/windows"; cp core/windows/gouikit.manifest core/windows/gouikit.rc "$out/windows/"
 fi
 cp -r "$lic" "$out/licences"
 cp "$lic/THIRD_PARTY.md" "$out/THIRD_PARTY.md"
 cp go/go.mod go/go.sum "$out/go/" && cp -r go/gk "$out/go/"
-cp core/include/gpuikit.h core/include/gk_ops.h "$out/include/"
+cp core/include/gouikit.h core/include/gk_ops.h "$out/include/"
 cp examples/go/go.mod examples/go/go.sum "$out/examples/go/"
 cp -r examples/go/hello examples/go/counter examples/go/notes examples/go/todo examples/go/reader \
   examples/go/expenses "$out/examples/go/"
@@ -108,7 +108,7 @@ cd "$src"
 if [ "${GK_STATIC:-}" != 1 ]; then
   CGO_ENABLED=0 go build -ldflags="-s -w" -o "$bin" .
   dir=$(dirname "$bin")
-  case "${GOOS:-$(go env GOOS)}" in windows) so=gpuikit.dll ;; darwin) so=libgpuikit.dylib ;; *) so=libgpuikit.so ;; esac
+  case "${GOOS:-$(go env GOOS)}" in windows) so=gouikit.dll ;; darwin) so=libgouikit.dylib ;; *) so=libgouikit.so ;; esac
   if [ -f "$lib/$so" ] && [ ! -e "$dir/$so" ]; then
     if [ -n "$win" ]; then cp "$lib/$so" "$dir/"; else ln -s "$lib/$so" "$dir/$so"; fi
   fi
@@ -124,16 +124,16 @@ echo "built $bin"
 B
 chmod +x "$out/examples/go/build.sh"
 case "$GK_PLATFORM" in
-  linux-x86_64) sys="Linux x86_64"; libdesc="the static library"; so=libgpuikit.so
+  linux-x86_64) sys="Linux x86_64"; libdesc="the static library"; so=libgouikit.so
     go_static='CGO_LDFLAGS="-L<this folder>/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections"'
     static_needs="a C compiler for cgo (gcc, or clang with CC=clang)"
     ship_note="" ;;
-  macos-universal) sys="macOS, Apple silicon and Intel (universal)"; so=libgpuikit.dylib
+  macos-universal) sys="macOS, Apple silicon and Intel (universal)"; so=libgouikit.dylib
     libdesc="the static library, universal (arm64 and x86_64)"
     go_static='CGO_LDFLAGS="-L<this folder>/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip"'
     static_needs="the Xcode command-line tools (clang) for cgo"
     ship_note="The library is universal: GOARCH=amd64 examples/go/build.sh APP builds for Intel on Apple silicon (GOARCH=arm64 the other way round), and lipo -create joins the two programs into a universal one. In an app bundle the library goes in Contents/Frameworks." ;;
-  windows-x86_64) sys="Windows x86_64"; libdesc="the static library (MinGW's format)"; so=gpuikit.dll
+  windows-x86_64) sys="Windows x86_64"; libdesc="the static library (MinGW's format)"; so=gouikit.dll
     go_static="CGO_LDFLAGS=\"-L<this folder>/lib\" go build -tags gkstatic -ldflags=\"-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'\" (with lld on PATH; without it, -extldflags=-Wl,--gc-sections, and the program holds every component)"
     static_needs="MinGW-w64 gcc and lld on PATH for cgo (MSYS2's ucrt64 with the mingw-w64-ucrt-x86_64-lld package, llvm-mingw, or WinLibs' LLVM build)"
     ship_note="The manifest is linked into the .exe (package gk carries it): without it the program does not start (the library needs common controls 6) and the window is not DPI aware. No C compiler is needed: GOOS=windows go build cross-compiles from any system." ;;
@@ -142,9 +142,9 @@ librows=$(for f in "${libs[@]}"; do
   case $f in
     ("$so") echo "| lib/$f | the library, which an app loads at start-up (put it beside the program) |" ;;
     ("$main") echo "| lib/$f | $libdesc, for an app built with -tags gkstatic, which links it into itself and keeps only the component families it uses |" ;;
-    (libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
-    (libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
-    (*) echo "| lib/$f | an import library of gpuikit.dll |" ;;
+    (libgouikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
+    (libgouikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
+    (*) echo "| lib/$f | an import library of gouikit.dll |" ;;
   esac
 done
 [ "$GK_PLATFORM" != windows-x86_64 ] || echo "| windows/ | the manifest a program embeds, and the resource script that embeds it |")
@@ -163,8 +163,8 @@ Needs Go 1.27 or newer, and no C compiler: an app loads lib/$so when it starts.
 
 An app's go.mod requires the module in go/ and points at it:
 
-    require gpuikit.dev v0.0.0
-    replace gpuikit.dev => ../$name/go
+    require github.com/ibanks42/goui-kit v0.0.0
+    replace github.com/ibanks42/goui-kit => ../$name/go
 
 then \`go mod tidy\` (it fetches purego, the one module the package needs) and \`go build\`.
 The program looks for $so in GK_LIB (the folder that holds it), beside itself, in its lib/ or
@@ -176,7 +176,7 @@ needs $static_needs): $go_static, or GK_STATIC=1 examples/go/build.sh.
 | path | what |
 |---|---|
 $librows
-| go/ | the Go module gpuikit.dev: import "gpuikit.dev/gk" (and gk/s, gk/theme, gk/palette) |
+| go/ | the Go module github.com/ibanks42/goui-kit: import "github.com/ibanks42/goui-kit/gk" (and gk/s, gk/theme, gk/palette) |
 | examples/go/ | hello, counter, todo, reader, notes, expenses, and build.sh |
 | docs/ | the guides, and the tutorial's programs in docs/tutorial-go/ |
 | include/ | the C interface, for other languages |
@@ -216,7 +216,7 @@ engine=$(cat "$root/ship/ENGINE" 2>/dev/null || echo gpui-fast)
 hash=$(grep -m1 'const ApiHash' go/gk/internal/rt/gen_ops.go | grep -o '0x[0-9a-f]*')
 go_v=$(go version 2>/dev/null | awk '{print $3}' | sed 's/^go//' || true)
 cat > "$out/VERSIONS" <<V
-gpuikit $ver for $GK_PLATFORM
+goui-kit $ver for $GK_PLATFORM
 library: release, gpui-kit $("$py" -c "import json;p=json.load(open('api/coverage.json', encoding='utf-8'))['pin'];print(p['gpui-kit'], 'features', ' '.join(f for f in p['features'] if f != 'gpui-fast'))"), on $engine
 interface hash: $hash (the library and the package refuse each other when it differs)
 needs: $needs${arch_line:-}

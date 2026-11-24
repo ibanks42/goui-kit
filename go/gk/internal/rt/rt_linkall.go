@@ -12,5 +12,5 @@ package rt
 import "C"
 
 // LinkAll forces the static linker to include every component family in
-// libgpuikit_static.a.
+// libgouikit_static.a.
 func LinkAll() { C.gk_use_all() }

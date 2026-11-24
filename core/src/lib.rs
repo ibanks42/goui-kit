@@ -1,4 +1,4 @@
-//! C ABI entry points for `libgpuikit`.
+//! C ABI entry points for `libgouikit`.
 //!
 //! Exports the lifecycle and message-passing surface (`gk_info_get`, `gk_last_error`, `gk_run`,
 //! `gk_headless_run`, `gk_call`, `gk_reply`, and `gk_post`), validates ABI compatibility, catches

@@ -4,11 +4,11 @@ package rt
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/include
-#cgo linux LDFLAGS: -lgpuikit_static -lgpuikit_sys -ldl -lgcc_s -lutil -lrt -lpthread -lm -lc
-#cgo darwin LDFLAGS: -lgpuikit_static -framework CoreServices -framework ApplicationServices -framework CoreFoundation -framework CoreVideo -framework Carbon -framework AppKit -framework Foundation -framework UserNotifications -framework Security -framework CoreText -framework CoreGraphics -framework CoreData -framework CoreImage -framework CloudKit -framework QuartzCore -framework UniformTypeIdentifiers -framework Metal -lobjc -liconv -lc -lm
-#cgo windows LDFLAGS: -lgpuikit_static -lgpuikit_sys -lkernel32 -lntdll -luserenv -lws2_32 -ldbghelp
+#cgo linux LDFLAGS: -lgouikit_static -lgouikit_sys -ldl -lgcc_s -lutil -lrt -lpthread -lm -lc
+#cgo darwin LDFLAGS: -lgouikit_static -framework CoreServices -framework ApplicationServices -framework CoreFoundation -framework CoreVideo -framework Carbon -framework AppKit -framework Foundation -framework UserNotifications -framework Security -framework CoreText -framework CoreGraphics -framework CoreData -framework CoreImage -framework CloudKit -framework QuartzCore -framework UniformTypeIdentifiers -framework Metal -lobjc -liconv -lc -lm
+#cgo windows LDFLAGS: -lgouikit_static -lgouikit_sys -lkernel32 -lntdll -luserenv -lws2_32 -ldbghelp
 #include <stdlib.h>
-#include "gpuikit.h"
+#include "gouikit.h"
 int32_t gk_go_run(int headless, const uint8_t *script, size_t len, uint16_t major, uint16_t minor,
                   uint64_t hash, uint32_t size_delta, int no_callback);
 */
@@ -23,12 +23,12 @@ const (
 	gkMagic  = uint32(C.GK_MAGIC)
 	infoSize = int(unsafe.Sizeof(C.gk_info{}))
 	libFile  = "static library"
-	libFind  = "the libgpuikit_static.a the program was linked with (the lib/ folder CGO_LDFLAGS named)"
+	libFind  = "the libgouikit_static.a the program was linked with (the lib/ folder CGO_LDFLAGS named)"
 	libPoint = "CGO_LDFLAGS"
-	libFirst = "first: link the program with the diagnostic library's libgpuikit_static.a (lib/diag in CGO_LDFLAGS)"
+	libFirst = "first: link the program with the diagnostic library's libgouikit_static.a (lib/diag in CGO_LDFLAGS)"
 )
 
-// loadLibrary is a no-op because libgpuikit_static.a is linked at build time.
+// loadLibrary is a no-op because libgouikit_static.a is linked at build time.
 func loadLibrary() error { return nil }
 
 // readInfo fetches the library metadata struct exported by gk_info_get.

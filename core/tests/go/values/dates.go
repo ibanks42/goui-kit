@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/kit"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/kit"
 )
 
 func init() {

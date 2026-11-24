@@ -99,7 +99,7 @@ out = {
     "core/include/gk_ops.h": header(),
     "go/gk/internal/rt/gen_ops.go": go(),
     "go/gk/internal/rt/include/gk_ops.h": header(),
-    "go/gk/internal/rt/include/gpuikit.h": open(os.path.join(root, "core", "include", "gpuikit.h")).read(),
+    "go/gk/internal/rt/include/gouikit.h": open(os.path.join(root, "core", "include", "gouikit.h")).read(),
 }
 stale = 0
 for rel, text in out.items():

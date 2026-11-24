@@ -1,6 +1,6 @@
-# The Go Front End (`gpuikit.dev`)
+# The Go Front End (`github.com/ibanks42/goui-kit`)
 
-The `gpuikit.dev` Go module exposes a strongly typed, idiomatic Go API over the prebuilt `libgpuikit` Rust library. This guide covers package organization, upstream-to-Go naming rules, execution turns and view re-description, state and handlers, handle lifetimes, specialized subsystems (lists, tables, trees, selects, overlays, docks, charts, motion, theming), dynamic vs. static linking, and runtime environment variables.
+The `github.com/ibanks42/goui-kit` Go module exposes a strongly typed, idiomatic Go API over the prebuilt `libgouikit` Rust library. This guide covers package organization, upstream-to-Go naming rules, execution turns and view re-description, state and handlers, handle lifetimes, specialized subsystems (lists, tables, trees, selects, overlays, docks, charts, motion, theming), dynamic vs. static linking, and runtime environment variables.
 
 For a hands-on walkthrough that builds an app from scratch, see [docs/GETTING-STARTED-GO.md](GETTING-STARTED-GO.md). For the generated index of every component, state, and value type, see [docs/API-GO.md](API-GO.md).
 
@@ -12,20 +12,20 @@ The code generator (`gen/gk_go.py`) first emits a flat IR and then `gen/gk_split
 
 | Package | Role |
 |---|---|
-| `gpuikit.dev/gk` | Core runtime API (`Run`, `RunHeadless`, `NewView`, `OpenWindow`, `OpenWindowWith`, `Model`, `Go`, `Post`, `Shortcut`, `After`, `Every`, `Release`, `Retain`, `Refresh`, `Notify`), GPUI primitives (`Div`, `HFlex`, `VFlex`, `Img`, `SVG`, `Text`), lengths, colors, gradients, icons, drag-and-drop, clipboard, file dialogs, menus, and theme control. |
-| `gpuikit.dev/gk/motion` | Animations (`WithAnimation`, `WithAnimations`), effect transitions, springs, keyframes, presence, focus traps (`FocusTrap`), and text selection scopes (`TextSelectionScopeOf`). |
-| `gpuikit.dev/gk/table` | Virtualized `List`, `DataTable`, `Tree`, `Select`, `Combobox`, `Command`, row sources (`NewListSource`, `NewSource`, `NewTreeSource`), and selection helpers (`SelectRow`, `Row`, `NoRow`). |
-| `gpuikit.dev/gk/editor` | Single-line `Input`, `Textarea`, `CodeEditor`, `NumberInput`, `OtpInput`, Markdown `TextView`, `BlockHost`, syntax highlighters, language providers, and `Diff`. |
-| `gpuikit.dev/gk/base` | Unstyled primitives from `gpui_kit::base` not placed in a specialized package (`base.Button`, `base.Checkbox`, `base.HResizable`, `base.Calendar`, `base.Questionnaire`). |
-| `gpuikit.dev/gk/kit` | Styled GPUI-kit components (`kit.Button`, `kit.Label`, `kit.Checkbox`, `kit.Switch`, `kit.Form`, `kit.Field`, `kit.TabBar`, `kit.Sidebar`, `kit.Settings`, `kit.TagSecondary`, `kit.Badge`, `kit.Alert`, `kit.NewPopupMenu`, `kit.DropdownMenu`). |
-| `gpuikit.dev/gk/chart` | Generic data-driven charts (`LineChart`, `AreaChart`, `BarChart`, `PieChart`, `CandlestickChart`, `RadarChart`, `SankeyChart`), `NewData`, scales, grids, and described plots (`Plot`, `NewPlotLine`, `NewPlotArea`, `NewPlotQuad`). |
-| `gpuikit.dev/gk/overlay` | Dialogs (`Dialog`, `OpenDialog`), alert dialogs (`AlertDialog`, `OpenAlertDialog`), sheets (`Sheet`, `OpenSheet`), popovers, hover cards, tooltips (`NewKitTooltip`, `NewKitTooltipElement`), notifications (`PushNotification`), and `overlay.Items`. |
-| `gpuikit.dev/gk/dock` | Dock areas (`NewAreaSkinned`, `NewArea`), panels (`NewPanel`, `KeepWhenClosed`), saved layouts (`Dump`, `Load`, `RegisterPanel`), pane trees, and custom dock renderers (`NewRenderer`, `Slot`). |
-| `gpuikit.dev/gk/s` | Nullary style tokens covering GPUI's `Styled` and GPUI-kit's `StyledExt` methods (`s.SizeFull`, `s.P4`, `s.Gap3`, `s.Flex1`, `s.ItemsCenter`, `s.TextXl`, `s.FontBold`). |
-| `gpuikit.dev/gk/theme` | Semantic theme color tokens (`theme.Background`, `theme.Foreground`, `theme.Primary`, `theme.MutedForeground`, `theme.Border`, `theme.Danger`), resolved dynamically against the active theme. |
-| `gpuikit.dev/gk/palette` | Fixed color palette tokens (`palette.Blue500`, `palette.Amber500`, `palette.Red500`). |
-| `gpuikit.dev/gk/internal/rt` | Shared internal runtime: turn stack, tape builder, handle registry, GC cleanups, purego/cgo transport, scheduler keep-alive, and panic boundary. Not importable by user apps. |
-| `gpuikit.dev/gk/internal/goid` | Cgo-free current-goroutine identity lookup (direct `g` register read in assembly on `amd64`/`arm64`, `runtime.Stack` fallback elsewhere) powering `*gk.Cx` UI-thread enforcement. |
+| `github.com/ibanks42/goui-kit/gk` | Core runtime API (`Run`, `RunHeadless`, `NewView`, `OpenWindow`, `OpenWindowWith`, `Model`, `Go`, `Post`, `Shortcut`, `After`, `Every`, `Release`, `Retain`, `Refresh`, `Notify`), GPUI primitives (`Div`, `HFlex`, `VFlex`, `Img`, `SVG`, `Text`), lengths, colors, gradients, icons, drag-and-drop, clipboard, file dialogs, menus, and theme control. |
+| `github.com/ibanks42/goui-kit/gk/motion` | Animations (`WithAnimation`, `WithAnimations`), effect transitions, springs, keyframes, presence, focus traps (`FocusTrap`), and text selection scopes (`TextSelectionScopeOf`). |
+| `github.com/ibanks42/goui-kit/gk/table` | Virtualized `List`, `DataTable`, `Tree`, `Select`, `Combobox`, `Command`, row sources (`NewListSource`, `NewSource`, `NewTreeSource`), and selection helpers (`SelectRow`, `Row`, `NoRow`). |
+| `github.com/ibanks42/goui-kit/gk/editor` | Single-line `Input`, `Textarea`, `CodeEditor`, `NumberInput`, `OtpInput`, Markdown `TextView`, `BlockHost`, syntax highlighters, language providers, and `Diff`. |
+| `github.com/ibanks42/goui-kit/gk/base` | Unstyled primitives from `gpui_kit::base` not placed in a specialized package (`base.Button`, `base.Checkbox`, `base.HResizable`, `base.Calendar`, `base.Questionnaire`). |
+| `github.com/ibanks42/goui-kit/gk/kit` | Styled GPUI-kit components (`kit.Button`, `kit.Label`, `kit.Checkbox`, `kit.Switch`, `kit.Form`, `kit.Field`, `kit.TabBar`, `kit.Sidebar`, `kit.Settings`, `kit.TagSecondary`, `kit.Badge`, `kit.Alert`, `kit.NewPopupMenu`, `kit.DropdownMenu`). |
+| `github.com/ibanks42/goui-kit/gk/chart` | Generic data-driven charts (`LineChart`, `AreaChart`, `BarChart`, `PieChart`, `CandlestickChart`, `RadarChart`, `SankeyChart`), `NewData`, scales, grids, and described plots (`Plot`, `NewPlotLine`, `NewPlotArea`, `NewPlotQuad`). |
+| `github.com/ibanks42/goui-kit/gk/overlay` | Dialogs (`Dialog`, `OpenDialog`), alert dialogs (`AlertDialog`, `OpenAlertDialog`), sheets (`Sheet`, `OpenSheet`), popovers, hover cards, tooltips (`NewKitTooltip`, `NewKitTooltipElement`), notifications (`PushNotification`), and `overlay.Items`. |
+| `github.com/ibanks42/goui-kit/gk/dock` | Dock areas (`NewAreaSkinned`, `NewArea`), panels (`NewPanel`, `KeepWhenClosed`), saved layouts (`Dump`, `Load`, `RegisterPanel`), pane trees, and custom dock renderers (`NewRenderer`, `Slot`). |
+| `github.com/ibanks42/goui-kit/gk/s` | Nullary style tokens covering GPUI's `Styled` and GPUI-kit's `StyledExt` methods (`s.SizeFull`, `s.P4`, `s.Gap3`, `s.Flex1`, `s.ItemsCenter`, `s.TextXl`, `s.FontBold`). |
+| `github.com/ibanks42/goui-kit/gk/theme` | Semantic theme color tokens (`theme.Background`, `theme.Foreground`, `theme.Primary`, `theme.MutedForeground`, `theme.Border`, `theme.Danger`), resolved dynamically against the active theme. |
+| `github.com/ibanks42/goui-kit/gk/palette` | Fixed color palette tokens (`palette.Blue500`, `palette.Amber500`, `palette.Red500`). |
+| `github.com/ibanks42/goui-kit/gk/internal/rt` | Shared internal runtime: turn stack, tape builder, handle registry, GC cleanups, purego/cgo transport, scheduler keep-alive, and panic boundary. Not importable by user apps. |
+| `github.com/ibanks42/goui-kit/gk/internal/goid` | Cgo-free current-goroutine identity lookup (direct `g` register read in assembly on `amd64`/`arm64`, `runtime.Stack` fallback elsewhere) powering `*gk.Cx` UI-thread enforcement. |
 
 ---
 
@@ -83,25 +83,25 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 ### `gk.Run` and `gk.RunHeadless`
 
-- **`gk.Run(start func(cx *gk.Cx)) error`**: locks the calling goroutine to its OS thread (`runtime.LockOSThread`), verifies the loaded `libgpuikit` ABI and `API_HASH`, and enters the GPUI event loop. `start` runs in the `INIT` turn (create your root view and call `gk.OpenWindow` or `gk.OpenWindowWith` there). When `GK_SCRIPT=file` is set in the environment (and a `diag` library is loaded), `gk.Run` automatically delegates to `gk.RunHeadless`.
+- **`gk.Run(start func(cx *gk.Cx)) error`**: locks the calling goroutine to its OS thread (`runtime.LockOSThread`), verifies the loaded `libgouikit` ABI and `API_HASH`, and enters the GPUI event loop. `start` runs in the `INIT` turn (create your root view and call `gk.OpenWindow` or `gk.OpenWindowWith` there). When `GK_SCRIPT=file` is set in the environment (and a `diag` library is loaded), `gk.Run` automatically delegates to `gk.RunHeadless`.
 - **`gk.RunHeadless(script string, start func(cx *gk.Cx)) error`**: runs the application offscreen using the `diag` library's `HeadlessAppContext` and executes `script` (see `docs/PROTOCOLS.md` Section 11.5). Returns an error if loaded against a `ship` library without `GK_FEAT_DIAG`.
 
 ### Error and Panic Contract
 
-Nothing in `gpuikit.dev` ever calls `os.Exit`, and no Go panic ever unwinds across C into Rust. Deferred functions in `main` always run.
+Nothing in `github.com/ibanks42/goui-kit` ever calls `os.Exit`, and no Go panic ever unwinds across C into Rust. Deferred functions in `main` always run.
 
 | Outcome | Type / Behavior | When It Happens |
 |---|---|---|
 | Clean quit | `nil` | User closed the last window (when `QuitOnLastWindow` is enabled) or app called `gk.Quit(cx)`. |
 | App contract violation | `*gk.Error` returned by `gk.Run` | Stale `*gk.Cx`, off-thread UI call, state write inside a view function, element reused across builds or attached twice, released handle used or drawn, invalid UTF-8, unknown chart column, or invalid animation description. The error message names the offending Go file, line, and function. |
 | App panic | `*gk.PanicError` re-panicked from `gk.Run` | Any Go panic inside `start`, `init`, a view function, an event handler, a posted closure, or a `gk.Go` worker is recovered at the callback boundary, requests clean shutdown, and re-panics from `gk.Run` with `Value` (accessible via `Unwrap()` when it is an `error`) and `Stack`. |
-| Rust library fault | `*gk.LibraryError` returned by `gk.Run` | An internal panic inside `libgpuikit` poisoned the session (`GK_ERR_POISONED` or a `PANIC` turn). |
+| Rust library fault | `*gk.LibraryError` returned by `gk.Run` | An internal panic inside `libgouikit` poisoned the session (`GK_ERR_POISONED` or a `PANIC` turn). |
 | Startup failure | `error` returned by `gk.Run` | Shared library missing, ABI/hash mismatch, missing display on Linux, or `gk.Run` called re-entrantly (`GK_ERR_BUSY`). |
 
 Inspecting failures in `main` uses standard Go `errors.As`:
 
 - `var ge *gk.Error; errors.As(err, &ge)` detects an app-code binding mistake (`ge.Error()` prints the offending Go file and line).
-- `var le *gk.LibraryError; errors.As(err, &le)` detects an internal Rust panic inside `libgpuikit`.
+- `var le *gk.LibraryError; errors.As(err, &le)` detects an internal Rust panic inside `libgouikit`.
 - Recovering a panic around `gk.Run` yields `*gk.PanicError`, where `pe.Value` is the original panic value (`errors.Is` / `errors.As` work automatically through `pe.Unwrap()`) and `pe.Stack` holds the formatted Go stack captured at the original panic site before the library unwound.
 
 When diagnosing element or buffered-write errors, run with `GK_DEBUG=1`: write buffering turns off so every state write fails at its own call site instead of at turn end, and every element node captures its creation stack frame.
@@ -239,7 +239,7 @@ Both modes verify `GK_MAGIC`, ABI `0.6`, and `API_HASH` from `gk_info_get()` at 
 
 ### Default Dynamic Mode (`!gkstatic`, `CGO_ENABLED=0`)
 
-- Loads `libgpuikit.so` (Linux), `libgpuikit.dylib` (macOS), or `gpuikit.dll` (Windows) via `github.com/ebitengine/purego` and calls `gk_use_all()` once on load.
+- Loads `libgouikit.so` (Linux), `libgouikit.dylib` (macOS), or `gouikit.dll` (Windows) via `github.com/ebitengine/purego` and calls `gk_use_all()` once on load.
 - Requires **no C compiler** and supports effortless `GOOS`/`GOARCH` cross-compilation (`GOOS=windows go build`, `GOOS=darwin GOARCH=arm64 go build`).
 - Uses the reflection-free `purego` callback trampoline on Linux and macOS (`amd64`/`arm64`) and `GK_FEAT_INLINE_REPLY` to avoid a second FFI call per turn.
 
@@ -251,13 +251,13 @@ Both modes verify `GK_MAGIC`, ABI `0.6`, and `API_HASH` from `gk_info_get()` at 
 
 ### Opt-In Static Mode (`-tags gkstatic`, `CGO_ENABLED=1`)
 
-- Links `libgpuikit_static.a` (plus `libgpuikit_sys.so` on Linux or `libgpuikit_sys.a` on Windows) via cgo and `internal/rt/capi.c`.
+- Links `libgouikit_static.a` (plus `libgouikit_sys.so` on Linux or `libgouikit_sys.a` on Windows) via cgo and `internal/rt/capi.c`.
 - `internal/rt/gen_use.go` registers only the component families referenced by your Go imports; linker dead-stripping drops unused Rust decoders and GPUI-kit families:
   - **Linux**: `CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" .`
   - **macOS**: `CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip" .`
   - **Windows**: `CGO_ENABLED=1 CGO_LDFLAGS="-L/path/to/lib" go build -tags gkstatic -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" .`
 - Call `gk.LinkAll()` if you want every family registered unconditionally.
-- On Windows, `internal/rt/gpuikit_windows_amd64.syso` embeds the Common Controls 6 and DPI-awareness manifest.
+- On Windows, `internal/rt/gouikit_windows_amd64.syso` embeds the Common Controls 6 and DPI-awareness manifest.
 - Building with `-tags gkstatic` while `CGO_ENABLED=0` fails at compile time with a clear identifier reminding you to enable cgo or drop `-tags gkstatic`.
 
 ---

@@ -404,8 +404,8 @@ def imports(text, extra=()):
             imps.add(pkg)
     if re.search(r"(?<![\w.])binary\.", text):
         imps.add("encoding/binary")
-    std = sorted(i for i in imps if not i.startswith("gpuikit.dev"))
-    ours = ['"gpuikit.dev/gk"'] + (['"gpuikit.dev/gk/s"'] if re.search(r"(?<![\w.])s\.[A-Z]", text) else [])
+    std = sorted(i for i in imps if not i.startswith("github.com/ibanks42/goui-kit"))
+    ours = ['"github.com/ibanks42/goui-kit/gk"'] + (['"github.com/ibanks42/goui-kit/gk/s"'] if re.search(r"(?<![\w.])s\.[A-Z]", text) else [])
     return ["import ("] + [f'\t"{i}"' for i in std] + ([""] if std else []) + ["\t" + i for i in ours] + [")", ""]
 
 

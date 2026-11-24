@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
+	"github.com/ibanks42/goui-kit/gk"
 )
 
 func init() {

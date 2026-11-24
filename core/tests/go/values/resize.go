@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 // c6 holds the custom handle RowSource and ResizableState for `c6-resize`.

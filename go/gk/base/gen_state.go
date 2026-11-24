@@ -5,9 +5,9 @@ package base
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AutoScroll is a handle to gpui_kit::base::AutoScroll, a runtime-owned library object.

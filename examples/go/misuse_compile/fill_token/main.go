@@ -2,8 +2,8 @@
 package main
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 func view(cx *gk.Cx) gk.Element { return gk.Div().Bg(s.Gap2) }

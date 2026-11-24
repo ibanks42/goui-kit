@@ -3,8 +3,8 @@
 package dock
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AnyDrag is a handle to gpui_kit::base::dock::AnyDrag, a runtime-owned library object.

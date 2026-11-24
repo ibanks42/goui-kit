@@ -1,7 +1,7 @@
-/* The whole C interface of libgpuikit: seven functions and one callback
+/* The whole C interface of libgouikit: seven functions and one callback
  * (docs/DESIGN.md section 5). Numbers are in gk_ops.h, generated from wire/ops.txt. */
-#ifndef GPUIKIT_H
-#define GPUIKIT_H
+#ifndef GOUIKIT_H
+#define GOUIKIT_H
 #include <stddef.h>
 #include <stdint.h>
 #include "gk_ops.h"

@@ -2,7 +2,7 @@
 
 package rt
 
-import "gpuikit.dev/gk/internal/goid"
+import "github.com/ibanks42/goui-kit/gk/internal/goid"
 
 // curG returns the current goroutine's g pointer via assembly so UI-thread
 // assertions avoid making an OS syscall on every call.

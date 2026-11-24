@@ -10,8 +10,8 @@ import (
 	"runtime"
 	"testing"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 var (

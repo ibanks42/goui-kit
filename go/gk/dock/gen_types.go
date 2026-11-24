@@ -3,8 +3,8 @@
 package dock
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // DockPlacement is gpui_kit::base::dock::DockPlacement.
@@ -216,7 +216,7 @@ func rdDockEvent(r *rt.Reader) Event {
 	case 1:
 		return EventDragDrop{Item: AnyDrag{HCore: rt.MkH(r.U64())}, Target: DropTarget{HCore: rt.MkH(r.U64())}}
 	}
-	rt.Stop("an event of type DockEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type DockEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -235,7 +235,7 @@ func rdTabGroupEvent(r *rt.Reader) TabGroupEvent {
 	case 5:
 		return TabGroupEventZoomOut{}
 	}
-	rt.Stop("an event of type TabGroupEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TabGroupEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -264,6 +264,6 @@ func rdInsertTarget(r *rt.Reader) InsertTarget {
 	case 1:
 		return InsertTargetSplit{Node: NodeID(r.U64()), Placement: gk.Placement(r.U16()), Size: rt.RdOpt(r, func(r *rt.Reader) float32 { return r.F32() })}
 	}
-	rt.Stop("an event of type InsertTarget arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type InsertTarget arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }

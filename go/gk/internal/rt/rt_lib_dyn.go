@@ -1,7 +1,7 @@
 //go:build !gkstatic
 
 // Dynamic-library backend used by default (CGO_ENABLED=0).
-// It opens libgpuikit at runtime via purego (dlopen/dlsym on Unix, LoadLibrary
+// It opens libgouikit at runtime via purego (dlopen/dlsym on Unix, LoadLibrary
 // /GetProcAddress on Windows), resolves the C ABI symbols, and registers a Go
 // turn callback without requiring a C compiler at build time.
 
@@ -20,7 +20,7 @@ import (
 	"github.com/ebitengine/purego"
 )
 
-// Dynamic-loader constants matching the C ABI header (include/gpuikit.h).
+// Dynamic-loader constants matching the C ABI header (include/gouikit.h).
 const (
 	gkMagic  = 0x314b5047 // "GPK1" little-endian magic verified in readInfo
 	infoSize = int(unsafe.Sizeof(cInfo{}))
@@ -34,7 +34,7 @@ var (
 	libFirst = "first: GK_LIB=<its lib/ folder> (or the folder itself first in " + loaderPathVar + ")"
 )
 
-// cInfo matches the exact C struct layout of gk_info in include/gpuikit.h on
+// cInfo matches the exact C struct layout of gk_info in include/gouikit.h on
 // 64-bit targets so readInfo can cast the pointer returned by gk_info_get.
 type cInfo struct {
 	size, magic        uint32
@@ -45,7 +45,7 @@ type cInfo struct {
 	versionsLen        uintptr
 }
 
-// cApp matches the exact C struct layout of gk_app in include/gpuikit.h.
+// cApp matches the exact C struct layout of gk_app in include/gouikit.h.
 type cApp struct {
 	size               uint32
 	abiMajor, abiMinor uint16
@@ -65,7 +65,7 @@ var (
 	inlineReply                                    bool
 )
 
-// loadLibrary opens libgpuikit once per process and caches any load error.
+// loadLibrary opens libgouikit once per process and caches any load error.
 func loadLibrary() error {
 	loadOnce.Do(func() { loadErr = load() })
 	return loadErr

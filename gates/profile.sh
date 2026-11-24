@@ -3,11 +3,11 @@
 #
 # What it measures (diagnostic tool, not a PASS/FAIL gate):
 #   Compares Rust reference and Go main-thread hot stacks and system calls on the exact same
-#   unstripped `libgpuikit.so` from `GK_SYMBOLS_DIR` (default `dist/symbols`). Defaults to 6
+#   unstripped `libgouikit.so` from `GK_SYMBOLS_DIR` (default `dist/symbols`). Defaults to 6
 #   rounds of `counter` with per-frame synthetic clicks (`GK_CLICK=40,32,61,1`).
 #
 # How it keeps the comparison fair:
-#   - Copies the unstripped `libgpuikit.so` and `ref-<scene>` into scratch and builds `<scene>-go`
+#   - Copies the unstripped `libgouikit.so` and `ref-<scene>` into scratch and builds `<scene>-go`
 #     against that exact same shared library so symbol resolution and optimization flags match.
 #   - Compiles `tools/profile/sampler.c` into `sampler.so` and runs `rust` and `go` interleaved
 #     inside one 60 Hz `display.sh` session (default `GK_FRAMES=60,600`) under `LD_PRELOAD`.
@@ -27,8 +27,8 @@ sym=${GK_SYMBOLS_DIR:-$repo/dist/symbols}
 cc=${GK_CC:-cc}
 base=${GK_SCRATCH:-${TMPDIR:-/tmp}/gk-gates}
 out=$base/profile; rm -rf "$out"; mkdir -p "$out/lib/ship" "$out/bin" "$out/runs"
-[ -f "$sym/libgpuikit.so" ] && [ -f "$sym/ref-$scene" ] || { echo "profile.sh: no unstripped library and ref-$scene in $sym"; exit 2; }
-cp "$sym/libgpuikit.so" "$sym/ref-$scene" "$out/lib/ship/"
+[ -f "$sym/libgouikit.so" ] && [ -f "$sym/ref-$scene" ] || { echo "profile.sh: no unstripped library and ref-$scene in $sym"; exit 2; }
+cp "$sym/libgouikit.so" "$sym/ref-$scene" "$out/lib/ship/"
 "$cc" -shared -fPIC -O2 -o "$out/sampler.so" "$repo/tools/profile/sampler.c"
 GK_LIB=$out/lib/ship OUT=$out/bin "$repo/examples/go/build.sh" "$scene"
 export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship

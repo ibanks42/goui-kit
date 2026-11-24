@@ -3,9 +3,9 @@
 package kit
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AlertEl is gpui_kit::component::alert::Alert.

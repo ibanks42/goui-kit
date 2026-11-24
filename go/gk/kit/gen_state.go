@@ -5,9 +5,9 @@ package kit
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AppMenuBar is a handle to gpui_kit::component::menu::AppMenuBar, a runtime-owned kit state entity.

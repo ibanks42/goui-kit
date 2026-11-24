@@ -5,10 +5,10 @@ package main
 import (
 	"log"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type App struct{ root gk.View }

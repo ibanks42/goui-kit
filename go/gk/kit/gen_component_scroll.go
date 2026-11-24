@@ -3,8 +3,8 @@
 package kit
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // ScrollableDivEl is gpui_kit::component::scroll::Scrollable<gpui_kit::Div>.

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/dock"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/dock"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 func init() {

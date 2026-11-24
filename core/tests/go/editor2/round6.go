@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
 )
 
 // Round6 holds per-mode state for TextView defaults, overlay key routing,

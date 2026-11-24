@@ -5,12 +5,12 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	gkeditor "gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/overlay"
-	gktable "gpuikit.dev/gk/table"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	gkeditor "github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	gktable "github.com/ibanks42/goui-kit/gk/table"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type lists2Pages struct {

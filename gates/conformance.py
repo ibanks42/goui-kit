@@ -433,8 +433,8 @@ package main
 import (
 \t"time"
 
-\t"gpuikit.dev/gk"
-\t"gpuikit.dev/gk/s"
+\t"github.com/ibanks42/goui-kit/gk"
+\t"github.com/ibanks42/goui-kit/gk/s"
 )
 
 var _ = time.Millisecond

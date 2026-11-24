@@ -9,14 +9,14 @@ import (
 	"strconv"
 	"strings"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/table"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/table"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type Category int

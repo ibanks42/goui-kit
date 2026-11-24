@@ -5,13 +5,13 @@ import (
 	"strings"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/dock"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/dock"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 // ov holds dock-tree, navigation-stack, custom-renderer, and toast-manager

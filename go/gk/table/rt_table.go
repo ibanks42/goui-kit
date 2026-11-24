@@ -5,8 +5,8 @@
 package table
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // EventKind identifies table delegate callbacks emitted for sorting, column

@@ -3,8 +3,8 @@
 package table
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // BaseTreeEntry is a handle to gpui_kit::base::TreeEntry, a runtime-owned library object.

@@ -1,6 +1,6 @@
 # Contributing
 
-This guide explains how to build `libgpuikit`, regenerate the Rust and Go bindings, run every verification gate, add a new wire op or generator rule, bump upstream `gpui-kit` / `gpui-fast` pins, and assemble release archives.
+This guide explains how to build `libgouikit`, regenerate the Rust and Go bindings, run every verification gate, add a new wire op or generator rule, bump upstream `gpui-kit` / `gpui-fast` pins, and assemble release archives.
 
 App developers who only consume a prebuilt release archive do not need Rust, Python, or any of the commands below; see [docs/GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) instead.
 
@@ -11,7 +11,7 @@ App developers who only consume a prebuilt release archive do not need Rust, Pyt
 | Directory | Role |
 |---|---|
 | `core/` | Rust C ABI library (`gk-capi`), runtime (`rt.rs`), tape decoder (`tape.rs`), protocol shims, `core/wire/ops.txt`, `core/wire/gen.py`, and `core/meter/`. |
-| `go/` | The `gpuikit.dev` Go module (`gk` + sub-packages + `internal/rt` + `internal/goid`). |
+| `go/` | The `github.com/ibanks42/goui-kit` Go module (`gk` + sub-packages + `internal/rt` + `internal/goid`). |
 | `gen/` | Pure Python 3 code generator (`gkgen.py`, `gk_model.py`, `gk_rust.py`, `gk_go.py`, `gk_split.py`, `gk_apidoc.py`, `extract.sh`, `round.sh`). |
 | `api/` | Committed rustdoc JSON extract (`api/rustdoc/`), `overrides.toml`, append-only `opcodes.lock`, `clone.json`, `quarantine.json`, and `coverage.json`. |
 | `examples/go/` | Complete Go apps, component gallery (`gallery/`), protocol tests (`proto/`, `port/`), and misuse tests (`misuse*`). |
@@ -36,7 +36,7 @@ App developers who only consume a prebuilt release archive do not need Rust, Pyt
 
 ## 2. Building the Library and Go Examples
 
-### 2.1 Building `libgpuikit` (`make lib`)
+### 2.1 Building `libgouikit` (`make lib`)
 
 ```sh
 make lib
@@ -44,7 +44,7 @@ make lib
 
 `tools/build-lib.sh ship diag` compiles release builds into `target/` and copies the artifacts into:
 
-- `lib/ship/`: shared library (`libgpuikit.so` / `libgpuikit.dylib` / `gpuikit.dll`), static library (`libgpuikit_static.a` + platform support libraries), and pure-Rust reference binaries (`ref-*`).
+- `lib/ship/`: shared library (`libgouikit.so` / `libgouikit.dylib` / `gouikit.dll`), static library (`libgouikit_static.a` + platform support libraries), and pure-Rust reference binaries (`ref-*`).
 - `lib/diag/`: diagnostic library with `GK_FEAT_DIAG` enabled (`gk_headless_run`, offscreen rendering, `Window::layout_stats()`, and scripted platform dialogs).
 - `lib/licences/`: collected third-party license texts.
 
@@ -189,7 +189,7 @@ When upgrading the pinned upstream crates:
 # On Linux:
 make lib-release
 make dist
-tools/dist-test.sh dist/gpuikit-<ver>-linux-x86_64.tar.zst
+tools/dist-test.sh dist/goui-kit-<ver>-linux-x86_64.tar.zst
 ```
 
-`tools/dist.sh` creates `dist/gpuikit-<ver>-<platform>/` (`.tar.zst` on Linux and macOS, `.zip` on Windows) containing `lib/`, `go/`, `include/`, `examples/go/`, `docs/`, `VERSIONS`, `THIRD_PARTY.md`, and `licences/`. `tools/dist-test.sh` unpacks the archive in isolation and verifies both default purego and `-tags gkstatic` builds plus a live window run. Cross-platform release CI lives in `.github/workflows/platforms.yml`.
+`tools/dist.sh` creates `dist/goui-kit-<ver>-<platform>/` (`.tar.zst` on Linux and macOS, `.zip` on Windows) containing `lib/`, `go/`, `include/`, `examples/go/`, `docs/`, `VERSIONS`, `THIRD_PARTY.md`, and `licences/`. `tools/dist-test.sh` unpacks the archive in isolation and verifies both default purego and `-tags gkstatic` builds plus a live window run. Cross-platform release CI lives in `.github/workflows/platforms.yml`.

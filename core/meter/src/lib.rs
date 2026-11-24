@@ -1,6 +1,6 @@
 //! Frame timing, runtime counters, window-option helpers, and synthetic input dispatch.
 //!
-//! Both `libgpuikit` and the pure-Rust reference apps share this crate so automated tests and
+//! Both `libgouikit` and the pure-Rust reference apps share this crate so automated tests and
 //! frame-cost measurements use identical window sizing, input sequences, and summary reporting.
 
 use gpui_kit::{
@@ -16,7 +16,7 @@ use std::time::{Duration, Instant};
 #[cfg(feature = "diag")]
 pub mod headless;
 
-/// Snapshot of cumulative runtime counters recorded by `libgpuikit` and sampled once per frame
+/// Snapshot of cumulative runtime counters recorded by `libgouikit` and sampled once per frame
 /// by [`attach`].
 #[derive(Default, Clone, Copy, Debug)]
 pub struct Counters {

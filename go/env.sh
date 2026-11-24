@@ -2,9 +2,9 @@
 # its example programs.
 #
 # By default, builds use CGO_ENABLED=0 without -tags=gkstatic so binaries load
-# libgpuikit dynamically at startup via purego (requiring no C compiler).
+# libgouikit dynamically at startup via purego (requiring no C compiler).
 # Setting GK_STATIC=1 switches to CGO_ENABLED=1 and adds -tags=gkstatic so
-# binaries link libgpuikit_static.a statically via cgo.
+# binaries link libgouikit_static.a statically via cgo.
 GOFLAGS=${GOFLAGS:--mod=mod}
 if [ "${GK_STATIC:-}" = 1 ]; then
   case " $GOFLAGS " in *" -tags=gkstatic "*) ;; *) GOFLAGS="$GOFLAGS -tags=gkstatic" ;; esac

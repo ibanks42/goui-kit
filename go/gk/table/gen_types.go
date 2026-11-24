@@ -3,8 +3,8 @@
 package table
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // ColumnFixed is gpui_kit::component::table::ColumnFixed.
@@ -447,7 +447,7 @@ func rdTreeEvent(r *rt.Reader) TreeEvent {
 	case 1:
 		return TreeEventCollapsed{Value: r.Str()}
 	}
-	rt.Stop("an event of type TreeEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TreeEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -458,7 +458,7 @@ func rdComboboxEvent(r *rt.Reader) ComboboxEvent {
 	case 1:
 		return ComboboxEventConfirm{Value: rt.RdList(r, func(r *rt.Reader) string { return r.Str() })}
 	}
-	rt.Stop("an event of type ComboboxEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type ComboboxEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -471,7 +471,7 @@ func rdListEvent(r *rt.Reader) ListEvent {
 	case 2:
 		return ListEventCancel{}
 	}
-	rt.Stop("an event of type ListEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type ListEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -480,7 +480,7 @@ func rdSelectEvent(r *rt.Reader) SelectEvent {
 	case 0:
 		return SelectEventConfirm{Value: rt.RdOpt(r, func(r *rt.Reader) string { return r.Str() })}
 	}
-	rt.Stop("an event of type SelectEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type SelectEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -507,7 +507,7 @@ func rdTableEvent(r *rt.Reader) Event {
 	case 9:
 		return EventClearSelection{}
 	}
-	rt.Stop("an event of type TableEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TableEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -522,7 +522,7 @@ func rdTableSelection(r *rt.Reader) Selection {
 	case 3:
 		return SelectionCell{V0: int(r.U64()), V1: int(r.U64())}
 	}
-	rt.Stop("an event of type TableSelection arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TableSelection arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 

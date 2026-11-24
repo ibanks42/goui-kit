@@ -3,10 +3,10 @@ package kit
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/motion"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/motion"
 )
 
 // DropdownMenu wraps button so clicking it opens menu with default placement.

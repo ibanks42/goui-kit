@@ -24,13 +24,13 @@
 #   GK_LICENCES        set to 0 to skip running `tools/licences.py` (default: 1)
 #
 # Per-platform artifact outputs in `$GK_LIB_OUT/<variant>/`:
-# - Linux:   `libgpuikit.so`, `libgpuikit_static.a`, `libgpuikit_sys.so` (GNU ld script naming
+# - Linux:   `libgouikit.so`, `libgouikit_static.a`, `libgouikit_sys.so` (GNU ld script naming
 #            X11/xkb/freetype SONAMEs for static cgo links), plus `ref-*` when `GK_REFS=1`.
-# - macOS:   universal `libgpuikit.dylib` (install name `@rpath/libgpuikit.dylib`, ad-hoc
-#            re-signed after `install_name_tool`) and universal `libgpuikit_static.a`.
-# - Windows: MSVC-built `gpuikit.dll` + `gpuikit.dll.lib`, GNU-ABI `libgpuikit_static.a`
+# - macOS:   universal `libgouikit.dylib` (install name `@rpath/libgouikit.dylib`, ad-hoc
+#            re-signed after `install_name_tool`) and universal `libgouikit_static.a`.
+# - Windows: MSVC-built `gouikit.dll` + `gouikit.dll.lib`, GNU-ABI `libgouikit_static.a`
 #            compiled with `-Zfunction-sections=yes` so MinGW/lld can dead-strip unused families,
-#            and `libgpuikit_sys.a` (Windows API import lib copied from `windows_x86_64_gnu`).
+#            and `libgouikit_sys.a` (Windows API import lib copied from `windows_x86_64_gnu`).
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd); cd "$repo"
 # Clear any inherited target-dir overrides so outputs always land under the workspace `target/`
@@ -52,7 +52,7 @@ if [ "$1" = symbols ]; then
   ref=${2:?usage: build-lib.sh symbols ref-NAME}
   cargo rustc --release --locked -p gk-capi --lib -- -C strip=none
   cargo rustc --release --locked -p gk-ref --bin "$ref" -- -C strip=none
-  rm -rf dist/symbols; mkdir -p dist/symbols; cp target/release/libgpuikit.so "target/release/$ref" dist/symbols/
+  rm -rf dist/symbols; mkdir -p dist/symbols; cp target/release/libgouikit.so "target/release/$ref" dist/symbols/
   ls -l dist/symbols; exit 0
 fi
 jobs=(); [ -z "${GK_JOBS:-}" ] || jobs=(-j "$GK_JOBS")
@@ -91,38 +91,38 @@ for v in "$@"; do
   # Record which GPUI engine produced this directory so tools/dist.sh can report it in VERSIONS.
   if [ "$v" = ship ]; then echo "$engine" > "$out/$v/ENGINE"; else echo gpui-fast > "$out/$v/ENGINE"; fi
   case $os in
-    linux) cp $rd/libgpuikit.so "$out/$v/"
-      cp $rd/libgpuikit.a "$out/$v/libgpuikit_static.a"
+    linux) cp $rd/libgouikit.so "$out/$v/"
+      cp $rd/libgouikit.a "$out/$v/libgouikit_static.a"
       # Emit a thin GNU ld linker script rather than hard-coding -l flags in Go cgo directives:
       # `AS_NEEDED(...)` ensures static cgo binaries link the exact versioned X11/xkb/freetype
       # SONAMEs required by GPUI without requiring -dev symlinks on end-user machines.
-      printf '%s\n' '/* GNU ld script: the system libraries libgpuikit_static.a needs (tools/build-lib.sh). */' \
-        'INPUT(AS_NEEDED(libxkbcommon.so.0 libxkbcommon-x11.so.0 libxcb.so.1 libfreetype.so.6))' > "$out/$v/libgpuikit_sys.so"
+      printf '%s\n' '/* GNU ld script: the system libraries libgouikit_static.a needs (tools/build-lib.sh). */' \
+        'INPUT(AS_NEEDED(libxkbcommon.so.0 libxkbcommon-x11.so.0 libxcb.so.1 libfreetype.so.6))' > "$out/$v/libgouikit_sys.so"
       if [ ${#refs[@]} -gt 0 ]; then
         for f in $rd/ref-*; do case $f in *.d) ;; *) cp "$f" "$out/$v/" ;; esac; done
       fi
       # Print the highest GLIBC_* symbol version referenced so CI/maintainers immediately see
       # if a build accidentally pulled in a newer host glibc symbol.
-      echo "build-lib: newest glibc symbol: $(objdump -T "$out/$v/libgpuikit.so" | grep -o 'GLIBC_[0-9.]*' | sort -V | tail -1)" ;;
+      echo "build-lib: newest glibc symbol: $(objdump -T "$out/$v/libgouikit.so" | grep -o 'GLIBC_[0-9.]*' | sort -V | tail -1)" ;;
     macos)
-      # Normalize each architecture slice's Mach-O install name to `@rpath/libgpuikit.dylib`
+      # Normalize each architecture slice's Mach-O install name to `@rpath/libgouikit.dylib`
       # (Cargo writes an absolute target path by default), ad-hoc re-sign each slice because
       # `install_name_tool` invalidates the arm64 linker signature, and join slices via `lipo`.
       sl=$out/$v.slices; rm -rf "$sl"; mkdir -p "$sl"
       archs=()
       for t in "${mac_targets[@]}"; do
         case $t in aarch64-*) a=arm64 ;; x86_64-*) a=x86_64 ;; *) echo "build-lib.sh: no macOS architecture for $t" >&2; exit 2 ;; esac
-        cp "target/$t/release/libgpuikit.dylib" "$sl/$a.dylib"; archs+=("$a")
-        if [ "$(otool -D "$sl/$a.dylib" | tail -1)" != "@rpath/libgpuikit.dylib" ]; then
-          install_name_tool -id @rpath/libgpuikit.dylib "$sl/$a.dylib"
+        cp "target/$t/release/libgouikit.dylib" "$sl/$a.dylib"; archs+=("$a")
+        if [ "$(otool -D "$sl/$a.dylib" | tail -1)" != "@rpath/libgouikit.dylib" ]; then
+          install_name_tool -id @rpath/libgouikit.dylib "$sl/$a.dylib"
           codesign --force --sign - "$sl/$a.dylib"
         fi
       done
-      f=$out/$v/libgpuikit.dylib
+      f=$out/$v/libgouikit.dylib
       lipo -create -output "$f" "$sl"/*.dylib
       rm -rf "$sl"
-      statics=(); for t in "${mac_targets[@]}"; do statics+=("target/$t/release/libgpuikit.a"); done
-      lipo -create -output "$out/$v/libgpuikit_static.a" "${statics[@]}"
+      statics=(); for t in "${mac_targets[@]}"; do statics+=("target/$t/release/libgouikit.a"); done
+      lipo -create -output "$out/$v/libgouikit_static.a" "${statics[@]}"
       lipo -info "$f"
       # Verify the resulting universal dylib contains the exact set of requested architecture slices.
       got=$(lipo -archs "$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' '); need=$(printf '%s\n' "${archs[@]}" | sort | tr '\n' ' ')
@@ -132,20 +132,20 @@ for v in "$@"; do
       done ;;
     windows)
       # Ship two complementary Windows binaries:
-      # 1. `gpuikit.dll` (and `.dll.lib`) built with the default MSVC toolchain for purego dynamic loading.
-      # 2. `libgpuikit_static.a` built with the pinned GNU-ABI toolchain (`x86_64-pc-windows-gnu`)
+      # 1. `gouikit.dll` (and `.dll.lib`) built with the default MSVC toolchain for purego dynamic loading.
+      # 2. `libgouikit_static.a` built with the pinned GNU-ABI toolchain (`x86_64-pc-windows-gnu`)
       #    because Go cgo on Windows links via MinGW/lld rather than MSVC. Setting
       #    `RUSTC_BOOTSTRAP=1` + `-Zfunction-sections=yes` puts each function in its own COMDAT
       #    section so `--gc-sections` can dead-strip unused component families.
-      # 3. `libgpuikit_sys.a`: the `windows-targets` import library required by static links.
-      cp $rd/gpuikit.dll $rd/gpuikit.dll.lib "$out/$v/"
+      # 3. `libgouikit_sys.a`: the `windows-targets` import library required by static links.
+      cp $rd/gouikit.dll $rd/gouikit.dll.lib "$out/$v/"
       gnu="$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)-x86_64-pc-windows-gnu"
       RUSTC_BOOTSTRAP=1 RUSTFLAGS="${RUSTFLAGS:-} -Zfunction-sections=yes" \
         cargo "+$gnu" build --release --locked ${jobs[@]+"${jobs[@]}"} --target x86_64-pc-windows-gnu -p gk-capi ${feats[@]+"${feats[@]}"}
-      cp target/x86_64-pc-windows-gnu/release/libgpuikit.a "$out/$v/libgpuikit_static.a"
+      cp target/x86_64-pc-windows-gnu/release/libgouikit.a "$out/$v/libgouikit_static.a"
       implib=$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*windows_x86_64_gnu-0.52*' -name libwindows.0.52.0.a | sort | tail -1)
       [ -n "$implib" ] || { echo "build-lib.sh: no libwindows.0.52.0.a under ${CARGO_HOME:-$HOME/.cargo}/registry/src" >&2; exit 1; }
-      cp "$implib" "$out/$v/libgpuikit_sys.a" ;;
+      cp "$implib" "$out/$v/libgouikit_sys.a" ;;
   esac
   echo "build-lib: $v built in $(( $(date +%s) - start )) s"; ls -l "$out/$v"
 done

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/kit"
-	gktable "gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	gktable "github.com/ibanks42/goui-kit/gk/table"
 )
 
 const (

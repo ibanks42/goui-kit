@@ -763,7 +763,7 @@ The block below is written by `python3 gates/status.py` from `gates/out/` after 
 <!-- gates:begin -->
 Last run of `gates/all.sh`: 23 November 2026, 18:00 (go1.27.4-X:nodwarf5). XFAIL is a gate known to fail today (`gates/expected.txt`).
 
-Tier quick: 57 passed, 2 failed, 0 failing as expected, 0 passing unexpectedly, 0 pending a Go binding; 272 s in all. Judged: library lib/ship/libgpuikit.so of 23 Nov 17:51 (sha256 67601e022a23), copied at 17:56; Go package and examples at commit df15ea2.
+Tier quick: 57 passed, 2 failed, 0 failing as expected, 0 passing unexpectedly, 0 pending a Go binding; 272 s in all. Judged: library lib/ship/libgouikit.so of 23 Nov 17:51 (sha256 67601e022a23), copied at 17:56; Go package and examples at commit df15ea2.
 
 | gate | subject | result | detail |
 |---|---|---|---|

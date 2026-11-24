@@ -3,8 +3,8 @@
 package editor
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // CaretAffinity is gpui_kit::base::text::editor_host::CaretAffinity.
@@ -1654,7 +1654,7 @@ func rdInputEvent(r *rt.Reader) InputEvent {
 	case 3:
 		return InputEventBlur{}
 	}
-	rt.Stop("an event of type InputEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type InputEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1673,7 +1673,7 @@ func rdDiffEvent(r *rt.Reader) DiffEvent {
 	case 5:
 		return DiffEventConflictResolved{V0: r.Str(), V1: int(r.U64())}
 	}
-	rt.Stop("an event of type DiffEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type DiffEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1816,7 +1816,7 @@ func rdTextOverflow(r *rt.Reader) gk.TextOverflow {
 	case 2:
 		return gk.TextOverflowTruncateMiddle{Value: r.Str()}
 	}
-	rt.Stop("an event of type TextOverflow arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TextOverflow arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1827,7 +1827,7 @@ func rdNativeMenuItem(r *rt.Reader) NativeMenuItem {
 	case 1:
 		return NativeMenuItemAction{Label: r.Str(), Disabled: r.Bool(), Action: rt.MkAction(r.U32())}
 	}
-	rt.Stop("an event of type NativeMenuItem arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type NativeMenuItem arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 

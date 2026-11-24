@@ -1,4 +1,0 @@
-/* Windows resource script that embeds gpuikit.manifest as resource ID 1
- * (CREATEPROCESS_MANIFEST_RESOURCE_ID, RT_MANIFEST = 24) in host binaries. */
-#define RT_MANIFEST 24
-1 RT_MANIFEST "gpuikit.manifest"

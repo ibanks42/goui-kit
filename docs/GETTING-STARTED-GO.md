@@ -15,7 +15,7 @@ This guide takes you from an unpacked release archive (or a local checkout of th
 
 ## 2. Setting Up a Project
 
-A prebuilt download unpacks into a folder such as `gpuikit-0.0.2-linux-x86_64/` containing `lib/`, `go/`, `include/`, `examples/go/`, and `docs/`. If you are working directly inside a git checkout, run `make lib` first so `lib/ship/` exists.
+A prebuilt download unpacks into a folder such as `goui-kit-0.0.2-linux-x86_64/` containing `lib/`, `go/`, `include/`, `examples/go/`, and `docs/`. If you are working directly inside a git checkout, run `make lib` first so `lib/ship/` exists.
 
 ### Running the Bundled Examples
 
@@ -35,23 +35,23 @@ GK_LIB=lib/ship bin/hello-go
 
 ### Creating Your Own Module
 
-Create a new directory, initialize a Go module, and point `gpuikit.dev` at the unpacked `go/` directory using a `replace` directive:
+Create a new directory, initialize a Go module, and point `github.com/ibanks42/goui-kit` at the unpacked `go/` directory using a `replace` directive:
 
 ```go.mod
 module myapp
 
 go 1.27
 
-require gpuikit.dev v0.0.0
+require github.com/ibanks42/goui-kit v0.0.0
 
-replace gpuikit.dev => ../gpuikit-0.0.2-linux-x86_64/go
+replace github.com/ibanks42/goui-kit => ../goui-kit-0.0.2-linux-x86_64/go
 ```
 
 Then run `go mod tidy` and `go build`.
 
 ### Finding the Shared Library at Runtime
 
-Default builds (`CGO_ENABLED=0`) search for `libgpuikit.so` (Linux), `libgpuikit.dylib` (macOS), or `gpuikit.dll` (Windows) in this order:
+Default builds (`CGO_ENABLED=0`) search for `libgouikit.so` (Linux), `libgouikit.dylib` (macOS), or `gouikit.dll` (Windows) in this order:
 
 1. **`GK_LIB`**: a direct path to the library file or the directory containing it. If `GK_LIB` is set and the file is missing, startup fails immediately without falling back.
 2. **Next to the executable**: `<exe-dir>`, `<exe-dir>/lib`, `<exe-dir>/../lib`, and on macOS `<exe-dir>/../Frameworks` (for `.app` bundles).
@@ -61,7 +61,7 @@ To distribute an app built in default mode, place the shared library beside your
 
 ### Optional Single-File Static Builds (`-tags gkstatic`)
 
-If you prefer a single executable with no shared library next to it, build with `-tags gkstatic` and `CGO_ENABLED=1`. Static builds link `libgpuikit_static.a` and register only the component families your Go code actually imports, so the linker drops unused GPUI-kit families from the binary:
+If you prefer a single executable with no shared library next to it, build with `-tags gkstatic` and `CGO_ENABLED=1`. Static builds link `libgouikit_static.a` and register only the component families your Go code actually imports, so the linker drops unused GPUI-kit families from the binary:
 
 - **Linux** (needs `gcc`, or `clang` with `CC=clang`):
   ```sh
@@ -111,8 +111,8 @@ Inside the start callback, you create a `gk.View` with `gk.NewView(initFn, viewF
 
 Notice how styling works:
 
-- Layout containers (`gk.VFlex`, `gk.HFlex`, `gk.Div`) and text controls (`kit.Label`) accept nullary style tokens from `gpuikit.dev/gk/s` (`s.SizeFull`, `s.P4`, `s.Gap3`, `s.TextXl`, `s.FontBold`) as variadic arguments.
-- Semantic colors come from `gpuikit.dev/gk/theme` (`theme.Background`, `theme.Foreground`). They stay symbolic on the tape and resolve against the active theme whenever GPUI draws.
+- Layout containers (`gk.VFlex`, `gk.HFlex`, `gk.Div`) and text controls (`kit.Label`) accept nullary style tokens from `github.com/ibanks42/goui-kit/gk/s` (`s.SizeFull`, `s.P4`, `s.Gap3`, `s.TextXl`, `s.FontBold`) as variadic arguments.
+- Semantic colors come from `github.com/ibanks42/goui-kit/gk/theme` (`theme.Background`, `theme.Foreground`). They stay symbolic on the tape and resolve against the active theme whenever GPUI draws.
 
 <!-- from: docs/tutorial-go/01-window/main.go -->
 ```go
@@ -121,10 +121,10 @@ package main
 import (
 	"log"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 // view describes the window's root element tree.
@@ -530,7 +530,7 @@ func (a *App) chart() gk.Element {
 
 - Read [docs/GO.md](GO.md) for the full Go front-end reference: package map, `gk.Model[T]` reactivity, handle lifetimes (`Release`, ownership, GC cleanups, `Held`, `dock.KeepWhenClosed`), linking modes, and debugging flags (`GK_DEBUG`, `GK_INFO`).
 - Browse [docs/API-GO.md](API-GO.md) for the rules translating upstream GPUI-kit documentation to Go and the generated index of every component, state, and value type.
-- Run `go doc gpuikit.dev/gk/kit ButtonEl` (or any package or type) inside any module that requires `gpuikit.dev`.
+- Run `go doc github.com/ibanks42/goui-kit/gk/kit ButtonEl` (or any package or type) inside any module that requires `github.com/ibanks42/goui-kit`.
 - Inspect the complete example apps under `examples/go/`:
   - `hello`: minimal counter and live input echo
   - `counter`: child-view isolation and background `gk.Post` stress testing

@@ -1,4 +1,4 @@
-# C ABI runtime library (libgpuikit) that decodes tape commands and drives gpui-kit.
+# C ABI runtime library (libgouikit) that decodes tape commands and drives gpui-kit.
 [package]
 name = "gk-capi"
 version.workspace = true
@@ -6,7 +6,7 @@ edition.workspace = true
 publish.workspace = true
 
 [lib]
-name = "gpuikit"
+name = "gouikit"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]

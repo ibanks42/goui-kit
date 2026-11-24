@@ -3,7 +3,7 @@
 package gk
 
 import (
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // IconEl is gpui_kit::component::Icon.

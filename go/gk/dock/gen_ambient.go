@@ -3,8 +3,8 @@
 package dock
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // Clamp a size into the range this dock may occupy: never below `PANEL_MIN_SIZE`, and never so

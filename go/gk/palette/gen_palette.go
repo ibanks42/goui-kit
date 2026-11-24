@@ -3,7 +3,7 @@
 // Package palette provides fixed palette color tokens (for example .Bg(palette.Blue500)).
 package palette
 
-import "gpuikit.dev/gk"
+import "github.com/ibanks42/goui-kit/gk"
 
 // Fixed palette color tokens.
 var (

@@ -3,9 +3,9 @@
 package main
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 type viewsPages struct {

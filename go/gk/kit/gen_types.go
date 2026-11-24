@@ -3,11 +3,11 @@
 package kit
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // AlertVariant is gpui_kit::component::alert::AlertVariant.
@@ -1185,7 +1185,7 @@ func rdDate(r *rt.Reader) base.Date {
 	case 1:
 		return base.DateRange{V0: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDate { return rt.RdCivilDate(r) }), V1: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDate { return rt.RdCivilDate(r) })}
 	}
-	rt.Stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1194,7 +1194,7 @@ func rdCarouselEvent(r *rt.Reader) CarouselEvent {
 	case 0:
 		return CarouselEventChange{Value: int(r.U64())}
 	}
-	rt.Stop("an event of type CarouselEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type CarouselEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1203,7 +1203,7 @@ func rdDatePickerEvent(r *rt.Reader) DatePickerEvent {
 	case 0:
 		return DatePickerEventChange{Value: rdDateTime(r)}
 	}
-	rt.Stop("an event of type DatePickerEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type DatePickerEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1214,7 +1214,7 @@ func rdDateTime(r *rt.Reader) DateTime {
 	case 1:
 		return DateTimeRange{V0: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDateTime { return rt.RdCivilDateTime(r) }), V1: rt.RdOpt(r, func(r *rt.Reader) gk.CivilDateTime { return rt.RdCivilDateTime(r) })}
 	}
-	rt.Stop("an event of type DateTime arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type DateTime arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1231,7 +1231,7 @@ func rdSpeechEvent(r *rt.Reader) SpeechEvent {
 	case 4:
 		return SpeechEventError{Value: rdSpeechError(r)}
 	}
-	rt.Stop("an event of type SpeechEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type SpeechEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -1263,6 +1263,6 @@ func rdSpeechError(r *rt.Reader) SpeechError {
 	case 2:
 		return SpeechErrorUnsupported
 	}
-	rt.Stop("an event of type SpeechError arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type SpeechError arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }

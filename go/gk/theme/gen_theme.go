@@ -4,7 +4,7 @@
 // (for example .Bg(theme.Background)) so theme switches update automatically.
 package theme
 
-import "gpuikit.dev/gk"
+import "github.com/ibanks42/goui-kit/gk"
 
 // Semantic theme color tokens.
 var (

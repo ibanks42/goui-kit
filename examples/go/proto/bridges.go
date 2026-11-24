@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"gpuikit.dev/gk"
-	gkdock "gpuikit.dev/gk/dock"
-	gkeditor "gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/s"
-	gktable "gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	gkdock "github.com/ibanks42/goui-kit/gk/dock"
+	gkeditor "github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/s"
+	gktable "github.com/ibanks42/goui-kit/gk/table"
 )
 
 type bridges struct {

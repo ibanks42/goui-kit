@@ -1,5 +1,5 @@
 # Shared runtime instrumentation, input helpers, and headless script runner
-# used by both libgpuikit and the pure-Rust reference apps.
+# used by both libgouikit and the pure-Rust reference apps.
 [package]
 name = "gk-meter"
 version.workspace = true

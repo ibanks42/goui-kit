@@ -3,7 +3,7 @@
 package base
 
 import (
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // GrowHeight is gpui_kit::base::grid_layout::GrowHeight.

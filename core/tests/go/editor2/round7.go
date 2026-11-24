@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 const customMD = "---\ntitle: Notes\nowner: me\n---\n\nAfter the front matter.\n"

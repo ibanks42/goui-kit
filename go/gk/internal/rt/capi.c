@@ -4,7 +4,7 @@
 // It wraps the Go-exported turn callback and populates gk_app before invoking
 // gk_run or gk_headless_run.
 
-#include "include/gpuikit.h"
+#include "include/gouikit.h"
 #include "_cgo_export.h"
 
 // go_callback forwards a library turn callback into Go and sends any reply

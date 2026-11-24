@@ -413,7 +413,7 @@ func finish(root Element, out Tape) Tape {
 	return out
 }
 
-// Style is a nullary GPUI style token opcode (defined in package gpuikit.dev/gk/s).
+// Style is a nullary GPUI style token opcode (defined in package github.com/ibanks42/goui-kit/gk/s).
 type Style uint16
 
 // Tokens emits an EStyle op applying a slice of nullary style tokens to n.

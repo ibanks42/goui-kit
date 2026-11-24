@@ -3,9 +3,9 @@
 package overlay
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // BaseResolvedCorner calls gpui_kit::base::Popup::resolved_corner.

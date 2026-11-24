@@ -5,8 +5,8 @@ package motion
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // MotionRevealEl is gpui_kit::base::MotionReveal.

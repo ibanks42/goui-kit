@@ -4,7 +4,7 @@
 // passed to element constructors or .Style(...) (for example gk.VFlex(s.SizeFull, s.Gap3)).
 package s
 
-import "gpuikit.dev/gk"
+import "github.com/ibanks42/goui-kit/gk"
 
 // Nullary style token constants.
 const (

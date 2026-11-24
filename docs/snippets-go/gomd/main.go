@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"log"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type App struct {
@@ -63,19 +63,21 @@ func (a *Bands) bandIDs() []uint64 {
 func (a *Bands) moveBand(from, to int) { a.names[from], a.names[to] = a.names[to], a.names[from] }
 
 func (a *Bands) examples(cx *gk.Cx, i int, name string, xs, ys []float32, area, curve [][2]float32, cyan, violet gk.Color) {
-gk.Div().ID(gk.Key("band", i)).
-	OnDrag(gk.DragValue{ID: uint64(i), Text: name}, a.bandPreview).
-	CanDrop(gk.DropAccept{IDs: a.bandIDs()}).
-	DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent)).
-	OnDrop(func(cx *gk.Cx, d gk.DragValue) { a.moveBand(int(d.ID), i) })
+	gk.Div().ID(gk.Key("band", i)).
+		OnDrag(gk.DragValue{ID: uint64(i), Text: name}, a.bandPreview).
+		CanDrop(gk.DropAccept{IDs: a.bandIDs()}).
+		DragOver(gk.NewStyleRefinementDefault().Bg(theme.Accent)).
+		OnDrop(func(cx *gk.Cx, d gk.DragValue) { a.moveBand(int(d.ID), i) })
 
-chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
-	chart.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
-	chart.NewPlotLine(curve, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
+	chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
+		chart.NewPlotArea(area, gk.HSLA(0.6, 0.8, 0.7, 0.12)),
+		chart.NewPlotLine(curve, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
 
-gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
-	if !a.dirty { return true }
-	overlay.OpenAlertDialog(cx, a.askClose)
-	return false
-})
+	gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
+		if !a.dirty {
+			return true
+		}
+		overlay.OpenAlertDialog(cx, a.askClose)
+		return false
+	})
 }

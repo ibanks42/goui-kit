@@ -6,7 +6,7 @@ import "syscall"
 
 // Windows DLL filename and loader search path variable.
 const (
-	libName       = "gpuikit.dll"
+	libName       = "gouikit.dll"
 	loaderPathVar = "PATH"
 )
 

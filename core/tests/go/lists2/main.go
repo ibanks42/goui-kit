@@ -9,12 +9,12 @@ import (
 	"os"
 	"strings"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
-	gktable "gpuikit.dev/gk/table"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
+	gktable "github.com/ibanks42/goui-kit/gk/table"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 // Sample fruit and vegetable items shared across select/combobox modes.

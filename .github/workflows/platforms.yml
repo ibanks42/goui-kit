@@ -17,7 +17,7 @@
 # only (the log says which). On Linux, gates/cross.sh first builds the Go package for macOS and
 # Windows without cgo. The diagnostic library (offscreen rendering, scripted
 # input) is not built here: it is for the repository's own tests (docs/CONTRIBUTING.md). Each
-# platform's archive is the artifact gpuikit-PLATFORM; the test output is test-PLATFORM.
+# platform's archive is the artifact goui-kit-PLATFORM; the test output is test-PLATFORM.
 #
 # When it runs: on a pull request (built and tested, nothing published), and for a release. Nothing
 # on main builds otherwise: a push to main runs nothing.
@@ -199,16 +199,16 @@ jobs:
       - name: Download (tools/dist.sh)
         run: |
           GK_PLATFORM=${{ matrix.platform }} tools/dist.sh
-          cat dist/gpuikit-*-${{ matrix.platform }}/VERSIONS
+          cat dist/goui-kit-*-${{ matrix.platform }}/VERSIONS
 
       - name: Hello in Go, from the download, in a window
         run: |
           ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
-          tools/dist-test.sh "dist/gpuikit-$ver-${{ matrix.platform }}"
+          tools/dist-test.sh "dist/goui-kit-$ver-${{ matrix.platform }}"
 
       - uses: actions/upload-artifact@v7.0.2
         with:
-          name: gpuikit-${{ matrix.platform }}
+          name: goui-kit-${{ matrix.platform }}
           path: |
             dist/*.tar.zst
             dist/*.zip
@@ -258,7 +258,7 @@ jobs:
 
       - uses: actions/download-artifact@v8.0.2
         with:
-          pattern: gpuikit-*
+          pattern: goui-kit-*
           path: release
           merge-multiple: true
 
@@ -271,7 +271,7 @@ jobs:
         run: |
           hash=$(grep -m1 'const apiHash' go/gk/gen_ops.go | grep -o '0x[0-9a-f]*')
           {
-            echo "gpuikit $VERSION: the prebuilt library, the Go module, examples and guides,"
+            echo "goui-kit $VERSION: the prebuilt library, the Go module, examples and guides,"
             echo "for Linux x86-64 (glibc 2.28 or newer), macOS 11.0 or newer (universal: Apple silicon and Intel)"
             echo "and Windows x86-64."
             echo
@@ -280,4 +280,4 @@ jobs:
           } > notes.md
           pre=(); case $VERSION in *-*) pre=(--prerelease) ;; esac   # 0.1.0-rc.1: not marked latest
           gh release create "v$VERSION" release/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --title "gpuikit $VERSION" --notes-file notes.md "${pre[@]}"
+            --title "goui-kit $VERSION" --notes-file notes.md "${pre[@]}"

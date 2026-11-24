@@ -1,4 +1,4 @@
-// Public re-exports of the hand-written runtime API from gpuikit.dev/gk/internal/rt.
+// Public re-exports of the hand-written runtime API from github.com/ibanks42/goui-kit/gk/internal/rt.
 // Type aliases preserve exact identity across sub-packages, while thin wrapper
 // functions keep the public surface documented under package gk.
 
@@ -7,7 +7,7 @@ package gk
 import (
 	"time"
 
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // Action identifies an application-defined or built-in kit action registered
@@ -198,7 +198,7 @@ func NewBuilt[T any](cx *Cx, render func(cx *Cx) T) Built[T] { return rt.NewBuil
 // func(*Cx) T when opening an overlay.
 type Builder[T any] = rt.Builder[T]
 
-// Info describes the loaded libgpuikit binary's ABI version, interface hash,
+// Info describes the loaded libgouikit binary's ABI version, interface hash,
 // feature flags, and embedded crate versions.
 type Info = rt.Info
 
@@ -271,7 +271,7 @@ func NewLanguageProvider(cx *Cx, aliases []LanguageAlias, syntax func(cx *Cx, q 
 // Element is implemented by every renderable element handle built inside a view function.
 type Element = rt.Element
 
-// Style is a nullary GPUI style token opcode (see package gpuikit.dev/gk/s).
+// Style is a nullary GPUI style token opcode (see package github.com/ibanks42/goui-kit/gk/s).
 type Style = rt.Style
 
 // Color represents either a theme/palette color token or an explicit HSLA color.

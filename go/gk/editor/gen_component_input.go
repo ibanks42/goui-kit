@@ -5,9 +5,9 @@ package editor
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // EditorEl is gpui_kit::component::input::Editor.

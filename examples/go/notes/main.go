@@ -7,14 +7,14 @@ import (
 	"log"
 	"slices"
 
-	"gpuikit.dev/gk"
-	gkdock "gpuikit.dev/gk/dock"
-	gkeditor "gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/overlay"
-	"gpuikit.dev/gk/s"
-	"gpuikit.dev/gk/table"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	gkdock "github.com/ibanks42/goui-kit/gk/dock"
+	gkeditor "github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk/s"
+	"github.com/ibanks42/goui-kit/gk/table"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 type Note struct {

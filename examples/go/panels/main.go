@@ -9,8 +9,8 @@ import (
 	"os"
 	"strconv"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 const labels = 97

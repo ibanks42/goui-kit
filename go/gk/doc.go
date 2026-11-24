@@ -39,20 +39,20 @@
 //
 // Component families live in sibling packages so applications import only what
 // they use:
-//   - gpuikit.dev/gk/s: nullary GPUI style tokens
-//   - gpuikit.dev/gk/theme and gpuikit.dev/gk/palette: theme and fixed colors
-//   - gpuikit.dev/gk/kit: everyday UI widgets and menus
-//   - gpuikit.dev/gk/base: low-level layout, questionnaire, and resize primitives
-//   - gpuikit.dev/gk/overlay: dialogs, alert dialogs, sheets, popovers, tooltips, hover cards, notifications
-//   - gpuikit.dev/gk/table: virtualized tables, lists, searchable lists, selects, comboboxes, trees
-//   - gpuikit.dev/gk/editor: text inputs, code editors, diffs, markdown plugins, block hosts
-//   - gpuikit.dev/gk/dock: dockable workspace areas, split panes, tab groups, custom renderers
-//   - gpuikit.dev/gk/chart: data tables, charts, and composable plots
-//   - gpuikit.dev/gk/motion: animations, springs, keyframes, focus traps, text selection scopes
+//   - github.com/ibanks42/goui-kit/gk/s: nullary GPUI style tokens
+//   - github.com/ibanks42/goui-kit/gk/theme and github.com/ibanks42/goui-kit/gk/palette: theme and fixed colors
+//   - github.com/ibanks42/goui-kit/gk/kit: everyday UI widgets and menus
+//   - github.com/ibanks42/goui-kit/gk/base: low-level layout, questionnaire, and resize primitives
+//   - github.com/ibanks42/goui-kit/gk/overlay: dialogs, alert dialogs, sheets, popovers, tooltips, hover cards, notifications
+//   - github.com/ibanks42/goui-kit/gk/table: virtualized tables, lists, searchable lists, selects, comboboxes, trees
+//   - github.com/ibanks42/goui-kit/gk/editor: text inputs, code editors, diffs, markdown plugins, block hosts
+//   - github.com/ibanks42/goui-kit/gk/dock: dockable workspace areas, split panes, tab groups, custom renderers
+//   - github.com/ibanks42/goui-kit/gk/chart: data tables, charts, and composable plots
+//   - github.com/ibanks42/goui-kit/gk/motion: animations, springs, keyframes, focus traps, text selection scopes
 //
-// By default (CGO_ENABLED=0), the runtime loads libgpuikit dynamically at
+// By default (CGO_ENABLED=0), the runtime loads libgouikit dynamically at
 // startup via purego (searching GK_LIB, directories beside the executable, and
 // the OS dynamic loader path). Building with -tags gkstatic and CGO_ENABLED=1
-// links libgpuikit_static.a statically via cgo and keeps only the imported
+// links libgouikit_static.a statically via cgo and keeps only the imported
 // component families.
 package gk

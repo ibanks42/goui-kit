@@ -3,11 +3,11 @@
 package overlay
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/kit"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/kit"
 )
 
 // ItemFunc constrains callback signatures accepted by Items for per-item component rendering.

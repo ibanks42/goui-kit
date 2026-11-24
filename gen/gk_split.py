@@ -49,7 +49,7 @@ import re
 import subprocess
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODULE = "gpuikit.dev"
+MODULE = "github.com/ibanks42/goui-kit"
 # Strict acyclic import order: any package at index i may only import packages at index < i.
 # `rt` sits at rank 0 (internal/rt); `gk` is the public root; domain packages layer above it
 # so higher-level shells (overlay, dock) can reference lower-level widgets (editor, table, kit).

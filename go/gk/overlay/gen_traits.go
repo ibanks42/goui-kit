@@ -5,8 +5,8 @@ package overlay
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // tElementExtKeepTextSelection: gpui_kit::base::ElementExt::keep_text_selection.

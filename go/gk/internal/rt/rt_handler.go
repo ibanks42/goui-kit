@@ -460,7 +460,7 @@ func event(cx *Cx, r *Reader) {
 				f(cx)
 				goto ran
 			}
-			Stop("an event of kind %d arrived for a handler of type %T (%s expected): the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from", shape, h.fn, info.Name)
+			Stop("an event of kind %d arrived for a handler of type %T (%s expected): the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from", shape, h.fn, info.Name)
 		}
 	}
 ran:

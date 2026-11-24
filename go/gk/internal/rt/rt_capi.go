@@ -1,4 +1,4 @@
-// Package rt implements the Go runtime beneath gpuikit.dev/gk and its
+// Package rt implements the Go runtime beneath github.com/ibanks42/goui-kit/gk and its
 // sub-packages.
 //
 // Core responsibilities:
@@ -31,7 +31,7 @@ func init() {
 	runtime.LockOSThread()
 }
 
-// Info describes the loaded libgpuikit binary's ABI version, opcode interface
+// Info describes the loaded libgouikit binary's ABI version, opcode interface
 // hash, feature flags (gpui-fast engine and diag offscreen support), and
 // embedded crate version summary.
 type Info struct {
@@ -131,7 +131,7 @@ func (e *Error) Error() string {
 }
 
 // appFrame walks up to 32 stack frames starting skip frames above appFrame and
-// returns the first frame belonging to user code (skipping gpuikit.dev/gk,
+// returns the first frame belonging to user code (skipping github.com/ibanks42/goui-kit/gk,
 // Go runtime internals, and cgo trampolines).
 func appFrame(skip int) (file string, line int, fn string) {
 	pcs := make([]uintptr, 32)
@@ -220,7 +220,7 @@ func onTurn(kind uint32, in []byte) []byte {
 // protocol tests override it via TestExpectHash.
 var expectHash = ApiHash
 
-// checkLibrary loads libgpuikit and validates its magic number, struct size,
+// checkLibrary loads libgouikit and validates its magic number, struct size,
 // ABI version (exact major, library minor >= package minor), and ApiHash.
 // Setting GK_INFO prints the verified library metadata to stdout.
 func checkLibrary() error {
@@ -330,5 +330,5 @@ func TestRunRaw(hashXor uint64, majorAdd, minorAdd uint16, sizeDelta uint32, noC
 func TestExpectHash(h uint64) { expectHash = h }
 
 func inGk(fn string) bool {
-	return strings.HasPrefix(fn, "gpuikit.dev/gk.") || strings.HasPrefix(fn, "gpuikit.dev/gk/")
+	return strings.HasPrefix(fn, "github.com/ibanks42/goui-kit/gk.") || strings.HasPrefix(fn, "github.com/ibanks42/goui-kit/gk/")
 }

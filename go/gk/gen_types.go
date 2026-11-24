@@ -5,7 +5,7 @@ package gk
 import (
 	"time"
 
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // AlignContent is gpui_kit::AlignContent.
@@ -2596,7 +2596,7 @@ func rdFileDropEvent(r *rt.Reader) FileDropEvent {
 	case 4:
 		return FileDropEventEnded{}
 	}
-	rt.Stop("an event of type FileDropEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type FileDropEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -3096,7 +3096,7 @@ func rdClipboardEntry(r *rt.Reader) ClipboardEntry {
 	case 2:
 		return ClipboardEntryExternalPaths{Value: rt.RdList(r, func(r *rt.Reader) string { return r.Str() })}
 	}
-	rt.Stop("an event of type ClipboardEntry arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type ClipboardEntry arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -3111,7 +3111,7 @@ func rdMouseButton(r *rt.Reader) MouseButton {
 	case 3:
 		return MouseButtonNavigate{Value: NavigationDirection(r.U16())}
 	}
-	rt.Stop("an event of type MouseButton arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type MouseButton arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -3122,7 +3122,7 @@ func rdScrollDelta(r *rt.Reader) ScrollDelta {
 	case 1:
 		return ScrollDeltaLines{PointF32: rdPointF32(r)}
 	}
-	rt.Stop("an event of type ScrollDelta arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type ScrollDelta arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -3147,7 +3147,7 @@ func rdEasing(r *rt.Reader) Easing {
 	case 8:
 		rt.Stop("EasingCustom cannot be read by the Go package yet (expr read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
 	}
-	rt.Stop("an event of type Easing arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type Easing arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 

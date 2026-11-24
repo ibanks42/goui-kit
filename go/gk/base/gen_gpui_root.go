@@ -3,8 +3,8 @@
 package base
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
 )
 
 // The part of an item the pointer moves it by, for an item built with `DragHandleOnly` - a card's

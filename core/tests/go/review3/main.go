@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"gpuikit.dev/gk"
-	gkdock "gpuikit.dev/gk/dock"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/s"
+	"github.com/ibanks42/goui-kit/gk"
+	gkdock "github.com/ibanks42/goui-kit/gk/dock"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/s"
 )
 
 const ms = time.Millisecond

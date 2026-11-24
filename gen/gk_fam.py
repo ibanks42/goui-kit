@@ -2,7 +2,7 @@
 
 Why this exists (dead-stripping static binaries):
 If `core/src/gen/mod.rs` dispatched directly to every generated widget decoder inside a
-single giant `match` statement, then linking `libgpuikit_static.a` into a minimal Go
+single giant `match` statement, then linking `libgouikit_static.a` into a minimal Go
 program would pull in every upstream GPUI-kit component (editor, charts, dock, markdown,
 tables, etc.).
 

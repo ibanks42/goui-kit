@@ -3,9 +3,9 @@
 package overlay
 
 import (
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/kit"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/kit"
 )
 
 // AlertDialogEl is gpui_kit::component::dialog::AlertDialog.

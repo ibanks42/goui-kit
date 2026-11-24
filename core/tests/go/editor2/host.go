@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/theme"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/theme"
 )
 
 const parsedMD = "## Parsed\n\n- one\n- two\n\n| a | b |\n|---|---|\n| 1 | 2 |\n"

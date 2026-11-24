@@ -8,14 +8,14 @@ import (
 	"fmt"
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/chart"
-	"gpuikit.dev/gk/dock"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/overlay"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/chart"
+	"github.com/ibanks42/goui-kit/gk/dock"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/overlay"
 )
 
 // ambientAll runs each generated ambient call once and returns the total count executed.

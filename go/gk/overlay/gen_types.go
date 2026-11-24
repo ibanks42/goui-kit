@@ -5,13 +5,13 @@ package overlay
 import (
 	"time"
 
-	"gpuikit.dev/gk"
-	"gpuikit.dev/gk/base"
-	"gpuikit.dev/gk/editor"
-	"gpuikit.dev/gk/internal/rt"
-	"gpuikit.dev/gk/kit"
-	"gpuikit.dev/gk/motion"
-	"gpuikit.dev/gk/table"
+	"github.com/ibanks42/goui-kit/gk"
+	"github.com/ibanks42/goui-kit/gk/base"
+	"github.com/ibanks42/goui-kit/gk/editor"
+	"github.com/ibanks42/goui-kit/gk/internal/rt"
+	"github.com/ibanks42/goui-kit/gk/kit"
+	"github.com/ibanks42/goui-kit/gk/motion"
+	"github.com/ibanks42/goui-kit/gk/table"
 )
 
 // Align is gpui_kit::base::Align.
@@ -326,7 +326,7 @@ func rdTooltipTransition(r *rt.Reader) TooltipTransition {
 	case 1:
 		return TooltipTransitionSwitch{Epoch: int(r.U64()), Previous: rdBounds(r), Current: rdBounds(r)}
 	}
-	rt.Stop("an event of type TooltipTransition arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type TooltipTransition arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
@@ -341,7 +341,7 @@ func rdAnyInputState(r *rt.Reader) editor.AnyInputState {
 	case 3:
 		return editor.AnyInputStateOtp{Value: editor.OtpState{HCore: rt.MkH(r.U64())}}
 	}
-	rt.Stop("an event of type AnyInputState arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	rt.Stop("an event of type AnyInputState arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgouikit.so came from")
 	return nil
 }
 
