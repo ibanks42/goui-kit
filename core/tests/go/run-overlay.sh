@@ -36,7 +36,7 @@ GK_PROTO_BIN=overlay-go run dock 0 'overlay dock made' 'overlay panel 0 event Ad
 # Probe the real Xvfb window tree before and after SetTitle to verify OS title propagation.
 cat > "$bin/overlay-display-go" <<SH
 #!/bin/bash
-exec "$repo/gates/display.sh" bash -c '"\$0" & p=\$!; sleep 0.6; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 before /"; sleep 1.0; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 after /"; wait \$p' "$bin/overlay-go"
+GK_DISPLAY=xvfb exec "$repo/gates/display.sh" bash -c '"\$0" & p=\$!; sleep 0.6; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 before /"; sleep 1.0; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 after /"; wait \$p' "$bin/overlay-go"
 SH
 chmod +x "$bin/overlay-display-go"
 # Proves SetTitle updates the actual X11 window title visible to xwininfo while preserving the 420x300 geometry.
