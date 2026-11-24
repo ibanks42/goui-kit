@@ -26,11 +26,16 @@ type node struct {
 	b                 *build
 	serial            uint32
 	idx               uint32
-	typ               uint16
 	args, first, last uint32
+	typ               uint16
 	attached          bool
-	file              string // GK_DEBUG=1: where it was made
-	line              int
+	made              *madeAt // GK_DEBUG=1: where it was made
+}
+
+// madeAt is where an element was made (recorded with GK_DEBUG=1 only, so a node stays small).
+type madeAt struct {
+	file string
+	line int
 }
 
 // Element is an element being described (gk.Div(), gk.Button("ok"), ...).
@@ -80,7 +85,9 @@ func (b *build) live(n *node) bool {
 func (b *build) reset(serial uint32) {
 	b.ops = append(b.ops[:0], 0, 0, 0, 0) // offset 0 means "no op"
 	b.nodes = b.nodes[:0]
-	b.slab = nil // a fresh block: nodes of the last build stay what they were, and stale
+	// The slab is not reused: the next build's nodes go after this one's (a new block when it is
+	// full), so a node of an earlier build keeps its serial and is caught as stale. Starting a
+	// fresh block per build cost a 4 KB allocation for every row of a table.
 	b.handlers = b.handlers[:0]
 	b.deps = b.deps[:0]
 	b.slots = b.slots[:0]
@@ -89,7 +96,7 @@ func (b *build) reset(serial uint32) {
 
 func (b *build) alloc(typ uint16) *node {
 	if len(b.slab) == cap(b.slab) {
-		b.slab = make([]node, 0, 64)
+		b.slab = make([]node, 0, 256)
 	}
 	b.slab = append(b.slab, node{b: b, serial: b.serial, idx: uint32(len(b.nodes)), typ: typ, args: uint32(len(b.ops))})
 	n := &b.slab[len(b.slab)-1]
@@ -97,10 +104,12 @@ func (b *build) alloc(typ uint16) *node {
 	b.cur = n.idx
 	curBuild = b
 	if debug {
-		_, n.file, n.line, _ = runtime.Caller(3)
+		m := &madeAt{}
+		_, m.file, m.line, _ = runtime.Caller(3)
 		if f, l, _ := appFrame(3); l != 0 {
-			n.file, n.line = f, l
+			m.file, m.line = f, l
 		}
+		n.made = m
 	}
 	return n
 }
@@ -118,8 +127,8 @@ func outerTurn() uint64 {
 
 // origin is what the runtime can say about where an element came from, for a stop.
 func origin(n *node, thisBuild bool) string {
-	if n != nil && thisBuild && n.line != 0 {
-		return fmt.Sprintf("\n    the element was made at %s:%d", n.file, n.line)
+	if n != nil && thisBuild && n.made != nil && n.made.line != 0 {
+		return fmt.Sprintf("\n    the element was made at %s:%d", n.made.file, n.made.line)
 	}
 	s := ""
 	if vb.active && vb.view != nil {
@@ -356,7 +365,7 @@ func putText(n *node, s string) { op(n, eText).str(s) }
 func slotView(n *node, v View) {
 	op(n, eChildView).u64(v.h)
 	vb.slots = append(vb.slots, v.h)
-	if rec := views[v.h]; rec != nil && !rec.described && cur != nil {
+	if rec := views.get(v.h); rec != nil && !rec.described && cur != nil {
 		cur.pending = append(cur.pending, rec)
 	}
 }
@@ -600,7 +609,7 @@ func putViewArg(o *tape, v View) {
 	o.u64(v.h)
 	if vb.active && v.h != 0 {
 		vb.slots = append(vb.slots, v.h)
-		if rec := views[v.h]; rec != nil && !rec.described && cur != nil {
+		if rec := views.get(v.h); rec != nil && !rec.described && cur != nil {
 			cur.pending = append(cur.pending, rec)
 		}
 	}

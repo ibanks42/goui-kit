@@ -390,13 +390,13 @@ func event(cx *Cx, r *reader) {
 			k := keptTab[id]
 			h, found, owner = k.h, true, k.owner
 			if owner != 0 {
-				t.owner = views[owner]
+				t.owner = views.get(owner)
 			}
 		}
-	} else if v := views[view]; v != nil {
+	} else if v := views.get(view); v != nil {
 		table, ok := v.cur, gen == v.gen
 		if !ok {
-			table, ok = v.old[gen]
+			table, ok = v.oldTableOf(gen)
 		}
 		if ok && int(id) < len(table) {
 			h, found, owner = table[id], true, view

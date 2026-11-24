@@ -51,7 +51,7 @@ func putBuilt(o *tape, v View) {
 	if v.h == 0 {
 		stop("no view given: make it with gk.NewBuilt(cx, function), once, in init")
 	}
-	if views[v.h] == nil {
+	if views.get(v.h) == nil {
 		stop("the view gk.NewBuilt made was released: make a new one with gk.NewBuilt")
 	}
 	o.u64(v.h)

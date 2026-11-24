@@ -23,7 +23,6 @@ type turn struct {
 	pending  []*viewRec
 	owner    *viewRec // the view whose init or handler runs: handlers kept now belong to it
 	quiet    bool     // gk.Quiet was called in the handler running
-	out      tape
 	cx       *Cx
 }
 
@@ -44,6 +43,8 @@ var (
 	dropped    uint64
 	appStart   func(*Cx)
 	tapeBuf    tape
+	cxSlab     []Cx     // the Cx of each turn, from blocks of 64 (one allocation per 64 turns)
+	viewList   []uint64 // the VIEWS turn's list, reused
 )
 
 func runtimeInit() {
@@ -113,8 +114,13 @@ func dispatch(kind uint32, in []byte) []byte {
 	depth++
 	turnSerial++
 	*t = turn{kind: kind, parent: cur, serial: turnSerial, ret: t.ret[:0], dirty: t.dirty[:0],
-		deferred: t.deferred[:0], tapes: t.tapes[:0], pending: t.pending[:0], out: t.out[:0]}
-	t.cx = &Cx{t, t.serial} // a new one per turn: a kept *Cx keeps its old serial
+		deferred: t.deferred[:0], tapes: t.tapes[:0], pending: t.pending[:0]}
+	// A new one per turn, so a kept *Cx keeps its old serial; taken from a block, never reused.
+	if len(cxSlab) == cap(cxSlab) {
+		cxSlab = make([]Cx, 0, 64)
+	}
+	cxSlab = append(cxSlab, Cx{t, t.serial})
+	t.cx = &cxSlab[len(cxSlab)-1]
 	cur = t
 	cx := t.cx
 	r := reader{b: in}
@@ -127,7 +133,7 @@ func dispatch(kind uint32, in []byte) []byte {
 		drainPosts(cx, early)
 	case kWindowInit:
 		t.window = r.u64()
-		if v := views[r.u64()]; v != nil && v.init != nil {
+		if v := views.get(r.u64()); v != nil && v.init != nil {
 			t.owner = v
 			v.init(cx)
 		}
@@ -139,9 +145,15 @@ func dispatch(kind uint32, in []byte) []byte {
 		}
 	case kViews:
 		t.window = r.u64()
-		list := make([]uint64, r.u32())
-		for i := range list {
-			list[i] = r.u64()
+		var list []uint64
+		if depth == 1 {
+			list = viewList[:0] // reused by the outermost turn only: a nested one keeps its own
+		}
+		for range r.u32() {
+			list = append(list, r.u64())
+		}
+		if depth == 1 {
+			viewList = list
 		}
 		// The descriptions the library dropped since the last VIEWS turn: their tables go.
 		for range r.u32() {
@@ -149,7 +161,7 @@ func dispatch(kind uint32, in []byte) []byte {
 			retireTable(view, r.u32())
 		}
 		for _, h := range list {
-			if v := views[h]; v != nil {
+			if v := views.get(h); v != nil {
 				describe(cx, v)
 			}
 		}
@@ -173,7 +185,8 @@ func dispatch(kind uint32, in []byte) []byte {
 	if len(t.ret) == 0 && len(t.dirty) == 0 && t.nDefer == 0 && t.nTapes == 0 {
 		return nil
 	}
-	o := t.out[:0]
+	// Written straight into C memory, which the C side hands to gk_reply (rt_capi.go).
+	o := replyBuf(16 + len(t.ret) + 8*len(t.dirty) + len(t.deferred) + len(t.tapes))
 	o.u32(uint32(len(t.ret)))
 	o = append(o, t.ret...)
 	o.u32(uint32(len(t.dirty)))
@@ -184,7 +197,6 @@ func dispatch(kind uint32, in []byte) []byte {
 	o = append(o, t.deferred...)
 	o.u32(t.nTapes)
 	o = append(o, t.tapes...)
-	t.out = o
 	return o
 }
 

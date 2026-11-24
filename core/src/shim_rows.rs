@@ -383,6 +383,10 @@ pub struct GkTableDelegate {
     order: Vec<usize>,
     x: Extras,
     watched: bool,
+    /// The rows `bind_ahead` last asked for and the frame it asked in: they are bound before the
+    /// next frame, so asking again for rows inside them in the same frame is skipped (every row
+    /// drawn asks while the rows ahead are missing).
+    asked: (u64, Range<usize>),
     /// What the app pushed besides cells (TABLE_TEXTS, TABLE_ROW_LABELS, TABLE_LOOK).
     look: Look,
 }
@@ -421,6 +425,7 @@ impl GkTableDelegate {
             order: Vec::new(),
             x: Extras::default(),
             watched: false,
+            asked: (0, 0..0),
             look: Look::default(),
         };
         d.set_columns(SOURCE_COLUMNS.with(|m| m.borrow_mut().remove(&src)).unwrap_or_default());
@@ -438,6 +443,43 @@ impl GkTableDelegate {
 
     fn cell_key(&self, row: usize, id: usize) -> u64 {
         source::key(0, (row * self.columns.len() + id) as u32)
+    }
+
+    /// Binds rows before they are drawn: when the row two screens past `rows` (or before it) has
+    /// no cells, asks for two screens behind and two and a half ahead, all columns, in one ROWS
+    /// turn (`source::want`: the rows not bound yet, with no overscan added). A steady scroll so
+    /// costs one turn of about half a screen of cells every half screen of rows, not one per
+    /// frame. Measured 23 Nov 2026 (the table scene, 100,000 rows): batches of two or three
+    /// screens cost a missed frame or more each at 1,000 Hz and set the p95 at 60 Hz; one screen
+    /// missed a median of 112 frames of 300 at 1,000 Hz against 107 for half a screen (Rust
+    /// 105), and half a screen also had the lower p95 at 60 Hz (987 against 1,017 us). gpui-kit 0.11 on gpui-fast 0.1.19 keeps two viewports of rows
+    /// drawn on each side of the visible ones (the list layer's overscan, grown a few rows a
+    /// frame). `rows` is a visible range the kit reports, or a row drawn now (`render_td`): the
+    /// list layer draws rows beyond the range the kit reports, and bound only from the reported
+    /// ranges such a row was drawn as a placeholder first, which redrew the table for five
+    /// frames.
+    fn bind_ahead(&mut self, rows: Range<usize>, window: &mut Window, cx: &mut Context<TableState<Self>>) {
+        let n = self.columns.len();
+        let count = self.rows_count(cx);
+        if n == 0 || count == 0 || rows.is_empty() {
+            return;
+        }
+        // The kit also reports short ranges (a few rows, from a measuring pass): a screen is
+        // taken as at least 24 rows.
+        let len = rows.len().max(24);
+        let ahead = (rows.end + 2 * len).min(count - 1);
+        let behind = rows.start.saturating_sub(2 * len);
+        let missing = |row: usize| !source::bound(self.src, self.cell_key(row, n - 1));
+        crate::rt::trace(|| format!("table rows={rows:?} ahead={ahead} behind={behind} missing={}/{}", missing(ahead), missing(behind)));
+        if missing(ahead) || missing(behind) {
+            let frame = rt::with(|s| s.frame_no());
+            let (lo, hi) = (rows.start.saturating_sub(2 * len), (rows.end + 2 * len + len / 2).min(count));
+            if self.asked.0 == frame && self.asked.1.start <= behind && ahead < self.asked.1.end {
+                return;
+            }
+            self.asked = (frame, lo..hi);
+            source::want(self.src, 0, (lo * n) as u32, (hi * n).min(u32::MAX as usize) as u32, window, cx);
+        }
     }
 
     fn watch(&mut self, cx: &mut Context<TableState<Self>>) {
@@ -496,6 +538,9 @@ impl TableDelegate for GkTableDelegate {
         cx: &mut Context<TableState<Self>>,
     ) -> impl IntoElement {
         self.watch(cx);
+        if col_ix == 0 {
+            self.bind_ahead(row_ix..row_ix + 1, window, cx);
+        }
         let key = self.cell_key(row_ix, self.id(col_ix));
         if !decode_cells() {
             return match source::row(self.src, key, window, cx) {
@@ -657,33 +702,10 @@ impl TableDelegate for GkTableDelegate {
         window: &mut Window,
         cx: &mut Context<TableState<Self>>,
     ) {
-        // Bind rows before they are drawn while the table scrolls: when the row two screens
-        // ahead (or behind) has no cells, ask for two screens behind and three ahead, all
-        // columns, in one ROWS turn. gpui-fast keeps two viewports of rows drawn on each side
-        // of the visible ones (its list layer's overscan, grown a few rows a frame), so a row
-        // is drawn up to two screens before it shows: bound any later, it is drawn as a
-        // placeholder first (gpui-kit 0.11, gpui-fast 0.1.19). Rows arrive in batches of
-        // screens, so a steady scroll costs one turn per screen, not one per frame: smaller,
-        // more frequent batches spread the app's describing like Rust's rendering of rows
-        // entering the overscan, but cost more at p95 than they save in missed frames
-        // (measured 23 Nov 2026, the 1000 Hz table scene). A far jump still shows placeholders
-        // for one frame.
-        let n = self.columns.len();
-        let rows = self.rows_count(cx);
-        if n > 0 && rows > 0 && !visible.is_empty() {
-            // The kit also reports short ranges (a few rows, from a measuring pass): a screen is
-            // taken as at least 24 rows.
-            let len = visible.len().max(24);
-            let ahead = (visible.end + 2 * len).min(rows - 1);
-            let behind = visible.start.saturating_sub(2 * len);
-            let missing = |row: usize| !source::bound(self.src, self.cell_key(row, n - 1));
-            crate::rt::trace(|| format!("table visible={visible:?} ahead={ahead} behind={behind} missing={}/{}", missing(ahead), missing(behind)));
-            if missing(ahead) || missing(behind) {
-                let lo = visible.start.saturating_sub(2 * len) * n;
-                let hi = ((visible.end + 3 * len).min(rows)) * n;
-                source::want(self.src, 0, lo as u32, hi.min(u32::MAX as usize) as u32, window, cx);
-            }
-        }
+        // Bind rows before they are drawn while the table scrolls (`bind_ahead`; the rows the
+        // table draws ask too, from `render_td`). A far jump still shows placeholders for one
+        // frame.
+        self.bind_ahead(visible.clone(), window, cx);
         if self.x.visible_events {
             table_event(self.src, TE_VISIBLE_ROWS, visible.start, 0, visible.end, 0, cx);
         }

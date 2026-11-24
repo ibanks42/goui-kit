@@ -143,25 +143,49 @@ struct Queued {
     window: Option<AnyWindowHandle>,
 }
 
+/// A map keyed by handle. Handles are the library's own numbers (no attacker picks them), so the
+/// hash is a multiply and a fold rather than SipHash: a ROWS turn looks several maps up for every
+/// row it binds.
+pub type IdMap<V> = HashMap<u64, V, std::hash::BuildHasherDefault<IdHasher>>;
+pub type IdSet = HashSet<u64, std::hash::BuildHasherDefault<IdHasher>>;
+
+#[derive(Default)]
+pub struct IdHasher(u64);
+
+impl std::hash::Hasher for IdHasher {
+    fn write(&mut self, bytes: &[u8]) {
+        for b in bytes {
+            self.0 = (self.0.rotate_left(8) ^ *b as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15);
+        }
+    }
+    fn write_u64(&mut self, v: u64) {
+        let x = (self.0 ^ v ^ (v >> 29)).wrapping_mul(0x9e37_79b9_7f4a_7c15);
+        self.0 = x ^ (x >> 32);
+    }
+    fn finish(&self) -> u64 {
+        self.0
+    }
+}
+
 pub struct Session {
     pub callback: GkCallback,
     pub user: *mut c_void,
     slots: Vec<Slot>,
     free: Vec<u32>,
     /// The window each mounted view is drawn in.
-    view_window: HashMap<u64, u64>,
+    view_window: IdMap<u64>,
     /// Dirty mounted views per window, in the order they were marked.
-    dirty: HashMap<u64, Vec<u64>>,
+    dirty: IdMap<Vec<u64>>,
     /// Dirty views that are in no window yet.
     unmounted_dirty: Vec<u64>,
     /// Views whose current tape read a state (the tape's dependency list), by state handle.
-    dep_views: HashMap<u64, Vec<u64>>,
+    dep_views: IdMap<Vec<u64>>,
     /// Windows whose pre-frame hook is registered for the next frame.
-    hooked: HashSet<u64>,
+    hooked: IdSet,
     /// The window whose pre-frame hook is running.
     in_hook: Option<u64>,
     /// Windows whose app asked for a FRAME turn before every frame.
-    pub frame_handler: HashSet<u64>,
+    pub frame_handler: IdSet,
     /// Buffered writes of EVENT turns, each with the window its turn had (a write such as
     /// WINDOW_CLOSE with 0, or a kit call that needs the window, gets that one, not the first).
     deferred: Vec<(Vec<u8>, Option<AnyWindowHandle>)>,
@@ -174,14 +198,14 @@ pub struct Session {
     /// Live row sources (core/src/source.rs).
     pub sources: Vec<u64>,
     /// Row views by the source they belong to.
-    pub row_owner: HashMap<u64, u64>,
+    pub row_owner: IdMap<u64>,
     /// The current tape of each row view, kept here as well as in its entity so a delegate shim
     /// can draw a row without reading the row's entity (in gpui-fast an entity read while a
     /// view draws makes that view depend on the entity: a table would depend on every cell it
     /// drew). Set in `accept`, dropped in `release`.
-    pub row_tapes: HashMap<u64, Rc<Tape>>,
+    pub row_tapes: IdMap<Rc<Tape>>,
     /// What a decoded row's tape depended on (its entity is not read: see `accept`).
-    pub row_deps: HashMap<u64, Vec<u64>>,
+    pub row_deps: IdMap<Vec<u64>>,
 }
 
 #[derive(Clone, Copy)]
@@ -218,13 +242,13 @@ pub fn install(callback: GkCallback, user: *mut c_void) {
                 item: None,
             }],
             free: Vec::new(),
-            view_window: HashMap::new(),
-            dirty: HashMap::new(),
+            view_window: IdMap::default(),
+            dirty: IdMap::default(),
             unmounted_dirty: Vec::new(),
-            dep_views: HashMap::new(),
-            hooked: HashSet::new(),
+            dep_views: IdMap::default(),
+            hooked: IdSet::default(),
             in_hook: None,
-            frame_handler: HashSet::new(),
+            frame_handler: IdSet::default(),
             deferred: Vec::new(),
             deferred_scheduled: false,
             queued: Vec::new(),
@@ -233,9 +257,9 @@ pub fn install(callback: GkCallback, user: *mut c_void) {
             frame_no: 0,
             debug,
             sources: Vec::new(),
-            row_owner: HashMap::new(),
-            row_tapes: HashMap::new(),
-            row_deps: HashMap::new(),
+            row_owner: IdMap::default(),
+            row_tapes: IdMap::default(),
+            row_deps: IdMap::default(),
         });
     });
 }
@@ -793,6 +817,26 @@ pub fn mark_dirty(view: u64, window: Option<&mut Window>, cx: &mut App) {
     }
 }
 
+/// `mark_dirty` for views just made and mounted in window `wh` (the row views a ROWS turn
+/// binds): none of them can be in the dirty list yet, so a batch of a few hundred costs no
+/// search of that list per view.
+pub fn mark_dirty_new(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
+    if views.is_empty() {
+        return;
+    }
+    trace(|| format!("dirty new views={} window={wh:#x}", views.len()));
+    with(|s| {
+        let mut list = s.dirty.remove(&wh).unwrap_or_default();
+        for v in views {
+            if s.view_window.get(v) == Some(&wh) {
+                list.push(*v);
+            }
+        }
+        s.dirty.insert(wh, list);
+    });
+    ensure_hook(wh, Some(window), cx);
+}
+
 /// A state was written through the binding. Inside a pre-frame hook GPUI's observers would
 /// fire only after the hook, one frame late for the views that read the state, so the
 /// runtime marks those views itself (DESIGN.md section 7, rule 2).
@@ -913,14 +957,20 @@ pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
     let mut sources = Vec::new();
     let mut first = Vec::new();
     for (view, generation, bytes) in std::mem::take(&mut reply.tapes) {
-        let (owner, had_tape) = with(|s| (s.row_owner.get(&view).copied(), s.row_tapes.contains_key(&view)));
-        if let Err(GkErr(code, msg)) = accept(wh, view, generation, bytes, cx) {
+        // A row view: its source, whether a shim decodes the source's rows, and whether it had a
+        // tape before this one.
+        let row = with(|s| {
+            let src = s.row_owner.get(&view).copied()?;
+            let decoded = s.source_mut(src).map(|x| x.decoded).unwrap_or(false);
+            Some((src, decoded, s.row_tapes.contains_key(&view)))
+        });
+        if let Err(GkErr(code, msg)) = accept(wh, view, generation, bytes, row.map(|r| r.1), cx) {
             eprintln!(
                 "gk: a view's description was refused ({msg}; error {code}); the view keeps what it showed. \
                  The app's odin/ package and the library are from different downloads, or this is a bug in the binding."
             );
-        } else if let Some(src) = owner {
-            let list = if had_tape || !crate::source::is_decoded(src) { &mut sources } else { &mut first };
+        } else if let Some((src, decoded, had_tape)) = row {
+            let list = if had_tape || !decoded { &mut sources } else { &mut first };
             if !list.contains(&src) {
                 list.push(src);
             }
@@ -939,7 +989,9 @@ pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
     process_reply(&mut reply, K_VIEWS, Some(window), cx);
 }
 
-fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, cx: &mut App) -> GkResult<()> {
+/// Accepts a view's new tape. `decoded`: the view is a row of a source (Some), whose rows a
+/// delegate shim decodes itself (true).
+fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, decoded: Option<bool>, cx: &mut App) -> GkResult<()> {
     trace(|| format!("tape view={view:#x} generation={generation} bytes={}", bytes.len()));
     let n = bytes.len() as u64;
     let mut tape = match Tape::parse(bytes, generation) {
@@ -950,8 +1002,15 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, cx: &mut App) -> 
         }
     };
     tape.pin = Some(std::sync::Arc::new(crate::tape::GenPin { view, generation }));
-    let entity = with(|s| s.view(view))?;
-    with(|s| {
+    // A row a delegate shim decodes itself (`Source::decoded`) is never drawn as a view: its
+    // tape goes to the session's table and its entity is left alone unless what it depends on
+    // changed. Updating and notifying it would make the window track one more entity for every
+    // row described (a few hundred per batch while a table scrolls) and drop them the frame
+    // after; its source's watchers redraw instead (`describe`).
+    let is_row = decoded.is_some();
+    let decoded = decoded.unwrap_or(false);
+    let (entity, row_old) = with(|s| -> GkResult<_> {
+        let entity = s.view(view)?;
         for slot in &tape.slots {
             s.view_window.insert(*slot, wh);
             if let Some(i) = s.unmounted_dirty.iter().position(|v| v == slot) {
@@ -959,25 +1018,13 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, cx: &mut App) -> 
                 s.dirty.entry(wh).or_default().push(*slot);
             }
         }
-    });
+        let row_old = if decoded { s.row_deps.get(&view).cloned().unwrap_or_default() } else { Vec::new() };
+        Ok((entity, row_old))
+    })?;
     // Kit state the view procedure read: observe it, so the view is described again when it
     // changes (section 9; correction 2 of section 1).
-    let deps = tape.deps.clone();
-    // A row a delegate shim decodes itself (`Source::decoded`) is never drawn as a view: its
-    // tape goes to the session's table and its entity is left alone unless what it depends on
-    // changed. Updating and notifying it would make the window track one more entity for every
-    // row described (a few hundred per batch while a table scrolls) and drop them the frame
-    // after; its source's watchers redraw instead (`describe`).
-    let decoded = with(|s| {
-        let src = s.row_owner.get(&view).copied()?;
-        s.source_mut(src).ok().map(|x| x.decoded)
-    })
-    .unwrap_or(false);
-    let old = if decoded {
-        with(|s| s.row_deps.get(&view).cloned().unwrap_or_default())
-    } else {
-        entity.read(cx).deps.clone()
-    };
+    let deps = std::mem::take(&mut tape.deps);
+    let old = if decoded { row_old } else { entity.read(cx).deps.clone() };
     let subs = if old != deps {
         let observers: Vec<_> = with(|s| {
             for dep in &old {
@@ -997,15 +1044,20 @@ fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, cx: &mut App) -> 
     } else {
         None
     };
+    tape.deps = deps.clone();
     let tape = Rc::new(tape);
-    with(|s| {
-        if s.row_owner.contains_key(&view) {
+    if is_row {
+        with(|s| {
             s.row_tapes.insert(view, tape.clone());
-        }
-        if decoded {
-            s.row_deps.insert(view, deps.clone());
-        }
-    });
+            if decoded {
+                if deps.is_empty() {
+                    s.row_deps.remove(&view); // read as empty
+                } else {
+                    s.row_deps.insert(view, deps.clone());
+                }
+            }
+        });
+    }
     if decoded {
         if let Some(subs) = subs {
             entity.update(cx, |v, _| {

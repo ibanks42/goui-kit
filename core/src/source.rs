@@ -52,6 +52,9 @@ pub struct Source {
     rows: BTreeMap<u64, u64>,
     /// Keys asked for while drawing that have no row view yet.
     wanted: BTreeSet<u64>,
+    /// Keys a shim asked for before drawing them (`want`): bound as asked, with no overscan of
+    /// their own (the shim's range already reaches past what it will draw).
+    ahead: BTreeSet<u64>,
     /// Most row views kept at once; far ones are evicted beyond it.
     pub capacity: usize,
     /// The kept handler that receives this source's events (slot, generation).
@@ -88,10 +91,11 @@ impl Source {
 
     /// Rows to bind and row views to evict for what was wanted since the last ROWS turn: the
     /// wanted rows of each section and as many again on each side (a viewport of overscan
-    /// each way), the farthest rows evicted beyond `capacity`.
+    /// each way), the rows asked for ahead (`want`) as they are, the farthest rows evicted
+    /// beyond `capacity`.
     fn plan(&mut self) -> (Vec<u64>, Vec<u64>) {
         let wanted = std::mem::take(&mut self.wanted);
-        let mut want = BTreeSet::new();
+        let mut want = std::mem::take(&mut self.ahead);
         let mut by_section: BTreeMap<u64, (u64, u64, u64)> = BTreeMap::new(); // lo, hi, n
         for k in &wanted {
             let row = k & 0xffff_ffff;
@@ -209,11 +213,6 @@ pub(crate) fn take_missed(src: u64) -> bool {
     rt::with(|s| s.source_mut(src).map(|x| std::mem::take(&mut x.missed)).unwrap_or(false))
 }
 
-/// Whether `src`'s row views are decoded by a shim rather than drawn as views.
-pub(crate) fn is_decoded(src: u64) -> bool {
-    rt::with(|s| s.source_mut(src).map(|x| x.decoded).unwrap_or(false))
-}
-
 pub(crate) fn notify_watchers(sources: &[u64], cx: &mut App) {
     for src in sources {
         let ids = rt::with(|s| s.source_mut(*src).map(|x| x.watchers.clone()).unwrap_or_default());
@@ -272,7 +271,7 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
         let mut plans = Vec::new();
         for h in s.sources.clone() {
             if let Ok(source) = s.source_mut(h) {
-                if source.window == wh && !source.wanted.is_empty() {
+                if source.window == wh && (!source.wanted.is_empty() || !source.ahead.is_empty()) {
                     let (bind, evict) = source.plan();
                     plans.push((h, bind, evict));
                 }
@@ -309,9 +308,7 @@ pub(crate) fn rows_turn(wh: u64, window: &mut Window, cx: &mut App) {
             drop(item);
         }
     }
-    for v in fresh {
-        rt::mark_dirty(v, Some(&mut *window), cx);
-    }
+    rt::mark_dirty_new(wh, &fresh, window, cx);
     gk_meter::bump(|c| c.rows_turns += 1);
 }
 
@@ -357,6 +354,7 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
                         counts: vec![count],
                         rows: BTreeMap::new(),
                         wanted: BTreeSet::new(),
+                        ahead: BTreeSet::new(),
                         capacity,
                         events,
                         watchers: Vec::new(),
@@ -589,7 +587,7 @@ pub fn want(src: u64, section: u32, lo: u32, hi: u32, window: &mut Window, cx: &
         let mut any = false;
         for row in lo..hi.min(count) {
             let k = key(section, row);
-            if !source.rows.contains_key(&k) && source.wanted.insert(k) {
+            if !source.rows.contains_key(&k) && source.ahead.insert(k) {
                 any = true;
             }
         }

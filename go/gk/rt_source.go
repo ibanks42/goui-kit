@@ -199,9 +199,9 @@ func Refresh(cx *Cx) {
 			}
 		}
 	}
-	for h, v := range views {
-		if !v.dead {
-			t.markDirty(h)
+	for _, v := range views.slots {
+		if v != nil && !v.dead {
+			t.markDirty(v.h)
 		}
 	}
 }
@@ -226,18 +226,25 @@ func ScrollTo(cx *Cx, src RowSource, row int) {
 	checkCx(cx).deferOp(*o)
 }
 
+// rowRecs is the block row views are taken from: a ROWS turn binds a few hundred at a time.
+var rowRecs []viewRec
+
 func bindRow(rec *sourceRec, key, view uint64) {
-	v := &viewRec{h: view, row: rec.row, rowAt: RowAt{int(key >> 32), int(key & 0xffff_ffff)}, src: rec.h}
-	views[view] = v
+	if len(rowRecs) == cap(rowRecs) {
+		rowRecs = make([]viewRec, 0, 128)
+	}
+	rowRecs = append(rowRecs, viewRec{h: view, row: rec.row, rowAt: RowAt{int(key >> 32), int(key & 0xffff_ffff)}, src: rec.h})
+	v := &rowRecs[len(rowRecs)-1]
+	views.set(view, v)
 	rec.rows[key] = view
 }
 
 func unbindRow(view uint64) {
-	v := views[view]
+	v := views.get(view)
 	if v == nil {
 		return
 	}
-	delete(views, view)
+	views.del(view)
 	if rec := sources[v.src]; rec != nil {
 		delete(rec.rows, rowKey(v.rowAt))
 	}

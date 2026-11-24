@@ -211,7 +211,7 @@ func boundary() {
 }
 
 //export gkGoCallback
-func gkGoCallback(user unsafe.Pointer, cb *C.gk_cb, kind C.uint32_t, req *C.uint8_t, n C.size_t) C.int32_t {
+func gkGoCallback(user unsafe.Pointer, cb *C.gk_cb, kind C.uint32_t, req *C.uint8_t, n C.size_t, out **C.uint8_t, outN *C.size_t) C.int32_t {
 	defer boundary()
 	var in []byte
 	if n > 0 {
@@ -222,12 +222,34 @@ func gkGoCallback(user unsafe.Pointer, cb *C.gk_cb, kind C.uint32_t, req *C.uint
 		r := reader{b: in}
 		libraryPanic(r.str() + "")
 	}
-	out := dispatch(uint32(kind), in)
-	if len(out) > 0 {
-		C.gk_reply(cb, (*C.uint8_t)(unsafe.Pointer(&out[0])), C.size_t(len(out))) // copies before it returns
+	if r := dispatch(uint32(kind), in); len(r) > 0 {
+		// The C side passes it to gk_reply when this returns (capi.c): C memory, valid until the
+		// next callback's reply is written.
+		*out, *outN = (*C.uint8_t)(unsafe.Pointer(&r[0])), C.size_t(len(r))
 	}
 	endTurn()
 	return 0
+}
+
+// replyMem is the C memory a turn's reply is written into (see gkGoCallback); it grows as needed
+// and is never freed.
+var (
+	replyMem unsafe.Pointer
+	replyCap int
+)
+
+// replyBuf is an empty slice over C memory of at least n bytes.
+func replyBuf(n int) tape {
+	if n > replyCap {
+		c := max(n, 2*replyCap, 4096)
+		replyMem = C.realloc(replyMem, C.size_t(c))
+		if replyMem == nil {
+			fmt.Fprintln(os.Stderr, "gk: out of memory for a turn's reply")
+			os.Exit(1)
+		}
+		replyCap = c
+	}
+	return unsafe.Slice((*byte)(replyMem), replyCap)[:0]
 }
 
 // expectHash is the interface hash this package expects; the runtime's version test changes it.

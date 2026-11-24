@@ -193,10 +193,11 @@ func main() {
   their window server, so the check is skipped there. Messages the library returns name the Go
   calls (`gk.NewBuilt`, not `gk.built`), and every stop says what to do.
 - **Fallible upstream calls** return `error` (Go's way); misuse is not an error value.
-- **cgo pointer rules**: the library never keeps Go memory. Requests and replies are Go byte
-  slices passed for the duration of one C call (`gk_call`, `gk_reply` copies before it
-  returns); the library's buffers are copied out at once (`gk_call`'s result is valid until the
-  next call). The `gk_app` struct and the script are C memory. Handlers, views and states are
+- **cgo pointer rules**: the library never keeps Go memory. Requests are Go byte slices passed
+  for the duration of one C call (`gk_call`); a turn's reply is written into C memory the package
+  keeps, and the C half of the callback (`go/gk/capi.c`) hands it to `gk_reply`, which copies it,
+  after the Go callback has returned, so a turn costs one crossing into Go and none back out; the
+  library's buffers are copied out at once (`gk_call`'s result is valid until the next call). The `gk_app` struct and the script are C memory. Handlers, views and states are
   numbers on the C side (handler ids, handles); the Go side keeps the functions in its own
   tables. `gk.Post` passes no payload through C.
 - **Threads**: package `gk` locks the main goroutine to the main OS thread in `init`; `gk.Run`

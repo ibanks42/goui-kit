@@ -62,10 +62,17 @@ func notUTF8(s string) {
 	stop("a string given to the kit is not UTF-8 (byte %#02x at offset %d of %d: %q); text from outside the program can be made valid with strings.ToValidUTF8", s[at], at, len(s), s)
 }
 
+// reqBuf is a request with room for its first bytes: newReq costs one allocation, not two.
+type reqBuf struct {
+	t tape
+	b [48]byte
+}
+
 func newReq(op uint16) *tape {
-	o := make(tape, 0, 32)
-	o.u16(op)
-	return &o
+	r := new(reqBuf)
+	r.t = r.b[:0]
+	r.t.u16(op)
+	return &r.t
 }
 
 // reader reads a request, a reply or a call's result.

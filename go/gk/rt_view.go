@@ -22,7 +22,7 @@ type viewRec struct {
 	// The handler tables of older generations the library still holds (an open menu made from
 	// one, a closure upstream keeps): each goes when the library reports its description dropped
 	// (retireTable, from a VIEWS turn).
-	old        map[uint32][]handlerRec
+	old        []oldTable
 	curRetired bool   // the library dropped gen's description: its table is not kept when gen moves on
 	buildNo    uint32 // counts runs of the view function (what a Model's reader list refers to)
 	described  bool
@@ -35,7 +35,37 @@ type viewRec struct {
 	line  int
 }
 
-var views = map[uint64]*viewRec{}
+// views holds every live view by handle (viewTable).
+var views viewTable
+
+// viewTable is the live views by handle: a slice indexed by the handle's slot number (its low 32
+// bits; the library reuses slot numbers, so the table stays as small as the handles alive), each
+// entry checked against the whole handle. A ROWS turn binds a few hundred row views at once:
+// a map paid a hash and, now and then, a regrowth for each.
+type viewTable struct{ slots []*viewRec }
+
+func (t *viewTable) get(h uint64) *viewRec {
+	if i := int(uint32(h)); i < len(t.slots) {
+		if v := t.slots[i]; v != nil && v.h == h {
+			return v
+		}
+	}
+	return nil
+}
+
+func (t *viewTable) set(h uint64, v *viewRec) {
+	i := int(uint32(h))
+	if i >= len(t.slots) {
+		t.slots = append(t.slots, make([]*viewRec, i+1-len(t.slots)+len(t.slots)/2)...)
+	}
+	t.slots[i] = v
+}
+
+func (t *viewTable) del(h uint64) {
+	if i := int(uint32(h)); i < len(t.slots) && t.slots[i] != nil && t.slots[i].h == h {
+		t.slots[i] = nil
+	}
+}
 
 // NewView makes a view: render describes it whenever it is dirty, and init, if not nil, runs
 // once when a window builds this view as its root (kit state that needs a window is made there).
@@ -56,7 +86,7 @@ func NewView(init func(cx *Cx), render func(cx *Cx) Element) View {
 	r := reader{b: mustCall(*newReq(cViewNew))}
 	rec := &viewRec{h: r.u64(), init: init, render: render}
 	rec.file, rec.line, _ = appFrame(2)
-	views[rec.h] = rec
+	views.set(rec.h, rec)
 	return View{rec.h}
 }
 
@@ -75,11 +105,11 @@ func Notify(cx *Cx, v View) {
 func Quiet(cx *Cx) { checkCx(cx).quiet = true }
 
 func releaseView(t *turn, v View) {
-	rec := views[v.h]
+	rec := views.get(v.h)
 	if rec == nil {
 		stop("this gk.View was released already: release a view once")
 	}
-	delete(views, v.h)
+	views.del(v.h)
 	dropKeptOf(t, v.h)
 	rec.cur, rec.old, rec.last = nil, nil, nil
 	rec.dead = true
@@ -108,12 +138,12 @@ func describe(cx *Cx, v *viewRec) {
 		v.cur = append(v.cur[:0], vb.handlers...)
 		return
 	}
+	if cap(v.last) < len(tapeBuf) {
+		v.last = tapeMem(len(tapeBuf))
+	}
 	v.last = append(v.last[:0], tapeBuf...)
 	if v.gen != 0 && !v.curRetired {
-		if v.old == nil {
-			v.old = map[uint32][]handlerRec{}
-		}
-		v.old[v.gen] = v.cur
+		v.old = append(v.old, oldTable{v.gen, v.cur})
 	}
 	v.curRetired = false
 	v.gen++
@@ -123,6 +153,24 @@ func describe(cx *Cx, v *viewRec) {
 	t.tapes.u32(uint32(len(v.last)))
 	t.tapes = append(t.tapes, v.last...)
 	t.nTapes++
+}
+
+// tapeBlock is where small accepted tapes are kept: a row view's first tape (a ROWS turn binds a
+// few hundred rows) is a piece of it rather than an allocation of its own.
+var tapeBlock []byte
+
+// tapeMem is an empty slice of capacity n for a view's accepted tape: a piece of tapeBlock when
+// small (capped, so an append past it never runs into the next piece).
+func tapeMem(n int) tape {
+	if n > 512 {
+		return make(tape, 0, n)
+	}
+	if cap(tapeBlock)-len(tapeBlock) < n {
+		tapeBlock = make([]byte, 0, 16<<10)
+	}
+	at := len(tapeBlock)
+	tapeBlock = tapeBlock[:at+n]
+	return tapeBlock[at : at : at+n]
 }
 
 // Handler tables no description uses any more, for reuse.
@@ -140,7 +188,7 @@ func newTable() []handlerRec {
 // retireTable forgets the handler table of a view's description the library has dropped (no
 // element, open menu or closure upstream keeps holds it): none of its handlers can fire again.
 func retireTable(view uint64, gen uint32) {
-	v := views[view]
+	v := views.get(view)
 	if v == nil {
 		return
 	}
@@ -148,13 +196,33 @@ func retireTable(view uint64, gen uint32) {
 		v.curRetired = true
 		return
 	}
-	if t, ok := v.old[gen]; ok {
-		clear(t)
-		if len(tablePool) < 64 {
-			tablePool = append(tablePool, t[:0])
+	for i, o := range v.old {
+		if o.gen == gen {
+			clear(o.t)
+			if len(tablePool) < 64 {
+				tablePool = append(tablePool, o.t[:0])
+			}
+			v.old = append(v.old[:i], v.old[i+1:]...)
+			return
 		}
-		delete(v.old, gen)
 	}
+}
+
+// oldTable is the handler table of an older description of a view that the library still holds
+// (viewRec.old: usually none or one, so a slice rather than a map).
+type oldTable struct {
+	gen uint32
+	t   []handlerRec
+}
+
+// oldTableOf is the handler table of description gen of v, if the library still holds it.
+func (v *viewRec) oldTableOf(gen uint32) ([]handlerRec, bool) {
+	for _, o := range v.old {
+		if o.gen == gen {
+			return o.t, true
+		}
+	}
+	return nil, false
 }
 
 // dep records that the view being built read this state: the library observes it and has the
